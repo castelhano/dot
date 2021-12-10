@@ -1,0 +1,82 @@
+<div class="modal fade" id="modal-webcam" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title""><i class="fas fa-video text-primary me-1"></i> Captura de Imagem</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-6 border border-end-0 p-0">
+            <video id="video" class="" style="width: {{width}}px;">Recurso nao disponivel</video>
+          </div>
+          <div class="col-6 border p-0">
+            <img src="" id="photo" style="width: {{width}}px;">
+          </div>
+        </div>
+        <small class="pt-1" id="error_label"></small>
+      </div>
+      <canvas id="canvas" class="d-none"></canvas>
+      <div class="modal-footer d-flex justify-content-between">
+        <div class="btn-group">
+          <button type="button" class="btn btn-primary" onclick="webcam_start()"><i class="fas fa-circle"></i></button>
+          <button type="button" class="btn btn-success" onclick="webcam_capture()"><i class="fas fa-play"></i></button>
+          <button type="button" class="btn btn-danger" onclick="webcam_stop()"><i class="fas fa-square"></i></button>
+        </div>        
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="webcam_stop()">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">  
+var width = {{width}};
+var height = {{height}};
+var streaming = false;
+var video = document.getElementById('video');
+var canvas = document.getElementById('canvas');
+var photo = document.getElementById('photo');
+var error_label = document.getElementById('error_label');
+function webcam_start() {
+  navigator.mediaDevices.getUserMedia({video: true, audio: false})
+  .then(function(stream){video.srcObject = stream;video.play();})
+  .catch(function(err){error_label.innerHTML = '[ ' + err + ' ]';});  
+  
+  video.addEventListener('canplay', function(ev){
+    if (!streaming) {
+      height = video.videoHeight / (video.videoWidth/width);  
+      if (isNaN(height)) {height = width / (4/3);}
+      video.setAttribute('width', width);
+      video.setAttribute('height', height);
+      canvas.setAttribute('width', width);
+      canvas.setAttribute('height', height);
+      streaming = true;
+    }
+  }, false);
+  clearphoto();
+}  
+function clearphoto() {
+  var context = canvas.getContext('2d');
+  context.fillStyle = "#FFF";
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  var data = canvas.toDataURL('image/png');
+  photo.setAttribute('src', data);
+}  
+function webcam_capture() {
+  try{
+    var context = canvas.getContext('2d');
+    if (width && height) {
+      canvas.width = width;
+      canvas.height = height;
+      context.drawImage(video, 0, 0, width, height);
+  
+      var data = canvas.toDataURL('image/png');
+      image_container.src = data;
+      photo.setAttribute('src', data);
+    } else {
+      clearphoto();
+    }      
+  }
+  catch(err){error_label.innerHTML = '[ ' + err + ' ]';}
+}
+function webcam_stop(){try{let mediaStream = video.srcObject;let tracks = mediaStream.getTracks();tracks[0].stop();}catch(err){error_label.innerHTML = '[ ' + err + ' ]';}}
+</script>

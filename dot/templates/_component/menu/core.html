@@ -1,0 +1,24 @@
+<li class="nav-item dropdown">
+  <a class="nav-link dropdown-toggle" id="menu_cadastro" href="#" data-bs-toggle="dropdown" title="ALT + C"><b>C</b>adastro</a>
+  <ul class="dropdown-menu dropdown-menu-dark">
+    {% if perms.core.view_empresa %}
+    <li><a class="dropdown-item" id="cadastro_empresa" href="{% url 'core_empresas' %}"><b>E</b>mpresa</a></li>
+    {% endif %}
+  </ul>
+</li>
+
+<script>
+  var SHORTCUT_MAP = {
+    'cTFF':'#menu_cadastro',
+  };
+  
+  function eventHandler(e){
+    {% include '_component/script/global_handler.js' %}
+    else{
+      let cadastro = false;
+      try{cadastro = document.getElementById('menu_cadastro').classList.contains('show') ? true : false;}catch(err){}
+      if(cadastro && e.key.toLowerCase() == 'e'){e.preventDefault();document.getElementById('cadastro_empresa').click();}
+      else if(cadastro && e.key.toLowerCase() == 'a'){e.preventDefault();document.getElementById('admin_admin').click();}
+    }
+  }
+</script>

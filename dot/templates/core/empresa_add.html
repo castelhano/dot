@@ -1,0 +1,36 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Empresas{% endblock %}
+{% block model_menu %}
+{% include "_component/menu/core.html" %}
+{% endblock%}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'core_empresa_add' %}"></a>
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a class="nav-link disabled" data-bs-toggle="tab" data-bs-target="#param" href="#"><i class="fas fa-cogs"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'core_empresas' %}"><i class="fas fa-undo"></i></a></li>
+    </ul>
+  </div>
+  <form id="app_form" action="{% url 'core_empresa_add' %}" method="POST" autocomplete="off">
+    {% csrf_token %}
+    {% include 'core/_form_empresa.html' %}
+  </form>
+</div>
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/vendor/mask.js' %}"></script>
+{% endblock %}
+
+<script>
+  {% block add_script %}
+  var TAB_ON_ENTER = true;
+  VMasker(document.getElementById("id_cnpj")).maskPattern('99.999.999/9999-99');
+  VMasker(document.getElementById("id_cep")).maskPattern('99.999-999');
+  
+  {% endblock %}
+</script>

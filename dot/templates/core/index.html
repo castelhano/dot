@@ -1,0 +1,14 @@
+{% extends "layout/dot.html" %}
+{% block title %}Dot{% endblock %}
+{% block model  %}Inicio{% endblock %}
+{% block model_menu %}
+{% include "_component/menu/core.html" %}
+{% endblock%}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'index' %}"></a>
+<div class="row px-1 pt-lg-2">
+  {% if user.is_staff %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-danger"><i class="fas fa-cogs lead-image"></i><a class="widget-label stretched-link" href="{% url 'admin:index' %}" target="_blank">Admin</a></div>{% endif %}
+  {% if user.is_superuser %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-danger"><i class="fas fa-code lead-image"></i><a class="widget-label stretched-link" href="{% url 'core_run_script' %}">Rodar Script</a></div>{% endif %}
+</div>
+{% endblock%}

@@ -1,0 +1,47 @@
+<div class="row g-1" id="inspetor_container"{% if hide %} style="display:none"{% endif %}>
+  <div class="form-floating mb-1 col" style="max-width: 130px;">
+    <input type="text" class="form-control" name="matricula" maxlength="6" id="id_matricula_inspetor" value="{{matricula}}" placeholder="" onfocusout="getInspetor()"{% if autofocus %} autofocus{% endif %}{% if required %} REQUIRED{% endif %}>
+    <label for="id_matricula_inspetor">Mat Inspetor</label>
+  </div>
+  <div class="form-floating mb-1 col">
+    <input type="text" class="form-control" name="nome_inspetor" id="id_nome_inspetor" value="{{nome}}" disabled>
+    <label for="id_nome_inspetor">Nome Inspetor</label>
+  </div>
+  <input type="hidden" name="inspetor" id="id_inspetor" value="{{id}}">
+</div>
+<script>
+  
+    
+  function cleanInspetor(){
+    document.getElementById('id_matricula_inspetor').value = '';
+    document.getElementById('id_matricula_inspetor').classList.remove('is-invalid');
+    document.getElementById('id_nome_inspetor').value = '';
+  };  
+  
+  function getInspetor() {
+    empresa = document.getElementById('id_empresa');
+    matricula = document.getElementById('id_matricula_inspetor');
+    nome = document.getElementById("id_nome_inspetor");
+    inspetor = document.getElementById("id_inspetor");
+    if(matricula.value != ''){
+      var xhttp = new XMLHttpRequest();
+    	xhttp.onreadystatechange = function() {
+    		if(this.readyState == 4 && this.status == 200){
+    			if(this.responseText == ''){
+            document.getElementById("id_matricula_inspetor").classList.add('is-invalid');
+            document.getElementById("id_nome_inspetor").value = 'Funcionário não cadastrado / habilitado';
+            inspetor.value = '';
+          }
+    			else{
+            matricula.classList.remove('is-invalid');
+            nome.value = this.responseText.split(';')[1];
+            inspetor.value = this.responseText.split(';')[0];
+          }
+    		}
+    	};
+    	xhttp.open("GET", "{% url 'pessoal_get_funcionario' %}?empresa=" + empresa.value + "&matricula=" + matricula.value + "&funcaofixa=T&incluir_inativos={{incluir_inativos}}", true);
+    	xhttp.send();  
+    }
+    else{cleanInspetor();}
+  }  
+</script>

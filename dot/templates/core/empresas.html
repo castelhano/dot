@@ -1,0 +1,116 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Empresas{% endblock %}
+{% block model_menu %}
+{% include "_component/menu/core.html" %}
+{% endblock%}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'core_empresas' %}"></a>
+
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a class="nav-link pointer" id="search" data-bs-toggle="modal" data-bs-target="#search_modal" onclick="setTimeout(function(){document.getElementById('id_pesquisa').focus();},480);" title="CTRL + /"><i class="fas fa-search"></i></a></li>
+      {% if perms.core.add_empresa %}
+      <li class="nav-item"><a class="nav-link border" id="add" href="{% url 'core_empresa_add' %}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
+      {% endif %}
+      <li class="nav-item dropdown ms-auto">
+        <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item pointer" id="download" onclick="download_table_as_csv('main_table',';')" title="ALT + &darr;">Exportar CSV</a></li>
+          {% if perms.core.view_log %}
+          <li><a class="dropdown-item pointer" href="{% url 'logs' %}?modelo=core.empresa&mensagem=DELETE" target="_blank">Log de Exclusões</a></li>
+          {% endif %}
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div class="card-body tab-content">
+    <h5 class="card-title mb-3">Empresas <small class="badge bg-primary ms-1">{{empresas.count}}</small></h5>
+    <div class="tab-pane fade show active" id="base" role="tabpanel">
+      <table id="main_table" class="table border table-striped table-hover">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th class="d-none d-lg-table-cell">Razão Social</th>
+            <th class="d-none d-lg-table-cell">CNPJ</th>
+            <th class="d-none">Insc Estadual</th>
+            <th class="d-none">Insc Municipal</th>
+            <th class="d-none">Cnae</th>
+            <th class="d-none">Endereço</th>
+            <th class="d-none">Bairro</th>
+            <th class="d-none">Cidade</th>
+            <th class="d-none">UF</th>
+            <th class="d-none">CEP</th>
+            <th class="d-none">Fone</th>
+            <th class="d-none">Fax</th>
+            {% if perms.core.change_empresa %}
+            <th>&nbsp;</th>
+            {% endif %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for empresa in empresas %}
+          <tr>
+            <td>{{empresa.nome}}</td>
+            <td class="d-none d-lg-table-cell">{{empresa.razao_social}}</td>
+            <td class="d-none d-lg-table-cell">{{empresa.cnpj}}</td>
+            <td class="d-none">{{empresa.inscricao_estadual}}</td>
+            <td class="d-none">{{empresa.inscricao_municipal}}</td>
+            <td class="d-none">{{empresa.cnae}}</td>
+            <td class="d-none">{{empresa.endereco}}</td>
+            <td class="d-none">{{empresa.bairro}}</td>
+            <td class="d-none">{{empresa.cidade}}</td>
+            <td class="d-none">{{empresa.uf}}</td>
+            <td class="d-none">{{empresa.cep}}</td>
+            <td class="d-none">{{empresa.fone}}</td>
+            <td class="d-none">{{empresa.fax}}</td>
+            {% if perms.core.change_empresa %}
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'core_empresa_id' empresa.id %}"><i class="fas fa-pen"></i></a></td>
+            {% endif %}
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4">Nenhum registro a exibir</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        
+      </table>
+      
+      
+    </div>
+    
+    
+  </div>
+</div>
+
+<div class="modal fade" id="search_modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="row">
+        <div class="col"><h5 class="ms-3 mt-3">Pesquisa</h5></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      </div>
+      <div class="modal-body">
+        <form id="app_form" action="{% url 'core_empresas' %}" method="POST" autocomplete="off">
+          {% csrf_token %}
+          <div class="row g-1">
+            <div class="form-floating mb-1 col-lg-12">
+              <input type="text" class="form-control" name="pesquisa" value="" id="id_pesquisa" placeholder="">
+              <label for="id_pesquisa">Termo pesquisa</label>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/table_to_csv.js' %}"></script>
+{% endblock %}
