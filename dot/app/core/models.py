@@ -35,7 +35,7 @@ class Log(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    empresas = models.ManyToManyField(Empresa, blank=True, null=True)
+    empresas = models.ManyToManyField(Empresa)
     force_password_change = models.BooleanField(default=True)
 
 @receiver(post_save, sender=User)

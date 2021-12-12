@@ -26,6 +26,14 @@ def empresas(request):
     return render(request,'core/empresas.html',{'empresas':empresas})
 
 @login_required
+@permission_required('auth.view_user')
+def usuarios(request):
+    usuarios = User.objects.all().order_by('username')
+    if request.method == 'POST':
+        usuarios = usuarios.filter(username__contains=request.POST['pesquisa'])
+    return render(request,'core/usuarios.html',{'usuarios':usuarios})
+
+@login_required
 @permission_required('core.view_log')
 def logs(request):
     modelo = request.GET.get('modelo',None)
