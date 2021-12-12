@@ -1,0 +1,471 @@
+# SNIPPETS HTML
+'.text.html.basic':
+  
+  # LAYOUT
+  'Template Basic':
+    'prefix': '_basic'
+    'body':'{% extends "layout/dot.html" %}\n{% block title %}Titulo{% endblock %}\n{% block model  %}Modulo{% endblock %}\n{% block model_menu %}\n{% include "_component/menu/core.html" %}\n{% endblock%}\n\n{% block content_fluid %}\n<a class="d-none" id="clear" href="url"></a>\n{% endblock%}\n\n{% block add_script_src %}{% endblock %}\n\n<script>\n{% block add_script %}{% endblock %}\n</script>'
+  
+  'Template Table':
+    'prefix': '_table'
+    'body':'{% extends "layout/dot.html" %}\n
+    {% load static %}\n
+    {% block title %}Titulo{% endblock %}\n
+    {% block model  %}Modulo{% endblock %}\n
+    {% block model_menu %}\n
+    {% include "_component/menu/core.html" %}\n
+    {% endblock%}\n\n
+    {% block content_fluid %}\n
+    <a class="d-none" id="clear" href="url"></a>\n\n
+    <div class="card mt-2">\n
+    \t<div class="card-header">\n
+    \t\t<ul class="nav nav-tabs card-header-tabs">\n
+    \t\t\t<li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>\n
+    \t\t\t<li class="nav-item"><a class="nav-link" data-bs-toggle="tab" data-bs-target="#param" href="#"><i class="fas fa-filter"></i></a></li>\n
+    \t\t\t<li class="nav-item"><a class="nav-link pointer" id="search_btn" data-bs-toggle="modal" data-bs-target="#search_modal" onclick="setTimeout(function(){document.getElementById(\'id_pesquisa\').focus();},480);" title="CTRL + /"><i class="fas fa-search"></i></a></li>\n
+    \t\t\t{% if perms.app.add_modelo %}\n
+    \t\t\t<li class="nav-item"><a class="nav-link border" id="add" href="url" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>\n
+    \t\t\t{% endif %}\n
+    \t\t\t<li class="nav-item dropdown ms-auto">\n
+    \t\t\t\t<a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>\n
+    \t\t\t\t<ul class="dropdown-menu">\n
+    \t\t\t\t\t<li><a class="dropdown-item pointer" id="download" onclick="download_table_as_csv(\'main_table\',\';\')" title="ALT + &darr;">Exportar CSV</a></li>\n
+    \t\t\t\t\t{% if perms.core.view_log %}\n
+    \t\t\t\t\t<li><a class="dropdown-item pointer" href="{% url \'logs\' %}?modelo=app.modelo&mensagem=DELETE" target="_blank">Log de Exclusões</a></li>\n
+    \t\t\t\t\t{% endif %}\n
+    \t\t\t\t</ul>\n
+    \t\t\t</li>\n
+    \t\t</ul>\n
+    \t</div>\n
+    \t<div class="card-body tab-content">\n
+    \t\t<h5 class="card-title mb-3">Modelos <small class="badge bg-primary ms-1">{{modelos.count}}</small></h5>\n
+    \t\t<div class="tab-pane fade show active" id="base" role="tabpanel">\n
+    \t\t\t<table id="main_table" class="table border table-striped table-hover">\n
+    \t\t\t\t<thead>\n
+    \t\t\t\t\t<tr>\n
+    \t\t\t\t\t\t<th>Nome</th>\n
+    \t\t\t\t\t\t{% if perms.app.change_modelo %}\n
+    \t\t\t\t\t\t<th>&nbsp;</th>\n
+    \t\t\t\t\t\t{% endif %}\n
+    \t\t\t\t\t</tr>\n
+    \t\t\t\t</thead>\n
+    \t\t\t\t<tbody>\n
+    \t\t\t\t\t{% for modelo in modelos %}\n
+    \t\t\t\t\t<tr>\n
+    \t\t\t\t\t\t<td>{{modelo.nome}}</td>\n
+    \t\t\t\t\t\t{% if perms.app.change_modelo %}\n
+    \t\t\t\t\t\t<td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="url"><i class="fas fa-pen"></i></a></td>\n
+    \t\t\t\t\t\t{% endif %}\n
+    \t\t\t\t\t</tr>\n
+    \t\t\t\t\t{% empty %}\n
+    \t\t\t\t\t<tr>\n
+    \t\t\t\t\t\t<td colspan="2">Nenhum registro a exibir</td>\n
+    \t\t\t\t\t</tr>\n
+    \t\t\t\t\t{% endfor %}\n
+    \t\t\t\t</tbody>\n
+    \t\t\t</table>\n
+    \t\t</div>\n
+    \t\t<div class="tab-pane fade" id="param" role="tabpanel">param</div>\n
+    \t</div>\n
+    </div>\n\n    
+    <div class="modal fade" id="search_modal" tabindex="-1">\n
+    \t<div class="modal-dialog">\n
+    \t\t<div class="modal-content">\n
+    \t\t\t<div class="row">\n
+    \t\t\t\t<div class="col"><h5 class="ms-3 mt-3">Pesquisa</h5></div>\n
+    \t\t\t\t<div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>\n
+    \t\t\t</div>\n
+    \t\t\t<div class="modal-body">\n
+    \t\t\t\t<form id="app_form" action="url" method="POST" autocomplete="off">\n
+    \t\t\t\t{% csrf_token %}\n
+    \t\t\t\t\t<div class="row g-1">\n
+    \t\t\t\t\t\t<div class="form-floating mb-1 col-lg-12">\n
+    \t\t\t\t\t\t\t<input type="text" class="form-control" name="pesquisa" value="" id="id_pesquisa" placeholder="">\n
+    \t\t\t\t\t\t\t<label for="id_pesquisa">Termo pesquisa</label>\n
+    \t\t\t\t\t\t</div>\n
+    \t\t\t\t\t</div>\n
+    \t\t\t\t</form>\n
+    \t\t\t</div>\n
+    \t\t</div>\n
+    \t</div>\n
+    </div>\n
+    {% endblock%}\n\n
+
+    {% block add_script_src %}\n
+    <script src="{% static \'js/table_to_csv.js\' %}"></script>\n
+    {% endblock %}'
+
+  'Template Add Form':
+    'prefix': '_add'
+    'body':'{% extends "layout/dot.html" %}\n
+    {% load static %}\n
+    {% block title %}Titulo{% endblock %}\n
+    {% block model  %}Modulo{% endblock %}\n
+    {% block model_menu %}\n
+    {% include "_component/menu/core.html" %}\n
+    {% endblock%}\n\n
+    {% block content_fluid %}\n
+    <a class="d-none" id="clear" href="url"></a>\n
+    <div class="card mt-2">\n
+    \t<div class="card-header">\n
+    \t\t<ul class="nav nav-tabs card-header-tabs">\n
+    \t\t\t<li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>\n
+    \t\t\t<li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="url"><i class="fas fa-undo"></i></a></li>\n
+    \t\t</ul>\n
+    \t</div>\n
+    \t<form id="app_form" action="url" method="POST" autocomplete="off">\n
+    \t{% csrf_token %}\n
+    \t\t<div class="card-body tab-content">\n
+    \t\t\t<h5 class="card-title mb-3">Cadastro de Modelo</h5>\n
+    \t\t\t<div class="tab-pane fade show active" id="base" role="tabpanel">\n
+    \t\t\t\t<div class="row g-1">\n
+    \t\t\t\t\t<div class="form-floating mb-lg-1 col-lg">\n
+    \t\t\t\t\t\t{{ form.nome }}\n
+    \t\t\t\t\t\t<label for="id_nome">Nome</label>\n
+    \t\t\t\t\t</div>\n
+    \t\t\t\t</div>\n
+    \t\t\t</div>\n
+    \t\t\t<!-- CONTROLES DO FORM -->\n
+    \t\t\t<div class="row mt-3">\n
+    \t\t\t\t<div class="col">\n
+    \t\t\t\t\t<button type="submit" id="submit" class="btn btn-primary" title="ALT + G"><b>G</b>ravar</button>\n
+    \t\t\t\t</div>\n
+    \t\t\t</div>\n
+    \t\t</div>\n
+    \t</form>\n
+    </div>\n\n
+    {% endblock%}\n\n
+    {% block add_script_src %}{% endblock %}\n\n
+    <script>\n
+    {% block add_script %}{% endblock %}\n
+    </script>'
+  
+  'Template Edit Form':
+    'prefix': '_edit'
+    'body':'{% extends "layout/dot.html" %}\n
+    {% load static %}\n
+    {% block title %}Titulo{% endblock %}\n
+    {% block model  %}Modulo{% endblock %}\n
+    {% block model_menu %}\n
+    {% include "_component/menu/core.html" %}\n
+    {% endblock%}\n
+    {% block content_fluid %}\n
+    <a class="d-none" id="clear" href="url"></a>\n
+    <div class="card mt-2">\n
+    \t<div class="card-header">\n
+    \t\t<ul class="nav nav-tabs card-header-tabs">\n
+    \t\t\t<li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>\n
+    \t\t\t<li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="url"><i class="fas fa-undo"></i></a></li>\n
+    \t\t\t<li class="nav-item dropdown ms-auto">\n
+    \t\t\t\t<a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>\n
+    \t\t\t\t<ul class="dropdown-menu">\n
+    \t\t\t\t\t<li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#history_modal">Historico</a></li>\n
+    \t\t\t\t\t{% if perms.app.delete_modelo %}\n
+    \t\t\t\t\t<li><hr class="dropdown-divider"></li>\n
+    \t\t\t\t\t<li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal">Excluir Modelo</a></li>\n
+    \t\t\t\t\t{% endif %}\n
+    \t\t\t\t</ul>\n
+    \t\t\t</li>\n
+    \t\t</ul>\n
+    \t</div>\n
+    \t<form id="app_form" action="url" method="POST" autocomplete="off">\n
+    \t{% csrf_token %}\n
+    \t\t<div class="card-body tab-content">\n
+    \t\t\t<h5 class="card-title mb-3">Cadastro de Modelo</h5>\n
+    \t\t\t<div class="tab-pane fade show active" id="base" role="tabpanel">\n
+    \t\t\t\t<div class="row g-1">\n
+    \t\t\t\t\t<div class="form-floating mb-lg-1 col-lg">\n
+    \t\t\t\t\t{{ form.nome }}\n
+    \t\t\t\t\t\t<label for="id_nome">Nome</label>\n
+    \t\t\t\t\t</div>\n
+    \t\t\t\t</div>\n
+    \t\t\t</div>\n
+    \t\t\t<!-- CONTROLES DO FORM -->\n
+    \t\t\t<div class="row mt-3">\n
+    \t\t\t\t<div class="col">\n
+    \t\t\t\t\t<button type="submit" id="submit" class="btn btn-primary" title="ALT + G"><b>G</b>ravar</button>\n
+    \t\t\t\t</div>\n
+    \t\t\t</div>\n
+    \t\t</div>\n
+    \t</form>\n
+    </div>\n\n
+    {% if perms.app.delete_modelo %}\n
+    <div class="modal fade" id="delete_modal" tabindex="-1">\n
+    \t<div class="modal-dialog">\n
+    \t\t<div class="modal-content">\n
+    \t\t\t<div class="row">\n
+    \t\t\t\t<div class="col"><h5 class="ms-3 mt-3"><i class="fas fa-exclamation-triangle text-danger me-2"></i> Excluir Registro</h5></div>\n
+    \t\t\t\t<div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>\n
+    \t\t\t</div>\n
+    \t\t\t<div class="modal-body">\n
+    \t\t\t\t<p><b class="text-danger">Atenção!!</b> Esta operação não pode ser desfeita, confirma a exclusão do registro?</p>\n
+    \t\t\t\t<div class="row mt-2">\n
+    \t\t\t\t\t<div class="col text-end">\n
+    \t\t\t\t\t\t<a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>\n
+    \t\t\t\t\t\t<a class="btn btn-danger px-3" href="url">Excluir</a>\n
+    \t\t\t\t\t</div>\n
+    \t\t\t\t</div>\n
+    \t\t\t</div>\n
+    \t\t</div>\n
+    \t</div>\n
+    </div>\n
+    {% endif %}\n
+    <div class="modal fade" id="history_modal" tabindex="-1">\n
+    \t<div class="modal-dialog modal-dialog-scrollable">\n
+    \t\t<div class="modal-content">\n
+    \t\t\t<div class="row">\n
+    \t\t\t\t<div class="col"><h5 class="ms-3 mt-3">Histórico de Alterações <sup>(last 15)</sup></h5></div>\n
+    \t\t\t\t\t<div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>\n
+    \t\t\t\t</div>\n
+    \t\t\t\t<div class="modal-body">\n
+    \t\t\t\t\t<table class="table table-sm">\n
+    \t\t\t\t\t\t<thead>\n
+    \t\t\t\t\t\t\t<th>Data</th>\n
+    \t\t\t\t\t\t\t<th>Operação</th>\n
+    \t\t\t\t\t\t\t<th>Usuário</th>\n
+    \t\t\t\t\t\t</thead>\n
+    \t\t\t\t\t<tbody class="fs-7">\n
+    \t\t\t\t\t{% for i in modelo.ultimas_alteracoes %}\n
+    \t\t\t\t\t\t<tr>\n
+    \t\t\t\t\t\t\t<td>{{i.data|date:\'d/m/Y H:i:s\'}}</td>\n
+    \t\t\t\t\t\t\t<td>{{i.mensagem}}</td>\n
+    \t\t\t\t\t\t\t<td>{{i.usuario.username|upper}}</td>\n
+    \t\t\t\t\t\t</tr>\n
+    \t\t\t\t\t{% endfor %}\n
+    \t\t\t\t\t</tbody>\n
+    \t\t\t\t</table>\n
+    \t\t\t</div>\n
+    \t\t</div>\n
+    \t</div>\n
+    </div>\n
+    {% endblock%}\n\n
+    {% block add_script_src %}{% endblock %}\n\n
+    <script>\n
+    {% block add_script %}{% endblock %}\n
+    </script>'
+  
+  'Boostrap Row / Col':
+    'prefix': 'row'
+    'body':'<div class="row">\n\t<div class="col">${1:aqui}</div>\n</div>'
+  
+  
+  # FORMULARIOS
+  'Form Imput':
+    'prefix': 'form_input'
+    'body':'<div class="row g-1">\n\t<div class="form-floating mb-1 col-lg-12">\n\t\t{{ form.nome }}\n\t\t<label for="id_nome">Nome completo</label>\n\t</div>\n</div>'
+  
+  'Form Select':
+    'prefix': 'form_select'
+    'body':'<div class="row g-1">\n\t<div class="form-floating mb-1 col-lg-12">\n\t\t<select class="form-select" id="id_nome" name="nome">\n\t\t\t<option value="" selected>---------</option>\n\t\t\t<option value="1">One</option>\n\t\t\t<option value="2">Two</option>\n\t\t</select>\n\t\t<label for="id_nome">modelo</label>\n\t</div>\n</div>'
+  
+  'Form Checkbox':
+    'prefix': 'form_checkbox'
+    'body':'<div class="mt-1 form-check">\n\t<input type="checkbox" class="form-check-input" id="id_nome" name="nome">\n\t<label class="form-check-label noselect" for="id_nome">Nome</label>\n</div>'
+  
+  'Form Radio':
+    'prefix': 'form_radio'
+    'body':'<div class="form-check"><input class="form-check-input" type="radio" name="status" id="all" value="" checked><label class="form-check-label noselect" for="all">Todos</label></div>'
+  
+  'Form Switch':
+    'prefix': 'form_switch'
+    'body':'<div class="form-check form-switch">\n\t<input class="form-check-input" type="checkbox" role="switch" name="switch" id="id_switch">\n\t<label class="form-check-label" for="id_switch">Opcao1</label>\n</div>'
+  
+  'Component Linha':
+    'prefix': 'component_linha'
+    'body':'{% include "_component/plan/linha.html" with id=app.linha.id codigo=app.linha.codigo nome=app.linha.nome required=False incluir_inativos=False %}'
+  
+  'Component Condutor':
+    'prefix': 'component_condutor'
+    'body':'{% include "_component/pessoal/condutor.html" with id=app.condutor.id matricula=app.condutor.matricula nome=app.condutor.nome required=False incluir_inativos=False %}'
+  
+  'Component Veiculo':
+    'prefix': 'component_veiculo'
+    'body':'{% include "_component/oficina/veiculo.html" with id=app.veiculo.id prefixo=app.veiculo.prefixo placa=app.veiculo.placa required=False incluir_inativos=False %}'
+  
+  'Multiple Option Select':
+    'prefix': 'form_select_multiple'
+    'body':'<div class="row g-1">\n
+    \t<div class="form-floating mb-1 col-lg">\n
+    \t\t<select class="form-control" id="modelos_disponiveis" style="min-height:180px;" multiple>\n
+    \t\t\t{% for modelo in modelos %}\n
+    \t\t\t<option value="{{modelo.id}}">{{modelo.nome}}</option>\n
+    \t\t\t{% endfor %}\n
+    \t\t</select>\n
+    \t\t<label for="id_modelos_disponiveis">Modelos Disponíveis</label>\n
+    \t</div>\n
+    \t<div class="col-lg-auto">\n
+    \t\t<div class="d-flex justify-content-center d-lg-grid gap-1">\n
+    \t\t\t<a class="btn btn-sm btn-secondary pointer" id="select_multiple_add" onclick="addSelected();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-right rotate-lg-90"></i></a>\n
+    \t\t\t<a class="btn btn-sm btn-secondary pointer" id="select_multiple_add_all" onclick="addAll();"><i class="fas fa-angle-double-right rotate-lg-90"></i></a>\n
+    \t\t\t<a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove" onclick="removeSelected();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-left rotate-lg-90"></i></a>\n
+    \t\t\t<a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove_all" onclick="removeAll();"><i class="fas fa-angle-double-left rotate-lg-90"></i></a>\n
+    \t\t</div>\n
+    \t</div>\n
+    \t<div class="form-floating mb-1 col-lg">\n
+    \t\t<select class="form-control" name="modelos" id="id_modelos" style="min-height:180px;" multiple>\n
+    \t\t</select>\n
+    \t<label for="id_modelos">Modelos Associados</label>\n
+    \t</div>\n
+    </div>\n'
+  
+  'Multiple Option Select Javascript':
+    'prefix': 'script_select_multiple'
+    'body':'// SET onsubmit="return submitForm();" ON FORM\ndisponiveis = document.getElementById("modelos_disponiveis");\n
+    selecionados = document.getElementById("id_modelos");\n
+    function submitForm(){options = selecionados.options;for(i=0; i < options.length; i++){options[i].selected = "true";}return true;}\n\n
+    function addAll(){selecionados.innerHTML += disponiveis.innerHTML;disponiveis.innerHTML = \'\';}\n
+    function removeAll(){disponiveis.innerHTML += selecionados.innerHTML;selecionados.innerHTML = \'\';}\n
+    function addSelected(){residual = document.createElement("select");for(var i=0; i < disponiveis.length; i++){if(disponiveis[i].selected){let newOption = new Option(disponiveis[i].text,disponiveis[i].value);selecionados.add(newOption);}else{let newOption = new Option(disponiveis[i].text,disponiveis[i].value);residual.add(newOption);}}disponiveis.innerHTML = residual.innerHTML;}\n
+    function removeSelected(){residual = document.createElement("select");for(var i=0; i < selecionados.length; i++){if(selecionados[i].selected){let newOption = new Option(selecionados[i].text,selecionados[i].value);disponiveis.add(newOption);}else{let newOption = new Option(selecionados[i].text,selecionados[i].value);residual.add(newOption);}}selecionados.innerHTML = residual.innerHTML;}'
+  
+  'Plugin webcam':
+    'prefix': 'webcam'
+    'body':'<!-- Inserir um botao para iniciar o modal -->\n<!-- <div class="col-auto"><a class="btn btn-light border py-3 px-4" data-bs-toggle="modal" data-bs-target="#modal-webcam"><i class="fas fa-video text-muted"></i></a></div> -->\n{% include "_component/webcam.html" with width=245 height=0 %}'  
+  
+  
+  # JAVASCRIPT
+  'Select Populate Ajax':
+    'prefix': 'ajax_select'
+    'body':'function carregaSetores() {\n\tvar xhttp = new XMLHttpRequest();\n\txhttp.onreadystatechange = function() {\n\t\tif(this.readyState == 4 && this.status == 200){\n\t\t\tif(this.responseText == \'\'){}\n\t\t\telse{\n\t\t\t\tlet obj = JSON.parse(this.responseText);\n\t\t\t\tsetores = document.getElementById("id_setor")\n\t\t\t\tfor(key in obj){setores.innerHTML += \'<option value="\' + obj[key] + \'">\' + key + \'</option>\';}\n\t\t\t}\n\t\t}\n\t};\n\txhttp.open("GET", "url", true);\n\txhttp.send();\n}'
+  
+  'Script Submit Form':
+    'prefix': 'script_submit'
+    'body':'function submitForm(){\n\tlet pesquisa = document.getElementById(\'main_search\').value;\n\tif(pesquisa.length > 3 || (pesquisa.length > 1 && pesquisa[0] == \'#\')){return true;}\n\telse{var modal = new bootstrap.Modal(document.getElementById(\'modal-query-alert\'),{keyboard: true});modal.show();return false;}\n}\n'
+  
+  # PYTHON TEMPLATE SNIPPETS
+  'Python IF on Template':
+    'prefix': 'tif'
+    'body':'{% if ${1:args} %}{% else %}{% endif %}'
+  
+  'Python FOR on Template':
+    'prefix': 'tfor'
+    'body':'{% for ${1:arg} in args %}\n{% endfor %}\n'
+  
+  'Python URL':
+    'prefix': 'url'
+    'body':"{% url '${1:url}' %}"
+  
+  'Python Permitions':
+    'prefix': 'perm'
+    'body':'{% if perms.${1:app}.add_${2:modelo} %} disabled{% endif %}'
+  
+  'Block Body Atributes':
+    'prefix': 'block_body_attr'
+    'body':'{% block body_attrs %}{% endblock %}'
+  
+  'Include Basic Listener':
+    'prefix': 'listener_basic'
+    'body':'{% include "_partial/_basicListener.js" %}'  
+  
+  'Include Message':
+    'prefix': 'message'
+    'body':'{% include "_partial/_message.html" %}'
+  
+  'Include Extra Tags':
+    'prefix': 'extra_tags'
+    'body':'{% load tag_extras %}'
+  
+  'Include Table to CSV':
+    'prefix': 'table_csv'
+    'body':'<script src="{% static \'js/table_to_csv.js\' %}"></script>'
+  
+  'Include Masker JS':
+    'prefix': 'mask_include'
+    'body':'<script src="{% static \'js/vendor/mask.js\' %}"></script>'
+  
+  'Masker Patterns':
+    'prefix': 'mask_patterns'
+    'body':'// VMasker(document.getElementById("input")).maskMoney();\n
+    // VMasker(document.getElementById("id_renavan")).maskNumber();\n
+    // document.getElementById(\'id_acordo\').value = parseFloat(document.getElementById(\'id_acordo\').value.replace(\'.\',\'\').replace(\',\',\'.\'));\n
+    // VMasker(document.getElementById("input")).unMask();\n
+    // VMasker(document.getElementById("id_placa")).maskPattern(\'AAA-9S99\');\n
+    // VMasker(document.getElementById("id_cnh")).maskPattern(\'999.999.999-99\');\n
+    // VMasker(document.getElementById("id_cnpj")).maskPattern(\'99.999.999/9999-99\');\n
+    // VMasker(document.getElementById("id_cpf")).maskPattern(\'999.999.999-99\');\n\n
+    // FONE MASK\n
+    // function inputHandler(masks, max, event) {\n
+    // 	var c = event.target;\n
+    // 	var v = c.value.replace(/\D/g, \'\');\n
+    // 	var m = c.value.length > max ? 1 : 0;\n
+    // 	VMasker(c).unMask();\n
+    // 	VMasker(c).maskPattern(masks[m]);\n
+    // 	c.value = VMasker.toPattern(v, masks[m]);\n
+    // }\n
+    // var telMask = [\'(99) 9999-99999\', \'(99) 99999-9999\'];\n
+    // var fone1 = document.getElementById(\'id_fone1\');\n
+    // var fone2 = document.getElementById(\'id_fone2\');\n
+    // VMasker(fone1).maskPattern(telMask[0]);\n
+    // VMasker(fone2).maskPattern(telMask[0]);\n
+    // fone1.addEventListener(\'input\', inputHandler.bind(undefined, telMask, 14), false);\n
+    // fone2.addEventListener(\'input\', inputHandler.bind(undefined, telMask, 14), false);\n\n
+    // fone1.dispatchEvent(new Event("input"));\n
+    // fone2.dispatchEvent(new Event("input"));\n\n
+    // // Macara para inteiro com separador de milhares\n
+    // // necessario adicionar chamada de funcao no evento onkeyup="mask_number(event.this);" do campo\n
+    // let target = document.getElementById(\'id_km_cadastro\');\n
+    // function submitForm(){target.value = target.value.replace(\'.\',\'\');return true;}\n\n
+    // function mask_number(e,t){\n
+    //   let v = t.value.replace(\'.\',\'\');\n
+    //   let l = v.length;\n
+    //   if(isNaN(parseInt(t.value.charAt(t.value.length - 1)))){t.value = t.value.substr(0,t.value.length - 1)}\n
+    //   else{if(l > 3){if(l < 7){t.value = v.substr(0,l - 3) + \'.\' + v.substr(l - 3,3);}else if(t.value.length > 7){t.value = t.value.substr(0,6) + t.value.substr(7,1);}}}\n
+    // }\n\n
+    // // Inicia mascara para valores ja carregados\n
+    // mask_number(true,target);\n'
+  
+  
+  'Chart JS include':
+    'prefix': 'chart_include'
+    'body':'<script src="{% static \'js/vendor/Chart.min.js\' %}"></script>'
+  
+  'Chart JS body':
+    'prefix': 'chart_body'
+    'body':'var ctx = document.getElementById(\'barChart\');\n
+    var barChart = new Chart(ctx, {\n
+    \t// line bar horizontalBar pie doughnut\n
+    \ttype: \'bar\',\n
+    \tdata: {\n
+    \t\tlabels: {{ categorias|safe }},\n
+    \t\tdatasets: [{\n
+    \t\t\tlabel: \'Total de Acordos\',\n
+    \t\t\tdata: {{ dados }},\n
+    \t\t\tbackgroundColor: {{ bgcolors|safe }},\n
+    \t\t\tborderColor: {{ bordercolors|safe }},\n
+    \t\t\tfill: false,\n
+    \t\t\tborderWidth: 1\n
+    \t\t}]\n
+    \t},\n
+    \toptions: {\n
+    \t\tscales: {\n
+    \t\t\tyAxes: [{\n
+    \t\t\t\tticks: {\n
+    \t\t\t\t\tbeginAtZero: true\n
+    \t\t\t\t}\n
+    \t\t\t}]\n
+    \t\t},\n
+    \t\ttitle: {\n
+    \t\t\tdisplay: true,\n
+    \t\t\ttext: \'Acordos Mensais\',\n
+    \t\t\tfontSize: 18,\n
+    \t\t\tposition: \'top\'\n
+    \t\t},\n
+    \t\tlegend: {\n
+    \t\t\tdisplay: false,\n
+    \t\t\t// labels: {\n
+    \t\t\t// fontColor: \'rgb(108, 117, 125)\',\n
+    \t\t\t// fillStyle: \'rgb(255, 255, 255)\'\n
+    \t\t\t// }\n
+    \t\t}\n
+    \t}\n
+    });'
+
+####################
+# FIM SNIPPETS HTML
+
+
+# SNIPPETS PYTHON .py
+'.source.python':
+  'Dome Log':
+    'prefix': 'log'
+    'body':'l = Log()\nl.modelo = "app.modelo"\nl.objeto_id = registro.id\nl.objeto_str = registro.nome[0:48]\nl.usuario = request.user\nl.mensagem = "mensagem para o log"[0:98]\nl.save()'
