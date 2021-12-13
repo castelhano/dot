@@ -40,6 +40,12 @@
                 <label for="id_last_name">Last Name</label>
               </div>
             </div>
+            <div class="row g-1">
+            	<div class="form-floating mb-1 col-lg-12">
+            		{{ form.email }}
+            		<label for="id_email">Email</label>
+            	</div>
+            </div>
             <div class="accordion" id="accordion_user_profile">
               <div class="accordion-item">
                 <h2 class="accordion-header">
@@ -208,29 +214,30 @@
   }
   carregaEmpresasDisponiveis();
   
-  // function carregaPermsDisponiveis() {
-  //   var xhttp = new XMLHttpRequest();
-  //   xhttp.onreadystatechange = function() {
-  //     if(this.readyState == 4 && this.status == 200){
-  //       if(this.responseText == ''){}
-  //       else{
-  //         let obj = JSON.parse(this.responseText);
-  //         let perms_disponiveis = document.getElementById("perms_disponiveis");
-  //         for(key in obj){perms_disponiveis.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
-  //       }
-  //     }
-  //   };
-  //   xhttp.open("GET", "{% url 'core_get_perms' %}?tipo=disponiveis&usuario=new", true);
-  //   xhttp.send();
-  // }
-  // carregaPermsDisponiveis();
+  function carregaPermsDisponiveis() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if(this.readyState == 4 && this.status == 200){
+        if(this.responseText == ''){}
+        else{
+          let obj = JSON.parse(this.responseText);
+          let perms_disponiveis = document.getElementById("perms_disponiveis");
+          for(key in obj){perms_disponiveis.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
+        }
+      }
+    };
+    xhttp.open("GET", "{% url 'core_get_perms' %}?tipo=disponiveis&usuario=new", true);
+    xhttp.send();
+  }
+  carregaPermsDisponiveis();
   
   
   // SET onsubmit="return submitForm();" ON FORM
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false})
   function submitForm(){
     options = selecionados.options;for(i=0; i < options.length; i++){options[i].selected = "true";}
-    options_2 = empresas_selecionadas.options;for(i=0; i < options_2.length; i++){options_2[i].selected = "true";}modal_loading.show();return true;
+    options_2 = empresas_selecionadas.options;for(i=0; i < options_2.length; i++){options_2[i].selected = "true";};
+    options_3 = perms_selecionadas.options;for(i=0; i < options_3.length; i++){options_3[i].selected = "true";}modal_loading.show();return true;
   }
   
   let disponiveis = document.getElementById("grupos_disponiveis");
@@ -246,6 +253,13 @@
   function removeAll_2(){empresas_disponiveis.innerHTML += empresas_selecionadas.innerHTML;empresas_selecionadas.innerHTML = '';}
   function addSelected_2(){residual_2 = document.createElement("select");for(var i=0; i < empresas_disponiveis.length; i++){if(empresas_disponiveis[i].selected){let newOption = new Option(empresas_disponiveis[i].text,empresas_disponiveis[i].value);empresas_selecionadas.add(newOption);}else{let newOption = new Option(empresas_disponiveis[i].text,empresas_disponiveis[i].value);residual_2.add(newOption);}}empresas_disponiveis.innerHTML = residual_2.innerHTML;}
   function removeSelected_2(){residual_2 = document.createElement("select");for(var i=0; i < empresas_selecionadas.length; i++){if(empresas_selecionadas[i].selected){let newOption = new Option(empresas_selecionadas[i].text,empresas_selecionadas[i].value);empresas_disponiveis.add(newOption);}else{let newOption = new Option(empresas_selecionadas[i].text,empresas_selecionadas[i].value);residual_2.add(newOption);}}empresas_selecionadas.innerHTML = residual_2.innerHTML;}
+  
+  let perms_disponiveis = document.getElementById("perms_disponiveis");
+  let perms_selecionadas = document.getElementById("id_perms");
+  function addAll_3(){perms_selecionadas.innerHTML += perms_disponiveis.innerHTML;perms_disponiveis.innerHTML = '';}
+  function removeAll_3(){perms_disponiveis.innerHTML += perms_selecionadas.innerHTML;perms_selecionadas.innerHTML = '';}
+  function addSelected_3(){residual_3 = document.createElement("select");for(var i=0; i < perms_disponiveis.length; i++){if(perms_disponiveis[i].selected){let newOption = new Option(perms_disponiveis[i].text,perms_disponiveis[i].value);perms_selecionadas.add(newOption);}else{let newOption = new Option(perms_disponiveis[i].text,perms_disponiveis[i].value);residual_3.add(newOption);}}perms_disponiveis.innerHTML = residual_3.innerHTML;}
+  function removeSelected_3(){residual_3 = document.createElement("select");for(var i=0; i < perms_selecionadas.length; i++){if(perms_selecionadas[i].selected){let newOption = new Option(perms_selecionadas[i].text,perms_selecionadas[i].value);perms_disponiveis.add(newOption);}else{let newOption = new Option(perms_selecionadas[i].text,perms_selecionadas[i].value);residual_3.add(newOption);}}perms_selecionadas.innerHTML = residual_3.innerHTML;}
   
   {% endblock %}
 </script>

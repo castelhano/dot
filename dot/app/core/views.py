@@ -2,7 +2,7 @@ import re
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import auth, messages
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User, Group, Permission
 from .models import Empresa, Log
 from .forms import EmpresaForm, UserForm
 from django.http import HttpResponse
@@ -92,6 +92,10 @@ def usuario_add(request):
                     g = Group.objects.get(id=grupo)
                     g.user_set.add(registro)
                 
+                for perm in request.POST.getlist('perms'):
+                    p = Permission.objects.get(id=perm)
+                    p.user_set.add(registro)
+                
                 for empresa in request.POST.getlist('empresas'):
                     e = Empresa.objects.get(id=empresa)
                     registro.profile.empresas.add(e)
@@ -159,11 +163,25 @@ def usuario_update(request, id):
             registro.profile.force_password_change = True
         else:
             registro.profile.force_password_change = False
+        
+        try:
+            if request.POST['reset_password'] != '':
+                registro.set_password(request.POST['reset_password'])
+                registro.profile.force_password_change = True
+        except:
+            # CAMPO RESET PASSWORD EH POR PADRAO DISABLED NO FORM, EXCEPT TRATA AUSENCIA DO CAMPO NO POST
+            pass
+            
         registro.save()
         registro.groups.clear()
         for grupo in request.POST.getlist('grupos'):
             g = Group.objects.get(id=grupo)
             g.user_set.add(registro)
+        
+        registro.profile.empresas.clear()
+        for perm in request.POST.getlist('perms'):
+            p = Permission.objects.get(id=perm)
+            p.user_set.add(registro)
         
         registro.profile.empresas.clear()
         for empresa in request.POST.getlist('empresas'):
@@ -331,4 +349,22 @@ def get_grupos(request):
 
 @login_required
 def get_perms(request):
-    pass
+    try:
+        tipo = request.GET.get('tipo',None)
+        if request.GET.get('usuario',None) != 'new':
+            usuario = User.objects.get(id=request.GET.get('usuario',None))
+            if tipo == 'disponiveis':
+                perms = Permission.objects.all().exclude(user=usuario).order_by('id')
+            elif tipo == 'cadastrados':
+                perms = Permission.objects.all().filter(user=usuario).order_by('id')
+            else:
+                pass
+        else:
+            perms = Permission.objects.all().exclude(content_type__app_label='auth').exclude(content_type__app_label='sessions').exclude(content_type__app_label='contenttypes').exclude(content_type__app_label='admin').order_by('id')
+        itens = {}
+        for item in perms:
+            itens[item.codename] = item.id
+        dataJSON = dumps(itens)
+        return HttpResponse(dataJSON)
+    except:
+        return HttpResponse('')

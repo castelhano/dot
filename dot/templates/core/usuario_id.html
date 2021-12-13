@@ -36,7 +36,8 @@
                 <label for="id_username">Username</label>
               </div>
               <div class="form-floating mb-1 col-lg d-none d-lg-block">
-                <input type="text" class="form-control" disabled>
+                <input type="text" class="form-control" name="reset_password" id="id_reset_password" placeholder="" disabled>
+                <label for="id_reset_password">Password Reset</label>
               </div>
             </div>
             <div class="row g-1">
@@ -49,48 +50,106 @@
                 <label for="id_last_name">Last Name</label>
               </div>
             </div>
-            {% if not usuario.is_superuser %}
             <div class="row g-1">
-              <div class="form-floating mb-1 col-lg">
-                <select class="form-control" id="grupos_disponiveis" style="min-height:180px;" multiple></select>
-                <label for="grupos_disponiveis">Grupos</label>
-              </div>
-              <div class="col-lg-auto">
-                <div class="d-flex justify-content-center d-lg-grid gap-1">
-                  <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add" onclick="addSelected();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-right rotate-lg-90"></i></a>
-                  <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add_all" onclick="addAll();"><i class="fas fa-angle-double-right rotate-lg-90"></i></a>
-                  <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove" onclick="removeSelected();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-left rotate-lg-90"></i></a>
-                  <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove_all" onclick="removeAll();"><i class="fas fa-angle-double-left rotate-lg-90"></i></a>
+            	<div class="form-floating mb-1 col-lg-12">
+            		{{ form.email }}
+            		<label for="id_email">Email</label>
+            	</div>
+            </div>
+            {% if not usuario.is_superuser %}
+            <div class="accordion" id="accordion_user_profile">
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#accordion_empresas"><i class="fas fa-laptop-house text-muted me-2"></i> Empresas</button>
+                </h2>
+                <div id="accordion_empresas" class="accordion-collapse collapse" data-bs-parent="#accordion_user_profile">
+                  <div class="accordion-body">
+                    <div class="row g-1">
+                      <div class="form-floating mb-1 col-lg">
+                        <select class="form-control" id="empresas_disponiveis" style="min-height:138px;" multiple></select>
+                        <label for="empresas_disponiveis">Empresas</label>
+                      </div>
+                      <div class="col-lg-auto">
+                        <div class="d-flex justify-content-center d-lg-grid gap-1">
+                          <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add_2" onclick="addSelected_2();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-right rotate-lg-90"></i></a>
+                          <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add_all_2" onclick="addAll_2();"><i class="fas fa-angle-double-right rotate-lg-90"></i></a>
+                          <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove_2" onclick="removeSelected_2();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-left rotate-lg-90"></i></a>
+                          <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove_all_2" onclick="removeAll_2();"><i class="fas fa-angle-double-left rotate-lg-90"></i></a>
+                        </div>
+                      </div>
+                      <div class="form-floating mb-1 col-lg">
+                        <select class="form-control" name="empresas" id="id_empresas" style="min-height:138px;" multiple>
+                        </select>
+                        <label for="id_empresas">Habilitadas</label>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div class="form-floating mb-1 col-lg">
-                <select class="form-control" name="grupos" id="id_grupos" style="min-height:180px;" multiple>
-                </select>
-                <label for="id_grupos">Ativos</label>
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#accordion_grupos"><i class="fas fa-user-tag text-muted me-2"></i> Grupos</button>
+                </h2>
+                <div id="accordion_grupos" class="accordion-collapse collapse" data-bs-parent="#accordion_user_profile">
+                  <div class="accordion-body">
+                    <div class="row g-1">
+                      <div class="form-floating mb-1 col-lg">
+                        <select class="form-control" id="grupos_disponiveis" style="min-height:180px;" multiple></select>
+                        <label for="grupos_disponiveis">Grupos</label>
+                      </div>
+                      <div class="col-lg-auto">
+                        <div class="d-flex justify-content-center d-lg-grid gap-1">
+                          <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add" onclick="addSelected();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-right rotate-lg-90"></i></a>
+                          <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add_all" onclick="addAll();"><i class="fas fa-angle-double-right rotate-lg-90"></i></a>
+                          <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove" onclick="removeSelected();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-left rotate-lg-90"></i></a>
+                          <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove_all" onclick="removeAll();"><i class="fas fa-angle-double-left rotate-lg-90"></i></a>
+                        </div>
+                      </div>
+                      <div class="form-floating mb-1 col-lg">
+                        <select class="form-control" name="grupos" id="id_grupos" style="min-height:180px;" multiple>
+                        </select>
+                        <label for="id_grupos">Ativos</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#accordion_permittions"><i class="fas fa-user-lock text-muted me-2"></i> Permissões</button>
+                </h2>
+                <div id="accordion_permittions" class="accordion-collapse collapse" data-bs-parent="#accordion_user_profile">
+                  <div class="accordion-body">
+                    <div class="row g-1">
+                      <div class="form-floating mb-1 col-lg">
+                        <select class="form-control" id="perms_disponiveis" style="min-height:180px;" multiple></select>
+                        <label for="perms_disponiveis">Permissões</label>
+                      </div>
+                      <div class="col-lg-auto">
+                        <div class="d-flex justify-content-center d-lg-grid gap-1">
+                          <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add_3" onclick="addSelected_3();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-right rotate-lg-90"></i></a>
+                          <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add_all_3" onclick="addAll_3();"><i class="fas fa-angle-double-right rotate-lg-90"></i></a>
+                          <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove_3" onclick="removeSelected_3();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-left rotate-lg-90"></i></a>
+                          <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove_all_3" onclick="removeAll_3();"><i class="fas fa-angle-double-left rotate-lg-90"></i></a>
+                        </div>
+                      </div>
+                      <div class="form-floating mb-1 col-lg">
+                        <select class="form-control" name="perms" id="id_perms" style="min-height:180px;" multiple>
+                        </select>
+                        <label for="id_perms">Habilitadas</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="row g-1">
-             	<div class="form-floating mb-1 col-lg">
-             		<select class="form-control" id="empresas_disponiveis" style="min-height:138px;" multiple></select>
-             		<label for="empresas_disponiveis">Empresas</label>
-             	</div>
-             	<div class="col-lg-auto">
-             		<div class="d-flex justify-content-center d-lg-grid gap-1">
-             			<a class="btn btn-sm btn-secondary pointer" id="select_multiple_add_2" onclick="addSelected_2();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-right rotate-lg-90"></i></a>
-             			<a class="btn btn-sm btn-secondary pointer" id="select_multiple_add_all_2" onclick="addAll_2();"><i class="fas fa-angle-double-right rotate-lg-90"></i></a>
-             			<a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove_2" onclick="removeSelected_2();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-left rotate-lg-90"></i></a>
-             			<a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove_all_2" onclick="removeAll_2();"><i class="fas fa-angle-double-left rotate-lg-90"></i></a>
-             		</div>
-             	</div>
-             	<div class="form-floating mb-1 col-lg">
-             		<select class="form-control" name="empresas" id="id_empresas" style="min-height:138px;" multiple>
-             		</select>
-             	<label for="id_empresas">Habilitadas</label>
-             	</div>
-             </div>
             {% endif %}
           </div>
           <div class="col-lg">
+            <div class="form-check form-switch mt-1">
+              <input type="checkbox" class="form-check-input" id="resetar_senha" name="" value="" onclick="switchSenha();">
+              <label class="form-check-label user-select-none" for="resetar_senha">Reiniciar Password</label>
+            </div>
             <div class="form-check form-switch mt-1">
               {{form.is_active}}
               <label class="form-check-label user-select-none" for="id_is_active">Ativo</label>
@@ -143,6 +202,7 @@
   </div>
 </div>
 {% endif %}
+
 <div class="modal fade" id="history_modal" tabindex="-1">
   <div class="modal-dialog modal-dialog-scrollable">
     <div class="modal-content">
@@ -186,6 +246,11 @@
   var TAB_ON_ENTER = true;
   
   {% if not usuario.is_superuser %}
+  
+  function switchSenha(){
+    if(document.getElementById('resetar_senha').checked){document.getElementById('id_reset_password').disabled = false;document.getElementById('id_reset_password').focus();}
+    else{document.getElementById('id_reset_password').disabled = true;}
+  }
   
   function carregaGruposDisponiveis() {
     var xhttp = new XMLHttpRequest();
@@ -254,6 +319,40 @@
     xhttp.send();
   }
   carregaEmpresasSelecionadas();
+  
+  function carregaPermsDisponiveis() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if(this.readyState == 4 && this.status == 200){
+        if(this.responseText == ''){}
+        else{
+          let obj = JSON.parse(this.responseText);
+          let perms_disponiveis = document.getElementById("perms_disponiveis");
+          for(key in obj){perms_disponiveis.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
+        }
+      }
+    };
+    xhttp.open("GET", "{% url 'core_get_perms' %}?tipo=disponiveis&usuario={{usuario.id}}", true);
+    xhttp.send();
+  }
+  carregaPermsDisponiveis();
+  
+  function carregaPermsSelecionados() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if(this.readyState == 4 && this.status == 200){
+        if(this.responseText == ''){}
+        else{
+          let obj = JSON.parse(this.responseText);
+          let perms_selecionados = document.getElementById("id_perms");
+          for(key in obj){perms_selecionados.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
+        }
+      }
+    };
+    xhttp.open("GET", "{% url 'core_get_perms' %}?tipo=cadastrados&usuario={{usuario.id}}", true);
+    xhttp.send();
+  }
+  carregaPermsSelecionados();
   
   // SET onsubmit="return submitForm();" ON FORM
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false})
