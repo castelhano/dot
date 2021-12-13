@@ -4,6 +4,9 @@
     {% if perms.core.view_empresa %}
     <li><a class="dropdown-item" id="cadastro_empresa" href="{% url 'core_empresas' %}"><b>E</b>mpresa</a></li>
     {% endif %}
+    {% if perms.auth.view_user %}
+    <li><a class="dropdown-item" id="cadastro_usuario" href="{% url 'core_usuarios' %}"><b>U</b>suário</a></li>
+    {% endif %}
   </ul>
 </li>
 
@@ -18,7 +21,7 @@
       let cadastro = false;
       try{cadastro = document.getElementById('menu_cadastro').classList.contains('show') ? true : false;}catch(err){}
       if(cadastro && e.key.toLowerCase() == 'e'){e.preventDefault();document.getElementById('cadastro_empresa').click();}
-      else if(cadastro && e.key.toLowerCase() == 'a'){e.preventDefault();document.getElementById('admin_admin').click();}
+      else if(cadastro && e.key.toLowerCase() == 'u'){e.preventDefault();document.getElementById('cadastro_usuario').click();}
     }
   }
 </script>

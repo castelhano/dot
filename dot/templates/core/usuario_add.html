@@ -1,0 +1,251 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Usuario{% endblock %}
+{% block model_menu %}
+{% include "_component/menu/core.html" %}
+{% endblock%}
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'core_usuario_add' %}"></a>
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active disabled" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'core_usuarios' %}"><i class="fas fa-undo"></i></a></li>
+    </ul>
+  </div>
+  <form id="app_form" action="{% url 'core_usuario_add' %}" method="POST" autocomplete="off" onsubmit="return submitForm();">
+    {% csrf_token %}
+    <div class="card-body tab-content">
+      <h5 class="card-title mb-3">Cadastro de Usuario</h5>
+      <div class="tab-pane fade show active" id="base" role="tabpanel">
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="row g-1">
+              <div class="form-floating mb-1 col-lg">
+                {{ form.username }}
+                <label for="id_username">Username</label>
+              </div>
+              <div class="form-floating mb-1 col-lg d-none d-lg-block">
+                <input type="password" class="form-control bg-light" name="password" id="id_password">
+                <label for="id_password">Password</label>
+              </div>
+            </div>
+            <div class="row g-1">
+              <div class="form-floating mb-lg-1 col-lg-6">
+                {{ form.first_name }}
+                <label for="id_first_name">Fist Name</label>
+              </div>
+              <div class="form-floating mb-1 col-lg-6">
+                {{ form.last_name }}
+                <label for="id_last_name">Last Name</label>
+              </div>
+            </div>
+            <div class="accordion" id="accordion_user_profile">
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#accordion_empresas"><i class="fas fa-laptop-house text-muted me-2"></i> Empresas</button>
+                </h2>
+                <div id="accordion_empresas" class="accordion-collapse collapse" data-bs-parent="#accordion_user_profile">
+                  <div class="accordion-body">
+                    <div class="row g-1">
+                      <div class="form-floating mb-1 col-lg">
+                        <select class="form-control" id="empresas_disponiveis" style="min-height:138px;" multiple></select>
+                        <label for="empresas_disponiveis">Empresas</label>
+                      </div>
+                      <div class="col-lg-auto">
+                        <div class="d-flex justify-content-center d-lg-grid gap-1">
+                          <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add_2" onclick="addSelected_2();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-right rotate-lg-90"></i></a>
+                          <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add_all_2" onclick="addAll_2();"><i class="fas fa-angle-double-right rotate-lg-90"></i></a>
+                          <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove_2" onclick="removeSelected_2();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-left rotate-lg-90"></i></a>
+                          <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove_all_2" onclick="removeAll_2();"><i class="fas fa-angle-double-left rotate-lg-90"></i></a>
+                        </div>
+                      </div>
+                      <div class="form-floating mb-1 col-lg">
+                        <select class="form-control" name="empresas" id="id_empresas" style="min-height:138px;" multiple>
+                        </select>
+                        <label for="id_empresas">Habilitadas</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#accordion_grupos"><i class="fas fa-user-tag text-muted me-2"></i> Grupos</button>
+                </h2>
+                <div id="accordion_grupos" class="accordion-collapse collapse" data-bs-parent="#accordion_user_profile">
+                  <div class="accordion-body">
+                    <div class="row g-1">
+                      <div class="form-floating mb-1 col-lg">
+                        <select class="form-control" id="grupos_disponiveis" style="min-height:180px;" multiple></select>
+                        <label for="grupos_disponiveis">Grupos</label>
+                      </div>
+                      <div class="col-lg-auto">
+                        <div class="d-flex justify-content-center d-lg-grid gap-1">
+                          <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add" onclick="addSelected();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-right rotate-lg-90"></i></a>
+                          <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add_all" onclick="addAll();"><i class="fas fa-angle-double-right rotate-lg-90"></i></a>
+                          <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove" onclick="removeSelected();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-left rotate-lg-90"></i></a>
+                          <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove_all" onclick="removeAll();"><i class="fas fa-angle-double-left rotate-lg-90"></i></a>
+                        </div>
+                      </div>
+                      <div class="form-floating mb-1 col-lg">
+                        <select class="form-control" name="grupos" id="id_grupos" style="min-height:180px;" multiple>
+                        </select>
+                        <label for="id_grupos">Ativos</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#accordion_permittions"><i class="fas fa-user-lock text-muted me-2"></i> Permissões</button>
+                </h2>
+                <div id="accordion_permittions" class="accordion-collapse collapse" data-bs-parent="#accordion_user_profile">
+                  <div class="accordion-body">
+                    <div class="row g-1">
+                      <div class="form-floating mb-1 col-lg">
+                        <select class="form-control" id="perms_disponiveis" style="min-height:180px;" multiple></select>
+                        <label for="perms_disponiveis">Permissões</label>
+                      </div>
+                      <div class="col-lg-auto">
+                        <div class="d-flex justify-content-center d-lg-grid gap-1">
+                          <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add_3" onclick="addSelected_3();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-right rotate-lg-90"></i></a>
+                          <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add_all_3" onclick="addAll_3();"><i class="fas fa-angle-double-right rotate-lg-90"></i></a>
+                          <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove_3" onclick="removeSelected_3();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-left rotate-lg-90"></i></a>
+                          <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove_all_3" onclick="removeAll_3();"><i class="fas fa-angle-double-left rotate-lg-90"></i></a>
+                        </div>
+                      </div>
+                      <div class="form-floating mb-1 col-lg">
+                        <select class="form-control" name="perms" id="id_perms" style="min-height:180px;" multiple>
+                        </select>
+                        <label for="id_perms">Habilitadas</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg">
+            <div class="form-check form-switch mt-1">
+              <input type="checkbox" class="form-check-input" id="mostrar_senha" name="" value="" onclick="switchSenha();">
+              <label class="form-check-label user-select-none" for="mostrar_senha">Mostra Senha</label>
+            </div>
+            <div class="form-check form-switch mt-1">
+              {{form.is_active}}
+              <label class="form-check-label user-select-none" for="id_is_active">Ativo</label>
+            </div>
+            <div class="form-check form-switch">
+              {{form.is_staff}}
+              <label class="form-check-label user-select-none" for="id_is_staff">Membro de Equipe</label>
+            </div>
+            <div class="form-check form-switch">
+              {{form.is_superuser}}
+              <label class="form-check-label user-select-none text-danger" for="id_is_superuser">Super Usuário</label>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+      <!-- CONTROLES DO FORM -->
+      <div class="row mt-3">
+        <div class="col">
+          <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"><b>G</b>ravar</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+{% include "_component/modal/loading.html" with message='Configurando usuario' background='' spinner_classlist='' %}
+
+{% endblock%}
+
+{% block add_script_src %}{% endblock %}
+
+<script>
+  {% block add_script %}
+  
+  var TAB_ON_ENTER = true;
+  
+  function switchSenha(){
+    if(document.getElementById('mostrar_senha').checked){document.getElementById('id_password').type = 'text';}
+    else{document.getElementById('id_password').type = 'password';}
+  }
+  
+  function carregaGruposDisponiveis() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if(this.readyState == 4 && this.status == 200){
+        if(this.responseText == ''){}
+        else{
+          let obj = JSON.parse(this.responseText);
+          let grupos_disponiveis = document.getElementById("grupos_disponiveis");
+          for(key in obj){grupos_disponiveis.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
+        }
+      }
+    };
+    xhttp.open("GET", "{% url 'core_get_grupos' %}?tipo=disponiveis&usuario=new", true);
+    xhttp.send();
+  }
+  carregaGruposDisponiveis();
+  
+  function carregaEmpresasDisponiveis() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if(this.readyState == 4 && this.status == 200){
+        if(this.responseText == ''){}
+        else{
+          let obj = JSON.parse(this.responseText);
+          let empresas_disponiveis = document.getElementById("empresas_disponiveis");
+          for(key in obj){empresas_disponiveis.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
+        }
+      }
+    };
+    xhttp.open("GET", "{% url 'core_get_empresas' %}?tipo=disponiveis&usuario=new", true);
+    xhttp.send();
+  }
+  carregaEmpresasDisponiveis();
+  
+  // function carregaPermsDisponiveis() {
+  //   var xhttp = new XMLHttpRequest();
+  //   xhttp.onreadystatechange = function() {
+  //     if(this.readyState == 4 && this.status == 200){
+  //       if(this.responseText == ''){}
+  //       else{
+  //         let obj = JSON.parse(this.responseText);
+  //         let perms_disponiveis = document.getElementById("perms_disponiveis");
+  //         for(key in obj){perms_disponiveis.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
+  //       }
+  //     }
+  //   };
+  //   xhttp.open("GET", "{% url 'core_get_perms' %}?tipo=disponiveis&usuario=new", true);
+  //   xhttp.send();
+  // }
+  // carregaPermsDisponiveis();
+  
+  
+  // SET onsubmit="return submitForm();" ON FORM
+  var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false})
+  function submitForm(){
+    options = selecionados.options;for(i=0; i < options.length; i++){options[i].selected = "true";}
+    options_2 = empresas_selecionadas.options;for(i=0; i < options_2.length; i++){options_2[i].selected = "true";}modal_loading.show();return true;
+  }
+  
+  let disponiveis = document.getElementById("grupos_disponiveis");
+  let selecionados = document.getElementById("id_grupos");
+  function addAll(){selecionados.innerHTML += disponiveis.innerHTML;disponiveis.innerHTML = '';}
+  function removeAll(){disponiveis.innerHTML += selecionados.innerHTML;selecionados.innerHTML = '';}
+  function addSelected(){residual = document.createElement("select");for(var i=0; i < disponiveis.length; i++){if(disponiveis[i].selected){let newOption = new Option(disponiveis[i].text,disponiveis[i].value);selecionados.add(newOption);}else{let newOption = new Option(disponiveis[i].text,disponiveis[i].value);residual.add(newOption);}}disponiveis.innerHTML = residual.innerHTML;}
+  function removeSelected(){residual = document.createElement("select");for(var i=0; i < selecionados.length; i++){if(selecionados[i].selected){let newOption = new Option(selecionados[i].text,selecionados[i].value);disponiveis.add(newOption);}else{let newOption = new Option(selecionados[i].text,selecionados[i].value);residual.add(newOption);}}selecionados.innerHTML = residual.innerHTML;}
+  
+  let empresas_disponiveis = document.getElementById("empresas_disponiveis");
+  let empresas_selecionadas = document.getElementById("id_empresas");
+  function addAll_2(){empresas_selecionadas.innerHTML += empresas_disponiveis.innerHTML;empresas_disponiveis.innerHTML = '';}
+  function removeAll_2(){empresas_disponiveis.innerHTML += empresas_selecionadas.innerHTML;empresas_selecionadas.innerHTML = '';}
+  function addSelected_2(){residual_2 = document.createElement("select");for(var i=0; i < empresas_disponiveis.length; i++){if(empresas_disponiveis[i].selected){let newOption = new Option(empresas_disponiveis[i].text,empresas_disponiveis[i].value);empresas_selecionadas.add(newOption);}else{let newOption = new Option(empresas_disponiveis[i].text,empresas_disponiveis[i].value);residual_2.add(newOption);}}empresas_disponiveis.innerHTML = residual_2.innerHTML;}
+  function removeSelected_2(){residual_2 = document.createElement("select");for(var i=0; i < empresas_selecionadas.length; i++){if(empresas_selecionadas[i].selected){let newOption = new Option(empresas_selecionadas[i].text,empresas_selecionadas[i].value);empresas_disponiveis.add(newOption);}else{let newOption = new Option(empresas_selecionadas[i].text,empresas_selecionadas[i].value);residual_2.add(newOption);}}empresas_selecionadas.innerHTML = residual_2.innerHTML;}
+  
+  {% endblock %}
+</script>

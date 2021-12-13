@@ -22,7 +22,7 @@
     \t\t<ul class="nav nav-tabs card-header-tabs">\n
     \t\t\t<li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>\n
     \t\t\t<li class="nav-item"><a class="nav-link" data-bs-toggle="tab" data-bs-target="#param" href="#"><i class="fas fa-filter"></i></a></li>\n
-    \t\t\t<li class="nav-item"><a class="nav-link pointer" id="search_btn" data-bs-toggle="modal" data-bs-target="#search_modal" onclick="setTimeout(function(){document.getElementById(\'id_pesquisa\').focus();},480);" title="CTRL + /"><i class="fas fa-search"></i></a></li>\n
+    \t\t\t<li class="nav-item"><a class="nav-link pointer" id="search" data-bs-toggle="modal" data-bs-target="#search_modal" onclick="setTimeout(function(){document.getElementById(\'id_pesquisa\').focus();},480);" title="CTRL + /"><i class="fas fa-search"></i></a></li>\n
     \t\t\t{% if perms.app.add_modelo %}\n
     \t\t\t<li class="nav-item"><a class="nav-link border" id="add" href="url" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>\n
     \t\t\t{% endif %}\n
@@ -31,7 +31,7 @@
     \t\t\t\t<ul class="dropdown-menu">\n
     \t\t\t\t\t<li><a class="dropdown-item pointer" id="download" onclick="download_table_as_csv(\'main_table\',\';\')" title="ALT + &darr;">Exportar CSV</a></li>\n
     \t\t\t\t\t{% if perms.core.view_log %}\n
-    \t\t\t\t\t<li><a class="dropdown-item pointer" href="{% url \'logs\' %}?modelo=app.modelo&mensagem=DELETE" target="_blank">Log de Exclusões</a></li>\n
+    \t\t\t\t\t<li><a class="dropdown-item pointer" href="{% url \'logs\' %}?target_model=app.modelo&mensagem=DELETE" target="_blank">Log de Exclusões</a></li>\n
     \t\t\t\t\t{% endif %}\n
     \t\t\t\t</ul>\n
     \t\t\t</li>\n
@@ -220,9 +220,11 @@
     \t\t\t\t<div class="modal-body">\n
     \t\t\t\t\t<table class="table table-sm">\n
     \t\t\t\t\t\t<thead>\n
-    \t\t\t\t\t\t\t<th>Data</th>\n
-    \t\t\t\t\t\t\t<th>Operação</th>\n
-    \t\t\t\t\t\t\t<th>Usuário</th>\n
+    \t\t\t\t\t\t\t<tr>\n
+    \t\t\t\t\t\t\t\t<th>Data</th>\n
+    \t\t\t\t\t\t\t\t<th>Operação</th>\n
+    \t\t\t\t\t\t\t\t<th>Usuário</th>\n
+    \t\t\t\t\t\t\t</tr>\n
     \t\t\t\t\t\t</thead>\n
     \t\t\t\t\t<tbody class="fs-7">\n
     \t\t\t\t\t{% for i in modelo.ultimas_alteracoes %}\n
@@ -282,6 +284,10 @@
     'prefix': 'component_veiculo'
     'body':'{% include "_component/oficina/veiculo.html" with id=app.veiculo.id prefixo=app.veiculo.prefixo placa=app.veiculo.placa required=False incluir_inativos=False %}'
   
+  'Component Loading Modal':
+    'prefix': 'component_loadding'
+    'body':'{% include "_component/modal/loading.html" with message=\'Salvando....\' background=\'\' spinner_classlist=\'\' message_classlist=\'\' %}'
+  
   'Multiple Option Select':
     'prefix': 'form_select_multiple'
     'body':'<div class="row g-1">\n
@@ -306,7 +312,7 @@
     \t\t</select>\n
     \t<label for="id_modelos">Modelos Associados</label>\n
     \t</div>\n
-    </div>\n'
+    </div>'
   
   'Multiple Option Select Javascript':
     'prefix': 'script_select_multiple'

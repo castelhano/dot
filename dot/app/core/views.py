@@ -2,9 +2,9 @@ import re
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import auth, messages
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from .models import Empresa, Log
-from .forms import EmpresaForm
+from .forms import EmpresaForm, UserForm
 from django.http import HttpResponse
 from json import dumps
 from django.core.serializers.json import DjangoJSONEncoder
@@ -36,9 +36,9 @@ def usuarios(request):
 @login_required
 @permission_required('core.view_log')
 def logs(request):
-    modelo = request.GET.get('modelo',None)
+    target_model = request.GET.get('target_model',None)
     mensagem = request.GET.get('mensagem',None)
-    logs = Log.objects.filter(modelo=modelo,mensagem=mensagem)
+    logs = Log.objects.filter(modelo=target_model,mensagem=mensagem)
     return render(request,'core/logs.html',{'logs':logs})
     
 def run_script(request):
@@ -77,6 +77,40 @@ def empresa_add(request):
         form = EmpresaForm()
     return render(request,'core/empresa_add.html',{'form':form})
 
+@login_required
+@permission_required('auth.add_user')
+def usuario_add(request):
+    if request.method == 'POST':
+        form = UserForm(request.POST)
+        if form.is_valid():
+            try:
+                form_clean = form.cleaned_data
+                registro = form.save(commit=False)
+                registro.set_password(request.POST['password'])
+                registro.save()
+                for grupo in request.POST.getlist('grupos'):
+                    g = Group.objects.get(id=grupo)
+                    g.user_set.add(registro)
+                
+                for empresa in request.POST.getlist('empresas'):
+                    e = Empresa.objects.get(id=empresa)
+                    registro.profile.empresas.add(e)
+                l = Log()
+                l.modelo = "auth.user"
+                l.objeto_id = registro.id
+                l.objeto_str = registro.username
+                l.usuario = request.user
+                l.mensagem = "CREATED"
+                l.save()
+                messages.success(request,'Usuario ' + registro.username + ' criado')
+                return redirect('core_usuarios')
+            except:
+                messages.error(request,'Erro ao inserir usuario [INVALID FORM]')
+                return redirect('core_usuarios')
+    else:
+        form = UserForm()
+    return render(request,'core/usuario_add.html',{'form':form})
+
 
 # METODOS GET
 @login_required
@@ -85,6 +119,13 @@ def empresa_id(request, id):
     empresa = Empresa.objects.get(id=id)
     form = EmpresaForm(instance=empresa)
     return render(request,'core/empresa_id.html',{'form':form,'empresa':empresa})
+
+@login_required
+@permission_required('auth.change_user')
+def usuario_id(request, id):
+    usuario = User.objects.get(id=id)
+    form = UserForm(instance=usuario)
+    return render(request,'core/usuario_id.html',{'form':form,'usuario':usuario})
 
 
 # METODOS UPDATE
@@ -98,7 +139,7 @@ def empresa_update(request, id):
         l = Log()
         l.modelo = "core.empresa"
         l.objeto_id = registro.id
-        l.objeto_str = registro.nome[0:48]
+        l.objeto_str = registro.nome
         l.usuario = request.user
         l.mensagem = "UPDATE"
         l.save()
@@ -106,6 +147,39 @@ def empresa_update(request, id):
         return redirect('core_empresa_id',id)
     else:
         return render(request,'core/empresa_id.html',{'form':form,'empresa':empresa})
+
+@login_required
+@permission_required('auth.change_user')
+def usuario_update(request, id):
+    usuario = User.objects.get(pk=id)
+    form = UserForm(request.POST, instance=usuario)
+    if form.is_valid():
+        registro = form.save(commit=False)
+        if 'force_password_change' in request.POST:
+            registro.profile.force_password_change = True
+        else:
+            registro.profile.force_password_change = False
+        registro.save()
+        registro.groups.clear()
+        for grupo in request.POST.getlist('grupos'):
+            g = Group.objects.get(id=grupo)
+            g.user_set.add(registro)
+        
+        registro.profile.empresas.clear()
+        for empresa in request.POST.getlist('empresas'):
+            e = Empresa.objects.get(id=empresa)
+            registro.profile.empresas.add(e)
+        l = Log()
+        l.modelo = "auth.user"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.username
+        l.usuario = request.user
+        l.mensagem = "UPDATE"
+        l.save()
+        messages.success(request,'Usuario ' + registro.username + ' alterado')
+        return redirect('core_usuario_id',id)
+    else:
+        return render(request,'core/usuario_id.html',{'form':form,'usuario':usuario})
 
 # METODOS DELETE
 @login_required
@@ -116,7 +190,7 @@ def empresa_delete(request, id):
         l = Log()
         l.modelo = "core.empresa"
         l.objeto_id = registro.id
-        l.objeto_str = registro.nome[0:48]
+        l.objeto_str = registro.nome
         l.usuario = request.user
         l.mensagem = "DELETE"
         l.save()
@@ -126,6 +200,25 @@ def empresa_delete(request, id):
     except:
         messages.error(request,'ERRO ao apagar empresa')
         return redirect('core_empresa_id', id)
+
+@login_required
+@permission_required('auth.delete_user')
+def usuario_delete(request, id):
+    try:
+        registro = User.objects.get(pk=id)
+        l = Log()
+        l.modelo = "auth.user"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.username
+        l.usuario = request.user
+        l.mensagem = "DELETE"
+        l.save()
+        registro.delete()
+        messages.warning(request,'Usuario ' + registro.username + ' apagado')
+        return redirect('core_usuarios')
+    except:
+        messages.error(request,'ERRO ao apagar usuario')
+        return redirect('core_usuario_id', id)
 
 # AUTENTICACAO E PERMISSAO
 def login(request):
@@ -195,7 +288,17 @@ def password_valid(password):
 @login_required
 def get_empresas(request):
     try:
-        empresas = Empresa.objects.all()
+        tipo = request.GET.get('tipo',None)
+        if request.GET.get('usuario',None) != 'new':
+            usuario = User.objects.get(id=request.GET.get('usuario',None))
+            if tipo == 'disponiveis':
+                empresas = Empresa.objects.all().exclude(profile__user=usuario).order_by('nome')
+            elif tipo == 'cadastrados':
+                empresas = usuario.profile.empresas.all().order_by('nome')
+            else:
+                pass
+        else:
+            empresas = Empresa.objects.all().order_by('nome')
         itens = {}
         for item in empresas:
             itens[item.nome] = item.id
@@ -203,3 +306,29 @@ def get_empresas(request):
         return HttpResponse(dataJSON)
     except:
         return HttpResponse('')
+
+@login_required
+def get_grupos(request):
+    try:
+        tipo = request.GET.get('tipo',None)
+        if request.GET.get('usuario',None) != 'new':
+            usuario = User.objects.get(id=request.GET.get('usuario',None))
+            if tipo == 'disponiveis':
+                grupos = Group.objects.all().exclude(user=usuario).order_by('name')
+            elif tipo == 'cadastrados':
+                grupos = usuario.groups.all().order_by('name')
+            else:
+                pass
+        else:
+            grupos = Group.objects.all().order_by('name')
+        itens = {}
+        for item in grupos:
+            itens[item.name] = item.id
+        dataJSON = dumps(itens)
+        return HttpResponse(dataJSON)
+    except:
+        return HttpResponse('')
+
+@login_required
+def get_perms(request):
+    pass
