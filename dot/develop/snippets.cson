@@ -272,17 +272,21 @@
     'prefix': 'form_switch'
     'body':'<div class="form-check form-switch">\n\t<input class="form-check-input" type="checkbox" role="switch" name="switch" id="id_switch">\n\t<label class="form-check-label" for="id_switch">Opcao1</label>\n</div>'
   
+  'Component Empresa':
+    'prefix': 'component_empresa'
+    'body':'{% include "_component/field/empresa.html" %}'
+  
   'Component Linha':
     'prefix': 'component_linha'
-    'body':'{% include "_component/plan/linha.html" with id=app.linha.id codigo=app.linha.codigo nome=app.linha.nome required=False incluir_inativos=False %}'
+    'body':'{% include "_component/field/linha.html" with id=app.linha.id codigo=app.linha.codigo nome=app.linha.nome required=False incluir_inativos=False %}'
   
   'Component Condutor':
     'prefix': 'component_condutor'
-    'body':'{% include "_component/pessoal/condutor.html" with id=app.condutor.id matricula=app.condutor.matricula nome=app.condutor.nome required=False incluir_inativos=False %}'
+    'body':'{% include "_component/field/condutor.html" with id=app.condutor.id matricula=app.condutor.matricula nome=app.condutor.nome required=False incluir_inativos=False %}'
   
   'Component Veiculo':
     'prefix': 'component_veiculo'
-    'body':'{% include "_component/oficina/veiculo.html" with id=app.veiculo.id prefixo=app.veiculo.prefixo placa=app.veiculo.placa required=False incluir_inativos=False %}'
+    'body':'{% include "_component/field/veiculo.html" with id=app.veiculo.id prefixo=app.veiculo.prefixo placa=app.veiculo.placa required=False incluir_inativos=False %}'
   
   'Component Loading Modal':
     'prefix': 'component_loadding'

@@ -32,6 +32,16 @@ class Log(models.Model):
     objeto_str = models.CharField(max_length=50, blank=False)
     usuario = models.ForeignKey(User, on_delete=models.RESTRICT)
     mensagem = models.CharField(max_length=50, blank=True)
+    
+class Alerta(models.Model):
+    titulo = models.CharField(max_length=50, blank=False)
+    mensagem = models.CharField(max_length=220, blank=True)
+    link = models.CharField(max_length=220, blank=True)
+    to_user = models.ForeignKey(User, related_name='to_user', on_delete=models.RESTRICT)
+    from_user = models.ForeignKey(User, related_name='from_user', on_delete=models.RESTRICT)
+    lido = models.BooleanField(default=False)
+    critico = models.BooleanField(default=False)
+    create_at = models.DateField(default = datetime.today)
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -40,6 +50,9 @@ class Profile(models.Model):
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='auth.user',objeto_id=self.user.id).order_by('-data')[:15]
         return reversed(logs)
+    def alertas(self):
+        alertas = Alerta.objects.filter(to_user=self.user,lido=False).order_by('data')
+        return alertas
 
 
 @receiver(post_save, sender=User)

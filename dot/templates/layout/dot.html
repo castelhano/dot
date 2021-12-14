@@ -21,13 +21,16 @@
 <body>
   <nav class="navbar navbar-dark bg-dark bg-gradient navbar-expand sticky-top shadow-sm border-bottom" style="height:45px;">
     <div class="container-fluid">
-      <a class="navbar-brand user-select-none pt-0" data-bs-toggle="offcanvas" data-bs-target="#panelR">{% block model %} Dot {% endblock%}</a>
+      <a class="navbar-brand user-select-none pt-0">{% block model %} Dot {% endblock%}</a>
       <div class="collapse navbar-collapse ms-2" id="navControls">
         <ul class="navbar-nav">
           <li class="nav-item"><a class="nav-link px-3" id="home" href="{% url 'index' %}"><i class="fas fa-th-large fs-5"></i></a></li>
           {% block model_menu %}{% endblock%}
         </ul>
         <ul class="navbar-nav ms-auto">
+          {# if alertas #}
+          <li class="nav-item"><a class="nav-link pt-1 px-0 pointer" data-bs-toggle="offcanvas" href="#panelR" role="button"><span class="badge bg-light text-dark">2</span></a></li>
+          {# endif #}
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle pt-1" id="system" href="#" data-bs-toggle="dropdown" title="ALT + S"><span class="d-none d-sm-inline">{{user.first_name}} {{user.last_name}}</span><span class="d-inline d-sm-none">{{user.first_name.0}}{{user.last_name.0}}</span></a>
             <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end mt-1" id="user_list_options">
@@ -43,103 +46,94 @@
   </nav>
   
   <!-- INICIO DO OFFCANVAS -->
-  <!-- <div class="offcanvas offcanvas-end" tabindex="-1" id="panelR">
-  <div class="offcanvas-header">
-  <h5>Módulos</h5>
-  <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
-</div>
-<div class="offcanvas-body">
-<div class="row g-2 mb-2">
-<div class="col-6 d-grid"><a class="btn btn-dark text-start" id="ctr_link" href="{% url 'index' %}"><i class="fas fa-bars fs-5 pe-2"></i> <b>I</b>nicio</a></div>
-{# if 'pessoal' in perms #}
-<div class="col-6 d-grid"><a class="btn btn-orange text-start" id="rhm_link" href="{# url 'pessoal' #}"><i class="fas fa-users fs-5 pe-2"></i> <b>P</b>essoal</a></div>
-{# endif #}
-{# if 'trafego' in perms or 'plan' in perms #}
-<div class="col-6 d-grid"><a class="btn btn-primary text-start" id="trf_link" href="{# url 'trafego' #}"><i class="fas fa-road fs-5 pe-2"></i> <b>T</b>ráfego</a></div>
-{# endif #}
-{# if 'frota' in perms #}
-<div class="col-6 d-grid"><a id="man_link" class="btn btn-success text-start" href="{# url 'manutencao' #}"><i class="fas fa-bus fs-5 pe-2"></i> <b>M</b>anutenção</a></div>
-{# endif #}
-</div>
-</div>
-</div> -->
-<!-- FIM DO OFFCANVAS -->
-
-
-<div class="container-fluid">
-  {% block content_fluid %}{% endblock %}        
-</div>
-
-{% for message in messages %}
-<div class="alert alert-{{message.tags}} alert-dismissible fade show mb-1" role="alert">
-  {{ message|safe }}
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-{% endfor %}
-
-{% if form.errors %}
-  {% for field in form %}
-    {% if field.errors %}
-    {% for error in field.errors %}
-    <div class="alert alert-danger alert-dismissible fade show mb-1" role="alert">
-      {{ error|escape }}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="panelR">
+    <div class="offcanvas-header">
+      <h5>Notificações</h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
     </div>
-    {% endfor %}
-    {% endif %}
+    <div class="offcanvas-body">
+      <div class="row g-2 mb-2">
+        
+      </div>
+    </div>
+  </div>
+  <!-- FIM DO OFFCANVAS -->
+  
+  
+  <div class="container-fluid">
+    {% block content_fluid %}{% endblock %}        
+  </div>
+  
+  {% for message in messages %}
+  <div class="alert alert-{{message.tags}} alert-dismissible fade show mb-1" role="alert">
+    {{ message|safe }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endfor %}
+  
+  {% if form.errors %}
+  {% for field in form %}
+  {% if field.errors %}
+  {% for error in field.errors %}
+  <div class="alert alert-danger alert-dismissible fade show mb-1" role="alert">
+    {{ error|escape }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endfor %}
+  {% endif %}
   {% endfor %}
   {% if form.non_field_errors %}
-    {{ form.non_field_errors }}
+  {{ form.non_field_errors }}
   {% endif %}
-{% endif %}
-
-<div class="modal fade" id="shortcut_modal" tabindex="-1">
-  <div class="modal-dialog modal-fullscreen">
-    <div class="modal-content bg-light">
-      <div class="row">
-        <div class="col"><h5 class="ms-3 mt-3">Atalhos de teclado e informações do sistema</h5></div>
-        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
-      </div>
-      <div class="modal-body">
+  {% endif %}
+  
+  <div class="modal fade" id="shortcut_modal" tabindex="-1">
+    <div class="modal-dialog modal-fullscreen">
+      <div class="modal-content bg-light">
         <div class="row">
-          <div class="col-lg-6">
-            <table class="table table-sm fs-8">
-              <tr><td class="fw-bold" style="min-width:80px;">ALT + I</td><td>Retorna à tela inicial</td></tr>
-              <tr><td class="fw-bold" style="min-width:80px;">ALT + S</td><td>Menu de operações do usuário</td></tr>
-              <!-- <tr><td class="fw-bold" style="min-width:80px;">ALT + M</td><td>Painel de módulos do sistema</td></tr> -->
-              <tr><td class="fw-bold" style="min-width:80px;">ALT + N</td><td>Cria novo registro para janela ativa</td></tr>
-              <tr><td class="fw-bold" style="min-width:80px;">ALT + L</td><td>Recarrega página ativa (limpa filtros)</td></tr>
-              <tr><td class="fw-bold" style="min-width:80px;">ALT + V</td><td>Voltar a origem</td></tr>
-              <tr><td class="fw-bold" style="min-width:80px;">ALT + <i class="fas fa-arrow-down"></i></td><td>Baixa em formato CSV registros da janela ativa (quando disponível)</td></tr>
-              <tr><td class="fw-bold" style="min-width:80px;">CTRL + /</td><td>Abre janela de consulta para janela ativa</td></tr>
-            </table>
-          </div>
-          <div class="col-lg-6">
-            <div class="callout callout-info" style="background-color:#FFF;">
-              <h5>Sobre o sistema</h5>
-              <table class="fs-7">
-                <tr><td class="pe-3">Versão da Aplicação</td><td class="fw-bold"><span class="badge bg-dark py-1" style="font-size:0.9rem">1.0</span> 30/11/2021</td></tr>
-                <tr><td class="pe-3">Versão Python</td><td class="fw-bold">3.9</td></tr>
-                <tr><td class="pe-3">Versão Django</td><td class="fw-bold">3.2.3</td></tr>
-                <tr><td class="pe-3">Dependências</td><td class=""><span class="badge bg-success" style="font-size:0.8rem">pillow 8.2</span> <span class="badge bg-primary" style="font-size:0.8rem">reportlab 3.5</span></td></tr>
-                <tr><td class="pe-3">Versão Bootstrap</td><td class="fw-bold">5.1</td></tr>
-                <tr><td class="pe-3">Framework JS</td><td class="fw-bold">N/A</td></tr>
-                <tr><td class="pe-3">Desenvolvedor</td><td class="fw-bold">Rafael Gustavo Alves</td></tr>
-                <tr><td class="pe-3">Contato</td><td class="fw-bold">castelhano.rafael@gmail.com</td></tr>
+          <div class="col"><h5 class="ms-3 mt-3">Atalhos de teclado e informações do sistema</h5></div>
+          <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-lg-6">
+              <table class="table table-sm fs-8">
+                <tr><td class="fw-bold" style="min-width:80px;"><kbd>ALT + I</kbd></td><td>Retorna à tela inicial</td></tr>
+                <tr><td class="fw-bold" style="min-width:80px;"><kbd>ALT + S</kbd></td><td>Menu de operações do usuário</td></tr>
+                <!-- <tr><td class="fw-bold" style="min-width:80px;">ALT + M</td><td>Painel de módulos do sistema</td></tr> -->
+                <tr><td class="fw-bold" style="min-width:80px;"><kbd>ALT + N</kbd></td><td>Cria novo registro para janela ativa</td></tr>
+                <tr><td class="fw-bold" style="min-width:80px;"><kbd>ALT + L</kbd></td><td>Recarrega página ativa (limpa filtros)</td></tr>
+                <tr><td class="fw-bold" style="min-width:80px;"><kbd>ALT + V</kbd></td><td>Voltar a origem</td></tr>
+                <tr><td class="fw-bold" style="min-width:80px;"><kbd>ALT + <i class="fas fa-arrow-down"></i></kbd></td><td>Baixa em formato CSV registros da janela ativa (quando disponível)</td></tr>
+                <tr><td class="fw-bold" style="min-width:80px;"><kbd>CTRL + /</kbd></td><td>Abre o form de consulta para janela ativa</td></tr>
               </table>
-            </div>              
+            </div>
+            <div class="col-lg-6">
+              <div class="callout callout-info" style="background-color:#FFF;">
+                <h5>Sobre o sistema</h5>
+                <table class="fs-7">
+                  <tr><td class="pe-3">Versão da Aplicação</td><td class="fw-bold"><span class="badge bg-dark py-1" style="font-size:0.9rem">1.0</span> 30/11/2021</td></tr>
+                  <tr><td class="pe-3">Versão Python</td><td class="fw-bold">3.9</td></tr>
+                  <tr><td class="pe-3">Versão Django</td><td class="fw-bold">3.2.3</td></tr>
+                  <tr><td class="pe-3">Dependências</td><td class=""><span class="badge bg-success" style="font-size:0.8rem">pillow 8.2</span> <span class="badge bg-primary" style="font-size:0.8rem">reportlab 3.5</span></td></tr>
+                  <tr><td class="pe-3">Versão Bootstrap</td><td class="fw-bold">5.1</td></tr>
+                  <tr><td class="pe-3">Framework JS</td><td class="fw-bold">N/A</td></tr>
+                  <tr><td class="pe-3">Desenvolvedor</td><td class="fw-bold">Rafael Gustavo Alves</td></tr>
+                  <tr><td class="pe-3">Contato</td><td class="fw-bold">castelhano.rafael@gmail.com</td></tr>
+                </table>
+              </div>              
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
-
-<script src="{% static 'js/vendor/bootstrap.bundle.min.js' %}"></script>
-<script src="{% static 'js/_basicListener.js' %}"></script>
-{% block add_script_src %}{% endblock %}
-<script>
-{% block add_script %}{% endblock %}
+  
+  <script src="{% static 'js/vendor/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'js/_basicListener.js' %}"></script>
+  {% block add_script_src %}{% endblock %}
+  <script>
+  {% block add_script %}{% endblock %}
 </script>
 
 </body>

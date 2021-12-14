@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import auth, messages
 from django.contrib.auth.models import User, Group, Permission
-from .models import Empresa, Log
+from .models import Empresa, Log, Alerta
 from .forms import EmpresaForm, UserForm, GroupForm
 from django.http import HttpResponse
 from json import dumps
@@ -59,11 +59,17 @@ def logs(request):
     return render(request,'core/logs.html',{'logs':logs})
     
 def run_script(request):
-    # from plan.models import Diaria
-    # usuario = User.objects.get(id=1)
+    # usuario = User.objects.get(id=2)
+    # titulo = 'Meu primeiro alerta'
+    # titulo2 = 'ja perdeu a graca'
+    # mensagem = 'Este eh um teste do rafita com varios caracteres, tente nao me encher a merda do saco'
+    # mensagem2 = 'Outro teste do rafita'
+    # link = 'core_usuarios'
+    # alerta = Alerta.objects.create(to_user=usuario,from_user=request.user,titulo=titulo,mensagem=mensagem,link=link)
+    # alerta = Alerta.objects.create(to_user=usuario,from_user=request.user,titulo=titulo2,mensagem=mensagem2,critico=True)
     # usuario.profile.force_password_change = False
     # usuario.save()
-    # messages.warning(request,'Done')
+    # messages.success(request,'Done')
     messages.warning(request,'Nothing to do')
     return redirect('index')
 
@@ -459,7 +465,7 @@ def get_user_perms(request):
 
 @login_required
 def get_group_perms(request):
-    # try:
+    try:
         tipo = request.GET.get('tipo',None)
         if request.GET.get('grupo',None) != 'new':
             grupo = Group.objects.get(id=request.GET.get('grupo',None))
@@ -476,5 +482,5 @@ def get_group_perms(request):
             itens[item.codename] = item.id
         dataJSON = dumps(itens)
         return HttpResponse(dataJSON)
-    # except:
-    #     return HttpResponse('')
+    except:
+        return HttpResponse('')

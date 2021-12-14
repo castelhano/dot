@@ -33,6 +33,7 @@
       <table id="main_table" class="table border table-striped table-hover">
         <thead>
           <tr>
+            <th>#</th>
             <th>Nome</th>
             <th class="d-none d-lg-table-cell">Razão Social</th>
             <th class="d-none d-lg-table-cell">CNPJ</th>
@@ -54,6 +55,7 @@
         <tbody>
           {% for empresa in empresas %}
           <tr>
+            <td>{{empresa.id}}</td>
             <td>{{empresa.nome}}</td>
             <td class="d-none d-lg-table-cell">{{empresa.razao_social}}</td>
             <td class="d-none d-lg-table-cell">{{empresa.cnpj}}</td>
