@@ -54,9 +54,8 @@
                 <div id="accordion_empresas" class="accordion-collapse collapse" data-bs-parent="#accordion_user_profile">
                   <div class="accordion-body">
                     <div class="row g-1">
-                      <div class="form-floating mb-1 col-lg">
+                      <div class="mb-1 col-lg">
                         <select class="form-control" id="empresas_disponiveis" style="min-height:138px;" multiple></select>
-                        <label for="empresas_disponiveis">Empresas</label>
                       </div>
                       <div class="col-lg-auto">
                         <div class="d-flex justify-content-center d-lg-grid gap-1">
@@ -66,10 +65,8 @@
                           <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove_all_2" onclick="removeAll_2();"><i class="fas fa-angle-double-left rotate-lg-90"></i></a>
                         </div>
                       </div>
-                      <div class="form-floating mb-1 col-lg">
-                        <select class="form-control" name="empresas" id="id_empresas" style="min-height:138px;" multiple>
-                        </select>
-                        <label for="id_empresas">Habilitadas</label>
+                      <div class="mb-1 col-lg">
+                        <select class="form-control" name="empresas" id="id_empresas" style="min-height:138px;" multiple></select>
                       </div>
                     </div>
                   </div>
@@ -82,9 +79,8 @@
                 <div id="accordion_grupos" class="accordion-collapse collapse" data-bs-parent="#accordion_user_profile">
                   <div class="accordion-body">
                     <div class="row g-1">
-                      <div class="form-floating mb-1 col-lg">
+                      <div class="mb-1 col-lg">
                         <select class="form-control" id="grupos_disponiveis" style="min-height:180px;" multiple></select>
-                        <label for="grupos_disponiveis">Grupos</label>
                       </div>
                       <div class="col-lg-auto">
                         <div class="d-flex justify-content-center d-lg-grid gap-1">
@@ -94,10 +90,9 @@
                           <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove_all" onclick="removeAll();"><i class="fas fa-angle-double-left rotate-lg-90"></i></a>
                         </div>
                       </div>
-                      <div class="form-floating mb-1 col-lg">
+                      <div class="mb-1 col-lg">
                         <select class="form-control" name="grupos" id="id_grupos" style="min-height:180px;" multiple>
                         </select>
-                        <label for="id_grupos">Ativos</label>
                       </div>
                     </div>
                   </div>
@@ -110,9 +105,8 @@
                 <div id="accordion_permittions" class="accordion-collapse collapse" data-bs-parent="#accordion_user_profile">
                   <div class="accordion-body">
                     <div class="row g-1">
-                      <div class="form-floating mb-1 col-lg">
+                      <div class="mb-1 col-lg">
                         <select class="form-control" id="perms_disponiveis" style="min-height:180px;" multiple></select>
-                        <label for="perms_disponiveis">Permissões</label>
                       </div>
                       <div class="col-lg-auto">
                         <div class="d-flex justify-content-center d-lg-grid gap-1">
@@ -122,10 +116,8 @@
                           <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove_all_3" onclick="removeAll_3();"><i class="fas fa-angle-double-left rotate-lg-90"></i></a>
                         </div>
                       </div>
-                      <div class="form-floating mb-1 col-lg">
-                        <select class="form-control" name="perms" id="id_perms" style="min-height:180px;" multiple>
-                        </select>
-                        <label for="id_perms">Habilitadas</label>
+                      <div class="mb-1 col-lg">
+                        <select class="form-control" name="perms" id="id_perms" style="min-height:180px;" multiple></select>
                       </div>
                     </div>
                   </div>
@@ -226,7 +218,7 @@
         }
       }
     };
-    xhttp.open("GET", "{% url 'core_get_perms' %}?tipo=disponiveis&usuario=new", true);
+    xhttp.open("GET", "{% url 'core_get_user_perms' %}?tipo=disponiveis&usuario=new", true);
     xhttp.send();
   }
   carregaPermsDisponiveis();
@@ -234,6 +226,7 @@
   
   // SET onsubmit="return submitForm();" ON FORM
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false})
+  
   function submitForm(){
     options = selecionados.options;for(i=0; i < options.length; i++){options[i].selected = "true";}
     options_2 = empresas_selecionadas.options;for(i=0; i < options_2.length; i++){options_2[i].selected = "true";};

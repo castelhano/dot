@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from datetime import datetime
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -40,6 +40,7 @@ class Profile(models.Model):
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='auth.user',objeto_id=self.user.id).order_by('-data')[:15]
         return reversed(logs)
+
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

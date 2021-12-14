@@ -1,0 +1,35 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Grupo{% endblock %}
+{% block model_menu %}
+{% include "_component/menu/core.html" %}
+{% endblock%}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'core_grupo_add' %}"></a>
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active disabled" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'core_grupos' %}"><i class="fas fa-undo"></i></a></li>
+    </ul>
+  </div>
+  <form id="app_form" action="{% url 'core_grupo_add' %}" method="POST" autocomplete="off" onsubmit="return submitForm();">
+    {% csrf_token %}
+    {% include 'core/_form_grupo.html' %}
+  </form>
+</div>
+
+{% include "_component/modal/loading.html" with message='Configurando grupo' spinner_classlist='text-success' %}
+
+{% endblock%}
+
+{% block add_script_src %}{% endblock %}
+
+<script>
+  {% block add_script %}
+  var TAB_ON_ENTER = true;
+  var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false})
+  
+  {% endblock %}
+</script>

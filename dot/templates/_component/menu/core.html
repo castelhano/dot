@@ -7,6 +7,9 @@
     {% if perms.auth.view_user %}
     <li><a class="dropdown-item" id="cadastro_usuario" href="{% url 'core_usuarios' %}"><b>U</b>suário</a></li>
     {% endif %}
+    {% if perms.auth.view_group %}
+    <li><a class="dropdown-item" id="cadastro_grupo" href="{% url 'core_grupos' %}"><b>G</b>rupo</a></li>
+    {% endif %}
   </ul>
 </li>
 
@@ -22,6 +25,7 @@
       try{cadastro = document.getElementById('menu_cadastro').classList.contains('show') ? true : false;}catch(err){}
       if(cadastro && e.key.toLowerCase() == 'e'){e.preventDefault();document.getElementById('cadastro_empresa').click();}
       else if(cadastro && e.key.toLowerCase() == 'u'){e.preventDefault();document.getElementById('cadastro_usuario').click();}
+      else if(cadastro && e.key.toLowerCase() == 'g'){e.preventDefault();document.getElementById('cadastro_grupo').click();}
     }
   }
 </script>

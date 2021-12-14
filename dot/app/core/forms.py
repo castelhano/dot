@@ -1,6 +1,6 @@
 from django import forms
 from .models import Empresa
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 
 class EmpresaForm(forms.ModelForm):
     class Meta:
@@ -30,4 +30,10 @@ class UserForm(forms.ModelForm):
     is_superuser = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch'}))
     is_staff = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch'}))
     is_active = forms.BooleanField(required=False, initial=True, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch'}))
+
+class GroupForm(forms.ModelForm):
+    class Meta:
+        model = Group
+        fields = ['name','permissions']
+    name = forms.CharField(error_messages={'required': 'Nome do grupo requerido', 'unique': 'Grupo com este nome ja existe'},widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'','autofocus':'autofocus'}))
     

@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import auth, messages
 from django.contrib.auth.models import User, Group, Permission
 from .models import Empresa, Log
-from .forms import EmpresaForm, UserForm
+from .forms import EmpresaForm, UserForm, GroupForm
 from django.http import HttpResponse
 from json import dumps
 from django.core.serializers.json import DjangoJSONEncoder
@@ -26,11 +26,28 @@ def empresas(request):
     return render(request,'core/empresas.html',{'empresas':empresas})
 
 @login_required
+@permission_required('auth.view_group')
+def grupos(request):
+    grupos = Group.objects.all().order_by('name')
+    if request.method == 'POST':
+        grupos = grupos.filter(name__contains=request.POST['pesquisa'])
+    return render(request,'core/grupos.html',{'grupos':grupos})
+
+@login_required
 @permission_required('auth.view_user')
 def usuarios(request):
     usuarios = User.objects.all().order_by('username')
     if request.method == 'POST':
-        usuarios = usuarios.filter(username__contains=request.POST['pesquisa'])
+        if request.POST['pesquisa'] != '':
+            if request.POST['pesquisa'][-1] == '*':
+                if request.POST['pesquisa'] == 'super*':
+                    usuarios = usuarios.filter(is_superuser=True)
+                elif request.POST['pesquisa'] == 'membro*':
+                    usuarios = usuarios.filter(is_staff=True)
+                elif request.POST['pesquisa'] == 'inativo*':
+                    usuarios = usuarios.filter(is_active=False)
+            else:
+                usuarios = usuarios.filter(username__contains=request.POST['pesquisa'])
     return render(request,'core/usuarios.html',{'usuarios':usuarios})
 
 @login_required
@@ -115,6 +132,31 @@ def usuario_add(request):
         form = UserForm()
     return render(request,'core/usuario_add.html',{'form':form})
 
+@login_required
+@permission_required('auth.add_group')
+def grupo_add(request):
+    if request.method == 'POST':
+        form = GroupForm(request.POST)
+        if form.is_valid():
+            # try:
+            form_clean = form.cleaned_data
+            registro = form.save()
+            l = Log()
+            l.modelo = "auth.group"
+            l.objeto_id = registro.id
+            l.objeto_str = registro.name
+            l.usuario = request.user
+            l.mensagem = "CREATED"
+            l.save()
+            messages.success(request,'Grupo ' + registro.name + ' criado')
+            return redirect('core_grupos')
+            # except:
+            #     messages.error(request,'Erro ao inserir grupo [INVALID FORM]')
+            #     return redirect('core_grupos')
+    else:
+        form = GroupForm()
+    return render(request,'core/grupo_add.html',{'form':form})
+
 
 # METODOS GET
 @login_required
@@ -130,6 +172,14 @@ def usuario_id(request, id):
     usuario = User.objects.get(id=id)
     form = UserForm(instance=usuario)
     return render(request,'core/usuario_id.html',{'form':form,'usuario':usuario})
+
+@login_required
+@permission_required('auth.change_group')
+def grupo_id(request, id):
+    grupo = Group.objects.get(id=id)
+    form = GroupForm(instance=grupo)
+    logs = Log.objects.filter(modelo='auth.group',objeto_id=grupo.id).order_by('-data')[:15]
+    return render(request,'core/grupo_id.html',{'form':form,'grupo':grupo,'logs':reversed(logs)})
 
 
 # METODOS UPDATE
@@ -178,7 +228,7 @@ def usuario_update(request, id):
             g = Group.objects.get(id=grupo)
             g.user_set.add(registro)
         
-        registro.profile.empresas.clear()
+        registro.user_permissions.clear()
         for perm in request.POST.getlist('perms'):
             p = Permission.objects.get(id=perm)
             p.user_set.add(registro)
@@ -198,6 +248,25 @@ def usuario_update(request, id):
         return redirect('core_usuario_id',id)
     else:
         return render(request,'core/usuario_id.html',{'form':form,'usuario':usuario})
+
+@login_required
+@permission_required('auth.change_group')
+def grupo_update(request, id):
+    grupo = Group.objects.get(pk=id)
+    form = GroupForm(request.POST, instance=grupo)
+    if form.is_valid():
+        registro = form.save()
+        l = Log()
+        l.modelo = "auth.group"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.name
+        l.usuario = request.user
+        l.mensagem = "UPDATE"
+        l.save()
+        messages.success(request,'Grupo ' + registro.name + ' alterado')
+        return redirect('core_grupo_id',id)
+    else:
+        return render(request,'core/grupo_id.html',{'form':form,'grupo':grupo})
 
 # METODOS DELETE
 @login_required
@@ -237,6 +306,25 @@ def usuario_delete(request, id):
     except:
         messages.error(request,'ERRO ao apagar usuario')
         return redirect('core_usuario_id', id)
+
+@login_required
+@permission_required('auth.delete_group')
+def grupo_delete(request, id):
+    try:
+        registro = Group.objects.get(pk=id)
+        l = Log()
+        l.modelo = "auth.group"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.name
+        l.usuario = request.user
+        l.mensagem = "DELETE"
+        l.save()
+        registro.delete()
+        messages.warning(request,'Grupo ' + registro.name + ' apagado')
+        return redirect('core_grupos')
+    except:
+        messages.error(request,'ERRO ao apagar grupo')
+        return redirect('core_grupo_id', id)
 
 # AUTENTICACAO E PERMISSAO
 def login(request):
@@ -348,7 +436,7 @@ def get_grupos(request):
         return HttpResponse('')
 
 @login_required
-def get_perms(request):
+def get_user_perms(request):
     try:
         tipo = request.GET.get('tipo',None)
         if request.GET.get('usuario',None) != 'new':
@@ -360,7 +448,29 @@ def get_perms(request):
             else:
                 pass
         else:
-            perms = Permission.objects.all().exclude(content_type__app_label='auth').exclude(content_type__app_label='sessions').exclude(content_type__app_label='contenttypes').exclude(content_type__app_label='admin').order_by('id')
+            perms = Permission.objects.all().exclude(content_type__app_label='sessions').exclude(content_type__app_label='contenttypes').exclude(content_type__app_label='admin').order_by('id')
+        itens = {}
+        for item in perms:
+            itens[item.codename] = item.id
+        dataJSON = dumps(itens)
+        return HttpResponse(dataJSON)
+    except:
+        return HttpResponse('')
+
+@login_required
+def get_group_perms(request):
+    try:
+        tipo = request.GET.get('tipo',None)
+        if request.GET.get('grupo',None) != 'new':
+            grupo = Group.objects.get(id=request.GET.get('grupo',None))
+            if tipo == 'disponiveis':
+                perms = Permission.objects.all().exclude(group=grupo).order_by('id')
+            elif tipo == 'cadastrados':
+                perms = Permission.objects.all().filter(group=grupo).order_by('id')
+            else:
+                pass
+        else:
+            perms = Permission.objects.all().exclude(content_type__app_label='sessions').exclude(content_type__app_label='contenttypes').exclude(content_type__app_label='admin').order_by('id')
         itens = {}
         for item in perms:
             itens[item.codename] = item.id
