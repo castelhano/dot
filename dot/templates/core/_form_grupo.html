@@ -62,11 +62,11 @@
   			}
   		}
   	};
-  	xhttp.open("GET", "{% url 'core_get_group_perms' %}?tipo=disponiveis&grupo={{grupo.id}}", true);
+  	xhttp.open("GET", "{% url 'core_get_group_perms' %}?tipo=disponiveis&grupo={% if 'grupo_add' in request.get_full_path %}new{% else %}{{grupo.id}}{% endif%}", true);
   	xhttp.send();
   }
   carregaPermsDisponiveis();
-  
+  {% if 'grupo_id' in request.get_full_path %}
   function carregaPermsCadastrados() {
   	var xhttp = new XMLHttpRequest();
   	xhttp.onreadystatechange = function() {
@@ -83,4 +83,5 @@
   	xhttp.send();
   }
   carregaPermsCadastrados();
+  {% endif%}
 </script>

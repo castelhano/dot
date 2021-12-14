@@ -459,7 +459,7 @@ def get_user_perms(request):
 
 @login_required
 def get_group_perms(request):
-    try:
+    # try:
         tipo = request.GET.get('tipo',None)
         if request.GET.get('grupo',None) != 'new':
             grupo = Group.objects.get(id=request.GET.get('grupo',None))
@@ -476,5 +476,5 @@ def get_group_perms(request):
             itens[item.codename] = item.id
         dataJSON = dumps(itens)
         return HttpResponse(dataJSON)
-    except:
-        return HttpResponse('')
+    # except:
+    #     return HttpResponse('')
