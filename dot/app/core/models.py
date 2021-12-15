@@ -38,9 +38,10 @@ class Alerta(models.Model):
     mensagem = models.CharField(max_length=220, blank=True)
     link = models.CharField(max_length=220, blank=True)
     to_user = models.ForeignKey(User, related_name='to_user', on_delete=models.RESTRICT)
-    from_user = models.ForeignKey(User, related_name='from_user', on_delete=models.RESTRICT)
+    from_user = models.ForeignKey(User, related_name='from_user', null=True, on_delete=models.RESTRICT)
     lido = models.BooleanField(default=False)
     critico = models.BooleanField(default=False)
+    alerta_de_sistema = models.BooleanField(default=False)
     create_at = models.DateField(default = datetime.today)
 
 class Profile(models.Model):

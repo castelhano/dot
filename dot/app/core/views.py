@@ -6,8 +6,9 @@ from django.contrib.auth.models import User, Group, Permission
 from .models import Empresa, Log, Alerta
 from .forms import EmpresaForm, UserForm, GroupForm
 from django.http import HttpResponse
+from django.core import serializers
 from json import dumps
-from django.core.serializers.json import DjangoJSONEncoder
+# from django.core.serializers.json import DjangoJSONEncoder
 
 
 @login_required
@@ -60,10 +61,8 @@ def logs(request):
     
 def run_script(request):
     # usuario = User.objects.get(id=2)
-    # titulo = 'Meu primeiro alerta'
-    # titulo2 = 'ja perdeu a graca'
+    # titulo = 'Alerta com Link'
     # mensagem = 'Este eh um teste do rafita com varios caracteres, tente nao me encher a merda do saco'
-    # mensagem2 = 'Outro teste do rafita'
     # link = 'core_usuarios'
     # alerta = Alerta.objects.create(to_user=usuario,from_user=request.user,titulo=titulo,mensagem=mensagem,link=link)
     # alerta = Alerta.objects.create(to_user=usuario,from_user=request.user,titulo=titulo2,mensagem=mensagem2,critico=True)
@@ -273,6 +272,13 @@ def grupo_update(request, id):
         return redirect('core_grupo_id',id)
     else:
         return render(request,'core/grupo_id.html',{'form':form,'grupo':grupo})
+
+@login_required
+def alerta_marcar_lido(request):
+    alerta = Alerta.objects.get(id=request.GET.get('id', None))
+    alerta.lido = True
+    alerta.save()
+    return HttpResponse('')
 
 # METODOS DELETE
 @login_required
@@ -484,3 +490,9 @@ def get_group_perms(request):
         return HttpResponse(dataJSON)
     except:
         return HttpResponse('')
+
+@login_required
+def get_alertas(request):
+    alertas = Alerta.objects.filter(to_user=request.user,lido=False).order_by('create_at')
+    data = serializers.serialize('json', alertas)
+    return HttpResponse(data, content_type="application/json")

@@ -21,16 +21,13 @@
 <body>
   <nav class="navbar navbar-dark bg-dark bg-gradient navbar-expand sticky-top shadow-sm border-bottom" style="height:45px;">
     <div class="container-fluid">
-      <a class="navbar-brand user-select-none pt-0">{% block model %} Dot {% endblock%}</a>
+      <a class="navbar-brand user-select-none pt-0" id="messages" data-bs-toggle="offcanvas" href="#panelR" role="button" title="ALT + M">{% block model %} Dot {% endblock%}<sup id="alertas_badge" class="badge bg-white text-dark fs-8 ms-1 d-none">0</sup></a>
       <div class="collapse navbar-collapse ms-2" id="navControls">
         <ul class="navbar-nav">
           <li class="nav-item"><a class="nav-link px-3" id="home" href="{% url 'index' %}"><i class="fas fa-th-large fs-5"></i></a></li>
           {% block model_menu %}{% endblock%}
         </ul>
         <ul class="navbar-nav ms-auto">
-          {# if alertas #}
-          <li class="nav-item"><a class="nav-link pt-1 px-0 pointer" data-bs-toggle="offcanvas" href="#panelR" role="button"><span class="badge bg-light text-dark">2</span></a></li>
-          {# endif #}
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle pt-1" id="system" href="#" data-bs-toggle="dropdown" title="ALT + S"><span class="d-none d-sm-inline">{{user.first_name}} {{user.last_name}}</span><span class="d-inline d-sm-none">{{user.first_name.0}}{{user.last_name.0}}</span></a>
             <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end mt-1" id="user_list_options">
@@ -51,9 +48,9 @@
       <h5>Notificações</h5>
       <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
     </div>
-    <div class="offcanvas-body">
-      <div class="row g-2 mb-2">
-        
+    <div class="offcanvas-body pe-0">
+      <div class="container-fluid">
+        <div class="row pe-3" id="alertas_container"></div>
       </div>
     </div>
   </div>
@@ -100,7 +97,7 @@
               <table class="table table-sm fs-8">
                 <tr><td class="fw-bold" style="min-width:80px;"><kbd>ALT + I</kbd></td><td>Retorna à tela inicial</td></tr>
                 <tr><td class="fw-bold" style="min-width:80px;"><kbd>ALT + S</kbd></td><td>Menu de operações do usuário</td></tr>
-                <!-- <tr><td class="fw-bold" style="min-width:80px;">ALT + M</td><td>Painel de módulos do sistema</td></tr> -->
+                <tr><td class="fw-bold" style="min-width:80px;"><kbd>ALT + M</kbd></td><td>Painel de notificações</td></tr>
                 <tr><td class="fw-bold" style="min-width:80px;"><kbd>ALT + N</kbd></td><td>Cria novo registro para janela ativa</td></tr>
                 <tr><td class="fw-bold" style="min-width:80px;"><kbd>ALT + L</kbd></td><td>Recarrega página ativa (limpa filtros)</td></tr>
                 <tr><td class="fw-bold" style="min-width:80px;"><kbd>ALT + V</kbd></td><td>Voltar a origem</td></tr>
@@ -129,11 +126,15 @@
     </div>
   </div>
   
-  <script src="{% static 'js/vendor/bootstrap.bundle.min.js' %}"></script>
-  <script src="{% static 'js/_basicListener.js' %}"></script>
-  {% block add_script_src %}{% endblock %}
-  <script>
-  {% block add_script %}{% endblock %}
+<script src="{% static 'js/vendor/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'js/_basicListener.js' %}"></script>
+{% block add_script_src %}{% endblock %}
+<script>
+{% block add_script %}
+
+{% include '_component/script/update_alertas.js' %}
+
+{% endblock %}
 </script>
 
 </body>
