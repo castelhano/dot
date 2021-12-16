@@ -58,7 +58,7 @@ def logs(request):
     mensagem = request.GET.get('mensagem',None)
     logs = Log.objects.filter(modelo=target_model,mensagem=mensagem)
     return render(request,'core/logs.html',{'logs':logs})
-    
+
 def run_script(request):
     # usuario = User.objects.get(id=1)
     # titulo = 'Alerta Novo'

@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from . import views, docs
 
 urlpatterns = [
     path('',views.index,name='index'),
@@ -10,6 +10,7 @@ urlpatterns = [
     path('change_password',views.change_password,name='change_password'),
     path('core_run_script',views.run_script,name='core_run_script'),
     path('logs',views.logs,name='logs'),
+    path('docs',docs.docs,name='docs'),
     path('handle404',views.handle404,name='handle404'),
     path('handle500',views.handle500,name='handle500'),
     path('core_usuarios',views.usuarios,name='core_usuarios'),
