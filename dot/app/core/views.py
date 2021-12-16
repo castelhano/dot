@@ -60,11 +60,11 @@ def logs(request):
     return render(request,'core/logs.html',{'logs':logs})
     
 def run_script(request):
-    # usuario = User.objects.get(id=2)
-    # titulo = 'Alerta com Link'
-    # mensagem = 'Este eh um teste do rafita com varios caracteres, tente nao me encher a merda do saco'
+    # usuario = User.objects.get(id=1)
+    # titulo = 'Alerta Novo'
+    # mensagem = 'Este eh um novo alerta sem titulo, testando'
     # link = 'core_usuarios'
-    # alerta = Alerta.objects.create(to_user=usuario,from_user=request.user,titulo=titulo,mensagem=mensagem,link=link)
+    # alerta = Alerta.objects.create(usuario=usuario, titulo=titulo, mensagem=mensagem)
     # alerta = Alerta.objects.create(to_user=usuario,from_user=request.user,titulo=titulo2,mensagem=mensagem2,critico=True)
     # usuario.profile.force_password_change = False
     # usuario.save()
@@ -493,6 +493,6 @@ def get_group_perms(request):
 
 @login_required
 def get_alertas(request):
-    alertas = Alerta.objects.filter(to_user=request.user,lido=False).order_by('create_at')
+    alertas = Alerta.objects.filter(usuario=request.user,lido=False).order_by('create_at')
     data = serializers.serialize('json', alertas)
     return HttpResponse(data, content_type="application/json")

@@ -34,15 +34,14 @@ class Log(models.Model):
     mensagem = models.CharField(max_length=50, blank=True)
     
 class Alerta(models.Model):
-    titulo = models.CharField(max_length=50, blank=False)
+    titulo = models.CharField(max_length=50, blank=True)
     mensagem = models.CharField(max_length=220, blank=True)
     link = models.CharField(max_length=220, blank=True)
-    to_user = models.ForeignKey(User, related_name='to_user', on_delete=models.RESTRICT)
-    from_user = models.ForeignKey(User, related_name='from_user', null=True, on_delete=models.RESTRICT)
+    usuario = models.ForeignKey(User, on_delete=models.RESTRICT)
     lido = models.BooleanField(default=False)
-    critico = models.BooleanField(default=False)
-    alerta_de_sistema = models.BooleanField(default=False)
-    create_at = models.DateField(default = datetime.today)
+    alert_class_list = models.CharField(max_length=60, blank=True)
+    action_class_list = models.CharField(max_length=60, blank=True)
+    create_at = models.DateTimeField(default=datetime.now)
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

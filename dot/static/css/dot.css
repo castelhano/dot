@@ -11,6 +11,9 @@ VERSION: 1.0
 .bg-success-light{background-color: #64d69f!important;}
 .bg-danger-light{background-color: #ff969f!important;}
 
+.border-oil{border-color: #0065A4!important;}
+
+.btn-dark-alt, .bg-dark-alt{background-color: #393939;color: #FFF;}
 .btn-orange, .bg-orange{background-color: #F35B04;color: #FFF;}
 .btn-orange:hover{background-color: #FD7E14;color: #FFF;}
 .btn-pink, .bg-pink{background-color: #d63384;color: #FFF;}

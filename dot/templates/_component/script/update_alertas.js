@@ -1,5 +1,5 @@
 function carregaAlertas() {
-  document.getElementById('alertas_container').innerHTML = '';
+  document.getElementById('offcanvas_body').innerHTML = '';
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if(this.readyState == 4 && this.status == 200){
@@ -10,25 +10,25 @@ function carregaAlertas() {
         for(item in obj){
           let titulo = obj[item].fields.titulo;
           let mensagem = obj[item].fields.mensagem;
-          let create_at = obj[item].fields.create_at;
-          let style = obj[item].fields.critico == true ? 'bg-danger text-light' : 'bg-light';
+          let alert_style = obj[item].fields.alert_class_list != '' ? obj[item].fields.alert_class_list : 'bg-dark-alt border border-4 border-oil text-light';
+          let action_style = obj[item].fields.action_class_list != '' ? obj[item].fields.action_class_list : 'btn btn-sm btn-secondary opacity-75 rounded-0';
           let link = '';
           if(obj[item].fields.link != ''){
-            link = obj[item].fields.critico == true ? `<a class="btn btn-sm btn-outline-light" href="${obj[item].fields.link}">Link</a>` : `<a class="btn btn-sm btn-outline-secondary" href="${obj[item].fields.link}">Link</a>`;
+            link = `<a class="${action_style}" href="${obj[item].fields.link}">Link</a>`;
           }
-          let marcar_lido = obj[item].fields.critico == true ? `<a class="btn btn-sm btn-outline-light" onclick="marcarAlertaLido(${obj[item].pk})">Fechar</a>` : `<a class="btn btn-sm btn-outline-secondary" onclick="marcarAlertaLido(${obj[item].pk})">Fechar</a>`;
-          let alerta = `<div id="alert_${item}" class="col-12 ${style} p-3 mb-2 border"><h5 class="m-0">${titulo}</h5><small>${create_at}</small><p class="text-justify mt-2">${mensagem}</p><div class="row"><div class="col d-grid">${link}</div><div class="col d-grid">${marcar_lido}</div></div></div>`;
-          document.getElementById('alertas_container').innerHTML += alerta;
+          let marcar_lido = `<a class="${action_style}" onclick="marcarAlertaLido(${obj[item].pk})">Fechar</a>`;
+          let alerta = `<div id="alert_${item}" class="col-12 ${alert_style} p-3 mb-2"><h6 class="m-0">${titulo}</h6><p class="text-justify mt-2 fs-7">${mensagem}</p><div class="row"><div class="col d-grid">${link}</div><div class="col d-grid">${marcar_lido}</div></div></div>`;
+          document.getElementById('offcanvas_body').innerHTML += alerta;
           qtde++;
         }
         if(qtde > 0){
-          document.getElementById('alertas_badge').classList.remove('d-none');
-          document.getElementById('alertas_badge').classList.add('d-inline-block');
+          document.getElementById('messages').classList.remove('d-none');
+          document.getElementById('messages').classList.add('d-inline');
           document.getElementById('alertas_badge').innerHTML = qtde;
         }
         else{
-          document.getElementById('alertas_badge').classList.remove('d-inline-block');
-          document.getElementById('alertas_badge').classList.add('d-none');
+          document.getElementById('messages').classList.remove('d-inline');
+          document.getElementById('messages').classList.add('d-none');
           document.getElementById('alertas_badge').innerHTML = '';            
         }
       }
