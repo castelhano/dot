@@ -41,7 +41,14 @@ function User(nome, nickname, email=''){
   this.email_href = function(titulo, mensagem){return `mailto:${this.email}?subject=${titulo}&body=${mensagem}`;}
 };
 
-function Issue(titulo, descricao, solucao, data_entrada, usuario_entrada, data_conclusao, responsavel_conclusao, status, fechado){
+function Mensagem(){
+  this.data = '';
+  this.usuario = '';
+  this.body = '';
+  
+}
+function Issue(tipo, titulo, descricao, solucao, data_entrada, usuario_entrada, data_conclusao, responsavel_conclusao, status, fechado){
+  this.tipo = tipo;
   this.titulo = titulo;
   this.descricao = descricao;
   this.solucao = solucao;
@@ -51,7 +58,12 @@ function Issue(titulo, descricao, solucao, data_entrada, usuario_entrada, data_c
   this.responsavel_conclusao = responsavel_conclusao;
   this.status = status;
   this.fechado = fechado;
+  this.mensagens = [];
+  this.tags = [];
   this.href = function(){if(this.url =! ''){window.location = 'url';}else{return false;}};
+  this.html = function(){
+    return `<div class="callout py-1 px-3 mb-1"><div class="row"><div class="col-lg"><i class="fas fa-circle me-2 text-${this.fechado == true ? 'success' : 'danger'}" title="${this.status}"></i>${this.titulo}</div><div class="col-lg-auto fs-8"><!-- BADGE ENTRA AQUI --><a href="#">@${this.usuario_entrada}</a> - ${this.data_entrada}</div><div class="col-12 fs-7">${this.descricao}</div></div></div>`
+  }
 };
 
 function Docs(){
@@ -59,4 +71,5 @@ function Docs(){
     this.tags = [];
     this.topics = [];
     this.issues = [];
+    this.issues_body = '';
 };

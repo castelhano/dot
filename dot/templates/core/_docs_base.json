@@ -133,15 +133,28 @@
     ],
     "issues":[
       {
+        "tipo":"BUG",
         "titulo":"Manual do sistema incompleto",
         "descricao":"Verificado que maior parte dos componentes do sistema permanece sem conteudo e detalhamento.",
         "solucao":"",
         "data_entrada":"16/12/2021",
-        "usuario_entrada":"Rafael Alves",
+        "usuario_entrada":"rafael",
         "data_conclusao":"",
         "responsavel_conclusao":"",
         "status":"ABERTO",
         "fechado":false
+      },
+      {
+        "tipo":"MELHORIA",
+        "titulo":"Atualizar issues por ajax de servidor externo",
+        "descricao":"Seria interessante implementar solução para atualização dos issues inseridos no repositorio do github.",
+        "solucao":"Ajustado implementação de sincronização, em schedule a cada 10 min.",
+        "data_entrada":"10/11/2021",
+        "usuario_entrada":"rafael",
+        "data_conclusao":"11/12/2022",
+        "responsavel_conclusao":"rafael",
+        "status":"ABERTO",
+        "fechado":true
       }
     ]
   }

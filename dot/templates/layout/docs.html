@@ -24,6 +24,10 @@
       font-weight: bold;
       border-bottom:2px solid #FD7E14;
     }
+    .docs-nav-item.home{
+      font-weight: bold;
+      border-bottom:2px solid #CCC;
+    }
     .link_start_page{
       position: fixed;
       bottom: 40px;
@@ -49,14 +53,14 @@
       <div class="row pt-2">
         <div class="col">
           <span class="fs-5 text-muted"><i class="fas fa-terminal me-3"></i>
-            <a class="text-decoration-none" id="home" href="{% url 'index' %}">docs</a> / <a id="doc_breadcrumb" class="text-decoration-none fw-bold text-lowercase"></a>
+            <span class="text-primary">docs</span> / <a id="doc_breadcrumb" class="text-decoration-none fw-bold text-lowercase"></a>
           </span>
         </div>
         <div class="col-auto">
           <!-- HEADER DOCS VERSION -->
           <div class="input-group">
             <button type="button" class="btn btn-sm btn-outline-secondary" disabled>Versão 1.0</button>
-            <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
+            <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" disabled>
               <span class="visually-hidden">Toggle Dropdown</span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
@@ -67,12 +71,17 @@
           <!-- END HEADEER DOCS VERSION -->          
         </div>
       </div>
-      <div class="row mt-3">
+      <div class="row mt-3 pr-0">
         <div class="col">
           <ul class="nav text-muted text-center fs-7 user-select-none">
-            <li class="nav-item docs-nav-item active pointer" onclick="filter('view_type','manual')"><i class="fas fa-book me-1"></i> Manual</li>
-            <li class="nav-item docs-nav-item pointer" onclick="filter('view_type','issues')"><i class="fas fa-bug me-1"></i> Issues <sup id="issues_badge" class="badge bg-secondary opacity-75"></sup></li>
+            <li id="man_link_btn" class="nav-item docs-nav-item active pointer" onclick="doc_build('man');"><i class="fas fa-book me-1"></i> Manual</li>
+            <li id="issues_link_btn" class="nav-item docs-nav-item pointer" onclick="doc_build('issues');"><i class="fas fa-bug me-1"></i> Issues <sup id="issues_badge" class="badge bg-secondary opacity-75"></sup></li>
           </ul>
+        </div>
+        <div class="col-auto">
+          <ul class="nav text-muted text-center fs-7 user-select-none">
+            <li class="nav-item docs-nav-item home"><a id="home" class="text-decoration-none text-muted" href="{% url 'index' %}">Voltar</a></li>
+          </ul>          
         </div>
       </div>
     </div>
@@ -80,7 +89,7 @@
   <div id="docs_body" class="container-fluid pt-lg-4">
     <div class="row">
       <!-- INICIO  BODY MAIN-->
-      <div id="docs_body_main" class="col-lg-8 mt-4 mt-lg-0 order-2 order-lg-1">
+      <div id="docs_body_main" class="col-lg mt-4 mt-lg-0 order-2 order-lg-1">
         <h3 class="mb-0" id="doc_titulo"></h3>
         <hr>
         <div id="body_elements_container" style="padding-bottom: 400px;"></div>
@@ -88,7 +97,7 @@
       <!-- END  BODY MAIN-->
       
       <!-- INICIO  BODY TAGS-->
-      <div class="col-lg order-1 order-lg-2">
+      <div id="body_nav_container" class="col-lg-4 order-1 order-lg-2">
         <div class="row">
           <div class="col mt-4 fixed-lg">
             <h5 class="fw-bold text-muted">Indice</h5>
