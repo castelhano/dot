@@ -10,34 +10,51 @@ const query = window.location.search;
 const urlParams = new URLSearchParams(query);
 const version = urlParams.get('version');
 const view_type = urlParams.get('view_type') != null ? urlParams.get('view_type') : 'manual';
-const target = urlParams.get('target') != null ? urlParams.get('target') : 'core';
+const target = urlParams.get('target') != null ? urlParams.get('target') : 'Core';
 
-let doc = new Docs();
-if(target == null || target == 'core'){
-  doc.titulo = 'Core';
-  doc.tags.push(new Tag('python','https://www.python.org/'), new Tag('django','https://www.djangoproject.com/'), new Tag('bootstrap5','https://getbootstrap.com/','badge bg-pink text-light'));
-  p1 = new Topic('instalacao', 'Instalação');
-  p1.subtopics.push(new Topic('instalacao_ambiente','Preparando o ambiente'));
-  p1.subtopics.push(new Topic('instalacao_configuracoes','Configurações iniciais'));
-  p1.subtopics.push(new Topic('instalacao_fixture','Carregando dados iniciais <b>(fixture)</b>'));
-  i1 = new Issue();
-  doc.topics.push(p1);
-  i1.titulo = 'Manual do sistema incompleto';
-  i1.descricao = 'Verificado que maior parte dos componentes do sistema permanece sem conteudo e detalhamento.';
-  i1.data_entrada = '16/12/2021';
-  i1.usuario_entrada = 'Rafael Alves';
-  doc.issues.push(i1);
-  
+let docs = {};
+
+// Montando os documentos
+// Percorre array base instanciada no layout docs.html
+
+for(i=0;i < base.length;i++){ // CRIANDO DADOS BASO DO DOCUMENTO
+  d = new Docs();
+  d.titulo = base[i].titulo;
+  for(j=0;j < base[i].tags.length;j++){ // POPULANDO AS TAGS
+    t = new Tag(base[i].tags[j].nome,base[i].tags[j].url,base[i].tags[j].class_list);
+    d.tags.push(t);
+  }
+  for(j=0;j < base[i].topics.length;j++){ // POPULANDO OS TOPICS
+    t = new Topic(base[i].topics[j].id,base[i].topics[j].titulo);
+    d.topics.push(t);
+    
+    for(k=0;k < base[i].topics[j].subtopics.length;k++){ // POPULANDO OS SUBTOPICOS DO TOPICO ALVO
+      st = new Topic(base[i].topics[j].subtopics[k].id,base[i].topics[j].subtopics[k].titulo);
+      d.topics[j].subtopics.push(st);
+      
+      for(l=0;l < base[i].topics[j].subtopics[k].htmlEls.length - 1;l++){
+        console.log('IJKL' + String(i) + String(j) + String(k) + String(l));
+        el = new HtmlEL(base[i].topics[j].subtopics[k].htmlEls[l].el,base[i].topics[j].subtopics[k].htmlEls[l].innerHTML,base[i].topics[j].subtopics[k].htmlEls[l].class_list,base[i].topics[j].subtopics[k].htmlEls[l].auto_closed_tag);
+        console.log("l | : " + l  + base[i].topics[j].subtopics[k].htmlEls.length + (l < base[i].topics[j].subtopics[k].htmlEls.length + 1));
+        console.log("VOU ENTRAR: "  + (l < base[i].topics[j].subtopics[k].htmlEls.length + 1));
+        // d.topics[j].subtopics[k].htmlEls.push(el);
+      }
+    }
+  }
+  for(j=0;j < base[i].issues.length;j++){
+    t = new Issue(base[i].issues[j].titulo,base[i].issues[j].descricao,base[i].issues[j].solucao,base[i].issues[j].data_entrada,base[i].issues[j].usuario_entrada,base[i].issues[j].data_conclusao,base[i].issues[j].responsavel_conclusao,base[i].issues[j].status,base[i].issues[j].fechado);
+    d.issues.push(t);
+  }
+  docs[d.titulo] = d;
+}
+// console.log(docs);
+if(target == null || target == 'Core'){
+  var doc = docs[target];
+  // console.log(doc);
   if(view_type == 'manual'){
-    el1 = new HtmlEL('p', 'Manual de utilização do sistema DOT, selecione o item desejado no <code class="fw-bold text-uppercase">indice</code> ou use a caixa de pesquisa, atalho <kbd>Ctrl+/</kbd>');
-    el2 = new HtmlEL('div', 'Este eh um exemplo de um elemento callout', 'callout callout-warning');
-    p1.add(el1.html());
-    p1.add(el2.html());
+    doc_draw(doc);
   }
-  else{
-    p1.add('FOOOOO');
-  }
-  
+  else{}  
 }
 
 
@@ -50,9 +67,11 @@ function doc_draw(doc){
     document.getElementById('nav_container').innerHTML += `<li class="text-primary pointer" onclick="goTo('${doc.topics[i].id}');">${doc.topics[i].titulo}</a>`;
     document.getElementById('body_elements_container').innerHTML += doc.topics[i].body;    
     let subtopic_body = '';
-    for(j=0;j<doc.topics[i].subtopics.length;j++){subtopic_body += `<li class="text-primary pointer" onclick="goTo('${doc.topics[i].subtopics[j].id}');">${doc.topics[i].subtopics[j].titulo}</a>`;}
+    for(j=0;j < doc.topics[i].subtopics.length;j++){
+      subtopic_body += `<li class="text-primary pointer" onclick="goTo('${doc.topics[i].subtopics[j].id}');">${doc.topics[i].subtopics[j].titulo}</a>`;
+    }
     document.getElementById('nav_container').innerHTML += `<li><ul class="list-unstyled ps-4">${subtopic_body}</ul></li>`;
   }
   for(i=0;i<doc.tags.length;i++){document.getElementById('nav_tags').innerHTML += `<a class="me-1 text-decoration-none ${doc.tags[i].class_list}" href="${doc.tags[i].url}" target="_blank">${doc.tags[i].nome}</a>`;}
 };
-doc_draw(doc);
+// doc_draw(doc);

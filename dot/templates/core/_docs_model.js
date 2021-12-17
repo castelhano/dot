@@ -26,9 +26,11 @@ function HtmlEL(el, innerHTML='', classlist='', auto_closed_tag=false){
 function Topic(id, titulo){
   this.id = id;
   this.titulo = titulo;
+  this.htmlEls = [];
   this.subtopics = [];
   this.body = '';
-  this.add = function(b){this.body += b;}
+  this.add_el = function(e){this.htmlEls.push(e);}
+  this.body_print = function(b){this.body += b;}
 };
 
 function User(nome, nickname, email=''){
@@ -38,16 +40,16 @@ function User(nome, nickname, email=''){
   this.email_href = function(titulo, mensagem){return `mailto:${this.email}?subject=${titulo}&body=${mensagem}`;}
 };
 
-function Issue(){
-  this.titulo = '';
-  this.descricao = '';
-  this.solucao = '';
-  this.data_entrada = '';
-  this.usuario_entrada = '';
-  this.data_conclusao = '';
-  this.responsavel_conclusao = '';
-  this.status = 'ABERTO';
-  this.fechado = false;
+function Issue(titulo, descricao, solucao, data_entrada, usuario_entrada, data_conclusao, responsavel_conclusao, status, fechado){
+  this.titulo = titulo;
+  this.descricao = descricao;
+  this.solucao = solucao;
+  this.data_entrada = data_entrada;
+  this.usuario_entrada = usuario_entrada;
+  this.data_conclusao = data_conclusao;
+  this.responsavel_conclusao = responsavel_conclusao;
+  this.status = status;
+  this.fechado = fechado;
   this.href = function(){if(this.url =! ''){window.location = 'url';}else{return false;}};
 };
 

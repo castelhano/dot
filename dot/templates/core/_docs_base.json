@@ -1,0 +1,146 @@
+[
+  {
+    "titulo": "Core",
+    "tags":[
+      {
+        "nome":"python",
+        "url":"https://www.python.org/"
+      },
+      {
+        "nome":"django",
+        "url":"https://www.djangoproject.com/"
+      },
+      {
+        "nome":"bootstrap5",
+        "url":"https://getbootstrap.com/",
+        "class_list":"badge bg-pink text-light"
+      }
+    ],
+    "topics":[
+      {
+      "id":"instalacao",
+      "titulo":"Instalação",
+      "htmlEls":[
+        {
+          "el":"p",
+          "auto_closed_tag":false,
+          "class_list":"",
+          "innerHTML":"Todo o passo a passo a seguir foi preparado para o ambiente linux em uma distribuição <code>“debian like”</code>. Pequenos ajustes serão necessário caso o sistema operacional escolhido seja outro",
+          "attr":[{}]          
+        }
+      ],
+      "subtopics":[
+        {
+          "id":"instalacao_ambiente",
+          "titulo":"Preparando o ambiente",
+          "htmlEls":[
+            {
+              "el":"div",
+              "auto_closed_tag":false,
+              "class_list":"bg-light border rounded py-1 px-2 user-select-all",
+              "innerHTML":"<code>apt update && apt upgrade</code>",
+              "attr":[{}]          
+            },
+            {
+              "el":"p",
+              "auto_closed_tag":false,
+              "class_list":"",
+              "innerHTML":"Sistema requer o python na versão <b>3.8 ou superior</b>, execute o comando seguinte para verificar a versão do python atualmente instalada. Por padrão o ubuntu já vem pre instalado com a versão mais recente do python",
+              "attr":[{}]          
+            },
+            {
+              "el":"div",
+              "auto_closed_tag":false,
+              "class_list":"bg-light border rounded py-1 px-2 user-select-all",
+              "innerHTML":"<code>python -V</code>",
+              "attr":[{}]          
+            },
+            {
+              "el":"p",
+              "auto_closed_tag":false,
+              "class_list":"",
+              "innerHTML":"Caso necessário, o comando abaixo instala a versão mais atualizada do python",
+              "attr":[{}]          
+            },
+            {
+              "el":"div",
+              "auto_closed_tag":false,
+              "class_list":"bg-light border rounded py-1 px-2 user-select-all",
+              "innerHTML":"<code>sudo apt-get install python3</code>",
+              "attr":[{}]          
+            },
+            {
+              "el":"p",
+              "auto_closed_tag":false,
+              "class_list":"",
+              "innerHTML":"Após isso precisamos instalar o framework <code>django</code> e a biblioteca <code>pillow</code> (usada para manipulação de imagens)",
+              "attr":[{}]          
+            },
+            {
+              "el":"div",
+              "auto_closed_tag":false,
+              "class_list":"bg-light border rounded py-1 px-2 user-select-all",
+              "innerHTML":"<code>pip install django pillow</code>",
+              "attr":[{}]          
+            },
+            {
+              "el":"p",
+              "auto_closed_tag":false,
+              "class_list":"",
+              "innerHTML":"Utilizamos o git como sistema de versionamento de software e o github para distribuição, necessário a instalção do git",
+              "attr":[{}]          
+            },
+            {
+              "el":"div",
+              "auto_closed_tag":false,
+              "class_list":"bg-light border rounded py-1 px-2 user-select-all",
+              "innerHTML":"<code>sudo apt-get install git</code>",
+              "attr":[{}]          
+            },
+            {
+              "el":"p",
+              "auto_closed_tag":false,
+              "class_list":"",
+              "innerHTML":"Usamos o comando abaixo do git para baixar o projeto atualizado do repositório",
+              "attr":[{}]          
+            },
+            {
+              "el":"div",
+              "auto_closed_tag":false,
+              "class_list":"bg-light border rounded py-1 px-2 user-select-all",
+              "innerHTML":"<code>git clone https://github.com/castelhano/dot.git</code>",
+              "attr":[{}]          
+            },
+            {
+              "el":"div",
+              "auto_closed_tag":false,
+              "class_list":"callout callout-warning",
+              "innerHTML":"É necessário ter uma conta no github liberada no repositório, entre com contato contato com o administrador do sistema caso tenha problemas neste processo",
+              "attr":[{}]
+            }]
+        },
+        {
+          "id":"instalacao_configuracoes",
+          "titulo":"Configurações iniciais"
+        },
+        {
+          "id":"instalacao_fixture",
+          "titulo":"Carregando dados iniciais <b>(fixture)</b>"
+        }
+      ]}      
+    ],
+    "issues":[
+      {
+        "titulo":"Manual do sistema incompleto",
+        "descricao":"Verificado que maior parte dos componentes do sistema permanece sem conteudo e detalhamento.",
+        "solucao":"",
+        "data_entrada":"16/12/2021",
+        "usuario_entrada":"Rafael Alves",
+        "data_conclusao":"",
+        "responsavel_conclusao":"",
+        "status":"ABERTO",
+        "fechado":false
+      }
+    ]
+  }
+]
