@@ -37,7 +37,7 @@
             {
               "el":"div",
               "auto_closed_tag":false,
-              "class_list":"bg-light border rounded py-1 px-2 user-select-all",
+              "class_list":"bg-light border rounded py-1 px-2 mb-3 user-select-all",
               "innerHTML":"<code>apt update && apt upgrade</code>",
               "attr":[{}]          
             },
@@ -51,7 +51,7 @@
             {
               "el":"div",
               "auto_closed_tag":false,
-              "class_list":"bg-light border rounded py-1 px-2 user-select-all",
+              "class_list":"bg-light border rounded py-1 px-2 mb-3 user-select-all",
               "innerHTML":"<code>python -V</code>",
               "attr":[{}]          
             },
@@ -65,7 +65,7 @@
             {
               "el":"div",
               "auto_closed_tag":false,
-              "class_list":"bg-light border rounded py-1 px-2 user-select-all",
+              "class_list":"bg-light border rounded py-1 px-2 mb-3 user-select-all",
               "innerHTML":"<code>sudo apt-get install python3</code>",
               "attr":[{}]          
             },
@@ -79,7 +79,7 @@
             {
               "el":"div",
               "auto_closed_tag":false,
-              "class_list":"bg-light border rounded py-1 px-2 user-select-all",
+              "class_list":"bg-light border rounded py-1 px-2 mb-3 user-select-all",
               "innerHTML":"<code>pip install django pillow</code>",
               "attr":[{}]          
             },
@@ -93,7 +93,7 @@
             {
               "el":"div",
               "auto_closed_tag":false,
-              "class_list":"bg-light border rounded py-1 px-2 user-select-all",
+              "class_list":"bg-light border rounded py-1 px-2 mb-3 user-select-all",
               "innerHTML":"<code>sudo apt-get install git</code>",
               "attr":[{}]          
             },
@@ -107,7 +107,7 @@
             {
               "el":"div",
               "auto_closed_tag":false,
-              "class_list":"bg-light border rounded py-1 px-2 user-select-all",
+              "class_list":"bg-light border rounded py-1 px-2 mb-3 user-select-all",
               "innerHTML":"<code>git clone https://github.com/castelhano/dot.git</code>",
               "attr":[{}]          
             },
@@ -121,11 +121,13 @@
         },
         {
           "id":"instalacao_configuracoes",
-          "titulo":"Configurações iniciais"
+          "titulo":"Configurações iniciais",
+          "htmlEls":[]
         },
         {
           "id":"instalacao_fixture",
-          "titulo":"Carregando dados iniciais <b>(fixture)</b>"
+          "titulo":"Carregando dados iniciais <b>(fixture)</b>",
+          "htmlEls":[]
         }
       ]}      
     ],

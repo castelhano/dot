@@ -37,11 +37,14 @@
       padding-bottom: 8px;
       transition: opacity 0.5s ease-in-out;
     }
+    @media(min-width: 992px){
+      .fixed-lg{position: fixed;}
+    }
   </style>
   <title>Docs</title>
 </head>
 <body>
-  <div class="docs-header bg-light border-bottom">
+  <div class="docs-header bg-light border-bottom sticky-top">
     <div class="container-fluid px-3">
       <div class="row pt-2">
         <div class="col">
@@ -80,14 +83,14 @@
       <div id="docs_body_main" class="col-lg-8 mt-4 mt-lg-0 order-2 order-lg-1">
         <h3 class="mb-0" id="doc_titulo"></h3>
         <hr>
-        <div id="body_elements_container"></div>
+        <div id="body_elements_container" style="padding-bottom: 400px;"></div>
       </div>
       <!-- END  BODY MAIN-->
       
       <!-- INICIO  BODY TAGS-->
       <div class="col-lg order-1 order-lg-2">
         <div class="row">
-          <div class="col mt-4">
+          <div class="col mt-4 fixed-lg">
             <h5 class="fw-bold text-muted">Indice</h5>
             <ul id="nav_container" class="list-unstyled ps-1"></ul>
             <div id="nav_tags" class="mt-4 ps-2"></div>

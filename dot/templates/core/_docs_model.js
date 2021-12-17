@@ -31,6 +31,7 @@ function Topic(id, titulo){
   this.body = '';
   this.add_el = function(e){this.htmlEls.push(e);}
   this.body_print = function(b){this.body += b;}
+  this.html = function(el='h4'){return `<${el} id="${this.id}" class="mt-4" style="scroll-margin: 90px;">${this.titulo}</${el}>`}
 };
 
 function User(nome, nickname, email=''){
