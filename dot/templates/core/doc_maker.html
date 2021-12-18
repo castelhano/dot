@@ -1,0 +1,44 @@
+{% extends "layout/editor.html" %}
+{% load static %}
+
+
+{% block editor %}
+<div id="editor">@callout{ #meuID :foo;feii;fon __Este eh um texto eh valido__}</div>
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/vendor/ace/ace.js' %}"></script>
+{% endblock %}
+
+<script>
+  {% block add_script %}
+  var editor = ace.edit("editor");
+  editor.setTheme("ace/theme/ambiance");
+  editor.session.setMode("ace/mode/text");
+  editor.renderer.setScrollMargin(14)
+  document.getElementById('editor').style.fontSize='0.9rem';
+  
+var rules = editor.session.$mode.$highlightRules.getRules();
+for (var stateName in rules) {
+    if (Object.prototype.hasOwnProperty.call(rules, stateName)) {
+        rules[stateName].unshift(
+        {token: 'keyword',regex: '@[A-z-0-9]+'},
+        {token: 'variable',regex: '![A-z-0-9,-;]+'},
+        {token: 'constant',regex: ':[A-z-0-9,-;]+'},
+        {token: 'string',regex: '#[A-z-0-9]+'},
+        {token: 'invalid',regex: '<br>|<hr>'},
+        {token: 'comment',regex: '__[A-z0-9À-ú,-; ]+__'},
+        {token: 'custom',regex: 'foo'},
+      );
+    }
+}
+
+
+
+editor.session.$mode.$tokenizer = null;
+editor.session.bgTokenizer.setTokenizer(editor.session.$mode.getTokenizer());
+editor.session.bgTokenizer.start(0);
+
+  
+  {% endblock %}
+</script>

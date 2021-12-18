@@ -53,6 +53,10 @@ class Profile(models.Model):
     def alertas(self):
         alertas = Alerta.objects.filter(to_user=self.user,lido=False).order_by('data')
         return alertas
+    class Meta:
+        permissions = [
+            ("doc_maker", "Pode criar documentacao"),
+        ]
 
 
 @receiver(post_save, sender=User)

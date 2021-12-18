@@ -11,6 +11,7 @@ urlpatterns = [
     path('core_run_script',views.run_script,name='core_run_script'),
     path('logs',views.logs,name='logs'),
     path('docs',docs.docs,name='docs'),
+    path('core_doc_maker',docs.doc_maker,name='core_doc_maker'),
     path('handle404',views.handle404,name='handle404'),
     path('handle500',views.handle500,name='handle500'),
     path('core_usuarios',views.usuarios,name='core_usuarios'),
