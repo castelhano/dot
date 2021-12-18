@@ -13,9 +13,16 @@
     top: 45px;
     right: 0;
     bottom: 0;
-    left: 0;
+    left: 250px;
   }
   .ace_custom{color:#ac5d5d;}
+  
+  .sidebar{
+    background-color: #f5f5f5;
+    padding-right: 20px;
+    padding-top: 20px;
+    min-height: calc(100vh - 50px);
+  }
   {% block style %}{% endblock %}
   </style>
   <link rel="shortcut icon" href="{% static 'img/favicon.ico'%}">
@@ -50,7 +57,8 @@
       </div>
     </div>
   </nav>
-  {% block editor %}{% endblock %}        
+  <div class="sidebar">Aqui</div>
+  {% block editor %}{% endblock %}  
   
   {% for message in messages %}
   <div class="alert alert-{{message.tags}} alert-dismissible fade show mb-1" role="alert">
