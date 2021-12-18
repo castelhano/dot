@@ -1,0 +1,26 @@
+<li class="nav-item ms-3">
+  <div class="btn-group" role="group">
+    <button type="button" class="btn btn-sm btn-outline-light border-0"><i class="fas fa-spell-check"></i></button>
+    <button type="button" class="btn btn-sm btn-outline-light border-0"><i class="fas fa-upload"></i></button>
+    <a id="home" class="btn btn-sm btn-outline-light border-0" href="{% url 'index' %}"><i class="fas fa-undo"></i></a>
+  </div>  
+  <div class="btn-group ms-3" role="group">
+    <button type="button" class="btn btn-sm btn-outline-light border-0"><i class="fas fa-plus"></i></button>
+    <button type="button" class="btn btn-sm btn-outline-light border-0"><i class="fas fa-clone"></i></button>
+    <button type="button" class="btn btn-sm btn-outline-light border-0"><i class="fas fa-trash text-warning me-1"></i> Excluir</button>
+  </div>
+</li>
+
+<script>
+  var SHORTCUT_MAP = {};
+  
+  function eventHandler(e){
+    {% include '_component/script/global_handler.js' %}
+    else{
+      // let cadastro = false;
+      // try{cadastro = document.getElementById('menu_cadastro').classList.contains('show') ? true : false;}catch(err){}
+      // if(cadastro && e.key.toLowerCase() == 'e'){e.preventDefault();document.getElementById('cadastro_empresa').click();}
+      // else if(cadastro && e.key.toLowerCase() == 'g'){e.preventDefault();document.getElementById('cadastro_grupo').click();}
+    }
+  }
+</script>

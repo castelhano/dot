@@ -1,9 +1,12 @@
 {% extends "layout/editor.html" %}
 {% load static %}
 
+{% block model_menu %}
+{% include "_component/menu/editor.html" %}
+{% endblock%}
 
 {% block editor %}
-<div id="editor">@callout{ #meuID :foo;feii;fon __Este eh um texto eh valido__}</div>
+<div id="editor"></div>
 {% endblock%}
 
 {% block add_script_src %}
@@ -16,6 +19,7 @@
   editor.setTheme("ace/theme/ambiance");
   editor.session.setMode("ace/mode/text");
   editor.renderer.setScrollMargin(14)
+  editor.setShowPrintMargin(false);
   document.getElementById('editor').style.fontSize='0.9rem';
   
 var rules = editor.session.$mode.$highlightRules.getRules();
