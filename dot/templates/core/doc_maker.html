@@ -2,11 +2,33 @@
 {% load static %}
 
 {% block model_menu %}
-{% include "_component/menu/editor.html" %}
+<li class="nav-item ms-4">
+  <div class="btn-group" role="group">
+    <button type="button" class="btn btn-sm btn-outline-light border-0"><i class="fas fa-plus"></i></button>
+    <button type="button" class="btn btn-sm btn-outline-light border-0"><i class="fas fa-clone"></i></button>
+  </div>
+</li>
+<li class="nav-item ms-5">
+  <div class="btn-group ms-4" role="group">
+    <button type="button" class="btn btn-sm btn-outline-light border-0"><i class="fas fa-spell-check"></i></button>
+    <button type="button" class="btn btn-sm btn-outline-light border-0"><i class="fas fa-upload"></i></button>
+  </div>
+</li>
+<li class="nav-item">
+  <div class="btn-group ms-3" role="group">
+    <a href="{% url 'core_doc_maker' %}" id="clear" class="btn btn-sm btn-outline-light border-0" title="Reverter Alterações"><i class="fas fa-eraser"></i></a>
+    <a href="{% url 'index' %}" id="home" class="btn btn-sm btn-outline-light border-0" title="Salvar e Fechar"><i class="fas fa-sign-out-alt me-2"></i></a>
+  </div>
+</li>
 {% endblock%}
 
 {% block editor %}
 <div id="editor"></div>
+{% endblock%}
+
+{% block nav_editor %}
+<a href="#" class="ps-2 list-group-item list-group-item-action list-group-item-light active d-flex justify-content-between align-items-center">Foo<span><i class="fas fa-plus me-2 pointer"></i><i class="fas fa-trash pointer"></i></span></a>
+<a href="#" class="ps-2 list-group-item list-group-item-action list-group-item-light d-flex justify-content-between align-items-center">Fei<span><i class="fas fa-plus me-2 pointer"></i><i class="fas fa-trash pointer"></i></span></a>
 {% endblock%}
 
 {% block add_script_src %}
@@ -15,6 +37,17 @@
 
 <script>
   {% block add_script %}
+  var SHORTCUT_MAP = {};
+  function eventHandler(e){
+    {% include '_component/script/global_handler.js' %}
+    else{
+      // let cadastro = false;
+      // try{cadastro = document.getElementById('menu_cadastro').classList.contains('show') ? true : false;}catch(err){}
+      // if(cadastro && e.key.toLowerCase() == 'e'){e.preventDefault();document.getElementById('cadastro_empresa').click();}
+      // else if(cadastro && e.key.toLowerCase() == 'g'){e.preventDefault();document.getElementById('cadastro_grupo').click();}
+    }
+  }
+  // --------------------------------------------------------------------
   var editor = ace.edit("editor");
   editor.setTheme("ace/theme/ambiance");
   editor.session.setMode("ace/mode/text");

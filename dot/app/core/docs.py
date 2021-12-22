@@ -9,4 +9,5 @@ def docs(request):
 
 @login_required
 def doc_maker(request):
-    return render(request,'core/doc_maker.html')
+    c = '<span>Elemento <b class="text-danger">div</b> inserido com sucesso</span><span>14:22</span>'
+    return render(request,'core/doc_maker.html',{'console':[c]})
