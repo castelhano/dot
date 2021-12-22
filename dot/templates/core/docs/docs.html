@@ -1,0 +1,32 @@
+{% extends "layout/docs.html" %}
+
+{% block page_title %}index{% endblock %}
+
+{% block doc_container %}
+<h3 class="mb-0" id="doc_titulo">Documentação</h3>
+<hr>
+<p>Detalhamento do processo de instalação e configuração do sistema, componentes básicos e de extrutura, gestão do django, além do processo para autenticação e permissão dentro do sistema.</p>
+<h5 id="instalacao">Instalação</h5>
+{% endblock %}
+
+{% block nav_container %}
+<li><span class="text-primary pointer" onclick="goTo('instalacao')">Instalação</span></li>
+<li><span class="text-primary pointer" onclick="goTo('django')">Django</span></li>
+<li><span class="text-primary pointer ps-4" onclick="goTo('fixture')">Loaddata <b>(fixture)</b></span></li>
+<li><span class="text-primary pointer" onclick="goTo('usuarios')">Autenticação</span></li>
+<li><span class="text-primary pointer" onclick="goTo('permissoes')">Permissão</span></li>
+<li><hr class="my-1"></li>
+<li><span class="text-primary pointer" onclick="goTo('console')">Console</span></li>
+<li><span class="text-primary pointer" onclick="goTo('componentes')">Componentes</span></li>
+<li><span class="text-primary pointer ps-4" onclick="goTo('component_fields')">Fields Components</li>
+<li><span class="text-primary pointer ps-4" onclick="goTo('component_menu')">Menu Components</li>
+<li><span class="text-primary pointer ps-4" onclick="goTo('component_script')">Script Components</li>
+<li><span class="text-primary pointer ps-4" onclick="goTo('component_widget')">Widgets Components</li>
+  <li><span class="text-primary pointer" onclick="goTo('alertas')">Alertas</span></li>
+{% endblock %}
+
+{% block badges_container %}
+<a class="badge text-light bg-orange text-decoration-none" href="https://www.python.org/" target="_blank">python</a>
+<a class="badge text-light bg-purple text-decoration-none" href="https://www.djangoproject.com/" target="_blank">django</a>
+<a class="badge text-light bg-primary text-decoration-none" href="https://getbootstrap.com/docs/5.1/getting-started/introduction/" target="_blank">bootstrap5</a>
+{% endblock %}

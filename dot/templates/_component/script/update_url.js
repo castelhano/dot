@@ -8,3 +8,8 @@ function updateUrl(uri, key, value) {
     return uri + separator + key + "=" + value;
   }
 }
+
+// USAGE:
+// function filter(filter, value){
+//   location.href = updateUrl(window.location.href, filter, value);
+// }

@@ -61,16 +61,21 @@ def logs(request):
 
 def run_script(request):
     # usuario = User.objects.get(id=1)
-    # titulo = 'Alerta Novo'
-    # mensagem = 'Este eh um novo alerta sem titulo, testando'
+    # titulo = 'Alerta com Link'
+    # mensagem = 'Verificamos que você eh um <b>merda</b>, favor confirmar esta cnstatacao....'
     # link = 'core_usuarios'
-    # alerta = Alerta.objects.create(usuario=usuario, titulo=titulo, mensagem=mensagem)
+    # alerta = Alerta.objects.create(usuario=usuario, titulo=titulo, mensagem=mensagem, link=link)
     # alerta = Alerta.objects.create(to_user=usuario,from_user=request.user,titulo=titulo2,mensagem=mensagem2,critico=True)
     # usuario.profile.force_password_change = False
     # usuario.save()
     # messages.success(request,'Done')
     messages.warning(request,'Nothing to do')
     return redirect('index')
+
+@login_required
+def console(request):
+    c = '<span>Console DOT system <b>versão 1.0</b>, powered by <a href="https://ace.c9.io/" target="_blank" class="text-danger fw-bold text-decoration-none">Ace Editor&trade;</a></span><span>14:22</span>'
+    return render(request,'core/console.html',{'console':[c]})
 
 
 # METODOS ADD

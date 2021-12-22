@@ -48,9 +48,11 @@ VERSION: 1.0
 .callout-success{border-left-color: #198754;}
 .callout-warning{border-left-color: #FFC107;}
 .callout-danger{border-left-color: #DC3545;}
+.callout-orange{border-left-color: #F35B04;}
 
 .breadcrumb-item > a{text-decoration: none;}
 .alert{position: fixed;width: 100%;bottom: -4px;}
+.code{background-color: #F8F9FA;border: 1px solid #dee2e6;border-radius: .25rem;padding: 5px 10px;margin-bottom: 15px;user-select: all;}
 
 .card-widget{
   min-height: 150px;

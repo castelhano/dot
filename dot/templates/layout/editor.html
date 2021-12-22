@@ -42,10 +42,9 @@
   <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/dot.css' %}" type="text/css">
   
-  <title>{% block title %}Code{% endblock %}</title>
+  <title>{% block title %}Editor{% endblock %}</title>
 </head>
 <body>
-  <a class="d-none" id="clear" href="{% url 'core_doc_maker' %}"></a>
   <nav class="navbar navbar-dark bg-dark bg-gradient navbar-expand sticky-top" style="height:45px;">
     <div class="container-fluid">
       <a class="navbar-brand user-select-none pt-0">{% block model %} Dot {% endblock%}</a>
@@ -57,8 +56,7 @@
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle pt-1" id="system" href="#" data-bs-toggle="dropdown" title="ALT + S"><span class="d-none d-sm-inline">{{user.first_name}} {{user.last_name}}</span><span class="d-inline d-sm-none">{{user.first_name.0}}{{user.last_name.0}}</span></a>
             <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end mt-1" id="user_list_options">
-              <li><a class="dropdown-item" id="change_password_link" href="{% url 'change_password' %}"><i class="fas fa-unlock-alt me-2" style="width:15px"></i> Alterar <b>S</b>enha</a></li>
-              <li><a class="dropdown-item pointer" id="shortcut_link_list" data-bs-toggle="modal" data-bs-target="#shortcut_modal"><i class="fas fa-keyboard me-2" style="width:15px"></i> <b>A</b>talhos / Sobre</a></li>
+              <li><a class="dropdown-item pointer" id="shortcut_link_list" data-bs-toggle="modal" data-bs-target="#shortcut_modal"><i class="fas fa-keyboard me-2" style="width:15px"></i> <b>A</b>talhos Console</a></li>
               <li><a class="dropdown-item" id="docs_link" href="{% url 'docs' %}"><i class="fas fa-terminal me-2" style="width:15px"></i> <b>D</b>ocumentação</a></li>
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2" style="width:15px"></i> Sair</a></li>
@@ -71,7 +69,6 @@
   <div class="sidebar bg-dark-light text-light">
     <div class="list-group list-group-flush fs-7">
       {% block nav_editor %}{% endblock%}
-      <!-- <a href="#" class="ps-2 list-group-item list-group-item-action list-group-item-light active d-flex justify-content-between align-items-center">Foo</a> -->
     </div>
   </div>
   {% block editor %}{% endblock %}

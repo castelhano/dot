@@ -16,8 +16,8 @@
 </li>
 <li class="nav-item">
   <div class="btn-group ms-3" role="group">
-    <a href="{% url 'core_doc_maker' %}" id="clear" class="btn btn-sm btn-outline-light border-0" title="Reverter Alterações"><i class="fas fa-eraser"></i></a>
-    <a href="{% url 'index' %}" id="home" class="btn btn-sm btn-outline-light border-0" title="Salvar e Fechar"><i class="fas fa-sign-out-alt me-2"></i></a>
+    <a href="{% url 'console' %}" id="clear" class="btn btn-sm btn-outline-light border-0" title="Reverter Alterações"><i class="fas fa-eraser"></i></a>
+    <a href="{% url 'index' %}" id="home" class="btn btn-sm btn-outline-light border-0" title="Salvar e Fechar"><i class="fas fa-sign-out-alt"></i></a>
   </div>
 </li>
 {% endblock%}
@@ -27,8 +27,8 @@
 {% endblock%}
 
 {% block nav_editor %}
-<a href="#" class="ps-2 list-group-item list-group-item-action list-group-item-light active d-flex justify-content-between align-items-center">Foo<span><i class="fas fa-plus me-2 pointer"></i><i class="fas fa-trash pointer"></i></span></a>
-<a href="#" class="ps-2 list-group-item list-group-item-action list-group-item-light d-flex justify-content-between align-items-center">Fei<span><i class="fas fa-plus me-2 pointer"></i><i class="fas fa-trash pointer"></i></span></a>
+<a href="#" class="ps-2 list-group-item list-group-item-action list-group-item-light active d-flex justify-content-between align-items-center">Foo<span><i class="fas fa-trash pointer"></i></span></a>
+<a href="#" class="ps-2 list-group-item list-group-item-action list-group-item-light d-flex justify-content-between align-items-center">Fei<span><i class="fas fa-trash pointer"></i></span></a>
 {% endblock%}
 
 {% block add_script_src %}

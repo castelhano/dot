@@ -22,13 +22,13 @@ function carregaAlertas() {
           qtde++;
         }
         if(qtde > 0){
-          document.getElementById('messages').classList.remove('d-none');
-          document.getElementById('messages').classList.add('d-inline');
+          document.getElementById('messages_widget').classList.remove('d-none');
+          document.getElementById('messages_widget').classList.add('d-inline');
           document.getElementById('alertas_badge').innerHTML = qtde;
         }
         else{
-          document.getElementById('messages').classList.remove('d-inline');
-          document.getElementById('messages').classList.add('d-none');
+          document.getElementById('messages_widget').classList.remove('d-inline');
+          document.getElementById('messages_widget').classList.add('d-none');
           document.getElementById('alertas_badge').innerHTML = '';            
         }
       }
