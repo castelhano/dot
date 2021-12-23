@@ -63,12 +63,12 @@
           <!-- HEADER DOCS VERSION -->
             <div class="input-group">
               <input type="search" class="form-control form-control-sm" id="main_search" list="docs_options" name="pesquisa" value="" placeholder="Pesquisa [ / ]">
-              <!-- <button type="submit" class="btn btn-sm btn-primary" name="button"><i class="fas fa-search"></i></button> -->
+              <button type="button" class="btn btn-sm btn-primary" name="button" onclick="find();"><i class="fas fa-search"></i></button>
             </div>
             <datalist id="docs_options">
               <option value="Core / Instalação">
             </datalist>
-          <!-- END HEADEER DOCS VERSION -->          
+          <!-- END HEADEER DOCS VERSION -->
         </div>
       </div>
       <div class="row mt-3 pr-0">
@@ -89,7 +89,7 @@
   <div id="docs_body" class="container-fluid pt-lg-4">
     <div class="row">
       <!-- INICIO  BODY MAIN-->
-      <div class="col-lg mt-4 mt-lg-0 order-2 order-lg-1">
+      <div id="main_content" class="col-lg mt-4 mt-lg-0 order-2 order-lg-1">
         {% block doc_container %} {% endblock %}
       </div>
       <!-- INICIO  NAVS -->
@@ -113,7 +113,7 @@
   
   <script src="{% static 'js/vendor/bootstrap.bundle.min.js' %}"></script>
   <script src="{% static 'js/_basicListener.js' %}"></script>
-  
+  {% block script_src %}{% endblock %}
   <script>
   {% include '_component/script/update_url.js' %}
   var SHORTCUT_MAP = {
@@ -124,13 +124,17 @@
   function goTo(id){document.getElementById(id).scrollIntoView();}
   function filter(filter, value){location.href = updateUrl(window.location.href, filter, value);}
   function search(){document.getElementById('main_search').select();}
+  function find(){
+    let target = document.getElementById('main_search').value;
+    console.log(target);
+  }
   
   window.addEventListener('scroll', function() {
     if(window.scrollY > 399) {document.getElementById('link_start_page').style.opacity = '1';}
     else{document.getElementById('link_start_page').style.opacity = '0';}
   });
   
-  
+  {% block script %}{% endblock %}  
   </script>
 </body>
 </html>
