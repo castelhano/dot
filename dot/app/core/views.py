@@ -5,6 +5,7 @@ from django.contrib import auth, messages
 from django.contrib.auth.models import User, Group, Permission
 from .models import Empresa, Log, Alerta
 from .forms import EmpresaForm, UserForm, GroupForm
+from datetime import datetime
 from django.http import HttpResponse
 from django.core import serializers
 from json import dumps
@@ -74,8 +75,13 @@ def run_script(request):
 
 @login_required
 def console(request):
-    c = '<span>Console DOT system <b>versão 1.0</b>, powered by <a href="https://ace.c9.io/" target="_blank" class="text-danger fw-bold text-decoration-none">Ace Editor&trade;</a></span><span>14:22</span>'
-    return render(request,'core/console.html',{'console':[c]})
+    h = datetime.now().strftime('%H:%M')
+    c = f'<p class="m-0 d-flex justify-content-between"><span>Console DOT system <b>versão 1.0</b>, powered by <a href="https://ace.c9.io/" target="_blank" class="text-danger fw-bold text-decoration-none">Ace Editor&trade;</a></span><span>{h}</span></p>'
+    if request.method == 'POST':
+        from .console import Run
+        r = Run(request.POST['script'])
+        c += f'<p class="m-0 d-flex justify-content-between">{r}<span>{h}</span></p>'
+    return render(request,'core/console.html',{'console':c})
 
 
 # METODOS ADD

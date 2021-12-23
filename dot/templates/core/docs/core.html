@@ -1,7 +1,7 @@
 {% extends "layout/docs.html" %}
 {% load static %}
 
-{% block page_title %}index{% endblock %}
+{% block page_title %}core{% endblock %}
 
 {% block doc_container %}
 <h3 class="mb-0" id="doc_titulo">Documentação</h3>
@@ -23,7 +23,7 @@
 <div class="code"><code>sudo apt-get install git</code></div>
 <p>Clone o projeto para a máquina local</p>
 <div class="code"><code>git clone https://github.com/castelhano/dot.git</code></div>
-<div class="callout callout-orange my-3"><b>Atenção!</b> É necessário ter uma conta no github com acesso ao repositório da aplicação, entre em contato com o adminsitrador do sistema caso tenha problemas nesta etapa</div>
+<div class="callout callout-orange my-3">É necessário ter uma conta no github com acesso ao repositório da aplicação, entre em contato com o adminsitrador do sistema caso tenha problemas nesta etapa</div>
 <p>A aplicação utiliza por padrão o sistema de banco de dados <a href="https://www.sqlite.org/index.html" target="_blank">sqlite3</a>, que tem exelente desempenho e é de facil manutenção. Porém o django oferece suporte aos principais bancos de dados disponiveis, caso queira utilizar outro banco de dados vá até a parte de configuração do sistema <a class="fw-bold text-primary text-decoration-none pointer" onclick="goTo('config')">aqui</a>.</p>
 <p>O próximo comando cria o banco de dados, tabelas, indices e demais componentes para o BD definido.</p>
 <div class="code"><code>python manage.py migrate</code></div>
