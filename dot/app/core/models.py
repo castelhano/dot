@@ -55,7 +55,7 @@ class Profile(models.Model):
         return alertas
     class Meta:
         permissions = [
-            ("doc_maker", "Pode criar documentacao"),
+            ("console", "Pode abrir o console"),
         ]
 
 

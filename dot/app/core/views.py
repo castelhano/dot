@@ -74,13 +74,17 @@ def run_script(request):
     return redirect('index')
 
 @login_required
+@permission_required('core.console')
 def console(request):
-    h = datetime.now().strftime('%H:%M')
-    c = f'<p class="m-0 d-flex justify-content-between"><span>Console DOT system <b>versão 1.0</b>, powered by <a href="https://ace.c9.io/" target="_blank" class="text-danger fw-bold text-decoration-none">Ace Editor&trade;</a></span><span>{h}</span></p>'
+    h = datetime.now().strftime('%H:%M:%S')
+    c = ''
     if request.method == 'POST':
         from .console import Run
-        r = Run(request.POST['script'])
-        c += f'<p class="m-0 d-flex justify-content-between">{r}<span>{h}</span></p>'
+        response = Run(request.POST['script'])
+        for r in response:
+            c += f'<p class="m-0 d-flex justify-content-between"><span>{r}</span><span>{h}</span></p>'
+    else:
+        c = f'<p class="m-0 d-flex justify-content-between"><span>Console DOT system <b>versão 1.0</b>, powered by <a href="https://ace.c9.io/" target="_blank" class="text-danger fw-bold text-decoration-none">Ace Editor&trade;</a></span><span>{h}</span></p>'        
     return render(request,'core/console.html',{'console':c})
 
 
