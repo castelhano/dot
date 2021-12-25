@@ -1,5 +1,6 @@
 import re
 from .models import Alerta
+from django.contrib.auth.models import User
 
 def Run(script):
     rows = script.split('\n')
@@ -12,38 +13,37 @@ def Run(script):
     return response
 
 def alertaAdd(attrs):
-    # try:
-        response = ''
-        usuario = None
-        for attr in attrs:
-            errors = False
-            mensagem = ''
-            if len(attr) == 0: # Ignora espaços em branco entre os atributos
-                pass
-            elif attr[0] == '#' and not errors: # Atribui usuário ou all 
-                username = attr[1:]
-                if username == 'all':
-                    usuario = 'all'
-                else:
-                    try:
-                        usuario = User.objects.get(username=username)
-                        response = f'<b class="text-success">Done:</b> Alert create for user <b class="text-success">{usuario.username}</b>'
-                    except:
-                        errors = True
-                        response = f'<span><b class="text-danger">Error:</b> User <b>{username}</b> nor found, alert not created</span><br />'
-            # elif attr[0] == ':' and not errors:
-            #     response += f'{attr} Eh um Atributo Field'
-            # elif attr[0:1] == '__' and not errors:
-            #     response += f'{attr} Eh um Atributo Field'
-            # elif not errors: # Entrada não se encaixa em nenhuma das predefinidas, descarta entrada
-            #     response += f'{attr} Descartado'
-                
-        # usuario = User.objects.get(id=1)
-        # titulo = 'Alerta com Link'
-        # mensagem = 'Verificamos que você eh um <b>merda</b>, favor confirmar esta cnstatacao....'
-        # link = 'core_usuarios'
-        # alerta = Alerta.objects.create(usuario=usuario, titulo=titulo, mensagem=mensagem, link=link)
-        # alerta = Alerta.objects.create(to_user=usuario,from_user=request.user,titulo=titulo2,mensagem=mensagem2,critico=True)
-    # except:
-    #     response = 'DEU MERDA'
-        return response
+    response = ''
+    fields = {}
+    errors = False
+    for attr in attrs:
+        if len(attr) == 0: # Ignora espaços em branco entre os atributos
+            pass
+        elif attr[0] == '#' and not errors: # Atribui usuário ou all 
+            username = attr[1:]
+            if username == 'all':
+                fields['usuario'] = 'all'
+            else:
+                # try:
+                    fields['usuario'] = User.objects.get(username=username)
+                # except:
+                #     errors = True
+                #     response = f'<span><b class="text-danger">Error:</b> User <b>{username}</b> nor found, alert not created</span><br />'
+        elif attr[0] == ':' and not errors: # Entrada eh um atributo, adiciona no dicionario para metodo create
+            f = attr[1:].split('=')
+            fields[f[0]] = f[1].replace(';', ' ')
+        elif attr[:4] == 'msg:' and not errors: # Mensagem do alert eh inserido como atricuto no dicionario
+            # fields['mensagem'] = re.search('__(.*)__', attr).group(1)
+            print('ENTREI')
+            print('>> ', re.search('\[(.*?)\]', attr).group(1))
+        elif not errors: # Entrada não se encaixa em nenhuma das predefinidas, descarta entrada
+            pass
+    if not errors and isinstance(fields['usuario'], User): # Cria o alerta para usuario especifico (caso instanciado) e caso nao tenha erros
+        try:
+            # alerta = Alerta.objects.create(**fields)
+            # response = f'<b class="text-success">Done:</b> Alert create for user <b class="text-success">{fields['usuario'].username}</b>'
+            response = fields
+        except:
+            errors = True
+            response = f'<span><b class="text-danger">Error:</b> Bad formatted attributes, alert not created -> {fields}</span><br />'
+    return response
