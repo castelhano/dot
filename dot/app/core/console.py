@@ -11,7 +11,7 @@ def Run(script):
             attrs = re.search('{(.*)}', row).group(1)
             if command == 'alert':            
                 response.append(alertaAdd(attrs))
-            else:
+            else: # Comando nao reconhecido, gera exception de bad formated
                 raise Exception()                
         except:
             response.append('<span><b class="text-danger">Error:</b> Bad formatted attributes, alert not created</span>')
@@ -22,7 +22,7 @@ def alertaAdd(attrs):
     fields = {}
     errors = False
     try:
-        fields['mensagem'] = re.search('msg:(.*)+;', attrs).group(0).replace('msg:','').replace(';','') # Separa a mensagem do script e adiciona no dicionario
+        fields['mensagem'] = re.search('msg:(.*)+;', attrs).group(0).replace('msg:','')[:-1] # Separa a mensagem do script e adiciona no dicionario
     except:
         errors = True
     if errors:
@@ -52,7 +52,7 @@ def alertaAdd(attrs):
     if not errors and isinstance(fields['usuario'], User): # Cria o alerta para usuario especifico (caso instanciado) e caso nao tenha erros
         try:
             alerta = Alerta.objects.create(**fields)
-            response = f'<b class="text-success">Done:</b> Alert create for user <b class="text-success"></b>'
+            response = f'<b class="text-success">Done:</b> Alert create for user <b class="text-success">{username.title()}</b>'
         except:
             errors = True
     elif not errors and fields['usuario'] == 'all': # Cria o alerta para todos os usuario do sistema
@@ -65,6 +65,6 @@ def alertaAdd(attrs):
         except:
             errors = True
             response = f'<span><b class="text-danger">Error:</b> Something went wrong, alert not created</span>'
-    else: # 
+    else:
         pass
     return response

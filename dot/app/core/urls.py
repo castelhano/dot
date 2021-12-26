@@ -8,7 +8,6 @@ urlpatterns = [
     path('logout',views.logout,name='logout'),
     path('authenticate',views.authenticate,name='authenticate'),
     path('change_password',views.change_password,name='change_password'),
-    path('core_run_script',views.run_script,name='core_run_script'),
     path('logs',views.logs,name='logs'),
     path('docs',docs.docs,name='docs'),
     path('docs_issues',docs.issues,name='docs_issues'),
