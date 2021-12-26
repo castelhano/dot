@@ -30,7 +30,17 @@
 {% endblock%}
 
 {% block nav_editor %}
-<a href="#" class="ps-2 list-group-item list-group-item-action list-group-item-light active d-flex justify-content-between align-items-center">Dot<span><i class="fas fa-trash pointer"></i></span></a>
+<div class="btn-group">
+<a class="ps-2 list-group-item list-group-item-action list-group-item-light d-flex justify-content-between align-items-center pointer" onclick="editorSet(COMPONENTS['alert'])">Alerta<span><i class="fas fa-chevron-right"></i></span></a>
+<button type="button" class="btn btn-light border pe-3 dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
+    <span class="visually-hidden">Toggle Dropdown</span>
+  </button>
+  <ul class="dropdown-menu">
+    <li><a class="dropdown-item d-flex justify-content-between align-items-center pointer" onclick="editorSet(COMPONENTS['alert_link'])">Com link<i class="fas fa-chevron-right text-muted"></i></a></li>
+    <li><a class="dropdown-item d-flex justify-content-between align-items-center pointer" onclick="editorSet(COMPONENTS['alert_class'])">Estilizado<i class="fas fa-chevron-right text-muted"></i></a></li>
+    <li><a class="dropdown-item dropdown-item-danger d-flex justify-content-between align-items-center pointer" onclick="editorSet(COMPONENTS['alert_all'])">Geral<i class="fas fa-chevron-right"></i></a></li>
+  </ul>
+</div>
 {% endblock%}
 
 {% block add_script_src %}
@@ -43,6 +53,7 @@
   function eventHandler(e){
     {% include '_component/script/global_handler.js' %}
     else{}}
+    
   function submitForm(){
     document.getElementById('id_script').value = editor.getValue();
     document.getElementById('id_console').value = document.getElementById('console_display').innerHTML;
@@ -50,6 +61,13 @@
     return true;
   }
   // --------------------------------------------------------------------
+  // incluido no layout metodos editorSet(code)
+  const COMPONENTS = {
+    'alert':'@alert { #username :titulo=Titulo_do_Alert msg:Mensagem do Alerta; }',
+    'alert_link':'@alert { #username :titulo=Titulo_do_Alert !link=view_name msg:Mensagem do Alerta; }',
+    'alert_class':'@alert { #username :titulo=Titulo_do_Alert :alert_class_list=bg-orange;text-light :action_class_list=bg-info msg:Mensagem do Alerta; }',
+    'alert_all':'@alert { #all :titulo=Titulo_do_Alert msg:Mensagem do Alerta; }',
+  }
   var editor = ace.edit("editor");
   editor.setTheme("ace/theme/ambiance");
   editor.session.setMode("ace/mode/text");
@@ -62,12 +80,12 @@ var rules = editor.session.$mode.$highlightRules.getRules();
 for (var stateName in rules) {
     if (Object.prototype.hasOwnProperty.call(rules, stateName)) {
         rules[stateName].unshift(
-        {token: 'keyword',regex: '@[A-z-0-9]+'},
-        {token: 'variable',regex: '![A-z-0-9,-;]+'},
-        {token: 'constant',regex: ':[A-z-0-9,-;=]+'},
-        {token: 'string',regex: '#[A-z-0-9]+'},
-        {token: 'invalid',regex: '<br>|<hr>'},
-        {token: 'comment',regex: '__[A-z0-9À-ú,-; ]+__'},
+        {token: 'keyword',regex: '@[a-zA-Z][a-zA-Z0-9]+'}, // Funcoes do sistema, @alert @modal @schedule etc...
+        {token: 'variable',regex: ':[A-z-0-9áàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ,-;=]+'}, // Usado para parametros do componente, converte altera ; e _ por espaço
+        {token: 'constant',regex: '!link=[a-zA-Z0-9-_]+'}, // Usado para informar  
+        {token: 'string',regex: '#[A-z-0-9]+'}, // Usado para identificar um compoente, fazendo referencia ao usuario (por exemplo)
+        {token: 'invalid',regex: 'danger_syntax'},
+        {token: 'comment',regex: 'msg:([a-zA-Z0-9áàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ .<>/=\'!@#$%&])+;'}, // Mensagem generica, aceita espaços, simbolos e caracteres acentuados
         {token: 'custom',regex: 'foo'},
       );
     }
@@ -76,10 +94,6 @@ for (var stateName in rules) {
 editor.session.$mode.$tokenizer = null;
 editor.session.bgTokenizer.setTokenizer(editor.session.$mode.getTokenizer());
 editor.session.bgTokenizer.start(0);
-editor.setValue('@alert { #rafael :titulo=Titulo [Mensagem do alert]}',0);
-editor.navigateFileEnd();
-editor.focus();
-
   
 {% endblock %}
 </script>

@@ -6,7 +6,7 @@
 {% block doc_container %}
 <h3 class="mb-0" id="doc_titulo">Documentação</h3>
 <hr>
-<p>Este documento aborda o processo de instalação e configuração do sistema, componentes básicos e de extrutura, gestão do django, além do processo para autenticação e permissão dentro do sistema.</p>
+<p>Este documento aborda a instalação e configuração do sistema, componentes básicos e de extrutura, gestão do django, além do processo para autenticação e permissão.</p>
 <h5 id="instalacao" class="topic_anchor mt-4">Instalação</h5>
 <div class="callout callout-orange my-3"><b>Atenção!</b> Todo o processo de instalação descrito neste artigo foi realizado num ambiente linux (Ubuntu 20.10), pequenas alterações podem ser necessárias para outros ambientes</div>
 <p>Certifique-se que o sistema operacional está devidamente atualizado</p>
@@ -16,16 +16,16 @@
 <p><b class="text-orange">Opcional:</b> Configurando um ambiente virtual <b>na pasta do projeto</b>.</p>
 <div class="code mb-0"><code>python3 -m venv ./venv</code></div>
 <small class="ps-1">Para ativar o ambiente virtual digite: <b class="text-orange">source venv/bin/activate</b></small>
-<p class="mt-3">Utilizamos o gerenciar de aplicações do python para instalar o framework <b>django</b> e a biblioteca <b>pillow</b> usada para manipulação de imagens</p>
+<p class="mt-3">Instale o framework <b>django</b> e a biblioteca <b>pillow</b> usada para manipulação de imagens pelo gerenciar de pagotes do python <b>pip</b>.</p>
 <div class="code"><code>pip install django pillow</code></div>
 <hr>
-<p>Utilizamos o sistema open source de versionamento <b>git</b>, e o repositório <b>github</b> para distribuição do software</p>
+<p>Utilizamos o sistema open source de versionamento <b>git</b>, e o repositório <b>github</b> para distribuição da aplicação</p>
 <div class="code"><code>sudo apt-get install git</code></div>
 <p>Clone o projeto para a máquina local</p>
 <div class="code"><code>git clone https://github.com/castelhano/dot.git</code></div>
-<div class="callout callout-orange my-3">É necessário ter uma conta no github com acesso ao repositório da aplicação, entre em contato com o adminsitrador do sistema caso tenha problemas nesta etapa</div>
-<p>A aplicação utiliza por padrão o sistema de banco de dados <a href="https://www.sqlite.org/index.html" target="_blank">sqlite3</a>, que tem exelente desempenho e é de facil manutenção. Porém o django oferece suporte aos principais bancos de dados disponiveis, caso queira utilizar outro banco de dados vá até a parte de configuração do sistema <a class="fw-bold text-primary text-decoration-none pointer" onclick="goTo('config')">aqui</a>.</p>
-<p>O próximo comando cria o banco de dados, tabelas, indices e demais componentes para o BD definido.</p>
+<div class="callout callout-orange my-3">É necessário ter uma conta no github com acesso ao repositório da aplicação, entre em contato com o <a class="text-decoration-none fw-bold" href="mailto:castelhano.rafael@gmail.com?subject=Sistema DOT">adminstrador</a> do sistema caso tenha problemas nesta etapa</div>
+<p>A aplicação utiliza por padrão o sistema de banco de dados <a class="text-decoration-none fw-bold" href="https://www.sqlite.org/index.html" target="_blank">sqlite3</a>, que tem exelente desempenho e é de facil manutenção. Porém o django oferece suporte aos principais bancos de dados disponiveis, caso queira utilizar outro banco de dados siga os passos em <a class="fw-bold text-decoration-none pointer" onclick="goTo('config')">configuração</a> antes de seguir.</p>
+<p>O próximo comando cria o banco de dados, tabelas, indices e demais requisitos do <abbr title="Banco de Dados">BD</abbr>.</p>
 <div class="code"><code>python manage.py migrate</code></div>
 <h5 id="django" class="topic_anchor mt-5">Django&trade;</h5>
 <p id="config" class="fw-bold mt-3 topic_anchor">Configurando o projeto</p>

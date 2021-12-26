@@ -105,6 +105,13 @@
   {% block add_script_src %}{% endblock %}
   <script>
   {% block add_script %}{% endblock %}
+  
+  function editorSet(code){
+    editor.setValue(code, 0);
+    editor.navigateFileEnd();
+    editor.focus();
+  }
+  
 </script>
 
 </body>
