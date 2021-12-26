@@ -11,6 +11,8 @@ def Run(script):
             attrs = re.search('{(.*)}', row).group(1)
             if command == 'alert':            
                 response.append(alertaAdd(attrs))
+            else:
+                raise Exception()                
         except:
             response.append('<span><b class="text-danger">Error:</b> Bad formatted attributes, alert not created</span>')
     return response
