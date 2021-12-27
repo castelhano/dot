@@ -13,7 +13,6 @@
     {% csrf_token %}
     <button type="submit" class="btn btn-sm btn-success border-0" title="Rodar Script"><i class="fas fa-eraser me-2"></i> Run</button>
     <input type="hidden" id="id_script" name="script" value="">
-    <input type="hidden" id="id_console" name="console" value="">
   </form>
 </li>
 <li class="nav-item">
@@ -31,14 +30,23 @@
 
 {% block nav_editor %}
 <div class="btn-group">
-<a class="ps-2 list-group-item list-group-item-action list-group-item-light d-flex justify-content-between align-items-center pointer" onclick="editorSet(COMPONENTS['alert'])">Alerta<span><i class="fas fa-chevron-right"></i></span></a>
-<button type="button" class="btn btn-light border pe-3 dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
+  <a class="ps-2 list-group-item list-group-item-action list-group-item-light d-flex justify-content-between align-items-center pointer" style="border-bottom-width: 0;" onclick="editorSet(COMPONENTS['alert'])">Alerta<span><i class="fas fa-chevron-right"></i></span></a>
+  <button type="button" class="btn btn-light border border-bottom-0 pe-3 dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
     <span class="visually-hidden">Toggle Dropdown</span>
   </button>
-  <ul class="dropdown-menu">
+  <ul class="dropdown-menu fs-7">
     <li><a class="dropdown-item d-flex justify-content-between align-items-center pointer" onclick="editorSet(COMPONENTS['alert_link'])">Com link<i class="fas fa-chevron-right text-muted"></i></a></li>
     <li><a class="dropdown-item d-flex justify-content-between align-items-center pointer" onclick="editorSet(COMPONENTS['alert_class'])">Estilizado<i class="fas fa-chevron-right text-muted"></i></a></li>
     <li><a class="dropdown-item dropdown-item-danger d-flex justify-content-between align-items-center pointer" onclick="editorSet(COMPONENTS['alert_all'])">Geral<i class="fas fa-chevron-right"></i></a></li>
+  </ul>
+</div>
+<div class="btn-group">
+  <a class="ps-2 list-group-item list-group-item-action list-group-item-light d-flex justify-content-between align-items-center pointer" onclick="editorSet(COMPONENTS['clean_logs'])">Limpar Logs<span><i class="fas fa-chevron-right"></i></span></a>
+  <button type="button" class="btn btn-light border pe-3 dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
+    <span class="visually-hidden">Toggle Dropdown</span>
+  </button>
+  <ul class="dropdown-menu fs-7">
+    <li><a class="dropdown-item d-flex justify-content-between align-items-center pointer" onclick="editorSet(COMPONENTS['clean_logs_model'])">Filtrar modelo<i class="fas fa-chevron-right text-muted"></i></a></li>
   </ul>
 </div>
 {% endblock%}
@@ -54,46 +62,47 @@
     {% include '_component/script/global_handler.js' %}
     else{}}
     
-  function submitForm(){
-    document.getElementById('id_script').value = editor.getValue();
-    document.getElementById('id_console').value = document.getElementById('console_display').innerHTML;
-    console.log(document.getElementById('console_display').innerHTML);
-    return true;
-  }
-  // --------------------------------------------------------------------
-  // incluido no layout metodos editorSet(code)
-  const COMPONENTS = {
-    'alert':'@alert { #username :titulo=Titulo_do_Alert msg:Mensagem do Alerta; }',
-    'alert_link':'@alert { #username :titulo=Titulo_do_Alert !link=view_name msg:Mensagem do Alerta; }',
-    'alert_class':'@alert { #username :titulo=Titulo_do_Alert :alert_class_list=bg-orange;text-light :action_class_list=btn;btn-sm;btn-info msg:Mensagem do Alerta; }',
-    'alert_all':'@alert { #all :titulo=Titulo_do_Alert msg:Mensagem do Alerta; }',
-  }
-  var editor = ace.edit("editor");
-  editor.setTheme("ace/theme/ambiance");
-  editor.session.setMode("ace/mode/text");
-  editor.renderer.setScrollMargin(14)
-  editor.setShowPrintMargin(false);
-  document.getElementById('editor').style.fontSize='0.9rem';
-  
-  
-var rules = editor.session.$mode.$highlightRules.getRules();
-for (var stateName in rules) {
-    if (Object.prototype.hasOwnProperty.call(rules, stateName)) {
+    function submitForm(){
+      document.getElementById('id_script').value = editor.getValue();
+      document.getElementById('console_display').innerHTML += '<p class="fw-bold">Aguarde, processando requisição</p>';
+      return true;
+    }
+    // --------------------------------------------------------------------
+    // incluido no layout metodos editorSet(code)
+    const COMPONENTS = {
+      'alert':'@alert { #username :titulo=Titulo_do_Alert msg:Mensagem do Alerta; }',
+      'alert_link':'@alert { #username :titulo=Titulo_do_Alert !link=view_name msg:Mensagem do Alerta; }',
+      'alert_class':'@alert { #username :titulo=Titulo_do_Alert :alert_class_list=bg-orange;text-light :action_class_list=btn;btn-sm;btn-info msg:Mensagem do Alerta; }',
+      'alert_all':'@alert { #all :titulo=Titulo_do_Alert msg:Mensagem do Alerta; }',
+      'clean_logs':'@logs { #clean :until=aaaa-mm-dd }',
+      'clean_logs_model':'@logs { #clean :until=aaaa-mm-dd :model=core.empresa }',
+    }
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/ambiance");
+    editor.session.setMode("ace/mode/text");
+    editor.renderer.setScrollMargin(14)
+    editor.setShowPrintMargin(false);
+    document.getElementById('editor').style.fontSize='0.9rem';
+    
+    
+    var rules = editor.session.$mode.$highlightRules.getRules();
+    for (var stateName in rules) {
+      if (Object.prototype.hasOwnProperty.call(rules, stateName)) {
         rules[stateName].unshift(
         {token: 'keyword',regex: '@[a-zA-Z][a-zA-Z0-9]+'}, // Funcoes do sistema, @alert @modal @schedule etc...
         {token: 'variable',regex: ':[A-z-0-9áàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ,-;=]+'}, // Usado para parametros do componente, converte altera ; e _ por espaço
-        {token: 'constant',regex: '!link=[a-zA-Z0-9-_]+'}, // Usado para informar  
+        {token: 'constant',regex: '!link=[a-zA-Z0-9-_/]+'}, // Usado para informar operacoes e/ou atributos especiais  
         {token: 'string',regex: '#[A-z-0-9]+'}, // Usado para identificar um compoente, fazendo referencia ao usuario (por exemplo)
         {token: 'invalid',regex: 'danger_syntax'},
         {token: 'comment',regex: 'msg:([a-zA-Z0-9áàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ .<>/=\'!@#$%&])+;'}, // Mensagem generica, aceita espaços, simbolos e caracteres acentuados
         {token: 'custom',regex: 'foo'},
-      );
+        );
+      }
     }
-}
-
-editor.session.$mode.$tokenizer = null;
-editor.session.bgTokenizer.setTokenizer(editor.session.$mode.getTokenizer());
-editor.session.bgTokenizer.start(0);
-  
-{% endblock %}
-</script>
+    
+    editor.session.$mode.$tokenizer = null;
+    editor.session.bgTokenizer.setTokenizer(editor.session.$mode.getTokenizer());
+    editor.session.bgTokenizer.start(0);
+    
+    {% endblock %}
+  </script>

@@ -9,7 +9,7 @@
 <div class="row px-1 pt-lg-2">
   {% if user.is_staff %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-danger"><i class="fas fa-cogs lead-image"></i><a class="widget-label stretched-link" href="{% url 'admin:index' %}" target="_blank">Admin</a></div>{% endif %}
   {% if perms.core.console %}
-  <div class="card-widget col-6 col-lg-4 col-xl-2 btn-orange" title="Ctrl + ."><i class="fas fa-window-restore lead-image"></i><a id="console_link" class="widget-label stretched-link" href="{% url 'console' %}">Admin Console</a></div>
+  <div class="card-widget col-6 col-lg-4 col-xl-2 btn-orange" title="Ctrl + ."><i class="fas fa-window-restore lead-image"></i><a id="console_link" class="widget-label stretched-link" href="{% url 'console' %}">Admin Console <kbd class="float-end fs-9">ctrl .</kbd></a></div>
   {% endif %}
   <div id="messages_widget" class="card-widget col-6 col-lg-4 col-xl-2 btn-secondary d-none"><i class="fas fa-inbox lead-image"> <sup id="alertas_badge" style="font-family: var(--bs-body-font-family); font-size:2rem;">0</sup></i><a class="widget-label stretched-link" data-bs-toggle="offcanvas" href="#offcanvas" role="button" title="ALT + M">Notificações</a></div>
 </div>

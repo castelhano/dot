@@ -1,5 +1,5 @@
 import re
-from .models import Alerta
+from .models import Alerta, Log
 from django.contrib.auth.models import User
 
 def Run(script):
@@ -9,12 +9,14 @@ def Run(script):
         try:
             command = re.search(r'@(.*?) ', row).group(1)
             attrs = re.search('{(.*)}', row).group(1)
-            if command == 'alert':            
+            if command == 'alert':
                 response.append(alertaAdd(attrs))
+            elif command == 'logs':
+                response.append(logs(attrs))
             else: # Comando nao reconhecido, gera exception de bad formated
-                raise Exception()                
+                raise Exception()
         except:
-            response.append('<span><b class="text-danger">Error:</b> Bad formatted attributes, alert not created</span>')
+            response.append('<span><b class="text-danger">Error:</b> Bad formatted attributes, command aborted</span>')
     return response
 
 def alertaAdd(attrs):
@@ -67,4 +69,19 @@ def alertaAdd(attrs):
             response = f'<span><b class="text-danger">Error:</b> Something went wrong, alert not created</span>'
     else:
         pass
+    return response
+
+def logs(attrs):
+    try:
+        until = re.search(':until=([^\s]+)', attrs).group(1)
+        if not '#clean' in attrs:
+            raise Exception()
+        if ':model=' in attrs:
+            modelo = re.search(':model=(.*) ', attrs).group(1)
+            qtde = Log.objects.filter(data__lte=until, modelo=modelo).delete()[0]
+        else:
+            qtde = Log.objects.filter(data__lte=until).delete()[0]
+        response = f'<b class="text-success">Done:</b> Total of <b>{qtde}</b> logs deleted.'
+    except:
+        response = '<span><b class="text-danger">Error:</b> Bad formatted attributes, <b class="text-danger">operation aborted</b>.</span>'
     return response

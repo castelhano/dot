@@ -74,7 +74,7 @@
   {% block editor %}{% endblock %}
   
   <div id="console_display" class="console bg-light font-monospace">
-    <p class="m-0 d-flex justify-content-between">{{console|safe}}</p>
+    {{console|safe}}
   </div>
   
   {% for message in messages %}
