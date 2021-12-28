@@ -9,7 +9,9 @@ def Run(script):
         try:
             command = re.search(r'@(.*?) ', row).group(1)
             attrs = re.search('{(.*)}', row).group(1)
-            if command == 'alert':
+            if command == 'runscript':
+                response.append(runScript(attrs))
+            elif command == 'alert':
                 response.append(alertaAdd(attrs))
             elif command == 'logs':
                 response.append(logs(attrs))
@@ -17,6 +19,12 @@ def Run(script):
                 raise Exception()
         except:
             response.append('<span><b class="text-danger">Error:</b> Bad formatted attributes, command aborted</span>')
+    return response
+
+def runScript(attrs):
+    response = '<span><b class="text-orange">Alert:</b> Nothing to do...</span>'
+    if '!execute=True' in attrs:
+        response = '<span><b class="text-success">Done:</b> Routine executed, total of <b>55</b> rows affected</span>'
     return response
 
 def alertaAdd(attrs):

@@ -60,19 +60,6 @@ def logs(request):
     logs = Log.objects.filter(modelo=target_model,mensagem=mensagem)
     return render(request,'core/logs.html',{'logs':logs})
 
-def run_script(request):
-    # usuario = User.objects.get(id=1)
-    # titulo = 'Alerta com Link'
-    # mensagem = 'Verificamos que você eh um <b>merda</b>, favor confirmar esta cnstatacao....'
-    # link = 'core_usuarios'
-    # alerta = Alerta.objects.create(usuario=usuario, titulo=titulo, mensagem=mensagem, link=link)
-    # alerta = Alerta.objects.create(to_user=usuario,from_user=request.user,titulo=titulo2,mensagem=mensagem2,critico=True)
-    # usuario.profile.force_password_change = False
-    # usuario.save()
-    # messages.success(request,'Done')
-    messages.warning(request,'Nothing to do')
-    return redirect('index')
-
 @login_required
 @permission_required('core.console')
 def console(request):
