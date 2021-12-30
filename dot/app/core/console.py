@@ -12,7 +12,10 @@ def Run(script):
             if command == 'runscript':
                 response.append(runScript(attrs))
             elif command == 'alert':
-                response.append(alertaAdd(attrs))
+                if '#clean' in attrs:
+                    response.append(alertaClean(attrs))
+                else:
+                    response.append(alertaAdd(attrs))
             elif command == 'logs':
                 response.append(logs(attrs))
             else: # Comando nao reconhecido, gera exception de bad formated
@@ -25,6 +28,15 @@ def runScript(attrs):
     response = '<span><b class="text-orange">Alert:</b> Nothing to do...</span>'
     if '!execute=True' in attrs:
         response = '<span><b class="text-success">Done:</b> Routine executed, total of <b>55</b> rows affected</span>'
+    return response
+
+def alertaClean(attrs):
+    try:
+        until = re.search(':until=([^\s]+)', attrs).group(1)
+        qtde = Alerta.objects.filter(lido=True,create_at__lte=until).delete()[0]
+        response = f'<span><b class="text-success">Done:</b> Total of {qtde} alerts deleted</span>'
+    except:
+        response = '<span><b class="text-danger">Error:</b> Bad formatted attributes, command aborted</span>'
     return response
 
 def alertaAdd(attrs):

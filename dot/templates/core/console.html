@@ -38,6 +38,8 @@
     <li><a class="dropdown-item d-flex justify-content-between align-items-center pointer" onclick="editorSet(COMPONENTS['alert_link'])">Com link<i class="fas fa-chevron-right text-muted"></i></a></li>
     <li><a class="dropdown-item d-flex justify-content-between align-items-center pointer" onclick="editorSet(COMPONENTS['alert_class'])">Estilizado<i class="fas fa-chevron-right text-muted"></i></a></li>
     <li><a class="dropdown-item dropdown-item-danger d-flex justify-content-between align-items-center pointer" onclick="editorSet(COMPONENTS['alert_all'])">Geral<i class="fas fa-chevron-right"></i></a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item dropdown-item-danger d-flex justify-content-between align-items-center pointer" onclick="editorSet(COMPONENTS['clean_alerts'])">Limpar Alertas<i class="fas fa-chevron-right"></i></a></li>
   </ul>
 </div>
 <div class="btn-group">
@@ -76,6 +78,7 @@
       'alert_link':'@alert { #username :titulo=Titulo_do_Alert !link=view_name msg:Mensagem do Alerta; }',
       'alert_class':'@alert { #username :titulo=Titulo_do_Alert :alert_class_list=bg-orange;text-light :action_class_list=btn;btn-sm;btn-info msg:Mensagem do Alerta; }',
       'alert_all':'@alert { #all :titulo=Titulo_do_Alert msg:Mensagem do Alerta; }',
+      'clean_alerts':'@alert { #clean :until=aaaa-mm-dd }',
       'clean_logs':'@logs { #clean :until=aaaa-mm-dd }',
       'clean_logs_model':'@logs { #clean :until=aaaa-mm-dd :model=core.empresa }',
       'runscript':'@runscript { !execute=True }',
