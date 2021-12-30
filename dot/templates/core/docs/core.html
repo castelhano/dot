@@ -29,6 +29,63 @@
 <div class="code"><code>python manage.py migrate</code></div>
 <h5 id="django" class="topic_anchor mt-5">Django&trade;</h5>
 <p id="config" class="fw-bold mt-3 topic_anchor">Configurando o projeto</p>
+<p id="fixture" class="fw-bold mt-3 topic_anchor">Loaddata <b>(fixture)</b></p>
+<p>É possivel importar dados em lote diretamente para o sistema. O arquivo de importação deve estar em formato <a href="https://www.json.org/json-en.html" target="_blank">json</a> conforme o exemplo abaixo.</p>
+<div class="code pb-0">
+  <code><pre>
+[
+  {"model":"core.funcionario","fields":{
+    "nome": "Rafael Alves",
+    "email": "castelhano.rafael@gmail.com"
+  }},
+  {"model":"core.funcionario","fields":{
+    "nome": "Joao da Silva",
+    "cpf": "055.556.556-66"
+  }}
+]</pre></code>
+</div>
+<div class="callout callout-orange mb-3"><span class="text-orange fw-bold">Dica!</span> Existem serviços online como o <a href="https://beautifytools.com/excel-to-json-converter.php" target="_blank">beautifytools</a> que convertem registros tabulares salvos em uma planilha excel (por exemplo) para o formato json.<br />
+  No arquivo gerado, é necessário realizar pequenos ajustes, informando antes de cada registro o modelo a ser utilizado <code>{"model":"core.funcionario","fields":{</code> além de realizar o fechamento correto do registro <code>}</code>, com um editor de texto moderno (<a href="https://atom.io/" target="_blank">Atom</a> ou <a href="https://www.sublimetext.com/" target="_blank">Sublime Text</a>) é possivel fazer estes ajustes com facilidade.</div>
+<p>O arquivo gerado deve ser salvo na pasta da aplicação no diretorio <code>dot/fixture</code>. Abra um terminal e na raiz da aplicação execute o comando a seguir substituindo <code>exemplo</code> pelo nome do arquivo salvo (não é necessário informar a extensão .json)</p>
+<div class="code"><code>python manage.py loaddata exemplo</code></div>
+<h5 id="usuarios" class="topic_anchor mt-5">Autenticação</h5>
+<p>Para acessar os recursos do sistema é ncessário se autenticar fornecendo <b>username</b> e <b>senha</b> previamente cadastrados, além de dispor de uma conta ativa. Os usuários cadastrados podem ser visualizados acessando o menu de <span class="text-muted fw-bold">Cadastro <i class="fas fa-angle-right text-primary"></i> Usuário</span> no módulo principal da aplicação.</p>
+<p>A tela de cadastro é composta dos seguintes campos:</p>
+<ul class="list-unstyled">
+  <li><i class="fas fa-angle-right text-primary me-2"></i><b class="me-2">Username: </b><small class="badge bg-dark">obrigatório</small> Nome <abbr title="field unique">único</abbr> utilizado para login no sistema além de identificação em registros de log e outros</li>
+  <li><i class="fas fa-angle-right text-primary me-2"></i><b class="me-2">First Name: </b><small class="badge bg-secondary">opcional</small> Primeiro nome, exibido no menu do usuário além de outros locais do sistema</li>
+  <li><i class="fas fa-angle-right text-primary me-2"></i><b class="me-2">Last Name: </b><small class="badge bg-secondary">opcional</small> Sobrenome, exibido no menu do usuário além de outros locais do sistema</li>
+  <li><i class="fas fa-angle-right text-primary me-2"></i><b class="me-2">Email: </b><small class="badge bg-secondary">opcional</small> Email do usuário, utilizado para envio de email no módulo de controle e serviços integrados</li>
+</ul>
+<div class="row callout callout-orange ms-1 mb-1">
+  <div class="col-md-8 ps-0">No menu de empresas deve ser selecionado as empresas que poderam ser movimentadas pelo usuário</div>
+  <div class="border rounded col-md-4 p-0"><button class="accordion-button collapsed bg-light" type="button" disabled><i class="fas fa-laptop-house text-muted me-2"></i> Empresas</button></div>
+</div>
+<div class="row callout callout-orange ms-1 mb-1">
+  <div class="col-md-8 ps-0">Na parte de grupos é listado os grupos a que o usuário esta associado</div>
+  <div class="border rounded col-md-4 p-0"><button class="accordion-button collapsed bg-light" type="button" disabled><i class="fas fa-user-tag text-muted me-2"></i> Grupos</button></div>
+</div>
+<div class="row callout callout-orange ms-1 mb-1">
+  <div class="col-md-8 ps-0">Na parte de permissões é listado as permissões exclusivas do usuário</div>
+  <div class="border rounded col-md-4 p-0"><button class="accordion-button collapsed bg-light" type="button" disabled><i class="fas fa-user-lock text-muted me-2"></i> Permissões</button></div>
+</div>
+<span>A opção </span><div class="form-check form-check-inline form-switch m-2"><input type="checkbox" class="form-check-input" checked disabled><label class="form-check-label user-select-none">Ativo</label></div><span>habilita ou desabilita o acesso do usuário ao sistema, utilize esta opção ao invés de excluir usuários</span><br />
+<span>A opção </span><div class="form-check form-check-inline form-switch m-2"><input type="checkbox" class="form-check-input" disabled><label class="form-check-label user-select-none">Membro de Equipe</label></div><span>permite acesso ao <a href="https://docs.djangoproject.com/en/4.0/ref/contrib/admin/" target="_blank">django admin</a> (por padrão a movimentação é feita por telas customizadas, recurso do django admin deve ser evitado)</span>
+<span><b>Atenção!</b> Um usuário com a flag </span><div class="form-check form-check-inline form-switch m-2"><input type="checkbox" class="form-check-input" disabled><label class="form-check-label user-select-none text-danger">Superusuário</label></div><span>ativada terá acesso ao todos os recursos do sistema, é recomendável não utilizar contas com esta opção ativa para realizar movimentação de rotina</span>
+<h5 id="permissoes" class="topic_anchor mt-5">Permissão</h5>
+<p>O sistema utiliza o recurso integrado de permissão do django para acesso as aplicações. Por padrão todo recurso recebe as permissões para visualizar <b>view</b>, adicionar <b>add</b>, editar <b>change</b> e deletar <b>delete</b> registros, porém outras permissões customizadas podem ser adicionadas</p>
+<p>No <b>cadastro de usuário</b> é possivel associar uma permissão diretamente ao usuário ou a um grupo:</p>
+<div class="row">
+  <div class="border rounded col-md p-0 mb-1 mx-1"><button class="accordion-button collapsed bg-light" type="button" disabled><i class="fas fa-user-tag text-muted me-2"></i> Grupos</button></div>
+  <div class="border rounded col-md p-0 mb-1 mx-1"> <button class="accordion-button collapsed bg-light" type="button" disabled><i class="fas fa-user-lock text-muted me-2"></i> Permissões</button></div>
+</div>
+<h5 id="web_server" class="topic_anchor mt-5">Deploy (Gunicorn / Nginx)</h5>
+<h5 id="console" class="topic_anchor mt-5">Console</h5>
+<h5 id="componentes" class="topic_anchor mt-5">Componentes</h5>
+<p id="component_fields" class="fw-bold mt-3 topic_anchor">Fields Components</p>
+<p id="component_menu" class="fw-bold mt-3 topic_anchor">Menu Components</p>
+<p id="component_script" class="fw-bold mt-3 topic_anchor">Script Components</p>
+<p id="component_widget" class="fw-bold mt-3 topic_anchor">Widget Components</p>
 
 
 <p style="margin-top: 1550px;"></p>
@@ -41,7 +98,7 @@
 <li><span class="text-primary pointer ps-4" onclick="goTo('fixture')">Loaddata <b>(fixture)</b></span></li>
 <li><span class="text-primary pointer" onclick="goTo('usuarios')">Autenticação</span></li>
 <li><span class="text-primary pointer" onclick="goTo('permissoes')">Permissão</span></li>
-<li><span class="text-primary pointer" onclick="goTo('web_server')">Gunicorn / Nginx</span></li>
+<li><span class="text-primary pointer" onclick="goTo('web_server')">Deploy (Gunicorn / Nginx)</span></li>
 <li><hr class="my-1"></li>
 <li><span class="text-primary pointer" onclick="goTo('console')">Console</span></li>
 <li><span class="text-primary pointer" onclick="goTo('componentes')">Componentes</span></li>

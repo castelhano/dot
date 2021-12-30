@@ -46,7 +46,7 @@
     <span class="visually-hidden">Toggle Dropdown</span>
   </button>
   <ul class="dropdown-menu fs-7">
-    <li><a class="dropdown-item d-flex justify-content-between align-items-center pointer" onclick="editorSet(COMPONENTS['clean_logs_model'])">Filtrar modelo<i class="fas fa-chevron-right text-muted"></i></a></li>
+    <li><a class="dropdown-item d-flex justify-content-between align-items-center pointer" onclick="editorSet(COMPONENTS['clean_logs_model']);carregaContentTypes();">Filtrar modelo<i class="fas fa-chevron-right text-muted"></i></a></li>
   </ul>
 </div>
 <a class="ps-2 list-group-item list-group-item-action list-group-item-warning d-flex justify-content-between align-items-center pointer" onclick="editorSet(COMPONENTS['runscript'])">Rodar Script<span><i class="fas fa-chevron-right"></i></span></a>
@@ -106,6 +106,26 @@
     editor.session.$mode.$tokenizer = null;
     editor.session.bgTokenizer.setTokenizer(editor.session.$mode.getTokenizer());
     editor.session.bgTokenizer.start(0);
+    
+    display = document.getElementById("console_display");
+    function carregaContentTypes() {
+    	var xhttp = new XMLHttpRequest();
+    	xhttp.onreadystatechange = function() {
+    		if(this.readyState == 4 && this.status == 200){
+    			if(this.responseText == ''){}
+    			else{
+    				let obj = JSON.parse(this.responseText);    				
+            models = '[auth.user][auth.group]'
+            for(key in obj){models += `[${key}]`;}
+            display.innerHTML = `<p class="fw-bold text-primary m-0">Available Models:</p>`
+            display.innerHTML += `<p class="fw-bold">${models}</p>`
+            
+    			}
+    		}
+    	};
+    	xhttp.open("GET", "{% url 'core_get_contenttypes' %}", true);
+    	xhttp.send();
+    }
     
     {% endblock %}
   </script>

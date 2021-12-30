@@ -1,0 +1,10 @@
+[
+  {"model":"core.funcionario","fields":{
+    "nome": "Rafael Alves",
+    "email": "castelhano.rafael@gmail.com"
+  }},
+  {"model":"core.funcionario","fields":{
+    "nome": "Joao da Silva",
+    "email": "joao.foo@gmail.com"
+  }}
+]

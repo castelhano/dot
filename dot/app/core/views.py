@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import auth, messages
 from django.contrib.auth.models import User, Group, Permission
+from django.contrib.contenttypes.models import ContentType
 from .models import Empresa, Log, Alerta
 from .forms import EmpresaForm, UserForm, GroupForm
 from datetime import datetime
@@ -59,6 +60,10 @@ def logs(request):
     mensagem = request.GET.get('mensagem',None)
     logs = Log.objects.filter(modelo=target_model,mensagem=mensagem)
     return render(request,'core/logs.html',{'logs':logs})
+
+@login_required
+def docs(request):
+    return render(request,'core/docs/core.html')
 
 @login_required
 @permission_required('core.console')
@@ -485,7 +490,8 @@ def get_group_perms(request):
             else:
                 pass
         else:
-            perms = Permission.objects.all().exclude(content_type__app_label='sessions').exclude(content_type__app_label='contenttypes').exclude(content_type__app_label='admin').order_by('id')
+            exclude_itens = ['admin','contenttypes','sessions']
+            perms = Permission.objects.all().exclude(content_type__app_label__in=exclude_itens).order_by('id')
         itens = {}
         for item in perms:
             itens[item.codename] = item.id
@@ -499,3 +505,16 @@ def get_alertas(request):
     alertas = Alerta.objects.filter(usuario=request.user,lido=False).order_by('create_at')
     data = serializers.serialize('json', alertas)
     return HttpResponse(data, content_type="application/json")
+
+@login_required
+def get_contenttypes(request):
+    try:
+        exclude_itens = ['admin','auth','contenttypes','sessions']
+        contenttypes = ContentType.objects.all().exclude(app_label__in=exclude_itens).order_by('app_label','model')
+        itens = {}
+        for item in contenttypes:
+            itens[item.app_label + '.' + item.model] = item.id
+        dataJSON = dumps(itens)
+        return HttpResponse(dataJSON)
+    except:
+        return HttpResponse('')

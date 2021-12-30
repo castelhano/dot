@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views, docs
+from . import views
 
 urlpatterns = [
     path('',views.index,name='index'),
@@ -9,8 +9,7 @@ urlpatterns = [
     path('authenticate',views.authenticate,name='authenticate'),
     path('change_password',views.change_password,name='change_password'),
     path('logs',views.logs,name='logs'),
-    path('docs',docs.docs,name='docs'),
-    path('docs_issues',docs.issues,name='docs_issues'),
+    path('docs',views.docs,name='docs'),
     path('console',views.console,name='console'),
     path('handle404',views.handle404,name='handle404'),
     path('handle500',views.handle500,name='handle500'),
@@ -31,6 +30,7 @@ urlpatterns = [
     path('core_empresa_delete/<int:id>',views.empresa_delete,name='core_empresa_delete'),
     path('core_get_empresas',views.get_empresas,name='core_get_empresas'),
     path('core_get_grupos',views.get_grupos,name='core_get_grupos'),
+    path('core_get_contenttypes',views.get_contenttypes,name='core_get_contenttypes'),
     path('core_get_user_perms',views.get_user_perms,name='core_get_user_perms'),
     path('core_get_group_perms',views.get_group_perms,name='core_get_group_perms'),
     path('core_get_alertas',views.get_alertas,name='core_get_alertas'),

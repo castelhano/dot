@@ -23,7 +23,7 @@ class UserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['username','first_name','last_name','email','is_superuser','is_staff','is_active']
-    username = forms.CharField(error_messages={'required': 'Username requerido'},widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'','autofocus':'autofocus'}))
+    username = forms.CharField(error_messages={'required': 'Username requerido'},widget=forms.TextInput(attrs={'class': 'form-control fw-bold','placeholder':'','autofocus':'autofocus'}))
     first_name = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
     last_name = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
     email = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'','type':'email'}))

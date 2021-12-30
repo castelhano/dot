@@ -74,8 +74,8 @@
       <div class="row mt-3 pr-0">
         <div class="col">
           <ul class="nav text-muted text-center fs-7 user-select-none">
-            <li class="nav-item docs-nav-item active"><a class="text-decoration-none text-muted" href="{% url 'docs' %}?page={{page}}"><i class="fas fa-book me-1"></i> Manual</a></li>
-            <li class="nav-item docs-nav-item"><a class="text-decoration-none text-muted" href="{% url 'docs_issues' %}"><i class="fas fa-bug me-1"></i> Issues <sup id="issues_badge" class="badge bg-secondary opacity-75"></sup></a></li>
+            <li class="nav-item docs-nav-item active"><a class="text-decoration-none text-muted"><i class="fas fa-book me-1"></i> Manual</a></li>
+            <li class="nav-item docs-nav-item"><a class="text-decoration-none text-muted" href="https://github.com/castelhano/dot/issues" target="_blank"><i class="fas fa-bug me-1"></i> Issues <sup id="issues_badge" class="badge bg-secondary opacity-75"></sup></a></li>
           </ul>
         </div>
         <div class="col-auto">
@@ -90,7 +90,7 @@
     <div class="row">
       <!-- INICIO  BODY MAIN-->
       <div id="main_content" class="col-lg mt-4 mt-lg-0 order-2 order-lg-1">
-        {% block doc_container %} {% endblock %}
+        {% block doc_container %}{% endblock %}
       </div>
       <!-- INICIO  NAVS -->
       <div id="body_nav_container" class="col-lg-4 order-1 order-lg-2">
@@ -98,10 +98,10 @@
           <div class="col mt-2 fixed-lg">
             <h5 class="fw-bold text-muted">Indice</h5>
             <ul id="nav_container" class="list-unstyled ps-1">
-              {% block nav_container %} {% endblock %}
+              {% block nav_container %}{% endblock %}
             </ul>
             <div id="nav_tags" class="ps-2">
-              {% block badges_container %} {% endblock %}
+              {% block badges_container %}{% endblock %}
             </div>
           </div>
         </div>
