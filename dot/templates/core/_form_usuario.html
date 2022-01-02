@@ -172,6 +172,8 @@
   }
   {% endif %}
   
+  {% if not user.is_superuser  %}
+  
   function carregaGruposDisponiveis() {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
@@ -222,8 +224,9 @@
     xhttp.send();
   }
   carregaPermsDisponiveis();
+  {% endif %}
   
-  {% if 'usuario_id' in request.get_full_path %}
+  {% if 'usuario_id' in request.get_full_path and not user.is_superuser %}
   function carregaGruposSelecionados() {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {

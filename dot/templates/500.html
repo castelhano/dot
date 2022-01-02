@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>500 Error</title>
+  <link rel="shortcut icon" href="{% static 'img/favicon.ico'%}">
+  <link rel="stylesheet" href="{% static 'css/dot.css' %}" type="text/css">
+  <link rel="stylesheet" href="{% static 'css/vendor/all.min.css' %}" type="text/css">
+  <link rel="stylesheet" href="{% static 'css/vendor/fontawesome.min.css' %}" type="text/css">
+  <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.min.css' %}" type="text/css">
+  
+  <style media="screen">
+    body{background-color: #F4F6F9;}
+    h3{font-size: 1.5rem;}
+    @media(min-width: 768px){
+      .texto{max-width: 370px;}
+    }
+    a{}
+  </style>
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="row pt-2">
+      <div class="col"><h3 class="text-muted">500 Error Page</h3></div>
+      <div class="col-auto mb-3 mb-md-5"><a href="{% url 'index' %}">Dot</a>&nbsp;&nbsp;/&nbsp;&nbsp;500 Error Page</div>
+    </div>
+    <div class="row mt-3 mt-md-5">
+      <div class=" col-md text-center text-md-end text-danger pe-md-3" style="font-size:5.5rem;">500</div>
+      <div class=" col-md px-4 px-md-1 pt-1 pt-md-4 text-start" style="">
+          <div class="col-md-12 text-center text-md-start text-muted fs-5"><i class="fas fa-bug text-danger"></i> Oops! Alguma coisa deu errada.</div>
+          <div class="col-md texto pt-1">Estaremos trabalhando para resolver isso, pedimos que nos relate como o problema ocorreu.<br><a href="mailto:castelhano.rafael@gmail.com">Relatar problema</a>, ou voltar a <a href="{% url 'index' %}">página inicial</a>.</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

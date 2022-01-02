@@ -19,7 +19,7 @@
   <title>{% block title %}Dot{% endblock %}</title>
 </head>
 <body>
-  <nav class="navbar navbar-dark bg-dark bg-gradient navbar-expand sticky-top shadow-sm border-bottom" style="height:45px;">
+  <nav class="navbar {% block navbar_classlist %}navbar-dark bg-dark bg-gradient{% endblock %} navbar-expand sticky-top shadow-sm border-bottom" style="height:45px;">
     <div class="container-fluid">
       <a class="navbar-brand user-select-none pt-0">{% block model %} Dot {% endblock%}</a>
       <div class="collapse navbar-collapse ms-2" id="navControls">

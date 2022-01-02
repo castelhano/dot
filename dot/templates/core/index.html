@@ -8,6 +8,7 @@
 <a class="d-none" id="clear" href="{% url 'index' %}"></a>
 <div class="row px-1 pt-lg-2">
   {% if user.is_staff %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-danger"><i class="fas fa-cogs lead-image"></i><a class="widget-label stretched-link" href="{% url 'admin:index' %}" target="_blank">Admin</a></div>{% endif %}
+  {% if perms.pessoal.view_funcionario %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-purple"><i class="fas fa-users lead-image"></i><a class="widget-label stretched-link" href="{% url 'pessoal_funcionarios' %}">Pessoal</a></div>{% endif %}
   {% if perms.core.console %}
   <div class="card-widget col-6 col-lg-4 col-xl-2 btn-orange" title="Ctrl + ."><i class="fas fa-window-restore lead-image"></i><a id="console_link" class="widget-label stretched-link" href="{% url 'console' %}">Admin Console <kbd class="float-end fs-9">ctrl .</kbd></a></div>
   {% endif %}

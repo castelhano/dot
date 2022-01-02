@@ -1,0 +1,32 @@
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('pessoal_setores',views.setores,name='pessoal_setores'),
+    path('pessoal_setor_add',views.setor_add,name='pessoal_setor_add'),
+    path('pessoal_setor_id/<int:id>',views.setor_id,name='pessoal_setor_id'),
+    path('pessoal_setor_update/<int:id>',views.setor_update,name='pessoal_setor_update'),
+    path('pessoal_setor_delete/<int:id>/delete',views.setor_delete,name='pessoal_setor_delete'),
+    path('pessoal_cargos',views.cargos,name='pessoal_cargos'),
+    path('pessoal_cargo_add',views.cargo_add,name='pessoal_cargo_add'),
+    path('pessoal_cargo_id/<int:id>',views.cargo_id,name='pessoal_cargo_id'),
+    path('pessoal_cargo_update/<int:id>',views.cargo_update,name='pessoal_cargo_update'),
+    path('pessoal_cargo_delete/<int:id>/delete',views.cargo_delete,name='pessoal_cargo_delete'),
+    path('pessoal_funcionarios',views.funcionarios,name='pessoal_funcionarios'),
+    path('pessoal_funcionario_add',views.funcionario_add,name='pessoal_funcionario_add'),
+    path('pessoal_funcionario_id/<int:id>',views.funcionario_id,name='pessoal_funcionario_id'),
+    path('pessoal_funcionario_update/<int:id>',views.funcionario_update,name='pessoal_funcionario_update'),
+    path('pessoal_funcionario_delete/<int:id>/delete',views.funcionario_delete,name='pessoal_funcionario_delete'),
+    path('pessoal_afastar_funcionario',views.afastar_funcionario,name='pessoal_afastar_funcionario'),
+    path('pessoal_desligar_funcionario',views.desligar_funcionario,name='pessoal_desligar_funcionario'),
+    path('pessoal_funcoes_fixas',views.funcoes_fixas,name='pessoal_funcoes_fixas'),
+    path('pessoal_funcao_fixa_add',views.funcao_fixa_add,name='pessoal_funcao_fixa_add'),
+    path('pessoal_funcao_fixa_id/<int:id>',views.funcao_fixa_id,name='pessoal_funcao_fixa_id'),
+    path('pessoal_funcao_fixa_update/<int:id>',views.funcao_fixa_update,name='pessoal_funcao_fixa_update'),
+    path('pessoal_funcao_fixa_delete/<int:id>/delete',views.funcao_fixa_delete,name='pessoal_funcao_fixa_delete'),
+    path('pessoal_get_setores',views.get_setores,name='pessoal_get_setores'),
+    path('pessoal_get_funcionario',views.get_funcionario,name='pessoal_get_funcionario'),
+    path('pessoal_get_funcionarios',views.get_funcionarios,name='pessoal_get_funcionarios'),
+    path('pessoal_get_cargos',views.get_cargos,name='pessoal_get_cargos'),
+    path('pessoal_get_cargos_ff',views.get_cargos_ff,name='pessoal_get_cargos_ff'),
+]
