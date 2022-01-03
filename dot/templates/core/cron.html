@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="{% static 'img/favicon.ico'%}">
+  <link rel="stylesheet" href="{% static 'css/vendor/all.min.css' %}" type="text/css">
+  <link rel="stylesheet" href="{% static 'css/vendor/fontawesome.min.css' %}" type="text/css">
+  <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.min.css' %}" type="text/css">
+  <link rel="stylesheet" href="{% static 'css/dot.css' %}" type="text/css">
+  
+  <title>CRON</title>
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="card mt-2">
+      <div class="card-header d-flex justify-content-between">
+        <h5><b class="text-orange me-2">CRON:</b> Relatório de Conclusão</h5>
+        <a class="btn btn-sm btn-dark" onclick="window.close();">Fechar</a>
+      </div>
+      <div class="card-body fs-7">
+        <dl class="row">
+          <dd class="col-md-2">INICIO:</dd><dt class="col-10">{{header.inicio|date:'d/m/Y H:i:s'}}</dt>          
+          <dd class="col-md-2">CONCLUSÃO:</dd><dt class="col-10">{{header.termino|date:'d/m/Y H:i:s'}}</dt>          
+        </dl>
+        <hr />
+        <table class="table border table-striped table-hover">
+          <caption class="caption-top"><span class="badge bg-orange fs-6">{{header.script}}</span></caption>
+          <thead>
+            <tr>
+              <th>Subrotina</th>
+              <th>Params</th>
+              <th>Status</th>
+              <th>Mensagem</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in response %}
+            <tr>
+              <td>{{r.1|safe}}</td>  
+              <td>{{r.2|safe}}</td>  
+              <td>{{r.3|safe}}</td>
+              <td>{{r.4|safe}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>    
+  </div>
+</body>
+</html>

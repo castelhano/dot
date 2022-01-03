@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from . import views, reports
 
 urlpatterns = [
     path('pessoal_setores',views.setores,name='pessoal_setores'),
@@ -29,4 +29,5 @@ urlpatterns = [
     path('pessoal_get_funcionarios',views.get_funcionarios,name='pessoal_get_funcionarios'),
     path('pessoal_get_cargos',views.get_cargos,name='pessoal_get_cargos'),
     path('pessoal_get_cargos_ff',views.get_cargos_ff,name='pessoal_get_cargos_ff'),
+    path('pessoal_export_funcionario_csv/<int:id>',reports.export_funcionario_csv,name='pessoal_export_funcionario_csv'),
 ]

@@ -39,6 +39,7 @@ class Alerta(models.Model):
     link = models.CharField(max_length=220, blank=True)
     usuario = models.ForeignKey(User, on_delete=models.RESTRICT)
     lido = models.BooleanField(default=False)
+    critico = models.BooleanField(default=False)
     alert_class_list = models.CharField(max_length=60, blank=True)
     action_class_list = models.CharField(max_length=60, blank=True)
     create_at = models.DateTimeField(default=datetime.now)

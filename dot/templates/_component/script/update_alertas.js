@@ -17,7 +17,8 @@ function carregaAlertas() {
             link = `<a class="${action_style}" href="${obj[item].fields.link}">Link</a>`;
           }
           let marcar_lido = `<a class="${action_style}" onclick="marcarAlertaLido(${obj[item].pk})">Fechar</a>`;
-          let alerta = `<div id="alert_${item}" class="col-12 ${alert_style} p-3 mb-2"><h6 class="m-0">${titulo}</h6><p class="text-justify mt-2 fs-7">${mensagem}</p><div class="row"><div class="col d-grid">${link}</div><div class="col d-grid">${marcar_lido}</div></div></div>`;
+          let pin = obj[item].fields.critico == true ? '<i class="fas fa-thumbtack text-muted ms-auto fs-5" style="position:absolute;top:0px;right:2px;"></i>' : '';
+          let alerta = `<div id="alert_${item}" class="col-12 ${alert_style} p-3 mb-2"><div style="position:relative;"><h6 class="m-0">${titulo}</h6>${pin}</div><p class="text-justify mt-2 fs-7">${mensagem}</p><div class="row"><div class="col d-grid">${link}</div><div class="col d-grid">${marcar_lido}</div></div></div>`;
           document.getElementById('offcanvas_body').innerHTML += alerta;
           qtde++;
         }

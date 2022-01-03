@@ -30,7 +30,10 @@ def Run(script):
 def runScript(attrs):
     response = '<span><b class="text-orange">Alert:</b> Nothing to do...</span>'
     if '!execute=True' in attrs:
-        response = '<span><b class="text-success">Done:</b> Routine executed, total of <b>55</b> rows affected</span>'
+        code = re.search(':code=([^\s]+)', attrs).group(1)
+        response = f'<span><b class="text-orange">Alert:</b> Code <b>{code}</b> not configured</span>'
+        # if code == 'foo':
+        #     response = '<span><b class="text-success">Done:</b> Some text.....</span>'
     return response
 
 def alertaClean(attrs):

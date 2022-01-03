@@ -19,19 +19,23 @@
             <a class="btn btn-sm btn-warning px-4 px-lg-0 disabled">{{funcionario.get_status_display}}</a>
             {% endif %}
           </div></div>
+          {% if 'funcionario_id' in request.get_full_path %}
           <div class="col-auto">
             <button type="button" class="btn btn-sm" data-bs-toggle="dropdown"><i class="fas fa-angle-down text-light"></i></button>
             <ul class="dropdown-menu fs-7">
-              <li><a class="dropdown-item" href="#">Baixar CSV</a></li>
-              {% if perms.pessoal.afastar_funcionario %}
-              <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modal_afastamento" href="#">Afastamentos</a></li>
-              {% endif %}
+              <li><a class="dropdown-item" href="{% url 'pessoal_export_funcionario_csv' funcionario.id %}">Baixar CSV</a></li>
               {% if perms.pessoal.desligar_funcionario and funcionario.status == 'A' %}
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item dropdown-item-danger" data-bs-toggle="modal" data-bs-target="#modal_desligamento" href="#">Desligar Funcionário</a></li>
+                {% if perms.pessoal.afastar_funcionario %}
+                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modal_afastamento" href="#">Afastamentos</a></li>
+                {% endif %}
+                {% if perms.pessoal.desligar_funcionario %}
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item dropdown-item-danger" data-bs-toggle="modal" data-bs-target="#modal_desligamento" href="#">Desligar Funcionário</a></li>
+                {% endif %}
               {% endif %}
             </ul>
           </div>
+          {% endif %}
         </div>      
       </div>      
     </div>
@@ -71,13 +75,13 @@
           <div class="row g-1">
             <div class="form-floating mb-lg-1 col-lg-3">
               <select class="form-select bg-light" id="id_setor" name="setor" onchange="carregaCargos()">
-                <option value="" selected>---------</option>
+                <option value="">---------</option>
               </select>
               <label for="id_setor">Setor</label>
             </div>
             <div class="form-floating mb-lg-1 col-lg-3">
               <select class="form-select" id="id_cargo" name="cargo">
-                <option value="" selected>---------</option>
+                <option value="">---------</option>
               </select>
               <label for="id_cargo">Cargo</label>
             </div>
@@ -187,7 +191,11 @@
               <label for="id_cnh_validade">CNH Validade</label>
             </div>
             <div class="form-floating col-lg">
-              <input type="text" class="form-control bg-light" id="id_situacao_cnh" value="" disabled>
+              {% if funcionario.cnh_eh_valida %}
+              <input type="text" class="form-control bg-light" id="id_situacao_cnh" value="No prazo" disabled>
+              {% else %}
+              <input type="text" class="form-control bg-warning-light" id="id_situacao_cnh" value="Vencida" disabled>
+              {% endif %}
               <label for="id_situacao_cnh">Status</label>
             </div>
           </div>
@@ -264,7 +272,7 @@
   }
   carregaEmpresas();
   
-  function carregaSetores() {
+  function carregaSetores(loading_page=false) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
       if(this.readyState == 4 && this.status == 200){
@@ -276,18 +284,19 @@
           for(key in obj){
             if(obj[key] == setor_atual){setores.innerHTML += '<option value="' + obj[key] + '" selected>' + key + '</option>';}
             else{setores.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}}
+            if(loading_page){carregaCargos();}
           }
         }
       };
       xhttp.open("GET", "{% url 'pessoal_get_setores' %}", true);
       xhttp.send();
     }
-    carregaSetores();
+    carregaSetores(true);
     
     function carregaCargos() {
       setor = document.getElementById('id_setor').value;
       cargos = document.getElementById("id_cargo");
-      cargos.innerHTML = '<option value="" selected>---------</option>';
+      cargos.innerHTML = '<option value="">---------</option>';
       if(setor == ''){}
       else{
         var xhttp = new XMLHttpRequest();
@@ -307,5 +316,4 @@
           xhttp.send();
         }
       }
-      
     </script>

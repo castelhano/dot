@@ -35,7 +35,7 @@ VERSION: 1.0
   .rotate-lg-90{transform: rotateZ(90deg);}
   .widget-thumb-container{margin-bottom:5px;margin-left:12px;width: 97.5%;display: flex;flex-direction: row;justify-content: flex-start;}
   .widget-thumb-img{height: 100px;border: 1px solid #dee2e6;}
-  .widget-thumb-controls{margin-top: 0px;margin-left: 5px;}
+  .widget-thumb-controls{margin-top: 0px;margin-left: 15px;}
 }
 .fs-7{font-size: 0.9rem;}
 .fs-8{font-size: 0.8rem;}

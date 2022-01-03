@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from . import views, cron
 
 urlpatterns = [
     path('',views.index,name='index'),
@@ -11,6 +11,7 @@ urlpatterns = [
     path('logs',views.logs,name='logs'),
     path('docs',views.docs,name='docs'),
     path('console',views.console,name='console'),
+    path('cron/dot_cleaner',cron.dot_cleaner,name='cron/dot_cleaner'),
     path('handle404',views.handle404,name='handle404'),
     path('handle500',views.handle500,name='handle500'),
     path('core_usuarios',views.usuarios,name='core_usuarios'),
