@@ -38,7 +38,7 @@
             <th class="d-none d-sm-table-cell">Empresa</th>
 						<th>Matric</th>
 						<th class="d-none d-lg-table-cell">Nome</th>
-						<th class="">Apelido</th>
+						<th class="d-table-cell d-lg-none">Apelido</th>
 						<th class="d-none">Sexo</th>
 						<th class="d-none">Nascimento</th>
 						<th class="d-none">Admissão</th>
@@ -72,7 +72,7 @@
 						<td class="d-none">{{funcionario.get_regime_display|default:'---'}}</td>
 						<td class="d-none d-lg-table-cell{% if funcionario.status != 'A' %} bg-warning-light{% endif %}">{{funcionario.get_status_display}}</td>
             {% if perms.pessoal.change_funcionario %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="url"><i class="fas fa-pen"></i></a></td>
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'pessoal_funcionario_id' funcionario.id %}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
           </tr>
           {% empty %}
@@ -169,7 +169,7 @@ function carregaEmpresas() {
 		var xhttp = new XMLHttpRequest();
 		xhttp.onreadystatechange = function() {
 			if(this.readyState == 4 && this.status == 200){
-				if(this.responseText == '' || this.responseText == '{}' ){document.getElementById("id_empresa").innerHTML = '<option value="none" selected>Nenhuma habilitada</option>'}
+				if(this.responseText == '' || this.responseText == '{}' ){document.getElementById("id_empresa").innerHTML = '<option value="" selected>Nenhuma habilitada</option>'}
 				else{
 					let obj = JSON.parse(this.responseText);
 					empresas = document.getElementById("id_empresa")

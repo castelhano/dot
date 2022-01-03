@@ -374,23 +374,25 @@ def funcao_fixa_delete(request, id):
 @permission_required('pessoal.desligar_funcionario')
 def desligar_funcionario(request):
     if request.method == 'POST':
-        try:
+        # try:
             funcionario = Funcionario.objects.get(pk=request.POST['funcionario_desligar_id'])
-            data =  funcionario.desligamento()
-            if data[0]:
+            response =  funcionario.desligamento(request.POST['data_desligamento'],request.POST['motivo_desligamento'])
+            if response[0]:
                 l = Log()
                 l.modelo = "pessoal.funcionario"
                 l.objeto_id = funcionario.id
                 l.objeto_str = funcionario.matricula + ' - ' + funcionario.nome[0:48]
                 l.usuario = request.user
-                l.mensagem = data[1]
+                l.mensagem = response[1]
                 l.save()
                 funcionario.save()
-            messages.warning(request,data[2])
+                messages.warning(request,response[2])
+            else:
+                messages.danger(request,response[1])                
             return redirect('pessoal_funcionario_id', funcionario.id)
-        except:
-            messages.error(request,'Erro ao desligar funcionário')
-            return redirect('pessoal_funcionarios')
+        # except:
+        #     messages.error(request,'Erro ao desligar funcionário')
+        #     return redirect('pessoal_funcionarios')
     else:
         messages.error(request,'Operação não autorizada')
         return redirect('pessoal_funcionarios')

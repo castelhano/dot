@@ -155,8 +155,14 @@ class Funcionario(Pessoa):
     def afastamentos(self):
         afastamentos = Afastamento.objects.filter(funcionario=self).order_by('data')
         return afastamentos
-    def desligamento(self):
-        pass
+    def desligamento(self, data, motivo):
+        try:
+            self.status = 'D'
+            self.data_desligamento = data
+            self.motivo_desligamento = motivo
+            return [True,'DESLIGADO',f'Funcionario {self.matricula} desligado']
+        except:
+            return [False,'Erro ao desligar funcionario']
     def foto_url(self):
         return self.foto.url
     def foto_name(self):

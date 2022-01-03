@@ -1,5 +1,6 @@
 import re
 from .models import Alerta, Log
+from pessoal.models import Funcionario
 from django.contrib.auth.models import User
 
 def Run(script):
@@ -18,6 +19,8 @@ def Run(script):
                     response.append(alertaAdd(attrs))
             elif command == 'logs':
                 response.append(logs(attrs))
+            elif command == 'employee':
+                response.append(funcionario(attrs))
             else: # Comando nao reconhecido, gera exception de bad formated
                 raise Exception()
         except:
@@ -104,4 +107,32 @@ def logs(attrs):
         response = f'<b class="text-success">Done:</b> Total of <b>{qtde}</b> logs deleted.'
     except:
         response = '<span><b class="text-danger">Error:</b> Bad formatted attributes, <b class="text-danger">operation aborted</b>.</span>'
+    return response
+
+def funcionario(attrs):
+    response = '<span><b class="text-danger">Error:</b> Bad formatted FOO attributes, <b class="text-danger">operation aborted</b>.</span>'
+    # try:
+    operacao = re.search('!([^\s]+) ', attrs).group(1)
+    matricula = re.search('#([^\s]+) ', attrs).group(1)
+    if operacao == 'reengage':
+        funcionario = Funcionario.objects.get(matricula=matricula)
+        funcionario.status = 'A'
+        funcionario.data_desligamento = None
+        funcionario.motivo_desligamento = ''
+        funcionario.save()
+        Log.objects.filter(modelo='pessoal.funcionario', mensagem='DESLIGADO',objeto_id=funcionario.id).delete()
+        l = Log()
+        l.modelo = "pessoal.funcionario"
+        l.objeto_id = str(funcionario.id)
+        l.objeto_str = str(funcionario.matricula)
+        l.usuario = request.user
+        l.mensagem = "REENGAGE"
+        print('AQUII')
+        l.save()
+        print('AQUII 22')
+        response = f'<b class="text-success">Done:</b> Employee <b>{matricula}</b> reengage'
+    else:
+        pass
+    # except:
+    #     pass
     return response
