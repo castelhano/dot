@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from json import dumps
-from .models import Setor, Cargo, Funcionario, FuncaoFixa
-from .forms import SetorForm, CargoForm, FuncionarioForm, FuncaoFixaForm
+from .models import Setor, Cargo, Funcionario, FuncaoFixa, Afastamento
+from .forms import SetorForm, CargoForm, FuncionarioForm, FuncaoFixaForm, AfastamentoForm
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from core.models import Log
@@ -78,6 +78,12 @@ def funcionarios(request):
             messages.warning(request,'Nenhum registro com os filtros informados')
             return render(request,'pessoal/funcionarios.html')
     return render(request,'pessoal/funcionarios.html',{'funcionarios':funcionarios})
+
+@login_required
+@permission_required('pessoal.view_afastamento')
+def afastamentos(request, id):
+    funcionario = Funcionario.objects.get(id=id)
+    return render(request,'pessoal/afastamentos.html', {'funcionario' : funcionario})
 
 @login_required
 @permission_required('pessoal.view_funcaofixa')
@@ -162,6 +168,37 @@ def funcionario_add(request):
     return render(request,'pessoal/funcionario_add.html',{'form':form})
 
 @login_required
+@permission_required('pessoal.add_afastamento')
+def afastamento_add(request, id):
+    if request.method == 'POST':
+        form = AfastamentoForm(request.POST)
+        if form.is_valid():
+            try:
+                form_clean = form.cleaned_data
+                registro = form.save(commit=False)
+                resp = registro.funcionario.afastar()
+                if resp[0]:
+                    registro.save()
+                    l = Log()
+                    l.modelo = "pessoal.afastamento"
+                    l.objeto_id = registro.id
+                    l.objeto_str = registro.funcionario.matricula + ' - ' + registro.funcionario.nome[0:48]
+                    l.usuario = request.user
+                    l.mensagem = resp[1]
+                    l.save()
+                    messages.success(request,resp[2])
+                else:
+                    messages.warning(request,resp[2])
+                return redirect('pessoal_afastamentos', registro.funcionario.id)
+            except:
+                messages.error(request,'Erro ao inserir afastamento [INVALID FORM]')
+                return redirect('pessoal_afastamento_add', registro.funcionario.id)
+    else:
+        form = AfastamentoForm()
+        funcionario = Funcionario.objects.get(id=id)
+    return render(request,'pessoal/afastamento_add.html',{'form':form,'funcionario':funcionario})
+
+@login_required
 @permission_required('pessoal.add_funcaofixa')
 def funcao_fixa_add(request):
     if request.method == 'POST':
@@ -207,6 +244,13 @@ def funcionario_id(request,id):
     funcionario = Funcionario.objects.get(pk=id)
     form = FuncionarioForm(instance=funcionario)
     return render(request,'pessoal/funcionario_id.html',{'form':form,'funcionario':funcionario})
+
+@login_required
+@permission_required('pessoal.change_afastamento')
+def afastamento_id(request,id):
+    afastamento = Afastamento.objects.get(pk=id)
+    form = AfastamentoForm(instance=afastamento)
+    return render(request,'pessoal/afastamento_id.html',{'form':form,'afastamento':afastamento})
 
 @login_required
 @permission_required('pessoal.change_funcaofixa')
@@ -272,6 +316,30 @@ def funcionario_update(request,id):
         return redirect('pessoal_funcionario_id', id)
     else:
         return render(request,'pessoal/funcionario_id.html',{'form':form,'funcionario':funcionario})
+
+@login_required
+@permission_required('pessoal.change_afastamento')
+def afastamento_update(request,id):
+    afastamento = Afastamento.objects.get(pk=id)
+    form = AfastamentoForm(request.POST, instance=afastamento)
+    if form.is_valid():
+        registro = form.save(commit=False)
+        resp = registro.funcionario.afastar()
+        if resp[0]:
+            registro.save()
+            l = Log()
+            l.modelo = "pessoal.afastamento"
+            l.objeto_id = registro.id
+            l.objeto_str = registro.funcionario.matricula + ' - ' + registro.funcionario.nome[0:48]
+            l.usuario = request.user
+            l.mensagem = resp[1]
+            l.save()
+            messages.success(request,resp[2])
+        else:
+            messages.warning(request,resp[2])
+        return redirect('pessoal_afastamento_id', id)
+    else:
+        return render(request,'pessoal/afastamento_id.html',{'form':form,'afastamento':afastamento})
 
 @login_required
 @permission_required('pessoal.change_funcaofixa')
@@ -351,6 +419,26 @@ def funcionario_delete(request,id):
         return redirect('pessoal_funcionario_id', id)
 
 @login_required
+@permission_required('pessoal.delete_afastamento')
+def afastamento_delete(request,id):
+    try:
+        registro = Afastamento.objects.get(pk=id)
+        registro.delete()
+        l = Log()
+        l.modelo = "pessoal.afastamento"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.funcionario.matricula + ' - ' + registro.funcionario.nome[0:48]
+        l.usuario = request.user
+        l.mensagem = "DELETE"
+        l.save()
+        messages.warning(request,'Afastamento excluido. Essa operação não pode ser desfeita')
+        return redirect('pessoal_afastamentos', registro.funcionario.id)
+    except:
+        messages.error(request,'ERRO ao apagar afastamento')
+        return redirect('pessoal_afastamento_id', id)
+
+
+@login_required
 @permission_required('pessoal.delete_funcaofixa')
 def funcao_fixa_delete(request, id):
     try:
@@ -372,7 +460,7 @@ def funcao_fixa_delete(request, id):
 # OUTROS METODOS
 @login_required
 @permission_required('pessoal.desligar_funcionario')
-def desligar_funcionario(request):
+def funcionario_desligar(request):
     if request.method == 'POST':
         # try:
             funcionario = Funcionario.objects.get(pk=request.POST['funcionario_desligar_id'])
@@ -399,11 +487,11 @@ def desligar_funcionario(request):
         
 @login_required
 @permission_required('pessoal.afastar_funcionario')
-def afastar_funcionario(request):
+def funcionario_afastar(request):
     if request.method == 'POST':
         try:
             funcionario = Funcionario.objects.get(pk=request.POST['funcionario_afastar_id'])
-            data =  funcionario.afastamento()
+            data =  funcionario.afastar()
             if data[0]:
                 l = Log()
                 l.modelo = "pessoal.funcionario"

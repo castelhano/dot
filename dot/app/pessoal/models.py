@@ -150,11 +150,19 @@ class Funcionario(Pessoa):
             return math.floor(tempo_servico)
         else:
             return ''
-    def afastamento(self):
-        pass
+    def dependentes(self):
+        return Dependente.objects.filter(funcionario=self).order_by('nome')
+    def afastar(self):
+        try:
+            if self.status == 'A': # Afastamento restrito a funcionarios ativos
+                self.status = 'F'
+                return [True, 'AFASTADO', f'Funcionario{self.matricula} afastado']
+            else:
+                return [False, 'Warning' ,'So é possivel afastar <b>funcionários ativos</b>']
+        except:
+            return [False, 'Error' ,'<b class="text-danger">Erro</b> ao afastar funcionário']
     def afastamentos(self):
-        afastamentos = Afastamento.objects.filter(funcionario=self).order_by('data')
-        return afastamentos
+        return Afastamento.objects.filter(funcionario=self).order_by('data_afastamento')
     def desligamento(self, data, motivo):
         try:
             self.status = 'D'
@@ -199,7 +207,6 @@ class Dependente(models.Model):
         ("S","Sogro / Sogra"),
         ("A","Avo / Bisavo"),
         ("N","Neto / Bisneto"),
-        ("B","Bisneto"),
         ("In","Incapaz"),
         ("M","Outros menores"),
     )

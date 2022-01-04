@@ -412,24 +412,30 @@ def password_valid(password):
 # AJAX METODOS
 @login_required
 def get_empresas(request):
-    try:
+    # try:
         tipo = request.GET.get('tipo',None)
-        usuario = request.user if request.GET.get('usuario', None) == None else User.objects.get(id=request.GET.get('usuario', None))        
+        if request.GET.get('usuario', None) == 'new':
+            usuario = User()
+        else:
+            usuario = request.user if request.GET.get('usuario', None) == None else User.objects.get(id=request.GET.get('usuario', None))        
         if usuario.is_superuser: # Caso superusuario retorna todas as empresas
             empresas = Empresa.objects.all().order_by('nome')
         elif tipo == None or tipo == 'cadastrados': # Retorna as empresas cadastradas para usuario
             empresas = usuario.profile.empresas.all().order_by('nome')
         elif tipo == 'disponiveis':
-            empresas = Empresa.objects.all().exclude(profile__user=usuario).order_by('nome')
+            if request.GET.get('usuario', None) == 'new':
+                empresas = Empresa.objects.all().order_by('nome')
+            else:
+                empresas = Empresa.objects.all().exclude(profile__user=usuario).order_by('nome')
         else:
-            empresas = None        
+            empresas = None
         itens = {}
         for item in empresas:
             itens[item.nome] = item.id
         dataJSON = dumps(itens)
         return HttpResponse(dataJSON)
-    except:
-        return HttpResponse('')
+    # except:
+    #     return HttpResponse('')
 
 @login_required
 def get_grupos(request):
