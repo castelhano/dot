@@ -115,14 +115,12 @@
   <script src="{% static 'js/_basicListener.js' %}"></script>
   {% block script_src %}{% endblock %}
   <script>
-  {% include '_component/script/update_url.js' %}
   var SHORTCUT_MAP = {
     '/FFF':':search',
   };
   function eventHandler(e){}
   
   function goTo(id){document.getElementById(id).scrollIntoView();}
-  function filter(filter, value){location.href = updateUrl(window.location.href, filter, value);}
   function search(){document.getElementById('main_search').select();}
   function find(){
     let target = document.getElementById('main_search').value;

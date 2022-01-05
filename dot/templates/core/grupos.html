@@ -4,7 +4,23 @@
 {% block model_menu %}
 {% include "_component/menu/core.html" %}
 {% endblock%}
-
+  
+<style media="screen">
+{% block style %}
+.filter-container{
+  background-color: #F8F9FA;
+  border:1px solid rgb(222, 226, 230);
+  border-radius: 5px;
+  padding: 8px 10px;
+  min-width: 250px;
+  min-height: 250px;
+}
+.filter-container a{text-decoration: none;color: #0d6efd!important;cursor: pointer;}
+.filter-container a.active{font-weight: bold;}
+@media(max-width: 992px){
+}
+{% endblock%}
+</style>
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'core_grupos' %}"></a>
 
@@ -30,35 +46,46 @@
   </div>
   <div class="card-body tab-content">
     <h5 class="card-title mb-3">Grupos <small class="badge bg-primary ms-1">{{grupos.count}}</small></h5>
-    <div class="tab-pane fade show active" id="base" role="tabpanel">
-      <table id="main_table" class="table border table-striped table-hover">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Nome</th>
-            {% if perms.auth.change_group %}
-            <th>&nbsp;</th>
-            {% endif %}
-          </tr>
-        </thead>
-        <tbody>
-          {% for grupo in grupos %}
-          <tr>
-            <td>{{grupo.id}}</td>
-            <td>{{grupo.name}}</td>
-            {% if perms.auth.change_group %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'core_grupo_id' grupo.id %}"><i class="fas fa-pen"></i></a></td>
-            {% endif %}
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="3">Nenhum registro a exibir</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+    <div class="row">
+      <div class="col-lg">
+        <div class="tab-pane fade show active" id="base" role="tabpanel">
+          <table id="main_table" class="table border table-striped table-hover">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nome</th>
+                {% if perms.auth.change_group %}
+                <th>&nbsp;</th>
+                {% endif %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for grupo in grupos %}
+              <tr>
+                <td>{{grupo.id}}</td>
+                <td>{{grupo.name}}</td>
+                {% if perms.auth.change_group %}
+                <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'core_grupo_id' grupo.id %}"><i class="fas fa-pen"></i></a></td>
+                {% endif %}
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="3">Nenhum registro a exibir</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="col-lg-auto ps-auto ps-lg-0">
+        <div class="filter-container">
+          <h5 class="text-muted">Filtros</h5>
+          <ul class="list-unstyled">
+            <li><a onclick="filter('_associacoes','False')">Sem associações</a></li>
+          </ul>
+        </div>
+      </div>
     </div>
-    <!-- <div class="tab-pane fade" id="param" role="tabpanel">param</div> -->
   </div>
 </div>
 
@@ -70,8 +97,7 @@
         <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
       </div>
       <div class="modal-body">
-        <form id="auth_form" action="{% url 'core_grupos' %}" method="POST" autocomplete="off">
-          {% csrf_token %}
+        <form id="auth_form" action="{% url 'core_grupos' %}" method="GET" autocomplete="off">
           <div class="row g-1">
             <div class="form-floating mb-1 col-lg-12">
               <input type="text" class="form-control" name="pesquisa" value="" id="id_pesquisa" placeholder="">
@@ -87,4 +113,15 @@
 
 {% block add_script_src %}
 <script src="{% static 'js/table_to_csv.js' %}"></script>
+<script src="{% static 'js/update_url.js' %}"></script>
 {% endblock %}
+
+  
+<script>
+{% block add_script %}
+const filters = ['_associacoes'];
+
+urlSetFiltersActive(filters);
+
+{% endblock %}
+</script>

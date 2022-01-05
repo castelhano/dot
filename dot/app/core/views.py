@@ -32,8 +32,11 @@ def empresas(request):
 @permission_required('auth.view_group')
 def grupos(request):
     grupos = Group.objects.all().order_by('name')
-    if request.method == 'POST':
-        grupos = grupos.filter(name__contains=request.POST['pesquisa'])
+    pesquisa = request.GET.get('pesquisa', None)
+    if pesquisa:
+        grupos = grupos.filter(name__contains=pesquisa)
+    if request.GET.get('_associacoes', None):
+        grupos = grupos.filter(user=None)    
     return render(request,'core/grupos.html',{'grupos':grupos})
 
 @login_required
