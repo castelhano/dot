@@ -28,10 +28,12 @@ class FuncaoFixaForm(forms.ModelForm):
 class AfastamentoForm(forms.ModelForm):
     class Meta:
         model = Afastamento
-        fields = ['funcionario','motivo','data_afastamento', 'data_retorno','reabilitado','detalhe']
+        fields = ['funcionario','motivo','origem','data_afastamento', 'data_retorno','remunerado','reabilitado','detalhe']
     motivo = forms.ChoiceField(required=False, choices=Afastamento.MOTIVO_AFASTAMENTO, widget=forms.Select(attrs={'class':'form-select'}))
+    origem = forms.ChoiceField(required=False, choices=Afastamento.ORIGEM_CHOICES, widget=forms.Select(attrs={'class':'form-select'}))
     data_afastamento = forms.DateField(required=False, initial=date.today(), widget=forms.TextInput(attrs={'class':'form-control','type':'date', 'autofocus':'autofocus'}))
     data_retorno = forms.DateField(required=False, widget=forms.TextInput(attrs={'class':'form-control bg-light','type':'date', 'tabindex':'-1'}))
+    remunerado = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch', 'tabindex':'-1'}))
     reabilitado = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch', 'tabindex':'-1'}))
     detalhe = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'Detalhes', 'style':'min-height:300px'}))
     

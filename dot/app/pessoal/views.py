@@ -176,7 +176,7 @@ def afastamento_add(request, id):
             try:
                 form_clean = form.cleaned_data
                 registro = form.save(commit=False)
-                resp = registro.funcionario.afastar()
+                resp = registro.funcionario.afastar(registro)
                 if resp[0]:
                     registro.save()
                     l = Log()
@@ -184,11 +184,11 @@ def afastamento_add(request, id):
                     l.objeto_id = registro.id
                     l.objeto_str = registro.funcionario.matricula + ' - ' + registro.funcionario.nome[0:48]
                     l.usuario = request.user
-                    l.mensagem = resp[1]
+                    l.mensagem = 'AFASTADO'
                     l.save()
-                    messages.success(request,resp[2])
+                    messages.success(request, f'Funcionário {registro.funcionario.matricula} afastado')
                 else:
-                    messages.warning(request,resp[2])
+                    messages.warning(request,resp[1])
                 return redirect('pessoal_afastamentos', registro.funcionario.id)
             except:
                 messages.error(request,'Erro ao inserir afastamento [INVALID FORM]')
@@ -323,20 +323,29 @@ def afastamento_update(request,id):
     afastamento = Afastamento.objects.get(pk=id)
     form = AfastamentoForm(request.POST, instance=afastamento)
     if form.is_valid():
+        # try:
         registro = form.save(commit=False)
-        resp = registro.funcionario.afastar()
+        resp = registro.funcionario.afastar(registro, True)
         if resp[0]:
             registro.save()
+            if registro.funcionario.status == 'F' and not Afastamento.objects.filter(funcionario=registro.funcionario, data_retorno=None).exists():
+                registro.funcionario.status = 'A'
+                registro.funcionario.save()
+            elif registro.funcionario.status == 'A' and Afastamento.objects.filter(funcionario=registro.funcionario, data_retorno=None).exists():
+                registro.funcionario.status = 'F'
+                registro.funcionario.save()
             l = Log()
             l.modelo = "pessoal.afastamento"
             l.objeto_id = registro.id
             l.objeto_str = registro.funcionario.matricula + ' - ' + registro.funcionario.nome[0:48]
             l.usuario = request.user
-            l.mensagem = resp[1]
+            l.mensagem = 'UPDATE'
             l.save()
-            messages.success(request,resp[2])
+            messages.success(request, f'Afastamento atualizado')
         else:
-            messages.warning(request,resp[2])
+            messages.warning(request, resp[1])
+        # except:
+        #     messages.error(request, 'Erro ao atualizar afastamento')
         return redirect('pessoal_afastamento_id', id)
     else:
         return render(request,'pessoal/afastamento_id.html',{'form':form,'afastamento':afastamento})
@@ -423,7 +432,7 @@ def funcionario_delete(request,id):
 def afastamento_delete(request,id):
     try:
         registro = Afastamento.objects.get(pk=id)
-        registro.delete()
+        id_funcionario = registro.funcionario.id
         l = Log()
         l.modelo = "pessoal.afastamento"
         l.objeto_id = registro.id
@@ -431,8 +440,9 @@ def afastamento_delete(request,id):
         l.usuario = request.user
         l.mensagem = "DELETE"
         l.save()
+        registro.delete()
         messages.warning(request,'Afastamento excluido. Essa operação não pode ser desfeita')
-        return redirect('pessoal_afastamentos', registro.funcionario.id)
+        return redirect('pessoal_afastamentos', id_funcionario)
     except:
         messages.error(request,'ERRO ao apagar afastamento')
         return redirect('pessoal_afastamento_id', id)
@@ -462,7 +472,7 @@ def funcao_fixa_delete(request, id):
 @permission_required('pessoal.desligar_funcionario')
 def funcionario_desligar(request):
     if request.method == 'POST':
-        # try:
+        try:
             funcionario = Funcionario.objects.get(pk=request.POST['funcionario_desligar_id'])
             response =  funcionario.desligamento(request.POST['data_desligamento'],request.POST['motivo_desligamento'])
             if response[0]:
@@ -478,9 +488,9 @@ def funcionario_desligar(request):
             else:
                 messages.danger(request,response[1])                
             return redirect('pessoal_funcionario_id', funcionario.id)
-        # except:
-        #     messages.error(request,'Erro ao desligar funcionário')
-        #     return redirect('pessoal_funcionarios')
+        except:
+            messages.error(request,'Erro ao desligar funcionário')
+            return redirect('pessoal_funcionarios')
     else:
         messages.error(request,'Operação não autorizada')
         return redirect('pessoal_funcionarios')

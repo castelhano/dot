@@ -152,23 +152,34 @@ class Funcionario(Pessoa):
             return ''
     def dependentes(self):
         return Dependente.objects.filter(funcionario=self).order_by('nome')
-    def afastar(self):
+    def afastar(self, afastamento, update=False):
         try:
-            if self.status == 'A': # Afastamento restrito a funcionarios ativos
-                self.status = 'F'
-                return [True, 'AFASTADO', f'Funcionario{self.matricula} afastado']
-            else:
-                return [False, 'Warning' ,'So é possivel afastar <b>funcionários ativos</b>']
+            if not update and self.status != 'A': # Novo afastamento restrito a funcionarios ativos
+                return [False,'<b class="text-danger">Erro: </b> Só é possivel afastar <b>funcionários ativos</b>']
+            if not update and Afastamento.objects.filter(funcionario=self,data_retorno=None).exists(): # Nao eh possivel afastar caso ja tenha um afastamento sem retorno
+                return [False,'<b class="text-danger">Erro: </b> Existe <b>afastamento sem retorno</b> para o funcionário']
+            if afastamento.data_retorno != None and afastamento.data_retorno <= afastamento.data_afastamento: # Data de retorno precisa ser maior que data de afastamento
+                return [False,'<b class="text-danger">Erro: </b> Data de retorno precisa ser <b>maior</b> que a data de afastamento']
+            if afastamento.data_retorno == None and Afastamento.objects.filter(funcionario=self, data_afastamento__lte=afastamento.data_afastamento, data_retorno__gte=afastamento.data_afastamento).exclude(id=afastamento.id).exists(): # Valida conflito de datas para afastamento (sem data de retorno)
+                return [False,'<b class="text-danger">Erro: </b> <b>Conflito de data</b> com outro(s) afastamento(s)']
+            if afastamento.data_retorno != None and  Afastamento.objects.filter(funcionario=self,data_afastamento__lte=afastamento.data_retorno, data_retorno__gte=afastamento.data_afastamento).exclude(id=afastamento.id).exists(): # Valida registro ja com data de retorno
+                return [False,'<b class="text-danger">Erro: </b> <b>Conflito de data</b> com outro(s) afastamento(s)']
+            if afastamento.data_retorno != None and  Afastamento.objects.filter(funcionario=self,data_afastamento__lte=afastamento.data_retorno, data_retorno=None).exclude(id=afastamento.id).exists(): # Valida conflito com afastamento ainda sem data de retorno
+                return [False,'<b class="text-danger">Erro: </b> <b>Conflito de data</b> com outro(s) afastamento(s)']
+            return [True]
         except:
-            return [False, 'Error' ,'<b class="text-danger">Erro</b> ao afastar funcionário']
+            return [False, '<b class="text-danger">Erro: </b> ao afastar funcionário']
     def afastamentos(self):
         return Afastamento.objects.filter(funcionario=self).order_by('data_afastamento')
     def desligamento(self, data, motivo):
         try:
-            self.status = 'D'
-            self.data_desligamento = data
-            self.motivo_desligamento = motivo
-            return [True,'DESLIGADO',f'Funcionario {self.matricula} desligado']
+            if self.status == 'A': # Desligamento restrito a funcionarios ativos
+                self.status = 'D'
+                self.data_desligamento = data
+                self.motivo_desligamento = motivo
+                return [True,'DESLIGADO',f'Funcionario {self.matricula} desligado']
+            else:
+                return [False,'Fail','Somente funcionários ativos podem ser desligados']                
         except:
             return [False,'Erro ao desligar funcionario']
     def foto_url(self):
@@ -191,11 +202,20 @@ class Afastamento(models.Model):
         ("A","Acidente Trabalho"),
         ("O","Outro")
     )
+    ORIGEM_CHOICES = (
+        ("I","INSS"),
+        ("E","Escala"),
+        ("S","Sindicato"),
+        ("G","Gestora"),
+        ("O","Outros")
+    )
     funcionario = models.ForeignKey(Funcionario, on_delete=models.RESTRICT)
     motivo = models.CharField(max_length=3, choices=MOTIVO_AFASTAMENTO, default='D', blank=True)
+    origem = models.CharField(max_length=3, choices=ORIGEM_CHOICES, default='I', blank=True)
     data_afastamento = models.DateField(blank=True, null=True, default=datetime.today)
     data_retorno = models.DateField(blank=True, null=True)
     reabilitado = models.BooleanField(default=False)
+    remunerado = models.BooleanField(default=False)
     detalhe = models.TextField(blank=True)
 
 class Dependente(models.Model):
