@@ -72,7 +72,7 @@ def console(request):
     c = ''
     if request.method == 'POST':
         from .console import Run
-        response = Run(request.POST['script'])
+        response = Run(request, request.POST['script'])
         for r in response:
             c += f'<p class="m-0 d-flex justify-content-between"><span>{r}</span><span>{h}</span></p>'
     else:

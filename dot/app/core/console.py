@@ -3,7 +3,7 @@ from .models import Alerta, Log
 from pessoal.models import Funcionario
 from django.contrib.auth.models import User
 
-def Run(script):
+def Run(request, script):
     rows = script.split('\n')
     response = []
     for row in rows:
@@ -11,23 +11,23 @@ def Run(script):
             command = re.search(r'@(.*?) ', row).group(1)
             attrs = re.search('{(.*)}', row).group(1)
             if command == 'runscript':
-                response.append(runScript(attrs))
+                response.append(runScript(request, attrs))
             elif command == 'alert':
                 if '#clean' in attrs:
-                    response.append(alertaClean(attrs))
+                    response.append(alertaClean(request, attrs))
                 else:
-                    response.append(alertaAdd(attrs))
+                    response.append(alertaAdd(request, attrs))
             elif command == 'logs':
-                response.append(logs(attrs))
+                response.append(logs(request, attrs))
             elif command == 'employee':
-                response.append(funcionario(attrs))
+                response.append(funcionario(request, attrs))
             else: # Comando nao reconhecido, gera exception de bad formated
                 raise Exception()
         except:
             response.append('<span><b class="text-danger">Error:</b> Bad formatted attributes, command aborted</span>')
     return response
 
-def runScript(attrs):
+def runScript(request, attrs):
     response = '<span><b class="text-orange">Alert:</b> Nothing to do...</span>'
     if '!execute=True' in attrs:
         code = re.search(':code=([^\s]+)', attrs).group(1)
@@ -36,7 +36,7 @@ def runScript(attrs):
         #     response = '<span><b class="text-success">Done:</b> Some text.....</span>'
     return response
 
-def alertaClean(attrs):
+def alertaClean(request, attrs):
     try:
         until = re.search(':until=([^\s]+)', attrs).group(1)
         qtde = Alerta.objects.filter(lido=True,create_at__lte=until).delete()[0]
@@ -45,7 +45,7 @@ def alertaClean(attrs):
         response = '<span><b class="text-danger">Error:</b> Bad formatted attributes, command aborted</span>'
     return response
 
-def alertaAdd(attrs):
+def alertaAdd(request, attrs):
     response = '<span><b class="text-danger">Error:</b> Bad formatted attributes, alert not created</span>'
     fields = {}
     errors = False
@@ -97,7 +97,7 @@ def alertaAdd(attrs):
         pass
     return response
 
-def logs(attrs):
+def logs(request, attrs):
     try:
         until = re.search(':until=([^\s]+)', attrs).group(1)
         if not '#clean' in attrs:
@@ -112,30 +112,29 @@ def logs(attrs):
         response = '<span><b class="text-danger">Error:</b> Bad formatted attributes, <b class="text-danger">operation aborted</b>.</span>'
     return response
 
-def funcionario(attrs):
-    response = '<span><b class="text-danger">Error:</b> Bad formatted FOO attributes, <b class="text-danger">operation aborted</b>.</span>'
-    # try:
-    operacao = re.search('!([^\s]+) ', attrs).group(1)
-    matricula = re.search('#([^\s]+) ', attrs).group(1)
-    if operacao == 'reengage':
-        funcionario = Funcionario.objects.get(matricula=matricula)
-        funcionario.status = 'A'
-        funcionario.data_desligamento = None
-        funcionario.motivo_desligamento = ''
-        funcionario.save()
-        Log.objects.filter(modelo='pessoal.funcionario', mensagem='DESLIGADO',objeto_id=funcionario.id).delete()
-        l = Log()
-        l.modelo = "pessoal.funcionario"
-        l.objeto_id = str(funcionario.id)
-        l.objeto_str = str(funcionario.matricula)
-        l.usuario = request.user
-        l.mensagem = "REENGAGE"
-        print('AQUII')
-        l.save()
-        print('AQUII 22')
-        response = f'<b class="text-success">Done:</b> Employee <b>{matricula}</b> reengage'
-    else:
+def funcionario(request, attrs):
+    response = '<span><b class="text-danger">Error:</b> Bad formatted attributes, <b class="text-danger">operation aborted</b>.</span>'
+    try:
+        operacao = re.search('!([^\s]+) ', attrs).group(1)
+        matricula = re.search('#([^\s]+) ', attrs).group(1)
+        if operacao == 'reengage':
+            funcionario = Funcionario.objects.get(matricula=matricula)
+            funcionario.status = 'A'
+            funcionario.data_desligamento = None
+            funcionario.motivo_desligamento = ''
+            funcionario.save()
+            l = Log()
+            l.modelo = "pessoal.funcionario"
+            l.objeto_id = str(funcionario.id)
+            l.objeto_str = str(funcionario.matricula)
+            l.usuario = request.user
+            l.mensagem = "REENGAGE"
+            print('AQUII')
+            l.save()
+            print('AQUII 22')
+            response = f'<b class="text-success">Done:</b> Employee <b>{matricula}</b> reengage'
+        else:
+            pass
+    except:
         pass
-    # except:
-    #     pass
     return response
