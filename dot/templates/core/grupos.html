@@ -5,22 +5,6 @@
 {% include "_component/menu/core.html" %}
 {% endblock%}
   
-<style media="screen">
-{% block style %}
-.filter-container{
-  background-color: #F8F9FA;
-  border:1px solid rgb(222, 226, 230);
-  border-radius: 5px;
-  padding: 8px 10px;
-  min-width: 250px;
-  min-height: 250px;
-}
-.filter-container a{text-decoration: none;color: #0d6efd!important;cursor: pointer;}
-.filter-container a.active{font-weight: bold;}
-@media(max-width: 992px){
-}
-{% endblock%}
-</style>
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'core_grupos' %}"></a>
 
@@ -47,7 +31,7 @@
   <div class="card-body tab-content">
     <h5 class="card-title mb-3">Grupos <small class="badge bg-primary ms-1">{{grupos.count}}</small></h5>
     <div class="row">
-      <div class="col-lg">
+      <div class="col-lg order-2 order-lg-1">
         <div class="tab-pane fade show active" id="base" role="tabpanel">
           <table id="main_table" class="table border table-striped table-hover">
             <thead>
@@ -77,11 +61,11 @@
           </table>
         </div>
       </div>
-      <div class="col-lg-auto ps-auto ps-lg-0">
+      <div class="col-lg-auto ps-auto ps-lg-0 order-1 order-lg-2">
         <div class="filter-container">
-          <h5 class="text-muted">Filtros</h5>
+          <h6 class="text-muted" style="cursor: help;" title="ALT + L para limpar filtros">Filtros:</h6>
           <ul class="list-unstyled">
-            <li><a onclick="filter('_associacoes','False')">Sem associações</a></li>
+            <li><a id="id_sem_associacoes" onclick="filter('_associacoes','False')">Sem associações</a></li>
           </ul>
         </div>
       </div>
@@ -119,8 +103,7 @@
   
 <script>
 {% block add_script %}
-const filters = ['_associacoes'];
-
+const filters = {'_associacoes=False':'id_sem_associacoes'}
 urlSetFiltersActive(filters);
 
 {% endblock %}

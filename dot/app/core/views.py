@@ -43,17 +43,21 @@ def grupos(request):
 @permission_required('auth.view_user')
 def usuarios(request):
     usuarios = User.objects.all().order_by('username')
-    if request.method == 'POST':
-        if request.POST['pesquisa'] != '':
-            if request.POST['pesquisa'][-1] == '*':
-                if request.POST['pesquisa'] == 'super*':
-                    usuarios = usuarios.filter(is_superuser=True)
-                elif request.POST['pesquisa'] == 'membro*':
-                    usuarios = usuarios.filter(is_staff=True)
-                elif request.POST['pesquisa'] == 'inativo*':
-                    usuarios = usuarios.filter(is_active=False)
-            else:
-                usuarios = usuarios.filter(username__contains=request.POST['pesquisa'])
+    if request.GET:
+        if request.GET.get('pesquisa'):
+            usuarios = usuarios.filter(username__contains=request.GET.get('pesquisa'))
+        params = {}
+        fields = ['email','is_superuser','is_staff','is_active']
+        for p in request.GET:
+            if request.GET[p] in fields:
+                cleaned_data = ''
+                if request.GET[p] != 'True' and request.GET[p] != 'False':
+                    params[p] = request.GET[p]
+                elif request.GET[p] == 'True':
+                    params[p] = True
+                else:
+                    params[p] = False
+        usuarios = usuarios.filter(**params)
     return render(request,'core/usuarios.html',{'usuarios':usuarios})
 
 @login_required

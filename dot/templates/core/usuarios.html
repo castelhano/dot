@@ -30,6 +30,8 @@
   </div>
   <div class="card-body tab-content">
     <h5 class="card-title mb-3">Usuários <small class="badge bg-primary ms-1">{{usuarios.count}}</small></h5>
+    <div class="row">
+      <div class="col-lg order-2 order-lg-1">
     <div class="tab-pane fade show active" id="base" role="tabpanel">
       <table id="main_table" class="table border table-striped table-hover">
         <caption class="fs-7">
@@ -43,7 +45,7 @@
             <th class="d-none d-md-table-cell">First Name</th>
             <th class="d-none d-md-table-cell">Last Name</th>
             <th>Status</th>
-            <th class="d-none d-lg-table-cell">Last Login</th>
+            <th class="d-none d-xl-table-cell">Last Login</th>
             {% if perms.auth.change_user %}
             <th>&nbsp;</th>
             {% endif %}
@@ -57,7 +59,7 @@
             <td class="d-none d-md-table-cell">{{usuario.first_name}}</td>
             <td class="d-none d-md-table-cell">{{usuario.last_name}}</td>
             <td>{{usuario.is_active|yesno:"<b class='text-success'>Ativo</b>,<b class='text-danger'>Inativo</b>"|safe}}</td>
-            <td class="d-none d-lg-table-cell">{{usuario.last_login|date:'d/m/y H:i'}}</td>
+            <td class="d-none d-xl-table-cell">{{usuario.last_login|date:'d/m/y H:i'}}</td>
             {% if perms.auth.change_user %}
             <td class="text-end fit py-1">
               <a class="btn btn-sm btn-dark" href="{% url 'core_usuario_id' usuario.id %}" title="Editar"><i class="fas fa-pen"></i></a>
@@ -66,13 +68,26 @@
           </tr>
           {% empty %}
           <tr>
-            <td colspan="6">Nenhum registro a exibir</td>
+            <td colspan="7">Nenhum registro a exibir</td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
     <!-- <div class="tab-pane fade" id="param" role="tabpanel">param</div> -->
+  </div>
+  <div class="col-lg-auto ps-auto ps-lg-0 order-1 order-lg-2">
+    <div class="filter-container">
+      <h6 class="text-muted" style="cursor: help;" title="ALT + L para limpar filtros">Filtros:</h6>
+      <ul class="list-unstyled">
+        <li><a id="id_ativos" onclick="filter('is_active','True')">Ativos</a></li>
+        <li><a id="id_inativos" onclick="filter('is_active','False')">Bloqueados</a></li>
+        <li><a id="id_superuser" onclick="filter('is_superuser','True')">Superusuario</a></li>
+        <li><a id="id_staff" onclick="filter('is_staff','True')">Membro de Equipe</a></li>
+      </ul>
+    </div>
+  </div>
+  </div>
   </div>
 </div>
 
@@ -84,15 +99,13 @@
         <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
       </div>
       <div class="modal-body">
-        <form id="app_form" action="{% url 'core_usuarios' %}" method="POST" autocomplete="off">
-          {% csrf_token %}
+        <form id="search_form" action="" onsubmit="filter('pesquisa', document.getElementById('id_pesquisa').value);return false;" method="GET" autocomplete="off">
           <div class="row g-1">
             <div class="form-floating mb-1 col-lg-12">
               <input type="text" class="form-control" name="pesquisa" value="" id="id_pesquisa" placeholder="">
               <label for="id_pesquisa">Termo pesquisa</label>
             </div>
-            <small class="ps-2"><b>Dica.</b> Consulte <span class="text-primary">super*</span> para todos os super usuarios, ou <span class="text-primary">membro*</span>, <span class="text-primary">inativo*</span></small>
-          </div>
+          </div>  
         </form>
       </div>
     </div>
@@ -102,4 +115,17 @@
 
 {% block add_script_src %}
 <script src="{% static 'js/table_to_csv.js' %}"></script>
+<script src="{% static 'js/update_url.js' %}"></script>
 {% endblock %}
+
+<script>
+{% block add_script %}
+const filters = {
+  'is_active=True':'id_ativos',
+  'is_active=False':'id_inativos',
+  'is_superuser':'id_superuser',
+  'is_staff':'id_staff'
+}
+urlSetFiltersActive(filters);
+{% endblock %}
+</script>
