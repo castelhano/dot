@@ -49,7 +49,7 @@ def usuarios(request):
         params = {}
         fields = ['email','is_superuser','is_staff','is_active']
         for p in request.GET:
-            if request.GET[p] in fields:
+            if p in fields:
                 cleaned_data = ''
                 if request.GET[p] != 'True' and request.GET[p] != 'False':
                     params[p] = request.GET[p]
