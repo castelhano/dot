@@ -36,7 +36,7 @@
       </li>
     </ul>
   </div>
-  <form id="pessoal_form" action="{% url 'pessoal_funcionario_update' funcionario.id %}" method="POST" enctype="multipart/form-data" autocomplete="off">
+  <form id="pessoal_form" action="{% url 'pessoal_funcionario_update' funcionario.id %}" method="POST" enctype="multipart/form-data" autocomplete="off" onsubmit="return submitForm();">
     {% csrf_token %}
     {% include 'pessoal/_form_funcionario.html' %}
   </form>
@@ -102,7 +102,7 @@
         <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
       </div>
       <div class="modal-body">
-        <form action="{% url 'pessoal_funcionario_desligar' %}" method="POST" autocomplete="off">
+        <form action="{% url 'pessoal_funcionario_desligar' %}" method="POST" autocomplete="off" onsubmit="return submitForm();">
           {% csrf_token %}
           <div class="row g-1">
             <div class="form-floating mb-1 col-lg-12">
@@ -134,6 +134,8 @@
   </div>
 </div>
 {% endif %}
+
+{% include "_component/modal/loading.html" with message='Salvando....' %}
 {% endblock%}
 
 {% block add_script_src %}
@@ -149,6 +151,10 @@
   SHORTCUT_MAP['4FTF'] = '#menu_funcionario_detalhe';
   SHORTCUT_MAP['5FTF'] = '#menu_funcionario_extras';
   
+  var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
+  function submitForm(){modal_loading.show();return true;}
+    
+    
   VMasker(document.getElementById("id_cnh")).maskPattern('999.999.999-99');
   VMasker(document.getElementById("id_cpf")).maskPattern('999.999.999-99');
   {% endblock %}

@@ -48,8 +48,12 @@ def usuarios(request):
         if request.GET.get('pesquisa'):
             usuarios = usuarios.filter(username__contains=request.GET.get('pesquisa'))
         fields = ['email','is_superuser','is_staff','is_active','last_login','last_login__lte']
-        params = clean_request(request.GET, fields)        
-        usuarios = usuarios.filter(**params)
+        try:
+            params = clean_request(request.GET, fields)        
+            usuarios = usuarios.filter(**params)
+        except:
+            messages.warning(request,'<b class="text-danger">Erro</b> ao filtrar usuário..')
+            return redirect('core_usuarios')
     return render(request,'core/usuarios.html',{'usuarios':usuarios})
 
 @login_required
@@ -96,7 +100,7 @@ def empresa_add(request):
                 l.usuario = request.user
                 l.mensagem = "CREATED"
                 l.save()
-                messages.success(request,'Empresa ' + registro.nome + ' criada')
+                messages.success(request,'Empresa <b>' + registro.nome + '</b> criada')
                 return redirect('core_empresas')
             except:
                 messages.error(request,'Erro ao inserir empresa [INVALID FORM]')
@@ -134,7 +138,7 @@ def usuario_add(request):
                 l.usuario = request.user
                 l.mensagem = "CREATED"
                 l.save()
-                messages.success(request,'Usuario ' + registro.username + ' criado')
+                messages.success(request,'Usuario <b>' + registro.username + '</b> criado')
                 return redirect('core_usuarios')
             except:
                 messages.error(request,'Erro ao inserir usuario [INVALID FORM]')
@@ -149,21 +153,21 @@ def grupo_add(request):
     if request.method == 'POST':
         form = GroupForm(request.POST)
         if form.is_valid():
-            # try:
-            form_clean = form.cleaned_data
-            registro = form.save()
-            l = Log()
-            l.modelo = "auth.group"
-            l.objeto_id = registro.id
-            l.objeto_str = registro.name
-            l.usuario = request.user
-            l.mensagem = "CREATED"
-            l.save()
-            messages.success(request,'Grupo ' + registro.name + ' criado')
-            return redirect('core_grupos')
-            # except:
-            #     messages.error(request,'Erro ao inserir grupo [INVALID FORM]')
-            #     return redirect('core_grupos')
+            try:
+                form_clean = form.cleaned_data
+                registro = form.save()
+                l = Log()
+                l.modelo = "auth.group"
+                l.objeto_id = registro.id
+                l.objeto_str = registro.name
+                l.usuario = request.user
+                l.mensagem = "CREATED"
+                l.save()
+                messages.success(request,'Grupo <b>' + registro.name + '</b> criado')
+                return redirect('core_grupos')
+            except:
+                messages.error(request,'Erro ao inserir grupo [INVALID FORM]')
+                return redirect('core_grupos')
     else:
         form = GroupForm()
     return render(request,'core/grupo_add.html',{'form':form})
@@ -208,7 +212,7 @@ def empresa_update(request, id):
         l.usuario = request.user
         l.mensagem = "UPDATE"
         l.save()
-        messages.success(request,'Empresa ' + registro.nome + ' alterada')
+        messages.success(request,'Empresa <b>' + registro.nome + '</b> alterada')
         return redirect('core_empresa_id',id)
     else:
         return render(request,'core/empresa_id.html',{'form':form,'empresa':empresa})
@@ -255,7 +259,7 @@ def usuario_update(request, id):
         l.usuario = request.user
         l.mensagem = "UPDATE"
         l.save()
-        messages.success(request,'Usuario ' + registro.username + ' alterado')
+        messages.success(request,'Usuario <b>' + registro.username + '</b> alterado')
         return redirect('core_usuario_id',id)
     else:
         return render(request,'core/usuario_id.html',{'form':form,'usuario':usuario})
@@ -274,7 +278,7 @@ def grupo_update(request, id):
         l.usuario = request.user
         l.mensagem = "UPDATE"
         l.save()
-        messages.success(request,'Grupo ' + registro.name + ' alterado')
+        messages.success(request,'Grupo <b>' + registro.name + '</b> alterado')
         return redirect('core_grupo_id',id)
     else:
         return render(request,'core/grupo_id.html',{'form':form,'grupo':grupo})
@@ -283,6 +287,7 @@ def grupo_update(request, id):
 def alerta_marcar_lido(request):
     alerta = Alerta.objects.get(id=request.GET.get('id', None))
     alerta.lido = True
+    alerta.lido_at = datetime.now()
     alerta.save()
     return HttpResponse('')
 
@@ -300,7 +305,7 @@ def empresa_delete(request, id):
         l.mensagem = "DELETE"
         l.save()
         registro.delete()
-        messages.warning(request,'Empresa ' + registro.nome + ' apagada')
+        messages.warning(request,'Empresa <b>' + registro.nome + '</b> apagada')
         return redirect('core_empresas')
     except:
         messages.error(request,'ERRO ao apagar empresa')
@@ -319,7 +324,7 @@ def usuario_delete(request, id):
         l.mensagem = "DELETE"
         l.save()
         registro.delete()
-        messages.warning(request,'Usuario ' + registro.username + ' apagado')
+        messages.warning(request,'Usuario <b>' + registro.username + '</b> apagado')
         return redirect('core_usuarios')
     except:
         messages.error(request,'ERRO ao apagar usuario')
@@ -338,7 +343,7 @@ def grupo_delete(request, id):
         l.mensagem = "DELETE"
         l.save()
         registro.delete()
-        messages.warning(request,'Grupo ' + registro.name + ' apagado')
+        messages.warning(request,'Grupo <b>' + registro.name + '</b> apagado')
         return redirect('core_grupos')
     except:
         messages.error(request,'ERRO ao apagar grupo')

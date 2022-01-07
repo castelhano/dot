@@ -108,7 +108,7 @@ def setor_add(request):
                 l.usuario = request.user
                 l.mensagem = "CREATED"
                 l.save()
-                messages.success(request,'Setor ' + registro.nome + ' criado')
+                messages.success(request,'Setor <b>' + registro.nome + '</b> criado')
                 return redirect('pessoal_setor_add')
             except:
                 messages.error(request,'Erro ao inserir setor')
@@ -133,7 +133,7 @@ def cargo_add(request):
                 l.usuario = request.user
                 l.mensagem = "CREATED"
                 l.save()
-                messages.success(request,'Cargo ' + registro.nome + ' criado')
+                messages.success(request,'Cargo <b>' + registro.nome + '</b> criado')
                 return redirect('pessoal_cargo_add')
             except:
                 messages.error(request,'Erro ao inserir cargo [INVALID FORM]')
@@ -158,7 +158,7 @@ def funcionario_add(request):
                 l.usuario = request.user
                 l.mensagem = "CREATED"
                 l.save()
-                messages.success(request,'Funcionário ' + registro.matricula + ' cadastrado')
+                messages.success(request,'Funcionário <b>' + registro.matricula + '</b> cadastrado')
                 return redirect('pessoal_funcionario_id', registro.id)
             except:
                 messages.error(request,'Erro ao inserir funcionario [INVALID FORM]')
@@ -186,7 +186,7 @@ def afastamento_add(request, id):
                     l.usuario = request.user
                     l.mensagem = 'AFASTADO'
                     l.save()
-                    messages.success(request, f'Funcionário {registro.funcionario.matricula} afastado')
+                    messages.success(request, f'Funcionário <b>{registro.funcionario.matricula}</b> afastado')
                 else:
                     messages.warning(request,resp[1])
                 return redirect('pessoal_afastamentos', registro.funcionario.id)
@@ -274,7 +274,7 @@ def setor_update(request,id):
         l.usuario = request.user
         l.mensagem = "UPDATE"
         l.save()
-        messages.success(request,'Setor ' + registro.nome + ' alterado')
+        messages.success(request,'Setor <b>' + registro.nome + '</b> alterado')
         return redirect('pessoal_setor_id', id)
     else:
         return render(request,'pessoal/setor_id.html',{'form':form,'setor':setor})
@@ -293,7 +293,7 @@ def cargo_update(request,id):
         l.usuario = request.user
         l.mensagem = "UPDATE"
         l.save()
-        messages.success(request,'Cargo ' + registro.nome + ' alterado')
+        messages.success(request,'Cargo <b>' + registro.nome + '</b> alterado')
         return redirect('pessoal_cargo_id', id)
     else:
         return render(request,'pessoal/cargo_id.html',{'form':form,'cargo':cargo})
@@ -312,7 +312,7 @@ def funcionario_update(request,id):
         l.usuario = request.user
         l.mensagem = "UPDATE"
         l.save()
-        messages.success(request,'Funcionario ' + registro.matricula + ' alterado')
+        messages.success(request,'Funcionario <b>' + registro.matricula + '</b> alterado')
         return redirect('pessoal_funcionario_id', id)
     else:
         return render(request,'pessoal/funcionario_id.html',{'form':form,'funcionario':funcionario})
@@ -383,7 +383,7 @@ def setor_delete(request,id):
         l.mensagem = "DELETE"
         l.save()
         registro.delete()
-        messages.warning(request,'Setor apagado. Essa operação não pode ser desfeita')
+        messages.warning(request,f'Setor <b>{registro.nome}</b> apagado. Essa operação não pode ser desfeita')
         return redirect('pessoal_setores')
     except:
         messages.error(request,'ERRO ao apagar setor')

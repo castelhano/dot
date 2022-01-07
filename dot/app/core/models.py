@@ -43,6 +43,7 @@ class Alerta(models.Model):
     alert_class_list = models.CharField(max_length=60, blank=True)
     action_class_list = models.CharField(max_length=60, blank=True)
     create_at = models.DateTimeField(default=datetime.now)
+    lido_at = models.DateTimeField(blank=True, null=True)
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

@@ -84,10 +84,10 @@
     // --------------------------------------------------------------------
     // incluido no layout metodos editorSet(code)
     const COMPONENTS = {
-      'alert':'@alert { #username :titulo=Titulo_do_Alert msg:Mensagem do Alerta; }',
-      'alert_link':'@alert { #username :titulo=Titulo_do_Alert !link=view_name msg:Mensagem do Alerta; }',
-      'alert_class':'@alert { #username :titulo=Titulo_do_Alert :alert_class_list=bg-orange;text-light :action_class_list=btn;btn-sm;btn-info msg:Mensagem do Alerta; }',
-      'alert_full':'@alert { #username :titulo=Titulo_do_Alert !link=view_name :alert_class_list=style1;style2 :action_class_list=style1;style2 :critico=True msg:Mensagem do Alerta; }',
+      'alert':'@alert { #username :titulo=Titulo_do_Alert :critico=False msg:Mensagem do Alerta; }',
+      'alert_link':'@alert { #username :titulo=Titulo_do_Alert !link=view_name :critico=False msg:Mensagem do Alerta; }',
+      'alert_class':'@alert { #username :titulo=Titulo_do_Alert :alert_class_list=bg-orange;text-light :action_class_list=btn;btn-sm;btn-info :critico=False msg:Mensagem do Alerta; }',
+      'alert_full':'@alert { #username :titulo=Titulo_do_Alert !link=view_name :alert_class_list=style1;style2 :action_class_list=style1;style2 :critico=False msg:Mensagem do Alerta; }',
       'alert_all':'@alert { #all :titulo=Titulo_do_Alert msg:Mensagem do Alerta; }',
       'clean_alerts':'@alert { #clean :until=aaaa-mm-dd }',
       'clean_logs':'@logs { #clean :until=aaaa-mm-dd }',

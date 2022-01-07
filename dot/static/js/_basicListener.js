@@ -12,7 +12,7 @@
 **    * O VALOR DO DICIONARIO PODE SER A CHAMADA DE UM EVENTO CLICK DE UM OBJETO (PARA ISSO INFORME # SEQUIDO DO ID DO OBJETO ALVO) EX #meu_botao
 **    * OU A CHAMADA DE UMA FUNCAO, PARA ISSO INICIE COM : SEGUIDO DO NOME DA FUNCAO A SER ACIONADA EX :minha_funcao
 **/
-var KEY_G  = 71, KEY_I  = 73, KEY_L  = 76, KEY_M  = 77, KEY_N  = 78, KEY_S  = 83, KEY_V  = 86, _BAR = 111, _ENTER = 13, _DOWN = 40;
+var KEY_D  = 68, KEY_G  = 71, KEY_I  = 73, KEY_L  = 76, KEY_M  = 77, KEY_N  = 78, KEY_S  = 83, KEY_V  = 86, _BAR = 111, _ENTER = 13, _DOWN = 40;
 
 document.addEventListener('keydown', (e) => {
 	// console.log(e);
@@ -22,7 +22,7 @@ document.addEventListener('keydown', (e) => {
   else if ((e.altKey) && (e.which === KEY_L)) {e.preventDefault();try{document.getElementById('clear').click();}catch(e){}}
   else if ((e.altKey) && (e.which === KEY_G)) {e.preventDefault();try{document.getElementById('submit').click();}catch(e){}}
   else if ((e.ctrlKey) && (e.which === _BAR)) {e.preventDefault();try{document.getElementById('search').click();}catch(e){}}
-  else if ((e.altKey) && (e.which === _DOWN)) {e.preventDefault();try{document.getElementById('download').click();}catch(e){}}
+  else if ((e.altKey) && (e.which === KEY_D)) {e.preventDefault();try{document.getElementById('download').click();}catch(e){}}
   else if ((e.altKey) && (e.which === KEY_I)) {e.preventDefault();try{document.getElementById('home').click();}catch(e){}}
   else if ((e.altKey) && (e.which === KEY_M)) {e.preventDefault();try{document.getElementById('messages').click();}catch(e){}}
   else if ((e.altKey) && (e.which === KEY_S)) {e.preventDefault();try{document.getElementById('system').click();}catch(e){}}

@@ -19,11 +19,12 @@
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'pessoal_funcionarios' %}"><i class="fas fa-undo"></i></a></li>
     </ul>
   </div>
-  <form id="app_form" action="pessoal_funcionario_add" method="POST" enctype="multipart/form-data" autocomplete="off">
+  <form id="app_form" action="pessoal_funcionario_add" method="POST" enctype="multipart/form-data" autocomplete="off" onsubmit="return submitForm();">
     {% csrf_token %}
     {% include 'pessoal/_form_funcionario.html' %}
   </form>
 </div>
+{% include "_component/modal/loading.html" with message='Cadastrando Funcionário...' %}
 {% endblock%}
 
 {% block add_script_src %}
@@ -37,6 +38,9 @@
   SHORTCUT_MAP['2FTF'] = '#menu_funcionario_docs';
   SHORTCUT_MAP['3FTF'] = '#menu_funcionario_contato';
   SHORTCUT_MAP['4FTF'] = '#menu_funcionario_detalhe';
+  
+  var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
+  function submitForm(){modal_loading.show();return true;} 
   
   VMasker(document.getElementById("id_cnh")).maskPattern('999.999.999-99');
   VMasker(document.getElementById("id_cpf")).maskPattern('999.999.999-99');
