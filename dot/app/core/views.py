@@ -6,6 +6,7 @@ from django.contrib.auth.models import User, Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from .models import Empresa, Log, Alerta
 from .forms import EmpresaForm, UserForm, GroupForm
+from .extras import clean_request
 from datetime import datetime
 from django.http import HttpResponse
 from django.core import serializers
@@ -46,17 +47,8 @@ def usuarios(request):
     if request.GET:
         if request.GET.get('pesquisa'):
             usuarios = usuarios.filter(username__contains=request.GET.get('pesquisa'))
-        params = {}
-        fields = ['email','is_superuser','is_staff','is_active']
-        for p in request.GET:
-            if p in fields:
-                cleaned_data = ''
-                if request.GET[p] != 'True' and request.GET[p] != 'False':
-                    params[p] = request.GET[p]
-                elif request.GET[p] == 'True':
-                    params[p] = True
-                else:
-                    params[p] = False
+        fields = ['email','is_superuser','is_staff','is_active','last_login','last_login__lte']
+        params = clean_request(request.GET, fields)        
         usuarios = usuarios.filter(**params)
     return render(request,'core/usuarios.html',{'usuarios':usuarios})
 
