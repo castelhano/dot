@@ -1,0 +1,39 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Alerta{% endblock %}
+{% block model_menu %}
+{% include "_component/menu/core.html" %}
+{% endblock%}
+
+{% block content_fluid %}
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'core_alertas' %}"><i class="fas fa-undo"></i></a></li>
+    </ul>
+  </div>
+  <div class="card-body tab-content">
+    <h5 class="card-title mb-0">Detalhes Alerta</h5>
+    <p class="mb-2 fw-bold text-orange">ID: {{alerta.id}}</p>
+    <div class="tab-pane fade show active" id="base" role="tabpanel">
+      <div class="row">
+        <div class="col-md-2">Titulo:</div><div class="col-md-10 fw-bold">{{alerta.titulo}}</div>
+        <div class="col-md-2">Criado em:</div><div class="col-md-10 fw-bold">{{alerta.create_at|date:"d/m/Y H:i"}}</div>
+        <div class="col-md-2">Usuário:</div><div class="col-md-10 fw-bold">{{alerta.usuario.username}}</div>
+        <div class="col-md-2">Status:</div><div class="col-md-10 fw-bold">{{alerta.lido|yesno:'Lido: ,Não Lido'}} {{alerta.lido_at|date:'d/m/Y H:i'}}</div>
+        <div class="col-md-2">Crítico:</div><div class="col-md-10 fw-bold">{{alerta.critico|yesno:'Crítico,Não'}}</div>
+        <div class="col-md-12 border-top mt-1 pt-2">{{alerta.mensagem}}</div>
+      </div>
+    </div>      
+  </div>
+  
+</div>
+
+{% endblock%}
+
+{% block add_script_src %}{% endblock %}
+
+<script>
+  {% block add_script %}{% endblock %}
+</script>

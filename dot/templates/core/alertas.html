@@ -1,0 +1,128 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Alertas{% endblock %}
+{% block model_menu %}
+{% include "_component/menu/core.html" %}
+{% endblock%}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'core_alertas' %}"></a>
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link{% if alertas %} active{% endif %}" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a class="nav-link{% if not alertas %} active{% endif %}" data-bs-toggle="tab" data-bs-target="#filter" href="#"><i class="fas fa-filter"></i></a></li>
+      <li class="nav-item dropdown ms-auto">
+        <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item pointer" id="download" onclick="download_table_as_csv('main_table',';')" title="ALT + &darr;">Exportar CSV</a></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div class="card-body tab-content">
+    <h5 class="card-title mb-3">Alertas <small class="badge bg-primary ms-1">{{alertas.count}}</small></h5>
+    <div class="tab-pane fade{% if alertas %} show active{% endif %}" id="base" role="tabpanel">
+      <table id="main_table" class="table border table-striped table-hover">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Usuario</th>
+            <th>Titulo</th>
+            <th>Criado em</th>
+            <th>Critico</th>
+            <th>Lido</th>
+            <th>Lido em</th>
+            <th>&nbsp;</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for alerta in alertas %}
+          <tr>
+            <td>{{alerta.id}}</td>
+            <td class="fw-bold">{{alerta.usuario.username}}</td>
+            <td>{{alerta.titulo|truncatechars:20}}</td>
+            <td>{{alerta.create_at|date:'d/m/y H:i'}}</td>
+            <td class="text-orange fw-bold">{{alerta.critico|yesno:'Crítico,'}}</td>
+            <td class="text-primary fw-bold">{{alerta.lido|yesno:'Lido,'}}</td>
+            <td class="{% if lido %}text-success fw-bold{% endif %}">{{alerta.lido_at|date:'d/m/y H:i'}}</td>
+            <td class="text-end fit py-1"><a class="btn btn-sm bg-warning" href="{% url 'core_alerta_id' alerta.id %}"><i class="fas fa-eye"></i></a></td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="8">Nenhum registro a exibir</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="tab-pane fade{% if not alertas %} show active{% endif %}" id="filter" role="tabpanel">
+      <form id="pessoal_form" action="{% url 'core_alertas' %}" method="POST" autocomplete="off">
+        {% csrf_token %}
+        <div class="row g-1">
+          <div class="form-floating mb-1 col-lg-4">
+            <input type="text" class="form-control bg-light" id="id_pesquisa" name="pesquisa" value="" autofocus>
+            <label for="id_pesquisa">Titulo alerta</label>
+          </div>
+        </div>
+        <div class="row g-1">
+          <div class="form-floating mb-1 col-lg-4">
+            <select class="form-select" id="id_user" name="user" required>
+              <option value="" selected>---------</option>
+            </select>
+            <label for="id_user">Usuário</label>
+          </div>
+        </div>
+        <div class="row g-1">
+          <div class="form-floating mb-lg-1 col-lg-2">
+            <input type="date" class="form-control" id="id_periodo_de" name="periodo_de">
+            <label for="id_periodo_de">DE</label>
+          </div>
+          <div class="form-floating mb-1 col-lg-2">
+            <input type="date" class="form-control" id="id_periodo_ate" name="periodo_ate">
+            <label for="id_periodo_ate">ATE</label>
+          </div>
+        </div>
+        <div class="form-check form-switch mt-2">
+          <input class="form-check-input" type="checkbox" role="switch" name="lido" id="id_lido">
+          <label class="form-check-label" for="id_lido">Alertas lidos</label>
+        </div>
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" role="switch" name="critico" id="id_critico">
+          <label class="form-check-label" for="id_critico">Somente alertas criticos</label>
+        </div>
+        <div class="row mt-2">
+          <div class="col"><button type="submit" class="btn btn-sm btn-warning">Pesquisar</button></div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/table_to_csv.js' %}"></script>
+{% endblock %}
+
+  
+<script>
+{% block add_script %}
+
+function carregaUsuarios() {
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if(this.readyState == 4 && this.status == 200){
+			if(this.responseText == ''){}
+			else{
+				let obj = JSON.parse(this.responseText);
+				usuarios = document.getElementById("id_user")
+				for(key in obj){usuarios.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
+			}
+		}
+	};
+	xhttp.open("GET", "{% url 'core_get_usuarios' %}", true);
+	xhttp.send();
+}
+carregaUsuarios();
+{% endblock %}
+</script>

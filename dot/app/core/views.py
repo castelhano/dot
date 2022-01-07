@@ -37,7 +37,7 @@ def grupos(request):
     if pesquisa:
         grupos = grupos.filter(name__contains=pesquisa)
     if request.GET.get('_associacoes', None):
-        grupos = grupos.filter(user=None)    
+        grupos = grupos.filter(user=None)
     return render(request,'core/grupos.html',{'grupos':grupos})
 
 @login_required
@@ -49,7 +49,7 @@ def usuarios(request):
             usuarios = usuarios.filter(username__contains=request.GET.get('pesquisa'))
         fields = ['email','is_superuser','is_staff','is_active','last_login','last_login__lte']
         try:
-            params = clean_request(request.GET, fields)        
+            params = clean_request(request.GET, fields)
             usuarios = usuarios.filter(**params)
         except:
             messages.warning(request,'<b class="text-danger">Erro</b> ao filtrar usuário..')
@@ -67,6 +67,29 @@ def logs(request):
 @login_required
 def docs(request):
     return render(request,'core/docs/core.html')
+
+@login_required
+@permission_required('core.view_alerta')
+def alertas(request):
+    alertas = None
+    if request.method == 'POST':
+        alertas = Alerta.objects.filter(usuario=request.POST['user']).order_by('create_at')
+        if request.POST['pesquisa'] != '':
+            alertas = alertas.filter(titulo__contains=request.POST['pesquisa'])
+        if not 'lido' in request.POST:
+            alertas = alertas.filter(lido=False)
+        if 'critico' in request.POST:
+            alertas = alertas.filter(critico=True)
+        if request.POST['periodo_de'] != '' or request.POST['periodo_ate'] != '':
+            if request.POST['periodo_de'] != '' and request.POST['periodo_ate'] != '':
+                alertas = alertas.filter(create_at__range=[request.POST['periodo_de'],request.POST['periodo_ate']])
+            elif request.POST['periodo_ate'] != '':
+                alertas = alertas.filter(create_at__lte=request.POST['periodo_ate'])
+            elif request.POST['periodo_de'] != '':
+                alertas = alertas.filter(create_at__gte=request.POST['periodo_de'])
+        if not alertas.exists():
+            messages.warning(request,'Nenhum alerta com os filtros selecionados')
+    return render(request,'core/alertas.html',{'alertas':alertas})
 
 @login_required
 @permission_required('core.console')
@@ -193,9 +216,13 @@ def usuario_id(request, id):
 def grupo_id(request, id):
     grupo = Group.objects.get(id=id)
     form = GroupForm(instance=grupo)
-    logs = Log.objects.filter(modelo='auth.group',objeto_id=grupo.id).order_by('-data')[:15]
-    return render(request,'core/grupo_id.html',{'form':form,'grupo':grupo,'logs':reversed(logs)})
+    return render(request,'core/grupo_id.html',{'form':form,'grupo':grupo})
 
+@login_required
+@permission_required('core.view_alerta')
+def alerta_id(request, id):
+    alerta = Alerta.objects.get(id=id)
+    return render(request,'core/alerta_id.html',{'alerta':alerta})
 
 # METODOS UPDATE
 @login_required
@@ -416,12 +443,12 @@ def password_valid(password):
 # AJAX METODOS
 @login_required
 def get_empresas(request):
-    # try:
+    try:
         tipo = request.GET.get('tipo',None)
         if request.GET.get('usuario', None) == 'new':
             usuario = User()
         else:
-            usuario = request.user if request.GET.get('usuario', None) == None else User.objects.get(id=request.GET.get('usuario', None))        
+            usuario = request.user if request.GET.get('usuario', None) == None else User.objects.get(id=request.GET.get('usuario', None))
         if usuario.is_superuser: # Caso superusuario retorna todas as empresas
             empresas = Empresa.objects.all().order_by('nome')
         elif tipo == None or tipo == 'cadastrados': # Retorna as empresas cadastradas para usuario
@@ -438,8 +465,23 @@ def get_empresas(request):
             itens[item.nome] = item.id
         dataJSON = dumps(itens)
         return HttpResponse(dataJSON)
-    # except:
-    #     return HttpResponse('')
+    except:
+        return HttpResponse('')
+
+@login_required
+def get_usuarios(request):
+    try:
+        inativos = request.GET.get('inativos', None)
+        usuarios = User.objects.all().order_by('username')
+        if not request.GET.get('inativos', None):
+            usuarios = usuarios.filter(is_active=True)
+        itens = {}
+        for item in usuarios:
+            itens[item.username] = item.id
+        dataJSON = dumps(itens)
+        return HttpResponse(dataJSON)
+    except:
+        return HttpResponse('')
 
 @login_required
 def get_grupos(request):

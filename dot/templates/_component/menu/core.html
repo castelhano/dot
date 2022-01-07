@@ -12,20 +12,32 @@
     {% endif %}
   </ul>
 </li>
+<li class="nav-item dropdown">
+  <a class="nav-link dropdown-toggle" id="menu_relatorios" href="#" data-bs-toggle="dropdown" title="ALT + C"><span class="d-none d-md-inline"><b>R</b>elatórios</span><span class="d-inline d-md-none"><i class="fas fa-stream"></i></span></a>
+  <ul class="dropdown-menu dropdown-menu-dark">
+    {% if perms.core.view_alerta %}
+    <li><a class="dropdown-item" id="relatorio_alertas" href="{% url 'core_alertas' %}"><b>A</b>lertas</a></li>
+    {% endif %}
+  </ul>
+</li>
 
 <script>
   var SHORTCUT_MAP = {
     'cTFF':'#menu_cadastro',
+    'rTFF':'#menu_relatorios',
   };
   
   function eventHandler(e){
     {% include '_component/script/global_handler.js' %}
     else{
       let cadastro = false;
+      let relatorios = false;
       try{cadastro = document.getElementById('menu_cadastro').classList.contains('show') ? true : false;}catch(err){}
+      try{relatorios = document.getElementById('menu_relatorios').classList.contains('show') ? true : false;}catch(err){}
       if(cadastro && e.key.toLowerCase() == 'e'){e.preventDefault();document.getElementById('cadastro_empresa').click();}
       else if(cadastro && e.key.toLowerCase() == 'u'){e.preventDefault();document.getElementById('cadastro_usuario').click();}
       else if(cadastro && e.key.toLowerCase() == 'g'){e.preventDefault();document.getElementById('cadastro_grupo').click();}
+      else if(relatorios && e.key.toLowerCase() == 'a'){e.preventDefault();document.getElementById('relatorio_alertas').click();}
     }
   }
 </script>
