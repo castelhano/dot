@@ -1,0 +1,107 @@
+from django.db import models
+from core.models import Log
+from pessoal.models import Cargo
+from .validators import validate_file_extension
+from datetime import datetime, date
+
+
+class Vaga(models.Model):
+    cargo = models.ForeignKey(Cargo, on_delete=models.RESTRICT)
+    quantidade = models.PositiveIntegerField(default=0, blank=True, null=True)
+    descricao = models.CharField(max_length=200, blank=True)
+    visivel = models.BooleanField(default=True)
+    def __str__(self):
+        return self.cargo.nome
+    def ultimas_alteracoes(self):
+        logs = Log.objects.filter(modelo='recrutamento.vaga',objeto_id=self.id).order_by('-data')[:15]
+        return reversed(logs)
+        
+class Candidato(models.Model):
+    ORIGEM_CHOICES = (
+    ('S','Site'),
+    ('C','Cadastro'),
+    )
+    STATUS_CHOICES = (
+    ('B','Banco'),
+    ('S','Selecao'),
+    ('C','Contratado'),
+    ('D','Descartado'),
+    )
+    SEXO_CHOICES =(
+    ('','Nao Informado'),
+    ('M','Masculino'),
+    ('F','Feminino'),
+    )
+    origem = models.CharField(max_length=3,choices=ORIGEM_CHOICES, blank=True, default='C')
+    nome = models.CharField(max_length=200, blank=False)
+    sexo = models.CharField(max_length=3,choices=SEXO_CHOICES, blank=True)
+    rg = models.CharField(max_length=20, blank=True)
+    cpf = models.CharField(max_length=20, unique=True, blank=True)
+    vagas = models.ManyToManyField(Vaga, related_name="candidatos")
+    data_nascimento = models.DateField(blank=True, null=True)
+    endereco = models.CharField(max_length=255, blank=True)
+    bairro = models.CharField(max_length=100, blank=True)
+    cidade = models.CharField(max_length=60, blank=True)
+    uf = models.CharField(max_length=5, blank=True)
+    fone1 = models.CharField(max_length=20, blank=True)
+    fone2 = models.CharField(max_length=20, blank=True)
+    email = models.CharField(max_length=150, blank=True)
+    indicacao = models.CharField(max_length=50, blank=True)
+    pne = models.BooleanField(default=False)
+    status = models.CharField(max_length=3,choices=STATUS_CHOICES,default='B', blank=True)
+    bloqueado_ate = models.DateField(blank=True, null=True)
+    detalhe = models.TextField(blank=True)
+    apresentacao = models.TextField(blank=True)
+    curriculo = models.FileField(upload_to="recrutamento/curriculos/%Y/%m/%d",blank=True, validators=[validate_file_extension])
+    mensagens = models.TextField(blank=True)
+    nova_mensagem = models.BooleanField(default=False)
+    bloquear_mensagens = models.BooleanField(default=False)
+    def __str__(self):
+        return self.nome
+    def bloqueado(self):
+        if self.bloqueado_ate != None:
+            result = True if self.bloqueado_ate >= date.today() else False
+        else:
+            result = False
+        return result
+    def ultimas_alteracoes(self):
+        logs = Log.objects.filter(modelo='recrutamento.candidato',objeto_id=self.id).order_by('-data')[:15]
+        return reversed(logs)
+
+
+class Selecao(models.Model):
+    RESULTADO_CHOICES = (
+    ('','---------'),
+    ('A','Aprovado'),
+    ('R','Reprovado'),
+    )
+    candidato = models.ForeignKey(Candidato, on_delete=models.CASCADE)
+    data = models.DateField(default=datetime.today)
+    vaga = models.ForeignKey(Vaga, on_delete=models.RESTRICT)
+    resultado = models.CharField(max_length=3,choices=RESULTADO_CHOICES, blank=True)
+    arquivar = models.BooleanField(default=False)
+    def __str__(self):
+        return self.candidato
+    def ultimas_alteracoes(self):
+        logs = Log.objects.filter(modelo='recrutamento.selecao',objeto_id=self.id).order_by('-data')[:15]
+        return reversed(logs)
+    
+
+class Criterio(models.Model):
+    nome = models.CharField(max_length=80, blank=False)
+    def ultimas_alteracoes(self):
+        logs = Log.objects.filter(modelo='recrutamento.criterio',objeto_id=self.id).order_by('-data')[:15]
+        return reversed(logs)
+
+class Avaliacao(models.Model):
+    STATUS_CHOICES = (
+    ('','---------'),
+    ('A','Aprovado'),
+    ('R','Reprovado'),
+    )
+    selecao = models.ForeignKey(Selecao, on_delete=models.CASCADE)
+    criterio = models.ForeignKey(Criterio, on_delete=models.RESTRICT)
+    status = models.CharField(max_length=3,choices=STATUS_CHOICES, default='')
+    def ultimas_alteracoes(self):
+        logs = Log.objects.filter(modelo='recrutamento.avaliacao',objeto_id=self.id).order_by('-data')[:15]
+        return reversed(logs)

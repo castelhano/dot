@@ -10,6 +10,9 @@
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      {% if perms.core.delete_alerta %}
+      <li class="nav-item"><a class="nav-link pointer text-danger" data-bs-toggle="modal" data-bs-target="#delete_modal"><i class="fas fa-exclamation-triangle me-2"></i> Excluir</a></li>
+      {% endif %}
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'core_alertas' %}"><i class="fas fa-undo"></i></a></li>
     </ul>
   </div>
@@ -25,10 +28,31 @@
         <div class="col-md-2">Crítico:</div><div class="col-md-10 fw-bold">{{alerta.critico|yesno:'Crítico,Não'}}</div>
         <div class="col-md-12 border-top mt-1 pt-2">{{alerta.mensagem}}</div>
       </div>
-    </div>      
+    </div>
   </div>
-  
 </div>
+
+{% if perms.core.delete_alerta %}
+<div class="modal fade" id="delete_modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="row">
+        <div class="col"><h5 class="ms-3 mt-3"><i class="fas fa-exclamation-triangle text-danger me-2"></i> Excluir Alerta</h5></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      </div>
+      <div class="modal-body">
+        <p><b class="text-danger">Atenção!!</b> Esta operação não pode ser desfeita, confirma a exclusão do registro?</p>
+        <div class="row mt-2">
+          <div class="col text-end">
+            <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
+            <a class="btn btn-danger px-3" href="{% url 'core_alerta_delete' alerta.id %}">Excluir</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
 
 {% endblock%}
 

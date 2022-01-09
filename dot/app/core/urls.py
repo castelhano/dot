@@ -39,4 +39,5 @@ urlpatterns = [
     path('core_get_group_perms',views.get_group_perms,name='core_get_group_perms'),
     path('core_get_alertas',views.get_alertas,name='core_get_alertas'),
     path('core_alerta_marcar_lido',views.alerta_marcar_lido,name='core_alerta_marcar_lido'),
+    path('core_alerta_delete/<int:id>',views.alerta_delete,name='core_alerta_delete'),
 ]

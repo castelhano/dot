@@ -47,12 +47,13 @@
   <a  id="messages" data-bs-toggle="offcanvas" href="#offcanvas" role="button"></a>
   <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas">
     <div class="offcanvas-header">
-      <h5 id="offcanvas_title">Notificações</h5>
+      <h5 id="offcanvas_title">{% block offcanvas_title %}Notificações{% endblock %}</h5>
       <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
     </div>
     <div class="offcanvas-body pe-0">
       <div class="container-fluid">
         <div class="row pe-3" id="offcanvas_body"></div>
+        {% block offcanvas_body %}{% endblock %}
       </div>
     </div>
   </div>
@@ -60,7 +61,7 @@
   
   
   <div class="container-fluid">
-    {% block content_fluid %}{% endblock %}        
+    {% block content_fluid %}{% endblock %}
   </div>
   
   {% for message in messages %}

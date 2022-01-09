@@ -10,8 +10,8 @@
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
-      <li class="nav-item"><a class="nav-link{% if alertas %} active{% endif %}" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
-      <li class="nav-item"><a class="nav-link{% if not alertas %} active{% endif %}" data-bs-toggle="tab" data-bs-target="#filter" href="#"><i class="fas fa-filter"></i></a></li>
+      <li class="nav-item"><a id="id_dados_alerta" class="nav-link{% if alertas %} active{% endif %}" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a id="search" class="nav-link{% if not alertas %} active{% endif %}" data-bs-toggle="tab" data-bs-target="#filter" href="#"><i class="fas fa-filter"></i></a></li>
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
         <ul class="dropdown-menu">
@@ -61,16 +61,16 @@
         {% csrf_token %}
         <div class="row g-1">
           <div class="form-floating mb-1 col-lg-4">
-            <input type="text" class="form-control bg-light" id="id_pesquisa" name="pesquisa" value="" autofocus>
-            <label for="id_pesquisa">Titulo alerta</label>
+            <select class="form-select bg-light" id="id_user" name="user" required autofocus>
+              <option value="" selected>---------</option>
+            </select>
+            <label for="id_user">Usuário*</label>
           </div>
         </div>
         <div class="row g-1">
           <div class="form-floating mb-1 col-lg-4">
-            <select class="form-select" id="id_user" name="user" required>
-              <option value="" selected>---------</option>
-            </select>
-            <label for="id_user">Usuário</label>
+            <input type="text" class="form-control bg-light" id="id_pesquisa" name="pesquisa" value="">
+            <label for="id_pesquisa">Titulo alerta</label>
           </div>
         </div>
         <div class="row g-1">
@@ -84,11 +84,11 @@
           </div>
         </div>
         <div class="form-check form-switch mt-2">
-          <input class="form-check-input" type="checkbox" role="switch" name="lido" id="id_lido">
+          <input class="form-check-input" type="checkbox" role="switch" name="lido" id="id_lido" checked>
           <label class="form-check-label" for="id_lido">Alertas lidos</label>
         </div>
         <div class="form-check form-switch">
-          <input class="form-check-input" type="checkbox" role="switch" name="critico" id="id_critico">
+          <input class="form-check-input" type="checkbox" role="switch" name="critico" id="id_critico" checked>
           <label class="form-check-label" for="id_critico">Somente alertas criticos</label>
         </div>
         <div class="row mt-2">
@@ -107,6 +107,7 @@
   
 <script>
 {% block add_script %}
+SHORTCUT_MAP['1FTF'] = '#id_dados_alerta';
 
 function carregaUsuarios() {
 	var xhttp = new XMLHttpRequest();

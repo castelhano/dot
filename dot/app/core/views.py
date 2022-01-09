@@ -376,6 +376,18 @@ def grupo_delete(request, id):
         messages.error(request,'ERRO ao apagar grupo')
         return redirect('core_grupo_id', id)
 
+@login_required
+@permission_required('core.delete_alerta')
+def alerta_delete(request, id):
+    try:
+        registro = Alerta.objects.get(pk=id)
+        registro.delete()
+        messages.warning(request,'Alerta <b>apagado</b>')
+        return redirect('core_alertas')
+    except:
+        messages.error(request,'ERRO ao apagar alerta')
+        return redirect('core_alerta_id', id)
+
 # AUTENTICACAO E PERMISSAO
 def login(request):
     return render(request,'core/login.html')

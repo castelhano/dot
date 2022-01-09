@@ -11,6 +11,7 @@ from .settings_local import ALLOWED_HOSTS, DEBUG, SECRET_KEY, DATABASES
 INSTALLED_APPS = [
     'core',
     'pessoal',
+    'recrutamento',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
