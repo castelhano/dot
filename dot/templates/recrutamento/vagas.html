@@ -1,14 +1,13 @@
 {% extends "layout/dot.html" %}
 {% load static %}
 {% block title %}Vagas{% endblock %}
-{% block model  %}Recrutamento{% endblock %}
+{% block model %}Recrutamento{% endblock %}
 {% block navbar_classlist %}navbar-dark bg-purple bg-gradient{% endblock %}
 {% block model_menu %}
 {% include "_component/menu/recrutamento.html" %}
 {% endblock%}
 
 {% block content_fluid %}
-<a class="d-none" id="clear" href="{% url 'recrutamento_vagas' %}"></a>
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
@@ -30,34 +29,53 @@
   </div>
   <div class="card-body tab-content">
     <h5 class="card-title mb-3">Vagas <small class="badge bg-primary ms-1">{{vagas.count}}</small></h5>
-    <div class="tab-pane fade show active" id="base" role="tabpanel">
-      <table id="main_table" class="table border table-striped table-hover">
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Qtde</th>
-            {% if perms.recrutamento.change_vaga %}
-            <th>&nbsp;</th>
-            {% endif %}
-          </tr>
-        </thead>
-        <tbody>
-          {% for vaga in vagas %}
-          <tr>
-            <td>{{vaga.cargo.nome}}</td>
-            <td>{{vaga.quantidade}}</td>
-            {% if perms.recrutamento.change_vaga %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'recrutamento_vaga_id' vaga.id %}"><i class="fas fa-pen"></i></a></td>
-            {% endif %}
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="3">Nenhum registro a exibir</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
+    <div class="row">
+      <div class="col-lg order-2 order-lg-1">
+        <div class="tab-pane fade show active" id="base" role="tabpanel">
+          <table id="main_table" class="table border table-striped table-hover">
+            <thead>
+              <tr>
+                <th class="d-none d-sm-table-cell">#</th>
+                <th>Nome</th>
+                <th class="d-none d-xl-table-cell">Descrição</th>
+                <th class="d-none d-sm-table-cell">Visivel</th>
+                <th>Qtde</th>
+                {% if perms.recrutamento.change_vaga %}
+                <th>&nbsp;</th>
+                {% endif %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for vaga in vagas %}
+              <tr>
+                <td class="d-none d-sm-table-cell">{{vaga.id}}</td>
+                <td>{{vaga.cargo.nome}}</td>
+                <td class="d-none d-xl-table-cell">{{vaga.descricao}}</td>
+                <td class="d-none d-sm-table-cell {% if vaga.visivel %}text-success{% else %}text-danger{% endif %}">{{vaga.visivel|yesno:'Visivel,Oculta'}}</td>
+                <td>{{vaga.quantidade}}</td>
+                {% if perms.recrutamento.change_vaga %}
+                <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'recrutamento_vaga_id' vaga.id %}"><i class="fas fa-pen"></i></a></td>
+                {% endif %}
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="6">Nenhum registro a exibir</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="col-lg-auto ps-auto ps-lg-0 order-1 order-lg-2">
+        <div class="filter-container">
+          <h6 class="text-muted d-flex justify-content-between">Filtros:<a class="text-muted text-decoration-none fs-8" id="clear" href="{% url 'recrutamento_vagas' %}">Limpar</a></h6>
+          <ul class="list-unstyled">
+            <li><a id="id_vagas_abertas" onclick="filter('quantidade__gt', 0)">Vagas Abertas</a></li>
+            <li><a id="id_ocultas" onclick="filter('visivel','False')">Ocultas Site</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>    
   </div>
 </div>
 
@@ -69,7 +87,7 @@
         <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
       </div>
       <div class="modal-body">
-        <form id="recrutamento_form" action="{% url 'recrutamento_vagas' %}" method="POST" autocomplete="off">
+        <form id="recrutamento_form" action="{% url 'recrutamento_vagas' %}" method="GET" autocomplete="off">
           {% csrf_token %}
           <div class="row g-1">
             <div class="form-floating mb-1 col-lg-12">
@@ -86,4 +104,15 @@
 
 {% block add_script_src %}
 <script src="{% static 'js/table_to_csv.js' %}"></script>
+<script src="{% static 'js/update_url.js' %}"></script>
 {% endblock %}
+
+<script>
+  {% block add_script %}
+  const filters = {
+    'quantidade__gt':'id_vagas_abertas',
+    'visivel=False':'id_ocultas',
+  }
+  urlSetFiltersActive(filters);
+  {% endblock %}
+</script>

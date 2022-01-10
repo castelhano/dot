@@ -1,0 +1,33 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Vaga{% endblock %}
+{% block model %}Recrutamento{% endblock %}
+{% block navbar_classlist %}navbar-dark bg-purple bg-gradient{% endblock %}
+{% block model_menu %}
+{% include "_component/menu/recrutamento.html" %}
+{% endblock%}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'recrutamento_vaga_add' %}"></a>
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'recrutamento_vagas' %}"><i class="fas fa-undo"></i></a></li>
+    </ul>
+  </div>
+  <form id="app_form" action="{% url 'recrutamento_vaga_add' %}" method="POST" autocomplete="off">
+    {% csrf_token %}
+    {% include 'recrutamento/_form_vaga.html' %}
+  </form>
+</div>
+
+{% endblock%}
+
+{% block add_script_src %}{% endblock %}
+
+<script>
+  {% block add_script %}
+  var TAB_ON_ENTER = true;
+  {% endblock %}
+</script>

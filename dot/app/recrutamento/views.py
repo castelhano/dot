@@ -9,8 +9,7 @@ from core.models import Log
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.db.models import Q
-# from datetime import datetime, date
-
+from core.extras import clean_request
 
 # METODOS SHOW
 @login_required
@@ -55,12 +54,24 @@ def selecoes(request):
 @permission_required('recrutamento.view_vaga')
 def vagas(request):
     vagas = Vaga.objects.all()
-    if request.method == 'POST':
-        if request.POST['pesquisa'] != '':
-            vagas = vagas.filter(cargo__nome__contains=request.POST['pesquisa'])
-        if 'abertas' in request.POST:
-            vagas = vagas.filter(quantidade__gt=0)
+    if request.GET.get('pesquisa', None):
+        vagas = vagas.filter(cargo__nome__contains=request.GET.get('pesquisa'))
+    fields = ['visivel','quantidade__gt']
+    try:
+        params = clean_request(request.GET, fields)
+        vagas = vagas.filter(**params)
+    except:
+        messages.warning(request,'<b class="text-danger">Erro</b> ao filtrar vagas..')
+        return redirect('recrutamento_vagas')
     return render(request,'recrutamento/vagas.html',{'vagas':vagas})
+
+@login_required
+@permission_required('recrutamento.view_criterio')
+def criterios(request):
+    criterios = Criterio.objects.all()
+    if request.method == 'POST':
+        criterios = criterios.filter(nome__contains=request.POST['pesquisa'])
+    return render(request,'recrutamento/criterios.html',{'criterios':criterios})
 
 # METODOS ADD
 @login_required
@@ -165,6 +176,30 @@ def vaga_add(request):
     else:
         form = VagaForm()
     return render(request,'recrutamento/vaga_add.html',{'form':form})
+
+@login_required
+@permission_required('recrutamento.add_criterio')
+def criterio_add(request):
+    if request.method == 'POST':
+        form = CriterioForm(request.POST)
+        if form.is_valid():
+            try:
+                form_clean = form.cleaned_data
+                registro = form.save()
+                l = Log()
+                l.modelo = "recrutamento.criterio"
+                l.objeto_id = registro.id
+                l.objeto_str = registro.nome
+                l.usuario = request.user
+                l.mensagem = "CREATED"
+                l.save()
+                messages.success(request,f'Criterio <b>{registro.nome}</b> criado')
+                return redirect('recrutamento_criterio_add')
+            except:
+                pass
+    else:
+        form = CriterioForm()
+    return render(request,'recrutamento/criterio_add.html',{'form':form})
     
 
 # METODOS GET
@@ -188,6 +223,13 @@ def vaga_id(request, id):
     vaga = Vaga.objects.get(id=id)
     form = VagaForm(instance=vaga)
     return render(request,'recrutamento/vaga_id.html',{'form':form,'vaga':vaga})
+
+@login_required
+@permission_required('recrutamento.change_criterio')
+def criterio_id(request, id):
+    criterio = Criterio.objects.get(id=id)
+    form = CriterioForm(instance=criterio)
+    return render(request,'recrutamento/criterio_id.html',{'form':form,'criterio':criterio})
     
 
 # METODOS UPDATE
@@ -254,6 +296,25 @@ def vaga_update(request, id):
         return redirect('recrutamento_vaga_id', id)
     else:
         return render(request,'recrutamento/vaga.html',{'form':form,'vaga':vaga})
+
+@login_required
+@permission_required('recrutamento.change_criterio')
+def criterio_update(request, id):
+    criterio = Criterio.objects.get(pk=id)
+    form = CriterioForm(request.POST, instance=criterio)
+    if form.is_valid():
+        registro = form.save()
+        l = Log()
+        l.modelo = "recrutamento.criterio"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.nome
+        l.usuario = request.user
+        l.mensagem = "UPDATE"
+        l.save()
+        messages.success(request,f'Criterio <b>{registro.nome}</b> alterado')
+        return redirect('recrutamento_criterio_id', id)
+    else:
+        return render(request,'recrutamento/criterio.html',{'form':form,'criterio':criterio})
     
 # METODOS DELETE
 @login_required
@@ -323,6 +384,25 @@ def vaga_delete(request, id):
     except:
         messages.error(request,'ERRO ao apagar vaga')
         return redirect('recrutamento_vaga_id', id)
+
+@login_required
+@permission_required('recrutamento.delete_criterio')
+def criterio_delete(request, id):
+    try:
+        registro = Criterio.objects.get(id=id)
+        l = Log()
+        l.modelo = "recrutamento.criterio"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.nome
+        l.usuario = request.user
+        l.mensagem = "DELETE"
+        l.save()
+        registro.delete()
+        messages.warning(request,f'Criterio <b>{registro.nome}</b> removido')
+        return redirect('recrutamento_criterios')
+    except:
+        messages.error(request,'ERRO ao apagar criterio')
+        return redirect('recrutamento_criterio_id', id)
 
 
 # OUTROS METODOS

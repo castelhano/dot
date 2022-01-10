@@ -6,15 +6,21 @@
 <li class="nav-item dropdown">
   <a class="nav-link dropdown-toggle" id="menu_cadastro" href="#" data-bs-toggle="dropdown" title="ALT + C"><b>C</b>adastro</a>
   <ul class="dropdown-menu dropdown-menu-dark">
-    {% if perms.recrutamento.view_vaga %}
-    <li><a class="dropdown-item" id="cadastro_vaga" href="{% url 'recrutamento_vagas' %}"><b>V</b>agas</a></li>
-    {% endif %}
+    {% if perms.recrutamento.view_vaga %}<li><a class="dropdown-item" id="cadastro_vaga" href="{% url 'recrutamento_vagas' %}"><b>V</b>agas</a></li>{% endif %}
+    {% if perms.recrutamento.view_criterio %}<li><a class="dropdown-item" id="cadastro_criterio" href="{% url 'recrutamento_criterios' %}"><b>C</b>ritério</a></li>{% endif %}
   </ul>
 </li>
+{% if perms.recrutamento.view_candidato %}
+<li class="nav-item me-lg-2">
+  <a class="nav-link" id="menu_candidatos" href="{% url 'recrutamento_candidatos' %}" title="ALT + D">Can<b>d</b>idatos</a>
+</li>
+{% endif %}
 
 <script>
   var SHORTCUT_MAP = {
     'cTFF':'#menu_cadastro',
+    'pTFF':'#menu_pessoal',
+    'dTFF':'#menu_candidatos',
   };
   
   function eventHandler(e){
@@ -23,6 +29,7 @@
       let cadastro = false;
       try{cadastro = document.getElementById('menu_cadastro').classList.contains('show') ? true : false;}catch(err){}
       if(cadastro && e.key.toLowerCase() == 'v'){e.preventDefault();document.getElementById('cadastro_vaga').click();}
+      else if(cadastro && e.key.toLowerCase() == 'c'){e.preventDefault();document.getElementById('cadastro_criterio').click();}
     }
   }
 </script>

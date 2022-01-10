@@ -46,10 +46,11 @@ class VagaForm(forms.ModelForm):
         fields = ['cargo','descricao','quantidade','visivel']
     cargo = forms.ModelChoiceField(error_messages={'required': 'Selecione um cargo'}, queryset = Cargo.objects.all().order_by('nome'), widget=forms.Select(attrs={'class':'form-select','autofocus':'autofocus'}))
     descricao = forms.CharField(required=False,max_length=60,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
-    quantidade = forms.IntegerField(required=False,initial=0, widget=forms.TextInput(attrs={'class': 'form-control bg-light','type':'number','min':'0','max':'999'}))
+    quantidade = forms.IntegerField(required=False,initial=0, widget=forms.TextInput(attrs={'class': 'form-control bg-light','type':'number','min':'0','max':'999', 'onfocus':'this.select();'}))
+    visivel = forms.BooleanField(required=False, initial=True, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch'}))
 
 class CriterioForm(forms.ModelForm):
     class Meta:
         model = Criterio
         fields = ['nome']
-    descricao = forms.CharField(error_messages={'required': 'Informe o nome do criterio'},max_length=50,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
+    nome = forms.CharField(error_messages={'required': 'Informe o nome do criterio'},max_length=50,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'', 'autofocus':'autofocus'}))

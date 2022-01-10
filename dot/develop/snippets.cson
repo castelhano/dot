@@ -4,17 +4,15 @@
   # LAYOUT
   'Template Basic':
     'prefix': '_basic'
-    'body':'{% extends "layout/dot.html" %}\n{% block title %}Titulo{% endblock %}\n{% block model  %}Modulo{% endblock %}\n{% block model_menu %}\n{% include "_component/menu/core.html" %}\n{% endblock%}\n\n{% block content_fluid %}\n<a class="d-none" id="clear" href="url"></a>\n{% endblock%}\n\n{% block add_script_src %}{% endblock %}\n\n<script>\n{% block add_script %}{% endblock %}\n</script>'
+    'body':'{% extends "layout/dot.html" %}\n{% block title %}Titulo{% endblock %}\n{% block model %}Modulo{% endblock %}\n{% block model_menu %}\n{% include "_component/menu/core.html" %}\n{% endblock%}\n\n{% block content_fluid %}\n<a class="d-none" id="clear" href="url"></a>\n{% endblock%}\n\n{% block add_script_src %}{% endblock %}\n\n<script>\n{% block add_script %}{% endblock %}\n</script>'
   
   'Template Table':
     'prefix': '_table'
     'body':'{% extends "layout/dot.html" %}\n
     {% load static %}\n
     {% block title %}Titulo{% endblock %}\n
-    {% block model  %}Modulo{% endblock %}\n
-    {% block model_menu %}\n
-    {% include "_component/menu/core.html" %}\n
-    {% endblock%}\n\n
+    {% block model %}Modulo{% endblock %}\n
+    {% block model_menu %}{% include "_component/menu/core.html" %}{% endblock%}\n\n
     {% block content_fluid %}\n
     <a class="d-none" id="clear" href="url"></a>\n\n
     <div class="card mt-2">\n
@@ -100,10 +98,8 @@
     'body':'{% extends "layout/dot.html" %}\n
     {% load static %}\n
     {% block title %}Titulo{% endblock %}\n
-    {% block model  %}Modulo{% endblock %}\n
-    {% block model_menu %}\n
-    {% include "_component/menu/core.html" %}\n
-    {% endblock%}\n\n
+    {% block model %}Modulo{% endblock %}\n
+    {% block model_menu %}{% include "_component/menu/core.html" %}{% endblock%}\n\n
     {% block content_fluid %}\n
     <a class="d-none" id="clear" href="url"></a>\n
     <div class="card mt-2">\n
@@ -145,10 +141,8 @@
     'body':'{% extends "layout/dot.html" %}\n
     {% load static %}\n
     {% block title %}Titulo{% endblock %}\n
-    {% block model  %}Modulo{% endblock %}\n
-    {% block model_menu %}\n
-    {% include "_component/menu/core.html" %}\n
-    {% endblock%}\n
+    {% block model %}Modulo{% endblock %}\n
+    {% block model_menu %}{% include "_component/menu/core.html" %}{% endblock%}\n
     {% block content_fluid %}\n
     <a class="d-none" id="clear" href="url"></a>\n
     <div class="card mt-2">\n
@@ -290,7 +284,7 @@
   
   'Component Loading Modal':
     'prefix': 'component_loadding'
-    'body':'{% include "_component/modal/loading.html" with message=\'Salvando....\' background=\'\' spinner_classlist=\'\' message_classlist=\'\' %}\n<!-->\nUsage: var modal_loading = new bootstrap.Modal(document.getElementById(\'modal_loading\'), {keyboard: false});\nfunction submitForm(){modal_loading.show();} E no form onsubmit="return submitForm();"}\n<-->'
+    'body':'{% include "_component/modal/loading.html" with message=\'Salvando....\' background=\'\' spinner_classlist=\'\' message_classlist=\'\' %}'
   
   'Multiple Option Select':
     'prefix': 'form_select_multiple'

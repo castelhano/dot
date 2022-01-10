@@ -10,7 +10,8 @@
   {% if perms.core.console %}
   <div class="card-widget col-6 col-lg-4 col-xl-2 btn-orange" title="Ctrl + ."><i class="fas fa-window-restore lead-image"></i><a id="console_link" class="widget-label stretched-link" href="{% url 'console' %}">Admin Console <kbd class="float-end fs-9">ctrl .</kbd></a></div>
   {% endif %}
-  {% if perms.pessoal.view_funcionario %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-purple"><i class="fas fa-users lead-image"></i><a id="widget_action_pessoal" class="widget-label stretched-link" href="{% url 'pessoal_funcionarios' %}">Pessoal<kbd class="float-end fs-9">ctrl p</kbd></a></div>{% endif %}
+  {% if perms.pessoal.view_funcionario %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-purple"><i class="fas fa-user-tie lead-image"></i><a id="widget_action_pessoal" class="widget-label stretched-link" href="{% url 'pessoal_funcionarios' %}">Pessoal<kbd class="float-end fs-9">ctrl p</kbd></a></div>{% endif %}
+  {% if perms.recrutamento.view_selecao %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-purple"><i class="fas fa-users lead-image"></i><a id="widget_action_recrutamento" class="widget-label stretched-link" href="{% url 'recrutamento_vagas' %}">Recrutamento<kbd class="float-end fs-9">ctrl r</kbd></a></div>{% endif %}
   <div id="messages_widget" class="card-widget col-6 col-lg-4 col-xl-2 btn-secondary d-none"><i class="fas fa-inbox lead-image"> <sup id="alertas_badge" style="font-family: var(--bs-body-font-family); font-size:2rem;">0</sup></i><a class="widget-label stretched-link" data-bs-toggle="offcanvas" href="#offcanvas" role="button" title="ALT + M">Notificações</a></div>
 </div>
 {% endblock%}
@@ -20,6 +21,7 @@
 {% block add_script %}
 SHORTCUT_MAP['.FTF'] = '#console_link';
 SHORTCUT_MAP['pFTF'] = '#widget_action_pessoal';
+SHORTCUT_MAP['rFTF'] = '#widget_action_recrutamento';
 
 {% include '_component/script/update_alertas.js' %}
 {% endblock %}
