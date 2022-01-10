@@ -93,7 +93,7 @@
       'clean_logs':'@logs { #clean :until=aaaa-mm-dd }',
       'clean_logs_model':'@logs { #clean :until=aaaa-mm-dd :model=core.empresa }',
       'funcionario_cancelar_desligamento':'@employee { #matricula !reengage msg:Descrever motivo; }',
-      'runscript':'@runscript { !execute=True :code=00000 }',
+      'runscript':'@runscript { !execute=False :code=00000 }',
     }
     var editor = ace.edit("editor");
     editor.setTheme("ace/theme/ambiance");

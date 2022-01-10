@@ -13,23 +13,25 @@
   <link rel="stylesheet" href="{% static 'css/dot.css' %}" type="text/css">
   
   <style media="screen">
+  @media(min-width: 992px){.navbar-dot{height: 45px;}}
   {% block style %}{% endblock %}
   </style>
   
   <title>{% block title %}Dot{% endblock %}</title>
 </head>
 <body>
-  <nav class="navbar {% block navbar_classlist %}navbar-dark bg-dark bg-gradient{% endblock %} navbar-expand sticky-top shadow-sm border-bottom" style="height:45px;">
+  <nav class="navbar navbar-expand-lg sticky-top py-1 shadow-sm border-bottom navbar-dot {% block navbar_classlist %}navbar-dark bg-dark bg-gradient{% endblock %}">
     <div class="container-fluid">
+      <ul class="navbar-nav"><li class="nav-item"><a class="nav-link ps-0 pe-3" id="home" href="{% url 'index' %}" title="INICIO [ ALT + I ]"><i class="fas fa-th-large fs-5"></i></a></li></ul>
       <a class="navbar-brand user-select-none pt-0">{% block model %} Dot {% endblock%}</a>
+      <button class="btn btn-sm navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navControls"><i class="fas fa-bars text-light fs-4"></i></button>
       <div class="collapse navbar-collapse ms-2" id="navControls">
         <ul class="navbar-nav">
-          <li class="nav-item"><a class="nav-link px-3" id="home" href="{% url 'index' %}"><i class="fas fa-th-large fs-5"></i></a></li>
           {% block model_menu %}{% endblock%}
         </ul>
         <ul class="navbar-nav ms-auto">
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle pt-1" id="system" href="#" data-bs-toggle="dropdown" title="ALT + S"><span class="d-none d-sm-inline">{{user.first_name}} {{user.last_name}}</span><span class="d-inline d-sm-none">{{user.first_name.0}}{{user.last_name.0}}</span></a>
+            <a class="nav-link dropdown-toggle pt-1 fw-bold" id="system" href="#" data-bs-toggle="dropdown" title="ALT + S">{{user.username|title}}</a>
             <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end mt-1" id="user_list_options">
               <li><a class="dropdown-item" id="change_password_link" href="{% url 'change_password' %}"><i class="fas fa-unlock-alt me-2" style="width:15px"></i> Alterar <b>S</b>enha</a></li>
               <li><a class="dropdown-item pointer" id="shortcut_link_list" data-bs-toggle="modal" data-bs-target="#shortcut_modal"><i class="fas fa-keyboard me-2" style="width:15px"></i> <b>A</b>talhos / Sobre</a></li>
@@ -52,8 +54,8 @@
     </div>
     <div class="offcanvas-body pe-0">
       <div class="container-fluid">
-        <div class="row pe-3" id="offcanvas_body"></div>
         {% block offcanvas_body %}{% endblock %}
+        <div class="row pe-3" id="offcanvas_body"></div>
       </div>
     </div>
   </div>
@@ -61,7 +63,7 @@
   
   
   <div class="container-fluid">
-    {% block content_fluid %}{% endblock %}
+    {% block content_fluid %}{% endblock %}        
   </div>
   
   {% for message in messages %}
@@ -132,11 +134,11 @@
     </div>
   </div>
   
-<script src="{% static 'js/vendor/bootstrap.bundle.min.js' %}"></script>
-<script src="{% static 'js/_basicListener.js' %}"></script>
-{% block add_script_src %}{% endblock %}
-<script>
-{% block add_script %}{% endblock %}
+  <script src="{% static 'js/vendor/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'js/_basicListener.js' %}"></script>
+  {% block add_script_src %}{% endblock %}
+  <script>
+  {% block add_script %}{% endblock %}
 </script>
 
 </body>

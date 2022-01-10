@@ -9,12 +9,11 @@
 
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'pessoal_funcionarios' %}"></a>
-
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
-      <li class="nav-item"><a class="nav-link{% if funcionarios %} active{% endif %}" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
-      <li class="nav-item"><a class="nav-link{% if not funcionarios %} active{% endif %}" data-bs-toggle="tab" data-bs-target="#filter" href="#"><i class="fas fa-filter"></i></a></li>
+      <li class="nav-item"><a id="tab_funcionarios_table" class="nav-link{% if funcionarios %} active{% endif %}" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a id="search" class="nav-link{% if not funcionarios %} active{% endif %}" data-bs-toggle="tab" data-bs-target="#filter" href="#"><i class="fas fa-filter"></i></a></li>
       {% if perms.pessoal.add_funcionario %}
       <li class="nav-item ms-1"><a class="nav-link border" id="add" href="{% url 'pessoal_funcionario_add' %}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
       {% endif %}
@@ -165,6 +164,9 @@
 
 <script>  
 {% block add_script %}
+
+SHORTCUT_MAP['1FTF'] = '#tab_funcionarios_table';
+
 function carregaEmpresas() {
 		var xhttp = new XMLHttpRequest();
 		xhttp.onreadystatechange = function() {

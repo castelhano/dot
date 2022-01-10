@@ -13,7 +13,7 @@
   </ul>
 </li>
 <li class="nav-item dropdown">
-  <a class="nav-link dropdown-toggle" id="menu_relatorios" href="#" data-bs-toggle="dropdown" title="ALT + C"><span class="d-none d-md-inline"><b>R</b>elatórios</span><span class="d-inline d-md-none"><i class="fas fa-stream"></i></span></a>
+  <a class="nav-link dropdown-toggle" id="menu_relatorios" href="#" data-bs-toggle="dropdown" title="ALT + T">Ges<b>t</b>ão</a>
   <ul class="dropdown-menu dropdown-menu-dark">
     {% if perms.core.view_alerta %}
     <li><a class="dropdown-item" id="relatorio_alertas" href="{% url 'core_alertas' %}"><b>A</b>lertas</a></li>
@@ -24,7 +24,7 @@
 <script>
   var SHORTCUT_MAP = {
     'cTFF':'#menu_cadastro',
-    'rTFF':'#menu_relatorios',
+    'tTFF':'#menu_relatorios',
   };
   
   function eventHandler(e){

@@ -290,7 +290,7 @@
   
   'Component Loading Modal':
     'prefix': 'component_loadding'
-    'body':'{% include "_component/modal/loading.html" with message=\'Salvando....\' background=\'\' spinner_classlist=\'\' message_classlist=\'\' %}'
+    'body':'{% include "_component/modal/loading.html" with message=\'Salvando....\' background=\'\' spinner_classlist=\'\' message_classlist=\'\' %}\n<!-->\nUsage: var modal_loading = new bootstrap.Modal(document.getElementById(\'modal_loading\'), {keyboard: false});\nfunction submitForm(){modal_loading.show();} E no form onsubmit="return submitForm();"}\n<-->'
   
   'Multiple Option Select':
     'prefix': 'form_select_multiple'
