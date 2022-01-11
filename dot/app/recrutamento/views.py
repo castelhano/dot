@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
-# from django.http import HttpResponse
-# from json import dumps
+from django.http import HttpResponse
+from json import dumps
 from .models import Candidato, Selecao, Avaliacao, Vaga, Criterio
 from pessoal.models import Cargo
 from .forms import CandidatoForm, SelecaoForm, VagaForm, CriterioForm
@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.db.models import Q
 from core.extras import clean_request
+from datetime import date
 
 # METODOS SHOW
 @login_required
@@ -17,20 +18,28 @@ from core.extras import clean_request
 def candidatos(request):
     candidatos = Candidato.objects.all().order_by('nome')
     if request.method == 'POST':
-        if request.POST['pesquisa'] != '':
+        valid = False
+        if request.POST['pesquisa'] != '' and len(request.POST['pesquisa']) > 3:
+            valid = True
             candidatos = candidatos.filter(Q(nome__contains=request.POST['pesquisa']) | Q(cpf__contains=request.POST['pesquisa']))
         if request.POST['cargo'] != '':
+            valid = True
             candidatos = candidatos.filter(vagas__id=request.POST['cargo'])
         if request.POST['status'] != '':
             candidatos = candidatos.filter(status=request.POST['status'])
         if request.POST['origem'] != '':
             candidatos = candidatos.filter(origem=request.POST['origem'])
+        if not 'bloqueados' in request.POST:
+            candidatos = candidatos.exclude(bloqueado_ate__gte=date.today())
+        if not valid:
+            candidatos = None
         return render(request,'recrutamento/candidatos.html',{'candidatos':candidatos})
     else:
-        nova_mensagem = Candidato.objects.filter(nova_mensagem=True).count()
-        banco = Candidato.objects.filter(status='B').count()
-        selecoes = Candidato.objects.filter(status='S').count()
-        return render(request,'recrutamento/candidatos.html',{'banco':banco,'nova_mensagem':nova_mensagem,'selecoes':selecoes})
+        summary = {}
+        summary['nova_mensagem'] = Candidato.objects.filter(nova_mensagem=True).count()
+        summary['banco'] = Candidato.objects.filter(status='B').count()
+        summary['selecoes'] = Candidato.objects.filter(status='S').count()
+        return render(request,'recrutamento/candidatos.html',{'summary':summary})
 
 @login_required
 @permission_required('recrutamento.view_selecao')
@@ -90,7 +99,7 @@ def candidato_add(request):
                 l.usuario = request.user
                 l.mensagem = "CREATED"
                 l.save()
-                messages.success(request,f'Candidato {registro.nome.split(" ")[0]} criado')
+                messages.success(request,f'Candidato <b>{registro.nome.split(" ")[0]}</b> inserido no banco')
                 return redirect('recrutamento_candidato_id',registro.id)
             except:
                 messages.error(request,'Erro ao cadastrar candidato')
@@ -247,7 +256,7 @@ def candidato_update(request, id):
         l.usuario = request.user
         l.mensagem = "UPDATE"
         l.save()
-        messages.success(request,f'Candidato {registro.nome.split(" ")[0]} alterado(a)')
+        messages.success(request,f'Candidato <b>{registro.nome.split(" ")[0]}</b> alterado(a)')
         return redirect('recrutamento_candidato_id', id)
     else:
         return render(request,'recrutamento/candidato_id.html',{'form':form,'candidato':candidato})

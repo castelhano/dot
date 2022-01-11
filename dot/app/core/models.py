@@ -69,3 +69,24 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+
+# EXTENDED **********************************************
+class ImageField(models.ImageField):
+    class Meta:
+        abstract = True
+    def save_form_data(self, instance, data):
+        if data is not None: 
+            file = getattr(instance, self.attname)
+            if file != data:
+                file.delete(save=False)
+        super(ImageField, self).save_form_data(instance, data)
+
+class FileField(models.FileField):
+    class Meta:
+        abstract = True
+    def save_form_data(self, instance, data):
+        if data is not None: 
+            file = getattr(instance, self.attname)
+            if file != data:
+                file.delete(save=False)
+        super(FileField, self).save_form_data(instance, data)

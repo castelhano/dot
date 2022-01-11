@@ -1,0 +1,88 @@
+{% if summary %}
+<div class="row pt-3">
+  <div class="col-lg-4 col-xl-3 mb-2">
+    <div class="card text-center bg-warning">
+      <div class="card-header pointer" onclick="document.getElementById('search').click();">Candidatos Banco</div>
+      <div class="card-body">
+        <h1>{{summary.banco|default:0}}</h1>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4 col-xl-3 mb-2">
+    <div class="card text-center bg-purple">
+      <div class="card-header pointer" onclick="document.getElementById('menu_selecao').click();">Em Seleção</div>
+      <div class="card-body">
+        <h1>{{summary.selecao|default:0}}</h1>
+      </div>
+    </div>
+  </div>
+  {% if summary.nova_mensagem %}
+  <div class="col-lg-4 col-xl-3 mb-2">
+    <div class="card text-center bg-success text-light">
+      <div class="card-header pointer" onclick="">Novas Mensagens</div>
+      <div class="card-body">
+        <h1>{{summary.nova_mensagem|default:0}}</h1>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% else %}
+<table id="main_table" class="table border table-striped table-hover">
+  <caption class="fs-7"><span class="px-2 py-1 border rounded" style="background-color: #f8d7da;">Leg</span> Candidatos Bloqueados</caption>
+  <thead>
+    <tr>
+      <th class="d-none">#</th>
+      <th class="d-none d-md-table-cell">Origem</th>
+      <th>Nome</th>
+      <th class="d-none d-lg-table-cell">CPF</th>
+      <th class="d-none">RG</th>
+      <th class="d-none">Nascimento</th>
+      <th class="d-none d-lg-table-cell">Idade</th>
+      <th class="d-none d-md-table-cell">Fone 1</th>
+      <th class="d-none d-md-table-cell">Fone 2</th>
+      <th class="d-none">Email</th>
+      <th class="d-none d-xl-table-cell">Indicação</th>
+      <th class="d-none">Bairro</th>
+      <th class="d-none">Cidade</th>
+      <th class="d-none">Sexo</th>
+      <th class="d-none d-sm-table-cell">PNE</th>
+      <th class="d-none d-sm-table-cell">Status</th>
+      <th class="d-none d-lg-table-cell"></th>
+      {% if perms.recrutamento.change_candidato %}
+      <th>&nbsp;</th>
+      {% endif %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for candidato in candidatos %}
+    <tr class="{% if candidato.bloqueado %}table-danger{% endif %}">
+      <td class="d-none">{{candidato.id}}</td>
+      <td class="d-none d-md-table-cell">{{candidato.get_origem_display}}</td>
+      <td>{{candidato.nome}}</td>
+      <td class="d-none d-lg-table-cell">{{candidato.cpf}}</td>
+      <td class="d-none">{{candidato.rg}}</td>
+      <td class="d-none">{{candidato.data_nascimento|date:'d/m/Y'}}</td>
+      <td class="d-none d-lg-table-cell">{{candidato.idade}}</td>
+      <td class="d-none d-md-table-cell">{{candidato.fone1}}</td>
+      <td class="d-none d-md-table-cell">{{candidato.fone2}}</td>
+      <td class="d-none">{{candidato.email}}</td>
+      <td class="d-none d-xl-table-cell">{{candidato.indicacao}}</td>
+      <td class="d-none">{{candidato.bairro}}</td>
+      <td class="d-none">{{candidato.cidade}}</td>
+      <td class="d-none">{{candidato.get_sexo_display}}</td>
+      <td class="text-primary fw-bold d-none d-sm-table-cell">{{candidato.pne|yesno:'PNE,'}}</td>
+      <td class="d-none d-sm-table-cell">{{candidato.get_status_display}}</td>
+      <td class="d-none d-lg-table-cell">{{candidato.nova_mensagem|yesno:'<i class="fas fa-comment fs-5 text-success"></i>,'|safe}}</td>
+      {% if perms.recrutamento.change_candidato %}
+      <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'recrutamento_candidato_id' candidato.id %}"><i class="fas fa-pen"></i></a></td>
+      {% endif %}
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="18">Nenhum registro a exibir</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}

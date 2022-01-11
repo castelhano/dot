@@ -1,8 +1,3 @@
-{% if perms.pessoal.view_funcionario %}
-<li class="nav-item me-lg-2">
-  <a class="nav-link" id="menu_pessoal" href="{% url 'pessoal_funcionarios' %}" title="ALT + P"><i class="fas fa-users me-1"></i> <b>P</b>essoal</a>
-</li>
-{% endif %}
 <li class="nav-item dropdown">
   <a class="nav-link dropdown-toggle" id="menu_cadastro" href="#" data-bs-toggle="dropdown" title="ALT + C"><b>C</b>adastro</a>
   <ul class="dropdown-menu dropdown-menu-dark">
@@ -10,17 +5,13 @@
     {% if perms.recrutamento.view_criterio %}<li><a class="dropdown-item" id="cadastro_criterio" href="{% url 'recrutamento_criterios' %}"><b>C</b>ritério</a></li>{% endif %}
   </ul>
 </li>
-{% if perms.recrutamento.view_candidato %}
-<li class="nav-item me-lg-2">
-  <a class="nav-link" id="menu_candidatos" href="{% url 'recrutamento_candidatos' %}" title="ALT + D">Can<b>d</b>idatos</a>
-</li>
-{% endif %}
-
+{% if perms.recrutamento.view_candidato %}<li class="nav-item"><a class="nav-link" id="menu_candidatos" href="{% url 'recrutamento_candidatos' %}" title="ALT + D"><b>B</b>anco</a></li>{% endif %}
+{% if perms.recrutamento.view_selecao %}<li class="nav-item me-lg-2"><a class="nav-link" id="menu_selecao" href="{% url 'recrutamento_selecoes' %}" title="ALT + S">Sel<b>e</b>ção</a></li>{% endif %}
 <script>
   var SHORTCUT_MAP = {
     'cTFF':'#menu_cadastro',
-    'pTFF':'#menu_pessoal',
-    'dTFF':'#menu_candidatos',
+    'bTFF':'#menu_candidatos',
+    'eTFF':'#menu_selecao',
   };
   
   function eventHandler(e){

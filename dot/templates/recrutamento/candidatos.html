@@ -7,77 +7,75 @@
 
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'recrutamento_candidatos' %}"></a>
-
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
-      <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" data-bs-target="#param" href="#"><i class="fas fa-filter"></i></a></li>
-      <li class="nav-item"><a class="nav-link pointer" id="search" data-bs-toggle="modal" data-bs-target="#search_modal" onclick="setTimeout(function(){document.getElementById('id_pesquisa').focus();},480);" title="CTRL + /"><i class="fas fa-search"></i></a></li>
-      {% if perms.app.add_modelo %}
-      <li class="nav-item"><a class="nav-link border" id="add" href="url" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
+      <li class="nav-item"><a id="search" class="nav-link" data-bs-toggle="tab" data-bs-target="#filter" href="#" onclick="setTimeout(function(){document.getElementById('id_pesquisa').focus();},220);"><i class="fas fa-filter"></i></a></li>
+      {% if perms.recrutamento.add_candidato %}
+      <li class="nav-item"><a class="nav-link border ms-1" id="add" href="{% url 'recrutamento_candidato_add' %}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
       {% endif %}
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
         <ul class="dropdown-menu">
           <li><a class="dropdown-item pointer" id="download" onclick="download_table_as_csv('main_table',';')" title="ALT + &darr;">Exportar CSV</a></li>
           {% if perms.core.view_log %}
-          <li><a class="dropdown-item pointer" href="{% url 'logs' %}?target_model=app.modelo&mensagem=DELETE" target="_blank">Log de Exclusões</a></li>
+          <li><a class="dropdown-item pointer" href="{% url 'logs' %}?target_model=recrutamento.candidato&mensagem=DELETE" target="_blank">Log de Exclusões</a></li>
           {% endif %}
         </ul>
       </li>
     </ul>
   </div>
   <div class="card-body tab-content">
-    <h5 class="card-title mb-3">Modelos <small class="badge bg-primary ms-1">{{modelos.count}}</small></h5>
+    <h5 class="card-title mb-3">Candidatos <small class="badge bg-primary ms-1">{{candidatos.count}}</small></h5>
     <div class="tab-pane fade show active" id="base" role="tabpanel">
-      <table id="main_table" class="table border table-striped table-hover">
-        <thead>
-          <tr>
-            <th>Nome</th>
-            {% if perms.app.change_modelo %}
-            <th>&nbsp;</th>
-            {% endif %}
-          </tr>
-        </thead>
-        <tbody>
-          {% for modelo in modelos %}
-          <tr>
-            <td>{{modelo.nome}}</td>
-            {% if perms.app.change_modelo %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="url"><i class="fas fa-pen"></i></a></td>
-            {% endif %}
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="2">Nenhum registro a exibir</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+      {% include 'recrutamento/_extract_candidatos.html' %}
     </div>
-    <div class="tab-pane fade" id="param" role="tabpanel">param</div>
-  </div>
-</div>
-
-<div class="modal fade" id="search_modal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="row">
-        <div class="col"><h5 class="ms-3 mt-3">Pesquisa</h5></div>
-        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
-      </div>
-      <div class="modal-body">
-        <form id="app_form" action="url" method="POST" autocomplete="off">
-          {% csrf_token %}
-          <div class="row g-1">
-            <div class="form-floating mb-1 col-lg-12">
-              <input type="text" class="form-control" name="pesquisa" value="" id="id_pesquisa" placeholder="">
-              <label for="id_pesquisa">Termo pesquisa</label>
-            </div>
+    <div class="tab-pane fade" id="filter" role="tabpanel">
+      <form id="filter_form" action="{% url 'recrutamento_candidatos' %}" method="POST" autocomplete="off">
+        {% csrf_token %}
+        <div class="row g-1">
+          <div class="form-floating mb-1 col-lg-4">
+            <input type="text" class="form-control bg-light fw-bold" id="id_pesquisa" name="pesquisa">
+            <label for="id_pesquisa">CPF ou Nome</label>
           </div>
-        </form>
-      </div>
+        </div>
+        <div class="row g-1">
+          <div class="form-floating mb-1 col-lg-4">
+            <select class="form-select" id="id_cargo" name="cargo">
+              <option value="" selected>---------</option>
+            </select>
+            <label for="id_cargo">Vaga</label>
+          </div>
+        </div>
+        <div class="row g-1">
+          <div class="form-floating mb-1 col-lg-2">
+            <select class="form-select" id="id_status" name="status">
+              <option value="" selected>---------</option>
+              <option value="B">No Banco</option>
+              <option value="S">Em Seleção</option>
+              <option value="C">Contratado</option>
+              <option value="D">Descartado</option>
+            </select>
+            <label for="id_status">Status</label>
+          </div>
+          <div class="form-floating mb-1 col-lg-2">
+            <select class="form-select" id="id_origem" name="origem">
+              <option value="" selected>---------</option>
+              <option value="C">Cadastro</option>
+              <option value="S">Site</option>
+            </select>
+            <label for="id_origem">Origem</label>
+          </div>
+        </div>
+        <div class="form-check form-switch mt-1">
+        	<input class="form-check-input" type="checkbox" role="switch" name="bloqueados" id="id_bloqueados" checked>
+        	<label class="form-check-label" for="id_bloqueados">Incluir Bloqueados</label>
+        </div>
+        <div class="row">
+          <div class="col mt-2"><button type="submit" id="submit" class="btn btn-sm btn-warning">Pesquisar</button></div>
+        </div>
+      </form>
     </div>
   </div>
 </div>
@@ -86,3 +84,25 @@
 {% block add_script_src %}
 <script src="{% static 'js/table_to_csv.js' %}"></script>
 {% endblock %}
+
+
+<script>
+  {% block add_script %}
+  function carregaVagas() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if(this.readyState == 4 && this.status == 200){
+        if(this.responseText == ''){}
+        else{
+          let obj = JSON.parse(this.responseText);
+          vagas = document.getElementById("id_cargo")
+          for(key in obj){vagas.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
+        }
+      }
+    };
+    xhttp.open("GET", "{% url 'recrutamento_get_cargos_banco' %}?ocultos=True", true);
+    xhttp.send();
+  }
+  carregaVagas();
+  {% endblock %}
+</script>

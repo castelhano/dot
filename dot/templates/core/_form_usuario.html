@@ -120,31 +120,31 @@
         {% if 'usuario_add' in request.get_full_path %}
         <div class="form-check form-switch mt-1">
           <input type="checkbox" class="form-check-input" id="mostrar_senha" name="" value="" onclick="switchSenha();">
-          <label class="form-check-label user-select-none" for="mostrar_senha">Mostra Senha</label>
+          <label class="form-check-label" for="mostrar_senha">Mostra Senha</label>
         </div>
         {% else %}
         <div class="form-check form-switch mt-1">
           <input type="checkbox" class="form-check-input" id="resetar_senha" name="" value="" onclick="switchSenha();">
-          <label class="form-check-label user-select-none" for="resetar_senha">Reiniciar Password</label>
+          <label class="form-check-label" for="resetar_senha">Reiniciar Password</label>
         </div>
         {% endif %}
         <div class="form-check form-switch mt-1">
           {{form.is_active}}
-          <label class="form-check-label user-select-none" for="id_is_active">Ativo</label>
+          <label class="form-check-label" for="id_is_active">Ativo</label>
         </div>
         <div class="form-check form-switch">
           {{form.is_staff}}
-          <label class="form-check-label user-select-none" for="id_is_staff">Membro de Equipe</label>
+          <label class="form-check-label" for="id_is_staff">Membro de Equipe</label>
         </div>
         <div class="form-check form-switch">
           {{form.is_superuser}}
-          <label class="form-check-label user-select-none text-danger" for="id_is_superuser">Super Usuário</label>
+          <label class="form-check-label text-danger" for="id_is_superuser">Super Usuário</label>
         </div>
         {% if 'usuario_id' in request.get_full_path %}
         <hr />
         <div class="form-check form-switch">
           <input type="checkbox" class="form-check-input" name="force_password_change" id="id_force_password_change"{% if usuario.profile.force_password_change %} checked{% endif %}>
-          <label class="form-check-label user-select-none" for="id_force_password_change">Forçar troca de senha</label>
+          <label class="form-check-label" for="id_force_password_change">Forçar troca de senha</label>
         </div>
         {% endif %}
       </div>

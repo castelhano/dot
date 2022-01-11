@@ -1,5 +1,5 @@
 from django.db import models
-from core.models import Empresa, Log
+from core.models import Empresa, Log, ImageField as core_ImageField
 from datetime import datetime, date
 from django.contrib.auth.models import User
 
@@ -138,7 +138,7 @@ class Funcionario(Pessoa):
     data_admissao = models.DateField(blank=True, null=True, default=datetime.today)
     data_desligamento = models.DateField(blank=True, null=True)
     motivo_desligamento = models.CharField(max_length=3,choices=MOTIVOS_DESLIGAMENTO, blank=True)
-    foto = models.ImageField(upload_to='pessoal/fotos/', blank=True)
+    foto = core_ImageField(upload_to='pessoal/fotos/', blank=True)
     usuario = models.OneToOneField(User, blank=True, null=True, on_delete=models.RESTRICT)
     status = models.CharField(max_length=3, choices=STATUS_CHOICES, default='A', blank=True)
     def __str__(self):

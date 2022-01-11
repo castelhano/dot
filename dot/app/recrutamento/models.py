@@ -1,5 +1,5 @@
 from django.db import models
-from core.models import Log
+from core.models import Log, FileField as core_FileField
 from pessoal.models import Cargo
 from .validators import validate_file_extension
 from datetime import datetime, date
@@ -52,7 +52,7 @@ class Candidato(models.Model):
     bloqueado_ate = models.DateField(blank=True, null=True)
     detalhe = models.TextField(blank=True)
     apresentacao = models.TextField(blank=True)
-    curriculo = models.FileField(upload_to="recrutamento/curriculos/%Y/%m/%d",blank=True, validators=[validate_file_extension])
+    curriculo = core_FileField(upload_to="recrutamento/curriculos/%Y/%m/%d",blank=True, validators=[validate_file_extension])
     mensagens = models.TextField(blank=True)
     nova_mensagem = models.BooleanField(default=False)
     bloquear_mensagens = models.BooleanField(default=False)
@@ -64,6 +64,11 @@ class Candidato(models.Model):
         else:
             result = False
         return result
+    def vagas_disponiveis(self):
+        return Vaga.objects.all().exclude(candidatos=self).order_by('cargo__nome')
+    def idade(self):
+        hoje = date.today()
+        return hoje.year - self.data_nascimento.year - ((hoje.month, hoje.day) < (self.data_nascimento.month, self.data_nascimento.day))
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='recrutamento.candidato',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)

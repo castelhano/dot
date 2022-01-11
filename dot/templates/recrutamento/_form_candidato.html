@@ -1,0 +1,172 @@
+<div class="card-body">
+  <h5 class="card-title mb-3">Cadastro de Candidato</h5>
+  <div class="row g-lg-3">
+    <div class="col-lg-auto bg-dark-light bg-gradient rounded p-2 widget-thumb-container">
+      <div class="widget-thumb-controls">
+        <div class="row g-0">
+          <div class="col"><div class="d-grid">
+            {% if not candidato %}<a class="btn btn-sm btn-light px-4 px-lg-0 disabled">NOVO</a>
+            {% elif candidato.status == 'B' %}<a class="btn btn-sm btn-success px-4 px-lg-0 disabled">BANCO</a>
+            {% else %}<a class="btn btn-sm btn-warning px-4 px-lg-0 disabled">{{candidato.get_status_display}}</a>{% endif %}
+          </div></div>
+          {% if 'candidato_id' in request.get_full_path %}
+          <div class="col-auto">
+            <button type="button" class="btn btn-sm" data-bs-toggle="dropdown"><i class="fas fa-angle-down text-light"></i></button>
+            <ul class="dropdown-menu fs-7">
+              <li><a class="dropdown-item" href="">Baixar CSV</a></li>
+              <li><a class="dropdown-item" href="">Afastamentos</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item dropdown-item-danger" data-bs-toggle="modal" data-bs-target="#modal_descartar" href="#">Descartar Candidato</a></li>
+            </ul>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="col-lg">
+      <div class="tab-content">
+        <div class="tab-pane fade show active" id="base" role="tabpanel">
+          <div class="row g-1">
+            <div class="form-floating mb-lg-1 col-lg-8">
+              {{ form.nome }}
+              <label for="id_nome">Nome</label>
+            </div>
+            <div class="form-floating mb-1 col-lg-4">
+              {{ form.cpf }}
+              <label for="id_cpf">CPF</label>
+            </div>
+          </div>
+          <div class="row g-1">
+            <div class="form-floating mb-lg-1 col-lg-4">
+              {{ form.data_nascimento }}
+              <label for="id_data_nascimento">Nascimento</label>
+            </div>
+            <div class="form-floating mb-lg-1 col-lg-4">
+              {{ form.sexo }}
+              <label for="id_sexo">Sexo</label>
+            </div>
+            <div class="form-floating mb-1 col-lg-4">
+              {{ form.rg }}
+              <label for="id_rg">RG</label>
+            </div>
+          </div>
+          <div class="row"><div class="col"><input type="text" class="form-control mb-1 text-center bg-light fw-bold" name="" value="VAGAS" disabled></div></div>
+          <div class="row g-1 mb-1">
+            <div class="col-lg">
+              <select class="form-control" id="vagas_disponiveis" style="min-height:180px;" multiple>
+                {% for vaga in candidato.vagas_disponiveis %}
+                <option value="{{vaga.id}}">{{vaga.cargo.nome}}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-lg-auto">
+              <div class="d-flex justify-content-center d-lg-grid gap-1">
+                <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add" onclick="addSelected();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-right rotate-lg-90"></i></a>
+                <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add_all" onclick="addAll();"><i class="fas fa-angle-double-right rotate-lg-90"></i></a>
+                <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove" onclick="removeSelected();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-left rotate-lg-90"></i></a>
+                <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove_all" onclick="removeAll();"><i class="fas fa-angle-double-left rotate-lg-90"></i></a>
+              </div>
+            </div>
+            <div class="col-lg">
+              <select class="form-control" name="vagas" id="id_vagas" style="min-height:180px;" multiple>
+                {% for vaga in candidato.vagas.all %}
+                <option value="{{vaga.id}}">{{vaga.cargo.nome}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="row g-1">
+            <div class="form-floating mb-1 col-lg-12">
+              {{ form.indicacao }}
+              <label for="id_indicacao">Indicação</label>
+            </div>
+          </div>
+          <div class="form-check form-switch mt-1">
+            {{form.pne}}
+            <label class="form-check-label" for="id_pne">Candidato PNE</label>
+          </div>              
+        </div>
+        <div class="tab-pane fade" id="contato" role="tabpanel">
+          <div class="row g-1">
+            <div class="form-floating mb-1 col-lg-12">
+              {{ form.endereco }}
+              <label for="id_endereco">Endereço</label>
+            </div>
+          </div>
+          <div class="row g-1">
+            <div class="form-floating mb-lg-1 col" style="max-width: 100px;">
+              {{ form.uf }}
+              <label for="id_uf">UF</label>
+            </div>
+            <div class="form-floating mb-lg-1 col">
+              {{ form.cidade }}
+              <label for="id_cidade">Cidade</label>
+            </div>
+            <div class="form-floating mb-1 col-lg">
+              {{ form.bairro }}
+              <label for="id_bairro">Bairro</label>
+            </div>
+          </div>
+          <div class="row g-1">
+            <div class="form-floating mb-lg-1 col-lg-3">
+              {{ form.fone1 }}
+              <label for="id_fone1">Fone 01</label>
+            </div>
+            <div class="form-floating mb-lg-1 col-lg-3">
+              {{ form.fone2 }}
+              <label for="id_fone2">Fone 02</label>
+            </div>
+            <div class="form-floating mb-1 col-lg-6">
+              {{ form.email }}
+              <label for="id_email">Email</label>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="detalhe" role="tabpanel">
+          <div class="row g-1">
+            <div class="col-lg">
+              {{ form.detalhe }}
+            </div>
+            <div class=" col-lg"><textarea name="mensagens" class="form-control bg-light" rows="10" placeholder="Mensagens" disabled>{{candidato.mensagens|safe}}</textarea></div>
+            <div class="mb-1 col-12"><textarea name="apresentacao" class="form-control bg-light" rows="10" placeholder="Apresentação" disabled>{{candidato.apresentacao|safe}}</textarea></div>
+          </div>
+          <div class="row g-1">
+            <div class="mb-1 col-12">
+              <input type="file" class="form-control" name="curriculo" id="id_curriculo" accept=".pdf,.doc,.docx,.odt">
+            </div>
+            {% if candidato.curriculo %}
+            <div class="col-auto">
+              <a class="text-decoration-none fw-bold" href="{{candidato.curriculo.url}}" target="_blank">Baixar Curriculo</a>
+              <div class="form-switch mt-1">
+              	<input class="form-check-input" type="checkbox" role="switch" name="curriculo-clear" id="id_curriculo-clear">
+              	<label class="form-check-label" for="id_curriculo-clear">Remover</label>
+              </div>
+            </div>
+            {% endif %}
+            <div class="col">
+              <small class="ps-2 fw-bold text-muted">Curriculo: <span class="text-dark">[ .pdf, .doc, .docx, .odt ]</span></small>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="config" role="tabpanel">
+          <div class="form-check form-switch">
+            {{form.bloquear_mensagens}}
+            <label class="form-check-label" for="id_bloquear_mensagens">Bloquear mensagens</label>
+          </div>
+          <div class="row g-1 mt-2">
+            <div class="form-floating mb-1 col-lg-4">
+              {{ form.bloqueado_ate }}
+              <label for="id_bloqueado_ate">Bloqueado até</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <div class="col">
+      <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"><b>G</b>ravar</button>
+    </div>
+  </div>
+</div>
+<input type="hidden" name="origem" value="C">

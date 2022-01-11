@@ -1,0 +1,97 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Candidato{% endblock %}
+{% block model %}Recrutamento{% endblock %}
+{% block navbar_classlist %}navbar-dark bg-purple bg-gradient{% endblock %}
+{% block model_menu %}{% include "_component/menu/recrutamento.html" %}{% endblock%}
+
+<style media="screen">
+  {% block style %}
+  @media(min-width: 992px){.widget-thumb-container{min-width: 190px;}}
+  {% endblock%}
+</style>
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'recrutamento_candidato_add' %}"></a>
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a id="link_tab_base" class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a id="link_tab_contato" class="nav-link" data-bs-toggle="tab" data-bs-target="#contato" href="#"><i class="fas fa-map-marked-alt"></i></a></li>
+      <li class="nav-item"><a id="link_tab_detalhe" class="nav-link" data-bs-toggle="tab" data-bs-target="#detalhe" href="#"><i class="fas fa-scroll"></i></a></li>
+      <li class="nav-item"><a id="link_tab_config" class="nav-link" data-bs-toggle="tab" data-bs-target="#config" href="#"><i class="fas fa-sliders-h"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'recrutamento_candidatos' %}"><i class="fas fa-undo"></i></a></li>
+    </ul>
+  </div>
+  <form id="app_form" action="{% url 'recrutamento_candidato_add' %}" method="POST" autocomplete="off" enctype="multipart/form-data" onsubmit="return submitForm();">
+    {% csrf_token %}
+    {% include 'recrutamento/_form_candidato.html' %}
+  </form>
+</div>
+
+{% include "_component/modal/loading.html" with message='Criando candidato...' %}
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/vendor/mask.js' %}"></script>
+{% endblock %}
+
+<script>
+  {% block add_script %}
+  var TAB_ON_ENTER = true;
+  SHORTCUT_MAP['1FTF'] = '#link_tab_base';
+  SHORTCUT_MAP['2FTF'] = '#link_tab_contato';
+  SHORTCUT_MAP['3FTF'] = '#link_tab_detalhe';
+  SHORTCUT_MAP['4FTF'] = '#link_tab_config';
+  
+  VMasker(document.getElementById("id_cpf")).maskPattern('999.999.999-99');
+  // FONE MASK
+  function inputHandler(masks, max, event) {
+    var c = event.target;
+    var v = c.value.replace(/D/g, '');
+    var m = c.value.length > max ? 1 : 0;
+    VMasker(c).unMask();
+    VMasker(c).maskPattern(masks[m]);
+    c.value = VMasker.toPattern(v, masks[m]);
+  }
+  var telMask = ['(99) 9999-99999', '(99) 99999-9999'];
+  var fone1 = document.getElementById('id_fone1');
+  var fone2 = document.getElementById('id_fone2');
+  VMasker(fone1).maskPattern(telMask[0]);
+  VMasker(fone2).maskPattern(telMask[0]);
+  fone1.addEventListener('input', inputHandler.bind(undefined, telMask, 14), false);
+  fone2.addEventListener('input', inputHandler.bind(undefined, telMask, 14), false);
+  
+  fone1.dispatchEvent(new Event("input"));
+  fone2.dispatchEvent(new Event("input"));
+  
+  // SET onsubmit="return submitForm();" ON FORM
+  disponiveis = document.getElementById("vagas_disponiveis");
+  selecionados = document.getElementById("id_vagas");
+  
+  var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
+  function submitForm(){options = selecionados.options;for(i=0; i < options.length; i++){options[i].selected = "true";}modal_loading.show();return true;}
+  
+  function addAll(){selecionados.innerHTML += disponiveis.innerHTML;disponiveis.innerHTML = '';}
+  function removeAll(){disponiveis.innerHTML += selecionados.innerHTML;selecionados.innerHTML = '';}
+  function addSelected(){residual = document.createElement("select");for(var i=0; i < disponiveis.length; i++){if(disponiveis[i].selected){let newOption = new Option(disponiveis[i].text,disponiveis[i].value);selecionados.add(newOption);}else{let newOption = new Option(disponiveis[i].text,disponiveis[i].value);residual.add(newOption);}}disponiveis.innerHTML = residual.innerHTML;}
+  function removeSelected(){residual = document.createElement("select");for(var i=0; i < selecionados.length; i++){if(selecionados[i].selected){let newOption = new Option(selecionados[i].text,selecionados[i].value);disponiveis.add(newOption);}else{let newOption = new Option(selecionados[i].text,selecionados[i].value);residual.add(newOption);}}selecionados.innerHTML = residual.innerHTML;}
+  
+  
+  function carregaVagasDisponiveis() {
+  	var xhttp = new XMLHttpRequest();
+  	xhttp.onreadystatechange = function() {
+  		if(this.readyState == 4 && this.status == 200){
+  			if(this.responseText == ''){}
+  			else{
+  				let obj = JSON.parse(this.responseText);
+  				for(key in obj){disponiveis.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
+  			}
+  		}
+  	};
+  	xhttp.open("GET", "{% url 'recrutamento_get_vagas' %}", true);
+  	xhttp.send();
+  }
+  carregaVagasDisponiveis();
+  {% endblock %}
+</script>

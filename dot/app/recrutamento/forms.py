@@ -16,11 +16,11 @@ class SelecaoForm(forms.ModelForm):
 class CandidatoForm(forms.ModelForm):
     class Meta:
         model = Candidato
-        fields = ['origem','nome','rg','cpf','sexo','vagas','data_nascimento','endereco','fone1','fone2','email','indicacao','pne','bloqueado_ate','detalhe','apresentacao','curriculo','mensagens','nova_mensagem','bloquear_mensagens']
+        fields = ['origem','nome','rg','cpf','sexo','vagas','data_nascimento','endereco','bairro','cidade','uf','fone1','fone2','email','indicacao','pne','bloqueado_ate','detalhe','apresentacao','curriculo','mensagens','bloquear_mensagens']
     origem = forms.ChoiceField(required=False,choices=Candidato.ORIGEM_CHOICES, widget=forms.Select(attrs={'class':'form-select bg-light','tabindex':'-1'}))
-    nome = forms.CharField(error_messages={'required': 'Informe o nome'},widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'','autofocus':'autofocus'}))
+    nome = forms.CharField(error_messages={'required': 'Informe o nome'},widget=forms.TextInput(attrs={'class': 'form-control bg-light','placeholder':'','autofocus':'autofocus'}))
     rg = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
-    cpf = forms.CharField(error_messages={'required': 'Informe o CPF'},widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
+    cpf = forms.CharField(error_messages={'required': 'Informe o CPF'},widget=forms.TextInput(attrs={'class': 'form-control bg-light','placeholder':''}))
     sexo = forms.ChoiceField(required=False,choices=Candidato.SEXO_CHOICES, widget=forms.Select(attrs={'class':'form-select'}))
     data_nascimento = forms.DateField(required=False, widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
     endereco = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
@@ -33,10 +33,10 @@ class CandidatoForm(forms.ModelForm):
     indicacao = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
     pne = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch', 'tabindex':'-1'}))
     bloqueado_ate = forms.DateField(required=False, widget=forms.TextInput(attrs={'class':'form-control bg-light','type':'date'}))
-    detalhe = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','style':'min-height:140px;','placeholder':''}))
-    apresentacao = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control bg-light','placeholder':'','style':'min-height:140px;'}))
-    curriculo = forms.FileField(required=False)
-    mensagens = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':''}))
+    detalhe = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'Detalhes'}))
+    apresentacao = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'Apresentação'}))
+    curriculo = forms.FileField(required=False, widget=forms.ClearableFileInput(attrs={'class': 'form-control','accept':'.pdf,.doc,.docx,.odt'}))
+    mensagens = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'Mensagens'}))
     bloquear_mensagens = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch', 'tabindex':'-1'}))
 
 
