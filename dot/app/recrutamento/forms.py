@@ -1,6 +1,8 @@
 from django import forms
 from .models import Candidato, Selecao, Vaga, Criterio
 from pessoal.models import Cargo
+from django.core.exceptions import ValidationError
+from pessoal.validators import cpf_valid
 from datetime import date
 
 class SelecaoForm(forms.ModelForm):
@@ -16,11 +18,12 @@ class SelecaoForm(forms.ModelForm):
 class CandidatoForm(forms.ModelForm):
     class Meta:
         model = Candidato
-        fields = ['origem','nome','rg','cpf','sexo','vagas','data_nascimento','endereco','bairro','cidade','uf','fone1','fone2','email','indicacao','pne','bloqueado_ate','detalhe','apresentacao','curriculo','mensagens','bloquear_mensagens']
+        fields = ['nome','rg','cpf','sexo','vagas','data_nascimento','endereco','bairro','cidade','uf','fone1','fone2','email','indicacao','pne','bloqueado_ate','detalhe','curriculo','bloquear_mensagens']
     origem = forms.ChoiceField(required=False,choices=Candidato.ORIGEM_CHOICES, widget=forms.Select(attrs={'class':'form-select bg-light','tabindex':'-1'}))
     nome = forms.CharField(error_messages={'required': 'Informe o nome'},widget=forms.TextInput(attrs={'class': 'form-control bg-light','placeholder':'','autofocus':'autofocus'}))
+    vagas = forms.CharField(error_messages={'required': 'Necessário informar pelo menos uma vaga'})
     rg = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
-    cpf = forms.CharField(error_messages={'required': 'Informe o CPF'},widget=forms.TextInput(attrs={'class': 'form-control bg-light','placeholder':''}))
+    cpf = forms.CharField(error_messages={'required': 'Informe o CPF', 'unique': 'CPF já cadastrado'},widget=forms.TextInput(attrs={'class': 'form-control bg-light','placeholder':''}))
     sexo = forms.ChoiceField(required=False,choices=Candidato.SEXO_CHOICES, widget=forms.Select(attrs={'class':'form-select'}))
     data_nascimento = forms.DateField(required=False, widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
     endereco = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
@@ -38,7 +41,10 @@ class CandidatoForm(forms.ModelForm):
     curriculo = forms.FileField(required=False, widget=forms.ClearableFileInput(attrs={'class': 'form-control','accept':'.pdf,.doc,.docx,.odt'}))
     mensagens = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'Mensagens'}))
     bloquear_mensagens = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch', 'tabindex':'-1'}))
-
+    def clean(self):
+        cleaned_data = super(CandidatoForm, self).clean()
+        if not cpf_valid(cleaned_data.get('cpf')):
+            raise ValidationError("O CPF digitado <b>não é válido</b>")
 
 class VagaForm(forms.ModelForm):
     class Meta:

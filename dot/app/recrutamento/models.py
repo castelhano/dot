@@ -67,8 +67,11 @@ class Candidato(models.Model):
     def vagas_disponiveis(self):
         return Vaga.objects.all().exclude(candidatos=self).order_by('cargo__nome')
     def idade(self):
-        hoje = date.today()
-        return hoje.year - self.data_nascimento.year - ((hoje.month, hoje.day) < (self.data_nascimento.month, self.data_nascimento.day))
+        if self.data_nascimento:
+            hoje = date.today()
+            return hoje.year - self.data_nascimento.year - ((hoje.month, hoje.day) < (self.data_nascimento.month, self.data_nascimento.day))
+        else:
+            return ''
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='recrutamento.candidato',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)

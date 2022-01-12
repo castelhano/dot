@@ -91,7 +91,13 @@ def candidato_add(request):
         if form.is_valid():
             try:
                 form_clean = form.cleaned_data
-                registro = form.save()
+                registro = form.save(commit=False)
+                if request.POST.get('origem', None) and request.POST['origem'] == 'S':
+                    registro.origem = 'S'
+                    registro.apresentacao = request.POST['apresentacao']
+                else:
+                    registro.origem = 'C'
+                registro.save()
                 l = Log()
                 l.modelo = "recrutamento.candidato"
                 l.objeto_id = registro.id
