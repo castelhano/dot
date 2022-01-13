@@ -6,6 +6,7 @@ urlpatterns = [
     path('recrutamento_candidato_add',views.candidato_add,name='recrutamento_candidato_add'),
     path('recrutamento_candidato_id/<int:id>',views.candidato_id,name='recrutamento_candidato_id'),
     path('recrutamento_candidato_update/<int:id>',views.candidato_update,name='recrutamento_candidato_update'),
+    path('recrutamento_candidato_movimentar/<int:id>',views.candidato_movimentar,name='recrutamento_candidato_movimentar'),
     path('recrutamento_candidato_delete/<int:id>/delete',views.candidato_delete,name='recrutamento_candidato_delete'),
     path('recrutamento_selecoes',views.selecoes,name='recrutamento_selecoes'),
     path('recrutamento_selecao_add',views.selecao_add,name='recrutamento_selecao_add'),

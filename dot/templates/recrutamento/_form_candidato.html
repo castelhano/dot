@@ -13,10 +13,13 @@
           <div class="col-auto">
             <button type="button" class="btn btn-sm" data-bs-toggle="dropdown"><i class="fas fa-angle-down text-light"></i></button>
             <ul class="dropdown-menu fs-7">
-              <li><a class="dropdown-item" href="">Baixar CSV</a></li>
-              <li><a class="dropdown-item" href="">Afastamentos</a></li>
+              {% if candidato.status == 'B' or candidato.status == 'S'%}
+              <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modal_contratar" href="#">Contratar</a></li>
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item dropdown-item-danger" data-bs-toggle="modal" data-bs-target="#modal_descartar" href="#">Descartar Candidato</a></li>
+              {% else %}
+              <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modal_retornar" href="#">Retornar</a></li>
+              {% endif %}
             </ul>
           </div>
           {% endif %}
@@ -169,3 +172,4 @@
     </div>
   </div>
 </div>
+<input type="hidden" name="origem" value="S">

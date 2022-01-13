@@ -89,7 +89,7 @@
   			}
   		}
   	};
-  	xhttp.open("GET", "{% url 'recrutamento_get_vagas' %}", true);
+  	xhttp.open("GET", "{% url 'recrutamento_get_vagas' %}?ocultos=True", true);
   	xhttp.send();
   }
   carregaVagasDisponiveis();

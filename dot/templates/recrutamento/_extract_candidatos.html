@@ -29,7 +29,13 @@
 </div>
 {% else %}
 <table id="main_table" class="table border table-striped table-hover">
-  <caption class="fs-7"><span class="px-2 py-1 border rounded" style="background-color: #f8d7da;">Leg</span> Candidatos Bloqueados</caption>
+  <caption class="fs-7">
+    <div class="row">
+      <div class="col-lg-auto mb-2 mb-lg-0"><span class="px-2 py-1 border rounded" style="background-color: #f8d7da;">Leg</span> Candidatos Descartados</div>
+      <div class="col-lg-auto mb-2 mb-lg-0"><span class="px-2 py-1 border rounded" style="background-color: rgb(255, 243, 205);">Leg</span> Candidatos Bloqueados</div>
+      <div class="col-lg-auto"><span class="px-2 py-1 border rounded" style="background-color: #D1E7DD;">Leg</span> Candidatos Contratados</div>
+    </div>
+  </caption>
   <thead>
     <tr>
       <th class="d-none">#</th>
@@ -56,7 +62,7 @@
   </thead>
   <tbody>
     {% for candidato in candidatos %}
-    <tr class="{% if candidato.bloqueado %}table-danger{% endif %}">
+    <tr class="{% if candidato.status == 'D' %}table-danger{% elif candidato.status == 'C' %}table-success{% elif candidato.bloqueado %}table-warning{% endif %}">
       <td class="d-none">{{candidato.id}}</td>
       <td class="d-none d-md-table-cell">{{candidato.get_origem_display}}</td>
       <td>{{candidato.nome}}</td>

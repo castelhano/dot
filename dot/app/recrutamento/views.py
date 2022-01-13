@@ -29,6 +29,8 @@ def candidatos(request):
             candidatos = candidatos.filter(status=request.POST['status'])
         if request.POST['origem'] != '':
             candidatos = candidatos.filter(origem=request.POST['origem'])
+        if 'pne' in request.POST:
+            candidatos = candidatos.filter(pne=True)
         if not 'bloqueados' in request.POST:
             candidatos = candidatos.exclude(bloqueado_ate__gte=date.today())
         if not valid:
@@ -91,13 +93,10 @@ def candidato_add(request):
         if form.is_valid():
             try:
                 form_clean = form.cleaned_data
-                registro = form.save(commit=False)
+                registro = form.save()
                 if request.POST.get('origem', None) and request.POST['origem'] == 'S':
                     registro.origem = 'S'
-                    registro.apresentacao = request.POST['apresentacao']
-                else:
-                    registro.origem = 'C'
-                registro.save()
+                    registro.save()
                 l = Log()
                 l.modelo = "recrutamento.candidato"
                 l.objeto_id = registro.id
@@ -143,8 +142,13 @@ def selecao_add(request):
                 messages.error(request,'Erro ao inserir selecao')
                 return redirect('recrutamento_selecoes')
     else:
-        form = SelecaoForm()
-    return render(request,'recrutamento/selecao_add.html',{'form':form})
+        try:
+            candidato = Candidato.objects.get(id=request.GET.get('candidato', None))
+        except:
+            messages.error(request,'Candidato não localizado')
+            return redirect('recrutamento_candidatos')
+        form = SelecaoForm(instance=candidato)
+    return render(request,'recrutamento/selecao_add.html',{'form':form, 'candidato':candidato})
     
 @login_required
 @permission_required('recrutamento.add_avaliacao')
@@ -267,6 +271,34 @@ def candidato_update(request, id):
     else:
         return render(request,'recrutamento/candidato_id.html',{'form':form,'candidato':candidato})
 
+@login_required
+@permission_required('recrutamento.change_candidato')
+def candidato_movimentar(request, id):
+    candidato = Candidato.objects.get(pk=id)
+    l = Log()
+    if request.GET.get('operacao', None) == 'descartar':
+        candidato.movimentar('D')
+        l.mensagem = "DESCARTADO"
+    # elif request.GET.get('operacao', None) == 'contratar':
+    #     candidato.movimentar('C')
+    #     l.mensagem = "CONTRATADO"
+    elif request.GET.get('operacao', None) == 'retornar':
+        candidato.movimentar('B')
+        l.mensagem = "RETORNADO BANCO"
+    else:
+        messages.error(request,'Operação não altorizada')
+        return redirect('recrutamento_candidato_id', id)        
+    candidato.save()
+    l.modelo = "recrutamento.candidato"
+    l.objeto_id = candidato.id
+    l.objeto_str = candidato.nome[0:48]
+    l.usuario = request.user
+    l.save()
+    messages.warning(request,f'Candidato <b>{candidato.nome.split(" ")[0]}</b> {l.mensagem.lower()}')
+    # if request.GET.get('operacao', None) == 'contratar':
+    #     args = dict(pre_cadastro = candidato.__dict__)
+    #     return funcionario_add(request, **args)
+    return redirect('recrutamento_candidato_id', id)
 
 @login_required
 @permission_required('recrutamento.change_selecao')

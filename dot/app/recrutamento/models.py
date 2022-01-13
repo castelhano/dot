@@ -56,6 +56,7 @@ class Candidato(models.Model):
     mensagens = models.TextField(blank=True)
     nova_mensagem = models.BooleanField(default=False)
     bloquear_mensagens = models.BooleanField(default=False)
+    create_at = models.DateTimeField(default=datetime.now)
     def __str__(self):
         return self.nome
     def bloqueado(self):
@@ -72,6 +73,8 @@ class Candidato(models.Model):
             return hoje.year - self.data_nascimento.year - ((hoje.month, hoje.day) < (self.data_nascimento.month, self.data_nascimento.day))
         else:
             return ''
+    def movimentar(self, operacao):
+        self.status = operacao
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='recrutamento.candidato',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
