@@ -1,0 +1,70 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Selecao{% endblock %}
+{% block model %}Recrutamento{% endblock %}
+{% block navbar_classlist %}navbar-dark bg-purple bg-gradient{% endblock %}
+{% block model_menu %}{% include "_component/menu/recrutamento.html" %}{% endblock%}
+
+{% block content_fluid %}
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item ms-auto"><a id="back" title="ALT + V" class="btn btn-sm btn-dark ms-auto" onclick="window.close()">Cancelar</a></li>
+    </ul>
+  </div>
+  <form id="app_form" action="{% url 'recrutamento_selecao_add' %}" method="POST" autocomplete="off">
+    {% csrf_token %}
+    <div class="card-body tab-content">
+      <h5 class="card-title mb-3">Processo Seletivo</h5>
+      <div class="tab-pane fade show active" id="base" role="tabpanel">
+        <div class="row g-1">
+        	<div class="form-floating mb-1 col-lg-4">
+        		<select class="form-select bg-light fw-bold" id="id_candidato" name="candidato">
+        			<option value="{{candidato.id}}" selected>{{candidato.nome}}</option>
+        		</select>
+        		<label for="id_candidato">Candidato</label>
+        	</div>
+        </div>
+        <div class="row g-1">
+          <div class="form-floating mb-1 col-lg-4">
+            {{ form.vaga }}
+            <label for="id_vaga">Vaga</label>
+          </div>
+        </div>
+        <div class="row g-1">
+        	<div class="form-floating mb-1 col-lg-2">
+        		{{ form.data }}
+        		<label for="id_data">Data</label>
+        	</div>
+        	<div class="form-floating mb-1 col-lg-2">
+        		{{ form.hora }}
+        		<label for="id_hora">Hora</label>
+        	</div>
+        </div>
+        {% if 'selecao_id' in request.get_full_path %}
+        <div class="form-check form-switch my-2">
+        	{{form.arquivar}}
+        	<label class="form-check-label" for="id_arquivar">Arquivar</label>
+        </div>
+        {% endif %}
+      </div>
+      <!-- CONTROLES DO FORM -->
+      <div class="row mt-3">
+        <div class="col">
+          <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"><b>G</b>ravar</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+{% endblock%}
+
+{% block add_script_src %}{% endblock %}
+
+<script>
+  {% block add_script %}
+  var TAB_ON_ENTER = true;
+  {% endblock %}
+</script>

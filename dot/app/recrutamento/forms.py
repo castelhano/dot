@@ -3,15 +3,15 @@ from .models import Candidato, Selecao, Vaga, Criterio
 from pessoal.models import Cargo
 from django.core.exceptions import ValidationError
 from pessoal.validators import cpf_valid
-from datetime import date
+from datetime import date, datetime
 
 class SelecaoForm(forms.ModelForm):
     class Meta:
         model = Selecao
-        fields = ['candidato','data','vaga','resultado','arquivar']
-    data = forms.DateField(error_messages={'required': 'Informe uma data'},initial=date.today(),widget=forms.TextInput(attrs={'class':'form-control bg-light','type':'date','tabindex':'-1','placeholder':''}))
-    vaga = forms.ModelChoiceField(error_messages={'required': 'Informe a vaga'}, queryset = Vaga.objects.filter(quantidade__gt=0), widget=forms.Select(attrs={'class':'form-select','placeholder':''}))
-    resultado = forms.ChoiceField(required=False, choices=Selecao.RESULTADO_CHOICES, widget=forms.Select(attrs={'class':'form-control','placeholder':''}))
+        fields = ['candidato','data','hora','vaga','arquivar']
+    data = forms.DateField(error_messages={'required': 'Informe uma data'},initial=date.today(),widget=forms.TextInput(attrs={'class':'form-control','type':'date','placeholder':''}))
+    hora = forms.TimeField(required=False, initial=datetime.now().strftime('%H:%M'), widget=forms.TextInput(attrs={'class':'form-control','type':'time', 'placeholder':''}))
+    vaga = forms.ModelChoiceField(error_messages={'required': 'Informe a vaga'}, queryset = Vaga.objects.filter(quantidade__gt=0), widget=forms.Select(attrs={'class':'form-select','placeholder':'','autofocus':'autofocus'}))
     arquivar = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch', 'tabindex':'-1'}))
     
 

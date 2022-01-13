@@ -42,7 +42,7 @@
         </div>
         <div class="row g-1">
           <div class="form-floating mb-1 col-lg-4">
-            <select class="form-select" id="id_cargo" name="cargo">
+            <select class="form-select" id="id_cargo" name="cargo" onchange="vagaChange();">
               <option value="" selected>---------</option>
             </select>
             <label for="id_cargo">Vaga</label>
@@ -76,6 +76,11 @@
         	<input class="form-check-input" type="checkbox" role="switch" name="bloqueados" id="id_bloqueados" checked>
         	<label class="form-check-label" for="id_bloqueados">Incluir Bloqueados</label>
         </div>
+        <div class="form-check form-switch mt-1">
+        	<input class="form-check-input" type="checkbox" role="switch" name="global" id="id_global">
+        	<label class="form-check-label" for="id_global">Expandir busca **</label>
+        </div>
+        <p class="fs-7 ps-4">** Retorna registros mesmo se não informado vaga e/ou nome</p>
         <div class="row">
           <div class="col mt-2"><button type="submit" id="submit" class="btn btn-sm btn-warning">Pesquisar</button></div>
         </div>
@@ -108,5 +113,10 @@
     xhttp.send();
   }
   carregaVagas();
+  
+  function vagaChange(){
+    if(document.getElementById('id_cargo').value != ''){document.getElementById('id_status').value = 'B';}
+    else{document.getElementById('id_status').value = '';}}
+  
   {% endblock %}
 </script>

@@ -78,6 +78,11 @@ class Candidato(models.Model):
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='recrutamento.candidato',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
+    class Meta:
+        permissions = [
+            ("descartar_candidato", "Pode descartar / retornar candidato "),
+            ("contratar_candidato", "Pode contratar candidato "),
+        ]
 
 
 class Selecao(models.Model):
@@ -88,6 +93,7 @@ class Selecao(models.Model):
     )
     candidato = models.ForeignKey(Candidato, on_delete=models.CASCADE)
     data = models.DateField(default=datetime.today)
+    hora = models.TimeField(blank=True, null=True)
     vaga = models.ForeignKey(Vaga, on_delete=models.RESTRICT)
     resultado = models.CharField(max_length=3,choices=RESULTADO_CHOICES, blank=True)
     arquivar = models.BooleanField(default=False)

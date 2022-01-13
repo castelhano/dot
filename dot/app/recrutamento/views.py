@@ -2,8 +2,9 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from json import dumps
 from .models import Candidato, Selecao, Avaliacao, Vaga, Criterio
-from pessoal.models import Cargo
 from .forms import CandidatoForm, SelecaoForm, VagaForm, CriterioForm
+from pessoal.models import Cargo
+from pessoal.forms import FuncionarioForm
 from pessoal.validators import cpf_valid
 from core.models import Log
 from django.contrib.auth.decorators import login_required, permission_required
@@ -33,6 +34,8 @@ def candidatos(request):
             candidatos = candidatos.filter(pne=True)
         if not 'bloqueados' in request.POST:
             candidatos = candidatos.exclude(bloqueado_ate__gte=date.today())
+        if 'global' in request.POST:
+            valid = True
         if not valid:
             candidatos = None
         return render(request,'recrutamento/candidatos.html',{'candidatos':candidatos})
@@ -119,12 +122,12 @@ def selecao_add(request):
     if request.method == 'POST':
         form = SelecaoForm(request.POST)
         if form.is_valid():
-            try:
+            # try:
                 form_clean = form.cleaned_data
                 registro = form.save(commit=False)
-                if Selecao.objects.filter(candidato=registro.candidato.id, vaga=registro.vaga.id, arquivar=False).exists():
-                    messages.warning(request,'Canditado já esta participando de seleção para esta vaga')
-                    return redirect('recrutamento_selecoes')
+                if registro.candidato.status != 'B' or Selecao.objects.filter(candidato=registro.candidato.id, vaga=registro.vaga.id).exclude(resultado='').exists():
+                    messages.warning(request,'Canditado precisa estar no banco e não pode ter outros processos seletivos em aberto')
+                    return render(request, 'core/generic_response.html')
                 registro.save()
                 l = Log()
                 l.modelo = "recrutamento.selecao"
@@ -138,9 +141,9 @@ def selecao_add(request):
                 candidato.save()
                 messages.success(request,'Seleção criada')
                 return redirect('recrutamento_selecao_id',registro.id)
-            except:
-                messages.error(request,'Erro ao inserir selecao')
-                return redirect('recrutamento_selecoes')
+            # except:
+            #     messages.error(request,'Erro ao inserir selecao')
+            #     return redirect('recrutamento_selecoes')
     else:
         try:
             candidato = Candidato.objects.get(id=request.GET.get('candidato', None))
@@ -276,17 +279,17 @@ def candidato_update(request, id):
 def candidato_movimentar(request, id):
     candidato = Candidato.objects.get(pk=id)
     l = Log()
-    if request.GET.get('operacao', None) == 'descartar':
+    if request.GET.get('operacao', None) == 'descartar' and request.user.has_perm('recrutamento.descartar_candidato'):
         candidato.movimentar('D')
         l.mensagem = "DESCARTADO"
-    # elif request.GET.get('operacao', None) == 'contratar':
-    #     candidato.movimentar('C')
-    #     l.mensagem = "CONTRATADO"
-    elif request.GET.get('operacao', None) == 'retornar':
+    elif request.GET.get('operacao', None) == 'contratar' and request.user.has_perm('recrutamento.contratar_candidato'):
+        candidato.movimentar('C')
+        l.mensagem = "CONTRATADO"
+    elif request.GET.get('operacao', None) == 'retornar' and request.user.has_perm('recrutamento.descartar_candidato'):
         candidato.movimentar('B')
         l.mensagem = "RETORNADO BANCO"
     else:
-        messages.error(request,'Operação não altorizada')
+        messages.error(request,'Operação não autorizada')
         return redirect('recrutamento_candidato_id', id)        
     candidato.save()
     l.modelo = "recrutamento.candidato"
@@ -295,9 +298,9 @@ def candidato_movimentar(request, id):
     l.usuario = request.user
     l.save()
     messages.warning(request,f'Candidato <b>{candidato.nome.split(" ")[0]}</b> {l.mensagem.lower()}')
-    # if request.GET.get('operacao', None) == 'contratar':
-    #     args = dict(pre_cadastro = candidato.__dict__)
-    #     return funcionario_add(request, **args)
+    if request.GET.get('operacao', None) == 'contratar' and request.user.has_perm('pessoal.add_funcionario'): # Precarrega form com dados do candidato e redireciona para tela de criação de funcionario
+        form = FuncionarioForm(instance=candidato)
+        return render(request, 'pessoal/funcionario_add.html', {'form':form})
     return redirect('recrutamento_candidato_id', id)
 
 @login_required

@@ -48,7 +48,7 @@
 						<th>Cargo</th>
 						<th class="d-none">Regime</th>
 						<th class="d-none d-lg-table-cell">Status</th>
-            {% if perms.pessoal.change_funcionario %}
+            {% if perms.pessoal.view_funcionario %}
             <th>&nbsp;</th>
             {% endif %}
           </tr>
@@ -70,7 +70,7 @@
 						<td>{{funcionario.cargo.nome|default:'---'}}</td>
 						<td class="d-none">{{funcionario.get_regime_display|default:'---'}}</td>
 						<td class="d-none d-lg-table-cell{% if funcionario.status != 'A' %} bg-warning-light{% endif %}">{{funcionario.get_status_display}}</td>
-            {% if perms.pessoal.change_funcionario %}
+            {% if perms.pessoal.view_funcionario %}
             <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'pessoal_funcionario_id' funcionario.id %}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
           </tr>

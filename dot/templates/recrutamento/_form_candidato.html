@@ -13,11 +13,12 @@
           <div class="col-auto">
             <button type="button" class="btn btn-sm" data-bs-toggle="dropdown"><i class="fas fa-angle-down text-light"></i></button>
             <ul class="dropdown-menu fs-7">
-              {% if candidato.status == 'B' or candidato.status == 'S'%}
+              {% if perms.recrutamento.contratar_candidato  and candidato.status == 'B' or candidato.status == 'S'%}
               <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modal_contratar" href="#">Contratar</a></li>
-              <li><hr class="dropdown-divider"></li>
+              {% endif %}
+              {% if perms.recrutamento.descartar_candidato  and candidato.status == 'B' or candidato.status == 'S'%}
               <li><a class="dropdown-item dropdown-item-danger" data-bs-toggle="modal" data-bs-target="#modal_descartar" href="#">Descartar Candidato</a></li>
-              {% else %}
+              {% elif perms.recrutamento.descartar_candidato %}
               <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modal_retornar" href="#">Retornar</a></li>
               {% endif %}
             </ul>
@@ -172,4 +173,3 @@
     </div>
   </div>
 </div>
-<input type="hidden" name="origem" value="S">
