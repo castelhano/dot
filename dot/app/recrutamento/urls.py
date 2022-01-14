@@ -12,6 +12,7 @@ urlpatterns = [
     path('recrutamento_selecao_add',views.selecao_add,name='recrutamento_selecao_add'),
     path('recrutamento_selecao_id/<int:id>',views.selecao_id,name='recrutamento_selecao_id'),
     path('recrutamento_selecao_update/<int:id>',views.selecao_update,name='recrutamento_selecao_update'),
+    path('recrutamento_selecao_movimentar/<int:id>',views.selecao_movimentar,name='recrutamento_selecao_movimentar'),
     path('recrutamento_selecao_delete/<int:id>/delete',views.selecao_delete,name='recrutamento_selecao_delete'),
     path('recrutamento_vagas',views.vagas,name='recrutamento_vagas'),
     path('recrutamento_vaga_add',views.vaga_add,name='recrutamento_vaga_add'),
@@ -27,4 +28,5 @@ urlpatterns = [
     path('recrutamento_avaliacao_delete/<int:id>/delete',views.avaliacao_delete,name='recrutamento_avaliacao_delete'),
     path('recrutamento_get_vagas',views.get_vagas,name='recrutamento_get_vagas'),
     path('recrutamento_get_cargos_banco',views.get_cargos_banco,name='recrutamento_get_cargos_banco'),
+    path('recrutamento_get_criterios',views.get_criterios,name='recrutamento_get_criterios'),
 ]

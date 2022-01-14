@@ -1,0 +1,161 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Selecao{% endblock %}
+{% block model %}Recrutamento{% endblock %}
+{% block navbar_classlist %}navbar-dark bg-purple bg-gradient{% endblock %}
+{% block model_menu %}{% include "_component/menu/recrutamento.html" %}{% endblock%}
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'recrutamento_selecao_id' selecao.id %}"></a>
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active disabled" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'recrutamento_selecoes' %}"><i class="fas fa-undo"></i></a></li>
+      {% if perms.recrutamento.add_avaliacao %}
+      <li class="nav-item"><a class="nav-link border text-success pointer" id="add" data-bs-toggle="modal" data-bs-target="#avaliacao_modal" title="ALT+N"><i class="fas fa-plus"></i></a></li>
+      {% endif %}
+      <li class="nav-item ms-1">
+        <a class="nav-link" id="menu_selecao_extras" data-bs-toggle="dropdown" href="#"><i class="fas fa-caret-down text-dark"></i></a>
+        <ul class="dropdown-menu">
+          {% if selecao.resultado == '' %}
+          <li><a class="dropdown-item" href="{% url 'recrutamento_selecao_movimentar' selecao.id %}?operacao=aprovar">Aprovar</a></li>
+          <li><a class="dropdown-item" href="{% url 'recrutamento_selecao_movimentar' selecao.id %}?operacao=reprovar">Reprovar</a></li>
+          {% else %}
+          <li><a class="dropdown-item dropdown-item-danger" href="{% url 'recrutamento_selecao_movimentar' selecao.id %}?operacao=retornar">Retornar</a></li>
+          {% endif %}
+        </ul>
+      </li>
+      <li class="nav-item dropdown ms-auto">
+        <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#history_modal">Historico</a></li>
+          {% if perms.recrutamento.delete_selecao %}
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal">Excluir Seleção</a></li>
+          {% endif %}
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <form id="recrutamento_form" action="{% url 'recrutamento_selecao_update' selecao.id %}" method="POST" autocomplete="off">
+    {% csrf_token %}
+    {% include 'recrutamento/_form_selecao.html' %}
+  </form>
+</div>
+
+{% if perms.recrutamento.delete_selecao %}
+<div class="modal fade" id="delete_modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="row">
+        <div class="col"><h5 class="ms-3 mt-3"><i class="fas fa-exclamation-triangle text-danger me-2"></i> Excluir Registro</h5></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      </div>
+      <div class="modal-body">
+        <p><b class="text-danger">Atenção!!</b> Esta operação não pode ser desfeita, confirma a exclusão do registro?</p>
+        <div class="row mt-2">
+          <div class="col text-end">
+            <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
+            <a class="btn btn-danger px-3" href="url">Excluir</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% if perms.recrutamento.add_avaliacao %}
+<div class="modal fade" id="avaliacao_modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="row">
+        <div class="col"><h5 class="ms-3 mt-3"><i class="fas fa-chart-line text-success fs-4 me-2"></i> Avaliação</h5></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      </div>
+      <div class="modal-body">
+        <form id="recrutamento_form" action="{% url 'recrutamento_avaliacao_add' selecao.id %}" method="POST" autocomplete="off">
+          {% csrf_token %}
+          <div class="row g-1">
+            <div class="form-floating mb-1 col-12">
+              <select class="form-select" id="id_criterio" name="criterio" required>
+                <option value="" selected>---------</option>
+              </select>
+              <label for="id_criterio">Critério</label>
+            </div>
+          </div>
+          <div class="row g-1">
+            <div class="form-floating mb-1 col-lg-12">
+              <select class="form-select" id="id_status" name="status">
+                <option value="" selected>---------</option>
+                <option value="A">Aprovado</option>
+                <option value="R">Reprovado</option>
+              </select>
+              <label for="id_status">Resultado</label>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col text-end">
+              <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
+              <button type="submit" class="btn btn-success">Adicionar</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+<div class="modal fade" id="history_modal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="row">
+        <div class="col"><h5 class="ms-3 mt-3">Histórico de Alterações <sup>(last 15)</sup></h5></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      </div>
+      <div class="modal-body">
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Operação</th>
+              <th>Usuário</th>
+            </tr>
+          </thead>
+          <tbody class="fs-7">
+            {% for i in selecao.ultimas_alteracoes %}
+            <tr>
+              <td>{{i.data|date:'d/m/Y H:i:s'}}</td>
+              <td>{{i.mensagem}}</td>
+              <td>{{i.usuario.username|upper}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock%}
+
+{% block add_script_src %}{% endblock %}
+
+<script>
+  {% block add_script %}
+  function carregaCriterios() {
+  	var xhttp = new XMLHttpRequest();
+  	xhttp.onreadystatechange = function() {
+  		if(this.readyState == 4 && this.status == 200){
+  			if(this.responseText == ''){}
+  			else{
+  				let obj = JSON.parse(this.responseText);
+  				criterios = document.getElementById("id_criterio");
+  				for(key in obj){criterios.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
+  			}
+  		}
+  	};
+  	xhttp.open("GET", "{% url 'recrutamento_get_criterios' %}", true);
+  	xhttp.send();
+  }
+  carregaCriterios();
+  {% endblock %}
+</script>

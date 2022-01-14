@@ -3,9 +3,7 @@ from django.http import HttpResponse
 from json import dumps
 from .models import Candidato, Selecao, Avaliacao, Vaga, Criterio
 from .forms import CandidatoForm, SelecaoForm, VagaForm, CriterioForm
-from pessoal.models import Cargo
 from pessoal.forms import FuncionarioForm
-from pessoal.validators import cpf_valid
 from core.models import Log
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
@@ -122,10 +120,10 @@ def selecao_add(request):
     if request.method == 'POST':
         form = SelecaoForm(request.POST)
         if form.is_valid():
-            # try:
+            try:
                 form_clean = form.cleaned_data
                 registro = form.save(commit=False)
-                if registro.candidato.status != 'B' or Selecao.objects.filter(candidato=registro.candidato.id, vaga=registro.vaga.id).exclude(resultado='').exists():
+                if registro.candidato.status != 'B' or Selecao.objects.filter(candidato=registro.candidato.id, vaga=registro.vaga.id, resultado='').exists():
                     messages.warning(request,'Canditado precisa estar no banco e não pode ter outros processos seletivos em aberto')
                     return render(request, 'core/generic_response.html')
                 registro.save()
@@ -139,11 +137,11 @@ def selecao_add(request):
                 candidato = registro.candidato
                 candidato.status = 'S'
                 candidato.save()
-                messages.success(request,'Seleção criada')
+                messages.success(request, f'Seleção iniciada para candidato <b>{registro.candidato.nome.split(" ")[0]}</b>')
                 return redirect('recrutamento_selecao_id',registro.id)
-            # except:
-            #     messages.error(request,'Erro ao inserir selecao')
-            #     return redirect('recrutamento_selecoes')
+            except:
+                messages.error(request,'Erro ao inserir seleção')
+                return redirect('recrutamento_selecoes')
     else:
         try:
             candidato = Candidato.objects.get(id=request.GET.get('candidato', None))
@@ -164,7 +162,7 @@ def avaliacao_add(request, selecao_id):
                 avaliacao.save()
             else:
                 selecao = Selecao.objects.get(pk=selecao_id)
-                Avaliacao.objects.create(selecao=selecao,criterio=Criterio.objects.get(id=request.POST['nome']),status=request.POST['status'])
+                Avaliacao.objects.create(selecao=selecao,criterio=Criterio.objects.get(id=request.POST['criterio']), status=request.POST['status'])
             return redirect('recrutamento_selecao_id',selecao_id)
         except:
             messages.error(request,'Erro ao inserir avaliação')
@@ -317,17 +315,49 @@ def selecao_update(request, id):
         l.usuario = request.user
         l.mensagem = "UPDATE"
         l.save()
-        candidato = Candidato.objects.get(pk=registro.candidato.id)
-        if request.POST['bloqueado_ate'] != '' and request.POST['resultado'] == 'R':
-            candidato.bloqueado_ate = request.POST['bloqueado_ate']
-            candidato.status = 'B'
-        candidato.save()
         messages.success(request,'Selecao alterada')
         return redirect('recrutamento_selecao_id', id)
     else:
         messages.error(request,'Erro ao atualizar seleção')
         return redirect('recrutamento_selecao_id', id)
-    
+
+@login_required
+@permission_required('recrutamento.change_selecao')
+def selecao_movimentar(request, id):
+    selecao = Selecao.objects.get(pk=id)
+    l = Log()
+    mensagem = ''
+    if request.GET.get('operacao', None) == 'aprovar':
+        selecao.movimentar('A')
+        l.mensagem = "APROVADO"
+        mensagem = 'Seleção concluida como <b>aprovado</b>.'
+    elif request.GET.get('operacao', None) == 'reprovar' and request.user.has_perm('recrutamento.change_candidato'):
+        selecao.movimentar('R')
+        l.mensagem = "REPROVADO"
+        mensagem = 'Seleção concluida como <b>reprovado</b>, candidato retornado para banco.'
+        candidato = selecao.candidato
+        args = dict(dias_bloquear=90)
+        candidato.movimentar('B', **args)
+        candidato.save()
+    elif request.GET.get('operacao', None) == 'retornar' and request.user.has_perm('recrutamento.change_candidato'):
+        selecao.movimentar('')
+        l.mensagem = "RETORNADO"
+        mensagem = 'Seleção <b>retornada</b>.'
+        candidato = selecao.candidato
+        candidato.movimentar('S')
+        candidato.save()
+    else:
+        messages.error(request,'Operação não autorizada')
+        return redirect('recrutamento_selecao_id', id)        
+    selecao.save()
+    l.modelo = "recrutamento.selecao"
+    l.objeto_id = selecao.id
+    l.objeto_str = selecao.candidato.nome[0:48]
+    l.usuario = request.user
+    l.save()
+    messages.warning(request, mensagem)
+    return redirect('recrutamento_selecao_id', id)
+
 @login_required
 @permission_required('recrutamento.change_vaga')
 def vaga_update(request, id):
@@ -378,8 +408,8 @@ def candidato_delete(request, id):
         l.objeto_str = registro.nome[0:48]
         l.usuario = request.user
         l.mensagem = "DELETE"
-        l.save()
         registro.delete()
+        l.save()
         messages.warning(request,'Candidato apagado. Essa operação não pode ser desfeita')
         return redirect('recrutamento_candidatos')
     except:
@@ -397,8 +427,8 @@ def selecao_delete(request, id):
         l.objeto_str = registro.candidato.nome + ' ' + registro.vaga.cargo.nome[0:48]
         l.usuario = request.user
         l.mensagem = "DELETE"
-        l.save()
         registro.delete()
+        l.save()
         messages.warning(request,'Selecao apagada. Essa operação não pode ser desfeita')
         return redirect('recrutamento_selecoes')
     except:
@@ -408,13 +438,12 @@ def selecao_delete(request, id):
 @login_required
 @permission_required('recrutamento.delete_avaliacao')
 def avaliacao_delete(request, id):
-    selecao_id = request.GET['selecao_id']
     try:
-        registro = Avaliacao.objects.get(id=id).delete()
-        return redirect('recrutamento_selecao_id',selecao_id)
+        registro = Avaliacao.objects.get(id=id)
+        registro.delete()
     except:
         messages.error(request,'ERRO ao apagar avaliacao')
-        return redirect('recrutamento_selecao_id',selecao_id)
+    return redirect('recrutamento_selecao_id',registro.selecao.id)
 
 @login_required
 @permission_required('recrutamento.delete_vaga')
@@ -427,8 +456,8 @@ def vaga_delete(request, id):
         l.objeto_str = registro.cargo.nome[0:48]
         l.usuario = request.user
         l.mensagem = "DELETE"
-        l.save()
         registro.delete()
+        l.save()
         messages.warning(request,'Vaga removida')
         return redirect('recrutamento_vagas')
     except:
@@ -446,8 +475,8 @@ def criterio_delete(request, id):
         l.objeto_str = registro.nome
         l.usuario = request.user
         l.mensagem = "DELETE"
-        l.save()
         registro.delete()
+        l.save()
         messages.warning(request,f'Criterio <b>{registro.nome}</b> removido')
         return redirect('recrutamento_criterios')
     except:
@@ -460,8 +489,11 @@ def get_vagas(request):
     try:
         vagas = Vaga.objects.all()
         ocultos = request.GET.get('ocultos',None)
+        vazios = request.GET.get('vazios',None)
         if ocultos != 'True':
             vagas = vagas.filter(visivel=True)
+        if not vazios or vazios != 'True':
+            vagas = vagas.filter(quantidade__gt=0)
         itens = {}
         for item in vagas:
             itens[item.cargo.nome] = item.id
@@ -476,6 +508,17 @@ def get_cargos_banco(request):
         itens = {}
         for item in vagas:
             itens[item.cargo.nome] = item.id
+        dataJSON = dumps(itens)
+        return HttpResponse(dataJSON)
+    except:
+        return HttpResponse('')
+
+def get_criterios(request):
+    try:
+        criterios = Criterio.objects.all().order_by('nome')
+        itens = {}
+        for item in criterios:
+            itens[item.nome] = item.id
         dataJSON = dumps(itens)
         return HttpResponse(dataJSON)
     except:

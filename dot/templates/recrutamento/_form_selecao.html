@@ -1,0 +1,85 @@
+<div class="card-body tab-content">
+  <h5 class="card-title mb-0">Processo Seletivo</h5>
+  <p>Status: <b class="ms-2 {% if selecao.resultado == 'A' %} text-success{% elif selecao.resultado == 'R' %} text-danger{% endif %}">{{selecao.get_resultado_display|default:'Em avaliação'}}</b></p>
+  <div class="tab-pane fade show active" id="base" role="tabpanel">
+    <div class="row">
+      <div class="col-lg-5">
+        <div class="row g-1">
+          <div class="form-floating mb-1 col-lg-12">
+            <select class="form-select bg-light fw-bold" id="id_candidato" name="candidato">
+              {% if 'selecao_id' in request.get_full_path %}
+              <option value="{{selecao.candidato.id}}" selected>{{selecao.candidato.nome}}</option>
+              {% else %}
+              <option value="{{candidato.id}}" selected>{{candidato.nome}}</option>
+              {% endif %}
+            </select>
+            <label for="id_candidato">Candidato</label>
+          </div>
+        </div>
+        <div class="row g-1">
+          <div class="form-floating mb-1 col-lg-12">
+            {{ form.vaga }}
+            <label for="id_vaga">Vaga</label>
+          </div>
+        </div>
+        <div class="row g-1">
+          <div class="form-floating mb-1 col-lg-6">
+            {{ form.data }}
+            <label for="id_data">Data</label>
+          </div>
+          <div class="form-floating mb-1 col-lg-6">
+            {{ form.hora }}
+            <label for="id_hora">Hora</label>
+          </div>
+        </div>
+        {% if 'selecao_id' in request.get_full_path %}
+        <div class="form-check form-switch my-2">
+          {{form.arquivar}}
+          <label class="form-check-label" for="id_arquivar">Arquivar</label>
+        </div>
+        {% endif %}
+      </div>
+      {% if 'selecao_id' in request.get_full_path %}
+      <div class="col mt-2 mt-lg-0">
+        <table class="table table-sm border table-striped table-hover fs-7">
+          <caption class="fs-7">
+            <div class="row">
+              <div class="col-auto mb-2 mb-lg-0"><span class="px-2 py-1 border rounded" style="background-color: #D1E7DD;">Leg</span> Aprovado</div>
+              <div class="col-auto"><span class="px-2 py-1 border rounded" style="background-color: #f8d7da;">Leg</span> Reprovado</div>
+            </div>
+          </caption>
+          <thead>
+            <tr>
+              <th>Criterio</th>
+              <th>Resultado</th>
+              {% if perms.recrutamento.delete_avaliacao %}
+              <th> </th>
+              {% endif %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for avaliacao in selecao.avaliacoes %}
+            <tr class="{% if avaliacao.status == 'R' %} table-danger{% elif avaliacao.status == 'A' %} table-success{% endif %}">
+              <td>{{avaliacao.criterio.nome}}</td>
+              <td>{{avaliacao.get_status_display}}</td>
+              {% if perms.recrutamento.delete_avaliacao %}
+              <td class="text-end fit py-1"><a class="text-dark px-2" href="{% url 'recrutamento_avaliacao_delete' avaliacao.id %}"><i class="fas fa-times"></i></a></td>
+              {% endif %}
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="3">Nenhum criterio associado</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>      
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  <div class="row mt-3">
+    <div class="col">
+      <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"><b>G</b>ravar</button>
+    </div>
+  </div>
+</div>

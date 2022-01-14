@@ -2,7 +2,7 @@ from django.db import models
 from core.models import Log, FileField as core_FileField
 from pessoal.models import Cargo
 from .validators import validate_file_extension
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 
 
 class Vaga(models.Model):
@@ -73,8 +73,20 @@ class Candidato(models.Model):
             return hoje.year - self.data_nascimento.year - ((hoje.month, hoje.day) < (self.data_nascimento.month, self.data_nascimento.day))
         else:
             return ''
-    def movimentar(self, operacao):
+    def movimentar(self, operacao, **kwargs):
         self.status = operacao
+        if operacao == 'C':
+            try:
+                Selecao.objects.filter(candidato=self, arquivar=False).update(arquivar=True)
+                return True
+            except:
+                return False
+        if operacao == 'R' and kwargs.get('dias_bloquear', None):
+            try:
+                self.bloqueado_ate = datetime.now() + timedelta(kwargs.get('dias_bloquear'))
+                return True
+            except:
+                return False
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='recrutamento.candidato',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
@@ -83,7 +95,6 @@ class Candidato(models.Model):
             ("descartar_candidato", "Pode descartar / retornar candidato "),
             ("contratar_candidato", "Pode contratar candidato "),
         ]
-
 
 class Selecao(models.Model):
     RESULTADO_CHOICES = (
@@ -99,10 +110,17 @@ class Selecao(models.Model):
     arquivar = models.BooleanField(default=False)
     def __str__(self):
         return self.candidato
+    def avaliacoes(self):
+        return Avaliacao.objects.filter(selecao=self).order_by('criterio__nome')
+    def movimentar(self, operacao):
+        self.resultado = operacao
+        if operacao == 'R':
+            self.arquivar = True
+        elif operacao == '':
+            self.arquivar = False
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='recrutamento.selecao',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
-    
 
 class Criterio(models.Model):
     nome = models.CharField(max_length=80, blank=False)

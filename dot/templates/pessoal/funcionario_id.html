@@ -55,7 +55,7 @@
         <div class="row mt-2">
           <div class="col text-end">
             <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
-            <a class="btn btn-danger px-3" href="url">Excluir</a>
+            <a class="btn btn-danger px-3" href="{% url 'pessoal_funcionario_delete' funcionario.id %}">Excluir</a>
           </div>
         </div>
       </div>

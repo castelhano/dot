@@ -330,8 +330,8 @@ def empresa_delete(request, id):
         l.objeto_str = registro.nome
         l.usuario = request.user
         l.mensagem = "DELETE"
-        l.save()
         registro.delete()
+        l.save()
         messages.warning(request,'Empresa <b>' + registro.nome + '</b> apagada')
         return redirect('core_empresas')
     except:
@@ -349,8 +349,8 @@ def usuario_delete(request, id):
         l.objeto_str = registro.username
         l.usuario = request.user
         l.mensagem = "DELETE"
-        l.save()
         registro.delete()
+        l.save()
         messages.warning(request,'Usuario <b>' + registro.username + '</b> apagado')
         return redirect('core_usuarios')
     except:
@@ -368,8 +368,8 @@ def grupo_delete(request, id):
         l.objeto_str = registro.name
         l.usuario = request.user
         l.mensagem = "DELETE"
-        l.save()
         registro.delete()
+        l.save()
         messages.warning(request,'Grupo <b>' + registro.name + '</b> apagado')
         return redirect('core_grupos')
     except:

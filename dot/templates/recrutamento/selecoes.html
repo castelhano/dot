@@ -11,8 +11,8 @@
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
-      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
-      <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" data-bs-target="#param" href="#"><i class="fas fa-filter"></i></a></li>
+      <li class="nav-item"><a id="selecoes_tab_list" class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="search" data-bs-toggle="tab" data-bs-target="#filter" href="#" onclick="setTimeout(function(){document.getElementById('id_pesquisa').focus();},220);"><i class="fas fa-filter"></i></a></li>
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
         <ul class="dropdown-menu">
@@ -30,7 +30,12 @@
       <table id="main_table" class="table border table-striped table-hover">
         <thead>
           <tr>
-            <th>Nome</th>
+            <th class="d-none d-lg-table-cell">#</th>
+            <th>Candidato</th>
+            <th class="d-none d-lg-table-cell">Vaga</th>
+            <th class="d-none d-md-table-cell">Data</th>
+            <th class="d-none d-md-table-cell">Hora</th>
+            <th class="d-none d-sm-table-cell">Resultado</th>
             {% if perms.recrutamento.change_selecao %}
             <th>&nbsp;</th>
             {% endif %}
@@ -38,21 +43,55 @@
         </thead>
         <tbody>
           {% for selecao in selecoes %}
-          <tr>
-            <td>{{selecao.nome}}</td>
+          <tr class="{% if selecao.resultado == 'A' %} table-success {% elif selecao.resultado == 'R' %} table-danger{% endif %}">
+            <td class="d-none d-lg-table-cell">{{selecao.id}}</td>
+            <td>{% if perms.recrutamento.change_candidato %}<a class="px-2" href="{% url 'recrutamento_candidato_id' selecao.candidato.id %}"><i class="fas fa-arrow-left text-primary"></i></a> {% endif %}{{selecao.candidato.nome}}</td>
+            <td class="d-none d-lg-table-cell">{{selecao.vaga.cargo.nome}}</td>
+            <td class="d-none d-md-table-cell">{{selecao.data|date:'d/m/Y'}}</td>
+            <td class="d-none d-md-table-cell">{{selecao.hora}}</td>
+            <td class="d-none d-sm-table-cell">{{selecao.get_resultado_display}}</td>
             {% if perms.recrutamento.change_selecao %}
             <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'recrutamento_selecao_id' selecao.id %}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
           </tr>
           {% empty %}
           <tr>
-            <td colspan="2">Nenhum registro a exibir</td>
+            <td colspan="7">Nenhum registro a exibir</td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
-    <div class="tab-pane fade" id="param" role="tabpanel">param</div>
+    <div class="tab-pane fade" id="filter" role="tabpanel">
+      <form id="filter_form" action="{% url 'recrutamento_selecoes' %}" method="POST" autocomplete="off">
+        {% csrf_token %}
+        <div class="row g-1">
+          <div class="form-floating mb-1 col-lg-6">
+            <input type="text" class="form-control bg-light" id="id_pesquisa" name="pesquisa">
+            <label for="id_pesquisa">Candidato</label>
+          </div>
+        </div>
+        <div class="row g-1">
+          <div class="form-floating mb-lg-1 col-lg-3">
+            <select class="form-select" id="id_cargo" name="cargo">
+              <option value="" selected>---------</option>
+            </select>
+            <label for="id_cargo">Cargo</label>
+          </div>
+          <div class="form-floating mb-1 col-lg-3">
+            <select class="form-select" id="id_resultado" name="resultado">
+              <option value="" selected>---------</option>
+              <option value="A">Aprovado</option>
+              <option value="R">Reprovado</option>
+            </select>
+            <label for="id_resultado">Resultado</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col"><button type="submit" class="btn btn-sm btn-warning">Pesquisar</button></div>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 {% endblock%}
@@ -60,3 +99,27 @@
 {% block add_script_src %}
 <script src="{% static 'js/table_to_csv.js' %}"></script>
 {% endblock %}
+
+
+<script>
+  {% block add_script %}
+  SHORTCUT_MAP['1FTF'] = '#selecoes_tab_list';
+  
+  function carregaCargos() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if(this.readyState == 4 && this.status == 200){
+        if(this.responseText == ''){}
+        else{
+          let obj = JSON.parse(this.responseText);
+          cargos = document.getElementById("id_cargo");
+          for(key in obj){cargos.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
+        }
+      }
+    };
+    xhttp.open("GET", "{% url 'recrutamento_get_vagas' %}?ocultos=True&vazios=True", true);
+    xhttp.send();
+  }
+  carregaCargos();
+  {% endblock %}
+</script>

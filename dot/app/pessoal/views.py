@@ -381,8 +381,8 @@ def setor_delete(request,id):
         l.objeto_str = registro.nome[0:48]
         l.usuario = request.user
         l.mensagem = "DELETE"
-        l.save()
         registro.delete()
+        l.save()
         messages.warning(request,f'Setor <b>{registro.nome}</b> apagado. Essa operação não pode ser desfeita')
         return redirect('pessoal_setores')
     except:
@@ -400,8 +400,8 @@ def cargo_delete(request,id):
         l.objeto_str = registro.nome[0:48]
         l.usuario = request.user
         l.mensagem = "DELETE"
-        l.save()
         registro.delete()
+        l.save()
         messages.warning(request,'Cargo apagado. Essa operação não pode ser desfeita')
         return redirect('pessoal_cargos')
     except:
@@ -419,8 +419,8 @@ def funcionario_delete(request,id):
         l.objeto_str = registro.nome[0:48]
         l.usuario = request.user
         l.mensagem = "DELETE"
-        l.save()
         registro.delete()
+        l.save()
         messages.warning(request,'Funcionario apagado. Essa operação não pode ser desfeita')
         return redirect('pessoal_funcionarios')
     except:
@@ -439,8 +439,8 @@ def afastamento_delete(request,id):
         l.objeto_str = registro.funcionario.matricula + ' - ' + registro.funcionario.nome[0:48]
         l.usuario = request.user
         l.mensagem = "DELETE"
-        l.save()
         registro.delete()
+        l.save()
         messages.warning(request,'Afastamento excluido. Essa operação não pode ser desfeita')
         return redirect('pessoal_afastamentos', id_funcionario)
     except:
@@ -459,8 +459,8 @@ def funcao_fixa_delete(request, id):
         l.objeto_str = registro.get_nome_display()[0:48]
         l.usuario = request.user
         l.mensagem = "DELETE"
-        l.save()
         registro.delete()
+        l.save()
         messages.warning(request,'Função Fixa apagada. Essa operação não pode ser desfeita')
         return redirect('pessoal_funcoes_fixas')
     except:
@@ -482,8 +482,8 @@ def funcionario_desligar(request):
                 l.objeto_str = funcionario.matricula + ' - ' + funcionario.nome[0:48]
                 l.usuario = request.user
                 l.mensagem = response[1]
-                l.save()
                 funcionario.save()
+                l.save()
                 messages.warning(request,response[2])
             else:
                 messages.danger(request,response[1])                
@@ -509,8 +509,8 @@ def funcionario_afastar(request):
                 l.objeto_str = funcionario.matricula + ' - ' + funcionario.nome[0:48]
                 l.usuario = request.user
                 l.mensagem = data[1]
-                l.save()
                 funcionario.save()
+                l.save()
             messages.warning(request,data[2])
             return redirect('pessoal_funcionario_id', funcionario.id)
         except:
