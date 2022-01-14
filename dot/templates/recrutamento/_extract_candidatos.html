@@ -16,16 +16,6 @@
       </div>
     </div>
   </div>
-  {% if summary.nova_mensagem %}
-  <div class="col-lg-4 col-xl-3 mb-2">
-    <div class="card text-center bg-success text-light">
-      <div class="card-header pointer" onclick="">Novas Mensagens</div>
-      <div class="card-body">
-        <h1>{{summary.nova_mensagem|default:0}}</h1>
-      </div>
-    </div>
-  </div>
-  {% endif %}
 </div>
 {% else %}
 <table id="main_table" class="table border table-striped table-hover">
@@ -79,7 +69,7 @@
       <td class="d-none d-sm-table-cell">{{candidato.get_status_display}}</td>
       <td class="d-none d-lg-table-cell">{{candidato.nova_mensagem|yesno:'<i class="fas fa-comment fs-5 text-success"></i>,'|safe}}</td>
       <td class="text-end fit py-1">
-        {% if perms.recrutamento.add_selecao and candidato.status == 'B' %}<a class="btn btn-sm btn-warning" href="{% url 'recrutamento_selecao_add' %}?candidato={{candidato.id}}" target="_blank"><i class="fas fa-user-clock"></i></a>{% endif %}
+        {% if perms.recrutamento.add_selecao and candidato.status == 'B' %}<a class="btn btn-sm btn-warning" href="{% url 'recrutamento_selecao_add' %}?candidato={{candidato.id}}"><i class="fas fa-user-clock"></i></a>{% endif %}
         {% if perms.recrutamento.change_candidato %}<a class="btn btn-sm btn-dark" href="{% url 'recrutamento_candidato_id' candidato.id %}"><i class="fas fa-pen"></i></a>{% endif %}
       </td>
     </tr>

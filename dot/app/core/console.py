@@ -28,12 +28,14 @@ def Run(request, script):
     return response
 
 def runScript(request, attrs):
-    response = '<span><b class="text-orange">Alert:</b> Nothing to do...</span>'
+    response = '<span><b class="text-orange">Alert:</b> To run the script set <b class="text-orange">execute=True</b></span>'
     if '!execute=True' in attrs:
         code = re.search(':code=([^\s]+)', attrs).group(1)
         response = f'<span><b class="text-orange">Alert:</b> Code <b>{code}</b> not configured</span>'
-        # if code == 'foo':
-        #     response = '<span><b class="text-success">Done:</b> Some text.....</span>'
+        # if code == '666':
+        #     from recrutamento.models import Settings
+        #     qtde = Settings.objects.all().delete()
+        #     response = f'<span><b class="text-success">Done:</b> Purge {qtde[0]} settings from recrutamento</span>'
     return response
 
 def alertaClean(request, attrs):

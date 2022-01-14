@@ -6,11 +6,12 @@
 {% block model_menu %}{% include "_component/menu/recrutamento.html" %}{% endblock%}
 
 {% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'recrutamento_selecao_add' %}?candidato={{candidato.id}}"></a>
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
-      <li class="nav-item ms-auto"><a id="back" title="ALT + V" class="btn btn-sm btn-dark ms-auto" onclick="window.close()">Cancelar</a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'recrutamento_selecoes' %}"><i class="fas fa-undo"></i></a></li>
     </ul>
   </div>
   <form id="app_form" action="{% url 'recrutamento_selecao_add' %}" method="POST" autocomplete="off">

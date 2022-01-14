@@ -30,7 +30,7 @@ class Log(models.Model):
     modelo = models.CharField(max_length=50, blank=False)
     objeto_id = models.CharField(max_length=50, blank=False)
     objeto_str = models.CharField(max_length=50, blank=False)
-    usuario = models.ForeignKey(User, on_delete=models.RESTRICT)
+    usuario = models.ForeignKey(User, on_delete=models.RESTRICT, null=True)
     mensagem = models.CharField(max_length=50, blank=True)
     
 class Alerta(models.Model):

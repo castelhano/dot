@@ -3,6 +3,7 @@
   <ul class="dropdown-menu dropdown-menu-dark">
     {% if perms.recrutamento.view_vaga %}<li><a class="dropdown-item" id="cadastro_vaga" href="{% url 'recrutamento_vagas' %}"><b>V</b>agas</a></li>{% endif %}
     {% if perms.recrutamento.view_criterio %}<li><a class="dropdown-item" id="cadastro_criterio" href="{% url 'recrutamento_criterios' %}"><b>C</b>ritério</a></li>{% endif %}
+    {% if perms.recrutamento.view_settings %}<li><a class="dropdown-item" id="cadastro_settings" href="{% url 'recrutamento_settings' %}">Confi<b>g</b>urações</a></li>{% endif %}
   </ul>
 </li>
 {% if perms.recrutamento.view_candidato %}<li class="nav-item"><a class="nav-link" id="menu_candidatos" href="{% url 'recrutamento_candidatos' %}" title="ALT + D"><b>B</b>anco</a></li>{% endif %}
@@ -21,6 +22,7 @@
       try{cadastro = document.getElementById('menu_cadastro').classList.contains('show') ? true : false;}catch(err){}
       if(cadastro && e.key.toLowerCase() == 'v'){e.preventDefault();document.getElementById('cadastro_vaga').click();}
       else if(cadastro && e.key.toLowerCase() == 'c'){e.preventDefault();document.getElementById('cadastro_criterio').click();}
+      else if(cadastro && e.key.toLowerCase() == 'g'){e.preventDefault();document.getElementById('cadastro_settings').click();}
     }
   }
 </script>

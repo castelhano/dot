@@ -1,5 +1,5 @@
 from django import forms
-from .models import Candidato, Selecao, Vaga, Criterio
+from .models import Candidato, Selecao, Vaga, Criterio, Settings
 from pessoal.models import Cargo
 from django.core.exceptions import ValidationError
 from pessoal.validators import cpf_valid
@@ -18,7 +18,7 @@ class SelecaoForm(forms.ModelForm):
 class CandidatoForm(forms.ModelForm):
     class Meta:
         model = Candidato
-        fields = ['nome','rg','cpf','sexo','vagas','data_nascimento','endereco','bairro','cidade','uf','fone1','fone2','email','indicacao','pne','bloqueado_ate','detalhe','curriculo','bloquear_mensagens']
+        fields = ['nome','rg','cpf','sexo','vagas','data_nascimento','endereco','bairro','cidade','uf','fone1','fone2','email','indicacao','pne','bloqueado_ate','detalhe','curriculo']
     origem = forms.ChoiceField(required=False,choices=Candidato.ORIGEM_CHOICES, widget=forms.Select(attrs={'class':'form-select bg-light','tabindex':'-1'}))
     nome = forms.CharField(error_messages={'required': 'Informe o nome'},widget=forms.TextInput(attrs={'class': 'form-control bg-light','placeholder':'','autofocus':'autofocus'}))
     vagas = forms.CharField(error_messages={'required': 'Necessário informar pelo menos uma vaga'})
@@ -35,12 +35,10 @@ class CandidatoForm(forms.ModelForm):
     email = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','type':'email','placeholder':''}))
     indicacao = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
     pne = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch', 'tabindex':'-1'}))
-    bloqueado_ate = forms.DateField(required=False, widget=forms.TextInput(attrs={'class':'form-control bg-light','type':'date'}))
     detalhe = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'Detalhes'}))
+    bloqueado_ate = forms.DateField(required=False, widget=forms.TextInput(attrs={'class':'form-control bg-light','type':'date'}))
     apresentacao = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'Apresentação'}))
     curriculo = forms.FileField(required=False, widget=forms.ClearableFileInput(attrs={'class': 'form-control','accept':'.pdf,.doc,.docx,.odt'}))
-    mensagens = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'Mensagens'}))
-    bloquear_mensagens = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch', 'tabindex':'-1'}))
     def clean(self):
         cleaned_data = super(CandidatoForm, self).clean()
         if not cpf_valid(cleaned_data.get('cpf')):
@@ -60,3 +58,11 @@ class CriterioForm(forms.ModelForm):
         model = Criterio
         fields = ['nome']
     nome = forms.CharField(error_messages={'required': 'Informe o nome do criterio'},max_length=50,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'', 'autofocus':'autofocus'}))
+
+class SettingsForm(forms.ModelForm):
+    class Meta:
+        model = Settings
+        fields = ['redirecinar_cadastro_ao_aprovar', 'descartar_reprovados', 'dias_bloqueio']
+    redirecinar_cadastro_ao_aprovar = forms.BooleanField(required=False, initial=True, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch'}))
+    descartar_reprovados = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch'}))
+    dias_bloqueio = forms.IntegerField(required=False,initial=90, widget=forms.TextInput(attrs={'class': 'form-control bg-light','type':'number','min':'0','max':'999', 'onfocus':'this.select();'}))

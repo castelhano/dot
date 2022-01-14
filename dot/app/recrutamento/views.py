@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from json import dumps
-from .models import Candidato, Selecao, Avaliacao, Vaga, Criterio
-from .forms import CandidatoForm, SelecaoForm, VagaForm, CriterioForm
+from .models import Candidato, Selecao, Avaliacao, Vaga, Criterio, Settings
+from .forms import CandidatoForm, SelecaoForm, VagaForm, CriterioForm, SettingsForm
 from pessoal.forms import FuncionarioForm
 from core.models import Log
 from django.contrib.auth.decorators import login_required, permission_required
@@ -39,7 +39,6 @@ def candidatos(request):
         return render(request,'recrutamento/candidatos.html',{'candidatos':candidatos})
     else:
         summary = {}
-        summary['nova_mensagem'] = Candidato.objects.filter(nova_mensagem=True).count()
         summary['banco'] = Candidato.objects.filter(status='B').count()
         summary['selecoes'] = Candidato.objects.filter(status='S').count()
         return render(request,'recrutamento/candidatos.html',{'summary':summary})
@@ -85,6 +84,59 @@ def criterios(request):
         criterios = criterios.filter(nome__contains=request.POST['pesquisa'])
     return render(request,'recrutamento/criterios.html',{'criterios':criterios})
 
+@login_required
+@permission_required('recrutamento.view_settings')
+def settings(request):
+    try: # Busca configuracao do app
+        settings = Settings.objects.all().get()
+    except: # Caso ainda nao configurado, inicia com configuracao basica
+        if Settings.objects.all().count() == 0:
+            settings = Settings()
+            settings.save()
+            l = Log()
+            l.modelo = "recrutamento.settings"
+            l.objeto_id = settings.id
+            l.objeto_str = 'n/a'
+            l.usuario = request.user
+            l.mensagem = "AUTO CREATED"
+            l.save()
+            messages.warning(request,'<b>Informativo:</b> App configurado pela primeira vez.')
+        else:
+            settings = None
+            messages.error(request,'<b>Erro::</b> Identificado duplicatas nas configurações do sistema, entre em contato com o administrador.')
+    form = SettingsForm(instance=settings)
+    return render(request,'recrutamento/settings.html',{'form':form,'settings':settings})
+
+
+def cadastro_site(request):
+    if request.method == 'POST':
+        form = CandidatoForm(request.POST, request.FILES)
+        if form.is_valid():
+            try:
+                form_clean = form.cleaned_data
+                registro = form.save()
+                registro.origem = 'S'
+                registro.save()
+                l = Log()
+                l.modelo = "recrutamento.candidato"
+                l.objeto_id = registro.id
+                l.objeto_str = registro.nome[0:48]
+                l.usuario = None
+                l.mensagem = "CREATED AT SITE"
+                l.save()
+                messages.success(request, 'Cadastro realizado com sucesso')
+                return render(request, 'recrutamento/site.html',{'status':'CREATED'})
+            except:
+                messages.error(request,'Erro ao cadastrar candidato')
+                return redirect('recrutamento_candidato_add')
+        vagas = None
+    else:
+        form = CandidatoForm()
+        vagas = Vaga.objects.filter(visivel=True, quantidade__gt=0)
+    return render(request, 'recrutamento/site.html', {'form':form, 'vagas':vagas})
+
+
+
 # METODOS ADD
 @login_required
 @permission_required('recrutamento.add_candidato')
@@ -95,9 +147,6 @@ def candidato_add(request):
             try:
                 form_clean = form.cleaned_data
                 registro = form.save()
-                if request.POST.get('origem', None) and request.POST['origem'] == 'S':
-                    registro.origem = 'S'
-                    registro.save()
                 l = Log()
                 l.modelo = "recrutamento.candidato"
                 l.objeto_id = registro.id
@@ -125,7 +174,7 @@ def selecao_add(request):
                 registro = form.save(commit=False)
                 if registro.candidato.status != 'B' or Selecao.objects.filter(candidato=registro.candidato.id, vaga=registro.vaga.id, resultado='').exists():
                     messages.warning(request,'Canditado precisa estar no banco e não pode ter outros processos seletivos em aberto')
-                    return render(request, 'core/generic_response.html')
+                    return redirect('recrutamento_selecoes')
                 registro.save()
                 l = Log()
                 l.modelo = "recrutamento.selecao"
@@ -276,6 +325,10 @@ def candidato_update(request, id):
 @permission_required('recrutamento.change_candidato')
 def candidato_movimentar(request, id):
     candidato = Candidato.objects.get(pk=id)
+    try: # Carrega conficuracoes do app
+        settings = Settings.objects.all().get()
+    except: # Caso nao gerado configuracoes iniciais carrega definicoes basicas
+        settings = Settings()
     l = Log()
     if request.GET.get('operacao', None) == 'descartar' and request.user.has_perm('recrutamento.descartar_candidato'):
         candidato.movimentar('D')
@@ -296,7 +349,7 @@ def candidato_movimentar(request, id):
     l.usuario = request.user
     l.save()
     messages.warning(request,f'Candidato <b>{candidato.nome.split(" ")[0]}</b> {l.mensagem.lower()}')
-    if request.GET.get('operacao', None) == 'contratar' and request.user.has_perm('pessoal.add_funcionario'): # Precarrega form com dados do candidato e redireciona para tela de criação de funcionario
+    if request.GET.get('operacao', None) == 'contratar' and settings.redirecinar_cadastro_ao_aprovar and request.user.has_perm('pessoal.add_funcionario'): # Precarrega form com dados do candidato e redireciona para tela de criação de funcionario
         form = FuncionarioForm(instance=candidato)
         return render(request, 'pessoal/funcionario_add.html', {'form':form})
     return redirect('recrutamento_candidato_id', id)
@@ -327,6 +380,10 @@ def selecao_movimentar(request, id):
     selecao = Selecao.objects.get(pk=id)
     l = Log()
     mensagem = ''
+    try: # Carrega conficuracoes do app
+        settings = Settings.objects.all().get()
+    except: # Caso nao gerado configuracoes iniciais carrega definicoes basicas
+        settings = Settings()
     if request.GET.get('operacao', None) == 'aprovar':
         selecao.movimentar('A')
         l.mensagem = "APROVADO"
@@ -334,10 +391,13 @@ def selecao_movimentar(request, id):
     elif request.GET.get('operacao', None) == 'reprovar' and request.user.has_perm('recrutamento.change_candidato'):
         selecao.movimentar('R')
         l.mensagem = "REPROVADO"
-        mensagem = 'Seleção concluida como <b>reprovado</b>, candidato retornado para banco.'
+        mensagem = 'Seleção concluida como <b>reprovado</b>'
         candidato = selecao.candidato
-        args = dict(dias_bloquear=90)
-        candidato.movimentar('B', **args)
+        if settings.descartar_reprovados:
+            candidato.movimentar('D')
+        else: 
+            args = dict(dias_bloqueio=settings.dias_bloqueio)
+            candidato.movimentar('B', **args)
         candidato.save()
     elif request.GET.get('operacao', None) == 'retornar' and request.user.has_perm('recrutamento.change_candidato'):
         selecao.movimentar('')
@@ -375,7 +435,7 @@ def vaga_update(request, id):
         messages.success(request,'Vaga alterada')
         return redirect('recrutamento_vaga_id', id)
     else:
-        return render(request,'recrutamento/vaga.html',{'form':form,'vaga':vaga})
+        return render(request,'recrutamento/vaga_id.html',{'form':form,'vaga':vaga})
 
 @login_required
 @permission_required('recrutamento.change_criterio')
@@ -394,7 +454,26 @@ def criterio_update(request, id):
         messages.success(request,f'Criterio <b>{registro.nome}</b> alterado')
         return redirect('recrutamento_criterio_id', id)
     else:
-        return render(request,'recrutamento/criterio.html',{'form':form,'criterio':criterio})
+        return render(request,'recrutamento/criterio_id.html',{'form':form,'criterio':criterio})
+
+@login_required
+@permission_required('recrutamento.change_settings')
+def settings_update(request, id):
+    settings = Settings.objects.get(pk=id)
+    form = SettingsForm(request.POST, instance=settings)
+    if form.is_valid():
+        registro = form.save()
+        l = Log()
+        l.modelo = "recrutamento.settings"
+        l.objeto_id = registro.id
+        l.objeto_str = 'n/a'
+        l.usuario = request.user
+        l.mensagem = "UPDATE"
+        l.save()
+        messages.success(request,'Settings <b>recrutamento</b> alterado')
+        return redirect('recrutamento_settings')
+    else:
+        return render(request,'recrutamento/settings.html',{'form':form,'settings':settings})
     
 # METODOS DELETE
 @login_required

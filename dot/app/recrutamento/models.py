@@ -53,9 +53,6 @@ class Candidato(models.Model):
     detalhe = models.TextField(blank=True)
     apresentacao = models.TextField(blank=True)
     curriculo = core_FileField(upload_to="recrutamento/curriculos/%Y/%m/%d",blank=True, validators=[validate_file_extension])
-    mensagens = models.TextField(blank=True)
-    nova_mensagem = models.BooleanField(default=False)
-    bloquear_mensagens = models.BooleanField(default=False)
     create_at = models.DateTimeField(default=datetime.now)
     def __str__(self):
         return self.nome
@@ -77,13 +74,13 @@ class Candidato(models.Model):
         self.status = operacao
         if operacao == 'C':
             try:
-                Selecao.objects.filter(candidato=self, arquivar=False).update(arquivar=True)
+                Selecao.objects.filter(candidato=self, arquivar=False).update(resultado='A', arquivar=True)
                 return True
             except:
                 return False
-        if operacao == 'R' and kwargs.get('dias_bloquear', None):
+        if kwargs.get('dias_bloqueio', None):
             try:
-                self.bloqueado_ate = datetime.now() + timedelta(kwargs.get('dias_bloquear'))
+                self.bloqueado_ate = datetime.now() + timedelta(kwargs.get('dias_bloqueio'))
                 return True
             except:
                 return False
@@ -139,4 +136,12 @@ class Avaliacao(models.Model):
     status = models.CharField(max_length=3,choices=STATUS_CHOICES, default='')
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='recrutamento.avaliacao',objeto_id=self.id).order_by('-data')[:15]
+        return reversed(logs)
+
+class Settings(models.Model):
+    redirecinar_cadastro_ao_aprovar = models.BooleanField(default=True)
+    descartar_reprovados = models.BooleanField(default=False)
+    dias_bloqueio = models.PositiveIntegerField(default=90)
+    def ultimas_alteracoes(self):
+        logs = Log.objects.filter(modelo='recrutamento.settings',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
