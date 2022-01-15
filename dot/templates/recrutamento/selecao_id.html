@@ -126,7 +126,7 @@
             <tr>
               <td>{{i.data|date:'d/m/Y H:i:s'}}</td>
               <td>{{i.mensagem}}</td>
-              <td>{{i.usuario.username|upper}}</td>
+              <td>{{i.usuario.username|upper|default:'None'}}</td>
             </tr>
             {% endfor %}
           </tbody>
@@ -141,6 +141,8 @@
 
 <script>
   {% block add_script %}
+  
+  document.getElementById('id_vaga').innerHTML = '<option value="{{selecao.vaga.id}}">{{selecao.vaga.cargo.nome}}</option>';
   function carregaCriterios() {
   	var xhttp = new XMLHttpRequest();
   	xhttp.onreadystatechange = function() {

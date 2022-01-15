@@ -72,7 +72,7 @@ class Candidato(models.Model):
             return ''
     def movimentar(self, operacao, **kwargs):
         self.status = operacao
-        if operacao == 'C':
+        if operacao == 'C': # Contratando candidato, altera o status e arquiva o processo selectivo
             try:
                 Selecao.objects.filter(candidato=self, arquivar=False).update(resultado='A', arquivar=True)
                 return True
@@ -111,7 +111,7 @@ class Selecao(models.Model):
         return Avaliacao.objects.filter(selecao=self).order_by('criterio__nome')
     def movimentar(self, operacao):
         self.resultado = operacao
-        if operacao == 'R':
+        if operacao == 'R': # Candidato reprovado, arquiva selecao
             self.arquivar = True
         elif operacao == '':
             self.arquivar = False
@@ -141,6 +141,8 @@ class Avaliacao(models.Model):
 class Settings(models.Model):
     redirecinar_cadastro_ao_aprovar = models.BooleanField(default=True)
     descartar_reprovados = models.BooleanField(default=False)
+    exibir_quantidade_vagas_site = models.BooleanField(default=True)
+    abater_saldo_vagas_ao_aprovar = models.BooleanField(default=True)
     dias_bloqueio = models.PositiveIntegerField(default=90)
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='recrutamento.settings',objeto_id=self.id).order_by('-data')[:15]

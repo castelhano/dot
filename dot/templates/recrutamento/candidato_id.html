@@ -138,7 +138,7 @@
             <tr>
               <td>{{i.data|date:'d/m/Y H:i:s'}}</td>
               <td>{{i.mensagem}}</td>
-              <td>{{i.usuario.username|upper}}</td>
+              <td>{{i.usuario.username|upper|default:'None'}}</td>
             </tr>
             {% endfor %}
           </tbody>
@@ -162,6 +162,8 @@
   SHORTCUT_MAP['2FTF'] = '#link_tab_contato';
   SHORTCUT_MAP['3FTF'] = '#link_tab_detalhe';
   SHORTCUT_MAP['4FTF'] = '#link_tab_config';
+  
+  if(document.getElementById('candidato_options_list').childElementCount == 0){document.getElementById('candidato_options_container').classList.add('d-none');}
   
   VMasker(document.getElementById("id_cpf")).maskPattern('999.999.999-99');
   // FONE MASK

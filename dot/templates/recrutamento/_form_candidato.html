@@ -10,15 +10,18 @@
             {% else %}<a class="btn btn-sm btn-warning px-4 px-lg-0 disabled">{{candidato.get_status_display}}</a>{% endif %}
           </div></div>
           {% if 'candidato_id' in request.get_full_path %}
-          <div class="col-auto">
+          <div class="col-auto" id="candidato_options_container">
             <button type="button" class="btn btn-sm" data-bs-toggle="dropdown"><i class="fas fa-angle-down text-light"></i></button>
-            <ul class="dropdown-menu fs-7">
-              {% if perms.recrutamento.contratar_candidato  and candidato.status == 'B' or candidato.status == 'S'%}
+            <ul class="dropdown-menu fs-7" id="candidato_options_list">
+              {% if perms.recrutamento.add_selecao  and candidato.status == 'B' %}
+              <li><a class="dropdown-item" href="{% url 'recrutamento_selecao_add' %}?candidato={{candidato.id}}">Processo Seletivo</a></li>
+              {% endif %}
+              {% if candidato.status == 'B' or candidato.status == 'S' and perms.recrutamento.contratar_candidato %}
               <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modal_contratar" href="#">Contratar</a></li>
               {% endif %}
-              {% if perms.recrutamento.descartar_candidato  and candidato.status == 'B' or candidato.status == 'S'%}
+              {% if candidato.status == 'B' and perms.recrutamento.descartar_candidato or candidato.status == 'S' and perms.recrutamento.descartar_candidato %}
               <li><a class="dropdown-item dropdown-item-danger" data-bs-toggle="modal" data-bs-target="#modal_descartar" href="#">Descartar Candidato</a></li>
-              {% elif perms.recrutamento.descartar_candidato %}
+              {% elif perms.recrutamento.descartar_candidato and candidato.status == 'D' or perms.recrutamento.contratar_candidato and  candidato.status == 'C' %}
               <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modal_retornar" href="#">Retornar</a></li>
               {% endif %}
             </ul>

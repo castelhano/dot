@@ -116,6 +116,7 @@ def cadastro_site(request):
                 form_clean = form.cleaned_data
                 registro = form.save()
                 registro.origem = 'S'
+                registro.apresentacao = request.POST['apresentacao']
                 registro.save()
                 l = Log()
                 l.modelo = "recrutamento.candidato"
@@ -127,10 +128,12 @@ def cadastro_site(request):
                 messages.success(request, 'Cadastro realizado com sucesso')
                 return render(request, 'recrutamento/site.html',{'status':'CREATED'})
             except:
-                messages.error(request,'Erro ao cadastrar candidato')
-                return redirect('recrutamento_candidato_add')
+                return render(request, 'recrutamento/site.html',{'status':'ERROR'})
+        else:
+            return render(request, 'recrutamento/site.html',{'form':form,'status':'ERROR'})
         vagas = None
     else:
+        view = ''
         form = CandidatoForm()
         vagas = Vaga.objects.filter(visivel=True, quantidade__gt=0)
     return render(request, 'recrutamento/site.html', {'form':form, 'vagas':vagas})
@@ -205,13 +208,21 @@ def selecao_add(request):
 def avaliacao_add(request, selecao_id):
     if request.method == 'POST':
         try:
+            l = Log()
             if Avaliacao.objects.filter(selecao=selecao_id, criterio__id=request.POST['criterio']).exists():
                 avaliacao = Avaliacao.objects.filter(selecao=selecao_id, criterio__id=request.POST['criterio']).get()
                 avaliacao.status = request.POST['status']
                 avaliacao.save()
+                l.mensagem = "UPDATE CRITERIO"
             else:
                 selecao = Selecao.objects.get(pk=selecao_id)
-                Avaliacao.objects.create(selecao=selecao,criterio=Criterio.objects.get(id=request.POST['criterio']), status=request.POST['status'])
+                avaliacao = Avaliacao.objects.create(selecao=selecao,criterio=Criterio.objects.get(id=request.POST['criterio']), status=request.POST['status'])
+                l.mensagem = "ADD CRITERIO"
+            l.modelo = "recrutamento.selecao"
+            l.objeto_id = avaliacao.selecao.id
+            l.objeto_str = avaliacao.selecao.candidato.nome + ' ' + avaliacao.selecao.vaga.cargo.nome
+            l.usuario = request.user
+            l.save()
             return redirect('recrutamento_selecao_id',selecao_id)
         except:
             messages.error(request,'Erro ao inserir avaliação')
@@ -336,7 +347,7 @@ def candidato_movimentar(request, id):
     elif request.GET.get('operacao', None) == 'contratar' and request.user.has_perm('recrutamento.contratar_candidato'):
         candidato.movimentar('C')
         l.mensagem = "CONTRATADO"
-    elif request.GET.get('operacao', None) == 'retornar' and request.user.has_perm('recrutamento.descartar_candidato'):
+    elif request.GET.get('operacao', None) == 'retornar' and (candidato.status == 'D' and request.user.has_perm('recrutamento.descartar_candidato') or candidato.status == 'C' and request.user.has_perm('recrutamento.contratar_candidato')):
         candidato.movimentar('B')
         l.mensagem = "RETORNADO BANCO"
     else:
@@ -410,6 +421,11 @@ def selecao_movimentar(request, id):
         messages.error(request,'Operação não autorizada')
         return redirect('recrutamento_selecao_id', id)        
     selecao.save()
+    if request.GET.get('operacao', None) == 'aprovar' and settings.abater_saldo_vagas_ao_aprovar:
+        vaga = selecao.vaga
+        if vaga.quantidade > 0:
+            vaga.quantidade -= 1
+            vaga.save()        
     l.modelo = "recrutamento.selecao"
     l.objeto_id = selecao.id
     l.objeto_str = selecao.candidato.nome[0:48]
@@ -520,6 +536,13 @@ def avaliacao_delete(request, id):
     try:
         registro = Avaliacao.objects.get(id=id)
         registro.delete()
+        l = Log()
+        l.modelo = "recrutamento.selecao"
+        l.objeto_id = registro.selecao.id
+        l.objeto_str = registro.selecao.candidato.nome + ' ' + registro.selecao.vaga.cargo.nome
+        l.usuario = request.user
+        l.mensagem = "DELETE CRITERIO"
+        l.save()
     except:
         messages.error(request,'ERRO ao apagar avaliacao')
     return redirect('recrutamento_selecao_id',registro.selecao.id)

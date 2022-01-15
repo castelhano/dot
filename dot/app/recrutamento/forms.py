@@ -11,7 +11,6 @@ class SelecaoForm(forms.ModelForm):
         fields = ['candidato','data','hora','vaga','arquivar']
     data = forms.DateField(error_messages={'required': 'Informe uma data'},initial=date.today(),widget=forms.TextInput(attrs={'class':'form-control','type':'date','placeholder':''}))
     hora = forms.TimeField(required=False, initial=datetime.now().strftime('%H:%M'), widget=forms.TextInput(attrs={'class':'form-control','type':'time', 'placeholder':''}))
-    vaga = forms.ModelChoiceField(error_messages={'required': 'Informe a vaga'}, queryset = Vaga.objects.filter(quantidade__gt=0), widget=forms.Select(attrs={'class':'form-select','placeholder':'','autofocus':'autofocus'}))
     arquivar = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch', 'tabindex':'-1'}))
     
 
@@ -62,7 +61,9 @@ class CriterioForm(forms.ModelForm):
 class SettingsForm(forms.ModelForm):
     class Meta:
         model = Settings
-        fields = ['redirecinar_cadastro_ao_aprovar', 'descartar_reprovados', 'dias_bloqueio']
+        fields = ['redirecinar_cadastro_ao_aprovar','exibir_quantidade_vagas_site','abater_saldo_vagas_ao_aprovar','descartar_reprovados', 'dias_bloqueio']
     redirecinar_cadastro_ao_aprovar = forms.BooleanField(required=False, initial=True, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch'}))
+    exibir_quantidade_vagas_site = forms.BooleanField(required=False, initial=True, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch'}))
+    abater_saldo_vagas_ao_aprovar = forms.BooleanField(required=False, initial=True, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch'}))
     descartar_reprovados = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch'}))
     dias_bloqueio = forms.IntegerField(required=False,initial=90, widget=forms.TextInput(attrs={'class': 'form-control bg-light','type':'number','min':'0','max':'999', 'onfocus':'this.select();'}))

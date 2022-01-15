@@ -1,6 +1,6 @@
-<li class="nav-item dropdown">
+<li class="nav-item dropdown" id="cadastro_list_container">
   <a class="nav-link dropdown-toggle" id="menu_cadastro" href="#" data-bs-toggle="dropdown" title="ALT + C"><b>C</b>adastro</a>
-  <ul class="dropdown-menu dropdown-menu-dark">
+  <ul class="dropdown-menu dropdown-menu-dark" id="cadastro_list_options">
     {% if perms.pessoal.view_funcionario %}
     <li><a class="dropdown-item" id="cadastro_funcionario" href="{% url 'pessoal_funcionarios' %}"><b>F</b>uncionário</a></li>
     {% endif %}
@@ -20,7 +20,7 @@
   var SHORTCUT_MAP = {
     'cTFF':'#menu_cadastro',
   };
-  
+  if(document.getElementById('cadastro_list_options').childElementCount == 0){document.getElementById('cadastro_list_container').classList.add('d-none');}
   function eventHandler(e){
     {% include '_component/script/global_handler.js' %}
     else{

@@ -29,6 +29,14 @@
         	<label class="form-check-label" for="id_redirecinar_cadastro_ao_aprovar">Redirecionar para cadastro de funcionário ao aprovar candidato</label>
         </div>
         <div class="form-check form-switch my-2">
+        	{{form.exibir_quantidade_vagas_site}}
+        	<label class="form-check-label" for="id_exibir_quantidade_vagas_site">Exibir quantidade de vagas no site</label>
+        </div>
+        <div class="form-check form-switch my-2">
+        	{{form.abater_saldo_vagas_ao_aprovar}}
+        	<label class="form-check-label" for="id_abater_saldo_vagas_ao_aprovar">Ao aprovar candidato em seleção, abater do saldo da vaga</label>
+        </div>
+        <div class="form-check form-switch my-2">
         	{{form.descartar_reprovados}}
         	<label class="form-check-label" for="id_descartar_reprovados">Descartar candidatos reprovados</label> <i class="fas fa-info-circle text-primary fs-5" style="cursor: help;" title="Desmarque para retornar candidato ao banco"></i>
         </div>
@@ -42,7 +50,7 @@
       <!-- CONTROLES DO FORM -->
       <div class="row mt-3">
         <div class="col">
-          <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"><b>G</b>ravar</button>
+          <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"{% if not perms.recrutamento.change_settings %} disabled{% endif %}><b>G</b>ravar</button>
         </div>
       </div>
     </div>
@@ -69,7 +77,7 @@
             <tr>
               <td>{{i.data|date:'d/m/Y H:i:s'}}</td>
               <td>{{i.mensagem}}</td>
-              <td>{{i.usuario.username|upper}}</td>
+              <td>{{i.usuario.username|upper|default:'None'}}</td>
             </tr>
             {% endfor %}
           </tbody>

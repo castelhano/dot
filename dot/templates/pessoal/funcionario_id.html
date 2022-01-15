@@ -84,7 +84,7 @@
             <tr>
               <td>{{i.data|date:'d/m/Y H:i:s'}}</td>
               <td>{{i.mensagem}}</td>
-              <td>{{i.usuario.username|upper}}</td>
+              <td>{{i.usuario.username|upper|default:'None'}}</td>
             </tr>
             {% endfor %}
           </tbody>
