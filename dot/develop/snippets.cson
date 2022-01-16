@@ -421,7 +421,7 @@
   
   'Chart JS include':
     'prefix': 'chart_include'
-    'body':'<script src="{% static \'js/vendor/Chart.min.js\' %}"></script>'
+    'body':'<script src="{% static \'js/vendor/chart.min.js\' %}"></script>'
   
   'Chart JS body':
     'prefix': 'chart_body'

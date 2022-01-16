@@ -279,7 +279,11 @@
         else{
           let obj = JSON.parse(this.responseText);
           empresas = document.getElementById("id_empresa");
-          for(key in obj){empresas.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
+          empresa_atual = '{{funcionario.empresa.id}}';
+          for(key in obj){
+            selected = empresa_atual == obj[key] ? ' selected' : '';
+            empresas.innerHTML += `<option value="${obj[key]}"${selected}>${key}</option>`;
+          }
         }
       }
     };

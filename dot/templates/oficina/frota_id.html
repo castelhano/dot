@@ -1,0 +1,102 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Frota{% endblock %}
+{% block model %}Oficina{% endblock %}
+{% block navbar_classlist %}navbar-dark bg-success bg-gradient{% endblock %}
+{% block model_menu %}{% include "_component/menu/oficina.html" %}{% endblock%}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'oficina_frota_id' frota.id %}"></a>
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a id="tab_link_base" class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#" title="Basico [ Ctrl + 1 ]"><i class="fas fa-bus"></i></a></li>
+      <li class="nav-item"><a id="tab_link_metrics" class="nav-link" data-bs-toggle="tab" data-bs-target="#metrics" href="#" title="Métricas [ Ctrl + 2 ]"><i class="fas fa-tools"></i></a></li>
+      <li class="nav-item"><a id="tab_link_comp" class="nav-link" data-bs-toggle="tab" data-bs-target="#comp" href="#" title="Componentes [ Ctrl + 3 ]"><i class="fas fa-microchip"></i></a></li>
+      <li class="nav-item"><a id="tab_link_detalhe" class="nav-link" data-bs-toggle="tab" data-bs-target="#detalhe" href="#" title="Detalhe [ Ctrl + 4 ]"><i class="fas fa-scroll"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'oficina_frotas' %}"><i class="fas fa-undo"></i></a></li>
+      <li class="nav-item dropdown ms-auto">
+        <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#history_modal">Historico</a></li>
+          {% if perms.oficina.delete_frota %}
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal">Excluir Frota</a></li>
+          {% endif %}
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <form id="oficina_form" action="{% url 'oficina_frota_update' frota.id %}" method="POST" autocomplete="off" onsubmit="return submitForm();">
+    {% csrf_token %}
+    {% include 'oficina/_form_frota.html' %}
+  </form>
+</div>
+
+{% if perms.oficina.delete_frota %}
+<div class="modal fade" id="delete_modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="row">
+        <div class="col"><h5 class="ms-3 mt-3"><i class="fas fa-exclamation-triangle text-danger me-2"></i> Excluir Registro</h5></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      </div>
+      <div class="modal-body">
+        <p><b class="text-danger">Atenção!!</b> Esta operação não pode ser desfeita, confirma a exclusão do registro?</p>
+        <div class="row mt-2">
+          <div class="col text-end">
+            <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
+            <a class="btn btn-danger px-3" href="{% url 'oficina_frota_delete' frota.id %}">Excluir</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+<div class="modal fade" id="history_modal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="row">
+        <div class="col"><h5 class="ms-3 mt-3">Histórico de Alterações <sup>(last 15)</sup></h5></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      </div>
+      <div class="modal-body">
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Operação</th>
+              <th>Usuário</th>
+            </tr>
+          </thead>
+          <tbody class="fs-7">
+            {% for i in frota.ultimas_alteracoes %}
+            <tr>
+              <td>{{i.data|date:'d/m/Y H:i:s'}}</td>
+              <td>{{i.mensagem}}</td>
+              <td>{{i.usuario.username|upper}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% include "_component/modal/loading.html" with message='Configurando Frota....' %}
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/vendor/mask.js' %}"></script>
+{% endblock %}
+
+<script>
+  {% block add_script %}
+  VMasker(document.getElementById("id_renavan")).maskNumber();
+  VMasker(document.getElementById("id_placa")).maskPattern('AAA-9S99');
+  
+  var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
+  function submitForm(){options = selecionados.options;for(i=0; i < options.length; i++){options[i].selected = "true";}modal_loading.show();return true;}
+  {% endblock %}
+</script>
