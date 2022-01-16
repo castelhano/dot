@@ -72,9 +72,10 @@ class Candidato(models.Model):
             return ''
     def movimentar(self, operacao, **kwargs):
         self.status = operacao
-        if operacao == 'C': # Contratando candidato, altera o status e arquiva o processo selectivo
+        if operacao == 'C' or operacao == 'D': # Contratando ou descartando candidato, altera o status e arquiva o processo seletivo
             try:
-                Selecao.objects.filter(candidato=self, arquivar=False).update(resultado='A', arquivar=True)
+                resultado_default = 'A' if operacao == 'C' else 'R'
+                Selecao.objects.filter(candidato=self, arquivar=False).update(resultado=resultado_default, arquivar=True)
                 return True
             except:
                 return False

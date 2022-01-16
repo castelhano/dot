@@ -30,6 +30,7 @@
     <tr>
       <th class="d-none">#</th>
       <th class="d-none d-md-table-cell">Origem</th>
+      <th class="d-none">Cadastro</th>
       <th>Nome</th>
       <th class="d-none d-lg-table-cell">CPF</th>
       <th class="d-none">RG</th>
@@ -53,6 +54,7 @@
     <tr class="{% if candidato.status == 'D' %}table-danger{% elif candidato.status == 'C' %}table-success{% elif candidato.bloqueado %}table-warning{% endif %}">
       <td class="d-none">{{candidato.id}}</td>
       <td class="d-none d-md-table-cell">{{candidato.get_origem_display}}</td>
+      <td class="d-none">{{candidato.create_at|date:'d/m/Y H:i'}}</td>
       <td>{{candidato.nome}}</td>
       <td class="d-none d-lg-table-cell">{{candidato.cpf}}</td>
       <td class="d-none">{{candidato.rg}}</td>

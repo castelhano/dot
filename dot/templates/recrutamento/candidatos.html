@@ -15,6 +15,7 @@
       {% if perms.recrutamento.add_candidato %}
       <li class="nav-item"><a class="nav-link border ms-1" id="add" href="{% url 'recrutamento_candidato_add' %}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
       {% endif %}
+      <li class="nav-item"><a class="nav-link border ms-1" href="{% url 'recrutamento_candidato_dashboard' %}" title="Dashboard Banco Candidatos"><i class="fas fa-chart-pie text-purple"></i></a></li>
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
         <ul class="dropdown-menu">

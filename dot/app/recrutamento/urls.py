@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from . import views, reports
 
 urlpatterns = [
     path('recrutamento_candidatos',views.candidatos,name='recrutamento_candidatos'),
@@ -29,6 +29,7 @@ urlpatterns = [
     path('recrutamento_avaliacao_delete/<int:id>/delete',views.avaliacao_delete,name='recrutamento_avaliacao_delete'),
     path('recrutamento_settings',views.settings,name='recrutamento_settings'),
     path('recrutamento_settings_update/<int:id>',views.settings_update,name='recrutamento_settings_update'),
+    path('recrutamento_candidato_dashboard',reports.candidato_dashboard,name='recrutamento_candidato_dashboard'),
     path('recrutamento_get_vagas',views.get_vagas,name='recrutamento_get_vagas'),
     path('recrutamento_get_cargos_banco',views.get_cargos_banco,name='recrutamento_get_cargos_banco'),
     path('recrutamento_get_criterios',views.get_criterios,name='recrutamento_get_criterios'),

@@ -18,6 +18,10 @@ def sub(minuendo, subtraendo):
     return minuendo - subtraendo
 
 @register.filter
+def percentual(valor, total):
+    return (valor / total) * 100 if total > 0 else '---'
+
+@register.filter
 def zfill(valor,casas):
     return str(valor).zfill(int(casas))
 

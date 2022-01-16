@@ -606,7 +606,11 @@ def get_vagas(request):
 
 def get_cargos_banco(request):
     try:
-        vagas = Vaga.objects.filter(candidatos__in=Candidato.objects.filter(status='B')).distinct().order_by('cargo__nome')
+        incluir_todos = request.GET.get('incluir_todos', None)
+        if incluir_todos:
+            vagas = Vaga.objects.filter(candidatos__in=Candidato.objects.all()).distinct().order_by('cargo__nome')
+        else:
+            vagas = Vaga.objects.filter(candidatos__in=Candidato.objects.filter(status='B')).distinct().order_by('cargo__nome')
         itens = {}
         for item in vagas:
             itens[item.cargo.nome] = item.id
