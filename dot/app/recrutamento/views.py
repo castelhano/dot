@@ -133,10 +133,16 @@ def cadastro_site(request):
             return render(request, 'recrutamento/site.html',{'form':form,'status':'ERROR'})
         vagas = None
     else:
-        view = ''
+        status = ''
         form = CandidatoForm()
         vagas = Vaga.objects.filter(visivel=True, quantidade__gt=0)
-    return render(request, 'recrutamento/site.html', {'form':form, 'vagas':vagas})
+        try: # Carrega conficuracoes do app
+            settings = Settings.objects.all().get()
+        except: # Caso nao gerado configuracoes iniciais carrega definicoes basicas
+            settings = Settings()        
+        if not vagas.exists():
+            status = 'SEMVAGAS'
+    return render(request, 'recrutamento/site.html', {'form':form, 'vagas':vagas, 'status':status, 'mostrar_quantidade_vagas':settings.exibir_quantidade_vagas_site})
 
 
 

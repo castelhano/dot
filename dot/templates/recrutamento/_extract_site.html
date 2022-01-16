@@ -4,9 +4,14 @@
 </div>
 {% elif status == 'ERROR' %}
 <div class="col-md-12 text-center">
-  <p class="display-6"><b class="text-danger">Erro:</b> o cadastro não concluido. Verifique os campos digitados.</p>
+  <p class="display-6"><b class="text-danger">Erro:</b> o cadastro não foi concluido. Verifique os campos digitados.</p>
+</div>
+{% elif status == 'SEMVAGAS' %}
+<div class="col-md-12 text-center">
+  <p class="h2"><b class="text-warning">Informativo:</b> No momento não temos nenhuma vaga em aberto, você pode tentar novamente no futuro ou enviar seu curriculo para nosso setor de recursos humanos, dúvidas entre em contato pelo ńumero (00) 0000-0000.</p>
 </div>
 {% else %}
+<p class="lead text-center">Após concluir o cadastro aguarde o contato da nossa equipe de Recursos Humanos para agendamento de entrevista, dúvidas entre em contato no telefone <span class="text-nowrap">(00) 0000 - 0000</span></p>
 <div class="row">
   <div class="col-md-4 order-md-2 mb-4">
     <h4 class="d-flex justify-content-between align-items-center mb-3">
@@ -19,7 +24,9 @@
           <h6 class="my-0">{{ vaga.cargo.nome }}</h6>
           <small class="text-muted">{{ vaga.descricao|default:' ' }}</small>
         </div>
+        {% if mostrar_quantidade_vagas %}
         <span class="text-muted">{{ vaga.quantidade }}</span>
+        {% endif %}
       </li>
       {% empty %}
       <li class="list-group-item d-flex justify-content-between lh-condensed">
