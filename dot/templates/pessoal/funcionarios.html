@@ -47,6 +47,7 @@
 						<th class="d-none d-lg-table-cell">Setor</th>
 						<th>Cargo</th>
 						<th class="d-none">Regime</th>
+						<th class="d-none">PNE</th>
 						<th class="d-none d-lg-table-cell">Status</th>
             {% if perms.pessoal.view_funcionario %}
             <th>&nbsp;</th>
@@ -69,6 +70,7 @@
 						<td class="d-none d-lg-table-cell">{{funcionario.cargo.setor.nome|default:'---'}}</td>
 						<td>{{funcionario.cargo.nome|default:'---'}}</td>
 						<td class="d-none">{{funcionario.get_regime_display|default:'---'}}</td>
+						<td class="d-none">{{funcionario.pne|yesno:'PNE,'}}</td>
 						<td class="d-none d-lg-table-cell{% if funcionario.status != 'A' %} bg-warning-light{% endif %}">{{funcionario.get_status_display}}</td>
             {% if perms.pessoal.view_funcionario %}
             <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'pessoal_funcionario_id' funcionario.id %}"><i class="fas fa-pen"></i></a></td>
@@ -76,7 +78,7 @@
           </tr>
           {% empty %}
           <tr>
-            <td colspan="15">Nenhum registro a exibir</td>
+            <td colspan="16">Nenhum registro a exibir</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -147,6 +149,10 @@
 								<label for="id_sexo">Sexo</label>
 							</div>
 						</div>
+            <div class="form-check form-switch my-2">
+            	<input class="form-check-input" type="checkbox" role="switch" name="pne" id="id_pne">
+            	<label class="form-check-label" for="id_pne">Somente funcionários PNE</label>
+            </div>
 					</div>
 				</div>
 				<div class="row">

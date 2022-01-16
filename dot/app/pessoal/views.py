@@ -67,6 +67,8 @@ def funcionarios(request):
         if(request.POST['status'] != ''):
             funcionarios = funcionarios.filter(status=request.POST['status'])
             validado = True
+        if 'pne' in request.POST:
+            funcionarios = funcionarios.filter(pne=True)
         if(request.POST['vencimento_cnh'] != ''):
             vencimento_cnh = request.POST['vencimento_cnh']
             funcionarios = funcionarios.filter(cnh_validade__lt=vencimento_cnh).order_by('cnh_validade')

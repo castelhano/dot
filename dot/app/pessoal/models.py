@@ -138,9 +138,10 @@ class Funcionario(Pessoa):
     data_admissao = models.DateField(blank=True, null=True, default=datetime.today)
     data_desligamento = models.DateField(blank=True, null=True)
     motivo_desligamento = models.CharField(max_length=3,choices=MOTIVOS_DESLIGAMENTO, blank=True)
+    pne = models.BooleanField(default=False)
     foto = core_ImageField(upload_to='pessoal/fotos/', blank=True)
     usuario = models.OneToOneField(User, blank=True, null=True, on_delete=models.RESTRICT)
-    status = models.CharField(max_length=3, choices=STATUS_CHOICES, default='A', blank=True)
+    status = models.CharField(max_length=3, choices=STATUS_CHOICES, default='A', blank=True)    
     def __str__(self):
         return self.matricula
     def admissao_anos(self):

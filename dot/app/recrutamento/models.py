@@ -119,6 +119,8 @@ class Selecao(models.Model):
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='recrutamento.selecao',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
+    def avaliacao_pendente(self):
+        return True if Avaliacao.objects.filter(selecao=self, status='').exists() else False
 
 class Criterio(models.Model):
     nome = models.CharField(max_length=80, blank=False)

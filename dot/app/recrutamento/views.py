@@ -46,7 +46,7 @@ def candidatos(request):
 @login_required
 @permission_required('recrutamento.view_selecao')
 def selecoes(request):
-    selecoes = Selecao.objects.all().order_by('data','candidato')
+    selecoes = Selecao.objects.all().order_by('data','hora','candidato')
     if request.method == 'POST':
         if request.POST['pesquisa'] != '':
             selecoes = selecoes.filter(candidato__nome__contains=request.POST['pesquisa'])
