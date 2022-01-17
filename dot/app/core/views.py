@@ -521,16 +521,17 @@ def get_grupos(request):
 def get_user_perms(request):
     try:
         tipo = request.GET.get('tipo',None)
+        exclude_itens = ['sessions','contenttypes','admin']
         if request.GET.get('usuario',None) != 'new':
             usuario = User.objects.get(id=request.GET.get('usuario',None))
             if tipo == 'disponiveis':
-                perms = Permission.objects.all().exclude(user=usuario).order_by('id')
+                perms = Permission.objects.all().exclude(user=usuario).exclude(content_type__app_label__in=exclude_itens).order_by('id')
             elif tipo == 'cadastrados':
-                perms = Permission.objects.all().filter(user=usuario).order_by('id')
+                perms = Permission.objects.all().filter(user=usuario).exclude(content_type__app_label__in=exclude_itens).order_by('id')
             else:
                 pass
         else:
-            perms = Permission.objects.all().exclude(content_type__app_label='sessions').exclude(content_type__app_label='contenttypes').exclude(content_type__app_label='admin').order_by('id')
+            perms = Permission.objects.all().exclude(content_type__app_label__in=exclude_itens).order_by('id')
         itens = {}
         for item in perms:
             itens[item.codename] = item.id

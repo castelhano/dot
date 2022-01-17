@@ -100,6 +100,24 @@ class Frota(models.Model):
         return self.prefixo
     def componentes_disponiveis(self):
         return Componente.objects.all().exclude(frotas=self).order_by('nome')
+    def movimentar(self, operacao, **args):
+        resp = {'A':'ATIVADO','I':'INATIVADO','M':'PARADO MANUTENCAO','F':'FORA OPERACAO'}
+        if operacao in ['A', 'I', 'M', 'F']:
+            self.status = operacao
+            return resp[operacao]
+        elif operacao == 'V':
+            resp = 'VENDA FROTA' if self.status != 'V' else 'ALTERADO DADOS VENDA'
+            self.status = 'V'
+            self.data_venda = args['data_venda']
+            self.comprador = args['comprador']
+            self.valor_venda = args['valor_venda']
+            return resp
+        elif operacao == 'CV':
+            self.status = 'A'
+            self.data_venda = None
+            self.comprador = ''
+            self.valor_venda = 0
+            return 'VENDA CANCELADA'
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='oficina.frota',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)

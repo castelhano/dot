@@ -10,6 +10,10 @@ def add_days(value, days):
     return value + datetime.timedelta(days=days)
 
 @register.filter
+def remove_char(value, char):
+    return value.replace(char,'')
+
+@register.filter
 def now_until_date(value):
     return (value - date.today()).days
 

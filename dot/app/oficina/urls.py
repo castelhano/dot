@@ -6,6 +6,7 @@ urlpatterns = [
     path('oficina_frota_add',views.frota_add,name='oficina_frota_add'),
     path('oficina_frota_id/<int:id>',views.frota_id,name='oficina_frota_id'),
     path('oficina_frota_update/<int:id>',views.frota_update,name='oficina_frota_update'),
+    path('oficina_frota_movimentar/<int:id>',views.frota_movimentar,name='oficina_frota_movimentar'),
     path('oficina_frota_delete/<int:id>/delete',views.frota_delete,name='oficina_frota_delete'),
     path('oficina_marcas',views.marcas,name='oficina_marcas'),
     path('oficina_marca_add',views.marca_add,name='oficina_marca_add'),

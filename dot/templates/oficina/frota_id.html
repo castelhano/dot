@@ -84,6 +84,66 @@
     </div>
   </div>
 </div>
+{% if perms.oficina.vender_frota %}
+<div class="modal fade" id="venda_frota_modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="row">
+        <div class="col"><h5 class="ms-3 mt-3"><i class="fas fa-money-check-alt text-danger me-2"></i> Venda de Frota</h5></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'oficina_frota_movimentar' frota.id %}?operacao=V" method="POST" autocomplete="off" onsubmit="return formVendaSubmit();">
+          {% csrf_token %}
+          <div class="row g-1">
+            <div class="form-floating mb-1 col-12">
+              <input type="date" class="form-control bg-light" name="data_venda" id="id_data_venda" value="{% if not frota.data_venda %}{%now 'Y-m-d' %}{% else %}{{frota.data_venda|date:'Y-m-d'}}{% endif %}" required>
+              <label for="id_data_venda">Data Venda</label>
+            </div>
+          </div>
+          <div class="row g-1">
+            <div class="form-floating mb-1 col-lg-12">
+              <input type="text" name="comprador" class="form-control bg-light" id="id_comprador" value="{{frota.comprador}}" required>
+              <label for="id_comprador">Comprador</label>
+            </div>
+          </div>
+          <div class="row g-1">
+            <div class="form-floating mb-1 col-lg-12">
+              <input type="text" class="form-control bg-light" name="valor_venda" id="id_valor_venda" value="{{frota.valor_venda|default:0|safe}}">
+              <label for="id_valor_venda">Valor Venda</label>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col text-end">
+              <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
+              <button type="submit" class="btn btn-danger">Gravar</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="cancelar_venda_modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="row">
+        <div class="col"><h5 class="ms-3 mt-3"><i class="fas fa-exclamation-triangle text-danger me-2"></i> Cancelar Venda</h5></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      </div>
+      <div class="modal-body">
+        <p><b class="text-danger">Atenção:</b> Este processo não pode ser desfeito, os atuais dados da venda serão perdidos, confirma operação?</p>
+        <div class="row mt-2">
+          <div class="col text-end">
+            <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Voltar</a>
+            <a class="btn btn-danger" href="{% url 'oficina_frota_movimentar' frota.id %}?operacao=CV">Confirmar</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
 {% include "_component/modal/loading.html" with message='Configurando Frota....' %}
 {% endblock%}
 
@@ -95,8 +155,16 @@
   {% block add_script %}
   VMasker(document.getElementById("id_renavan")).maskNumber();
   VMasker(document.getElementById("id_placa")).maskPattern('AAA-9S99');
+  VMasker(document.getElementById("id_valor_venda")).maskMoney();
   
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
-  function submitForm(){options = selecionados.options;for(i=0; i < options.length; i++){options[i].selected = "true";}modal_loading.show();return true;}
-  {% endblock %}
+  function showModalLoading(){modal_loading.show();}
+  function formVendaSubmit(){
+    document.getElementById('venda_frota_modal').style.display = 'none';
+    showModalLoading();
+    document.getElementById('id_valor_venda').value = parseFloat(document.getElementById('id_valor_venda').value.replace('.','').replace(',','.'));
+    return true;
+  }
+  function submitForm(){options = selecionados.options;for(i=0; i < options.length; i++){options[i].selected = "true";}showModalLoading();return true;}
+{% endblock %}
 </script>

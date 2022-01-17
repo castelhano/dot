@@ -36,6 +36,7 @@
   VMasker(document.getElementById("id_placa")).maskPattern('AAA-9S99');
   
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
-  function submitForm(){options = selecionados.options;for(i=0; i < options.length; i++){options[i].selected = "true";}modal_loading.show();return true;}
+  function showModalLoading(){modal_loading.show();}
+  function submitForm(){options = selecionados.options;for(i=0; i < options.length; i++){options[i].selected = "true";}showModalLoading();return true;}
   {% endblock %}
 </script>

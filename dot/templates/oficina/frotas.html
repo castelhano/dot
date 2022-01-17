@@ -32,7 +32,7 @@
     <div class="tab-pane fade{% if frotas %} show active{% endif %}" id="base" role="tabpanel">
       <table id="main_table" class="table border table-striped table-hover">
         <thead>
-          <tr class="{% if frota.status == 'V' %} table-danger{% elif frota.status != 'A' %} table-warning{% endif %}">
+          <tr>
             <th class="d-none">#</th>
             <th class="d-none d-lg-table-cell">Empresa</th>
             <th>Prefixo</th>
@@ -53,7 +53,7 @@
         </thead>
         <tbody>
           {% for frota in frotas %}
-          <tr>
+          <tr class="{% if frota.status == 'V' %} table-danger{% elif frota.status != 'A' %} table-warning{% endif %}">
             <td class="d-none">{{frota.id}}</td>
             <td class="d-none d-lg-table-cell">{{frota.empresa.nome}}</td>
             <td>{{frota.prefixo}}</td>
@@ -73,7 +73,7 @@
           </tr>
           {% empty %}
           <tr>
-            <td colspan="2">Nenhum registro a exibir</td>
+            <td colspan="14">Nenhum registro a exibir</td>
           </tr>
           {% endfor %}
         </tbody>
