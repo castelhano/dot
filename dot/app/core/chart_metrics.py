@@ -1,6 +1,7 @@
 class backgrounds():
     danger = 'rgba(255, 99, 132, 0.6)'
     info = 'rgba(54, 162, 235, 0.6)'
+    success = 'rgba(25, 135, 84, 0.6)'
     warning = 'rgba(255, 206, 86, 0.6)'
     purple = 'rgba(111, 66, 193, 0.6)'
 
@@ -8,6 +9,7 @@ class borders():
     danger = 'rgba(255, 99, 132, 1)'
     info = 'rgba(54, 162, 235, 1)'
     warning = 'rgba(255, 206, 86, 1)'
+    success = 'rgba(25, 135, 84, 0.8)'
     purple = 'rgba(111, 66, 193, 0.5)'
 
 MONTH_NAME = {

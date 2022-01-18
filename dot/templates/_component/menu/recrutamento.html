@@ -8,12 +8,12 @@
   </ul>
 </li>
 {% if perms.recrutamento.view_candidato %}<li class="nav-item"><a class="nav-link" id="menu_candidatos" href="{% url 'recrutamento_candidatos' %}" title="ALT + D"><b>B</b>anco</a></li>{% endif %}
-{% if perms.recrutamento.view_selecao %}<li class="nav-item me-lg-2"><a class="nav-link" id="menu_selecao" href="{% url 'recrutamento_selecoes' %}" title="ALT + S">Sel<b>e</b>ção</a></li>{% endif %}
+{% if perms.recrutamento.view_selecao %}<li class="nav-item me-lg-2"><a class="nav-link" id="app_root" href="{% url 'recrutamento_selecoes' %}" title="ALT + S">Sel<b>e</b>ção</a></li>{% endif %}
 <script>
   var SHORTCUT_MAP = {
     'cTFF':'#menu_cadastro',
     'bTFF':'#menu_candidatos',
-    'eTFF':'#menu_selecao',
+    'eTFF':'#app_root',
   };
   // if(document.getElementById('cadastro_list_options').childElementCount == 0){document.getElementById('cadastro_list_container').classList.add('d-none');}
   function eventHandler(e){

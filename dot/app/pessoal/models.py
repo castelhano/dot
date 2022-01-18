@@ -66,10 +66,9 @@ class Pessoa(models.Model):
         else:
             return True
     def idade(self):
-        if self.data_nascimento != None:
-            diferenca = date.today() - self.data_nascimento
-            idade = (diferenca.days + diferenca.seconds/86400)/365.2425
-            return math.floor(idade)
+        if self.data_nascimento:
+            hoje = date.today()
+            return hoje.year - self.data_nascimento.year - ((hoje.month, hoje.day) < (self.data_nascimento.month, self.data_nascimento.day))
         else:
             return ''
     class Meta:

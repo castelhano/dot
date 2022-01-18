@@ -27,7 +27,7 @@
           <li><a class="dropdown-item pointer" onclick="filter('periodo_analise_dias', 90)">03 meses</a></li>
           <li><a class="dropdown-item dropdown-item-danger pointer" onclick="filter('periodo_analise_dias', 'all')">Todo periodo</a></li>
         </ul>
-        <a class="btn btn-sm btn-dark" data-bs-toggle="collapse" href="#adicional_filters" role="button"><i class="fas fa-caret-down"></i></a>
+        <a id="adicional_filters_link" class="btn btn-sm btn-dark" data-bs-toggle="collapse" href="#adicional_filters" role="button"><i class="fas fa-caret-down"></i></a>
       </div>
     </div>
     
@@ -157,6 +157,8 @@
 
 <script>
   {% block add_script %}
+  
+  SHORTCUT_MAP['fFFF'] = '#adicional_filters_link';
   
   var ctx = document.getElementById('banco_evolucao');
   var barChart = new Chart(ctx, {

@@ -10,12 +10,12 @@
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
-      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a id="candidato_tab_link" class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
       <li class="nav-item"><a id="search" class="nav-link" data-bs-toggle="tab" data-bs-target="#filter" href="#" onclick="setTimeout(function(){document.getElementById('id_pesquisa').focus();},220);"><i class="fas fa-filter"></i></a></li>
       {% if perms.recrutamento.add_candidato %}
       <li class="nav-item"><a class="nav-link border ms-1" id="add" href="{% url 'recrutamento_candidato_add' %}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
       {% endif %}
-      <li class="nav-item"><a class="nav-link border ms-1" href="{% url 'recrutamento_candidato_dashboard' %}" title="Dashboard Banco Candidatos"><i class="fas fa-chart-pie text-purple"></i></a></li>
+      <li class="nav-item"><a class="nav-link border ms-1" href="{% url 'recrutamento_candidato_dashboard' %}" title="Dashboard Banco Candidatos"><i class="fas fa-chart-bar text-purple"></i></a></li>
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
         <ul class="dropdown-menu">
@@ -98,6 +98,9 @@
 
 <script>
   {% block add_script %}
+  
+  SHORTCUT_MAP['1FTF'] = '#candidato_tab_link';
+  
   function carregaVagas() {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {

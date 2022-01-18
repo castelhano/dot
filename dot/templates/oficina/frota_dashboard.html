@@ -1,0 +1,192 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% load tag_extra %}
+{% block title %}Dashboard - Frota{% endblock %}
+{% block model %}Oficina{% endblock %}
+{% block navbar_classlist %}navbar-dark bg-success bg-gradient{% endblock %}
+{% block model_menu %}{% include "_component/menu/oficina.html" %}{% endblock%}
+{% block content_fluid %}
+
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-chart-line"></i></a></li>
+      <li class="nav-item ms-auto"><a class="btn btn-sm btn-secondary" id="clear" href="{% url 'oficina_frota_dashboard' %}">Limpar</a></li>
+    </ul>
+  </div>
+  <div class="card-body tab-content">
+    <div class="d-flex justify-content-between">
+      <div><h5 class="card-title mb-3"><span class="d-none d-lg-inline">Dashboard: </span><b class="text-success">Frota</b></h5></div>
+      <div class="dropdown">
+        <button class="btn btn-sm btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown">Simulado: <b>{{metrics.data_simulada|date:'d/m/y'}}</b></button>
+        <ul class="dropdown-menu fs-7">
+          <li>
+            <div class="row g-1">
+              <div class="col px-2">
+                <input type="date" class="form-control" name="data_simulacao" value="{{metrics.data_simulada|date:'Y-m-d'}}" onchange="filter('data_simulada', this.value)">
+              </div>
+            </div>
+          </li>
+        </ul>
+        <a id="adicional_filters_link" class="btn btn-sm btn-dark" data-bs-toggle="collapse" href="#adicional_filters" role="button"><i class="fas fa-caret-down"></i></a>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col collapse mb-2" id="adicional_filters">
+        <div class=" d-flex flex-row">
+          <div class="dropdown">
+            <button class="btn btn-sm btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown">Empresa: <b>{{metrics.empresa_nome|default:'Todas'}}</b></button>
+            <ul class="dropdown-menu fs-7" id="id_cargos">
+              <li><a class="dropdown-item" href="{% url 'oficina_frota_dashboard' %}?modelo=">Todos</a></li>
+            </ul>
+          </div>
+          <div class="dropdown ms-1">
+            <button class="btn btn-sm btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown">Resumo: <b>{{metrics.resumo_por_display|default:'Aniversario'}}</b></button>
+            <ul class="dropdown-menu fs-7" id="id_cargos">
+              <li><a class="dropdown-item pointer" onclick="filter('resumo_por','aniversario')">Aniversario</a></li>
+              <li><a class="dropdown-item pointer" onclick="filter('resumo_por','ano_fabricacao')">Ano Fabricacao</a></li>
+              <li><a class="dropdown-item pointer" onclick="filter('resumo_por','ano_modelo')">Ano Modelo</a></li>
+            </ul>
+          </div>
+        </div>        
+      </div>
+    </div>
+    
+    <div class="tab-pane fade show active" id="base" role="tabpanel">
+      <div class="row">
+        <div class="col-lg-3 mb-2">
+          <div class="card text-center bg-success text-light">
+            <div class="card-header">Frota Ativa</div>
+            <div class="body py-3"><h1>{{metrics.frota_ativa|default:0}}</h1></div>            
+          </div>
+        </div>
+        <div class="col-lg-3 mb-2">
+          <div class="card text-center bg-success text-light">
+            <div class="card-header">Idade Média {% if metrics.idade_frota_ignorada|length > 0 %}<i class="fas fa-info-circle ms-2" title="Existem carros sem dados cadastrados"></i>{% endif %}</div>
+            <div class="body py-3"><h1>{{metrics.idade_media|floatformat:1}}</h1></div>
+          </div>
+        </div>
+        <div class="col-lg-6 mb-2">
+          <div class="card text-center bg-success text-light">
+            <div class="card-header">
+              <div class="row">
+                <div class="col">Oficina</div>
+                <div class="col">F Operação</div>
+                <div class="col">Parados</div>
+              </div>
+            </div>
+            <div class="body p-3">
+              <div class="row">
+                <div class="col"><h1>{{metrics.frota_oficina|default:0}}</h1></div>
+                <div class="col"><h1>{{metrics.frota_fora_operacao|default:0}}</h1></div>
+                <div class="col"><h1>{{metrics.frota_oficina|add:metrics.frota_fora_operacao}} <sup class="fs-4">( {{metrics.frota_parada_percentual|default:'---'}}% )</sup></h1></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- ROW 2 | DETALHAMENTO  -->
+      <div class="row">
+        
+        <div class="col-lg-9 order-2 order-lg-1">
+          <div class="border rounded"><canvas id="frota_idade" style="height: 450px;"></canvas></div>
+        </div>
+        
+        <div class="col-lg order-1 order-lg-2 mb-2 mb-lg-0">
+          <div class="row g-1">
+            {% for k, v in metrics.componentes.items %}
+            <div class="col-6">
+              <div class="card text-center bg-light">
+                <div class="card-header">{{k}}</div>
+                <div class="card-body">
+                  <div class="row g-0">
+                    <div class="col-6 fs-5 text-nowrap">{{v}}</div>
+                    <div class="col-6 fs-5 text-nowrap">{{v|percentual:metrics.frota_ativa|floatformat:0}}%</div>
+                  </div>
+                </div>              
+              </div>
+            </div>
+            {% endfor %}
+          </div>          
+        </div>        
+      </div>
+      <div class="row mt-2">
+        {% for marca in metrics.marcas %}
+        <div class="col-lg-3">
+          <div class="card bg-light">
+            <div class="card-header text-center">{{marca}}</div>
+            <div class="card-body">
+              {% for modelo in metrics.marcas.marca.items %}
+              <div class="row"><div class="col">{{modelo}}</div><div class="col-auto text-end">{{marca.items.modelo|zfill:2}}</div><div class="col-auto text-end" style="width: 80px;"></div></div>
+              {% endfor %}
+            </div>              
+          </div>
+        </div>
+        {% endfor %}
+        
+      </div>
+    </div>
+  </div>
+  {% if metrics.idade_frota_ignorada|length > 0 %}
+  <div class="row"><div class="col px-4 pb-2">Sem dados: <span class="badge bg-dark ms-2">{{metrics.idade_frota_ignorada|length}}</span>
+    {% for row in metrics.idade_frota_ignorada %}
+    <span class="badge bg-danger">{{row}}</span>
+    {% endfor %}
+  </div></div>
+  {% endif %}
+</div>
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/vendor/chart.min.js' %}"></script>
+<script src="{% static 'js/update_url.js' %}"></script>
+{% endblock %}
+
+
+<script>
+  {% block add_script %}
+  
+  SHORTCUT_MAP['fFFF'] = '#adicional_filters_link';
+  
+  var ctx = document.getElementById('frota_idade');
+  var barChart = new Chart(ctx, {
+    // line bar horizontalBar pie doughnut
+    type: 'bar',
+    data: {
+      labels: {{ metrics.frota_idade.categorias|safe }},
+      datasets: [{
+        label: 'Qtde',
+        data: {{ metrics.frota_idade.dados }},
+        backgroundColor: {{ metrics.frota_idade.bgcolors|safe }},
+        borderColor: {{ metrics.frota_idade.bordercolors|safe }},
+        fill: false,
+        borderWidth: 1
+      }]
+    },
+    options: {
+      maintainAspectRatio: false,
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
+      },
+      title: {
+        display: true,
+        text: 'Frota Ativa - {{metrics.resumo_por_display}}',
+        fontSize: 18,
+        position: 'top'
+      },
+      legend: {
+        display: false,
+        // labels: {
+        // fontColor: 'rgb(108, 117, 125)',
+        // fillStyle: 'rgb(255, 255, 255)'
+        // }
+      }
+    }
+  });
+  {% endblock %}
+</script>

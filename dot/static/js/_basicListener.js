@@ -26,6 +26,7 @@ document.addEventListener('keydown', (e) => {
   else if ((e.ctrlKey) && (e.which === _BAR)) {e.preventDefault();try{document.getElementById('search').click();}catch(e){}}
   else if ((e.altKey) && (e.which === KEY_D)) {e.preventDefault();try{document.getElementById('download').click();}catch(e){}}
   else if ((e.altKey) && (e.which === KEY_I)) {e.preventDefault();try{document.getElementById('home').click();}catch(e){}}
+  else if ((e.altKey) && (e.key === '.')) {e.preventDefault();try{document.getElementById('app_root').click();}catch(e){}}
   else if ((e.altKey) && (e.which === KEY_M)) {e.preventDefault();try{document.getElementById('messages').click();}catch(e){}}
   else if ((e.altKey) && (e.which === KEY_S)) {e.preventDefault();try{document.getElementById('system').click();}catch(e){}}
 	// 2) ETAPA

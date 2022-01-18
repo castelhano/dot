@@ -11,11 +11,12 @@
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
-      <li class="nav-item"><a id="frota_tab_link" class="nav-link{% if frotas %} active{% endif %}" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a id="frota_tab_link" class="nav-link{% if frotas %} active{% endif %}" data-bs-toggle="tab" data-bs-target="#base" href="#" title="CTRL + 1"><i class="fas fa-list"></i></a></li>
       <li class="nav-item"><a id="search" class="nav-link{% if not frotas %} active{% endif %}" data-bs-toggle="tab" data-bs-target="#filter" href="#" onclick="setTimeout(function(){document.getElementById('id_pesquisa').focus();},220);" title="CTRL + /"><i class="fas fa-filter"></i></a></li>
       {% if perms.oficina.add_frota %}
       <li class="nav-item ms-1"><a class="nav-link border" id="add" href="{% url 'oficina_frota_add' %}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
       {% endif %}
+      <li class="nav-item ms-1"><a class="nav-link border" href="{% url 'oficina_frota_dashboard' %}" title="Resumo Frota Ativa"><i class="fas fa-chart-bar text-purple"></i></a></li>
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
         <ul class="dropdown-menu">

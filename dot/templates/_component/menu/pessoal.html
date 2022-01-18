@@ -2,7 +2,7 @@
   <a class="nav-link dropdown-toggle" id="menu_cadastro" href="#" data-bs-toggle="dropdown" title="ALT + C"><b>C</b>adastro</a>
   <ul class="dropdown-menu dropdown-menu-dark" id="cadastro_list_options">
     {% if perms.pessoal.view_funcionario %}
-    <li><a class="dropdown-item" id="cadastro_funcionario" href="{% url 'pessoal_funcionarios' %}"><b>F</b>uncionário</a></li>
+    <li><a class="dropdown-item" id="app_root" href="{% url 'pessoal_funcionarios' %}"><b>F</b>uncionário</a></li>
     {% endif %}
     {% if perms.pessoal.view_setor %}
     <li><a class="dropdown-item" id="cadastro_setor" href="{% url 'pessoal_setores' %}"><b>S</b>etor</a></li>
@@ -26,7 +26,7 @@
     else{
       let cadastro = false;
       try{cadastro = document.getElementById('menu_cadastro').classList.contains('show') ? true : false;}catch(err){}
-      if(cadastro && e.key.toLowerCase() == 'f'){e.preventDefault();document.getElementById('cadastro_funcionario').click();}
+      if(cadastro && e.key.toLowerCase() == 'f'){e.preventDefault();document.getElementById('app_root').click();}
       else if(cadastro && e.key.toLowerCase() == 's'){e.preventDefault();document.getElementById('cadastro_setor').click();}
       else if(cadastro && e.key.toLowerCase() == 'c'){e.preventDefault();document.getElementById('cadastro_cargo').click();}
       else if(cadastro && e.key.toLowerCase() == 'x'){e.preventDefault();document.getElementById('cadastro_funcaofixa').click();}
