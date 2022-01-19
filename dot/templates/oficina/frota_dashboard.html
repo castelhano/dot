@@ -80,7 +80,7 @@
               <div class="row">
                 <div class="col"><h1>{{metrics.frota_oficina|default:0}}</h1></div>
                 <div class="col"><h1>{{metrics.frota_fora_operacao|default:0}}</h1></div>
-                <div class="col"><h1>{{metrics.frota_oficina|add:metrics.frota_fora_operacao}} <sup class="fs-4">( {{metrics.frota_parada_percentual|default:'---'}}% )</sup></h1></div>
+                <div class="col"><h1>{{metrics.frota_oficina|add:metrics.frota_fora_operacao}} <sup class="fs-4">( {{metrics.frota_parada_percentual}}% )</sup></h1></div>
               </div>
             </div>
           </div>
@@ -113,7 +113,7 @@
       </div>
       <div class="row mt-2">
         {% for key, value in metrics.marcas.items %}
-        <div class="col-lg-3">
+        <div class="col-lg-3 mb-1 mb-lg-0">
           <div class="card bg-light">
             <div class="card-header text-center">{{key}} <span class="float-end fs-7"><span class="fw-bold">{{metrics.marcas_sum|dict_value:key|zfill:2}}</span> - <span>{{metrics.marcas_sum|dict_value:key|percentual:metrics.frota_ativa|floatformat:0}}%</span></span></div>
             <div class="card-body fs-7">
@@ -129,8 +129,15 @@
     </div>
   </div>
   {% if metrics.idade_frota_ignorada|length > 0 %}
-  <div class="row"><div class="col px-4 pb-2">Sem dados: <span class="badge bg-dark ms-2">{{metrics.idade_frota_ignorada|length}}</span>
+  <div class="row"><div class="col px-4 pb-2"><label style="width: 130px;">Sem aniversário:</label><span class="badge bg-dark ms-1">{{metrics.idade_frota_ignorada|length}}</span>
     {% for row in metrics.idade_frota_ignorada %}
+    <span class="badge bg-danger">{{row}}</span>
+    {% endfor %}
+  </div></div>
+  {% endif %}
+  {% if metrics.modelo_frota_ignorada|length > 0 %}
+  <div class="row"><div class="col px-4 pb-2"><label style="width: 130px;">Sem modelo:</label><span class="badge bg-dark ms-1">{{metrics.modelo_frota_ignorada|length}}</span>
+    {% for row in metrics.modelo_frota_ignorada %}
     <span class="badge bg-danger">{{row}}</span>
     {% endfor %}
   </div></div>

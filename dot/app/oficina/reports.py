@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from .models import Frota, Componente
+from core.models import Empresa
 from datetime import date, datetime, timedelta
 from django.db.models import F
 from core.chart_metrics import backgrounds as bg, borders as bc, MONTH_ABBR as m, COLORS as color
@@ -18,26 +19,30 @@ def frota_dashboard(request):
     frota = Frota.objects.all().exclude(status__in=['V', 'I']).order_by('prefixo')
     
     if request.GET.get('empresa', None):
-        if request.user.is_superuser or request.user.profile.empresas.filter(id=request.GET.get('empresa', None)):
-            frota = frota.filter(empresa__id=request.GET.get('empresa', None))
-        else:
-            messages.error(request,'Empresa <b>não habilitada</b> para o seu usuário')
+        try:
+            if request.user.is_superuser:
+                empresa = Empresa.objects.get(id=request.GET.get('empresa', None))
+            else:
+                empresa = request.user.profile.empresas.filter(id=request.GET.get('empresa', None)).get()
+        except:
+            messages.error(request,'Empresa <b>não encontrada</b> ou <b>não habilitada</b> para o seu usuário')
             return redirect('oficina_frota_dashboard')
+        frota = frota.filter(empresa=empresa)
     else:
-        if not request.user.is_superuser:
-            frota = frota.filter(empresa__id__in=request.user.profile.empresas.all())
-    
+        frota = frota.filter(empresa__in=request.user.profile.empresas.all())
+        
+        
     componentes = Componente.objects.filter(frota_componentes__in=frota).annotate(qtde=Count('nome')).order_by('nome')
     componentes_metrics = {}
     for row in componentes:
         componentes_metrics[row.nome] = row.qtde
     
     if not request.GET.get('resumo_por', None) or request.GET.get('resumo_por', None) == 'aniversario':
-        frota_idade = frota.exclude(aniversario=None).annotate(ano=TruncYear('aniversario')).values('ano').annotate(total=Count('ano'))
+        frota_idade = frota.exclude(aniversario=None).annotate(ano=TruncYear('aniversario')).values('ano').annotate(total=Count('ano')).order_by()
     elif request.GET.get('resumo_por', None) == 'ano_fabricacao':
-        frota_idade = frota.exclude(ano_fabricacao=None).annotate(ano=F('ano_fabricacao')).values('ano').annotate(total=Count('ano'))
+        frota_idade = frota.exclude(ano_fabricacao=None).annotate(ano=F('ano_fabricacao')).values('ano').annotate(total=Count('ano')).order_by()
     elif request.GET.get('resumo_por', None) == 'ano_modelo':
-        frota_idade = frota.exclude(ano_modelo=None).annotate(ano=F('ano_modelo')).values('ano').annotate(total=Count('ano'))
+        frota_idade = frota.exclude(ano_modelo=None).annotate(ano=F('ano_modelo')).values('ano').annotate(total=Count('ano')).order_by()
     else:
         messages.error(request,'Opção de resumo <b>inválida</b>')
     
@@ -52,6 +57,7 @@ def frota_dashboard(request):
     soma_idade_frota = 0
     qtde_idade_frota = 0
     idade_frota_ignorada = []
+    modelo_frota_ignorada = []
     marcas = dict()
     marcas_sum = dict()
     for f in frota: # Percore a frota para calculo da idade media e resumo das marcas e modelos
@@ -65,6 +71,8 @@ def frota_dashboard(request):
             else:
                 marcas_sum[f.modelo.marca.nome] = 1
                 marcas[f.modelo.marca.nome] = {f.modelo.nome:1}
+        else:
+            modelo_frota_ignorada.append(f.prefixo)
         # *********************************************** 
         if request.GET.get('resumo_por', None) == 'ano_fabricacao' and f.ano_fabricacao:
             soma_idade_frota += f.idade_ano_fabricacao(data_simulada)
@@ -85,12 +93,14 @@ def frota_dashboard(request):
         frota_idade_metrics['bordercolors'].append(bc.success)
     metrics = {
         'data_simulada':data_simulada,
+        'empresa_nome':'Todas' if not request.GET.get('empresa', None) else Empresa.objects.get(id=request.GET.get('empresa', None)).nome,
         'resumo_por_display':request.GET.get('resumo_por', None).replace('_', ' ').title() if request.GET.get('resumo_por', None) else 'Aniversario',
         'frota_ativa':frota.count(),
         'frota_oficina':frota.filter(status='M').count(),
         'frota_fora_operacao':frota.filter(status='F').count(),
         'frota_idade':frota_idade_metrics,
         'idade_frota_ignorada':idade_frota_ignorada,
+        'modelo_frota_ignorada':modelo_frota_ignorada,
         'idade_media':soma_idade_frota / qtde_idade_frota if qtde_idade_frota > 0 else '---',
         'marcas':marcas,
         'marcas_sum':marcas_sum,
