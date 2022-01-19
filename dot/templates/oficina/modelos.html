@@ -33,6 +33,7 @@
       <table id="main_table" class="table border table-striped table-hover">
         <thead>
           <tr>
+            <th>#</th>
             <th>Modelo</th>
             <th class="d-none d-sm-table-cell">Marca</th>
             <th class="d-none d-sm-table-cell">Ativos</th>
@@ -44,6 +45,7 @@
         <tbody>
           {% for modelo in modelos %}
           <tr>
+            <td>{{modelo.id}}</td>
             <td>{{modelo.nome}}</td>
             <td class="d-none d-sm-table-cell">{{modelo.marca.nome}}</td>
             <td class="d-none d-sm-table-cell">{{modelo.ativos}}</td>

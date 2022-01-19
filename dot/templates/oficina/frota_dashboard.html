@@ -7,7 +7,7 @@
 {% block model_menu %}{% include "_component/menu/oficina.html" %}{% endblock%}
 {% block content_fluid %}
 
-<div class="card mt-2">
+<div class="card mt-2 mb-5">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-chart-line"></i></a></li>
@@ -37,8 +37,8 @@
         <div class=" d-flex flex-row">
           <div class="dropdown">
             <button class="btn btn-sm btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown">Empresa: <b>{{metrics.empresa_nome|default:'Todas'}}</b></button>
-            <ul class="dropdown-menu fs-7" id="id_cargos">
-              <li><a class="dropdown-item" href="{% url 'oficina_frota_dashboard' %}?modelo=">Todos</a></li>
+            <ul class="dropdown-menu fs-7" id="id_empresa">
+              <li><a class="dropdown-item" href="{% url 'oficina_frota_dashboard' %}?empresa=">Todos</a></li>
             </ul>
           </div>
           <div class="dropdown ms-1">
@@ -63,8 +63,8 @@
         </div>
         <div class="col-lg-3 mb-2">
           <div class="card text-center bg-success text-light">
-            <div class="card-header">Idade Média {% if metrics.idade_frota_ignorada|length > 0 %}<i class="fas fa-info-circle ms-2" title="Existem carros sem dados cadastrados"></i>{% endif %}</div>
-            <div class="body py-3"><h1>{{metrics.idade_media|floatformat:1}}</h1></div>
+            <div class="card-header">Idade Média {% if metrics.idade_frota_ignorada|length > 0 %}<i class="fas fa-info-circle ms-2" title="Existem carros sem dados cadastrados" style="cursor: help;"></i>{% endif %}</div>
+            <div class="body py-3"><h1>{{metrics.idade_media|floatformat:1|default:"---"}}</h1></div>
           </div>
         </div>
         <div class="col-lg-6 mb-2">
@@ -112,15 +112,15 @@
         </div>        
       </div>
       <div class="row mt-2">
-        {% for marca in metrics.marcas %}
+        {% for key, value in metrics.marcas.items %}
         <div class="col-lg-3">
           <div class="card bg-light">
-            <div class="card-header text-center">{{marca}}</div>
-            <div class="card-body">
-              {% for modelo in metrics.marcas.marca.items %}
-              <div class="row"><div class="col">{{modelo}}</div><div class="col-auto text-end">{{marca.items.modelo|zfill:2}}</div><div class="col-auto text-end" style="width: 80px;"></div></div>
+            <div class="card-header text-center">{{key}} <span class="float-end fs-7"><span class="fw-bold">{{metrics.marcas_sum|dict_value:key|zfill:2}}</span> - <span>{{metrics.marcas_sum|dict_value:key|percentual:metrics.frota_ativa|floatformat:0}}%</span></span></div>
+            <div class="card-body fs-7">
+              {% for k, v in value.items %}
+              <div class="row"><div class="col">{{k}}</div><div class="col-auto text-end">{{v|zfill:2}}</div><div class="col-auto text-end" style="width: 80px;">{{v|percentual:metrics.frota_ativa|floatformat:0}}%</div></div>
               {% endfor %}
-            </div>              
+            </div>
           </div>
         </div>
         {% endfor %}
@@ -188,5 +188,43 @@
       }
     }
   });
+  
+  
+  function carregaEmpresas() {
+  	var xhttp = new XMLHttpRequest();
+  	xhttp.onreadystatechange = function() {
+  		if(this.readyState == 4 && this.status == 200){
+  			if(this.responseText == ''){}
+  			else{
+  				let obj = JSON.parse(this.responseText);
+  				empresas = document.getElementById("id_empresa");
+  				for(key in obj){empresas.innerHTML += `<li><a class="dropdown-item pointer" onclick="filter('empresa','${obj[key]}')">${key}</a></li>`;}
+  			}
+  		}
+  	};
+  	xhttp.open("GET", "{% url 'core_get_empresas' %}", true);
+  	xhttp.send();
+  }
+  carregaEmpresas();
+  
+  
+  
+  function carregaSetores() {
+  	var xhttp = new XMLHttpRequest();
+  	xhttp.onreadystatechange = function() {
+  		if(this.readyState == 4 && this.status == 200){
+  			if(this.responseText == ''){}
+  			else{
+  				let obj = JSON.parse(this.responseText);
+  				setores = document.getElementById("id_setor")
+  				for(key in obj){setores.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
+  			}
+  		}
+  	};
+  	xhttp.open("GET", "url", true);
+  	xhttp.send();
+  }
+  
+  
   {% endblock %}
 </script>
