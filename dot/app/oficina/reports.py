@@ -29,8 +29,8 @@ def frota_dashboard(request):
             return redirect('oficina_frota_dashboard')
         frota = frota.filter(empresa=empresa)
     else:
-        frota = frota.filter(empresa__in=request.user.profile.empresas.all())
-        
+        if not request.user.is_superuser:
+            frota = frota.filter(empresa__in=request.user.profile.empresas.all())
         
     componentes = Componente.objects.filter(frota_componentes__in=frota).annotate(qtde=Count('nome')).order_by('nome')
     componentes_metrics = {}

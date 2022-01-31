@@ -635,3 +635,18 @@ def get_criterios(request):
         return HttpResponse(dataJSON)
     except:
         return HttpResponse('')
+
+def get_agendamentos(request):
+    try:
+        data = request.GET.get('data_agendamento', date.today())
+        if not data == 'hoje':
+            agenda = Selecao.objects.filter(data=data).order_by('hora')
+        else:
+            agenda = Selecao.objects.filter(data=date.today()).order_by('hora')
+        itens = {}
+        for item in agenda:
+            itens[item.id] = f'{item.data.strftime("%d/%m/%Y")};{item.hora.strftime("%H:%M")};{item.vaga.cargo.nome};{item.candidato.nome};{item.candidato.fone1};{item.candidato.fone2}'
+        dataJSON = dumps(itens)
+        return HttpResponse(dataJSON)
+    except:
+        return HttpResponse('')

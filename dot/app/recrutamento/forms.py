@@ -3,14 +3,14 @@ from .models import Candidato, Selecao, Vaga, Criterio, Settings
 from pessoal.models import Cargo
 from django.core.exceptions import ValidationError
 from pessoal.validators import cpf_valid
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 class SelecaoForm(forms.ModelForm):
     class Meta:
         model = Selecao
         fields = ['candidato','data','hora','vaga','arquivar']
-    data = forms.DateField(error_messages={'required': 'Informe uma data'},initial=date.today(),widget=forms.TextInput(attrs={'class':'form-control','type':'date','placeholder':''}))
-    hora = forms.TimeField(required=False, initial=datetime.now().strftime('%H:%M'), widget=forms.TextInput(attrs={'class':'form-control','type':'time', 'placeholder':''}))
+    data = forms.DateField(error_messages={'required': 'Informe uma data'},initial=date.today() + timedelta(1),widget=forms.TextInput(attrs={'class':'form-control','type':'date','placeholder':''}))
+    hora = forms.TimeField(required=False, initial='08:00', widget=forms.TextInput(attrs={'class':'form-control','type':'time', 'placeholder':''}))
     arquivar = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch', 'tabindex':'-1'}))
     
 

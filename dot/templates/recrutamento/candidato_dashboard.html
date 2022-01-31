@@ -12,6 +12,7 @@
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-chart-line"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'recrutamento_selecoes' %}"><i class="fas fa-undo"></i></a></li>
       <li class="nav-item ms-auto"><a class="btn btn-sm btn-secondary" id="clear" href="{% url 'recrutamento_candidato_dashboard' %}">Limpar</a></li>
       <!-- <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" data-bs-target="#param" href="#"><i class="fas fa-filter"></i></a></li> -->
     </ul>
@@ -27,7 +28,7 @@
           <li><a class="dropdown-item pointer" onclick="filter('periodo_analise_dias', 90)">03 meses</a></li>
           <li><a class="dropdown-item dropdown-item-danger pointer" onclick="filter('periodo_analise_dias', 'all')">Todo periodo</a></li>
         </ul>
-        <a id="adicional_filters_link" class="btn btn-sm btn-dark" data-bs-toggle="collapse" href="#adicional_filters" role="button"><i class="fas fa-caret-down"></i></a>
+        <a id="adicional_filters_link" class="btn btn-sm btn-dark" data-bs-toggle="collapse" href="#adicional_filters" role="button" title="Filtros [ F ]"><i class="fas fa-caret-down"></i></a>
       </div>
     </div>
     
@@ -212,7 +213,7 @@
         }
       }
     };
-    xhttp.open("GET", "{% url 'recrutamento_get_cargos_banco' %}", true);
+    xhttp.open("GET", "{% url 'recrutamento_get_vagas' %}?ocultos=True&vazios=True", true);
     xhttp.send();
   }
   carregaCargosBanco();

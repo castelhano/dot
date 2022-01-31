@@ -33,4 +33,5 @@ urlpatterns = [
     path('recrutamento_get_vagas',views.get_vagas,name='recrutamento_get_vagas'),
     path('recrutamento_get_cargos_banco',views.get_cargos_banco,name='recrutamento_get_cargos_banco'),
     path('recrutamento_get_criterios',views.get_criterios,name='recrutamento_get_criterios'),
+    path('recrutamento_get_agendamentos',views.get_agendamentos,name='recrutamento_get_agendamentos'),
 ]

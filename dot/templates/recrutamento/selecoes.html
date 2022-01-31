@@ -11,8 +11,10 @@
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
-      <li class="nav-item"><a id="selecoes_tab_list" class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a id="selecoes_tab_list" class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#" title="Ctrl + 1"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a id="agenda_tab_list" class="nav-link" data-bs-toggle="tab" data-bs-target="#agenda" href="#" title="Ctrl + 2"><i class="fas fa-calendar"></i></a></li>
       <li class="nav-item"><a class="nav-link" id="search" data-bs-toggle="tab" data-bs-target="#filter" href="#" onclick="setTimeout(function(){document.getElementById('id_pesquisa').focus();},220);"><i class="fas fa-filter"></i></a></li>
+      <li class="nav-item"><a class="nav-link border ms-1" href="{% url 'recrutamento_candidato_dashboard' %}" title="Dashboard Banco Candidatos"><i class="fas fa-chart-bar text-purple"></i></a></li>
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
         <ul class="dropdown-menu">
@@ -64,6 +66,33 @@
         </tbody>
       </table>
     </div>
+    <div class="tab-pane fade" id="agenda" role="tabpanel">
+      <div class="row g-1">
+      	<div class="form-floating mb-1 col-lg-4">
+      		<input type="date" class="form-control" id="id_data_agendamento" name="data_agendamento" value="{% now 'Y-m-d' %}" onchange="carregaAgenda()">
+      		<label for="id_data_agendamento">Data</label>
+      	</div>
+      </div>
+      <div class="row mt-1">
+        <div class="col-12">
+          <table class="table border table-striped table-hover caption-top">
+            <caption>Agendados do dia: <span class="badge bg-dark ms-1" id="total_agendamentos_dia"></span></caption>
+            <thead>
+              <tr>
+                <th class="d-none">Data</th>
+                <th>Hora</th>
+                <th class="d-none d-lg-table-cell">Vaga</th>
+                <th>Candidato</th>
+                <th class="d-none d-lg-table-cell">Fone 1</th>
+                <th class="d-none d-lg-table-cell">Fone 2</th>
+                <th class="">&nbsp;</th>
+              </tr>
+            </thead>
+            <tbody id="agendamentos_body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
     <div class="tab-pane fade" id="filter" role="tabpanel">
       <form id="filter_form" action="{% url 'recrutamento_selecoes' %}" method="POST" autocomplete="off">
         {% csrf_token %}
@@ -106,6 +135,7 @@
 <script>
   {% block add_script %}
   SHORTCUT_MAP['1FTF'] = '#selecoes_tab_list';
+  SHORTCUT_MAP['2FTF'] = '#agenda_tab_list';
   
   function carregaCargos() {
     var xhttp = new XMLHttpRequest();
@@ -123,5 +153,31 @@
     xhttp.send();
   }
   carregaCargos();
+  
+  function carregaAgenda(loading_page=false) {
+  	if(loading_page){var data_agendamento = 'hoje';}
+  	else{var data_agendamento = document.getElementById('id_data_agendamento').value;}
+    var xhttp = new XMLHttpRequest();
+  	xhttp.onreadystatechange = function() {
+  		if(this.readyState == 4 && this.status == 200){
+        agendamentos = document.getElementById("agendamentos_body");
+        total_agendamentos_dia = document.getElementById("total_agendamentos_dia");
+  			if(this.responseText == '{}'){total_agendamentos_dia.innerHTML = '0';agendamentos.innerHTML = '<tr><td colspan="6">Nenhum agendamento</td></tr>';}
+  			else{
+  				let obj = JSON.parse(this.responseText);
+  				agendamentos.innerHTML = '';
+  				for(key in obj){
+            let dados = obj[key].split(';')
+            let action = ``;
+            agendamentos.innerHTML += `<tr><td class="d-none">${dados[0]}</td><td>${dados[1]}</td><td class="d-none d-lg-table-cell">${dados[2]}</td><td>${dados[3]}</td><td class="d-none d-lg-table-cell">${dados[4]}</td><td class="d-none d-lg-table-cell">${dados[5]}</td><td class="text-end fit py-1"><a class="btn btn-sm btn-dark{% if not perms.recrutamento.change_selecao %} disabled{% endif %}" href="recrutamento_selecao_id/${key}"><i class="fas fa-pen"></a></td></tr>`;
+          }
+          total_agendamentos_dia.innerHTML = Object.keys(obj).length;
+  			}
+  		}
+  	};
+  	xhttp.open("GET", "{% url 'recrutamento_get_agendamentos' %}?data_agendamento=" + data_agendamento, true);
+  	xhttp.send();
+  }
+  carregaAgenda(true);
   {% endblock %}
 </script>

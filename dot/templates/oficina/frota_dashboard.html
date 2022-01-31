@@ -129,7 +129,7 @@
     </div>
   </div>
   {% if metrics.idade_frota_ignorada|length > 0 %}
-  <div class="row"><div class="col px-4 pb-2"><label style="width: 130px;">Sem aniversário:</label><span class="badge bg-dark ms-1">{{metrics.idade_frota_ignorada|length}}</span>
+  <div class="row"><div class="col px-4 pb-2"><label style="width: 130px;">Sem dados:</label><span class="badge bg-dark ms-1">{{metrics.idade_frota_ignorada|length}}</span>
     {% for row in metrics.idade_frota_ignorada %}
     <span class="badge bg-danger">{{row}}</span>
     {% endfor %}
