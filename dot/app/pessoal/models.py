@@ -166,6 +166,7 @@ class Funcionario(Pessoa):
                 return [False,'<b class="text-danger">Erro: </b> <b>Conflito de data</b> com outro(s) afastamento(s)']
             if afastamento.data_retorno != None and  Afastamento.objects.filter(funcionario=self,data_afastamento__lte=afastamento.data_retorno, data_retorno=None).exclude(id=afastamento.id).exists(): # Valida conflito com afastamento ainda sem data de retorno
                 return [False,'<b class="text-danger">Erro: </b> <b>Conflito de data</b> com outro(s) afastamento(s)']
+            self.status = 'F'
             return [True]
         except:
             return [False, '<b class="text-danger">Erro: </b> ao afastar funcionário']

@@ -181,6 +181,7 @@ def afastamento_add(request, id):
                 resp = registro.funcionario.afastar(registro)
                 if resp[0]:
                     registro.save()
+                    registro.funcionario.save()
                     l = Log()
                     l.modelo = "pessoal.afastamento"
                     l.objeto_id = registro.id
@@ -325,29 +326,29 @@ def afastamento_update(request,id):
     afastamento = Afastamento.objects.get(pk=id)
     form = AfastamentoForm(request.POST, instance=afastamento)
     if form.is_valid():
-        # try:
-        registro = form.save(commit=False)
-        resp = registro.funcionario.afastar(registro, True)
-        if resp[0]:
-            registro.save()
-            if registro.funcionario.status == 'F' and not Afastamento.objects.filter(funcionario=registro.funcionario, data_retorno=None).exists():
-                registro.funcionario.status = 'A'
-                registro.funcionario.save()
-            elif registro.funcionario.status == 'A' and Afastamento.objects.filter(funcionario=registro.funcionario, data_retorno=None).exists():
-                registro.funcionario.status = 'F'
-                registro.funcionario.save()
-            l = Log()
-            l.modelo = "pessoal.afastamento"
-            l.objeto_id = registro.id
-            l.objeto_str = registro.funcionario.matricula + ' - ' + registro.funcionario.nome[0:48]
-            l.usuario = request.user
-            l.mensagem = 'UPDATE'
-            l.save()
-            messages.success(request, f'Afastamento atualizado')
-        else:
-            messages.warning(request, resp[1])
-        # except:
-        #     messages.error(request, 'Erro ao atualizar afastamento')
+        try:
+            registro = form.save(commit=False)
+            resp = registro.funcionario.afastar(registro, True)
+            if resp[0]:
+                registro.save()
+                if registro.funcionario.status == 'F' and not Afastamento.objects.filter(funcionario=registro.funcionario, data_retorno=None).exists():
+                    registro.funcionario.status = 'A'
+                    registro.funcionario.save()
+                elif registro.funcionario.status == 'A' and Afastamento.objects.filter(funcionario=registro.funcionario, data_retorno=None).exists():
+                    registro.funcionario.status = 'F'
+                    registro.funcionario.save()
+                l = Log()
+                l.modelo = "pessoal.afastamento"
+                l.objeto_id = registro.id
+                l.objeto_str = registro.funcionario.matricula + ' - ' + registro.funcionario.nome[0:48]
+                l.usuario = request.user
+                l.mensagem = 'UPDATE'
+                l.save()
+                messages.success(request, f'Afastamento atualizado')
+            else:
+                messages.warning(request, resp[1])
+        except:
+            messages.error(request, 'Erro ao atualizar afastamento')
         return redirect('pessoal_afastamento_id', id)
     else:
         return render(request,'pessoal/afastamento_id.html',{'form':form,'afastamento':afastamento})
@@ -435,6 +436,9 @@ def afastamento_delete(request,id):
     try:
         registro = Afastamento.objects.get(pk=id)
         id_funcionario = registro.funcionario.id
+        if registro.funcionario.status == 'F' and not Afastamento.objects.filter(funcionario=registro.funcionario, data_retorno=None).exclude(id=registro.id).exists():
+            registro.funcionario.status = 'A'
+            registro.funcionario.save()
         l = Log()
         l.modelo = "pessoal.afastamento"
         l.objeto_id = registro.id

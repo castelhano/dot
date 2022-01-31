@@ -54,7 +54,7 @@
         </ul>
         <ul class="navbar-nav ms-auto">
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle pt-1" id="system" href="#" data-bs-toggle="dropdown" title="ALT + S"><span class="d-none d-sm-inline">{{user.first_name}} {{user.last_name}}</span><span class="d-inline d-sm-none">{{user.first_name.0}}{{user.last_name.0}}</span></a>
+            <a class="nav-link dropdown-toggle pt-1 fw-bold" id="system" href="#" data-bs-toggle="dropdown" title="ALT + S">{{user.username|title}}</a>
             <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end mt-1" id="user_list_options">
               <li><a class="dropdown-item pointer" id="shortcut_link_list" data-bs-toggle="modal" data-bs-target="#shortcut_modal"><i class="fas fa-keyboard me-2" style="width:15px"></i> <b>A</b>talhos Console</a></li>
               <li><a class="dropdown-item" id="docs_link" href="{% url 'docs' %}"><i class="fas fa-terminal me-2" style="width:15px"></i> <b>D</b>ocumentação</a></li>

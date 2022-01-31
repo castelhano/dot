@@ -45,7 +45,7 @@
 						<th class="d-none">CNH</th>
 						<th class="d-none">Validade</th>
 						<th class="d-none d-lg-table-cell">Setor</th>
-						<th>Cargo</th>
+						<th class="d-none d-sm-table-cell">Cargo</th>
 						<th class="d-none">Regime</th>
 						<th class="d-none">PNE</th>
 						<th class="d-none d-lg-table-cell">Status</th>
@@ -68,7 +68,7 @@
 						<td class="d-none">{{funcionario.cnh}}</td>
 						<td class="d-none">{{funcionario.cnh_validade|date:'d/m/Y'}}</td>
 						<td class="d-none d-lg-table-cell">{{funcionario.cargo.setor.nome|default:'---'}}</td>
-						<td>{{funcionario.cargo.nome|default:'---'}}</td>
+						<td class="d-none d-sm-table-cell">{{funcionario.cargo.nome|default:'---'}}</td>
 						<td class="d-none">{{funcionario.get_regime_display|default:'---'}}</td>
 						<td class="d-none">{{funcionario.pne|yesno:'PNE,'}}</td>
 						<td class="d-none d-lg-table-cell{% if funcionario.status != 'A' %} bg-warning-light{% endif %}">{{funcionario.get_status_display}}</td>

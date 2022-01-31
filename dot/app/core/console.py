@@ -32,10 +32,12 @@ def runScript(request, attrs):
     if '!execute=True' in attrs:
         code = re.search(':code=([^\s]+)', attrs).group(1)
         response = f'<span><b class="text-orange">Alert:</b> Code <b>{code}</b> not configured</span>'
-        # if code == '666':
-        #     from recrutamento.models import Settings
-        #     qtde = Settings.objects.all().delete()
-        #     response = f'<span><b class="text-success">Done:</b> Purge {qtde[0]} settings from recrutamento</span>'
+        if code == '666':
+            from pessoal.models import Funcionario
+            func = Funcionario.objects.get(matricula='10120')
+            func.status = 'A'
+            func.save()
+            response = f'<span><b class="text-success">Done:</b></span>'
     return response
 
 def alertaClean(request, attrs):
