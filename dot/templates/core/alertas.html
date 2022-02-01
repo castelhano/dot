@@ -39,14 +39,14 @@
         <tbody>
           {% for alerta in alertas %}
           <tr>
-            <td>{{alerta.id}}</td>
+            <td>{{alerta.id|safe}}</td>
             <td class="fw-bold">{{alerta.usuario.username}}</td>
             <td>{{alerta.titulo|truncatechars:20}}</td>
             <td>{{alerta.create_at|date:'d/m/y H:i'}}</td>
             <td class="text-orange fw-bold">{{alerta.critico|yesno:'Crítico,'}}</td>
             <td class="text-primary fw-bold">{{alerta.lido|yesno:'Lido,'}}</td>
             <td class="{% if lido %}text-success fw-bold{% endif %}">{{alerta.lido_at|date:'d/m/y H:i'}}</td>
-            <td class="text-end fit py-1"><a class="btn btn-sm bg-warning" href="{% url 'core_alerta_id' alerta.id %}"><i class="fas fa-eye"></i></a></td>
+            <td class="text-end fit py-1"><a class="btn btn-sm bg-warning" href="{% url 'core_alerta_id' alerta.id|safe%}"><i class="fas fa-eye"></i></a></td>
           </tr>
           {% empty %}
           <tr>

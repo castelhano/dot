@@ -13,7 +13,7 @@
   </ul>
 </li>
 <li id="gestao_list_container" class="nav-item dropdown">
-  <a class="nav-link dropdown-toggle" id="menu_relatorios" href="#" data-bs-toggle="dropdown" title="ALT + T">Ges<b>t</b>ão</a>
+  <a class="nav-link dropdown-toggle" id="menu_relatorios" href="#" data-bs-toggle="dropdown" title="ALT + T">G<b>e</b>stão</a>
   <ul id="gestao_list_options" class="dropdown-menu dropdown-menu-dark">
     {% if perms.core.view_alerta %}
     <li><a class="dropdown-item" id="relatorio_alertas" href="{% url 'core_alertas' %}"><b>A</b>lertas</a></li>
@@ -24,7 +24,7 @@
 <script>
   var SHORTCUT_MAP = {
     'cTFF':'#menu_cadastro',
-    'tTFF':'#menu_relatorios',
+    'eTFF':'#menu_relatorios',
   };
   if(document.getElementById('cadastro_list_options').childElementCount == 0){document.getElementById('cadastro_list_container').classList.add('d-none');}
   if(document.getElementById('gestao_list_options').childElementCount == 0){document.getElementById('gestao_list_container').classList.add('d-none');}

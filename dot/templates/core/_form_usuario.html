@@ -186,7 +186,7 @@
         }
       }
     };
-    xhttp.open("GET", "{% url 'core_get_grupos' %}?tipo=disponiveis&usuario={% if 'usuario_add' in request.get_full_path %}new{% else %}{{usuario.id}}{% endif%}", true);
+    xhttp.open("GET", "{% url 'core_get_grupos' %}?tipo=disponiveis&usuario={% if 'usuario_add' in request.get_full_path %}new{% else %}{{usuario.id|safe}}{% endif%}", true);
     xhttp.send();
   }
   carregaGruposDisponiveis();
@@ -203,7 +203,7 @@
         }
       }
     };
-    xhttp.open("GET", "{% url 'core_get_empresas' %}?tipo=disponiveis&usuario={% if 'usuario_add' in request.get_full_path %}new{% else %}{{usuario.id}}{% endif%}", true);
+    xhttp.open("GET", "{% url 'core_get_empresas' %}?tipo=disponiveis&usuario={% if 'usuario_add' in request.get_full_path %}new{% else %}{{usuario.id|safe}}{% endif%}", true);
     xhttp.send();
   }
   carregaEmpresasDisponiveis();
@@ -220,7 +220,7 @@
         }
       }
     };
-    xhttp.open("GET", "{% url 'core_get_user_perms' %}?tipo=disponiveis&usuario={% if 'usuario_add' in request.get_full_path %}new{% else %}{{usuario.id}}{% endif%}", true);
+    xhttp.open("GET", "{% url 'core_get_user_perms' %}?tipo=disponiveis&usuario={% if 'usuario_add' in request.get_full_path %}new{% else %}{{usuario.id|safe}}{% endif%}", true);
     xhttp.send();
   }
   carregaPermsDisponiveis();
@@ -239,7 +239,7 @@
         }
       }
     };
-    xhttp.open("GET", "{% url 'core_get_grupos' %}?tipo=cadastrados&usuario={{usuario.id}}", true);
+    xhttp.open("GET", "{% url 'core_get_grupos' %}?tipo=cadastrados&usuario={{usuario.id|safe}}", true);
     xhttp.send();
   }
   carregaGruposSelecionados();
@@ -256,7 +256,7 @@
         }
       }
     };
-    xhttp.open("GET", "{% url 'core_get_empresas' %}?tipo=cadastrados&usuario={{usuario.id}}", true);
+    xhttp.open("GET", "{% url 'core_get_empresas' %}?tipo=cadastrados&usuario={{usuario.id|safe}}", true);
     xhttp.send();
   }
   carregaEmpresasSelecionadas();
@@ -273,7 +273,7 @@
         }
       }
     };
-    xhttp.open("GET", "{% url 'core_get_user_perms' %}?tipo=cadastrados&usuario={{usuario.id}}", true);
+    xhttp.open("GET", "{% url 'core_get_user_perms' %}?tipo=cadastrados&usuario={{usuario.id|safe}}", true);
     xhttp.send();
   }
   carregaPermsSelecionados();

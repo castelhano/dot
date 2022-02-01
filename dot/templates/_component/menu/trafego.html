@@ -1,0 +1,22 @@
+<li id="cadastro_list_container" class="nav-item dropdown">
+  <a class="nav-link dropdown-toggle" id="menu_cadastro" href="#" data-bs-toggle="dropdown" title="ALT + C"><b>C</b>adastro</a>
+  <ul id="cadastro_list_options" class="dropdown-menu dropdown-menu-dark">
+    {% if perms.trafego.view_linha %}<li><a class="dropdown-item" id="app_root" href="{% url 'trafego_linhas' %}"><b>L</b>inha</a></li>{% endif %}
+    {% if perms.trafego.view_localidade %}<li><a class="dropdown-item" id="cadastro_localidade" href="{% url 'trafego_localidades' %}">L<b>o</b>calidade</a></li>{% endif %}
+  </ul>
+</li>
+<script>
+  var SHORTCUT_MAP = {
+    'cTFF':'#menu_cadastro',
+  };
+  if(document.getElementById('cadastro_list_options').childElementCount == 0){document.getElementById('cadastro_list_container').classList.add('d-none');}
+  function eventHandler(e){
+    {% include '_component/script/global_handler.js' %}
+    else{
+      let cadastro = false;
+      try{cadastro = document.getElementById('menu_cadastro').classList.contains('show') ? true : false;}catch(err){}
+      if(cadastro && e.key.toLowerCase() == 'l'){e.preventDefault();document.getElementById('app_root').click();}
+      else if(cadastro && e.key.toLowerCase() == 'o'){e.preventDefault();document.getElementById('cadastro_localidade').click();}
+    }
+  }
+</script>

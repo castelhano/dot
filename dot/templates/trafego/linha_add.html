@@ -1,0 +1,43 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Linha{% endblock %}
+{% block model %}Tráfego{% endblock %}
+{% block navbar_classlist %}navbar-dark bg-primary bg-gradient{% endblock %}
+{% block model_menu %}{% include "_component/menu/trafego.html" %}{% endblock%}
+<style media="screen">
+  {% block style %}
+  @media(min-width: 992px){
+    .codigo_container{width: 150px;}
+  }
+  {% endblock %}
+</style>
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'trafego_linha_add' %}"></a>
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a id="tab_link_base" class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-road"></i></a></li>
+      <li class="nav-item"><a id="tab_link_extensoes" class="nav-link" data-bs-toggle="tab" data-bs-target="#extensoes" href="#"><i class="fas fa-pencil-ruler"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'trafego_linhas' %}"><i class="fas fa-undo"></i></a></li>
+    </ul>
+  </div>
+  <form id="app_form" action="{% url 'trafego_linha_add' %}" method="POST" autocomplete="off" onsubmit="return submitForm();">
+    {% csrf_token %}
+    {% include 'trafego/_form_linha.html' %}
+  </form>
+</div>
+
+{% include "_component/modal/loading.html" with message='Configurando linha e patamares....' %}
+{% endblock%}
+
+{% block add_script_src %}{% endblock %}
+
+<script>
+  {% block add_script %}
+  
+  var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
+  function submitForm(){modal_loading.show();return true;}
+  
+  {% endblock %}
+</script>

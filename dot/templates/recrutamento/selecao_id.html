@@ -5,7 +5,7 @@
 {% block navbar_classlist %}navbar-dark bg-purple bg-gradient{% endblock %}
 {% block model_menu %}{% include "_component/menu/recrutamento.html" %}{% endblock%}
 {% block content_fluid %}
-<a class="d-none" id="clear" href="{% url 'recrutamento_selecao_id' selecao.id %}"></a>
+<a class="d-none" id="clear" href="{% url 'recrutamento_selecao_id' selecao.id|safe%}"></a>
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
@@ -18,10 +18,10 @@
         <a class="nav-link" id="menu_selecao_extras" data-bs-toggle="dropdown" href="#"><i class="fas fa-caret-down text-dark"></i></a>
         <ul class="dropdown-menu">
           {% if selecao.resultado == '' %}
-          <li><a class="dropdown-item" href="{% url 'recrutamento_selecao_movimentar' selecao.id %}?operacao=aprovar">Aprovar</a></li>
-          <li><a class="dropdown-item" href="{% url 'recrutamento_selecao_movimentar' selecao.id %}?operacao=reprovar">Reprovar</a></li>
+          <li><a class="dropdown-item" href="{% url 'recrutamento_selecao_movimentar' selecao.id|safe%}?operacao=aprovar">Aprovar</a></li>
+          <li><a class="dropdown-item" href="{% url 'recrutamento_selecao_movimentar' selecao.id|safe%}?operacao=reprovar">Reprovar</a></li>
           {% else %}
-          <li><a class="dropdown-item dropdown-item-danger" href="{% url 'recrutamento_selecao_movimentar' selecao.id %}?operacao=retornar">Retornar</a></li>
+          <li><a class="dropdown-item dropdown-item-danger" href="{% url 'recrutamento_selecao_movimentar' selecao.id|safe%}?operacao=retornar">Retornar</a></li>
           {% endif %}
         </ul>
       </li>
@@ -37,7 +37,7 @@
       </li>
     </ul>
   </div>
-  <form id="recrutamento_form" action="{% url 'recrutamento_selecao_update' selecao.id %}" method="POST" autocomplete="off">
+  <form id="recrutamento_form" action="{% url 'recrutamento_selecao_update' selecao.id|safe%}" method="POST" autocomplete="off">
     {% csrf_token %}
     {% include 'recrutamento/_form_selecao.html' %}
   </form>
@@ -73,7 +73,7 @@
         <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
       </div>
       <div class="modal-body">
-        <form id="recrutamento_form" action="{% url 'recrutamento_avaliacao_add' selecao.id %}" method="POST" autocomplete="off">
+        <form id="recrutamento_form" action="{% url 'recrutamento_avaliacao_add' selecao.id|safe%}" method="POST" autocomplete="off">
           {% csrf_token %}
           <div class="row g-1">
             <div class="form-floating mb-1 col-12">
@@ -142,7 +142,7 @@
 <script>
   {% block add_script %}
   
-  document.getElementById('id_vaga').innerHTML = '<option value="{{selecao.vaga.id}}">{{selecao.vaga.cargo.nome}}</option>';
+  document.getElementById('id_vaga').innerHTML = '<option value="{{selecao.vaga.id|safe}}">{{selecao.vaga.cargo.nome}}</option>';
   function carregaCriterios() {
   	var xhttp = new XMLHttpRequest();
   	xhttp.onreadystatechange = function() {

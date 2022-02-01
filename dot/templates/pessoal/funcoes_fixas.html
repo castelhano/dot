@@ -44,10 +44,10 @@
         <tbody>
           {% for funcaofixa in funcoes_fixas %}
           <tr>
-            <td>{{funcaofixa.id}}</td>
+            <td>{{funcaofixa.id|safe}}</td>
             <td>{{funcaofixa.get_nome_display}}</td>
             {% if perms.pessoal.change_funcaofixa %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'pessoal_funcao_fixa_id' funcaofixa.id %}"><i class="fas fa-pen"></i></a></td>
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'pessoal_funcao_fixa_id' funcaofixa.id|safe%}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
           </tr>
           {% empty %}

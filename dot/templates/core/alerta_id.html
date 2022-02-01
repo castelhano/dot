@@ -18,7 +18,7 @@
   </div>
   <div class="card-body tab-content">
     <h5 class="card-title mb-0">Detalhes Alerta</h5>
-    <p class="mb-2 fw-bold text-orange">ID: {{alerta.id}}</p>
+    <p class="mb-2 fw-bold text-orange">ID: {{alerta.id|safe}}</p>
     <div class="tab-pane fade show active" id="base" role="tabpanel">
       <div class="row">
         <div class="col-md-2">Titulo:</div><div class="col-md-10 fw-bold">{{alerta.titulo}}</div>
@@ -45,7 +45,7 @@
         <div class="row mt-2">
           <div class="col text-end">
             <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
-            <a class="btn btn-danger px-3" href="{% url 'core_alerta_delete' alerta.id %}">Excluir</a>
+            <a class="btn btn-danger px-3" href="{% url 'core_alerta_delete' alerta.id|safe%}">Excluir</a>
           </div>
         </div>
       </div>

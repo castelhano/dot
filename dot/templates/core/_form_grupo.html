@@ -62,7 +62,7 @@
   			}
   		}
   	};
-  	xhttp.open("GET", "{% url 'core_get_group_perms' %}?tipo=disponiveis&grupo={% if 'grupo_add' in request.get_full_path %}new{% else %}{{grupo.id}}{% endif%}", true);
+  	xhttp.open("GET", "{% url 'core_get_group_perms' %}?tipo=disponiveis&grupo={% if 'grupo_add' in request.get_full_path %}new{% else %}{{grupo.id|safe}}{% endif%}", true);
   	xhttp.send();
   }
   carregaPermsDisponiveis();
@@ -79,7 +79,7 @@
   			}
   		}
   	};
-  	xhttp.open("GET", "{% url 'core_get_group_perms' %}?tipo=cadastrados&grupo={{grupo.id}}", true);
+  	xhttp.open("GET", "{% url 'core_get_group_perms' %}?tipo=cadastrados&grupo={{grupo.id|safe}}", true);
   	xhttp.send();
   }
   carregaPermsCadastrados();

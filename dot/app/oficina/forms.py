@@ -1,6 +1,5 @@
 from django import forms
 from .models import Frota, Marca, Categoria, Componente, Modelo, Classificacao, Carroceria
-from core.models import Empresa
 from datetime import date
 
 

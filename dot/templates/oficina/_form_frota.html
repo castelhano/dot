@@ -11,10 +11,10 @@
             <button class="btn btn-sm {% if frota.status == 'V' %}btn-danger{% elif frota.status != 'A' %}btn-warning{% else %}btn-success{% endif %} dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-offset="3,8"{% if not perms.oficina.change_frota %} disabled{% endif %}>Status: <b class="ms-2">{{frota.get_status_display}}</b></button>
             <ul class="dropdown-menu dropdown-menu-end fs-7" id="movimentar_frota_list">
               {% if frota.status != 'V' %}
-              <li><a class="dropdown-item text-success" href="{% url 'oficina_frota_movimentar' frota.id %}?operacao=A" onclick="showModalLoading()"><i class="fas fa-check me-2"></i>Ativo</a></li>
-              <li><a class="dropdown-item" href="{% url 'oficina_frota_movimentar' frota.id %}?operacao=M" onclick="showModalLoading()"><i class="fas fa-tools text-muted me-2"></i>Em Manutenção</a></li>
-              <li><a class="dropdown-item" href="{% url 'oficina_frota_movimentar' frota.id %}?operacao=F" onclick="showModalLoading()"><i class="fas fa-history text-muted me-2"></i>Fora de Operação</a></li>
-              <li><a class="dropdown-item dropdown-item-danger" href="{% url 'oficina_frota_movimentar' frota.id %}?operacao=I" onclick="showModalLoading()"><i class="fas fa-stop me-2"></i>Inativo</a></li>
+              <li><a class="dropdown-item text-success" href="{% url 'oficina_frota_movimentar' frota.id|safe%}?operacao=A" onclick="showModalLoading()"><i class="fas fa-check me-2"></i>Ativo</a></li>
+              <li><a class="dropdown-item" href="{% url 'oficina_frota_movimentar' frota.id|safe%}?operacao=M" onclick="showModalLoading()"><i class="fas fa-tools text-muted me-2"></i>Em Manutenção</a></li>
+              <li><a class="dropdown-item" href="{% url 'oficina_frota_movimentar' frota.id|safe%}?operacao=F" onclick="showModalLoading()"><i class="fas fa-history text-muted me-2"></i>Fora de Operação</a></li>
+              <li><a class="dropdown-item dropdown-item-danger" href="{% url 'oficina_frota_movimentar' frota.id|safe%}?operacao=I" onclick="showModalLoading()"><i class="fas fa-stop me-2"></i>Inativo</a></li>
               {% endif %}
               {% if perms.oficina.vender_frota %}
               {% if frota.status != 'V' %}
@@ -127,7 +127,7 @@
           <div class="col-lg">
             <select class="form-control" id="componentes_disponiveis" style="min-height:180px;" multiple>
               {% for componente in frota.componentes_disponiveis %}
-              <option value="{{componente.id}}">{{componente.nome}}</option>
+              <option value="{{componente.id|safe}}">{{componente.nome}}</option>
               {% endfor %}
             </select>
           </div>
@@ -142,7 +142,7 @@
           <div class="col-lg">
             <select class="form-control" name="componentes" id="id_componentes" style="min-height:180px;" multiple>
               {% for componente in frota.componentes.all %}
-              <option value="{{componente.id}}">{{componente.nome}}</option>
+              <option value="{{componente.id|safe}}">{{componente.nome}}</option>
               {% endfor %}           
             </select>
           </div>
@@ -204,7 +204,7 @@
         else{
           let obj = JSON.parse(this.responseText);
           let empresas = document.getElementById("id_empresa");
-          let empresa_atual = '{{frota.empresa.id}}';
+          let empresa_atual = '{{frota.empresa.id|safe}}';
           for(key in obj){
             selected = empresa_atual == obj[key] ? ' selected' : '';
             empresas.innerHTML += `<option value="${obj[key]}"${selected}>${key}</option>`;
@@ -225,7 +225,7 @@
         else{
           let obj = JSON.parse(this.responseText);
           let marcas = document.getElementById("id_marca");
-          let marca_atual = '{{frota.modelo.marca.id}}';
+          let marca_atual = '{{frota.modelo.marca.id|safe}}';
           for(key in obj){
             selected = marca_atual == obj[key] ? ' selected' : '';
             marcas.innerHTML += `<option value="${obj[key]}"${selected}>${key}</option>`;}
@@ -250,7 +250,7 @@
             else{
               let obj = JSON.parse(this.responseText);
               let modelos = document.getElementById("id_modelo");
-              let modelo_atual = '{{frota.modelo.id}}';
+              let modelo_atual = '{{frota.modelo.id|safe}}';
               for(key in obj){
                 selected = modelo_atual == obj[key] ? ' selected' : '';
                 modelos.innerHTML += `<option value="${obj[key]}"${selected}>${key}</option>`;

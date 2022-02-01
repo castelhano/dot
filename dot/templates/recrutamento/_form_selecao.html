@@ -8,9 +8,9 @@
           <div class="form-floating mb-1 col-lg-12">
             <select class="form-select bg-light fw-bold" id="id_candidato" name="candidato">
               {% if 'selecao_id' in request.get_full_path %}
-              <option value="{{selecao.candidato.id}}" selected>{{selecao.candidato.nome}}</option>
+              <option value="{{selecao.candidato.id|safe}}" selected>{{selecao.candidato.nome}}</option>
               {% else %}
-              <option value="{{candidato.id}}" selected>{{candidato.nome}}</option>
+              <option value="{{candidato.id|safe}}" selected>{{candidato.nome}}</option>
               {% endif %}
             </select>
             <label for="id_candidato">Candidato</label>
@@ -63,7 +63,7 @@
               <td>{{avaliacao.criterio.nome}}</td>
               <td>{{avaliacao.get_status_display}}</td>
               {% if perms.recrutamento.delete_avaliacao %}
-              <td class="text-end fit py-1"><a class="text-dark px-2" href="{% url 'recrutamento_avaliacao_delete' avaliacao.id %}"><i class="fas fa-times"></i></a></td>
+              <td class="text-end fit py-1"><a class="text-dark px-2" href="{% url 'recrutamento_avaliacao_delete' avaliacao.id|safe%}"><i class="fas fa-times"></i></a></td>
               {% endif %}
             </tr>
             {% empty %}

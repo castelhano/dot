@@ -9,7 +9,7 @@
       <div class="mb-1 col-lg">
         <select class="form-control" id="cargos_disponiveis" style="min-height:180px;" multiple>
           {% for funcao_fixa in funcoes_fixas %}
-          <option value="{{funcao_fixa.id}}">{{funcao_fixa.nome}}</option>
+          <option value="{{funcao_fixa.id|safe}}">{{funcao_fixa.nome}}</option>
           {% endfor %}
         </select>
       </div>
@@ -46,7 +46,7 @@
   {% if 'funcao_fixa_add' in request.get_full_path %}
     funcao_fixa = 'new';
   {% else %}
-    funcao_fixa = {{funcao_fixa.id}};
+    funcao_fixa = {{funcao_fixa.id|safe}};
     document.getElementById('id_nome').disabled = true;
     
     function cargosCadastrados() {

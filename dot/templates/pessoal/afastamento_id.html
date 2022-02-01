@@ -7,12 +7,12 @@
 {% include "_component/menu/pessoal.html" %}
 {% endblock%}
 {% block content_fluid %}
-<a class="d-none" id="clear" href="{% url 'pessoal_afastamento_id' afastamento.id %}"></a>
+<a class="d-none" id="clear" href="{% url 'pessoal_afastamento_id' afastamento.id|safe%}"></a>
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
-      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'pessoal_afastamentos' afastamento.funcionario.id %}"><i class="fas fa-undo"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'pessoal_afastamentos' afastamento.funcionario.id|safe%}"><i class="fas fa-undo"></i></a></li>
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
         <ul class="dropdown-menu">
@@ -25,14 +25,14 @@
       </li>
     </ul>
   </div>
-  <form id="pessoal_form" action="{% url 'pessoal_afastamento_update' afastamento.id %}" method="POST" autocomplete="off">
+  <form id="pessoal_form" action="{% url 'pessoal_afastamento_update' afastamento.id|safe%}" method="POST" autocomplete="off">
     {% csrf_token %}
     <div class="card-body tab-content">
       <h5 class="card-title mb-0">Afastamento</h5>
       <p class="text-primary fw-bold">{{afastamento.funcionario.matricula}} {{afastamento.funcionario.nome}} {% if afastamento.funcionario.status == 'A' %}<span class="badge bg-success">Ativo</span>{% else %}<span class="badge bg-warning">{{afastamento.funcionario.get_status_display}}</span>{% endif %}</p>
       {% include 'pessoal/_form_afastamento.html' %}
     </div>
-    <input type="hidden" name="funcionario" value="{{afastamento.funcionario.id}}">
+    <input type="hidden" name="funcionario" value="{{afastamento.funcionario.id|safe}}">
   </form>
 </div>
 
@@ -49,7 +49,7 @@
         <div class="row mt-2">
           <div class="col text-end">
             <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
-            <a class="btn btn-danger px-3" href="{% url 'pessoal_afastamento_delete' afastamento.id %}">Excluir</a>
+            <a class="btn btn-danger px-3" href="{% url 'pessoal_afastamento_delete' afastamento.id|safe%}">Excluir</a>
           </div>
         </div>
       </div>

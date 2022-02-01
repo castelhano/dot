@@ -14,7 +14,7 @@
             <button type="button" class="btn btn-sm" data-bs-toggle="dropdown"><i class="fas fa-angle-down text-light"></i></button>
             <ul class="dropdown-menu fs-7" id="candidato_options_list">
               {% if perms.recrutamento.add_selecao  and candidato.status == 'B' %}
-              <li><a class="dropdown-item" href="{% url 'recrutamento_selecao_add' %}?candidato={{candidato.id}}">Processo Seletivo</a></li>
+              <li><a class="dropdown-item" href="{% url 'recrutamento_selecao_add' %}?candidato={{candidato.id|safe}}">Processo Seletivo</a></li>
               {% endif %}
               {% if candidato.status == 'B' or candidato.status == 'S' and perms.recrutamento.contratar_candidato %}
               <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modal_contratar" href="#">Contratar</a></li>
@@ -62,7 +62,7 @@
             <div class="col-lg">
               <select class="form-control" id="vagas_disponiveis" style="min-height:180px;" multiple>
                 {% for vaga in candidato.vagas_disponiveis %}
-                <option value="{{vaga.id}}">{{vaga.cargo.nome}}</option>
+                <option value="{{vaga.id|safe}}">{{vaga.cargo.nome}}</option>
                 {% endfor %}
               </select>
             </div>
@@ -77,7 +77,7 @@
             <div class="col-lg">
               <select class="form-control" name="vagas" id="id_vagas" style="min-height:180px;" multiple>
                 {% for vaga in candidato.vagas.all %}
-                <option value="{{vaga.id}}">{{vaga.cargo.nome}}</option>
+                <option value="{{vaga.id|safe}}">{{vaga.cargo.nome}}</option>
                 {% endfor %}
               </select>
             </div>

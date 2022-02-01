@@ -46,7 +46,7 @@
             <td>{{classificacao.nome}}</td>
             <td>{{classificacao.ativos}}</td>
             {% if perms.oficina.change_classificacao %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'oficina_classificacao_id' classificacao.id %}"><i class="fas fa-pen"></i></a></td>
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'oficina_classificacao_id' classificacao.id|safe%}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
           </tr>
           {% empty %}

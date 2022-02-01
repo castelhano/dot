@@ -8,14 +8,14 @@
 {% endblock%}
 
 {% block content_fluid %}
-<a class="d-none" id="clear" href="{% url 'pessoal_afastamentos' funcionario.id %}"></a>
+<a class="d-none" id="clear" href="{% url 'pessoal_afastamentos' funcionario.id|safe%}"></a>
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
-      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'pessoal_funcionario_id' funcionario.id %}"><i class="fas fa-undo"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'pessoal_funcionario_id' funcionario.id|safe%}"><i class="fas fa-undo"></i></a></li>
       {% if perms.pessoal.add_afastamento %}
-      <li class="nav-item"><a class="nav-link border" id="add" href="{% url 'pessoal_afastamento_add' funcionario.id %}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
+      <li class="nav-item"><a class="nav-link border" id="add" href="{% url 'pessoal_afastamento_add' funcionario.id|safe%}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
       {% endif %}
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
@@ -58,7 +58,7 @@
             <td class="d-none d-md-table-cell">{{afastamento.data_retorno|date:'d/m/Y'|default:'---'}}</td>
             <td class="d-none d-lg-table-cell text-primary fw-bold">{{afastamento.reabilitado|yesno:'REABILITADO,'}}</td>
             {% if perms.pessoal.change_afastamento %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'pessoal_afastamento_id' afastamento.id %}"><i class="fas fa-pen"></i></a></td>
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'pessoal_afastamento_id' afastamento.id|safe%}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
           </tr>
           {% empty %}

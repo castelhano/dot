@@ -1,6 +1,5 @@
 from django import forms
 from .models import Setor, Cargo, Funcionario, FuncaoFixa, Afastamento
-from core.models import Empresa
 from django.contrib.auth.models import User
 from datetime import date
 

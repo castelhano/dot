@@ -47,15 +47,15 @@
         <tbody>
           {% for selecao in selecoes %}
           <tr class="{% if selecao.resultado == 'A' %} table-success {% elif selecao.resultado == 'R' %} table-danger{% endif %}">
-            <td class="d-none d-lg-table-cell">{{selecao.id}}</td>
-            <td>{% if perms.recrutamento.change_candidato %}<a class="px-2" href="{% url 'recrutamento_candidato_id' selecao.candidato.id %}"><i class="fas fa-arrow-left text-primary"></i></a> {% endif %}{{selecao.candidato.nome}}</td>
+            <td class="d-none d-lg-table-cell">{{selecao.id|safe}}</td>
+            <td>{% if perms.recrutamento.change_candidato %}<a class="px-2" href="{% url 'recrutamento_candidato_id' selecao.candidato.id|safe%}"><i class="fas fa-arrow-left text-primary"></i></a> {% endif %}{{selecao.candidato.nome}}</td>
             <td class="d-none d-lg-table-cell">{{selecao.vaga.cargo.nome}}</td>
             <td class="d-none d-md-table-cell">{{selecao.data|date:'d/m/Y'}}</td>
             <td class="d-none d-md-table-cell">{{selecao.hora}}</td>
             <td class="d-none d-md-table-cell fw-bold">{{selecao.avaliacao_pendente|yesno:'Pendente,Concluido'}}</td>
             <td class="d-none d-sm-table-cell">{{selecao.get_resultado_display}}</td>
             {% if perms.recrutamento.change_selecao %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'recrutamento_selecao_id' selecao.id %}"><i class="fas fa-pen"></i></a></td>
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'recrutamento_selecao_id' selecao.id|safe%}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
           </tr>
           {% empty %}

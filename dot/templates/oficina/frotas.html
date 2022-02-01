@@ -55,7 +55,7 @@
         <tbody>
           {% for frota in frotas %}
           <tr class="{% if frota.status == 'V' %} table-danger{% elif frota.status != 'A' %} table-warning{% endif %}">
-            <td class="d-none">{{frota.id}}</td>
+            <td class="d-none">{{frota.id|safe}}</td>
             <td class="d-none d-lg-table-cell">{{frota.empresa.nome}}</td>
             <td>{{frota.prefixo}}</td>
             <td class="d-none d-lg-table-cell">{{frota.modelo.marca.nome}}</td>
@@ -69,7 +69,7 @@
             <td class="d-none">{{frota.categoria.nome}}</td>
             <td class="{% if frota.status != 'A' %}bg-warning-light{% endif %}">{{frota.get_status_display}}</td>
             {% if perms.oficina.change_frota %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'oficina_frota_id' frota.id %}"><i class="fas fa-pen"></i></a></td>
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'oficina_frota_id' frota.id|safe%}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
           </tr>
           {% empty %}

@@ -73,7 +73,7 @@
 						<td class="d-none">{{funcionario.pne|yesno:'PNE,'}}</td>
 						<td class="d-none d-lg-table-cell{% if funcionario.status != 'A' %} bg-warning-light{% endif %}">{{funcionario.get_status_display}}</td>
             {% if perms.pessoal.view_funcionario %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'pessoal_funcionario_id' funcionario.id %}"><i class="fas fa-pen"></i></a></td>
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'pessoal_funcionario_id' funcionario.id|safe%}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
           </tr>
           {% empty %}
@@ -186,7 +186,7 @@ function carregaEmpresas() {
 				}
 			}
 		};
-		xhttp.open("GET", "{% url 'core_get_empresas' %}?tipo=cadastrados&usuario={{user.id}}", true);
+		xhttp.open("GET", "{% url 'core_get_empresas' %}?tipo=cadastrados&usuario={{user.id|safe}}", true);
 		xhttp.send();
 	}
 	carregaEmpresas();

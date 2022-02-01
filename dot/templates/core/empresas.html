@@ -55,7 +55,7 @@
         <tbody>
           {% for empresa in empresas %}
           <tr>
-            <td>{{empresa.id}}</td>
+            <td>{{empresa.id|safe}}</td>
             <td>{{empresa.nome}}</td>
             <td class="d-none d-lg-table-cell">{{empresa.razao_social}}</td>
             <td class="d-none d-lg-table-cell">{{empresa.cnpj}}</td>
@@ -70,7 +70,7 @@
             <td class="d-none">{{empresa.fone}}</td>
             <td class="d-none">{{empresa.fax}}</td>
             {% if perms.core.change_empresa %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'core_empresa_id' empresa.id %}"><i class="fas fa-pen"></i></a></td>
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'core_empresa_id' empresa.id|safe%}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
           </tr>
           {% empty %}

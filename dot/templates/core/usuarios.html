@@ -52,7 +52,7 @@
             <tbody>
               {% for usuario in usuarios %}
               <tr>
-                <td class="d-none d-sm-table-cell">{{usuario.id}}</td>
+                <td class="d-none d-sm-table-cell">{{usuario.id|safe}}</td>
                 <td>{{usuario.username}}{% if usuario.is_superuser %} <sup class="badge bg-dark fs-9" title="Super Usuário">SU</sup>{% endif %}{% if usuario.is_staff %} <sup class="badge bg-primary fs-9" title="Membro de equipe">ME</sup>{% endif %}</td>
                 <td class="d-none d-md-table-cell">{{usuario.first_name}}</td>
                 <td class="d-none d-md-table-cell">{{usuario.last_name}}</td>
@@ -60,7 +60,7 @@
                 <td class="d-none d-xl-table-cell">{{usuario.last_login|date:'d/m/y H:i'}}</td>
                 {% if perms.auth.change_user %}
                 <td class="text-end fit py-1">
-                  <a class="btn btn-sm btn-dark" href="{% url 'core_usuario_id' usuario.id %}" title="Editar"><i class="fas fa-pen"></i></a>
+                  <a class="btn btn-sm btn-dark" href="{% url 'core_usuario_id' usuario.id|safe%}" title="Editar"><i class="fas fa-pen"></i></a>
                 </td>
                 {% endif %}
               </tr>

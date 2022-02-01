@@ -137,7 +137,7 @@
         <div class="col-md">
           <select class="form-control" id="vagas_disponiveis" style="min-height:180px;" multiple>
             {% for vaga in vagas %}
-            <option value="{{vaga.id}}">{{vaga.cargo.nome}}</option>
+            <option value="{{vaga.id|safe}}">{{vaga.cargo.nome}}</option>
             {% endfor %}
           </select>
         </div>

@@ -48,13 +48,13 @@
             <tbody>
               {% for vaga in vagas %}
               <tr>
-                <td class="d-none d-sm-table-cell">{{vaga.id}}</td>
+                <td class="d-none d-sm-table-cell">{{vaga.id|safe}}</td>
                 <td>{{vaga.cargo.nome}}</td>
                 <td class="d-none d-xl-table-cell">{{vaga.descricao}}</td>
                 <td class="d-none d-sm-table-cell {% if vaga.visivel %}text-success{% else %}text-danger{% endif %}">{{vaga.visivel|yesno:'Visivel,Oculta'}}</td>
                 <td>{{vaga.quantidade}}</td>
                 {% if perms.recrutamento.change_vaga %}
-                <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'recrutamento_vaga_id' vaga.id %}"><i class="fas fa-pen"></i></a></td>
+                <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'recrutamento_vaga_id' vaga.id|safe%}"><i class="fas fa-pen"></i></a></td>
                 {% endif %}
               </tr>
               {% empty %}

@@ -25,7 +25,7 @@
       </li>
     </ul>
   </div>
-  <form id="app_form" action="{% url 'core_empresa_update' empresa.id %}" method="POST" autocomplete="off">
+  <form id="app_form" action="{% url 'core_empresa_update' empresa.id|safe%}" method="POST" autocomplete="off">
     {% csrf_token %}
     {% include 'core/_form_empresa.html' %}
   </form>
@@ -44,7 +44,7 @@
         <div class="row mt-2">
           <div class="col text-end">
             <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
-            <a class="btn btn-danger px-3" href="{% url 'core_empresa_delete' empresa.id %}">Excluir</a>
+            <a class="btn btn-danger px-3" href="{% url 'core_empresa_delete' empresa.id|safe%}">Excluir</a>
           </div>
         </div>
       </div>

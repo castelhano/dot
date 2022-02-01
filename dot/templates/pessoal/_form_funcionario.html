@@ -23,9 +23,9 @@
           <div class="col-auto">
             <button type="button" class="btn btn-sm" data-bs-toggle="dropdown"><i class="fas fa-angle-down text-light"></i></button>
             <ul class="dropdown-menu fs-7">
-              <li><a class="dropdown-item" href="{% url 'pessoal_export_funcionario_csv' funcionario.id %}">Baixar CSV</a></li>
+              <li><a class="dropdown-item" href="{% url 'pessoal_export_funcionario_csv' funcionario.id|safe%}">Baixar CSV</a></li>
                 {% if perms.pessoal.view_afastamento %}
-                <li><a class="dropdown-item" href="{% url 'pessoal_afastamentos' funcionario.id %}">Afastamentos</a></li>
+                <li><a class="dropdown-item" href="{% url 'pessoal_afastamentos' funcionario.id|safe%}">Afastamentos</a></li>
                 {% endif %}
                 {% if perms.pessoal.funcionario_desligar and funcionario.status == 'A' %}
                 <li><hr class="dropdown-divider"></li>
@@ -279,7 +279,7 @@
         else{
           let obj = JSON.parse(this.responseText);
           empresas = document.getElementById("id_empresa");
-          empresa_atual = '{{funcionario.empresa.id}}';
+          empresa_atual = '{{funcionario.empresa.id|safe}}';
           for(key in obj){
             selected = empresa_atual == obj[key] ? ' selected' : '';
             empresas.innerHTML += `<option value="${obj[key]}"${selected}>${key}</option>`;

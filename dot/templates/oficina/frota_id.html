@@ -6,7 +6,7 @@
 {% block model_menu %}{% include "_component/menu/oficina.html" %}{% endblock%}
 
 {% block content_fluid %}
-<a class="d-none" id="clear" href="{% url 'oficina_frota_id' frota.id %}"></a>
+<a class="d-none" id="clear" href="{% url 'oficina_frota_id' frota.id|safe%}"></a>
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
@@ -27,7 +27,7 @@
       </li>
     </ul>
   </div>
-  <form id="oficina_form" action="{% url 'oficina_frota_update' frota.id %}" method="POST" autocomplete="off" onsubmit="return submitForm();">
+  <form id="oficina_form" action="{% url 'oficina_frota_update' frota.id|safe%}" method="POST" autocomplete="off" onsubmit="return submitForm();">
     {% csrf_token %}
     {% include 'oficina/_form_frota.html' %}
   </form>
@@ -46,7 +46,7 @@
         <div class="row mt-2">
           <div class="col text-end">
             <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
-            <a class="btn btn-danger px-3" href="{% url 'oficina_frota_delete' frota.id %}">Excluir</a>
+            <a class="btn btn-danger px-3" href="{% url 'oficina_frota_delete' frota.id|safe%}">Excluir</a>
           </div>
         </div>
       </div>
@@ -93,7 +93,7 @@
         <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
       </div>
       <div class="modal-body">
-        <form action="{% url 'oficina_frota_movimentar' frota.id %}?operacao=V" method="POST" autocomplete="off" onsubmit="return formVendaSubmit();">
+        <form action="{% url 'oficina_frota_movimentar' frota.id|safe%}?operacao=V" method="POST" autocomplete="off" onsubmit="return formVendaSubmit();">
           {% csrf_token %}
           <div class="row g-1">
             <div class="form-floating mb-1 col-12">
@@ -136,7 +136,7 @@
         <div class="row mt-2">
           <div class="col text-end">
             <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Voltar</a>
-            <a class="btn btn-danger" href="{% url 'oficina_frota_movimentar' frota.id %}?operacao=CV">Confirmar</a>
+            <a class="btn btn-danger" href="{% url 'oficina_frota_movimentar' frota.id|safe%}?operacao=CV">Confirmar</a>
           </div>
         </div>
       </div>

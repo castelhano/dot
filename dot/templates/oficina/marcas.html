@@ -46,7 +46,7 @@
             <td>{{marca.nome}}</td>
             <td>{{marca.ativos}}</td>
             {% if perms.oficina.change_marca %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'oficina_marca_id' marca.id %}"><i class="fas fa-pen"></i></a></td>
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'oficina_marca_id' marca.id|safe%}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
           </tr>
           {% empty %}
