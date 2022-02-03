@@ -7,7 +7,7 @@
     <input type="text" class="form-control" name="nome_condutor" id="id_nome_condutor" value="{{nome}}" disabled>
     <label for="id_nome_condutor">Nome Condutor</label>
   </div>
-  <input type="hidden" name="condutor" id="id_condutor" value="{{id}}">
+  <input type="hidden" name="condutor" id="id_condutor" value="{{id|safe}}">
 </div>
 <script>
   

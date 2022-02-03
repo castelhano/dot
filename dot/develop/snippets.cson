@@ -268,7 +268,7 @@
   
   'Component Empresa':
     'prefix': 'component_empresa'
-    'body':'{% include "_component/field/empresa.html" %}'
+    'body':'{% include "_component/field/empresa.html" with empresa_atual=linha.empresa.id|safe attrs=\'autofocus\' %}'
   
   'Component Linha':
     'prefix': 'component_linha'
@@ -284,7 +284,7 @@
   
   'Component Loading Modal':
     'prefix': 'component_loadding'
-    'body':'{% include "_component/modal/loading.html" with message=\'Salvando....\' background=\'\' spinner_classlist=\'\' message_classlist=\'\' %}'
+    'body':'{% include "_component/modal/loading.html" with message=\'Salvando....\' background=\'\' spinner_classlist=\'\' message_classlist=\'\' %}\nvar modal_loading = new bootstrap.Modal(document.getElementById(\'modal_loading\'), {keyboard: false});\nfunction submitForm(){modal_loading.show();return true;}'
   
   'Multiple Option Select':
     'prefix': 'form_select_multiple'

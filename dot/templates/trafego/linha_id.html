@@ -19,7 +19,7 @@
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a id="tab_link_base" class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#" title="Basico [ Ctrl + 1 ]"><i class="fas fa-road"></i></a></li>
       <li class="nav-item"><a id="tab_link_extensoes" class="nav-link" data-bs-toggle="tab" data-bs-target="#extensoes" href="#" title="Extensões [ Ctrl + 2 ]"><i class="fas fa-pencil-ruler"></i></a></li>
-      <li class="nav-item"><a class="nav-link border" id="tab_link_patamares" href="{% url 'trafego_patamares' linha.id %}" title="Patamares [ Ctrl + 3 ]"><i class="fas fa-th text-success"></i></a></li>
+      <li class="nav-item"><a class="nav-link border" id="tab_link_patamares" href="{% url 'trafego_patamares' linha.id|safe %}" title="Patamares [ Ctrl + 3 ]"><i class="fas fa-th text-success"></i></a></li>
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'trafego_linhas' %}"><i class="fas fa-undo"></i></a></li>
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>

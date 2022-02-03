@@ -1,6 +1,6 @@
 <div class="row g-1">
-	<div class="form-floating mb-1 {{breakpoint|default:'col-lg-12'}}">
-		<select class="form-select" id="id_empresa" name="empresa"></select>
+	<div class="form-floating mb-1 {{breakpoint|default:'col-lg'}}">
+		<select class="form-select" id="id_empresa" name="empresa" {{attrs}}></select>
 		<label for="id_empresa">Empresa</label>
 	</div>
 </div>
@@ -14,11 +14,12 @@
   			else{
   				let obj = JSON.parse(this.responseText);
   				empresas = document.getElementById("id_empresa");
-  				for(key in obj){empresas.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
+					empresa_atual = '{{empresa_atual}}';
+  				for(key in obj){empresas.innerHTML += `<option value="${obj[key]}" ${obj[key] == empresa_atual ? 'selected' : ''}>${key}</option>`;}
   			}
   		}
   	};
-  	xhttp.open("GET", "{% url 'core_get_empresas' %}?tipo=cadastrados&usuario={{user.id|safe}}", true);
+  	xhttp.open("GET", "{% url 'core_get_empresas' %}", true);
   	xhttp.send();
   }
   getEmpresas();

@@ -1,38 +1,39 @@
 {% extends "layout/dot.html" %}
 {% load static %}
+{% load tag_extra %}
 {% block title %}Patamares{% endblock %}
 {% block model %}Tráfego{% endblock %}
 {% block navbar_classlist %}navbar-dark bg-primary bg-gradient{% endblock %}
 {% block model_menu %}{% include "_component/menu/trafego.html" %}{% endblock%}
 
 {% block content_fluid %}
-<a class="d-none" id="clear" href="{% url 'trafego_patamares' linha.id %}"></a>
+<a class="d-none" id="clear" href="{% url 'trafego_patamares' linha.id|safe %}"></a>
 
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
-      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a class="nav-link active disabled" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'trafego_linha_id' linha.id|safe %}"><i class="fas fa-undo"></i></a></li>
     </ul>
   </div>
   <div class="card-body tab-content">
-    <h5 class="card-title mb-3">Patamares <small class="badge bg-primary ms-1">{{patamares.count}}</small></h5>
+    <h5 class="card-title mb-0">Patamares</h5>
+    <p class="fs-6 fw-bold text-primary">{{linha.codigo}} - {{linha.nome}}</p>
     <div class="tab-pane fade show active" id="base" role="tabpanel">
-      <table id="main_table" class="table border table-striped table-hover">
+      <table id="main_table" class="table table-sm table-bordered table-striped table-hover text-center" style="table-layout: fixed;">
         <thead>
           <tr>
-            <th>Nome</th>
-            {% if perms.trafego.change_patamar %}
-            <th>&nbsp;</th>
-            {% endif %}
+            <th>Faixa</th>
+            <th>Ida</th>
+            <th>Volta</th>
           </tr>
         </thead>
         <tbody>
           {% for patamar in patamares %}
           <tr>
-            <td>{{patamar.nome}}</td>
-            {% if perms.trafego.change_patamar %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="url"><i class="fas fa-pen"></i></a></td>
-            {% endif %}
+            <td>{{patamar.faixa|zfill:2}}</td>
+            <td>{{patamar.ida}}{% if perms.trafego.change_patamar %}<span class="float-end pe-1 pointer" onclick="patamarModal({{patamar.id|safe}},'I',{{patamar.ida}})"><i class="fas fa-edit"></i></span>{% endif %}</td>
+            <td>{{patamar.volta}}{% if perms.trafego.change_patamar %}<span class="float-end pe-1 pointer" onclick="patamarModal({{patamar.id|safe}},'V',{{patamar.volta}})"><i class="fas fa-edit"></i></span>{% endif %}</td>
           </tr>
           {% empty %}
           <tr>
@@ -42,33 +43,65 @@
         </tbody>
       </table>
     </div>
-    <div class="tab-pane fade" id="param" role="tabpanel">param</div>
   </div>
 </div>
 
-<div class="modal fade" id="search_modal" tabindex="-1">
+<div class="modal fade" id="modal-patamar" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="row">
-        <div class="col"><h5 class="ms-3 mt-3">Pesquisa</h5></div>
-        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="fas fa-history text-warning me-2"></i> Alterar Patamar</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
-        <form id="trafego_form" action="url" method="POST" autocomplete="off">
-          {% csrf_token %}
+      <form role="form" id="" action="{% url 'trafego_patamar_update' %}" method="POST" autocomplete="off">
+        {% csrf_token %}
+        <div class="modal-body">
           <div class="row g-1">
             <div class="form-floating mb-1 col-lg-12">
-              <input type="text" class="form-control" name="pesquisa" value="" id="id_pesquisa" placeholder="">
-              <label for="id_pesquisa">Termo pesquisa</label>
+              <input type="text" class="form-control bg-light text-end" id="id_ciclo" name="ciclo" value="">
+              <label for="id_vencido_ate">Ciclo</label>
             </div>
           </div>
-        </form>
-      </div>
+          <div class="form-check form-switch mt-2">
+          	<input class="form-check-input" type="checkbox" role="switch" name="replicar" id="id_replicar">
+          	<label class="form-check-label" for="id_replicar">Replicar alterações</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button class="btn btn-sm btn-warning" type="submit" onclick="loadingModal()">Alterar</button>
+        </div>
+        <input type="hidden" name="sentido" id="id_sentido" value="">
+        <input type="hidden" name="patamar" id="id_patamar" value="">
+      </form>
     </div>
   </div>
 </div>
+
+{% include "_component/modal/loading.html" with message='Atualizando patamares....' %}
 {% endblock%}
 
 {% block add_script_src %}
 <script src="{% static 'js/table_to_csv.js' %}"></script>
 {% endblock %}
+
+<script>
+{% block add_script %}
+
+var patamar_modal = new bootstrap.Modal(document.getElementById('modal-patamar'), {keyboard: false});
+function patamarModal(id,sentido,ciclo){
+  document.getElementById('id_sentido').value = sentido;
+  document.getElementById('id_ciclo').value = ciclo;
+  document.getElementById('id_patamar').value = id;
+  patamar_modal.show();
+  setTimeout(function(){document.getElementById('id_ciclo').select();},500);
+};
+
+function loadingModal(){
+  patamar_modal.hide();
+  var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
+  modal_loading.show();
+};
+
+{% endblock %}
+</script>
