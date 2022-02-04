@@ -7,7 +7,7 @@
 {% include "_component/menu/pessoal.html" %}
 {% endblock%}
 {% block content_fluid %}
-<a class="d-none" id="clear" href="{% url 'pessoal_setor_id' setor.id|safe%}"></a>
+<a class="d-none" id="clear" href="{% url 'pessoal_setor_id' setor.id|safe %}"></a>
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
@@ -25,7 +25,7 @@
       </li>
     </ul>
   </div>
-  <form id="pessoal_form" action="{% url 'pessoal_setor_update' setor.id|safe%}" method="POST" autocomplete="off">
+  <form id="pessoal_form" action="{% url 'pessoal_setor_update' setor.id|safe %}" method="POST" autocomplete="off">
     {% csrf_token %}
     <div class="card-body tab-content">
       <h5 class="card-title mb-3">Cadastro de Setor</h5>
@@ -47,7 +47,7 @@
         <div class="row mt-2">
           <div class="col text-end">
             <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
-            <a class="btn btn-danger px-3" href="{% url 'pessoal_setor_delete' setor.id|safe%}">Excluir</a>
+            <a class="btn btn-danger px-3" href="{% url 'pessoal_setor_delete' setor.id|safe %}">Excluir</a>
           </div>
         </div>
       </div>

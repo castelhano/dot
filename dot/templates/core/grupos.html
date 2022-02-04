@@ -49,7 +49,7 @@
                 <td>{{grupo.id|safe}}</td>
                 <td>{{grupo.name}}</td>
                 {% if perms.auth.change_group %}
-                <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'core_grupo_id' grupo.id|safe%}"><i class="fas fa-pen"></i></a></td>
+                <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'core_grupo_id' grupo.id|safe %}"><i class="fas fa-pen"></i></a></td>
                 {% endif %}
               </tr>
               {% empty %}

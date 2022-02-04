@@ -24,6 +24,10 @@ class Empresa(models.Model):
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='core.empresa',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
+    class Meta:
+        permissions = [
+            ("dashboard_empresa", "Pode usar o dashboard empresa"),
+        ]
 
 class Log(models.Model):
     data = models.DateTimeField(default=datetime.now)

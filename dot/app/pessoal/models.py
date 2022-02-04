@@ -195,6 +195,7 @@ class Funcionario(Pessoa):
             ("associar_usuario", "Pode associar usuario a funcionário"),
             ("afastar_funcionario", "Pode afastar funcionário"),
             ("desligar_funcionario", "Pode desligar funcionário"),
+            ("dashboard_funcionario", "Pode acessar dashboard pessoal"),
         ]
 
 class Afastamento(models.Model):
@@ -218,6 +219,9 @@ class Afastamento(models.Model):
     reabilitado = models.BooleanField(default=False)
     remunerado = models.BooleanField(default=False)
     detalhe = models.TextField(blank=True)
+    def ultimas_alteracoes(self):
+        logs = Log.objects.filter(modelo='pessoal.afastamento',objeto_id=self.id).order_by('-data')[:15]
+        return reversed(logs)
 
 class Dependente(models.Model):
     PARENTESCO = (
@@ -240,3 +244,12 @@ class Dependente(models.Model):
     rg_emissao = models.DateField(blank=True, null=True)
     rg_orgao_expedidor = models.CharField(max_length=15, blank=True)
     cpf = models.CharField(max_length=20,blank=True)
+    def ultimas_alteracoes(self):
+        logs = Log.objects.filter(modelo='pessoal.dependente',objeto_id=self.id).order_by('-data')[:15]
+        return reversed(logs)
+    def idade(self):
+        if self.data_nascimento:
+            hoje = date.today()
+            return hoje.year - self.data_nascimento.year - ((hoje.month, hoje.day) < (self.data_nascimento.month, self.data_nascimento.day))
+        else:
+            return ''

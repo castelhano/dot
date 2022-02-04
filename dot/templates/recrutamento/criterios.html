@@ -46,7 +46,7 @@
           <tr>
             <td>{{criterio.nome}}</td>
             {% if perms.recrutamento.change_criterio %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'recrutamento_criterio_id' criterio.id|safe%}"><i class="fas fa-pen"></i></a></td>
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'recrutamento_criterio_id' criterio.id|safe %}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
           </tr>
           {% empty %}

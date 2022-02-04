@@ -50,7 +50,7 @@
             <td>{{setor.nome}}</td>
             <td>{{setor.ativos}}</td>
             {% if perms.pessoal.change_setor %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'pessoal_setor_id' setor.id|safe%}"><i class="fas fa-pen"></i></a></td>
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'pessoal_setor_id' setor.id|safe %}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
           </tr>
           {% empty %}

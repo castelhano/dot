@@ -13,13 +13,13 @@
 </style>
 
 {% block content_fluid %}
-<a class="d-none" id="clear" href="{% url 'trafego_linha_id' linha.id|safe%}"></a>
+<a class="d-none" id="clear" href="{% url 'trafego_linha_id' linha.id|safe %}"></a>
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
-      <li class="nav-item"><a id="tab_link_base" class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#" title="Basico [ Ctrl + 1 ]"><i class="fas fa-road"></i></a></li>
-      <li class="nav-item"><a id="tab_link_extensoes" class="nav-link" data-bs-toggle="tab" data-bs-target="#extensoes" href="#" title="Extensões [ Ctrl + 2 ]"><i class="fas fa-pencil-ruler"></i></a></li>
-      <li class="nav-item"><a class="nav-link border" id="tab_link_patamares" href="{% url 'trafego_patamares' linha.id|safe %}" title="Patamares [ Ctrl + 3 ]"><i class="fas fa-th text-success"></i></a></li>
+      <li class="nav-item"><a id="tab_link_base" class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" onclick="setTimeout(function(){document.getElementById('id_empresa').focus();},220);" href="#"><i class="fas fa-road"></i></a></li>
+      <li class="nav-item"><a id="tab_link_extensoes" class="nav-link" data-bs-toggle="tab" data-bs-target="#extensoes" onclick="setTimeout(function(){document.getElementById('id_extensao_ida').focus();},220);" href="#"><i class="fas fa-pencil-ruler"></i></a></li>
+      <li class="nav-item"><a class="nav-link border ms-1" id="tab_link_patamares" href="{% url 'trafego_patamares' linha.id|safe %}" title="Patamares [ Ctrl + 3 ]"><i class="fas fa-th text-success"></i></a></li>
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'trafego_linhas' %}"><i class="fas fa-undo"></i></a></li>
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>

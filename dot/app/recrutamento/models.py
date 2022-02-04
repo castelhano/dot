@@ -121,6 +121,11 @@ class Selecao(models.Model):
         return reversed(logs)
     def avaliacao_pendente(self):
         return True if Avaliacao.objects.filter(selecao=self, status='').exists() else False
+    class Meta:
+        permissions = [
+            ("dashboard_recrutamento", "Pode acessar dashboard recrutamento"),
+        ]
+    
 
 class Criterio(models.Model):
     nome = models.CharField(max_length=80, blank=False)

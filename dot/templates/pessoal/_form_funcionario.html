@@ -23,9 +23,9 @@
           <div class="col-auto">
             <button type="button" class="btn btn-sm" data-bs-toggle="dropdown"><i class="fas fa-angle-down text-light"></i></button>
             <ul class="dropdown-menu fs-7">
-              <li><a class="dropdown-item" href="{% url 'pessoal_export_funcionario_csv' funcionario.id|safe%}">Baixar CSV</a></li>
+              <li><a class="dropdown-item" href="{% url 'pessoal_export_funcionario_csv' funcionario.id|safe %}">Baixar CSV</a></li>
                 {% if perms.pessoal.view_afastamento %}
-                <li><a class="dropdown-item" href="{% url 'pessoal_afastamentos' funcionario.id|safe%}">Afastamentos</a></li>
+                <li><a class="dropdown-item" href="{% url 'pessoal_afastamentos' funcionario.id|safe %}">Afastamentos</a></li>
                 {% endif %}
                 {% if perms.pessoal.funcionario_desligar and funcionario.status == 'A' %}
                 <li><hr class="dropdown-divider"></li>

@@ -5,7 +5,7 @@
 {% block navbar_classlist %}navbar-dark bg-success bg-gradient{% endblock %}
 {% block model_menu %}{% include "_component/menu/oficina.html" %}{% endblock%}
 {% block content_fluid %}
-<a class="d-none" id="clear" href="{% url 'oficina_modelo_id' modelo.id|safe%}"></a>
+<a class="d-none" id="clear" href="{% url 'oficina_modelo_id' modelo.id|safe %}"></a>
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
@@ -23,7 +23,7 @@
       </li>
     </ul>
   </div>
-  <form id="oficina_form" action="{% url 'oficina_modelo_update' modelo.id|safe%}" method="POST" autocomplete="off">
+  <form id="oficina_form" action="{% url 'oficina_modelo_update' modelo.id|safe %}" method="POST" autocomplete="off">
     {% csrf_token %}
     <div class="card-body tab-content">
       <h5 class="card-title mb-3">Cadastro de Modelo</h5>
@@ -64,7 +64,7 @@
         <div class="row mt-2">
           <div class="col text-end">
             <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
-            <a class="btn btn-danger px-3" href="{% url 'oficina_modelo_delete' modelo.id|safe%}">Excluir</a>
+            <a class="btn btn-danger px-3" href="{% url 'oficina_modelo_delete' modelo.id|safe %}">Excluir</a>
           </div>
         </div>
       </div>

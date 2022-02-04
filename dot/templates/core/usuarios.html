@@ -60,7 +60,7 @@
                 <td class="d-none d-xl-table-cell">{{usuario.last_login|date:'d/m/y H:i'}}</td>
                 {% if perms.auth.change_user %}
                 <td class="text-end fit py-1">
-                  <a class="btn btn-sm btn-dark" href="{% url 'core_usuario_id' usuario.id|safe%}" title="Editar"><i class="fas fa-pen"></i></a>
+                  <a class="btn btn-sm btn-dark" href="{% url 'core_usuario_id' usuario.id|safe %}" title="Editar"><i class="fas fa-pen"></i></a>
                 </td>
                 {% endif %}
               </tr>

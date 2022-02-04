@@ -142,4 +142,5 @@ class Frota(models.Model):
             ("alterar_prefixo", "Pode alterar prefixo"),
             ("vender_frota", "Pode vender frota"),
             ("movimentar_em_massa", "Pode movimentar em massa"),
+            ("dashboard_frota", "Pode usar o dashboard frota"),
         ]

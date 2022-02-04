@@ -46,7 +46,7 @@
             <td>{{carroceria.nome}}</td>
             <td>{{carroceria.ativos}}</td>
             {% if perms.oficina.change_carroceria %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'oficina_carroceria_id' carroceria.id|safe%}"><i class="fas fa-pen"></i></a></td>
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'oficina_carroceria_id' carroceria.id|safe %}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
           </tr>
           {% empty %}

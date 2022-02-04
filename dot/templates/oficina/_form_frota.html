@@ -11,10 +11,10 @@
             <button class="btn btn-sm {% if frota.status == 'V' %}btn-danger{% elif frota.status != 'A' %}btn-warning{% else %}btn-success{% endif %} dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-offset="3,8"{% if not perms.oficina.change_frota %} disabled{% endif %}>Status: <b class="ms-2">{{frota.get_status_display}}</b></button>
             <ul class="dropdown-menu dropdown-menu-end fs-7" id="movimentar_frota_list">
               {% if frota.status != 'V' %}
-              <li><a class="dropdown-item text-success" href="{% url 'oficina_frota_movimentar' frota.id|safe%}?operacao=A" onclick="showModalLoading()"><i class="fas fa-check me-2"></i>Ativo</a></li>
-              <li><a class="dropdown-item" href="{% url 'oficina_frota_movimentar' frota.id|safe%}?operacao=M" onclick="showModalLoading()"><i class="fas fa-tools text-muted me-2"></i>Em Manutenção</a></li>
-              <li><a class="dropdown-item" href="{% url 'oficina_frota_movimentar' frota.id|safe%}?operacao=F" onclick="showModalLoading()"><i class="fas fa-history text-muted me-2"></i>Fora de Operação</a></li>
-              <li><a class="dropdown-item dropdown-item-danger" href="{% url 'oficina_frota_movimentar' frota.id|safe%}?operacao=I" onclick="showModalLoading()"><i class="fas fa-stop me-2"></i>Inativo</a></li>
+              <li><a class="dropdown-item text-success" href="{% url 'oficina_frota_movimentar' frota.id|safe %}?operacao=A" onclick="showModalLoading()"><i class="fas fa-check me-2"></i>Ativo</a></li>
+              <li><a class="dropdown-item" href="{% url 'oficina_frota_movimentar' frota.id|safe %}?operacao=M" onclick="showModalLoading()"><i class="fas fa-tools text-muted me-2"></i>Em Manutenção</a></li>
+              <li><a class="dropdown-item" href="{% url 'oficina_frota_movimentar' frota.id|safe %}?operacao=F" onclick="showModalLoading()"><i class="fas fa-history text-muted me-2"></i>Fora de Operação</a></li>
+              <li><a class="dropdown-item dropdown-item-danger" href="{% url 'oficina_frota_movimentar' frota.id|safe %}?operacao=I" onclick="showModalLoading()"><i class="fas fa-stop me-2"></i>Inativo</a></li>
               {% endif %}
               {% if perms.oficina.vender_frota %}
               {% if frota.status != 'V' %}

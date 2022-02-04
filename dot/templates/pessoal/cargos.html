@@ -52,7 +52,7 @@
             <td>{{cargo.setor.nome}}</td>
             <td>{{cargo.ativos}}</td>
             {% if perms.pessoal.change_cargo %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'pessoal_cargo_id' cargo.id|safe%}"><i class="fas fa-pen"></i></a></td>
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'pessoal_cargo_id' cargo.id|safe %}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
           </tr>
           {% empty %}

@@ -70,7 +70,7 @@
             <td class="d-none">{{empresa.fone}}</td>
             <td class="d-none">{{empresa.fax}}</td>
             {% if perms.core.change_empresa %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'core_empresa_id' empresa.id|safe%}"><i class="fas fa-pen"></i></a></td>
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'core_empresa_id' empresa.id|safe %}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
           </tr>
           {% empty %}

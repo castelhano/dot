@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from json import dumps
-from .models import Setor, Cargo, Funcionario, FuncaoFixa, Afastamento
-from .forms import SetorForm, CargoForm, FuncionarioForm, FuncaoFixaForm, AfastamentoForm
+from .models import Setor, Cargo, Funcionario, FuncaoFixa, Afastamento, Dependente
+from .forms import SetorForm, CargoForm, FuncionarioForm, FuncaoFixaForm, AfastamentoForm, DependenteForm
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from core.models import Log
@@ -86,6 +86,12 @@ def funcionarios(request):
 def afastamentos(request, id):
     funcionario = Funcionario.objects.get(id=id)
     return render(request,'pessoal/afastamentos.html', {'funcionario' : funcionario})
+
+@login_required
+@permission_required('pessoal.view_dependente')
+def dependentes(request, id):
+    funcionario = Funcionario.objects.get(id=id)
+    return render(request,'pessoal/dependentes.html', {'funcionario' : funcionario})
 
 @login_required
 @permission_required('pessoal.view_funcaofixa')
@@ -202,6 +208,32 @@ def afastamento_add(request, id):
     return render(request,'pessoal/afastamento_add.html',{'form':form,'funcionario':funcionario})
 
 @login_required
+@permission_required('pessoal.add_dependente')
+def dependente_add(request, id):
+    if request.method == 'POST':
+        form = DependenteForm(request.POST)
+        if form.is_valid():
+            try:
+                form_clean = form.cleaned_data
+                registro = form.save()
+                l = Log()
+                l.modelo = "pessoal.dependente"
+                l.objeto_id = registro.id
+                l.objeto_str = registro.nome[0:48]
+                l.usuario = request.user
+                l.mensagem = 'CREATED'
+                l.save()
+                messages.success(request, f'Dependente <b>{registro.nome}</b> inserido')
+                return redirect('pessoal_dependentes', registro.funcionario.id)
+            except:
+                messages.error(request,'Erro ao inserir dependente [INVALID FORM]')
+                return redirect('pessoal_dependente_add', registro.funcionario.id)
+    else:
+        form = DependenteForm()
+        funcionario = Funcionario.objects.get(id=id)
+    return render(request,'pessoal/dependente_add.html',{'form':form,'funcionario':funcionario})
+
+@login_required
 @permission_required('pessoal.add_funcaofixa')
 def funcao_fixa_add(request):
     if request.method == 'POST':
@@ -254,6 +286,13 @@ def afastamento_id(request,id):
     afastamento = Afastamento.objects.get(pk=id)
     form = AfastamentoForm(instance=afastamento)
     return render(request,'pessoal/afastamento_id.html',{'form':form,'afastamento':afastamento})
+
+@login_required
+@permission_required('pessoal.change_dependente')
+def dependente_id(request,id):
+    dependente = Dependente.objects.get(pk=id)
+    form = DependenteForm(instance=dependente)
+    return render(request,'pessoal/dependente_id.html',{'form':form,'dependente':dependente, 'funcionario':dependente.funcionario})
 
 @login_required
 @permission_required('pessoal.change_funcaofixa')
@@ -354,6 +393,29 @@ def afastamento_update(request,id):
         return render(request,'pessoal/afastamento_id.html',{'form':form,'afastamento':afastamento})
 
 @login_required
+@permission_required('pessoal.change_dependente')
+def dependente_update(request,id):
+    dependente = Dependente.objects.get(pk=id)
+    form = DependenteForm(request.POST, instance=dependente)
+    if form.is_valid():
+        try:
+            registro = form.save()
+            resp = registro.funcionario.afastar(registro, True)
+            l = Log()
+            l.modelo = "pessoal.dependente"
+            l.objeto_id = registro.id
+            l.objeto_str = registro.nome[0:48]
+            l.usuario = request.user
+            l.mensagem = 'UPDATE'
+            l.save()
+            messages.success(request, f'Dependente <b>{registro.nome}</b> atualizado')
+        except:
+            messages.error(request, 'Erro ao atualizar dependente')
+        return redirect('pessoal_dependente_id', id)
+    else:
+        return render(request,'pessoal/dependente_id.html',{'form':form,'dependente':dependente})
+
+@login_required
 @permission_required('pessoal.change_funcaofixa')
 def funcao_fixa_update(request, id):
     funcao_fixa = FuncaoFixa.objects.get(pk=id)
@@ -452,6 +514,26 @@ def afastamento_delete(request,id):
     except:
         messages.error(request,'ERRO ao apagar afastamento')
         return redirect('pessoal_afastamento_id', id)
+
+@login_required
+@permission_required('pessoal.delete_dependente')
+def dependente_delete(request,id):
+    try:
+        registro = Dependente.objects.get(pk=id)
+        id_funcionario = registro.funcionario.id
+        l = Log()
+        l.modelo = "pessoal.dependente"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.nome[0:48]
+        l.usuario = request.user
+        l.mensagem = "DELETE"
+        registro.delete()
+        l.save()
+        messages.warning(request,'Dependente excluido. Essa operação não pode ser desfeita')
+        return redirect('pessoal_dependentes', id_funcionario)
+    except:
+        messages.error(request,'ERRO ao apagar dependente')
+        return redirect('pessoal_dependente_id', id)
 
 
 @login_required

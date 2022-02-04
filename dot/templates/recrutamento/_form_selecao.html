@@ -63,7 +63,7 @@
               <td>{{avaliacao.criterio.nome}}</td>
               <td>{{avaliacao.get_status_display}}</td>
               {% if perms.recrutamento.delete_avaliacao %}
-              <td class="text-end fit py-1"><a class="text-dark px-2" href="{% url 'recrutamento_avaliacao_delete' avaliacao.id|safe%}"><i class="fas fa-times"></i></a></td>
+              <td class="text-end fit py-1"><a class="text-dark px-2" href="{% url 'recrutamento_avaliacao_delete' avaliacao.id|safe %}"><i class="fas fa-times"></i></a></td>
               {% endif %}
             </tr>
             {% empty %}

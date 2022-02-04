@@ -5,7 +5,7 @@
 {% include "_component/menu/core.html" %}
 {% endblock%}
 {% block content_fluid %}
-<a class="d-none" id="clear" href="{% url 'core_usuario_id' usuario.id|safe%}"></a>
+<a class="d-none" id="clear" href="{% url 'core_usuario_id' usuario.id|safe %}"></a>
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
@@ -23,7 +23,7 @@
       </li>
     </ul>
   </div>
-  <form id="app_form" action="{% url 'core_usuario_update' usuario.id|safe%}" method="POST" autocomplete="off" onsubmit="return submitForm();">
+  <form id="app_form" action="{% url 'core_usuario_update' usuario.id|safe %}" method="POST" autocomplete="off" onsubmit="return submitForm();">
     {% csrf_token %}
     {% include 'core/_form_usuario.html' %}
   </form>
@@ -42,7 +42,7 @@
         <div class="row mt-2">
           <div class="col text-end">
             <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
-            <a class="btn btn-danger px-3" href="{% url 'core_usuario_delete' usuario.id|safe%}">Excluir</a>
+            <a class="btn btn-danger px-3" href="{% url 'core_usuario_delete' usuario.id|safe %}">Excluir</a>
           </div>
         </div>
       </div>

@@ -7,12 +7,12 @@
 {% include "_component/menu/pessoal.html" %}
 {% endblock%}
 {% block content_fluid %}
-<a class="d-none" id="clear" href="{% url 'pessoal_afastamento_id' afastamento.id|safe%}"></a>
+<a class="d-none" id="clear" href="{% url 'pessoal_afastamento_id' afastamento.id|safe %}"></a>
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
-      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'pessoal_afastamentos' afastamento.funcionario.id|safe%}"><i class="fas fa-undo"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'pessoal_afastamentos' afastamento.funcionario.id|safe %}"><i class="fas fa-undo"></i></a></li>
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
         <ul class="dropdown-menu">
@@ -25,7 +25,7 @@
       </li>
     </ul>
   </div>
-  <form id="pessoal_form" action="{% url 'pessoal_afastamento_update' afastamento.id|safe%}" method="POST" autocomplete="off">
+  <form id="pessoal_form" action="{% url 'pessoal_afastamento_update' afastamento.id|safe %}" method="POST" autocomplete="off">
     {% csrf_token %}
     <div class="card-body tab-content">
       <h5 class="card-title mb-0">Afastamento</h5>
@@ -49,7 +49,7 @@
         <div class="row mt-2">
           <div class="col text-end">
             <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
-            <a class="btn btn-danger px-3" href="{% url 'pessoal_afastamento_delete' afastamento.id|safe%}">Excluir</a>
+            <a class="btn btn-danger px-3" href="{% url 'pessoal_afastamento_delete' afastamento.id|safe %}">Excluir</a>
           </div>
         </div>
       </div>

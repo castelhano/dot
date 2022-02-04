@@ -72,7 +72,7 @@
       <td class="d-none d-lg-table-cell">{{candidato.nova_mensagem|yesno:'<i class="fas fa-comment fs-5 text-success"></i>,'|safe}}</td>
       <td class="text-end fit py-1">
         {% if perms.recrutamento.add_selecao and candidato.status == 'B' %}<a class="btn btn-sm btn-warning" href="{% url 'recrutamento_selecao_add' %}?candidato={{candidato.id|safe}}"><i class="fas fa-user-clock"></i></a>{% endif %}
-        {% if perms.recrutamento.change_candidato %}<a class="btn btn-sm btn-dark" href="{% url 'recrutamento_candidato_id' candidato.id|safe%}"><i class="fas fa-pen"></i></a>{% endif %}
+        {% if perms.recrutamento.change_candidato %}<a class="btn btn-sm btn-dark" href="{% url 'recrutamento_candidato_id' candidato.id|safe %}"><i class="fas fa-pen"></i></a>{% endif %}
       </td>
     </tr>
     {% empty %}

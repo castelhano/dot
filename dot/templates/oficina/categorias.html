@@ -46,7 +46,7 @@
             <td>{{categoria.nome}}</td>
             <td>{{categoria.ativos}}</td>
             {% if perms.oficina.change_categoria %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'oficina_categoria_id' categoria.id|safe%}"><i class="fas fa-pen"></i></a></td>
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'oficina_categoria_id' categoria.id|safe %}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
           </tr>
           {% empty %}

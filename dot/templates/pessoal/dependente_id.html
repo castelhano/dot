@@ -1,51 +1,37 @@
 {% extends "layout/dot.html" %}
 {% load static %}
-{% block title %}Carroceria{% endblock %}
-{% block model %}Oficina{% endblock %}
-{% block navbar_classlist %}navbar-dark bg-success bg-gradient{% endblock %}
-{% block model_menu %}{% include "_component/menu/oficina.html" %}{% endblock%}
+{% block title %}Dependente{% endblock %}
+{% block model %}Pessoal{% endblock %}
+{% block navbar_classlist %}navbar-dark bg-purple bg-gradient{% endblock %}
+{% block model_menu %}
+{% include "_component/menu/pessoal.html" %}
+{% endblock%}
 {% block content_fluid %}
-<a class="d-none" id="clear" href="{% url 'oficina_carroceria_id' carroceria.id|safe %}"></a>
+<a class="d-none" id="clear" href="{% url 'pessoal_dependente_id' dependente.id|safe %}"></a>
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
-      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'oficina_carrocerias' %}"><i class="fas fa-undo"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'pessoal_dependentes' dependente.funcionario.id|safe %}"><i class="fas fa-undo"></i></a></li>
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
         <ul class="dropdown-menu">
           <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#history_modal">Historico</a></li>
-          {% if perms.oficina.delete_carroceria %}
+          {% if perms.pessoal.delete_dependente %}
           <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal">Excluir Carroceria</a></li>
+          <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal">Excluir Dependente</a></li>
           {% endif %}
         </ul>
       </li>
     </ul>
   </div>
-  <form id="oficina_form" action="{% url 'oficina_carroceria_update' carroceria.id|safe %}" method="POST" autocomplete="off">
+  <form id="pessoal_form" action="{% url 'pessoal_dependente_update' dependente.id|safe %}" method="POST" autocomplete="off">
     {% csrf_token %}
-    <div class="card-body tab-content">
-      <h5 class="card-title mb-3">Cadastro de Carroceria</h5>
-      <div class="tab-pane fade show active" id="base" role="tabpanel">
-        <div class="row g-1">
-          <div class="form-floating mb-lg-1 col-lg-4">
-            {{ form.nome }}
-            <label for="id_nome">Nome</label>
-          </div>
-        </div>
-      </div>
-      <!-- CONTROLES DO FORM -->
-      <div class="row mt-3">
-        <div class="col">
-          <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"><b>G</b>ravar</button>
-        </div>
-      </div>
-    </div>
+    {% include 'pessoal/_form_dependente.html' %}
   </form>
 </div>
 
-{% if perms.oficina.delete_carroceria %}
+{% if perms.pessoal.delete_dependente %}
 <div class="modal fade" id="delete_modal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -58,7 +44,7 @@
         <div class="row mt-2">
           <div class="col text-end">
             <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
-            <a class="btn btn-danger px-3" href="{% url 'oficina_carroceria_delete' carroceria.id|safe %}">Excluir</a>
+            <a class="btn btn-danger px-3" href="{% url 'pessoal_dependente_delete' dependente.id|safe %}">Excluir</a>
           </div>
         </div>
       </div>
@@ -66,6 +52,7 @@
   </div>
 </div>
 {% endif %}
+
 <div class="modal fade" id="history_modal" tabindex="-1">
   <div class="modal-dialog modal-dialog-scrollable">
     <div class="modal-content">
@@ -83,11 +70,11 @@
             </tr>
           </thead>
           <tbody class="fs-7">
-            {% for i in carroceria.ultimas_alteracoes %}
+            {% for i in dependente.ultimas_alteracoes %}
             <tr>
               <td>{{i.data|date:'d/m/Y H:i:s'}}</td>
               <td>{{i.mensagem}}</td>
-              <td>{{i.usuario.username|upper}}</td>
+              <td>{{i.usuario.username|upper|default:'None'}}</td>
             </tr>
             {% endfor %}
           </tbody>
@@ -98,8 +85,15 @@
 </div>
 {% endblock%}
 
-{% block add_script_src %}{% endblock %}
+{% block add_script_src %}
+<script src="{% static 'js/vendor/mask.js' %}"></script>
+{% endblock %}
 
 <script>
-  {% block add_script %}{% endblock %}
+  {% block add_script %}
+  var TAB_ON_ENTER = true;
+  
+  VMasker(document.getElementById("id_cpf")).maskPattern('999.999.999-99');
+  
+  {% endblock %}
 </script>

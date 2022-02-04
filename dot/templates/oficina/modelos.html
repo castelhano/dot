@@ -50,7 +50,7 @@
             <td class="d-none d-sm-table-cell">{{modelo.marca.nome}}</td>
             <td class="d-none d-sm-table-cell">{{modelo.ativos}}</td>
             {% if perms.oficina.change_modelo %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'oficina_modelo_id' modelo.id|safe%}"><i class="fas fa-pen"></i></a></td>
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'oficina_modelo_id' modelo.id|safe %}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
           </tr>
           {% empty %}

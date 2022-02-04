@@ -10,10 +10,10 @@
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
-      <li class="nav-item"><a id="tab_link_base" class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#" title="Basico [ Ctrl + 1 ]"><i class="fas fa-bus"></i></a></li>
-      <li class="nav-item"><a id="tab_link_metrics" class="nav-link" data-bs-toggle="tab" data-bs-target="#metrics" href="#" title="Métricas [ Ctrl + 2 ]"><i class="fas fa-tools"></i></a></li>
-      <li class="nav-item"><a id="tab_link_comp" class="nav-link" data-bs-toggle="tab" data-bs-target="#comp" href="#" title="Componentes [ Ctrl + 3 ]"><i class="fas fa-microchip"></i></a></li>
-      <li class="nav-item"><a id="tab_link_detalhe" class="nav-link" data-bs-toggle="tab" data-bs-target="#detalhe" href="#" title="Detalhe [ Ctrl + 4 ]"><i class="fas fa-scroll"></i></a></li>
+      <li class="nav-item"><a id="tab_link_base" class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" onclick="setTimeout(function(){document.getElementById('id_empresa').focus();},220);" href="#" title="Basico [ Ctrl + 1 ]"><i class="fas fa-bus"></i></a></li>
+      <li class="nav-item"><a id="tab_link_metrics" class="nav-link" data-bs-toggle="tab" data-bs-target="#metrics" onclick="setTimeout(function(){document.getElementById('id_renavan').focus();},220);" href="#" title="Métricas [ Ctrl + 2 ]"><i class="fas fa-tools"></i></a></li>
+      <li class="nav-item"><a id="tab_link_comp" class="nav-link" data-bs-toggle="tab" data-bs-target="#comp" onclick="setTimeout(function(){document.getElementById('componentes_disponiveis').focus();},220);" href="#" title="Componentes [ Ctrl + 3 ]"><i class="fas fa-microchip"></i></a></li>
+      <li class="nav-item"><a id="tab_link_detalhe" class="nav-link" data-bs-toggle="tab" data-bs-target="#detalhe" onclick="setTimeout(function(){document.getElementById('id_detalhe').focus();},220);" href="#" title="Detalhe [ Ctrl + 4 ]"><i class="fas fa-scroll"></i></a></li>
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'oficina_frotas' %}"><i class="fas fa-undo"></i></a></li>
     </ul>
   </div>

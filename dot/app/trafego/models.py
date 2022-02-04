@@ -52,6 +52,10 @@ class Linha(models.Model):
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='trafego.linha',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
+    class Meta:
+        permissions = [
+            ("dop_linha", "Pode acessar DOP"),
+        ]
 
 class Patamar(models.Model):
     linha = models.ForeignKey(Linha, blank=False, null=False, on_delete=models.CASCADE)

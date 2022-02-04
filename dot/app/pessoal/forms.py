@@ -1,5 +1,5 @@
 from django import forms
-from .models import Setor, Cargo, Funcionario, FuncaoFixa, Afastamento
+from .models import Setor, Cargo, Funcionario, FuncaoFixa, Afastamento, Dependente
 from django.contrib.auth.models import User
 from datetime import date
 
@@ -37,12 +37,26 @@ class AfastamentoForm(forms.ModelForm):
     detalhe = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'Detalhes', 'style':'min-height:300px'}))
     
 
+class DependenteForm(forms.ModelForm):
+    class Meta:
+        model = Dependente
+        fields = ['funcionario','nome','parentesco','sexo','data_nascimento', 'rg','rg_emissao','rg_orgao_expedidor','cpf']
+    nome = forms.CharField(error_messages={'required': 'Informe o nome do dependente'}, max_length=200,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'', 'autofocus':'autofocus'}))
+    parentesco = forms.ChoiceField(required=False,choices=Dependente.PARENTESCO, widget=forms.Select(attrs={'class':'form-select'}))
+    sexo = forms.ChoiceField(required=False,choices=Funcionario.SEXO_CHOICES, widget=forms.Select(attrs={'class':'form-select'}))
+    data_nascimento = forms.DateField(required=False, widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
+    rg = forms.CharField(required=False, max_length=15, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
+    rg_emissao = forms.DateField(required=False, widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
+    rg_orgao_expedidor = forms.CharField(required=False, max_length=8, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
+    cpf = forms.CharField(required=False, max_length=15,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
+    
+
 class FuncionarioForm(forms.ModelForm):
     class Meta:
         model = Funcionario
         fields = ['empresa','matricula','nome','apelido','nome_social','sexo','cargo','regime','data_admissao','data_nascimento','data_desligamento','motivo_desligamento','rg','rg_emissao','rg_orgao_expedidor','cpf','titulo_eleitor','titulo_zona','titulo_secao','reservista','cnh','cnh_categoria','cnh_primeira_habilitacao','cnh_emissao','cnh_validade','foto','fone1','fone2','email','endereco','bairro','cidade','uf','estado_civil','nome_mae','nome_pai','detalhe','usuario','pne']
-    matricula = forms.CharField(error_messages={'required': 'Campo Matricula OBRIGATÓRIO','unique':'Matricula já cadastrada para outro funcionário'},max_length=6,widget=forms.TextInput(attrs={'class': 'form-control bg-light fw-bold','placeholder':'','autofocus':'autofocus'}))
-    nome = forms.CharField(error_messages={'required': 'Campo Nome OBRIGATÓRIO'}, max_length=200,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
+    matricula = forms.CharField(error_messages={'required': 'Informe a matricula do funcionario','unique':'Matricula já cadastrada para outro funcionário'},max_length=6,widget=forms.TextInput(attrs={'class': 'form-control bg-light fw-bold','placeholder':'','autofocus':'autofocus'}))
+    nome = forms.CharField(error_messages={'required': 'Informe o nome do funcionario'}, max_length=200,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
     apelido = forms.CharField(required=False, max_length=15, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
     nome_social = forms.CharField(required=False, max_length=200, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
     sexo = forms.ChoiceField(required=False,choices=Funcionario.SEXO_CHOICES, widget=forms.Select(attrs={'class':'form-select'}))

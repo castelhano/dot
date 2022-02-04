@@ -525,16 +525,16 @@ def get_user_perms(request):
         if request.GET.get('usuario',None) != 'new':
             usuario = User.objects.get(id=request.GET.get('usuario',None))
             if tipo == 'disponiveis':
-                perms = Permission.objects.all().exclude(user=usuario).exclude(content_type__app_label__in=exclude_itens).order_by('id')
+                perms = Permission.objects.all().exclude(user=usuario).exclude(content_type__app_label__in=exclude_itens).order_by('content_type__app_label', 'content_type__model', 'name')
             elif tipo == 'cadastrados':
-                perms = Permission.objects.all().filter(user=usuario).exclude(content_type__app_label__in=exclude_itens).order_by('id')
+                perms = Permission.objects.all().filter(user=usuario).exclude(content_type__app_label__in=exclude_itens).order_by('content_type__app_label', 'content_type__model', 'name')
             else:
                 pass
         else:
-            perms = Permission.objects.all().exclude(content_type__app_label__in=exclude_itens).order_by('id')
+            perms = Permission.objects.all().exclude(content_type__app_label__in=exclude_itens).order_by('content_type__app_label', 'content_type__model', 'name')
         itens = {}
         for item in perms:
-            itens[item.codename] = item.id
+            itens[f'{item.content_type.app_label} | {item.content_type.model} | {item.name}'] = item.id
         dataJSON = dumps(itens)
         return HttpResponse(dataJSON)
     except:
@@ -547,17 +547,17 @@ def get_group_perms(request):
         if request.GET.get('grupo',None) != 'new':
             grupo = Group.objects.get(id=request.GET.get('grupo',None))
             if tipo == 'disponiveis':
-                perms = Permission.objects.all().exclude(group=grupo).order_by('id')
+                perms = Permission.objects.all().exclude(group=grupo).order_by('content_type__app_label', 'content_type__model', 'name')
             elif tipo == 'cadastrados':
-                perms = Permission.objects.all().filter(group=grupo).order_by('id')
+                perms = Permission.objects.all().filter(group=grupo).order_by('content_type__app_label', 'content_type__model', 'name')
             else:
                 pass
         else:
             exclude_itens = ['admin','contenttypes','sessions']
-            perms = Permission.objects.all().exclude(content_type__app_label__in=exclude_itens).order_by('id')
+            perms = Permission.objects.all().exclude(content_type__app_label__in=exclude_itens).order_by('content_type__app_label', 'content_type__model', 'name')
         itens = {}
         for item in perms:
-            itens[item.codename] = item.id
+            itens[f'{item.content_type.app_label} | {item.content_type.model} | {item.name}'] = item.id
         dataJSON = dumps(itens)
         return HttpResponse(dataJSON)
     except:
