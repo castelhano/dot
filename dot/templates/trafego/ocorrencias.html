@@ -1,0 +1,244 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Ocorrencias{% endblock %}
+{% block model %}Tráfego{% endblock %}
+{% block navbar_classlist %}navbar-dark bg-primary bg-gradient{% endblock %}
+{% block model_menu %}{% include "_component/menu/trafego.html" %}{% endblock%}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'trafego_ocorrencias' %}"></a>
+
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active" id="menu_ocorrencias_list" data-bs-toggle="tab" data-bs-target="#base" href="#" title="Ctrl + 1"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="search" data-bs-toggle="tab" data-bs-target="#filter" href="#" title="Ctrl + /" onclick="setTimeout(function(){document.getElementById('id_pesquisa').select();}, 220);"><i class="fas fa-filter"></i></a></li>
+      {% if perms.trafego.add_ocorrencia %}
+      <li class="nav-item ms-1"><a class="nav-link border" id="add" href="{% url 'trafego_ocorrencia_add' %}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
+      {% endif %}
+      {% if perms.trafego.view_tratativa %}
+      <li class="nav-item"><a class="nav-link border ms-1" id="menu_tratativas" href="{% url 'trafego_tratativas' %}" title="Tratativas [ALT+T]" style="background-color: #FFF;"><i class="fas fa-check"></i></a></li>
+      {% endif %}
+      <li class="nav-item dropdown ms-auto">
+        <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item pointer" id="download" onclick="download_table_as_csv('main_table',';')" title="ALT + &darr;">Exportar CSV</a></li>
+          {% if perms.core.view_log %}
+          <li><a class="dropdown-item pointer" href="{% url 'logs' %}?modelo=trafego.ocorrencia&mensagem=DELETE" target="_blank">Log de Exclusões</a></li>
+          {% endif %}
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div class="card-body tab-content">
+    <h5 class="card-title mb-3">Ocorrências <small class="badge bg-primary ms-1">{{ocorrencias.count}}</small></h5>
+    <div class="tab-pane fade show active" id="base" role="tabpanel">
+      <table id="main_table" class="table border table-striped table-hover table-responsive">
+        <thead>
+          <tr>
+            <th class="d-none d-sm-table-cell">Responsável</th>
+            <th class="d-none d-xl-table-cell">Empresa</th>
+            <th>Data</th>
+            <th class="d-none d-sm-table-cell">Hora</th>
+            <th>Evento</th>
+            <th class="d-none d-md-table-cell">Linha</th>
+            <th>Veiculo</th>
+            <th class="d-none d-lg-table-cell">Condutor</th>
+            <th class="d-none d-lg-table-cell">Apelido</th>
+            <th class="d-none d-xxl-table-cell">Gravidade</th>
+            <th class="d-none d-xxl-table-cell">Indisciplina</th>
+            <th class="d-none d-xl-table-cell">Omissão</th>
+            <th class="d-none d-xxl-table-cell">Tratado</th>
+            <th class="d-none">Providência</th>
+            {% if perms.trafego.change_ocorrencia %}
+            <th>&nbsp;</th>
+            {% endif %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for ocorrencia in ocorrencias %}
+          <tr>
+            <td class="d-none d-sm-table-cell">{{ocorrencia.usuario.username|title}}</td>
+            <td class="d-none d-xl-table-cell">{{ocorrencia.empresa.nome}}</td>
+            <td>{{ocorrencia.data|date:'d/m/y'}}</td>
+            <td class="d-none d-sm-table-cell">{{ocorrencia.hora}}</td>
+            <td>{{ocorrencia.evento.nome}}</td>
+            <td class="d-none d-md-table-cell">{{ocorrencia.linha.codigo}}</td>
+            <td>{{ocorrencia.veiculo.prefixo}}</td>
+            <td class="d-none d-lg-table-cell">{{ocorrencia.condutor.matricula}}</td>
+            <td class="d-none d-lg-table-cell">{{ocorrencia.condutor.apelido}}</td>
+            <td class="d-none d-xxl-table-cell {% if ocorrencia.gravidade == 'G' %} fw-bold text-danger{% endif %}">{{ocorrencia.get_gravidade_display}}</td>
+            <td class="d-none d-xxl-table-cell">{{ocorrencia.indisciplina_condutor|yesno:'INDISCIPLINA,--'}}</td>
+            <td class="d-none d-xl-table-cell">{{ocorrencia.viagem_omitida|yesno:'OMISSAO,--'}}</td>
+            <td class="d-none d-xxl-table-cell">{{ocorrencia.tratado|yesno:'TRATADO,--'}}</td>
+            <td class="d-none">{{ocorrencia.providencia.nome}}</td>
+            {% if perms.trafego.change_ocorrencia and ocorrencia.usuario == user or perms.trafego.tratar_ocorrencia  %}
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'trafego_ocorrencia_id' ocorrencia.id %}"><i class="fas fa-pen"></i></a></td>
+            {% else %}
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-warning pointer" data-bs-toggle="modal" data-bs-target="#modal-ocorrencia" onclick="getOcorrencia({{ocorrencia.id}})"><i class="fas fa-eye"></i></a></td>
+            {% endif %}
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="14">Nenhum registro a exibir</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="tab-pane fade" id="filter" role="tabpanel">
+    <form action="{% url 'trafego_ocorrencias' %}" method="POST" autocomplete="off">
+      {% csrf_token %}
+        <div class="row g-1">
+          <div class="form-floating mb-lg-1 col-lg-3">
+            <input type="text" class="form-control bg-light" name="pesquisa" id="id_pesquisa" value="">
+            <label for="id_pesquisa">Carro / condutor / linha</label>
+          </div>
+          <div class="form-floating mb-1 col-lg-3">
+            <select class="form-select" id="id_empresa" name="empresa">
+              <option value="" selected>Todas</option>
+            </select>
+            <label for="id_empresa">Empresa</label>
+          </div>
+        </div>
+        <div class="row g-1">
+          <div class="form-floating mb-LG-1 col-lg-3">
+            <input type="date" class="form-control" name="inicio" id="id_inicio" value="">
+            <label for="id_inicio">De</label>
+          </div>
+          <div class="form-floating mb-1 col-lg-3">
+            <input type="date" class="form-control" name="fim" id="id_fim" value="">
+            <label for="id_fim">Ate</label>
+          </div>
+        </div>
+        <div class="row g-1">
+          <div class="form-floating mb-lg-1 col-lg-3">
+            <select class="form-select" name="evento" id="id_evento">
+              <option value="" selected>Todos</option>
+            </select>
+            <label for="id_evento">Evento</label>
+          </div>
+          <div class="form-floating mb-1 col-lg-3">
+            <select class="form-select" name="gravidade" id="id_gravidade">
+              <option value="" selected>Todos</option>
+              <option value="G">Grave</option>
+              <option value="M">Media</option>
+              <option value="L">Leve</option>
+            </select>
+            <label for="id_gravidade">Gravidade</label>
+          </div>
+        </div>
+        <div class="form-check form-switch mt-2">
+          <input class="form-check-input" type="checkbox" role="switch" name="indisciplina_condutor" id="id_indisciplina_condutor">
+          <label class="form-check-label" for="id_indisciplina_condutor">Somente indisciplina condutor</label>
+        </div>
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" role="switch" name="viagem_omitida" id="id_viagem_omitida">
+          <label class="form-check-label" for="id_viagem_omitida">Somente com omissão de viagem</label>
+        </div>
+        <div class="row">
+          <div class="col"><button type="submit" class="btn btn-sm btn-warning mt-2">Pesquisar</button></div>
+        </div>
+      </form>
+      </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-ocorrencia" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Detalhes da Ocorrência</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body bg-light">
+        <dl class="row">
+          <dt class="col-3">DATA</dt><dd class="col-9" id="modal_data_hora"></dd>
+          <dt class="col-3">EVENTO</dt><dd class="col-9" id="modal_evento"></dd>
+          <dt class="col-3">INSPETOR</dt><dd class="col-9" id="modal_inspetor"></dd>
+          <dt class="col-3">CARRO</dt><dd class="col-9" id="modal_carro"></dd>
+          <dt class="col-3">LINHA</dt><dd class="col-9" id="modal_linha"></dd>
+          <dt class="col-3">CONDUTOR</dt><dd class="col-9" id="modal_condutor"></dd>
+          <hr class="m-0">
+          <foo class="col-12" id="modal_detalhe"></foo>
+        </dl>
+        
+      </div>
+      <div class="modal-footer text-end">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/table_to_csv.js' %}"></script>
+{% endblock %}
+
+
+<script>
+  {% block add_script %}
+  SHORTCUT_MAP['1FTF'] = '#menu_ocorrencias_list';
+  SHORTCUT_MAP['tTFF'] = '#menu_tratativas';
+  
+  
+  function carregaEmpresas() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if(this.readyState == 4 && this.status == 200){
+        if(this.responseText == ''){}
+        else{
+          let obj = JSON.parse(this.responseText);
+          empresas = document.getElementById("id_empresa");
+          for(key in obj){empresas.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
+        }
+      }
+    };
+    xhttp.open("GET", "{% url 'core_get_empresas' %}", true);
+    xhttp.send();
+  }
+  carregaEmpresas();
+  
+  function carregaEventos() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if(this.readyState == 4 && this.status == 200){
+        if(this.responseText == ''){}
+        else{
+          let obj = JSON.parse(this.responseText);
+          eventos = document.getElementById("id_evento");
+          for(key in obj){eventos.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
+        }
+      }
+    };
+    xhttp.open("GET", "{% url 'trafego_get_eventos' %}", true);
+    xhttp.send();
+  }
+  carregaEventos();
+  
+  function getOcorrencia(id) {
+      var xhttp = new XMLHttpRequest();
+    	xhttp.onreadystatechange = function() {
+    		if(this.readyState == 4 && this.status == 200){
+          foo = document.getElementById("foo");
+    			if(this.responseText == ''){foo.innerHTML = 'VAZIO'}
+    			else{
+            resp = this.responseText.split(';'); 
+            document.getElementById('modal_data_hora').innerHTML = resp[0] + ' ' + resp[1];
+            document.getElementById('modal_evento').innerHTML = resp[2].toUpperCase();
+            document.getElementById('modal_inspetor').innerHTML = resp[3].toUpperCase();
+            document.getElementById('modal_carro').innerHTML = resp[4];
+            document.getElementById('modal_linha').innerHTML = resp[5];
+            document.getElementById('modal_condutor').innerHTML = resp[6];
+            document.getElementById('modal_detalhe').innerHTML = resp[7];
+          }
+    		}
+    	};
+    	xhttp.open("GET", "{% url 'trafego_get_ocorrencia' %}?id_ocorrencia=" + id, true);
+    	xhttp.send();  
+  }
+  {% endblock %}
+</script>

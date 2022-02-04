@@ -1,13 +1,17 @@
+import os
 import json
 from json import dumps
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import Linha, Localidade, Patamar, Carro, Viagem
+from django.db.models import Q
+from .models import Linha, Localidade, Patamar, Carro, Viagem, Evento, Providencia, Ocorrencia, FotoOcorrencia
 from core.models import Empresa
-from .forms import LinhaForm, LocalidadeForm
+from .forms import LinhaForm, LocalidadeForm, EventoForm, ProvidenciaForm, OcorrenciaForm
+from .validators import validate_file_extension
 from core.models import Log
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
+from datetime import date
 
 
 # METODOS SHOW
@@ -22,6 +26,8 @@ def localidades(request):
             localidades = localidades.filter(eh_garagem=True)
         if 'troca_turno' in request.POST:
             localidades = localidades.filter(troca_turno=True)
+        if 'ponto_de_controle' in request.POST:
+            localidades = localidades.filter(ponto_de_controle=True)
     else:
         localidades = None
     return render(request,'trafego/localidades.html', {'localidades' : localidades})
@@ -67,6 +73,73 @@ def patamares(request, id):
 @permission_required('trafego.view_planejamento')
 def planejamentos(request):
     return render(request,'trafego/planejamentos.html')
+
+@login_required
+@permission_required('trafego.view_evento')
+def eventos(request):
+    eventos = Evento.objects.all().order_by('nome')
+    if request.method == 'POST':
+        eventos = eventos.filter(nome__contains=request.POST['pesquisa'])
+    return render(request,'trafego/eventos.html',{'eventos':eventos})
+
+@login_required
+@permission_required('trafego.view_providencia')
+def providencias(request):
+    providencias = Providencia.objects.all().order_by('nome')
+    if request.method == 'POST':
+        providencias = providencias.filter(nome__contains=request.POST['pesquisa'])
+    return render(request,'trafego/providencias.html',{'providencias':providencias})
+
+@login_required
+@permission_required('trafego.view_ocorrencia')
+def ocorrencias(request):
+    ocorrencias = Ocorrencia.objects.all().order_by('data','hora')
+    if request.method == 'POST':
+        if request.POST['pesquisa']:
+            ocorrencias = ocorrencias.filter(Q(veiculo__prefixo=request.POST['pesquisa']) | Q(linha__codigo=request.POST['pesquisa']) | Q(condutor__matricula=request.POST['pesquisa']))
+        if request.POST['inicio'] != '' and request.POST['fim'] != '':
+            ocorrencias = ocorrencias.filter(data__range=[request.POST['inicio'],request.POST['fim']]) 
+        else:
+            ocorrencias = ocorrencias.filter(data=date.today())            
+        if request.POST['empresa'] != '':
+            ocorrencias = ocorrencias.filter(empresa__id=request.POST['empresa'])
+        if request.POST['evento'] != '':
+            ocorrencias = ocorrencias.filter(evento__id=request.POST['evento'])
+        if request.POST['gravidade'] != '':
+            ocorrencias = ocorrencias.filter(gravidade=request.POST['gravidade'])        
+        if 'indisciplina_condutor' in request.POST:
+            ocorrencias = ocorrencias.filter(indisciplina_condutor=True)        
+        if 'viagem_omitida' in request.POST:
+            ocorrencias = ocorrencias.filter(viagem_omitida=True)        
+    else:
+        ocorrencias = ocorrencias.filter(data=date.today())
+    return render(request,'trafego/ocorrencias.html',{'ocorrencias':ocorrencias})
+
+@login_required
+@permission_required('trafego.tratar_ocorrencia')
+def tratativas(request):
+    ocorrencias = Ocorrencia.objects.all().order_by('data','hora')
+    if request.method == 'POST':
+        validado = False
+        if request.POST['pesquisa'] != '':
+            ocorrencias = ocorrencias.filter(condutor__matricula=request.POST['pesquisa'])
+            validado = True
+        if request.POST['inicio'] != '' and request.POST['fim'] != '':
+            ocorrencias = ocorrencias.filter(data__range=[request.POST['inicio'],request.POST['fim']])
+            validado = True
+        if request.POST['empresa'] != '':
+            ocorrencias = ocorrencias.filter(empresa__id=request.POST['empresa'])
+        if not 'tratado' in request.POST or not validado:
+            ocorrencias = ocorrencias.filter(tratado=False)
+        if 'indisciplina_condutor' in request.POST:
+            ocorrencias = ocorrencias.filter(indisciplina_condutor=True)
+        # if not validado:
+        #     messages.warning(request,'Informe uma matricula ou periodo para pesquisa')
+        #     return redirect('trafego_tratativas')
+    else:
+        ocorrencias = ocorrencias.filter(tratado=False, indisciplina_condutor=True)
+    return render(request,'trafego/tratativas.html',{'ocorrencias':ocorrencias})
+
 
 # METODOS ADD
 @login_required
@@ -120,6 +193,86 @@ def linha_add(request):
         form = LinhaForm()
     return render(request,'trafego/linha_add.html',{'form':form})
 
+@login_required
+@permission_required('trafego.add_evento')
+def evento_add(request):
+    if request.method == 'POST':
+        form = EventoForm(request.POST)
+        if form.is_valid():
+            try:
+                form_clean = form.cleaned_data
+                registro = form.save()
+                l = Log()
+                l.modelo = "trafego.evento"
+                l.objeto_id = registro.id
+                l.objeto_str = registro.nome[0:48]
+                l.usuario = request.user
+                l.mensagem = "CREATED"
+                l.save()
+                messages.success(request,'Evento <b>' + registro.nome + '</b> criado')
+                return redirect('trafego_evento_add')
+            except:
+                messages.error(request,'Erro ao inserir evento')
+                return redirect('trafego_evento_add')
+    else:
+        form = EventoForm()
+    return render(request,'trafego/evento_add.html',{'form':form})
+
+@login_required
+@permission_required('trafego.add_providencia')
+def providencia_add(request):
+    if request.method == 'POST':
+        form = ProvidenciaForm(request.POST)
+        if form.is_valid():
+            try:
+                form_clean = form.cleaned_data
+                registro = form.save()
+                l = Log()
+                l.modelo = "trafego.providencia"
+                l.objeto_id = registro.id
+                l.objeto_str = registro.nome[0:48]
+                l.usuario = request.user
+                l.mensagem = "CREATED"
+                l.save()
+                messages.success(request,'Providencia <b>' + registro.nome + '</b> criada')
+                return redirect('trafego_providencia_add')
+            except:
+                messages.error(request,'Erro ao inserir providencia')
+                return redirect('trafego_providencia_add')
+    else:
+        form = ProvidenciaForm()
+    return render(request,'trafego/providencia_add.html',{'form':form})
+
+@login_required
+@permission_required('trafego.add_ocorrencia')
+def ocorrencia_add(request):
+    if request.method == 'POST':
+        form = OcorrenciaForm(request.POST)
+        if form.is_valid():
+            # try:
+                form_clean = form.cleaned_data
+                registro = form.save(commit=False)
+                registro.usuario = request.user
+                registro.save()
+                l = Log()
+                l.modelo = "trafego.ocorrencia"
+                l.objeto_id = registro.id
+                l.objeto_str = registro.evento.nome + registro.veiculo.prefixo if registro.veiculo != None else '' + ']'
+                l.usuario = request.user
+                l.mensagem = "CREATED"
+                l.save()
+                for foto in request.FILES.getlist('fotos'):
+                    if validate_file_extension(foto):
+                        FotoOcorrencia.objects.create(ocorrencia=registro,foto=foto)
+                messages.success(request,'Ocorrencia inserida')
+                return redirect('trafego_ocorrencias')
+            # except:
+            #     messages.error(request,'Erro ao inserir ocorrencia')
+            #     return redirect('trafego_ocorrencia_add')
+    else:
+        form = OcorrenciaForm()
+    return render(request,'trafego/ocorrencia_add.html',{'form':form})
+
 # METODOS GET
 @login_required
 @permission_required('trafego.change_localidade')
@@ -134,6 +287,38 @@ def linha_id(request, id):
     linha = Linha.objects.get(id=id)
     form = LinhaForm(instance=linha)
     return render(request,'trafego/linha_id.html',{'form':form,'linha':linha})
+
+@login_required
+@permission_required('trafego.change_evento')
+def evento_id(request,id):
+    evento = Evento.objects.get(pk=id)
+    form = EventoForm(instance=evento)
+    return render(request,'trafego/evento_id.html',{'form':form,'evento':evento})
+
+@login_required
+@permission_required('trafego.change_providencia')
+def providencia_id(request,id):
+    providencia = Providencia.objects.get(pk=id)
+    form = ProvidenciaForm(instance=providencia)
+    return render(request,'trafego/providencia_id.html',{'form':form,'providencia':providencia})
+
+@login_required
+@permission_required('trafego.change_ocorrencia')
+def ocorrencia_id(request,id):
+    ocorrencia = Ocorrencia.objects.get(pk=id)
+    if ocorrencia.usuario != request.user and not request.user.has_perm('trafego.tratar_ocorrencia'): 
+        # SE USUARIO NAO FOR QUEM CRIOU OCORRENCIA, NEM TIVER LIBERACAO PARA TRATAR OCORRENCIA NÃO HABILITA EDICAO
+        messages.warning(request,'Somente proprietario pode editar essa ocorrencia')
+        return redirect('trafego_ocorrencias')
+    form = OcorrenciaForm(instance=ocorrencia)
+    return render(request,'trafego/ocorrencia_id.html',{'form':form,'ocorrencia':ocorrencia})
+
+@login_required
+@permission_required('trafego.tratar_ocorrencia')
+def tratativa_id(request,id):
+    ocorrencia = Ocorrencia.objects.get(pk=id)
+    form = OcorrenciaForm(instance=ocorrencia)
+    return render(request,'trafego/tratativa_id.html',{'form':form,'ocorrencia':ocorrencia})
 
 
 # METODOS UPDATE
@@ -235,6 +420,101 @@ def patamar_update(request):
         messages.error(request,'Operação inválida')
         return redirect('index')
 
+@login_required
+@permission_required('trafego.change_evento')
+def evento_update(request,id):
+    evento = Evento.objects.get(pk=id)
+    form = EventoForm(request.POST, instance=evento)
+    if form.is_valid():
+        registro = form.save()
+        l = Log()
+        l.modelo = "trafego.evento"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.nome[0:48]
+        l.usuario = request.user
+        l.mensagem = "UPDATE"
+        l.save()
+        messages.success(request,'Evento <b>' + registro.nome + '</b> alterado')
+        return redirect('trafego_evento_id', id)
+    else:
+        return render(request,'trafego/evento_id.html',{'form':form,'evento':evento})
+
+@login_required
+@permission_required('trafego.change_providencia')
+def providencia_update(request,id):
+    providencia = Providencia.objects.get(pk=id)
+    form = ProvidenciaForm(request.POST, instance=providencia)
+    if form.is_valid():
+        registro = form.save()
+        l = Log()
+        l.modelo = "trafego.providencia"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.nome[0:48]
+        l.usuario = request.user
+        l.mensagem = "UPDATE"
+        l.save()
+        messages.success(request,'Providencia <b>' + registro.nome + '</b> alterada')
+        return redirect('trafego_providencia_id', id)
+    else:
+        return render(request,'trafego/providencia_id.html',{'form':form,'providencia':providencia})
+
+@login_required
+@permission_required('trafego.change_ocorrencia')
+def ocorrencia_update(request,id):
+    ocorrencia = Ocorrencia.objects.get(pk=id)
+    if ocorrencia.usuario != request.user and not request.user.has_perm('trafego.tratar_ocorrencia'): 
+        # SE USUARIO NAO FOR QUEM CRIOU OCORRENCIA, NEM TIVER LIBERACAO PARA TRATAR OCORRENCIA NÃO HABILITA EDICAO
+        messages.warning(request,'Somente proprietario pode editar essa ocorrencia')
+        return redirect('trafego_ocorrencias')
+    form = OcorrenciaForm(request.POST, instance=ocorrencia)
+    if form.is_valid():
+        registro = form.save()
+        l = Log()
+        l.modelo = "trafego.ocorrencia"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.evento.nome + registro.veiculo.prefixo if registro.veiculo != None else '' + ']'
+        l.usuario = request.user
+        l.mensagem = "UPDATE"
+        l.save()
+        for foto in request.FILES.getlist('fotos'):
+            if validate_file_extension(foto):
+                FotoOcorrencia.objects.create(ocorrencia=registro,foto=foto)
+        messages.success(request,'Ocorrencia alterada')
+        return redirect('trafego_ocorrencia_id', id)
+    else:
+        return render(request,'trafego/ocorrencia_id.html',{'form':form,'ocorrencia':ocorrencia})
+
+@login_required
+@permission_required('trafego.tratar_ocorrencia')
+def tratativa_update(request,id):
+    if request.method == 'POST':
+        ocorrencia = Ocorrencia.objects.get(pk=id)
+        try:
+            ocorrencia.providencia = Providencia.objects.get(id=request.POST['providencia'])
+        except:
+            messages.error(request,'É necessário informar a providencia')
+            return redirect('trafego_tratativa_id', id)
+        try:
+            if 'tratado' in request.POST:
+                ocorrencia.tratado = True
+            else:
+                ocorrencia.tratado = False
+            ocorrencia.save()
+            l = Log()
+            l.modelo = "trafego.ocorrencia"
+            l.objeto_id = ocorrencia.id
+            l.objeto_str = ocorrencia.evento.nome + ocorrencia.veiculo.prefixo if ocorrencia.veiculo != None else '' + ']'
+            l.usuario = request.user
+            l.mensagem = "TRATADO"
+            l.save()
+            messages.success(request,'Ocorrencia tratada')
+            return redirect('trafego_tratativas')
+        except:
+            messages.error(request,'Erro ao tratar ocorrencia')
+            return redirect('trafego_tratativas')
+    else:
+        messages.warning(request,'Operação inválida')
+        return redirect('trafego_tratativas')
 
 # METODOS DELETE
 @login_required
@@ -275,6 +555,77 @@ def linha_delete(request, id):
         messages.error(request,'<b>Erro</b> ao apagar linha')
         return redirect('trafego_linha_id', id)
 
+@login_required
+@permission_required('trafego.delete_evento')
+def evento_delete(request,id):
+    try:
+        registro = Evento.objects.get(pk=id)
+        l = Log()
+        l.modelo = "trafego.evento"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.nome[0:48]
+        l.usuario = request.user
+        l.mensagem = "DELETE"
+        l.save()
+        registro.delete()
+        messages.warning(request,'Evento apagada. Essa operação não pode ser desfeita')
+        return redirect('trafego_eventos')
+    except:
+        messages.error(request,'ERRO ao apagar evento')
+        return redirect('trafego_evento_id', id)
+
+@login_required
+@permission_required('trafego.delete_providencia')
+def providencia_delete(request,id):
+    try:
+        registro = Providencia.objects.get(pk=id)
+        l = Log()
+        l.modelo = "trafego.providencia"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.nome[0:48]
+        l.usuario = request.user
+        l.mensagem = "DELETE"
+        l.save()
+        registro.delete()
+        messages.warning(request,'Providencia apagada. Essa operação não pode ser desfeita')
+        return redirect('trafego_providencias')
+    except:
+        messages.error(request,'ERRO ao apagar providencia')
+        return redirect('trafego_providencia_id', id)
+
+@login_required
+@permission_required('trafego.delete_ocorrencia')
+def ocorrencia_delete(request,id):
+    try:
+        registro = Ocorrencia.objects.get(pk=id)
+        l = Log()
+        l.modelo = "trafego.ocorrencia"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.evento.nome + registro.veiculo.prefixo if registro.veiculo != None else '' + ']'
+        l.usuario = request.user
+        l.mensagem = "DELETE"
+        l.save()
+        registro.delete()
+        messages.warning(request,'Ocorrencia apagada. Essa operação não pode ser desfeita')
+        return redirect('trafego_ocorrencias')
+    except:
+        messages.error(request,'ERRO ao apagar ocorrencia')
+        return redirect('trafego_ocorrencia_id', id)
+
+@login_required
+@permission_required('trafego.delete_foto')
+def foto_delete(request, id):
+    registro = FotoOcorrencia.objects.get(pk=id)
+    id_ocorrencia = registro.ocorrencia.id
+    try:
+        registro.delete()
+        os.remove(registro.foto.path) # REMOVE ARQUIVO FISICO 
+        messages.warning(request,'Foto apagada. Essa operação não pode ser desfeita')
+        return redirect('trafego_ocorrencia_id', id_ocorrencia)
+    except:
+        messages.error(request,'ERRO ao apagar foto')
+        return redirect('trafego_ocorrencia_id', id_ocorrencia)
+
 # METODOS AJAX
 def get_linha(request):
     try:
@@ -299,3 +650,30 @@ def get_linhas_empresa(request):
         return HttpResponse(dataJSON)
     except:
         return HttpResponse('')
+
+def get_eventos(request):
+    try:
+        eventos = Evento.objects.all().order_by('nome')
+        itens = {}
+        for item in eventos:
+            itens[item.nome] = item.id
+        dataJSON = dumps(itens)
+        return HttpResponse(dataJSON)
+    except:
+        return HttpResponse('')
+
+@login_required
+def get_ocorrencia(request):
+    # try:
+        id = request.GET.get('id_ocorrencia',None)
+        ocorrencia = Ocorrencia.objects.get(id=id)
+        ocorrencia_str = ocorrencia.data.strftime("%d/%m/%y") + ';' + ocorrencia.hora.strftime("%H:%M") + ';'
+        ocorrencia_str += ocorrencia.evento.nome + ';' if ocorrencia.evento != None else ';'
+        ocorrencia_str += str(ocorrencia.usuario.username) + ';'
+        ocorrencia_str += str(ocorrencia.veiculo.prefixo) + ';' if ocorrencia.veiculo != None else ';'
+        ocorrencia_str += str(ocorrencia.linha.codigo) + ' - ' + ocorrencia.linha.nome + ';' if ocorrencia.linha != None else ';'
+        ocorrencia_str += str(ocorrencia.condutor.matricula) + ' - ' + ocorrencia.condutor.nome + ';' if ocorrencia.condutor != None else ';'
+        ocorrencia_str += ocorrencia.detalhe
+        return HttpResponse(ocorrencia_str)
+    # except:
+    #     return HttpResponse('')

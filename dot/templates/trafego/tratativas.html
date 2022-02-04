@@ -1,0 +1,111 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Tratativas{% endblock %}
+{% block model %}Tráfego{% endblock %}
+{% block navbar_classlist %}navbar-dark bg-primary bg-gradient{% endblock %}
+{% block model_menu %}
+{% include "_component/menu/trafego.html" %}
+{% endblock%}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'trafego_tratativas' %}"></a>
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="search" data-bs-toggle="tab" data-bs-target="#filter" href="#" onclick="setTimeout(function(){document.getElementById('id_pesquisa').focus();},220);" title="CTRL + /"><i class="fas fa-filter"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'trafego_ocorrencias' %}"><i class="fas fa-undo"></i></a></li>
+    </ul>
+  </div>
+  <div class="card-body tab-content">
+    <h5 class="card-title mb-0">Tratativas <small class="badge bg-primary ms-1">{{ocorrencias.count}}</small></h5>
+    <p class="text-primary fw-bold">{{ocorrencia.matricula}} {{ocorrencia.nome}} {% if ocorrencia.status == 'A' %}<span class="badge bg-success">Ativo</span>{% else %}<span class="badge bg-warning">{{ocorrencia.get_status_display}}</span>{% endif %}</p>
+    <div class="tab-pane fade show active" id="base" role="tabpanel">
+      <table id="main_table" class="table border table-striped table-hover">
+        <thead>
+          <tr>
+            <th class="d-none d-lg-table-cell">Data</th>
+            <th class="d-none d-lg-table-cell">Hora</th>
+            <th class="d-none d-md-table-cell">Empresa</th>
+            <th>Linha</th>
+            <th class="d-none d-md-table-cell">Condutor</th>
+            <th class="d-none d-lg-table-cell">Apelido</th>
+            <th>Evento</th>
+            <th class="d-none d-xl-table-cell">Gravidade</th>
+            <th class="d-none d-xl-table-cell">Responsável</th>
+            <th>Tratado</th>
+            {% if perms.trafego.tratar_ocorrencia %}
+            <th>&nbsp;</th>
+            {% endif %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for ocorrencia in ocorrencias %}
+          <tr>
+            <td class="d-none d-lg-table-cell">{{ocorrencia.data|date:'d/m/y'}}</td>
+            <td class="d-none d-lg-table-cell">{{ocorrencia.hora}}</td>
+            <td class="d-none d-md-table-cell">{{ocorrencia.empresa.nome}}</td>
+            <td>{{ocorrencia.linha.codigo}}</td>
+            <td class="d-none d-md-table-cell">{{ocorrencia.condutor.matricula}}</td>
+            <td class="d-none d-lg-table-cell">{{ocorrencia.condutor.apelido}}</td>
+            <td>{{ocorrencia.evento.nome}}</td>
+            <td class="d-none d-xl-table-cell">{{ocorrencia.get_gravidade_display}}</td>
+            <td class="d-none d-xl-table-cell">{{ocorrencia.usuario.username|title}}</td>
+            <td class="{% if ocorrencia.tratado %} bg-success-light text-light{% endif %}">{{ocorrencia.tratado|yesno:'TRATADO,'}}</td>
+            {% if perms.trafego.change_ocorrencia %}
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'trafego_ocorrencia_id' ocorrencia.id %}"><i class="fas fa-pen"></i></a></td>
+            {% endif %}
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="11">Nenhum registro a exibir</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="tab-pane fade" id="filter" role="tabpanel">
+      <form id="trafego_form" action="{% url 'trafego_tratativas' %}" method="POST" autocomplete="off">
+        {% csrf_token %}
+        <div class="row g-1">
+          <div class="form-floating mb-1 col-lg-4">
+            <input type="text" class="form-control bg-light" name="pesquisa" value="" id="id_pesquisa" placeholder="">
+            <label for="id_pesquisa">Matricula condutor</label>
+          </div>
+        </div>
+        <div class="row g-1">
+        	<div class="form-floating mb-1 col-lg-4">
+        		<select class="form-select" id="id_empresa" name="empresa">
+        			<option value="" selected>Todas</option>
+        		</select>
+        		<label for="id_empresa">Empresa</label>
+        	</div>
+        </div>
+        <div class="row g-1">
+        	<div class="form-floating mb-1 col-lg-2">
+        		<input type="date" class="form-control" name="inicio" id="id_inicio" value="">
+        		<label for="id_inicio">De</label>
+        	</div>
+        	<div class="form-floating mb-1 col-lg-2">
+        		<input type="date" class="form-control" name="fim" id="id_fim" value="">
+        		<label for="id_fim">Ate</label>
+        	</div>
+        </div>
+        <div class="form-check form-switch mt-2">
+          <input class="form-check-input" type="checkbox" role="switch" name="tratado" id="id_tratado">
+          <label class="form-check-label user-select-none" for="id_tratado">Mostrar já tratados</label>
+        </div>
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" role="switch" name="indisciplina_condutor" id="id_indisciplina_condutor" checked>
+          <label class="form-check-label user-select-none" for="id_indisciplina_condutor">Somente indisciplina condutor</label>
+        </div>
+        <div class="col-auto"><button type="submit" class="btn btn-sm btn-warning mt-2" id="main_submit" name="button">Pesquisar</button></div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/table_to_csv.js' %}"></script>
+{% endblock %}

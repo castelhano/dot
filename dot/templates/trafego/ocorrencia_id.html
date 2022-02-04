@@ -1,63 +1,37 @@
 {% extends "layout/dot.html" %}
 {% load static %}
-{% block title %}Localidade{% endblock %}
+{% block title %}Ocorrencia{% endblock %}
 {% block model %}Tráfego{% endblock %}
 {% block navbar_classlist %}navbar-dark bg-primary bg-gradient{% endblock %}
 {% block model_menu %}{% include "_component/menu/trafego.html" %}{% endblock%}
+
 {% block content_fluid %}
-<a class="d-none" id="clear" href="{% url 'trafego_localidade_id' localidade.id|safe %}"></a>
+<a class="d-none" id="clear" href="{% url 'trafego_ocorrencia_id' ocorrencia.id|safe %}"></a>
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
-      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
-      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'trafego_localidades' %}"><i class="fas fa-undo"></i></a></li>
+      <li class="nav-item"><a id="tab_link_base" class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a id="tab_link_fotos" class="nav-link" data-bs-toggle="tab" data-bs-target="#fotos" href="#"><i class="fas fa-camera"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'trafego_ocorrencias' %}"><i class="fas fa-undo"></i></a></li>
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
         <ul class="dropdown-menu">
           <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#history_modal">Historico</a></li>
-          {% if perms.trafego.delete_localidade %}
+          {% if perms.trafego.delete_ocorrencia %}
           <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal">Excluir Localidade</a></li>
+          <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal">Excluir Ocorrencia</a></li>
           {% endif %}
         </ul>
       </li>
     </ul>
   </div>
-  <form id="trafego_form" action="{% url 'trafego_localidade_update' localidade.id|safe %}" method="POST" autocomplete="off">
+  <form id="trafego_form" action="{% url 'trafego_ocorrencia_update' ocorrencia.id|safe %}" method="POST" autocomplete="off" enctype="multipart/form-data">
     {% csrf_token %}
-    <div class="card-body tab-content">
-      <h5 class="card-title mb-3">Cadastro de Localidade</h5>
-      <div class="tab-pane fade show active" id="base" role="tabpanel">
-        <div class="row g-1">
-          <div class="form-floating mb-lg-1 col-lg-6">
-            {{ form.nome }}
-            <label for="id_nome">Nome</label>
-          </div>
-        </div>
-        <div class="form-check form-switch mt-2">
-        	{{form.eh_garagem}}
-        	<label class="form-check-label" for="id_eh_garagem">Garagem</label>
-        </div>
-        <div class="form-check form-switch">
-        	{{form.troca_turno}}
-        	<label class="form-check-label" for="id_troca_turno">Troca Turno</label>
-        </div>
-        <div class="form-check form-switch">
-        	{{form.ponto_de_controle}}
-        	<label class="form-check-label" for="id_ponto_de_controle">Ponto de controle</label>
-        </div>
-      </div>
-      <!-- CONTROLES DO FORM -->
-      <div class="row mt-3">
-        <div class="col">
-          <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"><b>G</b>ravar</button>
-        </div>
-      </div>
-    </div>
+    {% include 'trafego/_form_ocorrencia.html' %}
   </form>
 </div>
 
-{% if perms.trafego.delete_localidade %}
+{% if perms.trafego.delete_ocorrencia %}
 <div class="modal fade" id="delete_modal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -70,7 +44,7 @@
         <div class="row mt-2">
           <div class="col text-end">
             <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
-            <a class="btn btn-danger px-3" href="{% url 'trafego_localidade_delete' localidade.id|safe %}">Excluir</a>
+            <a class="btn btn-danger px-3" href="{% url 'trafego_ocorrencia_delete' ocorrencia.id|safe %}">Excluir</a>
           </div>
         </div>
       </div>
@@ -95,7 +69,7 @@
             </tr>
           </thead>
           <tbody class="fs-7">
-            {% for i in localidade.ultimas_alteracoes %}
+            {% for i in ocorrencia.ultimas_alteracoes %}
             <tr>
               <td>{{i.data|date:'d/m/Y H:i:s'}}</td>
               <td>{{i.mensagem}}</td>
@@ -113,5 +87,8 @@
 {% block add_script_src %}{% endblock %}
 
 <script>
-  {% block add_script %}{% endblock %}
+  {% block add_script %}
+  SHORTCUT_MAP['1FTF'] = '#tab_link_base';
+  SHORTCUT_MAP['2FTF'] = '#tab_link_fotos';
+  {% endblock %}
 </script>

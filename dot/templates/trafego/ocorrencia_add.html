@@ -1,0 +1,31 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Ocorrencia{% endblock %}
+{% block model %}Tráfego{% endblock %}
+{% block navbar_classlist %}navbar-dark bg-primary bg-gradient{% endblock %}
+{% block model_menu %}{% include "_component/menu/trafego.html" %}{% endblock %}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'trafego_ocorrencia_add' %}"></a>
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'trafego_ocorrencias' %}"><i class="fas fa-undo"></i></a></li>
+    </ul>
+  </div>
+  <form id="ocorrencia_form" action="{% url 'trafego_ocorrencia_add' %}" method="POST" autocomplete="off" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% include 'trafego/_form_ocorrencia.html' %}
+  </form>
+</div>
+
+{% endblock%}
+
+{% block add_script_src %}{% endblock %}
+
+<script>
+  {% block add_script %}
+  var TAB_ON_ENTER = true;
+  {% endblock %}
+</script>

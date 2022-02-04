@@ -1,0 +1,52 @@
+<div class="row g-1" id="veiculo_container"{% if hide %} style="display:none"{% endif %}>
+  <div class="form-floating mb-1 col" style="max-width: 130px;">
+    <input type="text" class="form-control" name="prefixo" maxlength="6" id="id_prefixo_veiculo" value="{{prefixo}}" placeholder="" onfocusout="getVeiculo()"{% if autofocus %} autofocus{% endif %}{% if required %} REQUIRED{% endif %}>
+    <label for="id_prefixo_veiculo">Cod Veiculo</label>
+  </div>
+  <div class="form-floating mb-lg-1 col col-lg-6">
+    <input type="text" class="form-control" name="placa_veiculo" id="id_placa_veiculo" value="{{placa}}" disabled>
+    <label for="id_placa_veiculo">Placa Veiculo</label>
+  </div>
+  <div class="form-floating mb-1 col d-none d-lg-block">
+    <input type="text" class="form-control" name="" id="" value="" disabled>
+    <label for=""></label>
+  </div>
+  <input type="hidden" name="veiculo" id="id_veiculo" value="{{id}}">
+</div>
+<script>
+    
+  
+  function cleanVeiculo(){
+    document.getElementById('id_prefixo_veiculo').value = '';
+    document.getElementById('id_prefixo_veiculo').classList.remove('is-invalid');
+    document.getElementById('id_placa_veiculo').value = '';
+  };
+  
+  
+  function getVeiculo() {
+    empresa = document.getElementById('id_empresa');
+    prefixo = document.getElementById('id_prefixo_veiculo');
+    placa = document.getElementById("id_placa_veiculo");
+    veiculo = document.getElementById("id_veiculo");
+    if(prefixo.value != ''){
+      var xhttp = new XMLHttpRequest();
+    	xhttp.onreadystatechange = function() {
+    		if(this.readyState == 4 && this.status == 200){
+    			if(this.responseText == ''){
+            document.getElementById("id_prefixo_veiculo").classList.add('is-invalid');
+            document.getElementById("id_placa_veiculo").value = 'Veiculo não cadastrada / habilitada';
+            veiculo.value = '';
+          }
+    			else{
+            prefixo.classList.remove('is-invalid');
+            placa.value = this.responseText.split(';')[1];
+            veiculo.value = this.responseText.split(';')[0];
+          }
+    		}
+    	};
+    	xhttp.open("GET", "{% url 'oficina_get_frota' %}?empresa=" + empresa.value + "&prefixo=" + prefixo.value + "&incluir_inativos={{incluir_inativos}}", true);
+    	xhttp.send();  
+    }
+    else{cleanVeiculo();}
+  }  
+</script>

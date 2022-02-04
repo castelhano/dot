@@ -37,6 +37,7 @@
             <th>Nome</th>
             <th class="d-none d-lg-table-cell">GAR</th>
             <th class="d-none d-lg-table-cell">T Turno</th>
+            <th class="d-none d-lg-table-cell">Controle</th>
             {% if perms.trafego.change_localidade %}
             <th>&nbsp;</th>
             {% endif %}
@@ -49,13 +50,14 @@
             <td>{{localidade.nome}}</td>
             <td class="d-none d-lg-table-cell">{{localidade.eh_garagem|yesno:'GAR,'}}</td>
             <td class="d-none d-lg-table-cell">{{localidade.troca_turno|yesno:'T Turno,'}}</td>
+            <td class="d-none d-lg-table-cell">{{localidade.ponto_de_controle|yesno:'P Controle,'}}</td>
             {% if perms.trafego.change_localidade %}
             <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'trafego_localidade_id' localidade.id|safe %}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
           </tr>
           {% empty %}
           <tr>
-            <td colspan="5">Nenhum registro a exibir</td>
+            <td colspan="6">Nenhum registro a exibir</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -86,11 +88,13 @@
               	<input class="form-check-input" type="checkbox" role="switch" name="eh_garagem" id="id_eh_garagem">
               	<label class="form-check-label" for="id_eh_garagem">Garagem</label>
               </div>
-            </div>
-            <div class="col">
               <div class="form-check form-switch">
               	<input class="form-check-input" type="checkbox" role="switch" name="troca_turno" id="id_troca_turno">
               	<label class="form-check-label" for="id_troca_turno">T Turno</label>
+              </div>
+              <div class="form-check form-switch">
+              	<input class="form-check-input" type="checkbox" role="switch" name="ponto_de_controle" id="id_ponto_de_controle">
+              	<label class="form-check-label" for="id_ponto_de_controle">Controle</label>
               </div>
             </div>
             <div class="col-auto"><button type="submit" class="btn btn-sm btn-warning" name="button">Pesquisar</button></div>
