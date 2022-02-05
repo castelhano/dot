@@ -3,9 +3,7 @@
 {% block title %}Tratativas{% endblock %}
 {% block model %}Tráfego{% endblock %}
 {% block navbar_classlist %}navbar-dark bg-primary bg-gradient{% endblock %}
-{% block model_menu %}
-{% include "_component/menu/trafego.html" %}
-{% endblock%}
+{% block model_menu %}{% include "_component/menu/trafego.html" %}{% endblock%}
 
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'trafego_tratativas' %}"></a>
@@ -53,7 +51,7 @@
             <td class="d-none d-xl-table-cell">{{ocorrencia.usuario.username|title}}</td>
             <td class="{% if ocorrencia.tratado %} bg-success-light text-light{% endif %}">{{ocorrencia.tratado|yesno:'TRATADO,'}}</td>
             {% if perms.trafego.change_ocorrencia %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'trafego_ocorrencia_id' ocorrencia.id %}"><i class="fas fa-pen"></i></a></td>
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'trafego_tratativa_id' ocorrencia.id %}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
           </tr>
           {% empty %}
@@ -109,3 +107,24 @@
 {% block add_script_src %}
 <script src="{% static 'js/table_to_csv.js' %}"></script>
 {% endblock %}
+
+<script>
+{% block add_script %}
+function carregaEmpresas() {
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if(this.readyState == 4 && this.status == 200){
+			if(this.responseText == ''){}
+			else{
+				let obj = JSON.parse(this.responseText);
+				empresas = document.getElementById("id_empresa");
+				for(key in obj){empresas.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
+			}
+		}
+	};
+	xhttp.open("GET", "{% url 'core_get_empresas' %}", true);
+	xhttp.send();
+}
+carregaEmpresas();
+{% endblock %}
+</script>

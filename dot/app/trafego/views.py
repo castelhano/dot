@@ -133,9 +133,9 @@ def tratativas(request):
             ocorrencias = ocorrencias.filter(tratado=False)
         if 'indisciplina_condutor' in request.POST:
             ocorrencias = ocorrencias.filter(indisciplina_condutor=True)
-        # if not validado:
-        #     messages.warning(request,'Informe uma matricula ou periodo para pesquisa')
-        #     return redirect('trafego_tratativas')
+        if not validado:
+            messages.warning(request,'Informe uma matricula ou periodo para pesquisa')
+            return redirect('trafego_tratativas')
     else:
         ocorrencias = ocorrencias.filter(tratado=False, indisciplina_condutor=True)
     return render(request,'trafego/tratativas.html',{'ocorrencias':ocorrencias})

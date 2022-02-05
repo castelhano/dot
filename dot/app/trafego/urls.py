@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from . import views, reports
 
 urlpatterns = [
     path('trafego_linhas',views.linhas,name='trafego_linhas'),
@@ -31,6 +31,7 @@ urlpatterns = [
     path('trafego_ocorrencia_id/<int:id>',views.ocorrencia_id,name='trafego_ocorrencia_id'),
     path('trafego_ocorrencia_update/<int:id>',views.ocorrencia_update,name='trafego_ocorrencia_update'),
     path('trafego_ocorrencia_delete/<int:id>/delete',views.ocorrencia_delete,name='trafego_ocorrencia_delete'),
+    path('trafego_ocorrencia_dashboard',reports.ocorrencia_dashboard,name='trafego_ocorrencia_dashboard'),
     path('trafego_tratativas',views.tratativas,name='trafego_tratativas'),
     path('trafego_tratativa_id/<int:id>',views.tratativa_id,name='trafego_tratativa_id'),
     path('trafego_tratativa_update/<int:id>',views.tratativa_update,name='trafego_tratativa_update'),

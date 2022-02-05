@@ -19,6 +19,9 @@
       {% if perms.trafego.view_tratativa %}
       <li class="nav-item"><a class="nav-link border ms-1" id="menu_tratativas" href="{% url 'trafego_tratativas' %}" title="Tratativas [ALT+T]" style="background-color: #FFF;"><i class="fas fa-check"></i></a></li>
       {% endif %}
+      {% if perms.trafego.dashboard_ocorrencia %}
+      <li class="nav-item"><a class="nav-link border ms-1" href="{% url 'trafego_ocorrencia_dashboard' %}" title="Dashboard Ocorrencias"><i class="fas fa-chart-bar text-purple"></i></a></li>
+      {% endif %}
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
         <ul class="dropdown-menu">

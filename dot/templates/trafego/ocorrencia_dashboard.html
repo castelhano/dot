@@ -1,0 +1,268 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% load tag_extra %}
+{% block title %}Dashboard - Ocorrencia{% endblock %}
+{% block model %}Tráfego{% endblock %}
+{% block navbar_classlist %}navbar-dark bg-primary bg-gradient{% endblock %}
+{% block model_menu %}{% include "_component/menu/trafego.html" %}{% endblock%}
+{% block content_fluid %}
+
+<div class="card mt-2 mb-5">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-chart-line"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'trafego_ocorrencias' %}"><i class="fas fa-undo"></i></a></li>
+      <li class="nav-item ms-auto"><a class="btn btn-sm btn-secondary" id="clear" href="{% url 'trafego_ocorrencia_dashboard' %}">Limpar</a></li>
+    </ul>
+  </div>
+  <div class="card-body tab-content">
+    <div class="d-flex justify-content-between">
+      <div><h5 class="card-title mb-3"><span class="d-none d-lg-inline">Dashboard: </span><b class="text-primary">Ocorrência</b></h5></div>
+      <div class="dropdown">
+        <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"><b>{{metrics.periodo_de|date:'d/m/y'}}</b> a <b>{{metrics.periodo_ate|date:'d/m/y'}}</b></button>
+        <ul class="dropdown-menu fs-7">
+          <li>
+            <div class="row g-1">
+              <div class="col-12 px-2"><input type="date" class="form-control" name="periodo_de" value="{{metrics.periodo_de|date:'Y-m-d'}}" onchange="filter('data_simulada', this.value)"></div>
+              <div class="col-12 px-2"><input type="date" class="form-control" name="periodo_ate" value="{{metrics.periodo_ate|date:'Y-m-d'}}" onchange="filter('data_simulada', this.value)"></div>
+            </div>
+          </li>
+        </ul>
+        <a id="adicional_filters_link" class="btn btn-sm btn-dark" data-bs-toggle="collapse" href="#adicional_filters" role="button"><i class="fas fa-caret-down"></i></a>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col collapse mb-2" id="adicional_filters">
+        <div class=" d-flex flex-row">
+          <div class="dropdown">
+            <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">Empresa: <b>{{metrics.empresa_nome|default:'Todas'}}</b></button>
+            <ul class="dropdown-menu fs-7" id="id_empresa">
+              <li><a class="dropdown-item" href="{% url 'trafego_ocorrencia_dashboard' %}?empresa=">Todos</a></li>
+            </ul>
+          </div>
+        </div>        
+      </div>
+    </div>
+    
+    <div class="tab-pane fade show active" id="base" role="tabpanel">
+      <div class="row">
+        <div class="col-lg-3 mb-2">
+          <div class="card text-center bg-primary text-light">
+            <div class="card-header">Total Ocorrências</div>
+            <div class="body py-3"><h1>{{metrics.qtd_ocorrencias|default:0}}</h1></div>            
+          </div>
+        </div>
+        <div class="col-lg-3 mb-2">
+          <div class="card text-center bg-primary text-light">
+            <div class="card-header">Média por Dia</div>
+            <div class="body py-3"><h1>{{metrics.media_dia_ocorrencias|default:0|floatformat:0}}</h1></div>            
+          </div>
+        </div>
+        <div class="col-lg-3 mb-2">
+          <div class="card text-center bg-primary text-light">
+            <div class="card-header">Indisciplina</div>
+            <div class="body py-3"><h1>{{metrics.indisciplina}} <sup class="fs-4">( {{metrics.indisciplina_percentual|floatformat:0}}% )</sup></h1></div>
+          </div>
+        </div>
+        <div class="col-lg-3 mb-2">
+          <div class="card text-center bg-primary text-light">
+            <div class="card-header">Omissão período</div>
+            <div class="body py-3"><h1>{{metrics.omissao}} <sup class="fs-4">( {{metrics.omissao_percentual|floatformat:0}}% )</sup></h1></div>
+          </div>
+        </div>        
+      </div>
+      <!-- ROW 2 | DETALHAMENTO  -->
+      <div class="row">
+        
+        <div class="col-lg-9">
+          <div class="border rounded"><canvas id="evolucao_ocorrencias" style="height: 450px;"></canvas></div>
+        </div>
+        <div class="col-lg-3">
+          <div class="border rounded"><canvas id="gravidade_ocorrencias" style="height: 450px;"></canvas></div>
+        </div>
+        
+        <div class="col-lg mb-2 mb-lg-0">
+          <div class="row g-1">
+            {% for k, v in metrics.componentes.items %}
+            <div class="col-6">
+              <div class="card text-center bg-light">
+                <div class="card-header">{{k}}</div>
+                <div class="card-body">
+                  <div class="row g-0">
+                    <div class="col-6 fs-5 text-nowrap">{{v}}</div>
+                    <div class="col-6 fs-5 text-nowrap">{{v|percentual:metrics.ocorrencia_ativa|floatformat:0}}%</div>
+                  </div>
+                </div>              
+              </div>
+            </div>
+            {% endfor %}
+          </div>          
+        </div>        
+      </div>
+      <div class="row mt-2">
+        {% for key, value in metrics.marcas.items %}
+        <div class="col-lg-3 mb-1 mb-lg-0">
+          <div class="card bg-light">
+            <div class="card-header text-center">{{key}} <span class="float-end fs-7"><span class="fw-bold">{{metrics.marcas_sum|dict_value:key|zfill:2}}</span> - <span>{{metrics.marcas_sum|dict_value:key|percentual:metrics.ocorrencia_ativa|floatformat:0}}%</span></span></div>
+            <div class="card-body fs-7">
+              {% for k, v in value.items %}
+              <div class="row"><div class="col">{{k}}</div><div class="col-auto text-end">{{v|zfill:2}}</div><div class="col-auto text-end" style="width: 80px;">{{v|percentual:metrics.ocorrencia_ativa|floatformat:0}}%</div></div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+        
+      </div>
+    </div>
+  </div>
+  {% if metrics.idade_ocorrencia_ignorada|length > 0 %}
+  <div class="row"><div class="col px-4 pb-2"><label style="width: 130px;">Sem dados:</label><span class="badge bg-dark ms-1">{{metrics.idade_ocorrencia_ignorada|length}}</span>
+    {% for row in metrics.idade_ocorrencia_ignorada %}
+    <span class="badge bg-danger">{{row}}</span>
+    {% endfor %}
+  </div></div>
+  {% endif %}
+  {% if metrics.modelo_ocorrencia_ignorada|length > 0 %}
+  <div class="row"><div class="col px-4 pb-2"><label style="width: 130px;">Sem modelo:</label><span class="badge bg-dark ms-1">{{metrics.modelo_ocorrencia_ignorada|length}}</span>
+    {% for row in metrics.modelo_ocorrencia_ignorada %}
+    <span class="badge bg-danger">{{row}}</span>
+    {% endfor %}
+  </div></div>
+  {% endif %}
+</div>
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/vendor/chart.min.js' %}"></script>
+<script src="{% static 'js/update_url.js' %}"></script>
+{% endblock %}
+
+
+<script>
+  {% block add_script %}
+  
+  SHORTCUT_MAP['fFFF'] = '#adicional_filters_link';
+  
+  var evolucao_ctx = document.getElementById('evolucao_ocorrencias');
+  var barChart = new Chart(evolucao_ctx, {
+    // line bar horizontalBar pie doughnut
+    type: 'bar',
+    data: {
+      labels: {{ metrics.evolucao_ocorrencias.categorias|safe }},
+      datasets: [{
+        label: 'Data',
+        data: {{ metrics.evolucao_ocorrencias.dados }},
+        backgroundColor: {{ metrics.evolucao_ocorrencias.bgcolors|safe }},
+        borderColor: {{ metrics.evolucao_ocorrencias.bordercolors|safe }},
+        fill: false,
+        borderWidth: 1
+      }]
+    },
+    options: {
+      maintainAspectRatio: false,
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
+      },
+      title: {
+        display: true,
+        text: 'Evolução Ocorrências por Dia',
+        fontSize: 18,
+        position: 'top'
+      },
+      legend: {
+        display: false,
+        // position: 'bottom',
+        // labels: {
+        // fontColor: 'rgb(108, 117, 125)',
+        // fillStyle: 'rgb(255, 255, 255)'
+        // }
+      }
+    }
+  });
+  
+  var gravidade_ctx = document.getElementById('gravidade_ocorrencias');
+  var barChart = new Chart(gravidade_ctx, {
+    // line bar horizontalBar pie doughnut
+    type: 'pie',
+    data: {
+      labels: ['Leve', 'Medio', 'Grave'],
+      datasets: [{
+        label: 'Qtde',
+        data: [{{metrics.gravidade.L}}, {{metrics.gravidade.M}}, {{metrics.gravidade.G}}],
+        backgroundColor: ['#68B679', '#6596CD', '#CB90BA'],
+        borderColor: ['#68B679', '#6596CD', '#CB90BA'],
+        fill: false,
+        borderWidth: 1
+      }]
+    },
+    options: {
+      maintainAspectRatio: false,
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
+      },
+      title: {
+        display: true,
+        text: 'Gravidade',
+        fontSize: 18,
+        position: 'top'
+      },
+      legend: {
+        display: true,
+        position: 'bottom',
+        // labels: {
+        // fontColor: 'rgb(108, 117, 125)',
+        // fillStyle: 'rgb(255, 255, 255)'
+        // }
+      }
+    }
+  });
+  
+  
+  function carregaEmpresas() {
+  	var xhttp = new XMLHttpRequest();
+  	xhttp.onreadystatechange = function() {
+  		if(this.readyState == 4 && this.status == 200){
+  			if(this.responseText == ''){}
+  			else{
+  				let obj = JSON.parse(this.responseText);
+  				empresas = document.getElementById("id_empresa");
+  				for(key in obj){empresas.innerHTML += `<li><a class="dropdown-item pointer" onclick="filter('empresa','${obj[key]}')">${key}</a></li>`;}
+  			}
+  		}
+  	};
+  	xhttp.open("GET", "{% url 'core_get_empresas' %}", true);
+  	xhttp.send();
+  }
+  carregaEmpresas();
+  
+  
+  
+  function carregaSetores() {
+  	var xhttp = new XMLHttpRequest();
+  	xhttp.onreadystatechange = function() {
+  		if(this.readyState == 4 && this.status == 200){
+  			if(this.responseText == ''){}
+  			else{
+  				let obj = JSON.parse(this.responseText);
+  				setores = document.getElementById("id_setor")
+  				for(key in obj){setores.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
+  			}
+  		}
+  	};
+  	xhttp.open("GET", "url", true);
+  	xhttp.send();
+  }
+  
+  
+  {% endblock %}
+</script>
