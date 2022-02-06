@@ -14,7 +14,9 @@
       <li class="nav-item"><a id="selecoes_tab_list" class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#" title="Ctrl + 1"><i class="fas fa-list"></i></a></li>
       <li class="nav-item"><a id="agenda_tab_list" class="nav-link" data-bs-toggle="tab" data-bs-target="#agenda" href="#" title="Ctrl + 2"><i class="fas fa-calendar"></i></a></li>
       <li class="nav-item"><a class="nav-link" id="search" data-bs-toggle="tab" data-bs-target="#filter" href="#" onclick="setTimeout(function(){document.getElementById('id_pesquisa').focus();},220);"><i class="fas fa-filter"></i></a></li>
+      {% if perms.recrutamento.dashboard_recrutamento %}
       <li class="nav-item"><a class="nav-link border ms-1" href="{% url 'recrutamento_candidato_dashboard' %}" title="Dashboard Banco Candidatos"><i class="fas fa-chart-bar text-purple"></i></a></li>
+      {% endif %}
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
         <ul class="dropdown-menu">

@@ -186,6 +186,7 @@ class Ocorrencia(models.Model):
         return fotos
     class Meta:
         permissions = [
+            ("dashboard_ocorrencia", "Pode ver dashboard ocorrencia"),
             ("tratar_ocorrencia", "Pode tratar ocorrencia"),
         ]
 

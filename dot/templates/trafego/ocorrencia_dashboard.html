@@ -17,14 +17,15 @@
   </div>
   <div class="card-body tab-content">
     <div class="d-flex justify-content-between">
-      <div><h5 class="card-title mb-3"><span class="d-none d-lg-inline">Dashboard: </span><b class="text-primary">Ocorrência</b></h5></div>
+      <div><h5 class="card-title mb-3"><span class="d-none d-lg-inline">Dashboard: </span><b class="text-primary">Ocorrência</b><sup class="badge bg-primary ms-2">{{metrics.empresa_nome|default:''}}</sup></h5></div>
       <div class="dropdown">
-        <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"><b>{{metrics.periodo_de|date:'d/m/y'}}</b> a <b>{{metrics.periodo_ate|date:'d/m/y'}}</b></button>
+        <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"><span class="d-none d-sm-inline"><b>{{metrics.periodo_de|date:'d/m/y'}}</b> a <b>{{metrics.periodo_ate|date:'d/m/y'}}</b></span><span class="d-inline d-sm-none">Periodo</span></button>
         <ul class="dropdown-menu fs-7">
           <li>
             <div class="row g-1">
-              <div class="col-12 px-2"><input type="date" class="form-control" name="periodo_de" value="{{metrics.periodo_de|date:'Y-m-d'}}" onchange="filter('data_simulada', this.value)"></div>
-              <div class="col-12 px-2"><input type="date" class="form-control" name="periodo_ate" value="{{metrics.periodo_ate|date:'Y-m-d'}}" onchange="filter('data_simulada', this.value)"></div>
+              <div class="col-12 px-2"><input type="date" class="form-control" id="id_periodo_de" name="periodo_de" value="{{metrics.periodo_de|date:'Y-m-d'}}"></div>
+              <div class="col-12 px-2"><input type="date" class="form-control" id="id_periodo_ate"  name="periodo_ate" value="{{metrics.periodo_ate|date:'Y-m-d'}}"></div>
+              <div class="col-12 d-grid px-2"><button type="button" class="btn btn-sm btn-primary" name="button" onclick="filtraPeriodo();">Filtrar</button></div>
             </div>
           </li>
         </ul>
@@ -38,7 +39,7 @@
           <div class="dropdown">
             <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">Empresa: <b>{{metrics.empresa_nome|default:'Todas'}}</b></button>
             <ul class="dropdown-menu fs-7" id="id_empresa">
-              <li><a class="dropdown-item" href="{% url 'trafego_ocorrencia_dashboard' %}?empresa=">Todos</a></li>
+              <li><a class="dropdown-item" href="{% url 'trafego_ocorrencia_dashboard' %}?empresa=">Todas</a></li>
             </ul>
           </div>
         </div>        
@@ -72,65 +73,31 @@
           </div>
         </div>        
       </div>
-      <!-- ROW 2 | DETALHAMENTO  -->
-      <div class="row">
-        
-        <div class="col-lg-9">
+      
+      <div class="row mt-3">
+        <div class="col-lg-6">
           <div class="border rounded"><canvas id="evolucao_ocorrencias" style="height: 450px;"></canvas></div>
         </div>
-        <div class="col-lg-3">
+        <div class="col-lg-3 mt-3 mt-lg-0">
+          <div class="border rounded"><canvas id="empresa_ocorrencias" style="height: 450px;"></canvas></div>
+        </div>
+        <div class="col-lg-3 mt-3 mt-lg-0">
           <div class="border rounded"><canvas id="gravidade_ocorrencias" style="height: 450px;"></canvas></div>
         </div>
-        
-        <div class="col-lg mb-2 mb-lg-0">
-          <div class="row g-1">
-            {% for k, v in metrics.componentes.items %}
-            <div class="col-6">
-              <div class="card text-center bg-light">
-                <div class="card-header">{{k}}</div>
-                <div class="card-body">
-                  <div class="row g-0">
-                    <div class="col-6 fs-5 text-nowrap">{{v}}</div>
-                    <div class="col-6 fs-5 text-nowrap">{{v|percentual:metrics.ocorrencia_ativa|floatformat:0}}%</div>
-                  </div>
-                </div>              
-              </div>
-            </div>
-            {% endfor %}
-          </div>          
-        </div>        
       </div>
-      <div class="row mt-2">
-        {% for key, value in metrics.marcas.items %}
-        <div class="col-lg-3 mb-1 mb-lg-0">
-          <div class="card bg-light">
-            <div class="card-header text-center">{{key}} <span class="float-end fs-7"><span class="fw-bold">{{metrics.marcas_sum|dict_value:key|zfill:2}}</span> - <span>{{metrics.marcas_sum|dict_value:key|percentual:metrics.ocorrencia_ativa|floatformat:0}}%</span></span></div>
-            <div class="card-body fs-7">
-              {% for k, v in value.items %}
-              <div class="row"><div class="col">{{k}}</div><div class="col-auto text-end">{{v|zfill:2}}</div><div class="col-auto text-end" style="width: 80px;">{{v|percentual:metrics.ocorrencia_ativa|floatformat:0}}%</div></div>
-              {% endfor %}
-            </div>
-          </div>
+      
+      <div class="row mt-3">
+        <div class="col-lg-4">
+          <div class="border rounded"><canvas id="ocorrencias_evento"></canvas></div>
         </div>
-        {% endfor %}
-        
+        <div class="col-lg-8 mt-3 mt-lg-0">
+          <div class="border rounded"><canvas id="ocorrencias_linha" style="height: 450px;"></canvas></div>
+        </div>
       </div>
+      
     </div>
+    
   </div>
-  {% if metrics.idade_ocorrencia_ignorada|length > 0 %}
-  <div class="row"><div class="col px-4 pb-2"><label style="width: 130px;">Sem dados:</label><span class="badge bg-dark ms-1">{{metrics.idade_ocorrencia_ignorada|length}}</span>
-    {% for row in metrics.idade_ocorrencia_ignorada %}
-    <span class="badge bg-danger">{{row}}</span>
-    {% endfor %}
-  </div></div>
-  {% endif %}
-  {% if metrics.modelo_ocorrencia_ignorada|length > 0 %}
-  <div class="row"><div class="col px-4 pb-2"><label style="width: 130px;">Sem modelo:</label><span class="badge bg-dark ms-1">{{metrics.modelo_ocorrencia_ignorada|length}}</span>
-    {% for row in metrics.modelo_ocorrencia_ignorada %}
-    <span class="badge bg-danger">{{row}}</span>
-    {% endfor %}
-  </div></div>
-  {% endif %}
 </div>
 {% endblock%}
 
@@ -145,87 +112,181 @@
   
   SHORTCUT_MAP['fFFF'] = '#adicional_filters_link';
   
+  function filtraPeriodo(){
+    let periodos = [document.getElementById('id_periodo_de').value,document.getElementById('id_periodo_ate').value]
+    filters(['periodo_de','periodo_ate'], periodos);
+  }
+  
   var evolucao_ctx = document.getElementById('evolucao_ocorrencias');
-  var barChart = new Chart(evolucao_ctx, {
-    // line bar horizontalBar pie doughnut
+  evolucao_ctx.style.backgroundColor = '#F7F7F7';
+  let evolucao_chart = new Chart(evolucao_ctx, {
     type: 'bar',
     data: {
-      labels: {{ metrics.evolucao_ocorrencias.categorias|safe }},
       datasets: [{
-        label: 'Data',
+        label: 'Qtde',
         data: {{ metrics.evolucao_ocorrencias.dados }},
         backgroundColor: {{ metrics.evolucao_ocorrencias.bgcolors|safe }},
         borderColor: {{ metrics.evolucao_ocorrencias.bordercolors|safe }},
-        fill: false,
-        borderWidth: 1
-      }]
+      }],
+      labels: {{ metrics.evolucao_ocorrencias.categorias|safe }},
     },
     options: {
       maintainAspectRatio: false,
       scales: {
-        yAxes: [{
-          ticks: {
-            beginAtZero: true
-          }
-        }]
+        y: {
+          suggestedMin: 0,
+          grace: 1,
+          ticks: {stepSize: 1}
+        }
       },
-      title: {
-        display: true,
-        text: 'Evolução Ocorrências por Dia',
-        fontSize: 18,
-        position: 'top'
-      },
-      legend: {
-        display: false,
-        // position: 'bottom',
-        // labels: {
-        // fontColor: 'rgb(108, 117, 125)',
-        // fillStyle: 'rgb(255, 255, 255)'
-        // }
+      plugins: {
+        legend: {display:false, position: 'bottom'},
+        title: {
+          display: true,
+          text:'Evolução Ocorrências Dia',
+          font: {size: 18},
+          padding: {top: 10,bottom: 10}
+        },
       }
     }
   });
   
   var gravidade_ctx = document.getElementById('gravidade_ocorrencias');
-  var barChart = new Chart(gravidade_ctx, {
-    // line bar horizontalBar pie doughnut
+  gravidade_ctx.style.backgroundColor = '#F7F7F7';
+  let gravidade_chart = new Chart(gravidade_ctx, {
     type: 'pie',
     data: {
-      labels: ['Leve', 'Medio', 'Grave'],
       datasets: [{
         label: 'Qtde',
         data: [{{metrics.gravidade.L}}, {{metrics.gravidade.M}}, {{metrics.gravidade.G}}],
-        backgroundColor: ['#68B679', '#6596CD', '#CB90BA'],
-        borderColor: ['#68B679', '#6596CD', '#CB90BA'],
-        fill: false,
-        borderWidth: 1
-      }]
+        backgroundColor: ['#C7C3E9', '#8179CD','#4D42B3'],
+        borderColor: ['#C7C3E9', '#8179CD','#4D42B3'],
+      }],
+      labels: ['Leve', 'Medio', 'Grave'],
     },
     options: {
       maintainAspectRatio: false,
       scales: {
-        yAxes: [{
-          ticks: {
-            beginAtZero: true
-          }
-        }]
+        y: {
+          display: false,
+          // suggestedMin: 0,
+          // ticks: {stepSize: 1}
+        }
       },
-      title: {
-        display: true,
-        text: 'Gravidade',
-        fontSize: 18,
-        position: 'top'
-      },
-      legend: {
-        display: true,
-        position: 'bottom',
-        // labels: {
-        // fontColor: 'rgb(108, 117, 125)',
-        // fillStyle: 'rgb(255, 255, 255)'
-        // }
+      plugins: {
+        legend: {display:true, position: 'bottom'},
+        title: {
+          display: true,
+          text:'Gravidade',
+          font: {size: 18},
+          padding: {top: 10,bottom: 10}
+        },
       }
     }
   });
+  
+  var empresa_ctx = document.getElementById('empresa_ocorrencias');
+  empresa_ctx.style.backgroundColor = '#F7F7F7';
+  let empresa_chart = new Chart(empresa_ctx, {
+    type: 'doughnut',
+    data: {
+      datasets: [{
+        label: 'Qtde',
+        data: {{ metrics.ocorrencias_empresa.dados }},
+        backgroundColor: {{ metrics.ocorrencias_empresa.bgcolors|safe }},
+        borderColor: {{ metrics.ocorrencias_empresa.bordercolors|safe }},
+      }],
+      labels: {{ metrics.ocorrencias_empresa.categorias|safe }},
+    },
+    options: {
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          display: false,
+          // suggestedMin: 0,
+          // ticks: {stepSize: 1}
+        }
+      },
+      plugins: {
+        legend: {display:true, position: 'bottom'},
+        title: {
+          display: true,
+          text:'Empresa',
+          font: {size: 18},
+          padding: {top: 10,bottom: 10}
+        },
+      }
+    }
+  });
+  
+  var evento_ctx = document.getElementById('ocorrencias_evento');
+  evento_ctx.style.backgroundColor = '#F7F7F7';
+  let evento_chart = new Chart(evento_ctx, {
+    type: 'bar',
+    data: {
+      datasets: [{
+        label: 'Qtde',
+        data: {{ metrics.ocorrencias_evento.dados }},
+        backgroundColor: {{ metrics.ocorrencias_evento.bgcolors|safe }},
+        borderColor: {{ metrics.ocorrencias_evento.bordercolors|safe }},
+      }],
+      labels: {{ metrics.ocorrencias_evento.categorias|safe }},
+    },
+    options: {
+      maintainAspectRatio: true,
+      indexAxis: 'y',
+      scales: {
+        x: {
+          suggestedMin: 0,
+          ticks: {stepSize: 1}
+        }
+      },
+      plugins: {
+        legend: {display:false, position: 'bottom'},
+        title: {
+          display: true,
+          text:'Por Evento',
+          font: {size: 18},
+          padding: {top: 10,bottom: 10}
+        },
+      }
+    }
+  });
+  
+  var linha_ctx = document.getElementById('ocorrencias_linha');
+  linha_ctx.style.backgroundColor = '#F7F7F7';
+  let linha_chart = new Chart(linha_ctx, {
+    type: 'bar',
+    data: {
+      datasets: [{
+        label: 'Qtde',
+        data: {{ metrics.ocorrencias_linha.dados }},
+        backgroundColor: {{ metrics.ocorrencias_linha.bgcolors|safe }},
+        borderColor: {{ metrics.ocorrencias_linha.bordercolors|safe }},
+      }],
+      labels: {{ metrics.ocorrencias_linha.categorias|safe }},
+    },
+    options: {
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          suggestedMin: 0,
+          grace: 1,
+          ticks: {stepSize: 1}
+        }
+      },
+      plugins: {
+        legend: {display:false, position: 'bottom'},
+        title: {
+          display: true,
+          text:'Por Linha',
+          font: {size: 18},
+          padding: {top: 10,bottom: 10}
+        },
+      }
+    }
+  });
+  
   
   
   function carregaEmpresas() {
@@ -244,24 +305,6 @@
   	xhttp.send();
   }
   carregaEmpresas();
-  
-  
-  
-  function carregaSetores() {
-  	var xhttp = new XMLHttpRequest();
-  	xhttp.onreadystatechange = function() {
-  		if(this.readyState == 4 && this.status == 200){
-  			if(this.responseText == ''){}
-  			else{
-  				let obj = JSON.parse(this.responseText);
-  				setores = document.getElementById("id_setor")
-  				for(key in obj){setores.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
-  			}
-  		}
-  	};
-  	xhttp.open("GET", "url", true);
-  	xhttp.send();
-  }
   
   
   {% endblock %}

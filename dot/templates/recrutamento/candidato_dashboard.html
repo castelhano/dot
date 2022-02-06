@@ -132,9 +132,9 @@
                 <div class="card bg-light">
                   <div class="card-header text-center">Critérios Reprovados</div>
                   <div class="card-body">
-                      {% for k, v in metrics.criterios_reprovados.items %}
-                      <div class="row"><div class="col">{{k}}</div><div class="col-auto text-end">{{v|zfill:2}}</div><div class="col-auto text-end" style="width: 80px;">{{v|percentual:metrics.total_criterios|floatformat:0}} %</div></div>
-                      {% endfor %}
+                    {% for k, v in metrics.criterios_reprovados.items %}
+                    <div class="row"><div class="col">{{k}}</div><div class="col-auto text-end">{{v|zfill:2}}</div><div class="col-auto text-end" style="width: 80px;">{{v|percentual:metrics.total_criterios|floatformat:0}} %</div></div>
+                    {% endfor %}
                   </div>              
                 </div>
               </div>
@@ -162,44 +162,38 @@
   SHORTCUT_MAP['fFFF'] = '#adicional_filters_link';
   
   var ctx = document.getElementById('banco_evolucao');
-  var barChart = new Chart(ctx, {
-    // line bar horizontalBar pie doughnut
+  ctx.style.backgroundColor = '#F7F7F7';  
+  let chart = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: {{ metrics.evolucao_banco.categorias|safe }},
       datasets: [{
-        label: 'Cadastros',
+        label: 'Qtde',
         data: {{ metrics.evolucao_banco.dados }},
         backgroundColor: {{ metrics.evolucao_banco.bgcolors|safe }},
         borderColor: {{ metrics.evolucao_banco.bordercolors|safe }},
-        fill: false,
-        borderWidth: 1
-      }]
+      }],
+      labels: {{ metrics.evolucao_banco.categorias|safe }},
     },
     options: {
       maintainAspectRatio: false,
       scales: {
-        yAxes: [{
-          ticks: {
-            beginAtZero: true
-          }
-        }]
+        y: {
+          suggestedMin: 0,
+          ticks: {stepSize: 1}
+        }
       },
-      title: {
-        display: true,
-        text: 'Evolução Banco',
-        fontSize: 18,
-        position: 'top'
-      },
-      legend: {
-        display: false,
-        // labels: {
-        // fontColor: 'rgb(108, 117, 125)',
-        // fillStyle: 'rgb(255, 255, 255)'
-        // }
+      plugins: {
+        legend: {display:false, position: 'bottom'},
+        title: {
+          display: true,
+          text:'Cadastros no Banco',
+          font: {size: 18},
+          padding: {top: 10,bottom: 10}
+        },
       }
     }
   });
+  
   
   function carregaCargosBanco() {
     var xhttp = new XMLHttpRequest();

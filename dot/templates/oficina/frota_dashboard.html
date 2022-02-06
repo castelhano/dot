@@ -158,45 +158,37 @@
   SHORTCUT_MAP['fFFF'] = '#adicional_filters_link';
   
   var ctx = document.getElementById('frota_idade');
-  var barChart = new Chart(ctx, {
-    // line bar horizontalBar pie doughnut
+  ctx.style.backgroundColor = '#F7F7F7';  
+  let chart = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: {{ metrics.frota_idade.categorias|safe }},
       datasets: [{
         label: 'Qtde',
-        data: {{ metrics.frota_idade.dados }},
+        data: {{ metrics.frota_idade.dados|safe }},
         backgroundColor: {{ metrics.frota_idade.bgcolors|safe }},
         borderColor: {{ metrics.frota_idade.bordercolors|safe }},
-        fill: false,
-        borderWidth: 1
-      }]
+      }],
+      labels: {{ metrics.frota_idade.categorias|safe }},
     },
     options: {
       maintainAspectRatio: false,
       scales: {
-        yAxes: [{
-          ticks: {
-            beginAtZero: true
-          }
-        }]
+        y: {
+          suggestedMin: 0,
+          // ticks: {stepSize: 1}
+        }
       },
-      title: {
-        display: true,
-        text: 'Frota Ativa - {{metrics.resumo_por_display}}',
-        fontSize: 18,
-        position: 'top'
-      },
-      legend: {
-        display: false,
-        // labels: {
-        // fontColor: 'rgb(108, 117, 125)',
-        // fillStyle: 'rgb(255, 255, 255)'
-        // }
+      plugins: {
+        legend: {display:false, position: 'bottom'},
+        title: {
+          display: true,
+          text:'Frota Ativa - {{metrics.resumo_por_display}}',
+          font: {size: 18},
+          padding: {top: 10,bottom: 10}
+        },
       }
     }
   });
-  
   
   function carregaEmpresas() {
   	var xhttp = new XMLHttpRequest();
