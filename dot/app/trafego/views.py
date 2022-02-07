@@ -516,6 +516,13 @@ def tratativa_update(request,id):
         messages.warning(request,'Operação inválida')
         return redirect('trafego_tratativas')
 
+@login_required
+@permission_required('trafego.tratar_ocorrencia')
+def tratativa_marcar_todas_tratadas(request,id):
+    resposta = Ocorrencia.objects.filter(tratado=False).update(tratado=True)
+    messages.warning(request,f'<b>{resposta[0]}</b> ocorrencias marcadas como tratadas')
+    return redirect('trafego_tratativas')
+
 # METODOS DELETE
 @login_required
 @permission_required('trafego.delete_localidade')

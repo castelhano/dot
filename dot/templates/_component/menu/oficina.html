@@ -1,7 +1,14 @@
+{% include "_component/layout/submenulist.html" %}
 <li id="cadastro_list_container" class="nav-item dropdown">
   <a class="nav-link dropdown-toggle" id="menu_cadastro" href="#" data-bs-toggle="dropdown" title="ALT + C"><b>C</b>adastro</a>
   <ul id="cadastro_list_options" class="dropdown-menu dropdown-menu-dark">
-    {% if perms.oficina.view_frota %}<li><a class="dropdown-item" id="app_root" href="{% url 'oficina_frotas' %}"><b>F</b>rota</a></li>{% endif %}
+    <li class="">
+      <a class="dropdown-item d-flex justify-content-between align-items-center pointer" id="app_root">Frota<i class="fas fa-chevron-right fs-8"></i></a>
+      <ul class="submenu dropdown-menu dropdown-menu-dark">
+        <li><a class="dropdown-item" href="#">Foo</a></li>
+      </ul>
+    </li>
+    {% if perms.oficina.view_frota %}<li><a class="dropdown-item"  href="{% url 'oficina_frotas' %}"><b>F</b>rota</a></li>{% endif %}
     {% if perms.oficina.view_marca %}<li><a class="dropdown-item" id="cadastro_marca" href="{% url 'oficina_marcas' %}"><b>M</b>arca</a></li>{% endif %}
     {% if perms.oficina.view_modelo %}<li><a class="dropdown-item" id="cadastro_modelo" href="{% url 'oficina_modelos' %}">M<b>o</b>delo</a></li>{% endif %}
     {% if perms.oficina.view_classificacao %}<li><a class="dropdown-item" id="cadastro_classificacao" href="{% url 'oficina_classificacoes' %}"><b>C</b>lassificação</a></li>{% endif %}
@@ -20,7 +27,12 @@
     else{
       let cadastro = false;
       try{cadastro = document.getElementById('menu_cadastro').classList.contains('show') ? true : false;}catch(err){}
-      if(cadastro && e.key.toLowerCase() == 'f'){e.preventDefault();document.getElementById('app_root').click();}
+      // if(cadastro && e.key.toLowerCase() == 'f'){e.preventDefault();document.getElementById('app_root').click();}
+      if(cadastro && e.key.toLowerCase() == 'f'){
+        e.preventDefault();
+        const mouseoverEvent = new Event('mouseover');
+        document.getElementById('app_root').dispatchEvent(mouseoverEvent);
+      }
       else if(cadastro && e.key.toLowerCase() == 'm'){e.preventDefault();document.getElementById('cadastro_marca').click();}
       else if(cadastro && e.key.toLowerCase() == 'o'){e.preventDefault();document.getElementById('cadastro_modelo').click();}
       else if(cadastro && e.key.toLowerCase() == 'c'){e.preventDefault();document.getElementById('cadastro_classificacao').click();}

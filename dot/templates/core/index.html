@@ -1,13 +1,11 @@
 {% extends "layout/dot.html" %}
-{% block title %}Dot{% endblock %}
-{% block model_menu %}
-{% include "_component/menu/core.html" %}
-{% endblock%}
+{% block title %}SIT{% endblock %}
+{% block model_menu %}{% include "_component/menu/core.html" %}{% endblock%}
 
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'index' %}"></a>
 <div class="row px-1 pt-lg-2">
-  {% if perms.core.console %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-dark" title="Ctrl + C"><i class="fas fa-window-restore lead-image"></i><a id="console_link" class="widget-label stretched-link" href="{% url 'console' %}">Admin Console <kbd class="float-end fs-9 bg-white text-dark">ctrl c</kbd></a></div>{% endif %}
+  {% if perms.core.console %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-dark" title="Ctrl + C"><i class="fas fa-window-restore lead-image"></i><a id="console_link" class="widget-label stretched-link" href="{% url 'console' %}">Admin Console</a></div>{% endif %}
   {% if perms.pessoal.view_funcionario %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-purple"><i class="fas fa-user-tie lead-image"></i><a id="widget_action_pessoal" class="widget-label stretched-link" href="{% url 'pessoal_funcionarios' %}">Pessoal<kbd class="float-end fs-9">ctrl p</kbd></a></div>{% endif %}
   {% if perms.recrutamento.view_selecao %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-purple"><i class="fas fa-users lead-image"></i><a id="widget_action_recrutamento" class="widget-label stretched-link" href="{% url 'recrutamento_selecoes' %}">Recrutamento<kbd class="float-end fs-9">ctrl r</kbd></a></div>{% endif %}
   {% if perms.oficina.view_frota %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-success"><i class="fas fa-bus lead-image"></i><a id="widget_action_oficina" class="widget-label stretched-link" href="{% url 'oficina_frotas' %}">Oficina<kbd class="float-end fs-9">ctrl o</kbd></a></div>{% endif %}
@@ -20,7 +18,6 @@
   
 <script>
 {% block add_script %}
-SHORTCUT_MAP['cFTF'] = '#console_link';
 SHORTCUT_MAP['pFTF'] = '#widget_action_pessoal';
 SHORTCUT_MAP['rFTF'] = '#widget_action_recrutamento';
 SHORTCUT_MAP['oFTF'] = '#widget_action_oficina';

@@ -35,6 +35,7 @@ urlpatterns = [
     path('trafego_tratativas',views.tratativas,name='trafego_tratativas'),
     path('trafego_tratativa_id/<int:id>',views.tratativa_id,name='trafego_tratativa_id'),
     path('trafego_tratativa_update/<int:id>',views.tratativa_update,name='trafego_tratativa_update'),
+    path('trafego_tratativa_marcar_todas_tratadas',views.tratativa_marcar_todas_tratadas,name='trafego_tratativa_marcar_todas_tratadas'),
     path('trafego_foto_delete/<int:id>/delete',views.foto_delete,name='trafego_foto_delete'),
     path('trafego_get_linha',views.get_linha,name='trafego_get_linha'),
     path('trafego_get_linhas_empresa',views.get_linhas_empresa,name='trafego_get_linhas_empresa'),
