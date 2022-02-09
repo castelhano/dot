@@ -71,9 +71,9 @@
             <td class="d-none d-lg-table-cell">{{ocorrencia.condutor.matricula}}</td>
             <td class="d-none d-lg-table-cell">{{ocorrencia.condutor.apelido}}</td>
             <td class="d-none d-xxl-table-cell {% if ocorrencia.gravidade == 'G' %} fw-bold text-danger{% endif %}">{{ocorrencia.get_gravidade_display}}</td>
-            <td class="d-none d-xxl-table-cell">{{ocorrencia.indisciplina_condutor|yesno:'INDISCIPLINA,--'}}</td>
-            <td class="d-none d-xl-table-cell">{{ocorrencia.viagem_omitida|yesno:'OMISSAO,--'}}</td>
-            <td class="d-none d-xxl-table-cell">{{ocorrencia.tratado|yesno:'TRATADO,--'}}</td>
+            <td class="d-none d-xxl-table-cell">{{ocorrencia.indisciplina_condutor|yesno:'Indisciplina,--'}}</td>
+            <td class="d-none d-xl-table-cell">{{ocorrencia.viagem_omitida|yesno:'Omissao,--'}}</td>
+            <td class="d-none d-xxl-table-cell">{{ocorrencia.tratado|yesno:'Tratado,--'}}</td>
             <td class="d-none">{{ocorrencia.providencia.nome}}</td>
             {% if perms.trafego.change_ocorrencia and ocorrencia.usuario == user or perms.trafego.tratar_ocorrencia  %}
             <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'trafego_ocorrencia_id' ocorrencia.id %}"><i class="fas fa-pen"></i></a></td>

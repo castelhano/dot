@@ -39,7 +39,7 @@
           <div class="dropdown">
             <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">Empresa: <b>{{metrics.empresa_nome|default:'Todas'}}</b></button>
             <ul class="dropdown-menu fs-7" id="id_empresa">
-              <li><a class="dropdown-item" href="{% url 'trafego_ocorrencia_dashboard' %}?empresa=">Todas</a></li>
+              <li><a class="dropdown-item" onclick="filter('empresa', '')">Todas</a></li>
             </ul>
           </div>
         </div>        

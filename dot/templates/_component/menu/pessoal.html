@@ -1,18 +1,16 @@
+{% include "_component/layout/submenulist.html" %}
 <li class="nav-item dropdown" id="cadastro_list_container">
   <a class="nav-link dropdown-toggle" id="menu_cadastro" href="#" data-bs-toggle="dropdown" title="ALT + C"><b>C</b>adastro</a>
   <ul class="dropdown-menu dropdown-menu-dark" id="cadastro_list_options">
-    {% if perms.pessoal.view_funcionario %}
-    <li><a class="dropdown-item" id="app_root" href="{% url 'pessoal_funcionarios' %}"><b>F</b>uncionário</a></li>
-    {% endif %}
-    {% if perms.pessoal.view_setor %}
-    <li><a class="dropdown-item" id="cadastro_setor" href="{% url 'pessoal_setores' %}"><b>S</b>etor</a></li>
-    {% endif %}
-    {% if perms.pessoal.view_cargo %}
-    <li><a class="dropdown-item" id="cadastro_cargo" href="{% url 'pessoal_cargos' %}"><b>C</b>argo</a></li>
-    {% endif %}
-    {% if perms.pessoal.view_funcaofixa %}
-    <li><a class="dropdown-item" id="cadastro_funcaofixa" href="{% url 'pessoal_funcoes_fixas' %}">Função Fi<b>x</b>a</a></li>
-    {% endif %}
+    <li id="cadastro_funcionario_list_container">
+      <a id="submenu_funcionario_link" class="dropdown-item d-flex justify-content-between align-items-center pointer" data-bs-toggle="dropdown"><span><b>F</b>uncionário</span><i class="fas fa-chevron-right fs-8"></i></a>
+      <ul id="cadastro_funcionario_list_options" class="submenu dropdown-menu dropdown-menu-dark">
+        {% if perms.pessoal.view_funcionario %}<li><a class="dropdown-item" id="app_root" href="{% url 'pessoal_funcionarios' %}"><b>F</b>uncionário</a></li>{% endif %}
+        {% if perms.pessoal.view_setor %}<li><a class="dropdown-item" id="cadastro_setor" href="{% url 'pessoal_setores' %}"><b>S</b>etor</a></li>{% endif %}
+        {% if perms.pessoal.view_cargo %}<li><a class="dropdown-item" id="cadastro_cargo" href="{% url 'pessoal_cargos' %}"><b>C</b>argo</a></li>{% endif %}
+        {% if perms.pessoal.view_funcaofixa %}<li><a class="dropdown-item" id="cadastro_funcaofixa" href="{% url 'pessoal_funcoes_fixas' %}">Função Fi<b>x</b>a</a></li>{% endif %}        
+      </ul>
+    </li>    
   </ul>
 </li>
 
@@ -25,11 +23,14 @@
     {% include '_component/script/global_handler.js' %}
     else{
       let cadastro = false;
+      let cadastro_funcionario = false;
       try{cadastro = document.getElementById('menu_cadastro').classList.contains('show') ? true : false;}catch(err){}
-      if(cadastro && e.key.toLowerCase() == 'f'){e.preventDefault();document.getElementById('app_root').click();}
-      else if(cadastro && e.key.toLowerCase() == 's'){e.preventDefault();document.getElementById('cadastro_setor').click();}
-      else if(cadastro && e.key.toLowerCase() == 'c'){e.preventDefault();document.getElementById('cadastro_cargo').click();}
-      else if(cadastro && e.key.toLowerCase() == 'x'){e.preventDefault();document.getElementById('cadastro_funcaofixa').click();}
+      try{cadastro_funcionario = document.getElementById('cadastro_funcionario_list_options').style.display == 'block' ? true : false;}catch(err){}
+      if(cadastro_funcionario && e.key.toLowerCase() == 'f'){e.preventDefault();document.getElementById('app_root').click();}
+      else if(cadastro_funcionario && e.key.toLowerCase() == 's'){e.preventDefault();document.getElementById('cadastro_setor').click();}
+      else if(cadastro_funcionario && e.key.toLowerCase() == 'c'){e.preventDefault();document.getElementById('cadastro_cargo').click();}
+      else if(cadastro_funcionario && e.key.toLowerCase() == 'x'){e.preventDefault();document.getElementById('cadastro_funcaofixa').click();}
+      else if(cadastro && e.key.toLowerCase() == 'f')try{submenuToggle(document.getElementById('submenu_funcionario_link'));cadastro_funcionario = true;}catch(err){}
     }
   }
 </script>

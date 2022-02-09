@@ -518,9 +518,9 @@ def tratativa_update(request,id):
 
 @login_required
 @permission_required('trafego.tratar_ocorrencia')
-def tratativa_marcar_todas_tratadas(request,id):
+def tratativa_marcar_todas_tratadas(request):
     resposta = Ocorrencia.objects.filter(tratado=False).update(tratado=True)
-    messages.warning(request,f'<b>{resposta[0]}</b> ocorrencias marcadas como tratadas')
+    messages.warning(request,f'Total de <b>{resposta}</b> ocorrencia(s) tratadas')
     return redirect('trafego_tratativas')
 
 # METODOS DELETE
