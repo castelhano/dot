@@ -121,7 +121,7 @@
 
 <script>
   {% block add_script %}
-  const filters = {
+  const usuario_filters = {
     'is_active=True':'id_ativos',
     'is_active=False':'id_bloqueados',
     'is_superuser':'id_superuser',
@@ -129,7 +129,7 @@
     'last_login__lte':'id_inativos',
     'last_login':'id_nunca_logado'
   }
-  urlSetFiltersActive(filters);
+  urlSetFiltersActive(usuario_filters);
   
   Date.prototype.addDays = function(days) {var date = new Date(this.valueOf());date.setDate(date.getDate() + days);return date;}
   var today = new Date();

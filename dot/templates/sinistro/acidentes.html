@@ -1,0 +1,81 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Acidentes{% endblock %}
+{% block model %}Sinistro{% endblock %}
+{% block navbar_classlist %}navbar-dark bg-primary bg-gradient{% endblock %}
+{% block model_menu %}{% include "_component/menu/sinistro.html" %}{% endblock%}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'sinistro_acidentes' %}"></a>
+
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a id="tab_link_base" class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a id="search" class="nav-link" data-bs-toggle="tab" data-bs-target="#param" href="#" onclick="setTimeout(function(){document.getElementById('id_pesquisa').focus();},220);" title="CTRL + /"><i class="fas fa-filter"></i></a></li>
+      {% if perms.sinistro.add_acidente %}
+      <li class="nav-item"><a class="nav-link border ms-1" id="add" href="{% url 'sinistro_acidente_add' %}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
+      {% endif %}
+      <li class="nav-item dropdown ms-auto">
+        <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item pointer" id="download" onclick="download_table_as_csv('main_table',';')" title="ALT + &darr;">Exportar CSV</a></li>
+          {% if perms.core.view_log %}
+          <li><a class="dropdown-item pointer" href="{% url 'logs' %}?target_model=sinistro.acidente&mensagem=DELETE" target="_blank">Log de Exclusões</a></li>
+          {% endif %}
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div class="card-body tab-content">
+    <h5 class="card-title mb-3">Acidentes <small class="badge bg-primary ms-1">{{acidentes.count}}</small></h5>
+    <div class="tab-pane fade show active" id="base" role="tabpanel">
+      <table id="main_table" class="table border table-striped table-hover">
+        <thead>
+          <tr>
+            <th>Pasta</th>
+            {% if perms.sinistro.change_acidente %}
+            <th>&nbsp;</th>
+            {% endif %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for acidente in acidentes %}
+          <tr>
+            <td>{{acidente.pasta}}</td>
+            {% if perms.sinistro.change_acidente %}
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'sinistro_acidente_id' acidente.id %}"><i class="fas fa-pen"></i></a></td>
+            {% endif %}
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="2">Nenhum registro a exibir</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="tab-pane fade" id="param" role="tabpanel">
+      <div class="row g-1">
+      	<div class="form-floating mb-1 col-lg-5">
+      		<input type="text" id="id_pesquisa" name="pesquisa" class="form-control bg-light" onfocus="this.value = '#'">
+      		<label for="id_pesquisa">Pesquisa</label>
+      	</div>
+      </div>
+    
+    </div>
+  </div>
+</div>
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/table_to_csv.js' %}"></script>
+{% endblock %}
+
+  
+<script>
+{% block add_script %}
+SHORTCUT_MAP['1FTF'] = '#tab_link_base';
+
+{% endblock %}
+</script>

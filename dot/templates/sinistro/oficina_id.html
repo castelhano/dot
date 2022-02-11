@@ -1,0 +1,115 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Oficina{% endblock %}
+{% block model %}Sinistro{% endblock %}
+{% block navbar_classlist %}navbar-dark bg-primary bg-gradient{% endblock %}
+{% block model_menu %}{% include "_component/menu/sinistro.html" %}{% endblock%}
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'sinistro_oficina_id' oficina.id|safe %}"></a>
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'sinistro_oficinas' %}"><i class="fas fa-undo"></i></a></li>
+      <li class="nav-item dropdown ms-auto">
+        <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#history_modal">Historico</a></li>
+          {% if perms.sinistro.delete_oficina %}
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal">Excluir Oficina</a></li>
+          {% endif %}
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <form id="sinistro_form" action="{% url 'sinistro_oficina_update' oficina.id|safe %}" method="POST" autocomplete="off">
+    {% csrf_token %}
+    {% include 'sinistro/_form_oficina.html' %}
+  </form>
+</div>
+
+{% if perms.sinistro.delete_oficina %}
+<div class="modal fade" id="delete_modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="row">
+        <div class="col"><h5 class="ms-3 mt-3"><i class="fas fa-exclamation-triangle text-danger me-2"></i> Excluir Registro</h5></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      </div>
+      <div class="modal-body">
+        <p><b class="text-danger">Atenção!!</b> Esta operação não pode ser desfeita, confirma a exclusão do registro?</p>
+        <div class="row mt-2">
+          <div class="col text-end">
+            <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
+            <a class="btn btn-danger px-3" href="{% url 'sinistro_oficina_delete' oficina.id|safe %}">Excluir</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+<div class="modal fade" id="history_modal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="row">
+        <div class="col"><h5 class="ms-3 mt-3">Histórico de Alterações <sup>(last 15)</sup></h5></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      </div>
+      <div class="modal-body">
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Operação</th>
+              <th>Usuário</th>
+            </tr>
+          </thead>
+          <tbody class="fs-7">
+            {% for i in oficina.ultimas_alteracoes %}
+            <tr>
+              <td>{{i.data|date:'d/m/Y H:i:s'}}</td>
+              <td>{{i.mensagem}}</td>
+              <td>{{i.usuario.username|upper}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/vendor/mask.js' %}"></script>
+{% endblock %}
+
+<script>
+  {% block add_script %}
+  
+  var TAB_ON_ENTER = true;
+  VMasker(document.getElementById("id_cnpj")).maskPattern('99.999.999/9999-99');
+  
+   function inputHandler(masks, max, event) {
+   	var c = event.target;
+   	var v = c.value.replace(/D/g, '');
+   	var m = c.value.length > max ? 1 : 0;
+   	VMasker(c).unMask();
+   	VMasker(c).maskPattern(masks[m]);
+   	c.value = VMasker.toPattern(v, masks[m]);
+   }
+   var telMask = ['(99) 9999-99999', '(99) 99999-9999'];
+   var fone1 = document.getElementById('id_fone1');
+   var fone2 = document.getElementById('id_fone2');
+   VMasker(fone1).maskPattern(telMask[0]);
+   VMasker(fone2).maskPattern(telMask[0]);
+   fone1.addEventListener('input', inputHandler.bind(undefined, telMask, 14), false);
+   fone2.addEventListener('input', inputHandler.bind(undefined, telMask, 14), false);
+  
+   fone1.dispatchEvent(new Event("input"));
+   fone2.dispatchEvent(new Event("input"));
+  
+  {% endblock %}
+</script>

@@ -1,0 +1,43 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Acidente{% endblock %}
+{% block model %}Sinistro{% endblock %}
+{% block navbar_classlist %}navbar-dark bg-primary bg-gradient{% endblock %}
+{% block model_menu %}{% include "_component/menu/sinistro.html" %}{% endblock%}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'sinistro_acidente_add' %}"></a>
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a id="tab_link_base" class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab_base" href="#" title="Basico [Ctrl + 1]" onclick="setTimeout(function(){document.getElementById('id_empresa').focus();},200);"><i class="fas fa-bars"></i></a></li>
+      <li class="nav-item"><a id="tab_link_local" class="nav-link" data-bs-toggle="tab" data-bs-target="#tab_local" href="#" title="Local [Ctrl + 2]" onclick="setTimeout(function(){document.getElementById('id_endereco').focus();},200);"><i class="fas fa-map-marked-alt"></i></a></li>
+      <li class="nav-item"><a id="tab_link_conclusao" class="nav-link" data-bs-toggle="tab" data-bs-target="#tab_conclusao" href="#" title="Conclusão [Ctrl + 3]" onclick="setTimeout(function(){document.getElementById('id_culpabilidade').focus();},200);"><i class="fas fa-check-square"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'sinistro_acidentes' %}"><i class="fas fa-undo"></i></a></li>
+    </ul>
+  </div>
+  <form id="app_form" action="{% url 'sinistro_acidente_add' %}" method="POST" autocomplete="off">
+    {% csrf_token %}
+    <div class="row">
+      <div class="col-lg">
+        {% include 'sinistro/_form_acidente.html' %}
+      </div>
+      <div class="col-lg-3"></div>
+    </div>
+  </form>
+</div>
+
+{% endblock%}
+
+{% block add_script_src %}{% endblock %}
+
+<script>
+  {% block add_script %}
+  var TAB_ON_ENTER = true;
+  
+  SHORTCUT_MAP['1FTF'] = '#tab_link_base';
+  SHORTCUT_MAP['2FTF'] = '#tab_link_local';
+  SHORTCUT_MAP['3FTF'] = '#tab_link_conclusao';
+  
+  {% endblock %}
+</script>

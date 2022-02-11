@@ -176,7 +176,7 @@ def acidente_add(request):
                 l.usuario = request.user
                 l.mensagem = "CREATED"
                 l.save()
-                messages.success(request,'Acidente inserido')
+                messages.success(request,f'Acidente <b>{registro.pasta}</b> inserido')
                 return redirect('sinistro_acidente_id',registro.id)
             except:
                 pass
@@ -416,7 +416,6 @@ def oficina_id(request, id):
     return render(request,'sinistro/oficina_id.html',{'form':form,'oficina':oficina})
 
 
-# ------------------- REVISEI ATE AQUI ----------------------------------------------
 @login_required
 @permission_required('sinistro.change_terceiro')
 def terceiro_id(request, id):
@@ -484,7 +483,7 @@ def acidente_update(request, id):
         l.usuario = request.user
         l.mensagem = "UPDATE"
         l.save()
-        messages.success(request,'Acidente alterado')
+        messages.success(request,f'Acidente <b>{registro.pasta}</b> alterado')
         return redirect('sinistro_acidente_id',registro.id)
     else:
         return render(request,'sinistro/acidente_id.html',{'form':form,'acidente':acidente})
@@ -503,7 +502,7 @@ def classificacao_update(request, id):
         l.usuario = request.user
         l.mensagem = "UPDATE"
         l.save()
-        messages.success(request,'Classificacao alterada')
+        messages.success(request,f'Classificacao <b>{registro.nome}</b> alterada')
         return redirect('sinistro_classificacao_id',registro.id)
     else:
         return render(request,'sinistro/classificacao_id.html',{'form':form,'classificacao':classificacao})
@@ -522,7 +521,7 @@ def oficina_update(request, id):
         l.usuario = request.user
         l.mensagem = "UPDATE"
         l.save()
-        messages.success(request,'Oficina alterada')
+        messages.success(request,f'Oficina <b>{registro.nome}</b> alterada')
         return redirect('sinistro_oficina_id',registro.id)
     else:
         return render(request,'sinistro/oficina_id.html',{'form':form,'oficina':oficina})
@@ -541,7 +540,7 @@ def terceiro_update(request, id):
         l.usuario = request.user
         l.mensagem = "UPDATE"
         l.save()
-        messages.success(request,'Terceiro alterado')
+        messages.success(request,f'Terceiro <b>{registro.nome}</b> atualizado')
         return redirect('sinistro_terceiro_id', terceiro.id)
     else:
         return render(request,'sinistro/terceiro_id.html',{'form':form,'terceiro':terceiro})
@@ -560,7 +559,7 @@ def tipo_despesa_update(request, id):
         l.usuario = request.user
         l.mensagem = "UPDATE"
         l.save()
-        messages.success(request,'Tipo despesa alterado')
+        messages.success(request,f'Tipo despesa <b>{registro.nome}</b> alterada')
         return redirect('sinistro_tipo_despesa_id',id)
     else:
         return render(request,'sinistro/tipo_despesa_id.html',{'form':form,'tipo_despesa':tipo_despesa})
@@ -572,7 +571,14 @@ def forma_update(request, id):
     form = FormaForm(request.POST, instance=forma)
     if form.is_valid():
         registro = form.save()
-        messages.success(request,'Forma alterada')
+        l = Log()
+        l.modelo = "sinistro.forma"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.nome
+        l.usuario = request.user
+        l.mensagem = "UPDATE"
+        l.save()
+        messages.success(request,f'Forma <b>{registro.nome}</b> alterada')
         return redirect('sinistro_forma_id', forma.id)
     else:
         return render(request,'sinistro/forma_id.html',{'form':form,'forma':forma})
@@ -584,7 +590,7 @@ def despesa_update(request, id):
     form = DespesaForm(request.POST, instance=despesa)
     if form.is_valid():
         registro = form.save()
-        messages.success(request,'Despesa alterada')
+        messages.success(request,f'Despesa <b>{registro.nome}</b> alterada')
         return redirect('sinistro_despesas', despesa.terceiro.id)
     else:
         return render(request,'sinistro/despesa_id.html',{'form':form,'despesa':despesa})
@@ -604,7 +610,7 @@ def termo_update(request, id):
         l.usuario = request.user
         l.mensagem = "UPDATE"
         l.save()
-        messages.success(request,'Termo alterado')
+        messages.success(request,f'Termo <b>{registro.nome}</b> alterado')
         return redirect('sinistro_termo_id', id)
     else:
         return render(request,'sinistro/termo_id.html',{'form':form,'termo':termo})
@@ -843,7 +849,7 @@ def paragrafo_delete(request, id):
         l.mensagem = "DELETE"
         l.save()
         
-        # REORDENA OS PARAGRAFOS CASO INSERIDO ANTERIOR AO ULTIMO JA EXISTENTE
+        # REORDENA OS PARAGRAFOS
         alvos = Paragrafo.objects.filter(Q(termo=registro.termo.id) & Q(ordem__gt=registro.ordem))
         for alvo in alvos:
             nova_ordem = alvo.ordem - 1

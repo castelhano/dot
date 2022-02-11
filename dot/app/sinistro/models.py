@@ -59,6 +59,7 @@ class Acidente(models.Model):
     class Meta:
         permissions = [
             ("tratar_acidente", "Tratar acidentes de outros inspetores"),
+            ("dashboard_acidente", "Pode acessar dashboard acidentes"),
         ]
 
 class Foto(models.Model):
@@ -83,7 +84,7 @@ class Oficina(models.Model):
     def __str__(self):
         return self.nome
     def notasPendentes(self):
-        notas = Terceiro.objects.filter(oficina=self,status='NF')
+        notas = Terceiro.objects.filter(oficina=self,pendente_nota_fiscal=True)
         qtde = notas.count()
         soma = notas.aggregate(Sum('acordo'))['acordo__sum']
         return [qtde,soma]

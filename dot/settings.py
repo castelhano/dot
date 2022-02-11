@@ -14,6 +14,7 @@ INSTALLED_APPS = [
     'recrutamento',
     'oficina',
     'trafego',
+    'sinistro',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

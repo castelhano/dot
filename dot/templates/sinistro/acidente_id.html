@@ -1,0 +1,113 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Acidente{% endblock %}
+{% block model %}Sinistro{% endblock %}
+{% block navbar_classlist %}navbar-dark bg-primary bg-gradient{% endblock %}
+{% block model_menu %}{% include "_component/menu/sinistro.html" %}{% endblock%}
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'sinistro_acidente_id' acidente.id|safe %}"></a>
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a id="tab_link_base" class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab_base" href="#" title="Basico [Ctrl + 1]" onclick="setTimeout(function(){document.getElementById('id_empresa').focus();},200);"><i class="fas fa-bars"></i></a></li>
+      <li class="nav-item"><a id="tab_link_local" class="nav-link" data-bs-toggle="tab" data-bs-target="#tab_local" href="#" title="Local [Ctrl + 2]" onclick="setTimeout(function(){document.getElementById('id_endereco').focus();},200);"><i class="fas fa-map-marked-alt"></i></a></li>
+      <li class="nav-item"><a id="tab_link_conclusao" class="nav-link" data-bs-toggle="tab" data-bs-target="#tab_conclusao" href="#" title="Conclusão [Ctrl + 3]" onclick="setTimeout(function(){document.getElementById('id_culpabilidade').focus();},200);"><i class="fas fa-check-square"></i></a></li>
+      <li id="acidente_extra_container" class="nav-item dropdown ms-1">
+        <a id="acidente_extra_link" class="nav-link" data-bs-toggle="dropdown" href="#" role="button" title="Outros [Ctrl + 4]"><i class="fas fa-caret-down fs-5 text-dark"></i></a>
+        <ul id="acidente_extra_options" class="dropdown-menu">
+          {% if perms.sinistro.view_foto %}<li><a class="dropdown-item pointer" href="{% url 'sinistro_fotos' acidente.id|safe %}"><i class="fas fa-camera text-muted me-1"></i> Fotos</a></li>{% endif %}
+          {% if perms.sinistro.view_terceiro %}<li><a class="dropdown-item pointer" href="{% url 'sinistro_terceiros' acidente.id|safe %}"><i class="fas fa-user-injured text-muted me-1"></i> Terceiros</a></li>{% endif %}
+        </ul>
+      </li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'sinistro_acidentes' %}"><i class="fas fa-undo"></i></a></li>
+      <li class="nav-item dropdown ms-auto">
+        <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#history_modal">Historico</a></li>
+          {% if perms.sinistro.delete_acidente %}
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal">Excluir Acidente</a></li>
+          {% endif %}
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <form id="sinistro_form" action="{% url 'sinistro_acidente_update' acidente.id|safe %}" method="POST" autocomplete="off">
+    {% csrf_token %}
+    <div class="row">
+      <div class="col-lg">
+        {% include 'sinistro/_form_acidente.html' %}
+      </div>
+      <div class="col-lg-3"></div>
+    </div>
+  </form>
+</div>
+
+{% if perms.sinistro.delete_acidente %}
+<div class="modal fade" id="delete_modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="row">
+        <div class="col"><h5 class="ms-3 mt-3"><i class="fas fa-exclamation-triangle text-danger me-2"></i> Excluir Registro</h5></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      </div>
+      <div class="modal-body">
+        <p><b class="text-danger">Atenção!!</b> Esta operação não pode ser desfeita, confirma a exclusão do registro?</p>
+        <div class="row mt-2">
+          <div class="col text-end">
+            <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
+            <a class="btn btn-danger px-3" href="{% url 'sinistro_acidente_delete' acidente.id|safe %}">Excluir</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+<div class="modal fade" id="history_modal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="row">
+        <div class="col"><h5 class="ms-3 mt-3">Histórico de Alterações <sup>(last 15)</sup></h5></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      </div>
+      <div class="modal-body">
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Operação</th>
+              <th>Usuário</th>
+            </tr>
+          </thead>
+          <tbody class="fs-7">
+            {% for i in acidente.ultimas_alteracoes %}
+            <tr>
+              <td>{{i.data|date:'d/m/Y H:i:s'}}</td>
+              <td>{{i.mensagem}}</td>
+              <td>{{i.usuario.username|upper}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock%}
+
+{% block add_script_src %}{% endblock %}
+
+<script>
+  {% block add_script %}
+  if(document.getElementById('acidente_extra_options').childElementCount == 0){document.getElementById('acidente_extra_container').classList.add('d-none');}
+  
+  var TAB_ON_ENTER = true;
+  
+  SHORTCUT_MAP['1FTF'] = '#tab_link_base';
+  SHORTCUT_MAP['2FTF'] = '#tab_link_local';
+  SHORTCUT_MAP['3FTF'] = '#tab_link_conclusao';
+  SHORTCUT_MAP['4FTF'] = '#acidente_extra_link';
+  
+  {% endblock %}
+</script>

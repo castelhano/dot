@@ -1,6 +1,6 @@
 <div class="row g-1" id="veiculo_container"{% if hide %} style="display:none"{% endif %}>
   <div class="form-floating mb-1 col" style="max-width: 130px;">
-    <input type="text" class="form-control" name="prefixo" maxlength="6" id="id_prefixo_veiculo" value="{{prefixo}}" placeholder="" onfocusout="getVeiculo()"{% if autofocus %} autofocus{% endif %}{% if required %} REQUIRED{% endif %}>
+    <input type="text" class="form-control" name="prefixo" maxlength="6" id="id_prefixo_veiculo" value="{{prefixo}}" placeholder="" onfocusout="getVeiculo();{{onfocusout}}"{% if autofocus %} autofocus{% endif %}{% if required %} REQUIRED{% endif %}>
     <label for="id_prefixo_veiculo">Cod Veiculo</label>
   </div>
   <div class="form-floating mb-lg-1 col col-lg-6">
@@ -44,7 +44,7 @@
           }
     		}
     	};
-    	xhttp.open("GET", "{% url 'oficina_get_frota' %}?empresa=" + empresa.value + "&prefixo=" + prefixo.value + "&incluir_inativos={{incluir_inativos}}", true);
+    	xhttp.open("GET", "{% url 'oficina_get_frota' %}?empresa=" + empresa.value + "&prefixo=" + prefixo.value + "&incluir_inativos={{incluir_inativos}}&multiempresa={{multiempresa}}", true);
     	xhttp.send();  
     }
     else{cleanVeiculo();}

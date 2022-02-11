@@ -616,10 +616,14 @@ def get_funcionario(request):
         matricula = request.GET.get('matricula',None)
         funcaofixa = request.GET.get('funcaofixa',None)
         incluir_inativos = request.GET.get('incluir_inativos',None)
-        if funcaofixa != None:
-            funcionario = Funcionario.objects.get(empresa__id=empresa, matricula=matricula, cargo__ffixas__nome=funcaofixa)
-        else:
-            funcionario = Funcionario.objects.get(empresa__id=empresa, matricula=matricula)
+        multiempresa = request.GET.get('multiempresa', None)
+        params  = dict(matricula=matricula)
+        if not multiempresa or multiempresa != 'True':
+            params['empresa__id'] = empresa
+        if funcaofixa:
+            print('Entrei FF: ', funcaofixa)
+            params['cargo__ffixas__nome'] = funcaofixa
+        funcionario = Funcionario.objects.get(**params)
         if incluir_inativos == 'False' and funcionario.status != 'A':
             raise Exception('')
         return HttpResponse(str(funcionario.id) + ';' + str(funcionario.nome) + ';' + str(funcionario.cargo.nome) + ';' + str(funcionario.status))
@@ -659,7 +663,7 @@ def get_funcionarios(request):
 
 @login_required
 def get_cargos(request):
-    # try:
+    try:
         setor = request.GET.get('setor',None)
         cargos = Cargo.objects.filter(setor__id=setor)
         itens = {}
@@ -667,8 +671,8 @@ def get_cargos(request):
             itens[item.nome] = item.id
         dataJSON = dumps(itens)
         return HttpResponse(dataJSON)
-    # except:
-    #     return HttpResponse('')
+    except:
+        return HttpResponse('')
 
 @login_required
 def get_cargos_ff(request): # Busca cargos disponiveis / associados a funcao fixa

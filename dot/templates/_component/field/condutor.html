@@ -1,6 +1,6 @@
 <div class="row g-1" id="condutor_container"{% if hide %} style="display:none"{% endif %}>
   <div class="form-floating mb-1 col" style="max-width: 130px;">
-    <input type="text" class="form-control" name="matricula" maxlength="6" id="id_matricula_condutor" value="{{matricula}}" placeholder="" onfocusout="getCondutor()"{% if autofocus %} autofocus{% endif %}{% if required %} REQUIRED{% endif %}>
+    <input type="text" class="form-control" name="matricula" maxlength="6" id="id_matricula_condutor" value="{{matricula}}" placeholder="" onfocusout="getCondutor();{{onfocusout}}"{% if autofocus %} autofocus{% endif %}{% if required %} REQUIRED{% endif %}>
     <label for="id_matricula_condutor">Mat Condutor</label>
   </div>
   <div class="form-floating mb-1 col">
@@ -41,7 +41,7 @@
           }
         }
       };
-      xhttp_condutor.open("GET", "{% url 'pessoal_get_funcionario' %}?empresa=" + empresa.value + "&matricula=" + matricula.value + "&funcaofixa=M&incluir_inativos={{incluir_inativos}}", true);
+      xhttp_condutor.open("GET", "{% url 'pessoal_get_funcionario' %}?empresa=" + empresa.value + "&matricula=" + matricula.value + "&funcaofixa=M&incluir_inativos={{incluir_inativos}}&multiempresa={{multiempresa}}", true);
       xhttp_condutor.send();  
     }
     else{cleanCondutor();}

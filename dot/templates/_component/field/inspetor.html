@@ -1,6 +1,6 @@
 <div class="row g-1" id="inspetor_container"{% if hide %} style="display:none"{% endif %}>
   <div class="form-floating mb-1 col" style="max-width: 130px;">
-    <input type="text" class="form-control" name="matricula" maxlength="6" id="id_matricula_inspetor" value="{{matricula}}" placeholder="" onfocusout="getInspetor()"{% if autofocus %} autofocus{% endif %}{% if required %} REQUIRED{% endif %}>
+    <input type="text" class="form-control" name="matricula" maxlength="6" id="id_matricula_inspetor" value="{{matricula}}" placeholder="" onfocusout="getInspetor();{{onfocusout}}"{% if autofocus %} autofocus{% endif %}{% if required %} REQUIRED{% endif %}>
     <label for="id_matricula_inspetor">Mat Inspetor</label>
   </div>
   <div class="form-floating mb-1 col">
@@ -39,7 +39,7 @@
           }
     		}
     	};
-    	xhttp.open("GET", "{% url 'pessoal_get_funcionario' %}?empresa=" + empresa.value + "&matricula=" + matricula.value + "&funcaofixa=T&incluir_inativos={{incluir_inativos}}", true);
+    	xhttp.open("GET", "{% url 'pessoal_get_funcionario' %}?empresa=" + empresa.value + "&matricula=" + matricula.value + "&funcaofixa=T&incluir_inativos={{incluir_inativos}}&multiempresa={{multiempresa}}", true);
     	xhttp.send();  
     }
     else{cleanInspetor();}

@@ -1,0 +1,58 @@
+<div class="card-body tab-content">
+  <h5 class="card-title mb-3">Cadastro de Oficina</h5>
+  <div class="tab-pane fade show active" id="base" role="tabpanel">
+    <div class="row g-1">
+      <div class="form-floating mb-lg-1 col-lg-3">
+        {{ form.nome }}
+        <label for="id_nome">Nome</label>
+      </div>
+      <div class="form-floating mb-1 col-lg-3">
+        {{ form.contato }}
+        <label for="id_contato">Contato</label>
+      </div>
+    </div>
+    <div class="row g-1">
+      <div class="form-floating mb-lg-1 col-lg-4">
+        {{ form.razao_social }}
+        <label for="id_razao_social">Razão Social</label>
+      </div>
+      <div class="form-floating mb-1 col-lg-2">
+        {{ form.cnpj }}
+        <label for="id_cnpj">CNPJ</label>
+      </div>
+      
+    </div>
+    <div class="row g-1">
+      <div class="form-floating mb-lg-1 col-lg-3">
+        {{ form.fone1 }}
+        <label for="id_fone1">Fone 1</label>
+      </div>
+      <div class="form-floating mb-1 col-lg-3">
+        {{ form.fone2 }}
+        <label for="id_fone2">Fone 2</label>
+      </div>
+    </div>
+    <div class="row g-1">
+      <div class="form-floating mb-1 col-lg-6">
+        {{ form.email }}
+        <label for="id_email">Email</label>
+      </div>
+    </div>
+    <div class="row g-1">
+      <div class="form-floating mb-1 col-lg-6">
+        {{ form.endereco }}
+        <label for="id_endereco">Endereço</label>
+      </div>
+    </div>
+    <div class="form-check form-switch mt-2">
+      {{form.ativa}}
+      <label class="form-check-label" for="id_ativa">Oficina Ativa</label>
+    </div>
+  </div>
+  <!-- CONTROLES DO FORM -->
+  <div class="row mt-3">
+    <div class="col">
+      <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"><b>G</b>ravar</button>
+    </div>
+  </div>
+</div>
