@@ -33,36 +33,105 @@
       <table id="main_table" class="table border table-striped table-hover">
         <thead>
           <tr>
+            <th class="d-none">#</th>
+            <th class="d-none">Empresa</th>
             <th>Pasta</th>
+            <th class="d-none">Classificação</th>
+            <th class="d-none">Linha</th>
+            <th class="d-none">Nome linha</th>
+            <th class="d-none d-lg-table-cell">Inspetor</th>
+            <th class="d-none">Nome apelido</th>
+            <th>Data</th>
+            <th class="d-none">Hora</th>
+            <th>Veiculo</th>
+            <th class="d-none d-lg-table-cell">Condutor</th>
+            <th class="d-none">Nome condutor</th>
+            <th class="d-none d-xl-table-cell">Terceiro</th>
+            <th>Carro</th>
+            <th class="d-none d-lg-table-cell">Placa</th>
+            <th class="d-none d-xl-table-cell">Acordo</th>
+            <th class="d-none d-xl-table-cell">Despesas</th>
+            <th class="d-none d-xl-table-cell">Culpabilidade</th>
+            <th class="d-none">Oficina</th>
+            <th class="d-none">Status</th>
             {% if perms.sinistro.change_acidente %}
             <th>&nbsp;</th>
             {% endif %}
           </tr>
         </thead>
         <tbody>
-          {% for acidente in acidentes %}
-          <tr>
+          {% for acidente in semTerceiros %}
+          <tr class="table-secondary">
+            <td class="d-none">{{acidente.id|safe}}</td>
+            <td class="d-none">{{acidente.empresa.nome}}</td>
             <td>{{acidente.pasta}}</td>
+            <td class="d-none">{{acidente.classificacao.nome}}</td>
+            <td class="d-none">{{acidente.linha.codigo}}</td>
+            <td class="d-none">{{acidente.linha.nome}}</td>
+            <td class="d-none">{{acidente.inspetor.matricula}}</td>
+            <td class="d-none d-lg-table-cell">{{acidente.inspetor.apelido|default:'---'}}</td>
+            <td>{{acidente.data|date:"d/m/y"|default:'---'}}</td>
+            <td class="d-none">{{acidente.hora}}</td>
+            <td>{{acidente.veiculo.prefixo|default:'---'}}</td>
+            <td class="d-none d-lg-table-cell">{{acidente.condutor.matricula|default:'---'}}</td>
+            <td class="d-none">{{acidente.condutor.apelido|default:'---'}}</td>
+            <td class="d-none d-xl-table-cell">---</td>
+            <td>---</td>
+            <td class="d-none d-lg-table-cell">---</td>
+            <td class="d-none d-xl-table-cell">---</td>
+            <td class="d-none d-xl-table-cell">---</td>
+            <td class="d-none d-xl-table-cell">{{acidente.get_culpabilidade_display}}</td>
+            <td class="d-none">---</td>
+            <td class="d-none">{{acidente.concluido|yesno:'Concluido, Aberto'}}</td>
             {% if perms.sinistro.change_acidente %}
             <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'sinistro_acidente_id' acidente.id %}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
           </tr>
-          {% empty %}
-          <tr>
-            <td colspan="2">Nenhum registro a exibir</td>
+          {% endfor %}
+          {% for acidente in terceiros %}
+          <tr class="table-secondary">
+            <td class="d-none">{{acidente.id|safe}}</td>
+            <td class="d-none">{{acidente.empresa.nome}}</td>
+            <td>{{acidente.pasta}}</td>
+            <td class="d-none">{{acidente.classificacao.nome}}</td>
+            <td class="d-none">{{acidente.linha.codigo}}</td>
+            <td class="d-none">{{acidente.linha.nome}}</td>
+            <td class="d-none">{{acidente.inspetor.matricula}}</td>
+            <td class="d-none d-lg-table-cell">{{acidente.inspetor.apelido|default:'---'}}</td>
+            <td>{{acidente.data|date:"d/m/y"|default:'---'}}</td>
+            <td class="d-none">{{acidente.hora}}</td>
+            <td>{{acidente.veiculo.prefixo|default:'---'}}</td>
+            <td class="d-none d-lg-table-cell">{{acidente.condutor.matricula|default:'---'}}</td>
+            <td class="d-none">{{acidente.condutor.apelido|default:'---'}}</td>
+            <td class="d-none d-xl-table-cell">{{acidente.nome}}</td>
+            <td class="">{{acidente.veiculo|default:'---'}}</td>
+            <td class="d-none d-lg-table-cell">{{acidente.placa|default:'---'}}</td>
+            <td class="text-end d-none d-xl-table-cell">{{acidente.acordo}}</td>
+            <td class="text-end d-none d-xl-table-cell">{{acidente.despesas|floatformat:2}}</td>
+            <td class="d-none d-xl-table-cell">{{acidente.get_culpabilidade_display}}</td>
+            <td class="d-none">{{acidente.oficina.nome|default:'---'}}</td>
+            <td class="d-none">{{acidente.concluido|yesno:'Concluido, Aberto'}}</td>
+            {% if perms.sinistro.change_acidente %}
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'sinistro_acidente_id' acidente.id %}"><i class="fas fa-pen"></i></a></td>
+            {% endif %}
           </tr>
           {% endfor %}
+          {% if not semTerceiros and not terceiros %}
+          <tr>
+            <td colspan="22">Nenhum registro a exibir</td>
+          </tr>
+          {% endif %}
         </tbody>
       </table>
     </div>
     <div class="tab-pane fade" id="param" role="tabpanel">
       <div class="row g-1">
-      	<div class="form-floating mb-1 col-lg-5">
-      		<input type="text" id="id_pesquisa" name="pesquisa" class="form-control bg-light" onfocus="this.value = '#'">
-      		<label for="id_pesquisa">Pesquisa</label>
-      	</div>
+        <div class="form-floating mb-1 col-lg-5">
+          <input type="text" id="id_pesquisa" name="pesquisa" class="form-control bg-light" onfocus="this.value = '#'">
+          <label for="id_pesquisa">Pesquisa</label>
+        </div>
       </div>
-    
+      
     </div>
   </div>
 </div>
@@ -72,10 +141,10 @@
 <script src="{% static 'js/table_to_csv.js' %}"></script>
 {% endblock %}
 
-  
-<script>
-{% block add_script %}
-SHORTCUT_MAP['1FTF'] = '#tab_link_base';
 
-{% endblock %}
+<script>
+  {% block add_script %}
+  SHORTCUT_MAP['1FTF'] = '#tab_link_base';
+  
+  {% endblock %}
 </script>

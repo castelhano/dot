@@ -1,0 +1,67 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Terceiro{% endblock %}
+{% block model %}Sinistro{% endblock %}
+{% block navbar_classlist %}navbar-dark bg-primary bg-gradient{% endblock %}
+{% block model_menu %}{% include "_component/menu/sinistro.html" %}{% endblock%}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'sinistro_terceiro_add' acidente.id|safe %}"></a>
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab_base" href="#"><i class="fas fa-user"></i></a></li>
+      <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" data-bs-target="#tab_veiculo" href="#"><i class="fas fa-car"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'sinistro_acidente_id' acidente.id|safe %}"><i class="fas fa-undo"></i></a></li>
+    </ul>
+  </div>
+  <form id="app_form" action="{% url 'sinistro_terceiro_add' acidente.id|safe %}" method="POST" autocomplete="off" onsubmit="return submitForm();">
+    {% csrf_token %}
+    {% include 'sinistro/_form_terceiro.html' %}
+  </form>
+</div>
+
+{% include "_component/modal/loading.html" with message='Salvando....' %}
+
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/vendor/mask.js' %}"></script>
+{% endblock %}
+
+<script>
+  {% block add_script %}
+  var TAB_ON_ENTER = true;
+  
+  var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
+  
+  function submitForm(){
+    modal_loading.show();
+    ajustado = parseFloat(document.getElementById('id_acordo').value.replace('.','').replace(',','.'));
+    document.getElementById('id_acordo').value = ajustado > 0 ? ajustado : 0;
+    document.getElementById('id_placa').value = document.getElementById('id_placa').value.toUpperCase();
+    return true;
+  }
+  
+  VMasker(document.getElementById("id_cpf")).maskPattern('999.999.999-99');
+  VMasker(document.getElementById("id_acordo")).maskMoney();
+  VMasker(document.getElementById("id_placa")).maskPattern('AAA-9S99');
+  
+  function inputHandler(masks, max, event) {
+    var c = event.target;
+    var v = c.value.replace(/D/g, '');
+    var m = c.value.length > max ? 1 : 0;
+    VMasker(c).unMask();
+    VMasker(c).maskPattern(masks[m]);
+    c.value = VMasker.toPattern(v, masks[m]);
+  }
+  var telMask = ['(99) 9999-99999', '(99) 99999-9999'];
+  var fone1 = document.getElementById('id_fone1');
+  var fone2 = document.getElementById('id_fone2');
+  VMasker(fone1).maskPattern(telMask[0]);
+  VMasker(fone2).maskPattern(telMask[0]);
+  fone1.addEventListener('input', inputHandler.bind(undefined, telMask, 14), false);
+  fone2.addEventListener('input', inputHandler.bind(undefined, telMask, 14), false);
+  
+  {% endblock %}
+</script>

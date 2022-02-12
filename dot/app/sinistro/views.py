@@ -1,14 +1,15 @@
-# import os
+import os
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from json import dumps
 from .models import Acidente, Foto, Oficina, Classificacao, Terceiro, TipoDespesa, Despesa, Forma, Termo, Paragrafo
-from .forms import AcidenteForm, ClassificacaoForm, FotoForm, OficinaForm, TerceiroForm, TipoDespesaForm, DespesaForm, FormaForm, TermoForm, ParagrafoForm
+from .forms import AcidenteForm, ClassificacaoForm, OficinaForm, TerceiroForm, TipoDespesaForm, DespesaForm, FormaForm, TermoForm, ParagrafoForm
 from core.models import Log, Empresa
 from oficina.models import Frota
 from pessoal.models import Funcionario
 from trafego.models import Linha
 from django.contrib.auth.decorators import login_required, permission_required
+from .validators import validate_file_extension
 from django.contrib import messages
 from django.db.models import Q, Sum, Count
 from datetime import date
@@ -83,8 +84,7 @@ def oficinas(request):
 def fotos(request, id):
     acidente = Acidente.objects.get(pk=id)
     fotos = Foto.objects.filter(acidente__id=id)
-    form = FotoForm()
-    return render(request,'sinistro/fotos.html', {'form':form,'fotos':fotos,'acidente':acidente})
+    return render(request,'sinistro/fotos.html', {'fotos':fotos,'acidente':acidente})
 
 @login_required
 @permission_required('sinistro.view_terceiro')
@@ -235,17 +235,21 @@ def oficina_add(request):
 
 @login_required
 @permission_required('sinistro.add_foto')
-def foto_add(request):
+def foto_add(request, id):
     if request.method == 'POST':
-        form = FotoForm(request.POST, request.FILES)
-        if form.is_valid():
-            try:
-                form_clean = form.cleaned_data
-                registro = form.save()
-                messages.success(request,'Foto adicionada')
-                return redirect('sinistro_fotos',registro.acidente.id)
-            except:
-                pass
+        acidente = Acidente.objects.get(id=id)
+        for foto in request.FILES.getlist('fotos'):
+            if validate_file_extension(foto):
+                Foto.objects.create(acidente=acidente,foto=foto)
+        l = Log()
+        l.modelo = "sinistro.acidente"
+        l.objeto_id = acidente.id
+        l.objeto_str = acidente.pasta
+        l.usuario = request.user
+        l.mensagem = "ADD FOTO"
+        l.save()
+        messages.success(request,'Fotos adicionadas')
+        return redirect('sinistro_fotos',acidente.id)
     else:
         messages.error(request,'Operacao invalida')
         return redirect('sinistro_acidentes')

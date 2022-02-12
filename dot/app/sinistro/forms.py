@@ -1,5 +1,5 @@
 from django import forms
-from .models import Acidente, Foto, Oficina, Classificacao, Terceiro, TipoDespesa, Despesa, Forma, Termo, Paragrafo
+from .models import Acidente, Oficina, Classificacao, Terceiro, TipoDespesa, Despesa, Forma, Termo, Paragrafo
 # from django.db.models import Q
 from datetime import date
 
@@ -26,12 +26,6 @@ class ClassificacaoForm(forms.ModelForm):
         fields = ['nome']
     nome = forms.CharField(error_messages={'required': 'Informe um nome para a classificação'}, max_length=30,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'','autofocus':'autofocus'}))
 
-class FotoForm(forms.ModelForm):
-    class Meta:
-        model = Foto
-        fields = ['acidente','foto']
-    foto = forms.ImageField(error_messages={'required': 'Selecione uma imagem válida'},required=True)
-
 class TerceiroForm(forms.ModelForm):
     class Meta:
         model = Terceiro
@@ -53,6 +47,7 @@ class TerceiroForm(forms.ModelForm):
     ano = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':'1980','max':'2100'}))
     acordo = forms.DecimalField(required=False,initial=0,widget=forms.TextInput(attrs={'class': 'form-control'}))
     forma = forms.ModelChoiceField(required=False, queryset = Forma.objects.all().order_by('nome'), widget=forms.Select(attrs={'class':'form-select'}))
+    oficina = forms.ModelChoiceField(required=False, queryset = Oficina.objects.filter(ativa=True).order_by('nome'), widget=forms.Select(attrs={'class':'form-select'}))
     concluido = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
     pendente_nota_fiscal = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
 
