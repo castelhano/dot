@@ -34,11 +34,15 @@
   </div>
   <form id="sinistro_form" action="{% url 'sinistro_acidente_update' acidente.id|safe %}" method="POST" autocomplete="off">
     {% csrf_token %}
-    <div class="row">
+    <div class="row g-0">
       <div class="col-lg">
         {% include 'sinistro/_form_acidente.html' %}
       </div>
-      <div class="col-lg-3"></div>
+      <div class="col-lg-3 pt-lg-5">
+        <div class="row mx-2 mb-3 mb-lg-0">
+          <div class="card-widget card-widget-sm col-lg-6 btn-dark"><i class="fas fa-file-code lead-image"></i><a id="widget_acidente_capa" class="widget-label stretched-link" href="{% url 'sinistro_capa_resumo' %}?acidente={{acidente.id|safe}}">Capa<kbd class="float-end fs-9 bg-light text-dark py-0 mt-1">ctrl p</kbd></a></div>
+        </div>
+      </div>
     </div>
   </form>
 </div>
@@ -108,6 +112,7 @@
   SHORTCUT_MAP['2FTF'] = '#tab_link_local';
   SHORTCUT_MAP['3FTF'] = '#tab_link_conclusao';
   SHORTCUT_MAP['4FTF'] = '#acidente_extra_link';
+  SHORTCUT_MAP['pFTF'] = '#widget_acidente_capa';
   
   {% endblock %}
 </script>

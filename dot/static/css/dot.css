@@ -78,37 +78,17 @@ VERSION: 1.0
 .code{background-color: #F8F9FA;border: 1px solid #dee2e6;border-radius: .25rem;padding: 5px 10px;margin-bottom: 15px;user-select: all;}
 .code-multiline{background-color: #F8F9FA;border: 1px solid #dee2e6;border-radius: .25rem;padding: 8px 20px;margin-bottom: 15px;user-select: all;}
 
-ol.code-multiline {
-  padding-left: 8px;
-  list-style: none;
-  counter-reset: code_line_counter;
-}
-ol.code-multiline li {
-  counter-increment: code_line_counter;
-}
-ol.code-multiline li::before {
-  content: counter(code_line_counter) "";
-  color: #6c757d;
-  margin-right: 15px;
-}
+ol.code-multiline {padding-left: 8px;list-style: none;counter-reset: code_line_counter;}
+ol.code-multiline li {counter-increment: code_line_counter;}
+ol.code-multiline li::before {content: counter(code_line_counter) "";color: #6c757d;margin-right: 15px;}
 ol.code-multiline li.list-ident-1::before {margin-right: 40px;}
 ol.code-multiline li.list-ident-2::before {margin-right: 80px;}
 
-.card-widget{
-  min-height: 100px;
-  border: 2px solid #FFF;
-  position: relative;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  padding-left: 10px;
-  padding-right: 10px;
-}
-.card-widget > .lead-image{
-  width: 100%;
-  line-height: 250%;
-  text-align: center;
-  font-size: 3.2rem;
-}
+.card-widget{min-height: 100px;border: 2px solid #FFF;position: relative;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;padding-right: 10px;}
+.card-widget-sm{}
+.card-widget > .lead-image{width: 100%;line-height: 250%;text-align: center;font-size: 3.2rem;}
+.card-widget-sm > .lead-image{width: 100%;line-height: 150%;text-align: center;font-size: 2.8rem;}
 .card-widget > .widget-label{font-size: 0.9rem;color: #FFF;text-decoration: none;}
+.card-widget-sm > .widget-label{font-size: 0.85rem;color: #FFF;text-decoration: none;}
 .card-widget > .widget-control{position: absolute;padding-top: 5px;padding-bottom: 5px;padding-left: 14px;padding-right: 14px;border-radius: 25px;text-align: center;border: 1px solid transparent;cursor: pointer;top: 5px;right: 10px;z-index: 500;transition: background-color 0.3s;user-select: none;}
 .card-widget > .widget-control:hover{background-color: #FFF;opacity: 0.6;color: #444!important;}

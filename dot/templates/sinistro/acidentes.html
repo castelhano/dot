@@ -31,6 +31,12 @@
     <h5 class="card-title mb-3">Acidentes <small class="badge bg-primary ms-1">{{acidentes.count}}</small></h5>
     <div class="tab-pane fade show active" id="base" role="tabpanel">
       <table id="main_table" class="table border table-striped table-hover">
+        <caption class="fs-7">
+          <div class="row">
+            <div class="col-lg-auto mb-2 mb-lg-0"><span class="px-2 py-1 border rounded" style="background-color: rgb(255, 243, 205);">Leg</span> Sem terceiro</div>
+            <div class="col-lg-auto"><span class="px-2 py-1 border rounded" style="background-color: #D1E7DD;">Leg</span> Concluido</div>
+          </div>
+        </caption>
         <thead>
           <tr>
             <th class="d-none">#</th>
@@ -54,14 +60,12 @@
             <th class="d-none d-xl-table-cell">Culpabilidade</th>
             <th class="d-none">Oficina</th>
             <th class="d-none">Status</th>
-            {% if perms.sinistro.change_acidente %}
-            <th>&nbsp;</th>
-            {% endif %}
+            <th></th>
           </tr>
         </thead>
         <tbody>
           {% for acidente in semTerceiros %}
-          <tr class="table-secondary">
+          <tr class="table-warning">
             <td class="d-none">{{acidente.id|safe}}</td>
             <td class="d-none">{{acidente.empresa.nome}}</td>
             <td>{{acidente.pasta}}</td>
@@ -83,37 +87,38 @@
             <td class="d-none d-xl-table-cell">{{acidente.get_culpabilidade_display}}</td>
             <td class="d-none">---</td>
             <td class="d-none">{{acidente.concluido|yesno:'Concluido, Aberto'}}</td>
-            {% if perms.sinistro.change_acidente %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'sinistro_acidente_id' acidente.id %}"><i class="fas fa-pen"></i></a></td>
-            {% endif %}
+            <td class="text-end fit py-1">
+            {% if perms.sinistro.change_acidente %}<a class="btn btn-sm btn-dark" href="{% url 'sinistro_acidente_id' acidente.id %}"><i class="fas fa-pen"></i></a>{% endif %}
+          </td>
           </tr>
           {% endfor %}
-          {% for acidente in terceiros %}
-          <tr class="table-secondary">
-            <td class="d-none">{{acidente.id|safe}}</td>
-            <td class="d-none">{{acidente.empresa.nome}}</td>
-            <td>{{acidente.pasta}}</td>
-            <td class="d-none">{{acidente.classificacao.nome}}</td>
-            <td class="d-none">{{acidente.linha.codigo}}</td>
-            <td class="d-none">{{acidente.linha.nome}}</td>
-            <td class="d-none">{{acidente.inspetor.matricula}}</td>
-            <td class="d-none d-lg-table-cell">{{acidente.inspetor.apelido|default:'---'}}</td>
-            <td>{{acidente.data|date:"d/m/y"|default:'---'}}</td>
-            <td class="d-none">{{acidente.hora}}</td>
-            <td>{{acidente.veiculo.prefixo|default:'---'}}</td>
-            <td class="d-none d-lg-table-cell">{{acidente.condutor.matricula|default:'---'}}</td>
-            <td class="d-none">{{acidente.condutor.apelido|default:'---'}}</td>
-            <td class="d-none d-xl-table-cell">{{acidente.nome}}</td>
-            <td class="">{{acidente.veiculo|default:'---'}}</td>
-            <td class="d-none d-lg-table-cell">{{acidente.placa|default:'---'}}</td>
-            <td class="text-end d-none d-xl-table-cell">{{acidente.acordo}}</td>
-            <td class="text-end d-none d-xl-table-cell">{{acidente.despesas|floatformat:2}}</td>
-            <td class="d-none d-xl-table-cell">{{acidente.get_culpabilidade_display}}</td>
-            <td class="d-none">{{acidente.oficina.nome|default:'---'}}</td>
-            <td class="d-none">{{acidente.concluido|yesno:'Concluido, Aberto'}}</td>
-            {% if perms.sinistro.change_acidente %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'sinistro_acidente_id' acidente.id %}"><i class="fas fa-pen"></i></a></td>
-            {% endif %}
+          {% for terceiro in terceiros %}
+          <tr class="{{terceiro.concluido|yesno:'table-success,'}}">
+            <td class="d-none">{{terceiro.id|safe}}</td>
+            <td class="d-none">{{terceiro.acidente.empresa.nome}}</td>
+            <td>{{terceiro.acidente.pasta}}</td>
+            <td class="d-none">{{terceiro.acidente.classificacao.nome}}</td>
+            <td class="d-none">{{terceiro.acidente.linha.codigo}}</td>
+            <td class="d-none">{{terceiro.acidente.linha.nome}}</td>
+            <td class="d-none">{{terceiro.acidente.inspetor.matricula}}</td>
+            <td class="d-none d-lg-table-cell">{{terceiro.acidente.inspetor.apelido|default:'---'}}</td>
+            <td>{{terceiro.acidente.data|date:"d/m/y"|default:'---'}}</td>
+            <td class="d-none">{{terceiro.acidente.hora}}</td>
+            <td>{{terceiro.acidente.veiculo.prefixo|default:'---'}}</td>
+            <td class="d-none d-lg-table-cell">{{terceiro.acidente.condutor.matricula|default:'---'}}</td>
+            <td class="d-none">{{terceiro.acidente.condutor.apelido|default:'---'}}</td>
+            <td class="d-none d-xl-table-cell">{{terceiro.nome}}</td>
+            <td class="">{{terceiro.veiculo|default:'---'}}</td>
+            <td class="d-none d-lg-table-cell">{{terceiro.placa|default:'---'}}</td>
+            <td class="d-none d-xl-table-cell">{{terceiro.acordo}}</td>
+            <td class="d-none d-xl-table-cell">{{terceiro.despesas|floatformat:2}}</td>
+            <td class="d-none d-xl-table-cell">{{terceiro.acidente.get_culpabilidade_display}}</td>
+            <td class="d-none">{{terceiro.oficina.nome|default:'---'}}</td>
+            <td class="d-none">{{terceiro.concluido|yesno:'Concluido, Aberto'}}</td>
+            <td class="text-end fit py-1">
+            {% if perms.sinistro.change_acidente %}<a class="btn btn-sm btn-dark" href="{% url 'sinistro_acidente_id' terceiro.acidente.id %}"><i class="fas fa-pen"></i></a>{% endif %}
+            {% if perms.sinistro.view_terceiro %}<a class="btn btn-sm btn-dark" href="{% url 'sinistro_terceiro_id' terceiro.id %}"><i class="fas fa-user"></i></a>{% endif %}
+          </td>
           </tr>
           {% endfor %}
           {% if not semTerceiros and not terceiros %}
@@ -125,13 +130,74 @@
       </table>
     </div>
     <div class="tab-pane fade" id="param" role="tabpanel">
-      <div class="row g-1">
-        <div class="form-floating mb-1 col-lg-5">
-          <input type="text" id="id_pesquisa" name="pesquisa" class="form-control bg-light" onfocus="this.value = '#'">
-          <label for="id_pesquisa">Pesquisa</label>
+      <div class="row">
+        <div class="col-lg">
+          <form role="form" id="" action="{% url 'sinistro_acidentes' %}" method="POST" autocomplete="off">
+            {% csrf_token %}
+            <div class="row g-1">
+              <div class="form-floating mb-lg-1 col-lg-6">
+                <input type="text" id="id_pesquisa" name="pesquisa" class="form-control bg-light" onfocus="this.value = '#'">
+                <label for="id_pesquisa">Pesquisa</label>
+              </div>
+              <div class="form-floating mb-1 col-lg-6">
+                <select class="form-select" id="id_empresa" name="empresa">
+                  <option value="" selected>Todas</option>
+                </select>
+                <label for="id_empresa">Empresa</label>
+              </div>
+            </div>
+            <div class="row g-1">
+              <div class="form-floating mb-lg-1 col-lg-6">
+                <select class="form-select bg-light" id="id_inspetor" name="inspetor">
+                  <option value="" selected>Todos</option>
+                </select>
+                <label for="id_inspetor">Inspetor</label>
+              </div>
+              <div class="form-floating mb-1 col-lg-6">
+                <select class="form-select" id="id_culpabilidade" name="culpabilidade">
+                  <option value="ALL" selected>---------</option>
+                  <option value="">Indefinido</option>
+                  <option value="E">Empresa</option>
+                  <option value="T">Terceiro</option>
+                </select>
+                <label for="id_culpabilidade">Culpabilidade</label>
+              </div>
+            </div>
+            <div class="row g-1">
+              <div class="form-floating mb-lg-1 col-lg-6">
+                <input type="date" class="form-control bg-light" id="id_periodo_de" name="periodo_de" placeholder="">
+                <label for="id_periodo_de">DE</label>
+              </div>
+              <div class="form-floating mb-1 col-lg-6">
+                <input type="date" class="form-control bg-light" id="id_periodo_ate" name="periodo_ate" placeholder="">
+                <label for="id_periodo_ate">ATE</label>
+              </div>
+            </div>
+            <div class="row g-1">
+              <div class="form-floating mb-lg-1 col-lg-6">
+                <select class="form-select" id="id_concluido" name="concluido">
+                  <option value="" selected>---------</option>
+                  <option value="False">Pendentes</option>
+                  <option value="True">Concluido</option>
+                </select>
+                <label for="id_concluido">Status Pasta</label>
+              </div>
+              <div class="form-floating mb-1 col-lg-6">
+                <select class="form-select" id="id_status_terceiro" name="status_terceiro">
+                  <option value="" selected>---------</option>
+                  <option value="True">Concluido</option>
+                  <option value="False">Em aberto</option>
+                </select>
+                <label for="id_status_terceiro">Status Terceiro</label>
+              </div>              
+            </div>
+            <div class="row">
+              <div class="col mt-1"><button type="submit" class="btn btn-sm btn-warning">Pesquisa</button></div>
+            </div>
+          </form>
         </div>
-      </div>
-      
+        <div class="col-lg"></div>
+      </div>      
     </div>
   </div>
 </div>
@@ -145,6 +211,43 @@
 <script>
   {% block add_script %}
   SHORTCUT_MAP['1FTF'] = '#tab_link_base';
+  
+  function carregaEmpresas() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if(this.readyState == 4 && this.status == 200){
+        if(this.responseText == ''){}
+        else{
+          let obj = JSON.parse(this.responseText);
+          empresas = document.getElementById("id_empresa");
+          for(key in obj){empresas.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
+        }
+      }
+    };
+    xhttp.open("GET", "{% url 'core_get_empresas' %}", true);
+    xhttp.send();
+  }
+  carregaEmpresas();
+  
+  var inspetores_incluir_inativos = 'False';
+  function carregaInspetores() {
+    document.getElementById("id_inspetor").innerHTML = '<option value="" selected>---------</option>';
+    empresa = document.getElementById("id_empresa").value;
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if(this.readyState == 4 && this.status == 200){
+        if(this.responseText == ''){}
+        else{
+          let obj = JSON.parse(this.responseText);
+          inspetores = document.getElementById("id_inspetor");
+          for(key in obj){inspetores.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
+        }
+      }
+    };
+    xhttp.open("GET", `{% url 'pessoal_get_funcionarios' %}?&funcaofixa=T&incluir_inativos=${inspetores_incluir_inativos}&multiempresa=True`, true);
+    xhttp.send();
+  }
+  carregaInspetores();
   
   {% endblock %}
 </script>

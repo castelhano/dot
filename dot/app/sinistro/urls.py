@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from . import views, reports
 
 urlpatterns = [
     path('sinistro_acidentes',views.acidentes,name='sinistro_acidentes'),
@@ -57,6 +57,6 @@ urlpatterns = [
     path('sinistro_paragrafo_delete/<int:id>',views.paragrafo_delete,name='sinistro_paragrafo_delete'),
     path('sinistro_get_oficinas',views.get_oficinas,name='sinistro_get_oficinas'),
     # path('sinistro_termo_pdf',reports.termo_pdf,name='sinistro_termo_pdf'),
-    # path('sinistro_capa_resumo',reports.capa_resumo,name='sinistro_capa_resumo'),
+    path('sinistro_capa_resumo',reports.capa_resumo,name='sinistro_capa_resumo'),
     # path('sinistro_acidentes_charts',reports.acidentes_charts,name='sinistro_acidentes_charts'),
 ]

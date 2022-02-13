@@ -13,6 +13,7 @@
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
       <li class="nav-item"><a class="nav-link pointer" id="search" data-bs-toggle="modal" data-bs-target="#search_modal" onclick="setTimeout(function(){document.getElementById('id_pesquisa').focus();},480);" title="CTRL + /"><i class="fas fa-search"></i></a></li>
+      <li class="nav-item"><a class="nav-link" href="{% url 'sinistro_notas_pendentes' %}"><i class="fas fa-dollar-sign" title="Notas Pendentes"></i></a></li>
       {% if perms.sinistro.add_oficina %}
       <li class="nav-item"><a class="nav-link border" id="add" href="{% url 'sinistro_oficina_add' %}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
       {% endif %}

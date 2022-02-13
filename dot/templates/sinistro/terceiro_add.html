@@ -18,6 +18,7 @@
   <form id="app_form" action="{% url 'sinistro_terceiro_add' acidente.id|safe %}" method="POST" autocomplete="off" onsubmit="return submitForm();">
     {% csrf_token %}
     {% include 'sinistro/_form_terceiro.html' %}
+    <input type="hidden" name="acidente" value="{{ acidente.id|safe }}">
   </form>
 </div>
 

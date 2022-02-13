@@ -19,42 +19,53 @@ from datetime import date
 @permission_required('sinistro.view_acidente')
 def acidentes(request):
     semTerceiros =  Acidente.objects.filter(terceiro__isnull=True).order_by('data')
-    terceiros =  Terceiro.objects.all().order_by('sinistro__data')
-    
+    terceiros =  Terceiro.objects.all().order_by('acidente__data')
+    validado = False
     if request.method == 'POST': 
         if request.POST['pesquisa'] != '':
-            if request.POST['pesquisa'][0] == '#':
+            if request.POST['pesquisa'][0] == '#' and len(request.POST['pesquisa']) > 1:
                 try:
                     sinistro = Acidente.objects.get(pasta=request.POST['pesquisa'][1:])
                     return redirect('sinistro_acidente_id',sinistro.id)
                 except:
                      messages.warning(request,'Sinistro não localizado')
                      return render(request,'sinistro/acidentes.html')
-            else:
-                semTerceiros = semTerceiros.filter(Q(pasta=request.POST['pesquisa']) | Q(veiculo__prefixo=request.POST['pesquisa']) | Q(veiculo__placa__contains=request.POST['pesquisa']) | Q(condutor__matricula=request.POST['pesquisa']))
-                terceiros = terceiros.filter(Q(sinistro__pasta=request.POST['pesquisa']) | Q(sinistro__veiculo__prefixo=request.POST['pesquisa']) | Q(sinistro__veiculo__placa__contains=request.POST['pesquisa']) | Q(nome__contains=request.POST['pesquisa']) | Q(veiculo__contains=request.POST['pesquisa']) | Q(placa__contains=request.POST['pesquisa']) | Q(sinistro__condutor__matricula=request.POST['pesquisa']))
+            elif len(request.POST['pesquisa']) > 1:
+                validado = True
+                semTerceiros = semTerceiros.filter(Q(veiculo__prefixo=request.POST['pesquisa']) | Q(veiculo__placa__contains=request.POST['pesquisa']) | Q(condutor__matricula=request.POST['pesquisa']))
+                terceiros = terceiros.filter(Q(acidente__veiculo__prefixo=request.POST['pesquisa']) | Q(acidente__veiculo__placa__contains=request.POST['pesquisa']) | Q(nome__contains=request.POST['pesquisa']) | Q(veiculo__contains=request.POST['pesquisa']) | Q(placa__contains=request.POST['pesquisa']) | Q(acidente__condutor__matricula=request.POST['pesquisa']))
         if request.POST['empresa'] != '':
             semTerceiros = semTerceiros.filter(empresa__id=request.POST['empresa'])
-            terceiros = terceiros.filter(sinistro__empresa__id=request.POST['empresa'])
+            terceiros = terceiros.filter(acidente__empresa__id=request.POST['empresa'])
         if request.POST['inspetor'] != '':
+            validado = True
             semTerceiros = semTerceiros.filter(inspetor__id=request.POST['inspetor'])
-            terceiros = terceiros.filter(sinistro__inspetor__id=request.POST['inspetor'])
+            terceiros = terceiros.filter(acidente__inspetor__id=request.POST['inspetor'])
         if request.POST['periodo_de'] != '' and request.POST['periodo_ate'] != '':
+            validado = True
             semTerceiros = semTerceiros.filter(data__range=(request.POST['periodo_de'],request.POST['periodo_ate']))
-            terceiros = terceiros.filter(sinistro__data__range=(request.POST['periodo_de'],request.POST['periodo_ate']))
+            terceiros = terceiros.filter(acidente__data__range=(request.POST['periodo_de'],request.POST['periodo_ate']))
         if request.POST['concluido'] != '':
             concluido = True if request.POST['concluido'] == 'True' else False
+            if not concluido: # Permite pesquisa dos acidentes em aberto, porem para filtar concluidos eh necessario ter filtrado em outro criterio anterior
+                validado = True
             semTerceiros = semTerceiros.filter(concluido=concluido)
-            terceiros = terceiros.filter(sinistro__concluido=concluido)
+            terceiros = terceiros.filter(acidente__concluido=concluido)
         if request.POST['culpabilidade'] != 'ALL':
             semTerceiros = semTerceiros.filter(culpabilidade=request.POST['culpabilidade'])
-            terceiros = terceiros.filter(sinistro__culpabilidade=request.POST['culpabilidade'])
+            terceiros = terceiros.filter(acidente__culpabilidade=request.POST['culpabilidade'])
         if request.POST['status_terceiro'] != '':
             semTerceiros = None
-            terceiros = terceiros.filter(status=request.POST['status_terceiro'])
+            status = True if request.POST['status_terceiro'] == 'True' else False
+            if not status: # Permite pesquisa dos terceiros em aberto, porem para filtar concluidos eh necessario ter filtrado em outro criterio anterior
+                validado = True
+            terceiros = terceiros.filter(concluido=status)
+        if not validado:
+            messages.warning(request,'Informe um criterio para pesquisa')
+            return render(request,'sinistro/acidentes.html')
     else:
         semTerceiros = semTerceiros.filter(concluido=False)
-        terceiros = terceiros.filter(sinistro__concluido=False)    
+        terceiros = terceiros.filter(concluido=False)    
     return render(request,'sinistro/acidentes.html',{'terceiros':terceiros,'semTerceiros':semTerceiros})
 
 
@@ -90,7 +101,9 @@ def fotos(request, id):
 @permission_required('sinistro.view_terceiro')
 def terceiros(request, id):
     acidente = Acidente.objects.get(pk=id)
-    terceiros = Terceiro.objects.filter(sinistro=acidente)
+    terceiros = Terceiro.objects.filter(acidente=acidente)
+    if request.method == 'POST':
+        terceiros = terceiros.filter(nome__contains=request.POST['pesquisa'])
     form = TerceiroForm()
     return render(request,'sinistro/terceiros.html', {'form':form,'terceiros':terceiros,'acidente':acidente})
 
@@ -137,19 +150,11 @@ def paragrafos(request, id):
 @login_required
 @permission_required('sinistro.view_oficina')
 def notas_pendentes(request):
-    notas = Terceiro.objects.filter(pendente_nota_fiscal=True)
-    oficina = None
+    terceiros = Terceiro.objects.filter(pendente_nota_fiscal=True)
     if request.method == 'POST':
-        if request.POST['pesquisa'] != '':
-            notas = notas.filter(Q(sinistro__pasta__contains=request.POST['pesquisa']) | Q(veiculo__nome__contains=request.POST['pesquisa']) | Q(placa__contains=request.POST['pesquisa']))
-        if request.POST['oficina'] != '':
-            oficina = request.POST['oficina'] if request.POST['oficina'] != 'None' else None
-            if oficina == None:
-                notas = notas.filter(oficina=None)
-            else:
-                notas = notas.filter(oficina__id=oficina)            
-    total = notas.aggregate(Sum('acordo'))['acordo__sum']
-    return render(request,'sinistro/notas_pendentes.html', {'notas':notas,'oficina':oficina,'total':total})
+        terceiros = terceiros.filter(Q(oficina__nome__contains=request.POST['pesquisa']) | Q(veiculo__contains=request.POST['pesquisa']) | Q(placa__contains=request.POST['pesquisa']))
+    total = terceiros.aggregate(Sum('acordo'))['acordo__sum']
+    return render(request,'sinistro/notas_pendentes.html', {'terceiros':terceiros,'total':total})
 
 @login_required
 @permission_required('sinistro.view_termo')
@@ -181,8 +186,11 @@ def acidente_add(request):
             except:
                 pass
     else:
-        count = Acidente.objects.all().count()
-        form = AcidenteForm(initial={'pasta':f'{count + 1}'})
+        ultima_pasta = Acidente.objects.all().last().pasta
+        if ultima_pasta.isdecimal(): # Caso info de pasta seja somente numero, sugere o nome da proxima pasta
+            form = AcidenteForm(initial={'pasta':f'{int(ultima_pasta) + 1}'})
+        else:
+            form = AcidenteForm()
     return render(request,'sinistro/acidente_add.html',{'form':form})
 
 @login_required
@@ -266,7 +274,7 @@ def terceiro_add(request, id):
                 l = Log()
                 l.modelo = "sinistro.terceiro"
                 l.objeto_id = registro.id
-                l.objeto_str = 'PASTA: ' + registro.sinistro.pasta + ' | ' + registro.nome[0:48]
+                l.objeto_str = 'PASTA: ' + registro.acidente.pasta + ' | ' + registro.nome[0:48]
                 l.usuario = request.user
                 l.mensagem = "CREATED"
                 l.save()
@@ -540,7 +548,7 @@ def terceiro_update(request, id):
         l = Log()
         l.modelo = "sinistro.terceiro"
         l.objeto_id = registro.id
-        l.objeto_str = 'PASTA: ' + registro.sinistro.pasta + ' | ' + registro.nome[0:48]
+        l.objeto_str = 'PASTA: ' + registro.acidente.pasta + ' | ' + registro.nome[0:48]
         l.usuario = request.user
         l.mensagem = "UPDATE"
         l.save()
@@ -793,16 +801,16 @@ def foto_delete(request, id):
 def terceiro_delete(request, id):
     try:
         registro = Terceiro.objects.get(pk=id)
-        acidente = registro.sinistro
+        acidente = registro.acidente
         l = Log()
         l.modelo = "sinistro.terceiro"
         l.objeto_id = registro.id
-        l.objeto_str = 'PASTA: ' + registro.sinistro.pasta + ' | ' + registro.nome[0:48]
+        l.objeto_str = 'PASTA: ' + registro.acidente.pasta + ' | ' + registro.nome[0:48]
         l.usuario = request.user
         l.mensagem = "DELETE"
         registro.delete()
         l.save()
-        messages.warning(request,'Terceiro removido')
+        messages.warning(request,f'Terceiro <b>{registro.nome}</b> removido')
         return redirect('sinistro_terceiros',acidente.id)
     except:
         messages.error(request,'ERRO ao apagar terceiro, pois existem lançamentos associados a ele')

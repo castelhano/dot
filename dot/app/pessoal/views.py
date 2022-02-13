@@ -621,7 +621,6 @@ def get_funcionario(request):
         if not multiempresa or multiempresa != 'True':
             params['empresa__id'] = empresa
         if funcaofixa:
-            print('Entrei FF: ', funcaofixa)
             params['cargo__ffixas__nome'] = funcaofixa
         funcionario = Funcionario.objects.get(**params)
         if incluir_inativos == 'False' and funcionario.status != 'A':
@@ -648,11 +647,15 @@ def get_funcionarios(request):
         empresa = request.GET.get('empresa',None)
         funcaofixa = request.GET.get('funcaofixa',None)
         incluir_inativos = request.GET.get('incluir_inativos',None)
-        funcionarios = Funcionario.objects.filter(empresa__id=empresa).order_by('nome')
-        if funcaofixa != '':
-            funcionarios = funcionarios.filter(cargo__ffixas__nome=funcaofixa)
+        multiempresa = request.GET.get('multiempresa', None)
+        params  = dict()
+        if not multiempresa or multiempresa != 'True':
+            params['empresa__id'] = empresa
+        if funcaofixa:
+            params['cargo__ffixas__nome'] = funcaofixa
         if incluir_inativos != 'True':
-            funcionarios = funcionarios.filter(status='A')
+            params['status'] = 'A'
+        funcionarios = Funcionario.objects.filter(**params).order_by('nome')
         itens = {}
         for item in funcionarios:
             itens[item.nome] = item.id

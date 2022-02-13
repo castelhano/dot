@@ -17,6 +17,7 @@
       <li class="nav-item"><a class="nav-link border" id="add" href="{% url 'sinistro_terceiro_add' acidente.id %}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
       {% endif %}
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'sinistro_acidente_id' acidente.id %}"><i class="fas fa-undo"></i></a></li>
+      <li class="nav-item"><a id="acidentes_link" class="nav-link" href="{% url 'sinistro_acidentes' %}"  title="Fechar: Acidentes"><i class="fas fa-reply-all"></i></a></li>
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
         <ul class="dropdown-menu">
@@ -35,7 +36,19 @@
       <table id="main_table" class="table border table-striped table-hover">
         <thead>
           <tr>
+            <th class="d-none">#</th>
+            <th class="d-none">Pasta</th>
             <th>Nome</th>
+            <th class="d-none">Classificacao</th>
+            <th class="d-none d-lg-table-cell">Fone 1</th>
+            <th class="d-none d-lg-table-cell">Fone 2</th>
+            <th>Veiculo</th>
+            <th class="d-none">Cor</th>
+            <th class="d-none d-lg-table-cell">Placa</th>
+            <th class="d-none d-lg-table-cell">Acordo</th>
+            <th class="d-none d-lg-table-cell">Despesas</th>
+            <th class="d-none d-lg-table-cell">Oficina</th>
+            <th class="d-none d-md-table-cell">Status</th>
             {% if perms.sinistro.change_terceiro %}
             <th>&nbsp;</th>
             {% endif %}
@@ -43,15 +56,27 @@
         </thead>
         <tbody>
           {% for terceiro in terceiros %}
-          <tr>
+          <tr class="{{terceiro.concluido|yesno:'table-success,'}}">
+            <td class="d-none">{{terceiro.id|safe}}</td>
+            <td class="d-none">{{terceiro.sinistro.pasta}}</td>
             <td>{{terceiro.nome}}</td>
+            <td class="d-none">{{terceiro.get_classificacao_display}}</td>
+            <td class="d-none d-lg-table-cell">{{terceiro.fone1}}</td>
+            <td class="d-none d-lg-table-cell">{{terceiro.fone2}}</td>
+            <td>{{terceiro.veiculo}}</td>
+            <td class="d-none">{{terceiro.cor}}</td>
+            <td class="d-none d-lg-table-cell">{{terceiro.placa}}</td>
+            <td class="d-none d-lg-table-cell">{{terceiro.acordo|default:'--'}}</td>
+            <td class="d-none d-lg-table-cell">{{terceiro.despesas|default:'--'}}</td>
+            <td class="d-none d-lg-table-cell">{{terceiro.oficina.nome|default:'--'}}</td>
+            <td class="d-none d-md-table-cell">{{terceiro.concluido|yesno:'Concluido, Em Aberto'}}</td>
             {% if perms.sinistro.change_terceiro %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="url"><i class="fas fa-pen"></i></a></td>
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'sinistro_terceiro_id' terceiro.id %}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
           </tr>
           {% empty %}
           <tr>
-            <td colspan="2">Nenhum registro a exibir</td>
+            <td colspan="14">Nenhum registro a exibir</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -86,3 +111,10 @@
 {% block add_script_src %}
 <script src="{% static 'js/table_to_csv.js' %}"></script>
 {% endblock %}
+
+
+<script>
+{% block add_script %}
+SHORTCUT_MAP['fTFF'] = '#acidentes_link';
+{% endblock %}
+</script>

@@ -42,13 +42,13 @@ class Acidente(models.Model):
     def __str__(self):
         return self.pasta
     def acordos(self):
-        valor = Terceiro.objects.filter(sinistro=self).aggregate(Sum('acordo'))
+        valor = Terceiro.objects.filter(acidente=self).aggregate(Sum('acordo'))
         if valor['acordo__sum'] == None:
             return 0
         else:
             return float(valor['acordo__sum'])
     def despesas(self):
-        valor = Despesa.objects.filter(terceiro__sinistro=self).aggregate(Sum('valor'))
+        valor = Despesa.objects.filter(terceiro__acidente=self).aggregate(Sum('valor'))
         if valor['valor__sum'] == None:
             return 0
         else:
@@ -106,7 +106,7 @@ class Terceiro(models.Model):
     ('VT','Vitima'),
     ('FT','Vitima Fatal'),
     )
-    sinistro = models.ForeignKey(Acidente, on_delete=models.PROTECT)
+    acidente = models.ForeignKey(Acidente, on_delete=models.PROTECT)
     nome = models.CharField(max_length=200, blank=False)
     classificacao = models.CharField(max_length=4,choices=CLASSIFICACAO_CHOICES, blank=True)
     rg = models.CharField(max_length=20, blank=True)

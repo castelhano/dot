@@ -29,7 +29,7 @@ class ClassificacaoForm(forms.ModelForm):
 class TerceiroForm(forms.ModelForm):
     class Meta:
         model = Terceiro
-        fields = ['sinistro','nome','classificacao','rg','cpf','fone1','fone2','email','endereco','bairro','cidade','uf','veiculo','placa','cor','ano','acordo','forma','oficina','concluido','pendente_nota_fiscal']
+        fields = ['acidente','nome','classificacao','rg','cpf','fone1','fone2','email','endereco','bairro','cidade','uf','veiculo','placa','cor','ano','acordo','forma','oficina','concluido','pendente_nota_fiscal']
     nome = forms.CharField(error_messages={'required': 'Informe o nome do terceiro'},widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'','autofocus':'autofocus'}))
     classificacao = forms.ChoiceField(required=False,choices=Terceiro.CLASSIFICACAO_CHOICES,initial='ENVOLVIDO', widget=forms.Select(attrs={'class':'form-select'}))
     rg = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
@@ -45,7 +45,7 @@ class TerceiroForm(forms.ModelForm):
     placa = forms.CharField(required=False,widget=forms.TextInput(attrs={'class':'form-control','placeholder':''}))
     cor = forms.CharField(required=False, max_length=15,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
     ano = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':'1980','max':'2100'}))
-    acordo = forms.DecimalField(required=False,initial=0,widget=forms.TextInput(attrs={'class': 'form-control'}))
+    acordo = forms.DecimalField(required=False,initial=0,widget=forms.TextInput(attrs={'class': 'form-control','onfocus':'this.select();'}))
     forma = forms.ModelChoiceField(required=False, queryset = Forma.objects.all().order_by('nome'), widget=forms.Select(attrs={'class':'form-select'}))
     oficina = forms.ModelChoiceField(required=False, queryset = Oficina.objects.filter(ativa=True).order_by('nome'), widget=forms.Select(attrs={'class':'form-select'}))
     concluido = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
