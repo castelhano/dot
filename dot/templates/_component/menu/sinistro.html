@@ -15,7 +15,7 @@
     <li id="cadastro_docs_list_container">
       <a id="submenu_docs_link" class="dropdown-item d-flex justify-content-between align-items-center pointer" data-bs-toggle="dropdown"><span><b>D</b>ocs</span><i class="fas fa-chevron-right fs-8"></i></a>
       <ul id="cadastro_docs_list_options" class="submenu dropdown-menu dropdown-menu-dark">
-        {% if perms.sinistro.view_termo %}<li><a class="dropdown-item" id="cadastro_classificacao" href="{% url 'sinistro_termos' %}"><b>T</b>ermos</a></li>{% endif %}
+        {% if perms.sinistro.view_termo %}<li><a class="dropdown-item" id="cadastro_termo" href="{% url 'sinistro_termos' %}"><b>T</b>ermos</a></li>{% endif %}
       </ul>
     </li>
   </ul>

@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from json import dumps
 from .models import Acidente, Foto, Oficina, Classificacao, Terceiro, TipoDespesa, Despesa, Forma, Termo, Paragrafo
-from .forms import AcidenteForm, ClassificacaoForm, OficinaForm, TerceiroForm, TipoDespesaForm, DespesaForm, FormaForm, TermoForm, ParagrafoForm
+from .forms import AcidenteForm, ClassificacaoForm, OficinaForm, TerceiroForm, TipoDespesaForm, DespesaForm, FormaForm, TermoForm
 from core.models import Log, Empresa
 from oficina.models import Frota
 from pessoal.models import Funcionario
@@ -137,14 +137,14 @@ def termos(request):
     termos = Termo.objects.all().order_by('nome')
     return render(request,'sinistro/termos.html', {'termos' : termos})
 
-@login_required
-@permission_required('sinistro.view_termo')
-def paragrafos(request, id):
-    termo = Termo.objects.get(pk=id)
-    paragrafos = Paragrafo.objects.filter(termo=termo).order_by('ordem')
-    last = Paragrafo.objects.filter(termo=termo).count()
-    form = ParagrafoForm(initial={'ordem':last + 1})
-    return render(request,'sinistro/paragrafos.html', {'form':form,'paragrafos' : paragrafos,'termo':termo})
+# @login_required
+# @permission_required('sinistro.view_termo')
+# def paragrafos(request, id):
+#     termo = Termo.objects.get(pk=id)
+#     paragrafos = Paragrafo.objects.filter(termo=termo).order_by('ordem')
+#     last = Paragrafo.objects.filter(termo=termo).count()
+#     form = ParagrafoForm(initial={'ordem':last + 1})
+#     return render(request,'sinistro/paragrafos.html', {'form':form,'paragrafos' : paragrafos,'termo':termo})
 
 
 @login_required
@@ -399,9 +399,8 @@ def paragrafo_add(request, id):
             messages.error(request,'Erro ao inserir paragrafo')
             return redirect('sinistro_termo_id',id)
     else:
-        form = ParagrafoForm()
         termo = Termo.objects.get(id=id)
-        return render(request,'sinistro/paragrafo_add.html',{'form':form,'termo':termo})
+        return render(request,'sinistro/paragrafo_add.html',{'termo':termo})
 
 
 
@@ -464,12 +463,12 @@ def termo_id(request, id):
     form = TermoForm(instance=termo)
     return render(request,'sinistro/termo_id.html',{'form':form,'termo':termo})
 
-@login_required
-@permission_required('sinistro.change_paragrafo')
-def paragrafo_id(request, id):
-    paragrafo = Paragrafo.objects.get(id=id)
-    form = ParagrafoForm(instance=paragrafo)
-    return render(request,'sinistro/paragrafo_id.html',{'form':form,'paragrafo':paragrafo})
+# @login_required
+# @permission_required('sinistro.change_paragrafo')
+# def paragrafo_id(request, id):
+#     paragrafo = Paragrafo.objects.get(id=id)
+#     form = ParagrafoForm(instance=paragrafo)
+#     return render(request,'sinistro/paragrafo_id.html',{'form':form,'paragrafo':paragrafo})
 
 @login_required
 @permission_required('sinistro.view_foto')

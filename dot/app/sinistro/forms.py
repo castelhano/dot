@@ -1,5 +1,5 @@
 from django import forms
-from .models import Acidente, Oficina, Classificacao, Terceiro, TipoDespesa, Despesa, Forma, Termo, Paragrafo
+from .models import Acidente, Oficina, Classificacao, Terceiro, TipoDespesa, Despesa, Forma, Termo
 # from django.db.models import Q
 from datetime import date
 
@@ -97,9 +97,3 @@ class TermoForm(forms.ModelForm):
     cargo = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
     local = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
     rodape = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
-
-class ParagrafoForm(forms.ModelForm):
-    class Meta:
-        model = Paragrafo
-        fields = ['termo','ordem','texto']
-    texto = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'','style':'min-height: 150px;','autofocus':'autofocus'}))
