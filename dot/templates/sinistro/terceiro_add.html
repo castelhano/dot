@@ -10,8 +10,8 @@
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
-      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab_base" href="#"><i class="fas fa-user"></i></a></li>
-      <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" data-bs-target="#tab_veiculo" href="#"><i class="fas fa-car"></i></a></li>
+      <li class="nav-item"><a id="tab_link_base" class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab_base" href="#"><i class="fas fa-user"></i></a></li>
+      <li class="nav-item"><a id="tab_link_veiculo" class="nav-link" data-bs-toggle="tab" data-bs-target="#tab_veiculo" href="#"><i class="fas fa-car"></i></a></li>
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'sinistro_acidente_id' acidente.id|safe %}"><i class="fas fa-undo"></i></a></li>
     </ul>
   </div>
@@ -33,6 +33,8 @@
 <script>
   {% block add_script %}
   var TAB_ON_ENTER = true;
+  SHORTCUT_MAP['1FTF'] = '#tab_link_base';
+  SHORTCUT_MAP['2FTF'] = '#tab_link_veiculo';
   
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
   

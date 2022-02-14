@@ -6,131 +6,130 @@
 {% block model_menu %}{% include "_component/menu/sinistro.html" %}{% endblock%}
 {% block style_src %}<link rel="stylesheet" href="{% static 'css/pages.css' %}" type="text/css">{% endblock %}
 
+  
+<style media="screen">
+{% block style %}
+.hover{margin-bottom: 5px;}
+.hover:hover{
+  cursor: pointer;
+  background-color: #F1F1F1;
+}
+{% endblock %}
+</style>
+
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'sinistro_termo_id' termo.id|safe %}"></a>
 
-<control-A4 class="mt-3">
-  <div class="d-flex">
-    <div class="dropdown">
-      <a class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown">Editar </a>
-      <ul class="dropdown-menu fs-7">
-        <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#cabecalhos_modal" href="#">Cabeçalhos</a></li>
-      </ul>
-    </div>
-    <div class="dropdown ms-1">
-      <a class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown"><i class="fas fa-plus pe-2"></i></a>
-      <ul class="dropdown-menu fs-7">
-        <li><a class="dropdown-item" href="#">Parágrafo</a></li>
-      </ul>
-    </div>
-  </div>
-  
-</control-A4>
-
-<!-- INICIO PAGE -->
-<page size="A4" class="mt-1 p-5 d-flex flex-column position-relative">
-  <span class="position-absolute badge rounded bg-secondary" style="right: 4px;top:5px;">Prévia</span>
-  <div class="row">
-    <div class="col-12 text-center mb-5 mt-5">
-      <h4 class="text-bold">{{ termo.titulo }}</h4>
-    </div>
-  </div>
-  {% for paragrafo in termo.paragrafos %}
-  <div class="row">
-    <div class="col paragrafo text-justify" >
-      {% autoescape off %}{{ paragrafo.texto|linebreaks }}{% endautoescape %}
-    </div>
-    <div class="col-auto text-md" >
-      <a href="{% url 'sinistro_paragrafo_id' paragrafo.id %}"><i class="fas fa-pen text-dark"></i></a>
-      <a href="{% url 'sinistro_paragrafo_up' paragrafo.id %}"><i class="fas fa-arrow-circle-up text-dark"></i></a>
-      <a href="{% url 'sinistro_paragrafo_down' paragrafo.id %}"><i class="fas fa-arrow-circle-down text-dark"></i></a>
-    </div>
-  </div>
-  {% endfor %}
-  
-  <div class="row">
-    <div class="col-12 mb-5 mt-5">
-      <p class="text-bold">{{ termo.local }} - {% now "SHORT_DATE_FORMAT" %}</p>
-    </div>
-  </div>
-  <div class="row mt-3">
-    <div class="col-6">
-      <hr class="linha_assinatura">
-      <p class="text-center text-bold m-0">{{ termo.representante }}</p>
-      <p class="text-center m-0">{{ termo.cargo }}</p>
-    </div>
-    <div class="col-6">
-      <hr class="linha_assinatura">
-      <p class="text-center text-bold m-0">Nome Terceiro</p>
-      <p class="text-center m-0">CPF: 000.000.000-00</p>
-    </div>
-  </div>
-  <div class="row mt-3">
-    <div class="col-12 text-center mb-auto fs-8" style="">
-      <hr>
-      {{ termo.rodape }}
-    </div>
-  </div>
-</page>
-<!-- TERMINO PAGE -->
-
-<div class="modal fade" id="cabecalhos_modal" tabindex="-1">
-  <div class="modal-dialog modal-fullscreen">
-    <div class="modal-content">
+<div class="row">
+  <div class="col-xl-auto">
+    <control-A4 class="mt-3">
+      <div class="d-flex">
+        <div class="dropdown">
+          <a class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown">Editar </a>
+          <ul class="dropdown-menu fs-7">
+            <li><a id="modal_link_cabecalhos" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#cabecalhos_modal" href="#" title="Alt + ENTER">Cabeçalhos</a></li>
+          </ul>
+        </div>
+        <div class="dropdown ms-1">
+          <a class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown"><i class="fas fa-plus pe-2"></i></a>
+          <ul class="dropdown-menu fs-7">
+            <li><a id="add" class="dropdown-item pointer" onclick="paragrafoAdd();"  title="Alt + N">Parágrafo</a></li>
+          </ul>
+        </div>
+        <a class="btn btn-sm btn-secondary ms-1" id="back" href="{% url 'sinistro_termos' %}"><i class="fas fa-undo"></i></a>
+      </div>
+    </control-A4>
+    
+    <!-- INICIO PAGE -->
+    <page size="A4" class="mt-2 px-5 py-3 d-flex flex-column position-relative d-none d-xl-block">
+      <span class="position-absolute badge rounded bg-primary" style="right: 4px;top:5px;">Preview</span>
       <div class="row">
-        <div class="col"><h5 class="ms-3 mt-3"><i class="fas fa-file text-primary me-2"></i> Cabeçalhos</h5></div>
-        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+        <div class="col-12 text-center mb-5 mt-5">
+          <h4 class="text-bold mb-5">{{ termo.titulo }}</h4>
+        </div>
       </div>
-      <div class="modal-body">
-        <form action="{% url 'sinistro_termo_update' termo.id|safe %}" method="POST" autocomplete="off">
-          {% csrf_token %}
-          <div class="row g-1">
-            <div class="form-floating mb-lg-1 col-lg-3">
-              {{ form.nome }}
-              <label for="id_nome">Nome</label>
-            </div>
-            <div class="form-floating mb-1 col-lg-3">
-              {{ form.local }}
-              <label for="id_local">Local</label>
-            </div>
-          </div>
-          <div class="row g-1">
-            <div class="form-floating mb-1 col-lg-6">
-              {{ form.titulo }}
-              <label for="id_titulo">Titulo</label>
-            </div>
-          </div>
-          <div class="row g-1">
-            <div class="form-floating mb-lg-1 col-lg-3">
-              {{ form.representante }}
-              <label for="id_representante">Nome representante</label>
-            </div>
-            <div class="form-floating mb-1 col-lg-3">
-              {{ form.cargo }}
-              <label for="id_cargo">Cargo representante</label>
-            </div>
-          </div>
-          <div class="row g-1">
-            <div class="form-floating mb-1 col-lg-6">
-              {{ form.rodape }}
-              <label for="id_rodape">Rodapé termo</label>
-            </div>
-          </div>          
-          <div class="row mt-2">
-            <div class="col">
-              <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
-              <button type="submit" class="btn btn-primary">Gravar</button>
-            </div>
-          </div>
-        </form>
+      {% for paragrafo in termo.paragrafos %}
+      <div class="row">
+        <div class="col paragrafo text-justify hover" id="PR{{paragrafo.id|safe}}" onclick="paragrafoUpdate('{{paragrafo.id|safe}}', this);">
+          {% autoescape off %}{{ paragrafo.texto|linebreaks }}{% endautoescape %}
+        </div>
+        <div class="col-auto" >
+          <a href="{% url 'sinistro_paragrafo_up' paragrafo.id|safe %}"><i class="fas fa-arrow-circle-up text-dark"></i></a>
+          <a href="{% url 'sinistro_paragrafo_down' paragrafo.id|safe %}"><i class="fas fa-arrow-circle-down text-dark"></i></a>
+        </div>
       </div>
+      {% endfor %}
+      
+      <div class="position-absolute" style="width: 90%; top:780px;">
+        <div class="row">
+          <div class="col-12 mb-5 mt-5">
+            <p class="text-bold">{{ termo.local }} - {% now "SHORT_DATE_FORMAT" %}</p>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-6">
+            <hr class="linha_assinatura">
+            <p class="text-center text-bold m-0">{{ termo.representante }}</p>
+            <p class="text-center m-0">{{ termo.cargo }}</p>
+          </div>
+          <div class="col-6">
+            <hr class="linha_assinatura">
+            <p class="text-center text-bold m-0">Nome Terceiro</p>
+            <p class="text-center m-0">CPF: 000.000.000-00</p>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-12 text-center mb-auto fs-8" style="">
+            <hr>
+            {{ termo.rodape }}
+          </div>
+        </div>        
+      </div>
+    </page>
+    <div class="border p-3 mt-2 d-block d-xl-none">
+      <p><b class="text-muted"><i class="fas fa-info-circle text-primary"></i> Preview</b> não disponível no seu dispositivo</p>
+      <span class="placeholder placeholder-lg col-10 cursor-default bg-primary"></span><br /><br />
+      <ol id="paragrafos_container" class="ps-3">
+        {% for paragrafo in termo.paragrafos %}
+        <li><span class="placeholder placeholder-lg col-10 pointer"></span></li>
+        {% endfor %}
+      </ol>
+      <div class="d-flex justify-content-around">
+        <span class="placeholder placeholder-lg col-5 cursor-default bg-primary"></span><span class="placeholder placeholder-lg col-5 cursor-default bg-primary"></span>
+      </div><br />
+      <span class="placeholder placeholder-sm col-12 cursor-default bg-secondary"></span>
+      <br /><br /><br />
     </div>
   </div>
+  <div class="col-xl">aqui</div>
 </div>
+
+
+{% include 'sinistro/_extract_termo_modais.html' %}
 {% endblock%}
 
 {% block add_script_src %}{% endblock %}
 
 <script>
-  {% block add_script %}{% endblock %}
+  {% block add_script %}
+  SHORTCUT_MAP['enterTFF'] = '#modal_link_cabecalhos';
+  
+  var paragrafo_add_modal = new bootstrap.Modal(document.getElementById('paragrafo_add_modal'), {keyboard: true});
+  var paragrafo_update_modal = new bootstrap.Modal(document.getElementById('paragrafo_update_modal'), {keyboard: true});
+  
+  function paragrafoAdd(){paragrafo_add_modal.show();setTimeout(function(){document.getElementById('id_paragrafo_add_texto').focus();},480);}
+  function paragrafoUpdate(id, element){
+    paragrafo_update_modal.show()
+    document.getElementById('id_paragrafo_update').value = id;
+    document.getElementById('id_paragrafo_update_texto').value = element.innerText;
+    setTimeout(function(){document.getElementById('id_paragrafo_update_texto').focus();},480);    
+  }
+  function paragrafoDelete(){
+    id = document.getElementById('id_paragrafo_update').value;
+    location.href = `{% url 'sinistro_paragrafo_delete' %}?id=${id}`;
+  }
+  
+  
+  
+  {% endblock %}
 </script>

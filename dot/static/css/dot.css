@@ -4,6 +4,7 @@ castelhano.rafael@gmail.com
 VERSION: 1.0 
 */
 
+.cursor-default{cursor: default;}
 .pointer{cursor: pointer;}
 .table td.fit,.table th.fit {white-space: nowrap;width: 1%;}
 

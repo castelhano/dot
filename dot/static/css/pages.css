@@ -13,5 +13,5 @@ control-A4 {display: block;margin: 0 auto;width: 28cm;}
 /* Small devices */
 @media(max-width: 1200px){
   page {border: 1px solid #dee2e6;}
-  control-A4 {}
+  control-A4 {display: block;margin: 0 auto;width: auto;}
 }

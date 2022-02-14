@@ -49,9 +49,7 @@
             <th class="d-none d-lg-table-cell">Despesas</th>
             <th class="d-none d-lg-table-cell">Oficina</th>
             <th class="d-none d-md-table-cell">Status</th>
-            {% if perms.sinistro.change_terceiro %}
             <th>&nbsp;</th>
-            {% endif %}
           </tr>
         </thead>
         <tbody>
@@ -70,9 +68,10 @@
             <td class="d-none d-lg-table-cell">{{terceiro.despesas|default:'--'}}</td>
             <td class="d-none d-lg-table-cell">{{terceiro.oficina.nome|default:'--'}}</td>
             <td class="d-none d-md-table-cell">{{terceiro.concluido|yesno:'Concluido, Em Aberto'}}</td>
-            {% if perms.sinistro.change_terceiro %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'sinistro_terceiro_id' terceiro.id %}"><i class="fas fa-pen"></i></a></td>
-            {% endif %}
+            <td class="text-end fit py-1">
+            {% if perms.sinistro.change_terceiro %}<a class="btn btn-sm btn-dark" href="{% url 'sinistro_terceiro_id' terceiro.id %}"><i class="fas fa-pen"></i></a>{% endif %}
+            {% if perms.sinistro.view_despesa %}<a class="btn btn-sm btn-dark" href="{% url 'sinistro_despesas' terceiro.id %}" title="Despesas"> <i class="fas fa-dollar-sign px-1"></i> </a>{% endif %}
+          </td>
           </tr>
           {% empty %}
           <tr>

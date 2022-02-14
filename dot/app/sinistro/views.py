@@ -344,6 +344,13 @@ def despesa_add(request, terceiro):
             try:
                 form_clean = form.cleaned_data
                 registro = form.save()
+                l = Log()
+                l.modelo = "sinistro.despesa"
+                l.objeto_id = registro.id
+                l.objeto_str = registro.tipo.nome
+                l.usuario = request.user
+                l.mensagem = "CREATED"
+                l.save()
                 messages.success(request,'Despesa adicionada')
                 return redirect('sinistro_despesas',terceiro)
             except:
@@ -389,18 +396,24 @@ def paragrafo_add(request, id):
             ordem = Paragrafo.objects.filter(termo=termo).count()
             texto = request.POST['texto']
             if ordem < 10:
-                Paragrafo.objects.create(termo=termo,ordem=ordem,texto=texto)
-                messages.success(request,'Paragrafo inserido')
-                return redirect('sinistro_paragrafos',id)
+                paragrafo = Paragrafo.objects.create(termo=termo,ordem=ordem,texto=texto)
+                l = Log()
+                l.modelo = "sinistro.termo"
+                l.objeto_id = paragrafo.termo.id
+                l.objeto_str = (paragrafo.termo.nome + ' ' + str(paragrafo.ordem))
+                l.usuario = request.user
+                l.mensagem = "ADD PARAGRAFO"
+                l.save()
+                messages.success(request,'Paragrafo adicionado')
+                return redirect('sinistro_termo_id', id)
             else:
                 messages.warning(request,'Numero máximo de paragrafos adicionados')
-                return redirect('sinistro_paragrafos',id)
+                return redirect('sinistro_termo_id', id)
         except:
             messages.error(request,'Erro ao inserir paragrafo')
-            return redirect('sinistro_termo_id',id)
+            return redirect('sinistro_termo_id', id)
     else:
-        termo = Termo.objects.get(id=id)
-        return render(request,'sinistro/paragrafo_add.html',{'termo':termo})
+        return redirect('sinistro_termo_id', id)
 
 
 
@@ -601,7 +614,14 @@ def despesa_update(request, id):
     form = DespesaForm(request.POST, instance=despesa)
     if form.is_valid():
         registro = form.save()
-        messages.success(request,f'Despesa <b>{registro.nome}</b> alterada')
+        l = Log()
+        l.modelo = "sinistro.despesa"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.tipo.nome
+        l.usuario = request.user
+        l.mensagem = "UPDATE"
+        l.save()
+        messages.success(request,f'Despesa <b>{registro.tipo.nome}</b> alterada')
         return redirect('sinistro_despesas', despesa.terceiro.id)
     else:
         return render(request,'sinistro/despesa_id.html',{'form':form,'despesa':despesa})
@@ -628,37 +648,39 @@ def termo_update(request, id):
 
 @login_required
 @permission_required('sinistro.change_paragrafo')
-def paragrafo_update(request, id):
+def paragrafo_update(request):
     if request.method == 'POST':
-        paragrafo = Paragrafo.objects.get(pk=id)
+        paragrafo = Paragrafo.objects.get(pk=request.POST['paragrafo'])
         paragrafo.texto = request.POST['texto']
         paragrafo.save()    
         l = Log()
-        l.modelo = "sinistro.paragrafo"
-        l.objeto_id = paragrafo.id
-        l.objeto_str = (paragrafo.termo.nome + ' ' + str(paragrafo.ordem))[0:48]
+        l.modelo = "sinistro.termo"
+        l.objeto_id = paragrafo.termo.id
+        l.objeto_str = (paragrafo.termo.nome + ' ' + str(paragrafo.ordem))
         l.usuario = request.user
-        l.mensagem = "UPDATE"
+        l.mensagem = "UPDATE PARAGRAFO"
         l.save()
         messages.success(request,'Paragrafo alterado')
-        return redirect('sinistro_paragrafos',paragrafo.termo.id)
+        return redirect('sinistro_termo_id',paragrafo.termo.id)
     else:
         messages.error(request,'Erro')
-        return redirect('sinistro_paragrafos',paragrafo.termo.id)
+        return redirect('sinistro_termo_id',paragrafo.termo.id)
 
 @login_required
 @permission_required('sinistro.change_paragrafo')
 def paragrafo_up(request, id):
     paragrafo_atual = Paragrafo.objects.get(id=id)
     atual = paragrafo_atual.ordem
+    print('::', atual)
     if atual > 0:
+        print('ENTREI')
         ajustado = atual - 1
         paragrafo_anterior = Paragrafo.objects.get(ordem=ajustado,termo=paragrafo_atual.termo)
         paragrafo_anterior.ordem = atual
         paragrafo_anterior.save()
         paragrafo_atual.ordem = ajustado
         paragrafo_atual.save()
-    return redirect('sinistro_paragrafos',paragrafo_atual.termo.id)
+    return redirect('sinistro_termo_id',paragrafo_atual.termo.id)
 
 @login_required
 @permission_required('sinistro.change_paragrafo')
@@ -673,7 +695,7 @@ def paragrafo_down(request, id):
         paragrafo_posterior.save()
         paragrafo_atual.ordem = ajustado
         paragrafo_atual.save()
-    return redirect('sinistro_paragrafos',paragrafo_atual.termo.id)
+    return redirect('sinistro_termo_id',paragrafo_atual.termo.id)
 
 # METODOS DELETE
 @login_required
@@ -821,8 +843,15 @@ def despesa_delete(request, id):
     try:
         registro = Despesa.objects.get(pk=id)
         terceiro = registro.terceiro
+        l = Log()
+        l.modelo = "sinistro.despesa"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.tipo.nome
+        l.usuario = request.user
+        l.mensagem = "DELETE"
         registro.delete()
-        messages.warning(request,'Despesa removida')
+        l.save()
+        messages.warning(request,f'Despesa <b>{registro.tipo.nome}</b> removida')
         return redirect('sinistro_despesas',terceiro.id)
     except:
         messages.error(request,'ERRO ao apagar despesa')
@@ -849,15 +878,15 @@ def termo_delete(request, id):
 
 @login_required
 @permission_required('sinistro.delete_paragrafo')
-def paragrafo_delete(request, id):
+def paragrafo_delete(request):
     try:
-        registro = Paragrafo.objects.get(pk=id)
+        registro = Paragrafo.objects.get(pk=request.GET['id'])
         l = Log()
-        l.modelo = "sinistro.paragrafo"
-        l.objeto_id = registro.id
+        l.modelo = "sinistro.termo"
+        l.objeto_id = registro.termo.id
         l.objeto_str = (registro.termo.nome + ' ' + str(registro.ordem))[0:48]
         l.usuario = request.user
-        l.mensagem = "DELETE"
+        l.mensagem = "DELETE PARAGRAFO"
         l.save()
         
         # REORDENA OS PARAGRAFOS
@@ -869,10 +898,10 @@ def paragrafo_delete(request, id):
             
         registro.delete()
         messages.warning(request,'Paragrafo apagado. Essa operação não pode ser desfeita')
-        return redirect('sinistro_paragrafos', registro.termo.id)
+        return redirect('sinistro_termo_id', registro.termo.id)
     except:
         messages.error(request,'ERRO ao apagar paragrafo')
-        return redirect('sinistro_paragrafo_id', id)
+        return redirect('sinistro_termo_id', registro.termo.id)
 
 
 # METODOS AJAX

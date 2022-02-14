@@ -180,7 +180,7 @@ class Termo(models.Model):
     def __str__(self):
         return self.nome
     def paragrafos(self):
-        return Paragrafo.objects.filter(termo=self)
+        return Paragrafo.objects.filter(termo=self).order_by('ordem')
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='sinistro.termo',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)

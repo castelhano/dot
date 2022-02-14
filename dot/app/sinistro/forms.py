@@ -77,7 +77,7 @@ class DespesaForm(forms.ModelForm):
         fields = ['tipo','terceiro','data','valor','forma','detalhe']
     data = forms.DateField(error_messages={'required': 'Informe uma data válida'},initial=date.today(),widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
     tipo = forms.ModelChoiceField(error_messages={'required': 'Informe um tipo para despesa'}, queryset = TipoDespesa.objects.all().order_by('nome'), widget=forms.Select(attrs={'class':'form-select','autofocus':'autofocus'}))
-    valor = forms.DecimalField(required=False,widget=forms.TextInput(attrs={'class': 'form-control text-end'}))
+    valor = forms.DecimalField(required=False,initial=0, widget=forms.TextInput(attrs={'class': 'form-control','onfocus':'this.select();'}))
     forma = forms.ModelChoiceField(required=False, queryset = Forma.objects.all().order_by('nome'), widget=forms.Select(attrs={'class':'form-select'}))
     detalhe = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
 

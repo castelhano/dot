@@ -1,0 +1,113 @@
+<div class="modal fade" id="cabecalhos_modal" tabindex="-1">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content">
+      <div class="row">
+        <div class="col"><h5 class="ms-3 mt-3"><i class="fas fa-file text-primary me-2"></i> Cabeçalhos</h5></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'sinistro_termo_update' termo.id|safe %}" method="POST" autocomplete="off">
+          {% csrf_token %}
+          <div class="row g-1">
+            <div class="form-floating mb-lg-1 col-lg-3">
+              {{ form.nome }}
+              <label for="id_nome">Nome</label>
+            </div>
+            <div class="form-floating mb-1 col-lg-3">
+              {{ form.local }}
+              <label for="id_local">Local</label>
+            </div>
+          </div>
+          <div class="row g-1">
+            <div class="form-floating mb-1 col-lg-6">
+              {{ form.titulo }}
+              <label for="id_titulo">Titulo</label>
+            </div>
+          </div>
+          <div class="row g-1">
+            <div class="form-floating mb-lg-1 col-lg-3">
+              {{ form.representante }}
+              <label for="id_representante">Nome representante</label>
+            </div>
+            <div class="form-floating mb-1 col-lg-3">
+              {{ form.cargo }}
+              <label for="id_cargo">Cargo representante</label>
+            </div>
+          </div>
+          <div class="row g-1">
+            <div class="form-floating mb-1 col-lg-6">
+              {{ form.rodape }}
+              <label for="id_rodape">Rodapé termo</label>
+            </div>
+          </div>          
+          <div class="row mt-2">
+            <div class="col">
+              <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
+              <button type="submit" class="btn btn-primary">Gravar</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="paragrafo_add_modal" tabindex="-1">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content">
+      <div class="row">
+        <div class="col pt-3 ps-4"><span class="fs-5 fw-bold text-muted">Novo Paráfrago</span></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'sinistro_paragrafo_add' termo.id|safe %}" method="POST" autocomplete="off">
+          {% csrf_token %}
+          <div class="row g-1">
+            <div class="mb-1 col-12">
+              <textarea name="texto" id="id_paragrafo_add_texto" class="form-control" rows="10"></textarea>
+            </div>
+          </div>             
+          <div class="row mt-2">
+            <div class="col">
+              <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
+              <button type="submit" class="btn btn-primary">Gravar</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="paragrafo_update_modal" tabindex="-1">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content">
+      <div class="row">
+        <div class="col pt-3 ps-4"><span class="fs-5 fw-bold text-muted">Editar Paráfrago</span></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'sinistro_paragrafo_update' %}" method="POST" autocomplete="off">
+          {% csrf_token %}
+          <div class="row g-1">
+            <div class="mb-1 col-12">
+              <textarea name="texto" id="id_paragrafo_update_texto" class="form-control" rows="10"></textarea>
+            </div>
+          </div>             
+          <div class="row mt-2">
+            <div class="col">
+              <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
+              <button type="submit" class="btn btn-primary">Gravar</button>
+            </div>
+            {% if perms.sinistro.delete_paragrafo %}
+            <div class="col-auto">
+              <a class="btn btn-danger pointer" onclick="paragrafoDelete();">Excluir</a>
+            </div>
+            {% endif %}
+          </div>
+          <input type="hidden" name="paragrafo" id="id_paragrafo_update" value="">
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
