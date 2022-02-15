@@ -36,19 +36,28 @@
             <li><a id="add" class="dropdown-item pointer" onclick="paragrafoAdd();"  title="Alt + N">Parágrafo</a></li>
           </ul>
         </div>
+        {% if termo.paragrafos.count == 0 %}
+        <div class="dropdown ms-1">
+          <a class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown">Modelos </a>
+          <ul class="dropdown-menu fs-7">
+            <li><a class="dropdown-item" href="#">Composição</a></li>
+          </ul>
+        </div>
+        {% endif %}
         <a class="btn btn-sm btn-secondary ms-1" id="back" href="{% url 'sinistro_termos' %}"><i class="fas fa-undo"></i></a>
       </div>
     </control-A4>
     
     <!-- INICIO PAGE -->
     <page size="A4" class="mt-2 px-3 py-2 px-xl-5 py-xl-3 d-flex flex-column position-relative">
-      <span class="position-absolute badge rounded bg-primary" style="right: 4px;top:5px;">Preview</span>
+      <span class="position-absolute badge rounded bg-primary" style="left: 6px;top:8px;">{{termo.nome}}</span>
+      <span class="position-absolute badge rounded bg-primary" style="right: 6px;top:8px;">Preview</span>
       <div class="row d-none d-xl-block">
         <div class="col-12 text-center mb-5 mt-5">
           <h4 class="text-bold mb-5">{{ termo.titulo }}</h4>
         </div>
       </div>
-      <span class="placeholder placeholder-lg cursor-default col-10 d-block d-xl-none my-3"></span>
+      <span class="placeholder placeholder-lg cursor-default col-10 d-block d-xl-none mt-5 mb-3"></span>
       {% for paragrafo in termo.paragrafos %}
       <div class="row">
         <div class="col paragrafo text-justify hover" id="PR{{paragrafo.id|safe}}" onclick="paragrafoUpdate('{{paragrafo.id|safe}}', this.innerText);">

@@ -2,6 +2,8 @@
   <h5 class="card-title mb-0">Cadastro de Acidente</h5>
   {% if 'acidente_id' in request.get_full_path %}
   <p class="fs-7 text-muted">Inserido em: <b>{{acidente.created_on|date:"d/m/y"}}</b> por <b>{{acidente.created_by.username|title}}</b></p>
+  {% else %}
+  <p class="fs-7 text-muted"><b>Novo</b> registro de acidente</p>
   {% endif %}
   <div class="tab-pane fade show active" id="tab_base" role="tabpanel">
     <div class="row g-1">

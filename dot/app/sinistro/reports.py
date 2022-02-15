@@ -331,6 +331,8 @@ def termo_pdf(request):
     for item in fields:
         for paragrafo in paragrafos:
             paragrafo.texto = paragrafo.texto.replace(item,str(fields.get(item)))
+        termo.titulo = termo.titulo.replace(item,str(fields.get(item)))
+        termo.rodape = termo.rodape.replace(item,str(fields.get(item)))
     
     buffer = BytesIO()
     PAGE_WIDTH  = A4[0]

@@ -65,7 +65,7 @@ def acidentes(request):
             return render(request,'sinistro/acidentes.html')
     else:
         semTerceiros = semTerceiros.filter(concluido=False)
-        terceiros = terceiros.filter(concluido=False)    
+        terceiros = terceiros.filter(concluido=False)
     return render(request,'sinistro/acidentes.html',{'terceiros':terceiros,'semTerceiros':semTerceiros})
 
 
@@ -136,16 +136,6 @@ def despesas(request, terceiro):
 def termos(request):
     termos = Termo.objects.all().order_by('nome')
     return render(request,'sinistro/termos.html', {'termos' : termos})
-
-# @login_required
-# @permission_required('sinistro.view_termo')
-# def paragrafos(request, id):
-#     termo = Termo.objects.get(pk=id)
-#     paragrafos = Paragrafo.objects.filter(termo=termo).order_by('ordem')
-#     last = Paragrafo.objects.filter(termo=termo).count()
-#     form = ParagrafoForm(initial={'ordem':last + 1})
-#     return render(request,'sinistro/paragrafos.html', {'form':form,'paragrafos' : paragrafos,'termo':termo})
-
 
 @login_required
 @permission_required('sinistro.view_oficina')
@@ -357,7 +347,6 @@ def despesa_add(request, terceiro):
                 pass
     else:
         form = DespesaForm()
-    # despesas = Despesa.objects.filter(terceiro=terceiro)
     terceiro = Terceiro.objects.get(id=terceiro)
     return render(request,'sinistro/despesa_add.html',{'form':form, 'terceiro':terceiro})
 
@@ -422,6 +411,9 @@ def paragrafo_add(request, id):
 @permission_required('sinistro.view_acidente')
 def acidente_id(request, id):
     acidente = Acidente.objects.get(id=id)
+    if acidente.created_by != request.user and not request.user.has_perm('sinistro.tratar_acidente'):
+        messages.warning(request,'<b>Atenção.</b> Você nao tem acesso para visualizar este acidente')
+        return redirect('sinistro_acidentes')
     form = AcidenteForm(instance=acidente)
     return render(request,'sinistro/acidente_id.html',{'form':form,'acidente':acidente})
 
@@ -475,28 +467,15 @@ def termo_id(request, id):
     termo = Termo.objects.get(id=id)
     form = TermoForm(instance=termo)
     return render(request,'sinistro/termo_id.html',{'form':form,'termo':termo})
-
-# @login_required
-# @permission_required('sinistro.change_paragrafo')
-# def paragrafo_id(request, id):
-#     paragrafo = Paragrafo.objects.get(id=id)
-#     form = ParagrafoForm(instance=paragrafo)
-#     return render(request,'sinistro/paragrafo_id.html',{'form':form,'paragrafo':paragrafo})
-
-@login_required
-@permission_required('sinistro.view_foto')
-def foto_download(request, id):
-    foto = Foto.objects.get(pk=id)
-    filename = foto.foto.name.split('/')[-1]
-    response = HttpResponse(foto.foto)
-    response['Content-Disposition'] = 'attachment; filename="' + filename + '"'
-    return response
     
 # METODOS UPDATE
 @login_required
 @permission_required('sinistro.change_acidente')
 def acidente_update(request, id):
     acidente = Acidente.objects.get(pk=id)
+    if acidente.created_by != request.user and not request.user.has_perm('sinistro.tratar_acidente'):
+        messages.warning(request,'<b>Atenção.</b> Você nao tem acesso para editar este acidente')
+        return redirect('sinistro_acidentes')
     form = AcidenteForm(request.POST,instance=acidente)
     if form.is_valid():
         registro = form.save()
@@ -696,24 +675,27 @@ def paragrafo_down(request, id):
         paragrafo_atual.ordem = ajustado
         paragrafo_atual.save()
     return redirect('sinistro_termo_id',paragrafo_atual.termo.id)
-
+        
 # METODOS DELETE
 @login_required
 @permission_required('sinistro.delete_acidente')
 def acidente_delete(request, id):
     try:
-        registro = Acidente.objects.get(id=id)
-        fotos = Foto.objects.filter(acidente=registro)
+        acidente = Acidente.objects.get(id=id)
+        if acidente.created_by != request.user and not request.user.has_perm('sinistro.tratar_acidente'):
+            messages.warning(request,'<b>Atenção.</b> Você nao tem acesso para excluir este acidente')
+            return redirect('sinistro_acidentes')
+        fotos = Foto.objects.filter(acidente=acidente)
         for foto in fotos:
             os.remove(foto.foto.path) # REMOVE ARQUIVO FISICO DA FOTO 
         l = Log()
         l.modelo = "sinistro.acidente"
-        l.objeto_id = registro.id
-        l.objeto_str = 'PASTA: ' + str(registro.pasta)[0:48]
+        l.objeto_id = acidente.id
+        l.objeto_str = 'PASTA: ' + str(acidente.pasta)[0:48]
         l.usuario = request.user
         l.mensagem = "DELETE"
         l.save()
-        registro.delete()
+        acidente.delete()
         messages.warning(request,'Acidente apagado. Essa operação não pode ser desfeita')
         return redirect('sinistro_acidentes')
     except:

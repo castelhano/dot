@@ -23,11 +23,12 @@
       <div class="row">
         {% for foto in fotos %}
         <div class="card-widget col-md-6 col-lg-4 col-xl-3 btn-light" title="Ctrl + C">
+          {% if perms.sinistro.delete_foto %}
           <a class="widget-control text-light mt-2 me-2" data-bs-toggle="dropdown" role="button"><i class="fas fa-ellipsis-v"></i></a>
           <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="{% url 'sinistro_foto_download' foto.id %}">Baixar</a></li>
-            {% if perms.sinistro.delete_foto %}<li><a class="dropdown-item dropdown-item-danger" href="{% url 'sinistro_foto_delete' foto.id %}">Excluir Foto</a></li>{% endif %}
+            <li><a class="dropdown-item dropdown-item-danger" href="{% url 'sinistro_foto_delete' foto.id %}">Excluir Foto</a></li>
           </ul>
+          {% endif %}
           <div class="row">
             <div class="col-12 text-center"><img src="{{foto.url}}" class="img-fluid" alt="Arquivo nao localizado"></div>
           </div>
@@ -51,9 +52,9 @@
         <form id="foto_form" action="{% url 'sinistro_foto_add' acidente.id|safe %}" method="POST" autocomplete="off" enctype="multipart/form-data">
           {% csrf_token %}
           <div class="row mt-2 g-1">
-          	<div class="mb-1 col-lg-12">
-          		<input type="file" class="form-control" name="fotos" accept="image/*" multiple>
-          	</div>
+            <div class="mb-1 col-lg-12">
+              <input type="file" class="form-control" name="fotos" accept="image/*" multiple>
+            </div>
             <small>Formatos aceitos: <span class="badge bg-primary ms-2">.png</span> <span class="badge bg-primary">.jpg</span> <span class="badge bg-primary">.jpeg</span></small>
           </div>
           <div class="row mt-2">

@@ -1,6 +1,5 @@
 from django import forms
 from .models import Acidente, Oficina, Classificacao, Terceiro, TipoDespesa, Despesa, Forma, Termo
-# from django.db.models import Q
 from datetime import date
 
 

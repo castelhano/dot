@@ -55,6 +55,18 @@
             </div>
           </div>
         </form>
+        <div class="row">
+          <div class="col mt-2">
+            <hr>
+            <h6 class="fw-bold text-muted">Campos Dinâmicos <sup id="clipboard_label_cabecalho" class="badge bg-success ms-1 d-none">Copiado</sup></h6>
+            <div class="row">
+              <div class="col">
+                <ul class="list-unstyled" id="html_fields_cabecalho"</ul>
+              </div>
+            </div>
+            <hr>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -167,16 +179,20 @@
   for(i=0;i < fields_layout.length;i++){layout_container.innerHTML += `<span class="badge bg-dark me-1 pointer" onclick="copyField(this.innerText, ':')">${fields_layout[i]}</span>`;}
   {% endverbatim %}
   
-  // COPIA CONTEUDO DOS FIELDS PARA O MODAL UPDATE
+  // COPIA CONTEUDO DOS FIELDS PARA O MODAL UPDATE, E CABECALHOS
   document.getElementById('html_fields_update').innerHTML = document.getElementById('html_fields_add').innerHTML;
+  document.getElementById('html_fields_cabecalho').innerHTML = document.getElementById('html_fields_add').innerHTML;
   
   var add_label = document.getElementById('clipboard_label_add'); 
   var update_label = document.getElementById('clipboard_label_update'); 
+  var cabecalho_label = document.getElementById('clipboard_label_cabecalho'); 
+  
   function copyField(text, separator=false){
     if(!separator){navigator.clipboard.writeText(text);}
     else{navigator.clipboard.writeText(text.split(':')[0]);}
     if(document.getElementById('paragrafo_add_modal').style.display == 'block'){add_label.classList.remove('d-none');setTimeout(function(){add_label.classList.add('d-none');},2400);} 
     else if(document.getElementById('paragrafo_update_modal').style.display == 'block'){update_label.classList.remove('d-none');setTimeout(function(){update_label.classList.add('d-none');},2400);} 
+    else if(document.getElementById('cabecalhos_modal').style.display == 'block'){cabecalho_label.classList.remove('d-none');setTimeout(function(){cabecalho_label.classList.add('d-none');},2400);} 
   }
   
 </script>
