@@ -1,3 +1,11 @@
+<script>
+  {% verbatim %}
+  var fields_acidente = ['acidente.pasta','acidente.data','acidente.hora','acidente.classificacao','acidente.culpabilidade','acidente.veiculo','veiculo.placa','acidente.condutor','condutor.nome','acidente.inspetor','inspetor.nome','acidente.linha','acidente.linha.nome','acidente.endereco','acidente.bairro','acidente.cidade','acidente.detalhe','acidente.uf']
+  var fields_terceiro = ['terceiro.nome','terceiro.rg','terceiro.cpf','terceiro.endereco','terceiro.bairro','terceiro.cidade','terceiro.uf','terceiro.veiculo','terceiro.cor','terceiro.ano','terceiro.placa','terceiro.acordo','terceiro.forma','terceiro.despesas','oficina.nome','oficina.razao_social','oficina.cnpj']
+  var fields_empresa = ['empresa.nome','empresa.razao_social','empresa.cnpj','empresa.endereco','empresa.cidade','empresa.uf','empresa.bairro','empresa.cep','termo.local','termo.representante','representante.cargo']
+  var fields_layout = ['{{texto}}: Negrito','[[texto]]: Tachado','((texto)): Italico','__-texto-__: Cortado','*-&gt;texto: Lista', '&lt;hr /&gt;: Linha horizontal']
+  {% endverbatim %}
+</script>
 <div class="modal fade" id="cabecalhos_modal" tabindex="-1">
   <div class="modal-dialog modal-fullscreen">
     <div class="modal-content">
@@ -74,6 +82,27 @@
             </div>
           </div>
         </form>
+        <div class="row">
+          <div class="col mt-2">
+            <hr>
+            <h6 class="fw-bold text-muted">Campos Dinâmicos <sup id="clipboard_label_add" class="badge bg-success ms-1 d-none">Copiado</sup></h6>
+            <div class="row">
+              <div class="col">
+                <ul class="list-unstyled" id="html_fields_add">
+                  <li class="fw-bold fs-6 mt-2">Acidente:</li>
+                  <li id="fields_acidente_container"></li>
+                  <li class="fw-bold fs-6 mt-2">Terceiro:</li>
+                  <li id="fields_terceiro_container"></li>
+                  <li class="fw-bold fs-6 mt-2">Empresa:</li>
+                  <li id="fields_empresa_container"></li>
+                  <li class="fw-bold fs-6 mt-2">Componentes de layout:</li>
+                  <li id="fields_layout_container"></li>
+                </ul>
+              </div>
+            </div>
+            <hr>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -107,7 +136,47 @@
           </div>
           <input type="hidden" name="paragrafo" id="id_paragrafo_update" value="">
         </form>
+        <div class="row">
+          <div class="col mt-2">
+            <hr>
+            <h6 class="fw-bold text-muted">Campos Dinâmicos <sup id="clipboard_label_update" class="badge bg-success ms-1 d-none">Copiado</sup></h6>
+            <div class="row">
+              <div class="col">
+                <ul class="list-unstyled" id="html_fields_update"></ul>
+              </div>
+            </div>
+            <hr>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+  let acidente_container = document.getElementById('fields_acidente_container');
+  let terceiro_container = document.getElementById('fields_terceiro_container');
+  let empresa_container = document.getElementById('fields_empresa_container');
+  let layout_container = document.getElementById('fields_layout_container');
+  let editor_add = document.getElementById('id_paragrafo_add_texto');
+  let editor_update = document.getElementById('id_paragrafo_update_texto');
+  {% verbatim %}
+  for(i=0;i < fields_acidente.length;i++){acidente_container.innerHTML += `<span class="badge bg-secondary me-1 pointer" onclick="copyField('{{'+this.innerText+'}}')">${fields_acidente[i]}</span>`;}
+  for(i=0;i < fields_terceiro.length;i++){terceiro_container.innerHTML += `<span class="badge bg-success me-1 pointer" onclick="copyField('{{'+this.innerText+'}}')">${fields_terceiro[i]}</span>`;}
+  for(i=0;i < fields_empresa.length;i++){empresa_container.innerHTML += `<span class="badge bg-primary me-1 pointer" onclick="copyField('{{'+this.innerText+'}}')">${fields_empresa[i]}</span>`;}
+  for(i=0;i < fields_layout.length;i++){layout_container.innerHTML += `<span class="badge bg-dark me-1 pointer" onclick="copyField(this.innerText, ':')">${fields_layout[i]}</span>`;}
+  {% endverbatim %}
+  
+  // COPIA CONTEUDO DOS FIELDS PARA O MODAL UPDATE
+  document.getElementById('html_fields_update').innerHTML = document.getElementById('html_fields_add').innerHTML;
+  
+  var add_label = document.getElementById('clipboard_label_add'); 
+  var update_label = document.getElementById('clipboard_label_update'); 
+  function copyField(text, separator=false){
+    if(!separator){navigator.clipboard.writeText(text);}
+    else{navigator.clipboard.writeText(text.split(':')[0]);}
+    if(document.getElementById('paragrafo_add_modal').style.display == 'block'){add_label.classList.remove('d-none');setTimeout(function(){add_label.classList.add('d-none');},2400);} 
+    else if(document.getElementById('paragrafo_update_modal').style.display == 'block'){update_label.classList.remove('d-none');setTimeout(function(){update_label.classList.add('d-none');},2400);} 
+  }
+  
+</script>
