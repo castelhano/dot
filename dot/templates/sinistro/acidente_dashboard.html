@@ -1,0 +1,293 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% load tag_extra %}
+{% block title %}Dashboard - Acidente{% endblock %}
+{% block model %}Sinistro{% endblock %}
+{% block navbar_classlist %}navbar-dark bg-primary bg-gradient{% endblock %}
+{% block model_menu %}{% include "_component/menu/sinistro.html" %}{% endblock%}
+{% block content_fluid %}
+
+<div class="card mt-2 mb-5">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-chart-line"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'sinistro_acidentes' %}"><i class="fas fa-undo"></i></a></li>
+      <li class="nav-item ms-auto"><a class="btn btn-sm btn-secondary" id="clear" href="{% url 'sinistro_acidente_dashboard' %}">Limpar</a></li>
+    </ul>
+  </div>
+  <div class="card-body tab-content">
+    <div class="d-flex justify-content-between">
+      <div><h5 class="card-title mb-3"><span class="d-none d-lg-inline">Dashboard: </span><b class="text-primary">Ocorrência</b><sup class="badge bg-primary ms-2">{{metrics.empresa_nome|default:''}}</sup></h5></div>
+      <div class="dropdown">
+        <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"><span class="d-none d-sm-inline"><b>{{metrics.periodo_de|date:'d/m/y'}}</b> a <b>{{metrics.periodo_ate|date:'d/m/y'}}</b></span><span class="d-inline d-sm-none">Periodo</span></button>
+        <ul class="dropdown-menu fs-7">
+          <li>
+            <div class="row g-1">
+              <div class="col-12 px-2"><input type="date" class="form-control" id="id_periodo_de" name="periodo_de" value="{{metrics.periodo_de|date:'Y-m-d'}}"></div>
+              <div class="col-12 px-2"><input type="date" class="form-control" id="id_periodo_ate"  name="periodo_ate" value="{{metrics.periodo_ate|date:'Y-m-d'}}"></div>
+              <div class="col-12 d-grid px-2"><button type="button" class="btn btn-sm btn-primary" name="button" onclick="filtraPeriodo();">Filtrar</button></div>
+            </div>
+          </li>
+        </ul>
+        <a id="adicional_filters_link" class="btn btn-sm btn-dark" data-bs-toggle="collapse" href="#adicional_filters" role="button"><i class="fas fa-caret-down"></i></a>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col collapse mb-2" id="adicional_filters">
+        <div class=" d-flex flex-row">
+          <div class="dropdown">
+            <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">Empresa: <b>{{metrics.empresa_nome|default:'Todas'}}</b></button>
+            <ul class="dropdown-menu fs-7" id="id_empresa">
+              <li><a class="dropdown-item" onclick="filter('empresa', '')">Todas</a></li>
+            </ul>
+          </div>
+        </div>        
+      </div>
+    </div>
+    
+    <div class="tab-pane fade show active" id="base" role="tabpanel">
+      <div class="row">
+        <div class="col-lg-3 mb-2">
+          <div class="card text-center bg-primary text-light">
+            <div class="card-header">Total Acidentes</div>
+            <div class="body py-3"><h1>{{metrics.qtd_acidentes|default:0}}</h1></div>            
+          </div>
+        </div>
+      </div>
+      
+      <div class="row mt-3">
+        <div class="col-lg-6">
+          <div class="border rounded"><canvas id="evolucao_acidentes" style="height: 450px;"></canvas></div>
+        </div>
+        <div class="col-lg-3 mt-3 mt-lg-0">
+          <div class="border rounded"><canvas id="empresa_acidentes" style="height: 450px;"></canvas></div>
+        </div>
+        <div class="col-lg-3 mt-3 mt-lg-0">
+          <div class="border rounded"><canvas id="culpabilidade_acidentes" style="height: 450px;"></canvas></div>
+        </div>
+      </div>
+      
+      <div class="row mt-3">
+        <div class="col-lg-4">
+          <div class="border rounded"><canvas id="acidentes_classificacao"></canvas></div>
+        </div>
+        <div class="col-lg-8 mt-3 mt-lg-0">
+          <div class="border rounded"><canvas id="acidentes_linha" style="height: 450px;"></canvas></div>
+        </div>
+      </div>
+      
+    </div>
+    
+  </div>
+</div>
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/vendor/chart.min.js' %}"></script>
+<script src="{% static 'js/update_url.js' %}"></script>
+{% endblock %}
+
+
+<script>
+  {% block add_script %}
+  
+  SHORTCUT_MAP['fFFF'] = '#adicional_filters_link';
+  
+  function filtraPeriodo(){
+    let periodos = [document.getElementById('id_periodo_de').value,document.getElementById('id_periodo_ate').value]
+    filters(['periodo_de','periodo_ate'], periodos);
+  }
+  
+  var evolucao_ctx = document.getElementById('evolucao_acidentes');
+  evolucao_ctx.style.backgroundColor = '#F7F7F7';
+  let evolucao_chart = new Chart(evolucao_ctx, {
+    type: 'bar',
+    data: {
+      datasets: [{
+        label: 'Qtde',
+        data: {{ metrics.evolucao_acidentes.dados }},
+        backgroundColor: {{ metrics.evolucao_acidentes.bgcolors|safe }},
+        borderColor: {{ metrics.evolucao_acidentes.bordercolors|safe }},
+      }],
+      labels: {{ metrics.evolucao_acidentes.categorias|safe }},
+    },
+    options: {
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          suggestedMin: 0,
+          grace: 1,
+          ticks: {stepSize: 1}
+        }
+      },
+      plugins: {
+        legend: {display:false, position: 'bottom'},
+        title: {
+          display: true,
+          text:'Evolução Acidentes Dia',
+          font: {size: 18},
+          padding: {top: 10,bottom: 10}
+        },
+      }
+    }
+  });
+  
+  var culpabilidade_ctx = document.getElementById('culpabilidade_acidentes');
+  culpabilidade_ctx.style.backgroundColor = '#F7F7F7';
+  let culpabilidade_chart = new Chart(culpabilidade_ctx, {
+    type: 'pie',
+    data: {
+      datasets: [{
+        label: 'Qtde',
+        data: [{{metrics.culpabilidade.NA}}, {{metrics.culpabilidade.E}}, {{metrics.culpabilidade.T}}],
+        backgroundColor: ['#C7C3E9', '#8179CD','#4D42B3'],
+        borderColor: ['#C7C3E9', '#8179CD','#4D42B3'],
+      }],
+      labels: ['Indefinido', 'Empresa', 'Terceiro'],
+    },
+    options: {
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          display: false,
+          // suggestedMin: 0,
+          // ticks: {stepSize: 1}
+        }
+      },
+      plugins: {
+        legend: {display:true, position: 'bottom'},
+        title: {
+          display: true,
+          text:'Culpabilidade',
+          font: {size: 18},
+          padding: {top: 10,bottom: 10}
+        },
+      }
+    }
+  });
+  
+  var empresa_ctx = document.getElementById('empresa_acidentes');
+  empresa_ctx.style.backgroundColor = '#F7F7F7';
+  let empresa_chart = new Chart(empresa_ctx, {
+    type: 'doughnut',
+    data: {
+      datasets: [{
+        label: 'Qtde',
+        data: {{ metrics.acidentes_empresa.dados }},
+        backgroundColor: {{ metrics.acidentes_empresa.bgcolors|safe }},
+        borderColor: {{ metrics.acidentes_empresa.bordercolors|safe }},
+      }],
+      labels: {{ metrics.acidentes_empresa.categorias|safe }},
+    },
+    options: {
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          display: false,
+          // suggestedMin: 0,
+          // ticks: {stepSize: 1}
+        }
+      },
+      plugins: {
+        legend: {display:true, position: 'bottom'},
+        title: {
+          display: true,
+          text:'Empresa',
+          font: {size: 18},
+          padding: {top: 10,bottom: 10}
+        },
+      }
+    }
+  });
+  
+  var classificacao_ctx = document.getElementById('acidentes_classificacao');
+  classificacao_ctx.style.backgroundColor = '#F7F7F7';
+  let classificacao_chart = new Chart(classificacao_ctx, {
+    type: 'bar',
+    data: {
+      datasets: [{
+        label: 'Qtde',
+        data: {{ metrics.acidentes_classificacao.dados }},
+        backgroundColor: {{ metrics.acidentes_classificacao.bgcolors|safe }},
+        borderColor: {{ metrics.acidentes_classificacao.bordercolors|safe }},
+      }],
+      labels: {{ metrics.acidentes_classificacao.categorias|safe }},
+    },
+    options: {
+      maintainAspectRatio: true,
+      indexAxis: 'y',
+      scales: {
+        x: {
+          suggestedMin: 0,
+          ticks: {stepSize: 1}
+        }
+      },
+      plugins: {
+        legend: {display:false, position: 'bottom'},
+        title: {
+          display: true,
+          text:'Classificação',
+          font: {size: 18},
+          padding: {top: 10,bottom: 10}
+        },
+      }
+    }
+  });
+  
+  var linha_ctx = document.getElementById('acidentes_linha');
+  linha_ctx.style.backgroundColor = '#F7F7F7';
+  let linha_chart = new Chart(linha_ctx, {
+    type: 'bar',
+    data: {
+      datasets: [{
+        label: 'Qtde',
+        data: {{ metrics.acidentes_linha.dados }},
+        backgroundColor: {{ metrics.acidentes_linha.bgcolors|safe }},
+        borderColor: {{ metrics.acidentes_linha.bordercolors|safe }},
+      }],
+      labels: {{ metrics.acidentes_linha.categorias|safe }},
+    },
+    options: {
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          suggestedMin: 0,
+          grace: 1,
+          ticks: {stepSize: 1}
+        }
+      },
+      plugins: {
+        legend: {display:false, position: 'bottom'},
+        title: {
+          display: true,
+          text:'Por Linha',
+          font: {size: 18},
+          padding: {top: 10,bottom: 10}
+        },
+      }
+    }
+  });
+  
+  
+  
+  function carregaEmpresas() {
+  	var xhttp = new XMLHttpRequest();
+  	xhttp.onreadystatechange = function() {
+  		if(this.readyState == 4 && this.status == 200){
+  			if(this.responseText == ''){}
+  			else{
+  				let obj = JSON.parse(this.responseText);
+  				empresas = document.getElementById("id_empresa");
+  				for(key in obj){empresas.innerHTML += `<li><a class="dropdown-item pointer" onclick="filter('empresa','${obj[key]}')">${key}</a></li>`;}
+  			}
+  		}
+  	};
+  	xhttp.open("GET", "{% url 'core_get_empresas' %}", true);
+  	xhttp.send();
+  }
+  carregaEmpresas();
+  
+  
+  {% endblock %}
+</script>

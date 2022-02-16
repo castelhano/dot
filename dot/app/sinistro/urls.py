@@ -7,6 +7,7 @@ urlpatterns = [
     path('sinistro_acidente_id/<int:id>',views.acidente_id,name='sinistro_acidente_id'),
     path('sinistro_acidente_update/<int:id>',views.acidente_update,name='sinistro_acidente_update'),
     path('sinistro_acidente_delete/<int:id>/delete',views.acidente_delete,name='sinistro_acidente_delete'),
+    path('sinistro_acidente_dashboard',reports.acidente_dashboard,name='sinistro_acidente_dashboard'),
     path('sinistro_classificacoes',views.classificacoes,name='sinistro_classificacoes'),
     path('sinistro_classificacao_add',views.classificacao_add,name='sinistro_classificacao_add'),
     path('sinistro_classificacao_id/<int:id>',views.classificacao_id,name='sinistro_classificacao_id'),

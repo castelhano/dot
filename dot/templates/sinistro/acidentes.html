@@ -16,6 +16,9 @@
       {% if perms.sinistro.add_acidente %}
       <li class="nav-item"><a class="nav-link border ms-1" id="add" href="{% url 'sinistro_acidente_add' %}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
       {% endif %}
+      {% if perms.sinistro.dashboard_acidente %}
+      <li class="nav-item"><a class="nav-link border ms-1" href="{% url 'sinistro_acidente_dashboard' %}" title="Dashboard Acidentes"><i class="fas fa-chart-bar text-purple"></i></a></li>
+      {% endif %}
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
         <ul class="dropdown-menu">

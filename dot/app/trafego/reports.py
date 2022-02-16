@@ -5,7 +5,6 @@ from django.contrib import messages
 from .models import Ocorrencia
 from core.models import Empresa
 from datetime import date, datetime
-# from django.db.models.functions import TruncMonth
 from django.db.models import Count
 
 @login_required

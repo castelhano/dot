@@ -1,4 +1,3 @@
-# import csv
 from django.http import HttpResponse
 
 # IMPORTS PARA REPORTLAB
@@ -17,10 +16,8 @@ from django.contrib import messages
 from .models import Acidente, Terceiro, Despesa, Termo, Paragrafo
 from core.models import Empresa, Log
 from datetime import date, datetime
-from django.db.models.functions import TruncMonth
-from django.db.models import Sum, Count
-# import os
-# import pandas as pd
+# from django.db.models.functions import TruncMonth
+from django.db.models import Count
 
 
 @login_required
@@ -473,3 +470,104 @@ def termo_modelos(request, id):
     # except:
     #     messages.error(request,'<b>Erro</b> ao carregar modelo')
     return redirect('sinistro_termo_id', id)
+
+@login_required
+@permission_required('sinistro.dashboard_acidente')
+def acidente_dashboard(request):
+    periodo_de = request.GET.get('periodo_de', date.today().replace(day=1))
+    periodo_ate = request.GET.get('periodo_ate', date.today())
+    acidentes = Acidente.objects.filter(data__range=[periodo_de,periodo_ate])
+    
+    if request.GET.get('empresa', None):
+        try:
+            if request.user.is_superuser:
+                empresa = Empresa.objects.get(id=request.GET.get('empresa', None))
+            else:
+                empresa = request.user.profile.empresas.filter(id=request.GET.get('empresa', None)).get()
+            empresa_nome = empresa.nome
+        except:
+            messages.error(request,'Empresa <b>não encontrada</b> ou <b>não habilitada</b> para o seu usuário')
+            return redirect('sinistro_acidente_dashboard')
+        acidentes = acidentes.filter(empresa=empresa)
+    else:
+        if not request.user.is_superuser:
+            acidentes = acidentes.filter(empresa__in=request.user.profile.empresas.all())
+        empresa_nome = None
+    
+    evolucao_acidentes = acidentes.values('data').annotate(qtd=Count('data')).order_by()
+    acidentes_empresa = acidentes.values('empresa__nome').annotate(qtd=Count('empresa')).order_by()
+    acidentes_classificacao = acidentes.values('classificacao__nome').annotate(qtd=Count('classificacao')).exclude(classificacao=None).order_by('-qtd')
+    acidentes_linha = acidentes.values('linha__codigo').annotate(qtd=Count('linha')).exclude(linha=None).order_by('-qtd')
+    
+    from core.chart_metrics import backgrounds as bg, borders as bc, COLORS as color
+    
+    evolucao_acidentes_metrics = {
+        'categorias':[],
+        'dados':[],
+        'bgcolors':[],
+        'bordercolors':[]
+        }
+    dias = 0
+    for row in evolucao_acidentes:
+        evolucao_acidentes_metrics['categorias'].append(row['data'].day)
+        evolucao_acidentes_metrics['dados'].append(float(row['qtd']))
+        evolucao_acidentes_metrics['bgcolors'].append(bg.primary)
+        evolucao_acidentes_metrics['bordercolors'].append(bc.primary)
+        dias += 1
+    
+    acidentes_empresa_metrics = {
+        'categorias':[],
+        'dados':[],
+        'bgcolors':[],
+        'bordercolors':[]
+        }
+    for step, row in enumerate(acidentes_empresa):
+        acidentes_empresa_metrics['categorias'].append(row['empresa__nome'])
+        acidentes_empresa_metrics['dados'].append(int(row['qtd']))
+        acidentes_empresa_metrics['bgcolors'].append(color[step])
+        acidentes_empresa_metrics['bordercolors'].append(color[step])
+    
+    acidentes_classificacao_metrics = {
+        'categorias':[],
+        'dados':[],
+        'bgcolors':[],
+        'bordercolors':[]
+        }
+    for row in acidentes_classificacao:
+        acidentes_classificacao_metrics['categorias'].append(row['classificacao__nome'])
+        acidentes_classificacao_metrics['dados'].append(int(row['qtd']))
+        acidentes_classificacao_metrics['bgcolors'].append(bg.purple)
+        acidentes_classificacao_metrics['bordercolors'].append(bc.purple)
+    
+    acidentes_linha_metrics = {
+        'categorias':[],
+        'dados':[],
+        'bgcolors':[],
+        'bordercolors':[]
+        }
+    for row in acidentes_linha:
+        acidentes_linha_metrics['categorias'].append(row['linha__codigo'])
+        acidentes_linha_metrics['dados'].append(int(row['qtd']))
+        acidentes_linha_metrics['bgcolors'].append(bg.primary)
+        acidentes_linha_metrics['bordercolors'].append(bc.primary)
+    
+    
+    culpabilidade = dict(NA=0, E=0, T=0)
+    for row in acidentes:
+        if row.culpabilidade != '':
+            culpabilidade[row.culpabilidade] += 1
+        else:
+            culpabilidade['NA'] += 1
+    
+    metrics = {
+        'periodo_de': periodo_de if isinstance(periodo_de, date) else datetime.strptime(periodo_de, '%Y-%m-%d'),
+        'periodo_ate': periodo_ate if isinstance(periodo_ate, date) else datetime.strptime(periodo_ate, '%Y-%m-%d'),
+        'qtd_acidentes': acidentes.count(),
+        'culpabilidade':culpabilidade,
+        'empresa_nome':empresa_nome,
+        'evolucao_acidentes':evolucao_acidentes_metrics,
+        'acidentes_classificacao':acidentes_classificacao_metrics,
+        'acidentes_empresa':acidentes_empresa_metrics,
+        'acidentes_linha':acidentes_linha_metrics,
+    }
+    return render(request, 'sinistro/acidente_dashboard.html', {'metrics': metrics})
