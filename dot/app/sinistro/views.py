@@ -350,27 +350,26 @@ def despesa_add(request, terceiro):
 @permission_required('sinistro.add_termo')
 def termo_add(request):
     if request.method == 'POST':
-        form = TermoForm(request.POST)
-        if form.is_valid():
-            try:
-                form_clean = form.cleaned_data
-                registro = form.save(commit=False)
-                registro.author = request.user
-                registro.save()
-                l = Log()
-                l.modelo = "sinistro.termo"
-                l.objeto_id = registro.id
-                l.objeto_str = registro.nome[0:48]
-                l.usuario = request.user
-                l.mensagem = "CREATED"
-                l.save()
-                messages.success(request,'Termo criado')
-                return redirect('sinistro_termo_id',registro.id)
-            except:
-                pass
+        termo = Termo()
+        termo.nome = request.POST['nome']
+        termo.author = request.user
+        try:
+            termo.save()
+        except Exception as e:
+            messages.error(request,'<b>Erro:</b> nome do termo é inválido ou duplicado')
+            return redirect('sinistro_termos')
+        l = Log()
+        l.modelo = "sinistro.termo"
+        l.objeto_id = termo.id
+        l.objeto_str = termo.nome
+        l.usuario = request.user
+        l.mensagem = "CREATED"
+        l.save()
+        messages.success(request,f'Termo <b>{termo.nome}</b> iniciado')
+        return redirect('sinistro_termo_id',termo.id)
     else:
-        form = TermoForm()
-    return render(request,'sinistro/termo_add.html',{'form':form})
+        messages.error(request,'Operação <b>invalida</b>')
+        return render(request,'sinistro/termos.html')
 
 @login_required
 @permission_required('sinistro.add_paragrafo')

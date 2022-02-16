@@ -14,7 +14,7 @@
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
       <li class="nav-item"><a class="nav-link pointer" id="search" data-bs-toggle="modal" data-bs-target="#search_modal" onclick="setTimeout(function(){document.getElementById('id_pesquisa').focus();},480);" title="CTRL + /"><i class="fas fa-search"></i></a></li>
       {% if perms.sinistro.add_termo %}
-      <li class="nav-item"><a class="nav-link border" id="add" href="{% url 'sinistro_termo_add' %}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
+      <li class="nav-item"><a class="nav-link border" id="add" data-bs-toggle="modal" data-bs-target="#add_termo_modal" onclick="setTimeout(function(){document.getElementById('id_nome').focus();},480);" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
       {% endif %}
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
@@ -34,10 +34,11 @@
         <thead>
           <tr>
             <th>Nome</th>
-            <th class="d-none">Titulo</th>
-            <th class="d-none d-lg-table-cell">Representante</th>
-            <th class="d-none d-lg-table-cell">Cargo</th>
+            <th class="d-none d-xl-table-cell">Representante</th>
+            <th class="d-none d-xl-table-cell">Cargo</th>
             <th class="d-none d-lg-table-cell">Local</th>
+            <th class="d-none d-md-table-cell">Criado por</th>
+            <th class="d-none d-md-table-cell">Criado em</th>
             {% if perms.sinistro.change_termo %}
             <th>&nbsp;</th>
             {% endif %}
@@ -47,10 +48,11 @@
           {% for termo in termos %}
           <tr>
             <td>{{termo.nome}}</td>
-            <td class="d-none">{{termo.titulo}}</td>
-            <td class="d-none d-lg-table-cell">{{termo.representante}}</td>
-            <td class="d-none d-lg-table-cell">{{termo.cargo}}</td>
+            <td class="d-none d-xl-table-cell">{{termo.representante}}</td>
+            <td class="d-none d-xl-table-cell">{{termo.cargo}}</td>
             <td class="d-none d-lg-table-cell">{{termo.local}}</td>
+            <td class="d-none d-md-table-cell fw-bold">{{termo.author.username|title}}</td>
+            <td class="d-none d-md-table-cell">{{termo.created_on|date:'d/m/Y'}}</td>
             {% if perms.sinistro.change_termo %}
             <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'sinistro_termo_id' termo.id|safe %}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
@@ -87,6 +89,29 @@
     </div>
   </div>
 </div>
+{% if perms.sinistro.add_termo %}
+<div class="modal fade" id="add_termo_modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="row">
+        <div class="col"><h5 class="ms-3 mt-3"><i class="fas fa-plus text-success me-2"></i> Novo Termo</h5></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      </div>
+      <div class="modal-body">
+        <form id="sinistro_form" action="{% url 'sinistro_termo_add' %}" method="POST" autocomplete="off">
+          {% csrf_token %}
+          <div class="row g-1">
+            <div class="form-floating mb-1 col-lg-12">
+              <input type="text" class="form-control fw-bold" name="nome" value="" id="id_nome" maxlength="20" placeholder="">
+              <label for="id_nome">Nome</label>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
 {% endblock%}
 
 {% block add_script_src %}
