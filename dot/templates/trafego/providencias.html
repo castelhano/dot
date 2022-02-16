@@ -44,7 +44,7 @@
           <tr>
             <td>{{providencia.nome}}</td>
             {% if perms.trafego.change_providencia %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'trafego_providencia_id' providencia.id %}"><i class="fas fa-pen"></i></a></td>
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'trafego_providencia_id' providencia.id|safe%}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
           </tr>
           {% empty %}

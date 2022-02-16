@@ -43,7 +43,7 @@
         <tbody>
           {% for forma in formas %}
           <tr>
-            <td>{{forma.id}}</td>
+            <td>{{forma.id|safe}}</td>
             <td>{{forma.nome}}</td>
             {% if perms.sinistro.change_forma %}
             <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'sinistro_forma_id' forma.id|safe %}"><i class="fas fa-pen"></i></a></td>

@@ -19,7 +19,7 @@
         <a class="nav-link" id="menu_funcionario_extras" data-bs-toggle="dropdown" href="#" title="Outros [Ctrl + 5]"><i class="fas fa-caret-down text-dark"></i></a>
         <ul class="dropdown-menu">
           {% if perms.pessoal.view_dependente %}
-          <li><a class="dropdown-item" href="{% url 'pessoal_dependentes' funcionario.id %}">Dependentes</a></li>
+          <li><a class="dropdown-item" href="{% url 'pessoal_dependentes' funcionario.id|safe%}">Dependentes</a></li>
           {% endif %}
         </ul>
       </li>

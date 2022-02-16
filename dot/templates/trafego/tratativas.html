@@ -59,7 +59,7 @@
             <td class="d-none d-xl-table-cell">{{ocorrencia.usuario.username|title}}</td>
             <td class="fw-bold">{{ocorrencia.tratado|yesno:'Tratado,'}}</td>
             {% if perms.trafego.change_ocorrencia %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'trafego_tratativa_id' ocorrencia.id %}"><i class="fas fa-pen"></i></a></td>
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'trafego_tratativa_id' ocorrencia.id|safe%}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
           </tr>
           {% empty %}

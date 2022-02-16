@@ -53,7 +53,7 @@
         <tbody>
           {% for oficina in oficinas %}
           <tr class="{% if not oficina.ativa %}table-danger{% endif %}">
-            <td>{{oficina.id}}</td>
+            <td>{{oficina.id|safe}}</td>
             <td>{{oficina.nome}}</td>
             <td>{{oficina.contato}}</td>
             <td class="d-none d-lg-table-cell">{{oficina.fone1}}</td>

@@ -639,7 +639,11 @@ def get_linha(request):
         empresa = request.GET.get('empresa',None)
         codigo = request.GET.get('codigo',None)
         incluir_inativos = request.GET.get('incluir_inativos',None)
-        linha = Linha.objects.get(empresa__id=empresa,codigo=codigo)
+        multiempresa = request.GET.get('multiempresa', None)
+        params  = dict(codigo=codigo)
+        if not multiempresa or multiempresa != 'True':
+            params['empresa__id'] = empresa
+        linha = Linha.objects.get(**params)
         if incluir_inativos != 'True' and linha.status != 'A':
             raise Exception('')
         return HttpResponse(str(linha.id) + ';' + str(linha.nome) + ';' + str(linha.status))
@@ -671,7 +675,7 @@ def get_eventos(request):
 
 @login_required
 def get_ocorrencia(request):
-    # try:
+    try:
         id = request.GET.get('id_ocorrencia',None)
         ocorrencia = Ocorrencia.objects.get(id=id)
         ocorrencia_str = ocorrencia.data.strftime("%d/%m/%y") + ';' + ocorrencia.hora.strftime("%H:%M") + ';'
@@ -682,5 +686,5 @@ def get_ocorrencia(request):
         ocorrencia_str += str(ocorrencia.condutor.matricula) + ' - ' + ocorrencia.condutor.nome + ';' if ocorrencia.condutor != None else ';'
         ocorrencia_str += ocorrencia.detalhe
         return HttpResponse(ocorrencia_str)
-    # except:
-    #     return HttpResponse('')
+    except:
+        return HttpResponse('')

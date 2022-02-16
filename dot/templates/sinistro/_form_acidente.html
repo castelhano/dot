@@ -30,10 +30,10 @@
         <label for="id_classificacao">Classificação</label>
       </div>
     </div>
-    {% include "_component/field/veiculo.html" with id=acidente.veiculo.id prefixo=acidente.veiculo.prefixo placa=acidente.veiculo.placa required=False incluir_inativos=False %}
-    {% include "_component/field/condutor.html" with id=acidente.condutor.id matricula=acidente.condutor.matricula nome=acidente.condutor.nome required=False incluir_inativos=False %}
-    {% include "_component/field/inspetor.html" with id=acidente.inspetor.id matricula=acidente.inspetor.matricula nome=acidente.inspetor.nome required=False incluir_inativos=False multiempresa='True' %}
-    {% include "_component/field/linha.html" with id=acidente.linha.id codigo=acidente.linha.codigo nome=acidente.linha.nome required=False incluir_inativos=False %}
+    {% include "_component/field/veiculo.html" with id=acidente.veiculo.id|safeprefixo=acidente.veiculo.prefixo placa=acidente.veiculo.placa required=False incluir_inativos=False %}
+    {% include "_component/field/condutor.html" with id=acidente.condutor.id|safematricula=acidente.condutor.matricula nome=acidente.condutor.nome required=False incluir_inativos=False %}
+    {% include "_component/field/inspetor.html" with id=acidente.inspetor.id|safematricula=acidente.inspetor.matricula nome=acidente.inspetor.nome required=False incluir_inativos=False multiempresa='True' %}
+    {% include "_component/field/linha.html" with id=acidente.linha.id|safecodigo=acidente.linha.codigo nome=acidente.linha.nome required=False incluir_inativos=False %}
   </div>
   <div class="tab-pane fade" id="tab_local" role="tabpanel">
     <div class="row g-1">

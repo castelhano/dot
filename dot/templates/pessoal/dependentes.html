@@ -55,7 +55,7 @@
         <tbody>
           {% for dependente in funcionario.dependentes %}
           <tr>
-            <td class="d-none d-md-table-cell">{{dependente.id}}</td>
+            <td class="d-none d-md-table-cell">{{dependente.id|safe}}</td>
             <td class="d-none">{{funcionario.matricula}}</td>
             <td class="d-none">{{funcionario.nome}}</td>
             <td>{{dependente.nome}}</td>

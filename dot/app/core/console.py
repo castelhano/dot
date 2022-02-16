@@ -133,9 +133,7 @@ def funcionario(request, attrs):
             l.objeto_str = str(funcionario.matricula)
             l.usuario = request.user
             l.mensagem = "REENGAGE"
-            print('AQUII')
             l.save()
-            print('AQUII 22')
             response = f'<b class="text-success">Done:</b> Employee <b>{matricula}</b> reengage'
         else:
             pass

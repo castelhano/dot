@@ -3,7 +3,7 @@
   var fields_acidente = ['acidente.pasta','acidente.data','acidente.hora','acidente.classificacao','acidente.culpabilidade','acidente.veiculo','veiculo.placa','acidente.condutor','condutor.nome','acidente.inspetor','inspetor.nome','acidente.linha','acidente.linha.nome','acidente.endereco','acidente.bairro','acidente.cidade','acidente.detalhe','acidente.uf']
   var fields_terceiro = ['terceiro.nome','terceiro.rg','terceiro.cpf','terceiro.endereco','terceiro.bairro','terceiro.cidade','terceiro.uf','terceiro.veiculo','terceiro.cor','terceiro.ano','terceiro.placa','terceiro.acordo','terceiro.forma','terceiro.despesas','oficina.nome','oficina.razao_social','oficina.cnpj']
   var fields_empresa = ['empresa.nome','empresa.razao_social','empresa.cnpj','empresa.endereco','empresa.cidade','empresa.uf','empresa.bairro','empresa.cep','termo.local','termo.representante','representante.cargo']
-  var fields_layout = ['{{texto}}: Negrito','[[texto]]: Tachado','((texto)): Italico','__-texto-__: Cortado','*-&gt;texto: Lista', '&lt;hr /&gt;: Linha horizontal']
+  var fields_layout = ['{{texto}}: Negrito','[[texto]]: Tachado','((texto)): Italico','__-texto-__: Cortado','*-&gt;texto: Lista', '&lt;hr /&gt;: Linha horizontal', '&lt;br /&gt;: Quebra de linha']
   {% endverbatim %}
 </script>
 <div class="modal fade" id="cabecalhos_modal" tabindex="-1">
@@ -14,7 +14,7 @@
         <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
       </div>
       <div class="modal-body">
-        <form action="{% url 'sinistro_termo_update' termo.id|safe %}" method="POST" autocomplete="off">
+        <form action="{% url 'sinistro_termo_update' termo.id|safe %}" method="POST" autocomplete="off" onsubmit="return submitForm()">
           {% csrf_token %}
           <div class="row g-1">
             <div class="form-floating mb-lg-1 col-lg-3">
@@ -80,7 +80,7 @@
         <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
       </div>
       <div class="modal-body">
-        <form action="{% url 'sinistro_paragrafo_add' termo.id|safe %}" method="POST" autocomplete="off">
+        <form action="{% url 'sinistro_paragrafo_add' termo.id|safe %}" method="POST" autocomplete="off" onsubmit="return submitForm()">
           {% csrf_token %}
           <div class="row g-1">
             <div class="mb-1 col-12">
@@ -128,7 +128,7 @@
         <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
       </div>
       <div class="modal-body">
-        <form action="{% url 'sinistro_paragrafo_update' %}" method="POST" autocomplete="off">
+        <form action="{% url 'sinistro_paragrafo_update' %}" method="POST" autocomplete="off" onsubmit="return submitForm()">
           {% csrf_token %}
           <div class="row g-1">
             <div class="mb-1 col-12">
@@ -136,15 +136,15 @@
             </div>
           </div>             
           <div class="row mt-2">
-            <div class="col">
-              <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
-              <button type="submit" class="btn btn-primary">Gravar</button>
-            </div>
             {% if perms.sinistro.delete_paragrafo %}
-            <div class="col-auto">
+            <div class="col">
               <a class="btn btn-danger pointer" onclick="paragrafoDelete();">Excluir</a>
             </div>
             {% endif %}
+            <div class="col-auto">
+              <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
+              <button type="submit" class="btn btn-primary">Gravar</button>
+            </div>
           </div>
           <input type="hidden" name="paragrafo" id="id_paragrafo_update" value="">
         </form>
@@ -164,6 +164,28 @@
     </div>
   </div>
 </div>
+
+{% if perms.sinistro.delete_termo %}
+<div class="modal fade" id="delete_modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="row">
+        <div class="col"><h5 class="ms-3 mt-3"><i class="fas fa-exclamation-triangle text-danger me-2"></i> Excluir Termo</h5></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      </div>
+      <div class="modal-body">
+        <p><b class="text-danger">Atenção!!</b> Esta operação não pode ser desfeita, confirma a exclusão do termo?</p>
+        <div class="row mt-2">
+          <div class="col text-end">
+            <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
+            <a class="btn btn-danger px-3" href="{% url 'sinistro_termo_delete' termo.id|safe %}">Excluir</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
 
 <script>
   let acidente_container = document.getElementById('fields_acidente_container');

@@ -28,6 +28,8 @@
           <a class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown">Editar </a>
           <ul class="dropdown-menu fs-7">
             <li><a id="modal_link_cabecalhos" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#cabecalhos_modal" href="#" title="Alt + ENTER">Cabeçalhos</a></li>
+            {% if perms.sinistro.delete_termo %}<li><hr class="dropdown-divider"></li><li><a class="dropdown-item dropdown-item-danger" data-bs-toggle="modal" data-bs-target="#delete_modal" href="#">Excluir Termo</a></li>{% endif %}
+            
           </ul>
         </div>
         <div class="dropdown ms-1">
@@ -40,7 +42,7 @@
         <div class="dropdown ms-1">
           <a class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown">Modelos </a>
           <ul class="dropdown-menu fs-7">
-            <li><a class="dropdown-item" href="#">Composição</a></li>
+            <li><a class="dropdown-item" href="{% url 'sinistro_termo_modelos' termo.id|safe%}?modelo=mod1" onclick="submitForm()">Composição M1</a></li>
           </ul>
         </div>
         {% endif %}
@@ -106,6 +108,7 @@
 
 
 {% include 'sinistro/_extract_termo_modais.html' %}
+{% include "_component/modal/loading.html" with message='Registrando termo....' %}
 {% endblock%}
 
 {% block add_script_src %}{% endblock %}
@@ -113,6 +116,9 @@
 <script>
   {% block add_script %}
   SHORTCUT_MAP['enterTFF'] = '#modal_link_cabecalhos';
+  
+  var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
+  function submitForm(){modal_loading.show();return true;}
   
   var paragrafo_add_modal = new bootstrap.Modal(document.getElementById('paragrafo_add_modal'), {keyboard: true});
   var paragrafo_update_modal = new bootstrap.Modal(document.getElementById('paragrafo_update_modal'), {keyboard: true});

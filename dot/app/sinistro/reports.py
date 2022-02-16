@@ -15,7 +15,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from .models import Acidente, Terceiro, Despesa, Termo, Paragrafo
-from core.models import Empresa
+from core.models import Empresa, Log
 from datetime import date, datetime
 from django.db.models.functions import TruncMonth
 from django.db.models import Sum, Count
@@ -440,3 +440,36 @@ def termo_pdf(request):
     
     response.write(pdf_value)
     return response
+
+@login_required
+@permission_required('sinistro.change_termo')
+def termo_modelos(request, id):
+    # try:
+    termo = Termo.objects.get(id=id)
+    modelo = request.GET.get('modelo', None)
+    if modelo == 'mod1' and Paragrafo.objects.filter(termo=termo).count() == 0:
+        mod1 = []
+        mod1.append('De um lado, como primeiro acordante temos, {{empresa.nome}} pessoa jurídica de direito privado, estabelecida na {{empresa.endereco}} - bairro {{empresa.bairro}} - CEP: {{empresa.cep}}, {{empresa.cidade}} {{empresa.uf}}, incrita no CNPJ/MF {{empresa.cnpj}},')
+        mod1.append('e, segundo acordante, {{terceiro.nome}}, portador do CPF: {{terceiro.cpf}}, residente e domiciliado à {{terceiro.endereco}}, bairro {{terceiro.bairro}} em {{terceiro.cidade}} {{terceiro.uf}}.')
+        mod1.append('<br />{{Dos Fatos}}<br />')
+        mod1.append('O presente termo é lavrado ante a ocorrência de colisão entre o veículo ônibus de prefixo {{acidente.veiculo}}, placa {{veiculo.placa}}, e o veículo de propriedade do segundo acordante, cuja marca/modelo se descreve: {{terceiro.veiculo}}, cor {{terceiro.cor}}, ano {{terceiro.ano}}, placa {{terceiro.placa}} - sendo o local do acidente ocorrido em {{acidente.endereco}}, {{acidente.bairro}}, {{acidente.cidade}} {{acidente.uf}}, na data de {{acidente.data}}, aproximadamente às {{acidente.hora}}')
+        mod1.append('A empresa citada pagará o montante de {{terceiro.acordo}} em {{terceiro.forma}}, referente aos danos ocorridos no veículo do segundo acordante, conforme dados constantes do PIA nº {{acidente.pasta}} (processo interno de acidentes), e que o valor acima pago refere-se à composição amigável entre as partes, no tocante ao sinistro em apreço.')
+        mod1.append('{{O pagamento efetuado pela empresa não acarreta reconhecimento de culpa sendo ato meramente liberal e ainda, com o pagamento acima descrito, o segundo acordante conferirá à primeira acordante a mais ampla, geral e irrevogável quitação quanto aos danos morais, materiais e lucros cessantes ou a que título for que tenha como objeto o fato descrito no presente termo.}}')
+        mod1.append('Por estarem às partes de comum acordo, assinam.')
+        ordem = 0
+        for p in mod1:
+            Paragrafo.objects.create(termo=termo, ordem=ordem, texto=p)
+            ordem += 1
+        l = Log()
+        l.modelo = "sinistro.termo"
+        l.objeto_id = termo.id
+        l.objeto_str = termo.nome
+        l.usuario = request.user
+        l.mensagem = "LOAD MODELO"
+        l.save()
+        messages.success(request,f'Modelo <b>{modelo}</b> aplicado')
+    else:
+        messages.warning(request,'Modelo <b>não localizado</b>')
+    # except:
+    #     messages.error(request,'<b>Erro</b> ao carregar modelo')
+    return redirect('sinistro_termo_id', id)

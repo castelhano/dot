@@ -43,7 +43,7 @@
         <tbody>
           {% for tipodespesa in tipos_despesa %}
           <tr>
-            <td>{{tipodespesa.id}}</td>
+            <td>{{tipodespesa.id|safe}}</td>
             <td>{{tipodespesa.nome}}</td>
             {% if perms.sinistro.change_tipodespesa %}
             <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'sinistro_tipo_despesa_id' tipodespesa.id|safe %}"><i class="fas fa-pen"></i></a></td>

@@ -6,7 +6,7 @@
 {% block model_menu %}{% include "_component/menu/sinistro.html" %}{% endblock%}
 
 {% block content_fluid %}
-<a class="d-none" id="clear" href="{% url 'sinistro_terceiros' acidente.id %}"></a>
+<a class="d-none" id="clear" href="{% url 'sinistro_terceiros' acidente.id|safe%}"></a>
 
 <div class="card mt-2">
   <div class="card-header">
@@ -14,9 +14,9 @@
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
       <li class="nav-item"><a class="nav-link pointer" id="search" data-bs-toggle="modal" data-bs-target="#search_modal" onclick="setTimeout(function(){document.getElementById('id_pesquisa').focus();},480);" title="CTRL + /"><i class="fas fa-search"></i></a></li>
       {% if perms.sinistro.add_terceiro %}
-      <li class="nav-item"><a class="nav-link border" id="add" href="{% url 'sinistro_terceiro_add' acidente.id %}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
+      <li class="nav-item"><a class="nav-link border" id="add" href="{% url 'sinistro_terceiro_add' acidente.id|safe%}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
       {% endif %}
-      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'sinistro_acidente_id' acidente.id %}"><i class="fas fa-undo"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'sinistro_acidente_id' acidente.id|safe%}"><i class="fas fa-undo"></i></a></li>
       <li class="nav-item"><a id="acidentes_link" class="nav-link" href="{% url 'sinistro_acidentes' %}"  title="Fechar: Acidentes"><i class="fas fa-reply-all"></i></a></li>
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
@@ -69,8 +69,8 @@
             <td class="d-none d-lg-table-cell">{{terceiro.oficina.nome|default:'--'}}</td>
             <td class="d-none d-md-table-cell">{{terceiro.concluido|yesno:'Concluido, Em Aberto'}}</td>
             <td class="text-end fit py-1">
-            {% if perms.sinistro.change_terceiro %}<a class="btn btn-sm btn-dark" href="{% url 'sinistro_terceiro_id' terceiro.id %}"><i class="fas fa-pen"></i></a>{% endif %}
-            {% if perms.sinistro.view_despesa %}<a class="btn btn-sm btn-dark" href="{% url 'sinistro_despesas' terceiro.id %}" title="Despesas"> <i class="fas fa-dollar-sign px-1"></i> </a>{% endif %}
+            {% if perms.sinistro.change_terceiro %}<a class="btn btn-sm btn-dark" href="{% url 'sinistro_terceiro_id' terceiro.id|safe%}"><i class="fas fa-pen"></i></a>{% endif %}
+            {% if perms.sinistro.view_despesa %}<a class="btn btn-sm btn-dark" href="{% url 'sinistro_despesas' terceiro.id|safe%}" title="Despesas"> <i class="fas fa-dollar-sign px-1"></i> </a>{% endif %}
           </td>
           </tr>
           {% empty %}
@@ -92,7 +92,7 @@
         <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
       </div>
       <div class="modal-body">
-        <form id="sinistro_form" action="{% url 'sinistro_terceiros' acidente.id %}" method="POST" autocomplete="off">
+        <form id="sinistro_form" action="{% url 'sinistro_terceiros' acidente.id|safe%}" method="POST" autocomplete="off">
           {% csrf_token %}
           <div class="row g-1">
             <div class="form-floating mb-1 col-lg-12">

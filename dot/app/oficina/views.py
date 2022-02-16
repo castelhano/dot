@@ -662,7 +662,11 @@ def get_frota(request):
         empresa = request.GET.get('empresa',None)
         prefixo = request.GET.get('prefixo',None)
         incluir_inativos = request.GET.get('incluir_inativos',None)
-        frota = Frota.objects.get(empresa__id=empresa,prefixo=prefixo)
+        multiempresa = request.GET.get('multiempresa', None)
+        params  = dict(prefixo=prefixo)
+        if not multiempresa or multiempresa != 'True':
+            params['empresa__id'] = empresa
+        frota = Frota.objects.get(**params)
         if incluir_inativos == 'False' and frota.status != 'A':
             raise Exception('')
         return HttpResponse(str(frota.id) + ';' + str(frota.placa) + ';' + str(frota.status))

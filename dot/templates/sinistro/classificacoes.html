@@ -43,7 +43,7 @@
         <tbody>
           {% for classificacao in classificacoes %}
           <tr>
-            <td>{{classificacao.id}}</td>
+            <td>{{classificacao.id|safe}}</td>
             <td>{{classificacao.nome}}</td>
             {% if perms.sinistro.change_classificacao %}
             <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'sinistro_classificacao_id' classificacao.id|safe %}"><i class="fas fa-pen"></i></a></td>

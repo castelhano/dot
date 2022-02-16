@@ -50,7 +50,7 @@
         <tbody>
           {% for despesa in despesas %}
           <tr>
-            <td class="d-none">{{despesa.id}}</td>
+            <td class="d-none">{{despesa.id|safe}}</td>
             <td class="d-none d-lg-table-cell">{{despesa.terceiro.nome}}</td>
             <td>{{despesa.tipo.nome}}</td>
             <td class="d-none d-md-table-cell">{{despesa.data|date:"d/m/Y"}}</td>

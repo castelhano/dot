@@ -76,9 +76,9 @@
             <td class="d-none d-xxl-table-cell">{{ocorrencia.tratado|yesno:'Tratado,--'}}</td>
             <td class="d-none">{{ocorrencia.providencia.nome}}</td>
             {% if perms.trafego.change_ocorrencia and ocorrencia.usuario == user or perms.trafego.tratar_ocorrencia  %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'trafego_ocorrencia_id' ocorrencia.id %}"><i class="fas fa-pen"></i></a></td>
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'trafego_ocorrencia_id' ocorrencia.id|safe%}"><i class="fas fa-pen"></i></a></td>
             {% else %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-warning pointer" data-bs-toggle="modal" data-bs-target="#modal-ocorrencia" onclick="getOcorrencia({{ocorrencia.id}})"><i class="fas fa-eye"></i></a></td>
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-warning pointer" data-bs-toggle="modal" data-bs-target="#modal-ocorrencia" onclick="getOcorrencia({{ocorrencia.id|safe}})"><i class="fas fa-eye"></i></a></td>
             {% endif %}
           </tr>
           {% empty %}

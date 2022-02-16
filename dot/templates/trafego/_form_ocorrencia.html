@@ -31,9 +31,9 @@
             <label for="id_gravidade">Gravidade</label>
           </div>
         </div>
-        {% include "_component/field/linha.html" with required=False id=ocorrencia.linha.id nome=ocorrencia.linha.nome codigo=ocorrencia.linha.codigo incluir_inativos=False %}
-        {% include "_component/field/veiculo.html" with required=False id=ocorrencia.veiculo.id placa=ocorrencia.veiculo.placa prefixo=ocorrencia.veiculo.prefixo incluir_inativos=False %}
-        {% include "_component/field/condutor.html" with required=False id=ocorrencia.condutor.id nome=ocorrencia.condutor.nome codigo=ocorrencia.condutor.matricula incluir_inativos=False %}
+        {% include "_component/field/linha.html" with required=False id=ocorrencia.linha.id|safenome=ocorrencia.linha.nome codigo=ocorrencia.linha.codigo incluir_inativos=False %}
+        {% include "_component/field/veiculo.html" with required=False id=ocorrencia.veiculo.id|safeplaca=ocorrencia.veiculo.placa prefixo=ocorrencia.veiculo.prefixo incluir_inativos=False %}
+        {% include "_component/field/condutor.html" with required=False id=ocorrencia.condutor.id|safenome=ocorrencia.condutor.nome codigo=ocorrencia.condutor.matricula incluir_inativos=False %}
         <div class="">
           <input class="form-control" type="file" name="fotos" id="id_fotos" multiple>
         </div>
@@ -70,7 +70,7 @@
         <div class="card-widget col-md-6 col-lg-4 col-xl-3 btn-light pointer" title="Ctrl + C">
           {% if perms.trafego.delete_foto %}
           <a class="widget-control text-light mt-2 me-2" data-bs-toggle="dropdown" role="button"><i class="fas fa-ellipsis-v"></i></a>
-          <ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item dropdown-item-danger" href="{% url 'trafego_foto_delete' foto.id %}">Excluir Foto</a></li></ul>
+          <ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item dropdown-item-danger" href="{% url 'trafego_foto_delete' foto.id|safe%}">Excluir Foto</a></li></ul>
           {% endif %}
           <div class="row">
             <div class="col-12 text-center"><img src="{{foto.url}}" class="img-fluid" alt="Arquivo nao localizado"></div>

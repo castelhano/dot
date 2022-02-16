@@ -146,10 +146,6 @@ def notas_pendentes(request):
     total = terceiros.aggregate(Sum('acordo'))['acordo__sum']
     return render(request,'sinistro/notas_pendentes.html', {'terceiros':terceiros,'total':total})
 
-@login_required
-@permission_required('sinistro.view_termo')
-def termo_fields(request):
-    return render(request,'sinistro/termo_fields.html')
     
 # METODOS ADD
 @login_required
@@ -650,9 +646,7 @@ def paragrafo_update(request):
 def paragrafo_up(request, id):
     paragrafo_atual = Paragrafo.objects.get(id=id)
     atual = paragrafo_atual.ordem
-    print('::', atual)
     if atual > 0:
-        print('ENTREI')
         ajustado = atual - 1
         paragrafo_anterior = Paragrafo.objects.get(ordem=ajustado,termo=paragrafo_atual.termo)
         paragrafo_anterior.ordem = atual
