@@ -14,7 +14,6 @@ urlpatterns = [
     path('trafego_localidade_update/<int:id>',views.localidade_update,name='trafego_localidade_update'),
     path('trafego_localidade_delete/<int:id>/delete',views.localidade_delete,name='trafego_localidade_delete'),
     path('trafego_planejamentos',views.planejamentos,name='trafego_planejamentos'),
-    path('trafego_patamares/<int:id>',views.patamares,name='trafego_patamares'),
     path('trafego_patamar_update',views.patamar_update,name='trafego_patamar_update'),
     path('trafego_eventos',views.eventos,name='trafego_eventos'),
     path('trafego_evento_add',views.evento_add,name='trafego_evento_add'),

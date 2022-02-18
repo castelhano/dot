@@ -63,13 +63,6 @@ def linhas(request):
     return render(request,'trafego/linhas.html', {'linhas' : linhas, 'metrics':metrics})
 
 @login_required
-@permission_required('trafego.view_patamar')
-def patamares(request, id):
-    linha = Linha.objects.get(pk=id)
-    patamares = Patamar.objects.filter(linha=linha)
-    return render(request,'trafego/patamares.html',{'linha':linha,'patamares':patamares})
-
-@login_required
 @permission_required('trafego.view_planejamento')
 def planejamentos(request):
     return render(request,'trafego/planejamentos.html')
@@ -182,9 +175,6 @@ def linha_add(request):
                 l.usuario = request.user
                 l.mensagem = "CREATED"
                 l.save()
-                # CRIA OS PATAMARES BASE DE OPERACAO
-                for faixa in range(24):
-                    Patamar.objects.create(linha=registro,faixa=faixa,ida=50,volta=50)
                 messages.success(request,f'Linha <b>{registro.codigo}</b> criada')
                 return redirect('trafego_linha_id',registro.id)
             except:
@@ -383,42 +373,73 @@ def linha_movimentar(request, id):
 @login_required
 @permission_required('trafego.change_patamar')
 def patamar_update(request):
+    # METODO PARA ADD E UPDATE DE PATAMARES
     if request.method == 'POST':
         try:
-            patamar = Patamar.objects.get(pk=request.POST['patamar'])
-            sentido = request.POST['sentido']
-            if sentido == 'I':
-                patamar.ida = request.POST['ciclo']
-            elif sentido == 'V':
-                patamar.volta = request.POST['ciclo']
+            linha = Linha.objects.get(id=request.POST['linha'])
+            if request.POST['patamar'] != '':
+                # PATAMAR EXISTENTE, CARREGA PARA UPDATE
+                patamar = Patamar.objects.get(id=request.POST['patamar'])
             else:
-                messages.error(request,'Sentido invalido')
-                return redirect('trafego_linha_id', patamar.id)
+                # NOVA INSERCAO
+                patamar = Patamar()
+                patamar.linha = linha
+            patamar.inicial = int(request.POST['inicial'])
+            patamar.final = int(request.POST['final'])
+            patamar.ida = int(request.POST['ida'])
+            patamar.volta = int(request.POST['volta'])
+            has_errors = []
+            has_errors.append(patamar.inicial > patamar.final)
+            has_errors.append(patamar.inicial < 0 or patamar.final < 0)
+            has_errors.append(patamar.inicial > 23 or patamar.final > 23)
+            has_errors.append(patamar.ida < 1 or patamar.volta < 1)
+            has_errors.append(patamar.ida > 540 or patamar.volta > 540) # INICIALMENTE CONSIDERADO VALOR MAXIMO PARA FAIXA DE 7 HORAS DE CICLO
+            if True in has_errors:
+                messages.error(request,f'<b>Erro: [PTC 1] Valores de patamar inválidos')
+                return redirect('trafego_linha_id', linha.id)
             patamar.save()
-            
-            if 'replicar' in request.POST:
-                patamares = Patamar.objects.filter(linha=patamar.linha,faixa__gt=patamar.faixa)
-                for patamar in patamares:
-                    if sentido == 'I':
-                        patamar.ida = request.POST['ciclo']
-                    elif sentido == 'V':
-                        patamar.volta = request.POST['ciclo']
-                    patamar.save()
-            l = Log()
-            l.modelo = "trafego.linha"
-            l.objeto_id = patamar.linha.id
-            l.objeto_str = patamar.linha.codigo + ' - ' + patamar.linha.nome
-            l.usuario = request.user
-            l.mensagem = "PATAMAR UPDATE"
-            l.save()
-            messages.success(request,f'Patamares linha <b>{patamar.linha.codigo}</b> atualizados')
-            return redirect('trafego_patamares', patamar.linha.id)
-        except:
-            messages.error(request,'<b>Erro</b> ao atualizar patamares')
-            return redirect('index')        
-    else:
-        messages.error(request,'Operação inválida')
-        return redirect('index')
+                
+            patamares = Patamar.objects.filter(linha=linha).exclude(id=patamar.id)
+            retorno = patamar_tratar_conflitos(patamar, patamares)
+            if retorno[0]:
+                l = Log()
+                l.modelo = "trafego.linha"
+                l.objeto_id = linha.id
+                l.objeto_str = linha.codigo + ' - ' + linha.nome
+                l.usuario = request.user
+                l.mensagem = "PATAMAR UPDATE"
+                l.save()
+                messages.success(request,'Patamares <b>atualizados</b>')
+            else:
+                messages.error(request,f'<b>Erro: [PTC 2]</b> {retorno[1]}')
+        except Exception as e:
+            messages.error(request,f'<b>Erro: [PTU 3]</b> {e}')
+    return redirect('trafego_linha_id', linha.id)
+
+def patamar_tratar_conflitos(patamar, patamares):
+    try:
+        for c in patamares:
+            changed= False
+            if c.inicial >= patamar.inicial and c.inicial <= patamar.final: # TRATA CONFLITO NO PERIODO INCIAL
+                c.inicial = patamar.final + 1
+                changed = True
+            if c.final >= patamar.inicial and c.final <= patamar.final: # TRATA CONCLITO NO PERIODO FINAL
+                c.final = patamar.inicial - 1
+                changed = True
+            if changed:
+                has_errors = []
+                has_errors.append(c.inicial > c.final)
+                has_errors.append(c.inicial < 0 or c.final < 0)
+                has_errors.append(c.inicial > 23 or c.final > 23)
+                if True in has_errors:
+                    # VALIDA PATAMAR APOS AJUSTE DE CONFLITO, SE APRESENTAR RANGE INVALIDO (FAIXA NEGATIVA, APOS 23 HORAS, INICIAL MAIOR QUE FINAL, ETC) APAGA PATAMAR INVALIDO
+                    c.delete()
+                else:
+                    # CASO CONTRARIO SALVA AJUSTES
+                    c.save()
+        return [True]
+    except Exception as e:
+        return [False, e]
 
 @login_required
 @permission_required('trafego.change_evento')

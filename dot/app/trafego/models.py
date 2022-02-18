@@ -56,6 +56,8 @@ class Linha(models.Model):
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='trafego.linha',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
+    def patamares(self):
+        return Patamar.objects.filter(linha=self).order_by('inicial')
     class Meta:
         permissions = [
             ("dop_linha", "Pode acessar DOP"),
@@ -63,11 +65,11 @@ class Linha(models.Model):
 
 class Patamar(models.Model):
     linha = models.ForeignKey(Linha, blank=False, null=False, on_delete=models.CASCADE)
-    faixa = models.PositiveIntegerField(blank=False, null=False)
+    # faixa = models.PositiveIntegerField(blank=False, null=False)
+    inicial = models.PositiveIntegerField(blank=False, null=False)
+    final = models.PositiveIntegerField(blank=False, null=False)
     ida = models.PositiveIntegerField(blank=True, null=True)
     volta = models.PositiveIntegerField(blank=True, null=True)
-    def __str__(self):
-        return str(self.faixa)
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='trafego.patamar',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)

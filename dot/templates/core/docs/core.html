@@ -179,28 +179,6 @@
 </div>
 
 <span id="link_start_page" class="link_start_page pointer fs-4 text-muted bg-light shadow-sm" onclick="window.scroll(0,0)"><i class="fas fa-chevron-up"></i></span>
-
-<!-- <div class="modal fade" id="search_modal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="row">
-        <div class="col"><h5 class="ms-3 mt-3">Pesquisa</h5></div>
-        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
-      </div>
-      <div class="modal-body">
-        <form id="app_form" action="url" method="POST" autocomplete="off">
-          {% csrf_token %}
-          <div class="row g-1">
-            <div class="form-floating mb-1 col-lg-12">
-              <input type="text" class="form-control" name="pesquisa" value="" id="id_pesquisa" placeholder="">
-              <label for="id_pesquisa">Termo pesquisa</label>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div> -->
 {% endblock%}
 
 {% block add_script_src %}{% endblock %}
@@ -209,10 +187,7 @@
   {% block add_script %}
   function goTo(id){document.getElementById(id).scrollIntoView();}
   function search(){document.getElementById('main_search').select();}
-  function find(){
-    let target = document.getElementById('main_search').value;
-    console.log(target);
-  }
+  function find(){let target = document.getElementById('main_search').value;}
   
   window.addEventListener('scroll', function() {
     if(window.scrollY > 399) {document.getElementById('link_start_page').style.opacity = '1';}
