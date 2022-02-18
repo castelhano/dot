@@ -11,9 +11,9 @@
                   <button class="btn btn-sm btn-{% if not linha.status %}secondary{% elif linha.status == 'A' %}primary{% else %}warning{% endif %} dropdown-toggle" type="button" data-bs-toggle="dropdown"{% if 'linha_add' in request.get_full_path or not perms.trafego.change_linha %} disabled{% endif %}>Status: <b>{{linha.get_status_display|default:'Novo'}}</b></button>
                   <ul class="dropdown-menu fs-7">
                     {% if linha.status == 'A' %}
-                    <li><a class="dropdown-item dropdown-item-danger" href="{% url 'trafego_linha_movimentar' linha.id|safe %}?status=I"><i class="fas fa-stop me-2"></i>Inativar</a></li>
+                    <li><a class="dropdown-item dropdown-item-danger" href="{% url 'trafego_linha_movimentar' linha.id|safe %}?status=I" onclick="submitForm()"><i class="fas fa-stop me-2"></i>Inativar</a></li>
                     {% elif linha.status == 'I' %}
-                    <li><a class="dropdown-item dropdown-item-success" href="{% url 'trafego_linha_movimentar' linha.id|safe %}?status=A"><i class="fas fa-check pe-2"></i>Ativar</a></li>
+                    <li><a class="dropdown-item dropdown-item-success" href="{% url 'trafego_linha_movimentar' linha.id|safe %}?status=A" onclick="submitForm()"><i class="fas fa-check pe-2"></i>Ativar</a></li>
                     {% endif %}
                   </ul>
                 </div>
@@ -126,7 +126,7 @@
       </div>
     </div>
   </div>
-  <div class="col-lg-4">
+  <div class="col-lg-4 mb-3 mb-lg-0">
     {% if 'linha_id' in request.get_full_path %}
     <table class="table border table-striped table-hover caption-top">
       <caption>
