@@ -1,0 +1,177 @@
+<div class="row g-1">
+  <div class="col-lg">
+    <div class="card-body tab-content">
+      <div class="tab-pane fade show active" id="base" role="tabpanel">
+        <div class="row">
+          <div class="col-lg">
+            <div class="row">
+              <div class="col-lg d-flex justify-content-between">
+                <h5 class="card-title mb-3">Cadastro de Linha</h5>
+                <div class="dropdown">
+                  <button class="btn btn-sm btn-{% if not linha.status %}secondary{% elif linha.status == 'A' %}primary{% else %}warning{% endif %} dropdown-toggle" type="button" data-bs-toggle="dropdown"{% if 'linha_add' in request.get_full_path or not perms.trafego.change_linha %} disabled{% endif %}>Status: <b>{{linha.get_status_display|default:'Novo'}}</b></button>
+                  <ul class="dropdown-menu fs-7">
+                    {% if linha.status == 'A' %}
+                    <li><a class="dropdown-item dropdown-item-danger" href="{% url 'trafego_linha_movimentar' linha.id|safe %}?status=I" onclick="submitForm()"><i class="fas fa-stop me-2"></i>Inativar</a></li>
+                    {% elif linha.status == 'I' %}
+                    <li><a class="dropdown-item dropdown-item-success" href="{% url 'trafego_linha_movimentar' linha.id|safe %}?status=A" onclick="submitForm()"><i class="fas fa-check pe-2"></i>Ativar</a></li>
+                    {% endif %}
+                  </ul>
+                </div>
+              </div>
+            </div>
+            {% include "_component/field/empresa.html" with empresa_atual=linha.empresa.id|safe attrs='autofocus' %}
+            <div class="row g-1">
+              <div class="form-floating mb-lg-1 col-lg-auto codigo_container">
+                {{ form.codigo }}
+                <label for="id_codigo">Codigo</label>
+              </div>
+              <div class="form-floating mb-1 col-lg">
+                {{ form.nome }}
+                <label for="id_nome">Nome</label>
+              </div>
+            </div>
+            <div class="row g-1">
+              <div class="form-floating mb-lg-1 col-lg">
+                {{ form.classificacao }}
+                <label for="id_classificacao">Classificação</label>
+              </div>
+              <div class="form-floating mb-lg-1 col-lg">
+                {{ form.origem }}
+                <label for="id_origem">Origem</label>
+              </div>
+              <div class="form-floating mb-1 col-lg">
+                {{ form.destino }}
+                <label for="id_destino">Destino</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+      <div class="tab-pane fade" id="extensoes" role="tabpanel">
+        <div class="row">
+          <div class="col-lg">
+            <div class="row g-1">
+              <div class="form-floating mb-lg-1 col-lg-3">
+                {{ form.extensao_ida }}
+                <label for="id_extensao_ida">Extensão Ida</label>
+              </div>
+              <div class="form-floating mb-lg-1 col-lg-3">
+                {{ form.intervalo_ida }}
+                <label for="id_intervalo_ida">Intervalo Ida</label>
+              </div>
+              <div class="form-floating mb-lg-1 col-lg-3">
+                {{ form.acesso_origem_minutos }}
+                <label for="id_acesso_origem_minutos">Acesso Ida (min)</label>
+              </div>
+              <div class="form-floating mb-1 col-lg-3">
+                {{ form.acesso_origem_km }}
+                <label for="id_acesso_origem_km">Acesso Ida (km)</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg">
+            <div class="row g-1">
+              <div class="form-floating mb-lg-1 col-lg-3">
+                {{ form.extensao_volta }}
+                <label for="id_extensao_volta">Extensão Volta</label>
+              </div>
+              <div class="form-floating mb-lg-1 col-lg-3">
+                {{ form.intervalo_volta }}
+                <label for="id_intervalo_ida">Intervalo Volta</label>
+              </div>
+              <div class="form-floating mb-lg-1 col-lg-3">
+                {{ form.acesso_destino_minutos }}
+                <label for="id_acesso_destino_minutos">Acesso Volta (min)</label>
+              </div>
+              <div class="form-floating mb-1 col-lg-3">
+                {{ form.acesso_destino_km }}
+                <label for="id_acesso_destino_km">Acesso Volta (km)</label>
+              </div>
+            </div>
+            <div class="row g-1">
+              <div class="col-lg-6 order-2 order-lg-1">
+                {{ form.detalhe }}
+              </div>
+              <div class="col-lg order-1 order-lg-2">
+                <div class="row g-1">
+                  <div class="form-floating mb-lg-1 col-lg-6">
+                    {{ form.recolhe_origem_minutos }}
+                    <label for="id_recolhe_origem_minutos">Recolhe Ida (min)</label>
+                  </div>
+                  <div class="form-floating mb-1 col-lg-6">
+                    {{ form.recolhe_origem_km }}
+                    <label for="id_recolhe_origem_km">Recolhe Ida (km)</label>
+                  </div>
+                  <div class="form-floating mb-lg-1 col-lg-6">
+                    {{ form.recolhe_destino_minutos }}
+                    <label for="id_recolhe_destino_minutos">Recolhe Volta (min)</label>
+                  </div>
+                  <div class="form-floating mb-1 col-lg-6">
+                    {{ form.recolhe_destino_km }}
+                    <label for="id_recolhe_destino_km">Recolhe Volta (km)</label>
+                  </div>
+                </div>
+              </div>
+            </div>            
+          </div>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col">
+          <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"{% if 'linha_id' in request.get_full_path and not perms.trafego.change_linha %} disabled{% endif %}><b>G</b>ravar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4 mb-3 mb-lg-0">
+    {% if 'linha_id' in request.get_full_path %}
+    <table class="table border table-striped table-hover caption-top">
+      <caption>
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="fw-bold">Patamares</div>
+          <a class="btn btn-sm btn-success pointer" style="width: 35px;" id="add" onclick="patamarUpdate();"><i class="fas fa-plus"></i></a></div>
+      </caption>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Inicial</th>
+          <th>Final</th>
+          <th>Ida</th>
+          <th>Volta</th>
+          {% if perms.trafego.change_patamar %}<th>&nbsp;</th>{% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for patamar in linha.patamares %}
+        <tr>
+          <td>{{patamar.id}}</td>  
+          <td class="table-secondary">{{patamar.inicial}}</td>  
+          <td class="table-secondary">{{patamar.final}}</td>  
+          <td>{{patamar.ida}}</td>  
+          <td>{{patamar.volta}}</td>  
+          {% if perms.trafego.change_patamar %}
+          <td class="fit py-1 text-end"><a class="btn btn-sm btn-dark pointer" style="width: 35px;" onclick="patamarUpdate({{patamar.inicial}}, {{patamar.final}}, {{patamar.ida}}, {{patamar.volta}}, {{patamar.id}});"><i class="fas fa-pen"></i></a></td>
+          {% endif %}
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5">Nenhum patamar cadastrado para linha</td>
+        </tr>
+        {% endfor %}
+      </tbody>          
+    </table>
+    {% endif %}
+  </div>
+</div>
+
+
+<script>
+  var TAB_ON_ENTER = true;
+  
+  SHORTCUT_MAP['1FTF'] = '#tab_link_base';
+  SHORTCUT_MAP['2FTF'] = '#tab_link_extensoes';
+  
+</script>

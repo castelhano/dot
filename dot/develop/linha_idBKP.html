@@ -11,6 +11,7 @@
   }
   {% endblock %}
 </style>
+
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'trafego_linha_id' linha.id|safe %}"></a>
 <div class="card mt-2">
@@ -88,7 +89,6 @@
     </div>
   </div>
 </div>
-
 {% if perms.trafego.change_patamar %}
 <div class="modal fade" id="patamar_modal" tabindex="-1">
   <div class="modal-dialog modal-dialog-scrollable">
@@ -135,9 +135,9 @@
     </div>
   </div>
 </div>
+{% endif %}
 
 {% include "_component/modal/loading.html" with message='Atualizando dados da linha....' %}
-{% endif %}
 {% endblock%}
 
 {% block add_script_src %}{% endblock %}

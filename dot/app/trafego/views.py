@@ -426,6 +426,17 @@ def patamar_tratar_conflitos(patamar, patamares):
             if c.final >= patamar.inicial and c.final <= patamar.final: # TRATA CONCLITO NO PERIODO FINAL
                 c.final = patamar.inicial - 1
                 changed = True
+            if c.inicial <= patamar.inicial and c.final >= patamar.final:
+            # TRATA CONCLITO CASO TODO INTERVALO ESTEJA CONFLITANDO, PODE RESULTAR EM DOIS PATAMARES COM OS INTERVALOS EXTERNOS AO NOVO PATAMAR
+                n = Patamar()
+                n.linha = c.linha
+                n.inicial = patamar.final + 1
+                n.final = c.final
+                n.ida = c.ida
+                n.volta = c.volta
+                n.save()
+                c.final = patamar.inicial - 1
+                changed = True
             if changed:
                 has_errors = []
                 has_errors.append(c.inicial > c.final)
