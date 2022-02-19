@@ -28,7 +28,7 @@
   // if(document.getElementById('cadastro_sinistro_list_options').childElementCount == 0){document.getElementById('cadastro_sinistro_list_container').classList.add('d-none');}
   if(document.getElementById('cadastro_docs_list_options').childElementCount == 0){document.getElementById('cadastro_docs_list_container').classList.add('d-none');}
   function eventHandler(e){
-    {% include '_component/script/global_handler.js' %}
+    {% include '_component/menu/global_handler.js' %}
     else{
       let cadastro = false;
       let cadastro_sinistro = false;
@@ -43,6 +43,7 @@
       else if(cadastro_docs && e.key.toLowerCase() == 't')try{e.preventDefault();document.getElementById('cadastro_termo').click();}catch(err){}
       else if(cadastro && e.key.toLowerCase() == 's')try{submenuToggle(document.getElementById('submenu_sinistro_link'));cadastro_sinistro = true;}catch(err){}
       else if(cadastro && e.key.toLowerCase() == 'd')try{submenuToggle(document.getElementById('submenu_docs_link'));}catch(err){}
+      else{try{eventLocalHandler(e);}catch(e){}}
     }
   }
   

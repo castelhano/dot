@@ -511,8 +511,8 @@ def acidente_dashboard(request):
     for row in evolucao_acidentes:
         evolucao_acidentes_metrics['categorias'].append(row['data'].day)
         evolucao_acidentes_metrics['dados'].append(float(row['qtd']))
-        evolucao_acidentes_metrics['bgcolors'].append(bg.primary)
-        evolucao_acidentes_metrics['bordercolors'].append(bc.primary)
+        evolucao_acidentes_metrics['bgcolors'].append(bg.purple)
+        evolucao_acidentes_metrics['bordercolors'].append(bc.purple)
         dias += 1
     
     acidentes_empresa_metrics = {
@@ -548,12 +548,16 @@ def acidente_dashboard(request):
     for row in acidentes_linha:
         acidentes_linha_metrics['categorias'].append(row['linha__codigo'])
         acidentes_linha_metrics['dados'].append(int(row['qtd']))
-        acidentes_linha_metrics['bgcolors'].append(bg.primary)
-        acidentes_linha_metrics['bordercolors'].append(bc.primary)
+        acidentes_linha_metrics['bgcolors'].append(bg.purple)
+        acidentes_linha_metrics['bordercolors'].append(bc.purple)
     
     
     culpabilidade = dict(NA=0, E=0, T=0)
+    custo_acordos = 0
+    custo_despesas = 0
     for row in acidentes:
+        custo_acordos += row.acordos()
+        custo_despesas += row.despesas()
         if row.culpabilidade != '':
             culpabilidade[row.culpabilidade] += 1
         else:
@@ -563,6 +567,9 @@ def acidente_dashboard(request):
         'periodo_de': periodo_de if isinstance(periodo_de, date) else datetime.strptime(periodo_de, '%Y-%m-%d'),
         'periodo_ate': periodo_ate if isinstance(periodo_ate, date) else datetime.strptime(periodo_ate, '%Y-%m-%d'),
         'qtd_acidentes': acidentes.count(),
+        'acidentes': acidentes,
+        'custo_acordos': custo_acordos,
+        'custo_despesas': custo_despesas,
         'culpabilidade':culpabilidade,
         'empresa_nome':empresa_nome,
         'evolucao_acidentes':evolucao_acidentes_metrics,
@@ -570,4 +577,5 @@ def acidente_dashboard(request):
         'acidentes_empresa':acidentes_empresa_metrics,
         'acidentes_linha':acidentes_linha_metrics,
     }
+    metrics['custo_total'] = metrics['custo_acordos'] + metrics['custo_despesas']
     return render(request, 'sinistro/acidente_dashboard.html', {'metrics': metrics})

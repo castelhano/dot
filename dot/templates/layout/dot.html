@@ -21,7 +21,7 @@
   
   <title>{% block title %}SIT{% endblock %}</title>
 </head>
-<body>
+<body class="{% block body_classlist %}{% endblock %}" style="{% block body_style %}{% endblock %}">
   <nav class="navbar navbar-expand-lg sticky-top py-1 shadow-sm border-bottom navbar-dot {% block navbar_classlist %}navbar-dark bg-dark bg-gradient{% endblock %}">
     <div class="container-fluid">
       <ul class="navbar-nav"><li class="nav-item"><a class="nav-link ps-0 pe-3" id="home" href="{% url 'index' %}" title="INICIO [ ALT + I ]"><i class="fas fa-th-large fs-5"></i></a></li></ul>

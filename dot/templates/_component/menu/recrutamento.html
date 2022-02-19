@@ -17,7 +17,7 @@
   };
   if(document.getElementById('cadastro_list_options').childElementCount == 0){document.getElementById('cadastro_list_container').classList.add('d-none');}
   function eventHandler(e){
-    {% include '_component/script/global_handler.js' %}
+    {% include '_component/menu/global_handler.js' %}
     else{
       let cadastro = false;
       try{cadastro = document.getElementById('menu_cadastro').classList.contains('show') ? true : false;}catch(err){}

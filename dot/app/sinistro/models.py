@@ -53,6 +53,8 @@ class Acidente(models.Model):
             return 0
         else:
             return float(valor['valor__sum'])
+    def terceiros(self):
+        return Terceiro.objects.filter(acidente=self)
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='sinistro.acidente',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)

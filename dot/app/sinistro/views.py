@@ -172,11 +172,14 @@ def acidente_add(request):
             except:
                 pass
     else:
-        ultima_pasta = Acidente.objects.all().last().pasta
-        if ultima_pasta.isdecimal(): # Caso info de pasta seja somente numero, sugere o nome da proxima pasta
-            form = AcidenteForm(initial={'pasta':f'{int(ultima_pasta) + 1}'})
-        else:
-            form = AcidenteForm()
+        try:
+            ultima_pasta = Acidente.objects.all().last().pasta
+            if ultima_pasta.isdecimal(): # Caso info de pasta seja somente numero, sugere o nome da proxima pasta
+                form = AcidenteForm(initial={'pasta':f'{int(ultima_pasta) + 1}'})
+            else:
+                form = AcidenteForm()
+        except:
+            form = AcidenteForm()        
     return render(request,'sinistro/acidente_add.html',{'form':form})
 
 @login_required
