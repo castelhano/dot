@@ -1,3 +1,4 @@
+import csv
 from django.http import HttpResponse
 
 # IMPORTS PARA REPORTLAB
@@ -17,7 +18,7 @@ from .models import Acidente, Terceiro, Despesa, Termo, Paragrafo
 from core.models import Empresa, Log
 from datetime import date, datetime
 # from django.db.models.functions import TruncMonth
-from django.db.models import Count
+from django.db.models import Count, Sum
 
 
 @login_required
@@ -441,34 +442,34 @@ def termo_pdf(request):
 @login_required
 @permission_required('sinistro.change_termo')
 def termo_modelos(request, id):
-    # try:
-    termo = Termo.objects.get(id=id)
-    modelo = request.GET.get('modelo', None)
-    if modelo == 'mod1' and Paragrafo.objects.filter(termo=termo).count() == 0:
-        mod1 = []
-        mod1.append('De um lado, como primeiro acordante temos, {{empresa.nome}} pessoa jurídica de direito privado, estabelecida na {{empresa.endereco}} - bairro {{empresa.bairro}} - CEP: {{empresa.cep}}, {{empresa.cidade}} {{empresa.uf}}, incrita no CNPJ/MF {{empresa.cnpj}},')
-        mod1.append('e, segundo acordante, {{terceiro.nome}}, portador do CPF: {{terceiro.cpf}}, residente e domiciliado à {{terceiro.endereco}}, bairro {{terceiro.bairro}} em {{terceiro.cidade}} {{terceiro.uf}}.')
-        mod1.append('<br />{{Dos Fatos}}<br />')
-        mod1.append('O presente termo é lavrado ante a ocorrência de colisão entre o veículo ônibus de prefixo {{acidente.veiculo}}, placa {{veiculo.placa}}, e o veículo de propriedade do segundo acordante, cuja marca/modelo se descreve: {{terceiro.veiculo}}, cor {{terceiro.cor}}, ano {{terceiro.ano}}, placa {{terceiro.placa}} - sendo o local do acidente ocorrido em {{acidente.endereco}}, {{acidente.bairro}}, {{acidente.cidade}} {{acidente.uf}}, na data de {{acidente.data}}, aproximadamente às {{acidente.hora}}')
-        mod1.append('A empresa citada pagará o montante de {{terceiro.acordo}} em {{terceiro.forma}}, referente aos danos ocorridos no veículo do segundo acordante, conforme dados constantes do PIA nº {{acidente.pasta}} (processo interno de acidentes), e que o valor acima pago refere-se à composição amigável entre as partes, no tocante ao sinistro em apreço.')
-        mod1.append('{{O pagamento efetuado pela empresa não acarreta reconhecimento de culpa sendo ato meramente liberal e ainda, com o pagamento acima descrito, o segundo acordante conferirá à primeira acordante a mais ampla, geral e irrevogável quitação quanto aos danos morais, materiais e lucros cessantes ou a que título for que tenha como objeto o fato descrito no presente termo.}}')
-        mod1.append('Por estarem às partes de comum acordo, assinam.')
-        ordem = 0
-        for p in mod1:
-            Paragrafo.objects.create(termo=termo, ordem=ordem, texto=p)
-            ordem += 1
-        l = Log()
-        l.modelo = "sinistro.termo"
-        l.objeto_id = termo.id
-        l.objeto_str = termo.nome
-        l.usuario = request.user
-        l.mensagem = "LOAD MODELO"
-        l.save()
-        messages.success(request,f'Modelo <b>{modelo}</b> aplicado')
-    else:
-        messages.warning(request,'Modelo <b>não localizado</b>')
-    # except:
-    #     messages.error(request,'<b>Erro</b> ao carregar modelo')
+    try:
+        termo = Termo.objects.get(id=id)
+        modelo = request.GET.get('modelo', None)
+        if modelo == 'mod1' and Paragrafo.objects.filter(termo=termo).count() == 0:
+            mod1 = []
+            mod1.append('De um lado, como primeiro acordante temos, {{empresa.nome}} pessoa jurídica de direito privado, estabelecida na {{empresa.endereco}} - bairro {{empresa.bairro}} - CEP: {{empresa.cep}}, {{empresa.cidade}} {{empresa.uf}}, incrita no CNPJ/MF {{empresa.cnpj}},')
+            mod1.append('e, segundo acordante, {{terceiro.nome}}, portador do CPF: {{terceiro.cpf}}, residente e domiciliado à {{terceiro.endereco}}, bairro {{terceiro.bairro}} em {{terceiro.cidade}} {{terceiro.uf}}.')
+            mod1.append('<br />{{Dos Fatos}}<br />')
+            mod1.append('O presente termo é lavrado ante a ocorrência de colisão entre o veículo ônibus de prefixo {{acidente.veiculo}}, placa {{veiculo.placa}}, e o veículo de propriedade do segundo acordante, cuja marca/modelo se descreve: {{terceiro.veiculo}}, cor {{terceiro.cor}}, ano {{terceiro.ano}}, placa {{terceiro.placa}} - sendo o local do acidente ocorrido em {{acidente.endereco}}, {{acidente.bairro}}, {{acidente.cidade}} {{acidente.uf}}, na data de {{acidente.data}}, aproximadamente às {{acidente.hora}}')
+            mod1.append('A empresa citada pagará o montante de {{terceiro.acordo}} em {{terceiro.forma}}, referente aos danos ocorridos no veículo do segundo acordante, conforme dados constantes do PIA nº {{acidente.pasta}} (processo interno de acidentes), e que o valor acima pago refere-se à composição amigável entre as partes, no tocante ao sinistro em apreço.')
+            mod1.append('{{O pagamento efetuado pela empresa não acarreta reconhecimento de culpa sendo ato meramente liberal e ainda, com o pagamento acima descrito, o segundo acordante conferirá à primeira acordante a mais ampla, geral e irrevogável quitação quanto aos danos morais, materiais e lucros cessantes ou a que título for que tenha como objeto o fato descrito no presente termo.}}')
+            mod1.append('Por estarem às partes de comum acordo, assinam.')
+            ordem = 0
+            for p in mod1:
+                Paragrafo.objects.create(termo=termo, ordem=ordem, texto=p)
+                ordem += 1
+            l = Log()
+            l.modelo = "sinistro.termo"
+            l.objeto_id = termo.id
+            l.objeto_str = termo.nome
+            l.usuario = request.user
+            l.mensagem = "LOAD MODELO"
+            l.save()
+            messages.success(request,f'Modelo <b>{modelo}</b> aplicado')
+        else:
+            messages.warning(request,'Modelo <b>não localizado</b>')
+    except:
+        messages.error(request,'<b>Erro</b> ao carregar modelo')
     return redirect('sinistro_termo_id', id)
 
 @login_required
@@ -579,3 +580,58 @@ def acidente_dashboard(request):
     }
     metrics['custo_total'] = metrics['custo_acordos'] + metrics['custo_despesas']
     return render(request, 'sinistro/acidente_dashboard.html', {'metrics': metrics})
+
+@login_required
+@permission_required('sinistro.view_acidente')
+def export_acidentes_csv(request):
+    # try:
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="acidentes.csv"'
+
+        writer = csv.writer(response, delimiter =';')
+        writer.writerow(['#','Empresa','Pasta','Classificacao','Data','Hora','Veiculo','Linha','Nome linha','Condutor','Nome condutor','Inspetor','Nome inspetor','Endereco','Bairro','Cidade','UF','Culpabilidade','Concluido','Terceiro','CPF','Veiculo Terceiro','Placa','Cor','Ano','Forma','Oficina','Acordo','Despesas','Custo Total'])
+        
+        periodo_de = request.GET.get('periodo_de', date.today().replace(day=1))
+        periodo_ate = request.GET.get('periodo_ate', date.today())
+        acidentes = Acidente.objects.filter(data__range=[periodo_de,periodo_ate])
+        terceiros = Terceiro.objects.filter(acidente__data__range=[periodo_de,periodo_ate])
+        
+        if request.GET.get('empresa', None):
+            try:
+                if request.user.is_superuser:
+                    empresa = Empresa.objects.get(id=request.GET.get('empresa', None))
+                else:
+                    empresa = request.user.profile.empresas.filter(id=request.GET.get('empresa', None)).get()
+            except:
+                messages.error(request,'Empresa <b>não encontrada</b> ou <b>não habilitada</b> para o seu usuário')
+                return redirect('sinistro_acidentes')
+            acidentes = acidentes.filter(empresa=empresa)
+            terceiros = terceiros.filter(empresa=empresa)
+        else:
+            if not request.user.is_superuser:
+                acidentes = acidentes.filter(empresa__in=request.user.profile.empresas.all())
+        
+        acidentes = acidentes.filter(terceiro__isnull=True).values_list('id','empresa__nome','pasta','classificacao__nome','data','hora','veiculo__prefixo','linha__codigo','linha__nome','condutor__matricula','condutor__nome','inspetor__matricula','inspetor__nome','endereco','bairro','cidade','uf','culpabilidade','concluido')
+        terceiros = terceiros.values_list('acidente__id','acidente__empresa__nome','acidente__pasta','acidente__classificacao__nome','acidente__data','acidente__hora','acidente__veiculo__prefixo','acidente__linha__codigo','acidente__linha__nome','acidente__condutor__matricula','acidente__condutor__nome','acidente__inspetor__matricula','acidente__inspetor__nome','acidente__endereco','acidente__bairro','acidente__cidade','acidente__uf','acidente__culpabilidade','acidente__concluido','nome','cpf','veiculo','placa','cor','ano','forma','oficina__nome','acordo','id','id')
+            
+        for acidente in acidentes:
+            writer.writerow(acidente)
+        consulta = Despesa.objects.values('terceiro').filter(terceiro__acidente__data__range=(periodo_de,periodo_ate)).annotate(valor=Sum('valor')).order_by('terceiro')
+        
+        # MONTA DICT COM DESPESAS POR TERCEIRO NO PERIODO
+        despesas = {}
+        for despesa in consulta:
+            despesas[despesa['terceiro']] = despesa['valor']
+        
+        for terceiro in terceiros:
+            terceiro = list(terceiro)
+            desp = despesas.get(terceiro[0]) or 0
+            soma = ((terceiro[27]) or 0) + desp
+            terceiro[27] = str(terceiro[27]).replace('.',',')
+            terceiro[28] = str(round(desp,2)).replace('.',',')
+            terceiro[29] = str(round(soma,2)).replace('.',',')                
+            writer.writerow(terceiro)
+        return response
+    # except:
+    #     messages.warning(request,'Erro ao exportar dados. Verifique os filtros')
+    #     return redirect('sinistro_acidentes')

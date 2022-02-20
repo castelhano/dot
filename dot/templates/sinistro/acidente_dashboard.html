@@ -10,7 +10,7 @@
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'sinistro_acidente_dashboard' %}"></a>
 <div class="d-flex justify-content-between mt-3">
-  <div><h5 class="card-title"><span class="d-none d-lg-inline text-muted">Dashboard: </span><b class="text-primary">Ocorrência</b><sup class="badge bg-primary ms-2">{{metrics.empresa_nome|default:''}}</sup></h5></div>
+  <div><h5 class="card-title"><span class="d-none d-lg-inline text-muted">Dashboard: </span><b class="text-primary">Acidentes</b><sup class="badge bg-primary ms-2">{{metrics.empresa_nome|default:''}}</sup></h5></div>
   <div class="dropdown">
     <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"><span class="d-none d-sm-inline"><b>{{metrics.periodo_de|date:'d/m/y'}}</b> a <b>{{metrics.periodo_ate|date:'d/m/y'}}</b></span><span class="d-inline d-sm-none">Periodo</span></button>
     <ul class="dropdown-menu fs-7">
@@ -100,7 +100,7 @@
   <div class="col-lg-6 order-2 order-lg-1">
     <div class="card widget-flat">
       <div class="card-body">
-        <a class="btn btn-sm btn-link text-decoration-none text-purple" style="position: absolute; right: 10px; top: 8px;" id="download" title="ALT + &darr;">Baixar <i class="fas fa-download"></i></a>
+        <a class="btn btn-sm btn-link text-decoration-none text-purple" style="position: absolute; right: 10px; top: 8px;" id="download" href="{% url 'sinistro_export_acidentes_csv' %}" title="ALT + &darr;">Baixar <i class="fas fa-download"></i></a>
         <h6 class="text-muted fw-normal">Acidentes período</h6>
         <div class="table-responsive">
           <table class="table table-centered table-nowrap table-hover">

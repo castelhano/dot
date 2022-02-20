@@ -56,4 +56,5 @@ urlpatterns = [
     path('sinistro_get_oficinas',views.get_oficinas,name='sinistro_get_oficinas'),
     path('sinistro_termo_pdf',reports.termo_pdf,name='sinistro_termo_pdf'),
     path('sinistro_capa_resumo',reports.capa_resumo,name='sinistro_capa_resumo'),
+    path('sinistro_export_acidentes_csv',reports.export_acidentes_csv,name='sinistro_export_acidentes_csv'),
 ]
