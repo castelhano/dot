@@ -494,11 +494,13 @@ def acidente_dashboard(request):
         if not request.user.is_superuser:
             acidentes = acidentes.filter(empresa__in=request.user.profile.empresas.all())
         empresa_nome = None
-    
     evolucao_acidentes = acidentes.values('data').annotate(qtd=Count('data')).order_by()
     acidentes_empresa = acidentes.values('empresa__nome').annotate(qtd=Count('empresa')).order_by()
     acidentes_classificacao = acidentes.values('classificacao__nome').annotate(qtd=Count('classificacao')).exclude(classificacao=None).order_by('-qtd')
     acidentes_linha = acidentes.values('linha__codigo').annotate(qtd=Count('linha')).exclude(linha=None).order_by('-qtd')
+    top_despesas = acidentes.exclude(terceiro__isnull=True)
+    # top_despesas = acidentes.annotate(soma_acordos=Sum('terceiro__acordo')).annotate(despesas=Sum('terceiro__despesa__valor')).exclude(terceiro__isnull=True).order_by('-terceiro__despesa__valor')[:10]
+    # top_despesas = acidentes.annotate(acordos=Sum('terceiro__acordo')).order_by('-acordos')
     
     from core.chart_metrics import backgrounds as bg, borders as bc, COLORS as color
     
@@ -568,7 +570,7 @@ def acidente_dashboard(request):
         'periodo_de': periodo_de if isinstance(periodo_de, date) else datetime.strptime(periodo_de, '%Y-%m-%d'),
         'periodo_ate': periodo_ate if isinstance(periodo_ate, date) else datetime.strptime(periodo_ate, '%Y-%m-%d'),
         'qtd_acidentes': acidentes.count(),
-        'acidentes': acidentes,
+        'top_despesas': top_despesas,
         'custo_acordos': custo_acordos,
         'custo_despesas': custo_despesas,
         'culpabilidade':culpabilidade,
@@ -584,8 +586,8 @@ def acidente_dashboard(request):
 @login_required
 @permission_required('sinistro.view_acidente')
 def export_acidentes_csv(request):
-    # try:
-        response = HttpResponse(content_type='text/csv')
+    try:
+        response = HttpResponse(content_type='text/csv; charset=utf-8')
         response['Content-Disposition'] = 'attachment; filename="acidentes.csv"'
 
         writer = csv.writer(response, delimiter =';')
@@ -632,6 +634,6 @@ def export_acidentes_csv(request):
             terceiro[29] = str(round(soma,2)).replace('.',',')                
             writer.writerow(terceiro)
         return response
-    # except:
-    #     messages.warning(request,'Erro ao exportar dados. Verifique os filtros')
-    #     return redirect('sinistro_acidentes')
+    except:
+        messages.warning(request,'Erro ao exportar dados. Verifique os filtros')
+        return redirect('sinistro_acidentes')

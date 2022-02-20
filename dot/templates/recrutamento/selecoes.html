@@ -31,7 +31,7 @@
   <div class="card-body tab-content">
     <h5 class="card-title mb-3">Seleções <small class="badge bg-primary ms-1">{{selecoes.count}}</small></h5>
     <div class="tab-pane fade show active" id="base" role="tabpanel">
-      <table id="main_table" class="table border table-striped table-hover">
+      <table id="main_table" class="table border table-striped table-hover table-sortable">
         <thead>
           <tr>
             <th class="d-none d-lg-table-cell">#</th>
@@ -77,7 +77,7 @@
       </div>
       <div class="row mt-1">
         <div class="col-12">
-          <table class="table border table-striped table-hover caption-top">
+          <table class="table border table-striped table-hover table-sortable caption-top">
             <caption>Agendados do dia: <span class="badge bg-dark ms-1" id="total_agendamentos_dia"></span></caption>
             <thead>
               <tr>
@@ -130,7 +130,7 @@
 {% endblock%}
 
 {% block add_script_src %}
-<script src="{% static 'js/table_to_csv.js' %}"></script>
+<script src="{% static 'js/table_extra.js' %}"></script>
 {% endblock %}
 
 

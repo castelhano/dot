@@ -10,9 +10,9 @@
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'sinistro_acidente_dashboard' %}"></a>
 <div class="d-flex justify-content-between mt-3">
-  <div><h5 class="card-title"><span class="d-none d-lg-inline text-muted">Dashboard: </span><b class="text-primary">Acidentes</b><sup class="badge bg-primary ms-2">{{metrics.empresa_nome|default:''}}</sup></h5></div>
+  <div><h5 class="card-title"><span class="d-none d-lg-inline text-muted">Dashboard: </span><b class="text-purple">Acidentes</b><sup class="badge bg-primary ms-2">{{metrics.empresa_nome|default:''}}</sup></h5></div>
   <div class="dropdown">
-    <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"><span class="d-none d-sm-inline"><b>{{metrics.periodo_de|date:'d/m/y'}}</b> a <b>{{metrics.periodo_ate|date:'d/m/y'}}</b></span><span class="d-inline d-sm-none">Periodo</span></button>
+    <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown"><span class="d-none d-sm-inline"><b>{{metrics.periodo_de|date:'d/m/y'}}</b> a <b>{{metrics.periodo_ate|date:'d/m/y'}}</b></span><span class="d-inline d-sm-none">Periodo</span></button>
     <ul class="dropdown-menu fs-7">
       <li class="bg-light">
         <div class="row g-1">
@@ -22,14 +22,14 @@
         </div>
       </li>
     </ul>
-    <a id="adicional_filters_link" class="btn btn-sm btn-dark" data-bs-toggle="collapse" href="#adicional_filters" role="button"><i class="fas fa-caret-down"></i></a>
+    <a id="adicional_filters_link" class="btn btn-sm btn-purple-light" data-bs-toggle="collapse" href="#adicional_filters" role="button"><i class="fas fa-caret-down"></i></a>
   </div>
 </div>
 <div class="row mb-2">
   <div class="col collapse" id="adicional_filters">
     <div class=" d-flex flex-row">
       <div class="dropdown">
-        <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">Empresa: <b>{{metrics.empresa_nome|default:'Todas'}}</b></button>
+        <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown">Empresa: <b>{{metrics.empresa_nome|default:'Todas'}}</b></button>
         <ul class="dropdown-menu fs-7" id="id_empresa">
           <li><a class="dropdown-item" onclick="filter('empresa', '')">Todas</a></li>
         </ul>
@@ -101,23 +101,25 @@
     <div class="card widget-flat">
       <div class="card-body">
         <a class="btn btn-sm btn-link text-decoration-none text-purple" style="position: absolute; right: 10px; top: 8px;" id="download" href="{% url 'sinistro_export_acidentes_csv' %}" title="ALT + &darr;">Baixar <i class="fas fa-download"></i></a>
-        <h6 class="text-muted fw-normal">Acidentes período</h6>
+        <h6 class="text-muted fw-normal">Custos com Terceiros</h6>
         <div class="table-responsive">
-          <table class="table table-centered table-nowrap table-hover">
+          <table id="table_terceiros" class="table table-centered table-nowrap table-hover table-sortable">
             <thead>
-              <tr>
-                <td><span class="text-muted fs-7">Terceiro</span></td>
-                <td><span class="text-muted fs-7">Acordo</span></td>
-                <td><span class="text-muted fs-7">Despesas</span></td>
+              <tr class="text-muted fs-7">
+                <th><span>Terceiro</span></th>
+                <th><span>Acordo</span></th>
+                <th><span>Despesas</span></th>
+                <th><span>Total</span></th>
               </tr>
             </thead>
             <tbody style="border-top-width: 0;">
-              {% for acidente in metrics.acidentes %}
+              {% for acidente in metrics.top_despesas %}
                 {% for terceiro in acidente.terceiros %}
               <tr>
                 <td><h6>{{terceiro.nome}}</h6><span class="text-muted fs-7">Pasta: <b>{{acidente.pasta}}</b> - {{terceiro.acidente.data|date:"d M y"}} - <b>{{terceiro.veiculo}}</b></span></td>
                 <td><h6>{{terceiro.acordo}}</h6></td>
                 <td><h6>{{terceiro.despesas}}</h6></td>
+                <td><h6>{{terceiro.despesas|add:terceiro.acordo}}</h6></td>
               </tr>
                 {% endfor %}
               {% endfor %}
@@ -165,6 +167,7 @@
 {% block add_script_src %}
 <script src="{% static 'js/vendor/chart.min.js' %}"></script>
 <script src="{% static 'js/update_url.js' %}"></script>
+<script src="{% static 'js/table_extra.js' %}"></script>
 {% endblock %}
 
 
@@ -172,6 +175,8 @@
   {% block add_script %}
   
   SHORTCUT_MAP['fFFF'] = '#adicional_filters_link';
+  
+  sortTable(document.getElementById('table_terceiros'), 3, false);
   
   function filtraPeriodo(){
     let periodos = [document.getElementById('id_periodo_de').value,document.getElementById('id_periodo_ate').value]

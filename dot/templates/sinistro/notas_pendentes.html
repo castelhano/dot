@@ -25,7 +25,7 @@
   <div class="card-body tab-content">
     <h5 class="card-title mb-3">Notas Pendentes <small class="badge bg-primary ms-1">{{terceiros.count}}</small><small class="badge bg-primary ms-1">R$ {{total|default:0|floatformat:2}}</small></h5>
     <div class="tab-pane fade show active" id="base" role="tabpanel">
-      <table id="main_table" class="table border table-striped table-hover">
+      <table id="main_table" class="table border table-striped table-hover table-sortable">
         <thead>
           <tr>
             <th class="d-none d-lg-table-cell">Seq</th>
@@ -90,5 +90,5 @@
 {% endblock%}
 
 {% block add_script_src %}
-<script src="{% static 'js/table_to_csv.js' %}"></script>
+<script src="{% static 'js/table_extra.js' %}"></script>
 {% endblock %}

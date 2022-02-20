@@ -33,7 +33,7 @@
   <div class="card-body tab-content">
     <h5 class="card-title mb-3">Acidentes <small class="badge bg-primary ms-1">{{acidentes.count}}</small></h5>
     <div class="tab-pane fade show active" id="base" role="tabpanel">
-      <table id="main_table" class="table border table-striped table-hover">
+      <table id="main_table" class="table border table-striped table-hover table-sortable">
         <caption class="fs-7">
           <div class="row">
             <div class="col-lg-auto mb-2 mb-lg-0"><span class="px-2 py-1 border rounded" style="background-color: rgb(255, 243, 205);">Leg</span> Sem terceiro</div>
@@ -207,7 +207,7 @@
 {% endblock%}
 
 {% block add_script_src %}
-<script src="{% static 'js/table_to_csv.js' %}"></script>
+<script src="{% static 'js/table_extra.js' %}"></script>
 {% endblock %}
 
 

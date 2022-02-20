@@ -31,7 +31,7 @@
     <div class="row">
       <div class="col-lg order-2 order-lg-1">
         <div class="tab-pane fade show active" id="base" role="tabpanel">
-          <table id="main_table" class="table border table-striped table-hover">
+          <table id="main_table" class="table border table-striped table-hover table-sortable">
             <caption class="fs-7">
               <small class="badge bg-dark" style="width: 35px;">SU</small> Super usuário <br />
               <small class="badge bg-primary" style="width: 35px;">ME</small> Membro de equipe
@@ -115,7 +115,7 @@
 {% endblock%}
 
 {% block add_script_src %}
-<script src="{% static 'js/table_to_csv.js' %}"></script>
+<script src="{% static 'js/table_extra.js' %}"></script>
 <script src="{% static 'js/update_url.js' %}"></script>
 {% endblock %}
 

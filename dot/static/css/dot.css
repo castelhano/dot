@@ -6,7 +6,13 @@ VERSION: 1.0
 
 .cursor-default{cursor: default;}
 .pointer{cursor: pointer;}
+
 .table td.fit,.table th.fit {white-space: nowrap;width: 1%;}
+.table-sortable th {cursor: pointer;}
+.table-sortable .th-sort-asc::after {content: "\2304";}
+.table-sortable .th-sort-desc::after {content: "\2303";}
+.table-sortable .th-sort-asc::after,.table-sortable .th-sort-desc::after {margin-left: 5px;}
+.table-sortable .th-sort-asc,.table-sortable .th-sort-desc {background: rgba(0, 0, 0, 0.1);}
 
 .bg-warning-light{background-color: #FFF0C2!important;}
 .bg-success-light{background-color: #64d69f!important;}
@@ -22,7 +28,9 @@ VERSION: 1.0
 .btn-pink, .bg-pink{background-color: #d63384;color: #FFF;}
 .btn-pink:hover{background-color: #ab296a;color: #FFF;}
 .btn-purple, .bg-purple{background-color: #6f42c1;color: #FFF;}
+.btn-purple-light, .bg-purple-light{background-color: #727cf5;color: #FFF;}
 .btn-purple:hover{background-color: #59359a;color: #FFF;}
+.btn-purple-light:hover{background-color: #6169d0;color: #FFF;}
 
 .text-orange{color: #FF5722!important;}
 .text-purple{color: #6f42c1!important;}

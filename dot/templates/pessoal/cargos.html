@@ -32,7 +32,7 @@
   <div class="card-body tab-content">
     <h5 class="card-title mb-3">Cargos <small class="badge bg-primary ms-1">{{cargos.count}}</small></h5>
     <div class="tab-pane fade{% if cargos %} show active{% endif %} fade" id="base" role="tabpanel">
-      <table id="main_table" class="table border table-striped table-hover">
+      <table id="main_table" class="table border table-striped table-hover table-sortable">
         <thead>
           <tr>
             <th>#</th>
@@ -112,7 +112,7 @@
 {% endblock%}
 
 {% block add_script_src %}
-<script src="{% static 'js/table_to_csv.js' %}"></script>
+<script src="{% static 'js/table_extra.js' %}"></script>
 {% endblock %}
 
 <script>

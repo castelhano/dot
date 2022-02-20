@@ -32,7 +32,7 @@
     <h5 class="card-title mb-0">Afastamentos <small class="badge bg-primary ms-1">{{afastamentos.count}}</small></h5>
     <p class="text-primary fw-bold">{{funcionario.matricula}} {{funcionario.nome}} {% if funcionario.status == 'A' %}<span class="badge bg-success">Ativo</span>{% else %}<span class="badge bg-warning">{{funcionario.get_status_display}}</span>{% endif %}</p>
     <div class="tab-pane fade show active" id="base" role="tabpanel">
-      <table id="main_table" class="table border table-striped table-hover">
+      <table id="main_table" class="table border table-striped table-hover table-sortable">
         <thead>
           <tr>
             <th class="d-none">Func Matricula</th>
@@ -75,5 +75,5 @@
 {% endblock%}
 
 {% block add_script_src %}
-<script src="{% static 'js/table_to_csv.js' %}"></script>
+<script src="{% static 'js/table_extra.js' %}"></script>
 {% endblock %}
