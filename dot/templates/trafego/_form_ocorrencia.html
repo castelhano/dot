@@ -31,9 +31,9 @@
             <label for="id_gravidade">Gravidade</label>
           </div>
         </div>
-        {% include "_component/field/linha.html" with required=False id=ocorrencia.linha.id|safenome=ocorrencia.linha.nome codigo=ocorrencia.linha.codigo incluir_inativos=False %}
-        {% include "_component/field/veiculo.html" with required=False id=ocorrencia.veiculo.id|safeplaca=ocorrencia.veiculo.placa prefixo=ocorrencia.veiculo.prefixo incluir_inativos=False %}
-        {% include "_component/field/condutor.html" with required=False id=ocorrencia.condutor.id|safenome=ocorrencia.condutor.nome codigo=ocorrencia.condutor.matricula incluir_inativos=False %}
+        {% include "_component/field/linha.html" with required=False id=ocorrencia.linha.id|safe nome=ocorrencia.linha.nome codigo=ocorrencia.linha.codigo incluir_inativos=False %}
+        {% include "_component/field/veiculo.html" with required=False id=ocorrencia.veiculo.id|safe placa=ocorrencia.veiculo.placa prefixo=ocorrencia.veiculo.prefixo incluir_inativos=False %}
+        {% include "_component/field/condutor.html" with required=False id=ocorrencia.condutor.id|safe nome=ocorrencia.condutor.nome codigo=ocorrencia.condutor.matricula incluir_inativos=False %}
         <div class="">
           <input class="form-control" type="file" name="fotos" id="id_fotos" multiple>
         </div>

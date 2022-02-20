@@ -34,6 +34,7 @@ def ocorrencia_dashboard(request):
     ocorrencias_empresa = ocorrencias.values('empresa__nome').annotate(qtd=Count('empresa')).order_by()
     ocorrencias_evento = ocorrencias.values('evento__nome').annotate(qtd=Count('evento')).order_by('-qtd')
     ocorrencias_linha = ocorrencias.values('linha__codigo').annotate(qtd=Count('linha')).exclude(linha=None).order_by('-qtd')
+    ocorrencias_inspetor = ocorrencias.values('usuario__username').annotate(qtd=Count('usuario')).exclude(usuario=None).order_by('-qtd')
     
     from core.chart_metrics import backgrounds as bg, borders as bc, COLORS as color
     
@@ -47,8 +48,8 @@ def ocorrencia_dashboard(request):
     for row in evolucao_ocorrencias:
         evolucao_ocorrencias_metrics['categorias'].append(row['data'].day)
         evolucao_ocorrencias_metrics['dados'].append(float(row['qtd']))
-        evolucao_ocorrencias_metrics['bgcolors'].append(bg.primary)
-        evolucao_ocorrencias_metrics['bordercolors'].append(bc.primary)
+        evolucao_ocorrencias_metrics['bgcolors'].append(bg.purple)
+        evolucao_ocorrencias_metrics['bordercolors'].append(bc.purple)
         dias += 1
     
     ocorrencias_empresa_metrics = {
@@ -84,8 +85,8 @@ def ocorrencia_dashboard(request):
     for row in ocorrencias_linha:
         ocorrencias_linha_metrics['categorias'].append(row['linha__codigo'])
         ocorrencias_linha_metrics['dados'].append(int(row['qtd']))
-        ocorrencias_linha_metrics['bgcolors'].append(bg.primary)
-        ocorrencias_linha_metrics['bordercolors'].append(bc.primary)
+        ocorrencias_linha_metrics['bgcolors'].append(bg.purple)
+        ocorrencias_linha_metrics['bordercolors'].append(bc.purple)
     
     
     gravidade = dict(L=0, M=0, G=0)
@@ -102,6 +103,7 @@ def ocorrencia_dashboard(request):
     metrics = {
         'periodo_de': periodo_de if isinstance(periodo_de, date) else datetime.strptime(periodo_de, '%Y-%m-%d'),
         'periodo_ate': periodo_ate if isinstance(periodo_ate, date) else datetime.strptime(periodo_ate, '%Y-%m-%d'),
+        'ocorrencias_inspetor': ocorrencias_inspetor,
         'qtd_ocorrencias': ocorrencias.count(),
         'gravidade':gravidade,
         'indisciplina':indisciplina,

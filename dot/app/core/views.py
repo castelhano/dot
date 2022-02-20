@@ -162,7 +162,7 @@ def usuario_add(request):
                 l.mensagem = "CREATED"
                 l.save()
                 messages.success(request,'Usuario <b>' + registro.username + '</b> criado')
-                return redirect('core_usuarios')
+                return redirect('core_usuario_id', registro.id)
             except:
                 messages.error(request,'Erro ao inserir usuario [INVALID FORM]')
                 return redirect('core_usuarios')

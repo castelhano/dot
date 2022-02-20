@@ -95,7 +95,20 @@ def ocorrencias(request):
         else:
             ocorrencias = ocorrencias.filter(data=date.today())            
         if request.POST['empresa'] != '':
-            ocorrencias = ocorrencias.filter(empresa__id=request.POST['empresa'])
+            try:
+                if request.user.is_superuser:
+                    empresa = Empresa.objects.get(id=request.POST['empresa'])
+                else:
+                    empresa = request.user.profile.empresas.filter(id=request.POST['empresa']).get()
+            except:
+                messages.error(request,'Empresa <b>não encontrada</b> ou <b>não habilitada</b>')
+                return redirect('trafego_linhas')
+            ocorrencias = ocorrencias.filter(empresa=empresa)
+            empresa_display = empresa.nome
+        else:
+            empresa_display = 'Todas'
+            if not request.user.is_superuser:
+                ocorrencias = ocorrencias.filter(empresa__in=request.user.profile.empresas.all())
         if request.POST['evento'] != '':
             ocorrencias = ocorrencias.filter(evento__id=request.POST['evento'])
         if request.POST['gravidade'] != '':

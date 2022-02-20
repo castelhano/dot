@@ -11,18 +11,23 @@
 <a class="d-none" id="clear" href="{% url 'sinistro_acidente_dashboard' %}"></a>
 <div class="d-flex justify-content-between mt-3">
   <div><h5 class="card-title"><span class="d-none d-lg-inline text-muted">Dashboard: </span><b class="text-purple">Acidentes</b><sup class="badge bg-primary ms-2">{{metrics.empresa_nome|default:''}}</sup></h5></div>
-  <div class="dropdown">
-    <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown"><span class="d-none d-sm-inline"><b>{{metrics.periodo_de|date:'d/m/y'}}</b> a <b>{{metrics.periodo_ate|date:'d/m/y'}}</b></span><span class="d-inline d-sm-none">Periodo</span></button>
-    <ul class="dropdown-menu fs-7">
-      <li class="bg-light">
-        <div class="row g-1">
-          <div class="col-12 px-2"><input type="date" class="form-control" id="id_periodo_de" name="periodo_de" value="{{metrics.periodo_de|date:'Y-m-d'}}"></div>
-          <div class="col-12 px-2"><input type="date" class="form-control" id="id_periodo_ate"  name="periodo_ate" value="{{metrics.periodo_ate|date:'Y-m-d'}}"></div>
-          <div class="col-12 d-grid px-2"><button type="button" class="btn btn-sm btn-primary" name="button" onclick="filtraPeriodo();">Filtrar</button></div>
-        </div>
-      </li>
-    </ul>
-    <a id="adicional_filters_link" class="btn btn-sm btn-purple-light" data-bs-toggle="collapse" href="#adicional_filters" role="button"><i class="fas fa-caret-down"></i></a>
+  <div class="d-inline-flex">
+    <div class="dropdown">
+      <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown"><span class="d-none d-sm-inline"><b>{{metrics.periodo_de|date:'d/m/y'}}</b> a <b>{{metrics.periodo_ate|date:'d/m/y'}}</b></span><span class="d-inline d-sm-none">Periodo</span></button>
+      <ul class="dropdown-menu fs-7">
+        <li class="bg-light">
+          <div class="row g-1">
+            <div class="col-12 px-2"><input type="date" class="form-control" id="id_periodo_de" name="periodo_de" value="{{metrics.periodo_de|date:'Y-m-d'}}"></div>
+            <div class="col-12 px-2"><input type="date" class="form-control" id="id_periodo_ate"  name="periodo_ate" value="{{metrics.periodo_ate|date:'Y-m-d'}}"></div>
+            <div class="col-12 d-grid px-2"><button type="button" class="btn btn-sm btn-primary" name="button" onclick="filtraPeriodo();">Filtrar</button></div>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="input-group ms-1">
+      <a id="back" class="btn btn-sm btn-purple-light" href="{% url 'sinistro_acidentes' %}"><i class="fas fa-undo"></i></a>
+      <a id="adicional_filters_link" class="btn btn-sm btn-purple-light" data-bs-toggle="collapse" href="#adicional_filters" role="button"><i class="fas fa-caret-down"></i></a>
+    </div>
   </div>
 </div>
 <div class="row mb-2">
@@ -90,7 +95,7 @@
       <div class="card-body">
         <div class="float-end d-none d-lg-block"><i class="fas fa-chart-line widget-icon"></i></div>
         <div class="row">
-          <div class="col"><canvas id="evolucao_acidentes" style="height: 260px;"></canvas></div>
+          <div class="col" style="height: 260px;"><canvas id="evolucao_acidentes"></canvas></div>
         </div>        
       </div>      
     </div>
@@ -114,14 +119,14 @@
             </thead>
             <tbody style="border-top-width: 0;">
               {% for acidente in metrics.top_despesas %}
-                {% for terceiro in acidente.terceiros %}
+              {% for terceiro in acidente.terceiros %}
               <tr>
                 <td><h6>{{terceiro.nome}}</h6><span class="text-muted fs-7">Pasta: <b>{{acidente.pasta}}</b> - {{terceiro.acidente.data|date:"d M y"}} - <b>{{terceiro.veiculo}}</b></span></td>
                 <td><h6>{{terceiro.acordo}}</h6></td>
                 <td><h6>{{terceiro.despesas}}</h6></td>
                 <td><h6>{{terceiro.despesas|add:terceiro.acordo}}</h6></td>
               </tr>
-                {% endfor %}
+              {% endfor %}
               {% endfor %}
             </tbody>            
           </table>          
@@ -135,7 +140,7 @@
         <div class="card widget-flat">
           <div class="card-body">
             <div class="row">
-              <div class="col"><canvas id="culpabilidade_acidentes" style="height: 260px;"></canvas></div>
+              <div class="col" style="height: 260px;"><canvas id="culpabilidade_acidentes"></canvas></div>
             </div>        
           </div>      
         </div>    
@@ -144,7 +149,7 @@
         <div class="card widget-flat">
           <div class="card-body">
             <div class="row">
-              <div class="col"><canvas id="acidentes_classificacao" style="height: 260px;"></canvas></div>
+              <div class="col" style="height: 260px;"><canvas id="acidentes_classificacao"></canvas></div>
             </div>        
           </div>
         </div>
@@ -153,7 +158,7 @@
         <div class="card widget-flat">
           <div class="card-body">
             <div class="row">
-              <div class="col"><canvas id="acidentes_linha" style="height: 260px;"></canvas></div>
+              <div class="col" style="height: 300px;"><canvas id="acidentes_linha"></canvas></div>
             </div>        
           </div>
         </div>

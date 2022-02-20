@@ -1,115 +1,187 @@
 {% extends "layout/dot.html" %}
 {% load static %}
 {% load tag_extra %}
-{% block title %}Dashboard - Ocorrencia{% endblock %}
+{% block title %}Dashboard - Ocorrencias{% endblock %}
 {% block model %}Tráfego{% endblock %}
 {% block navbar_classlist %}navbar-dark bg-primary bg-gradient{% endblock %}
 {% block model_menu %}{% include "_component/menu/trafego.html" %}{% endblock%}
-{% block content_fluid %}
 
-<div class="card mt-2 mb-5">
-  <div class="card-header">
-    <ul class="nav nav-tabs card-header-tabs">
-      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-chart-line"></i></a></li>
-      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'trafego_ocorrencias' %}"><i class="fas fa-undo"></i></a></li>
-      <li class="nav-item ms-auto"><a class="btn btn-sm btn-secondary" id="clear" href="{% url 'trafego_ocorrencia_dashboard' %}">Limpar</a></li>
-    </ul>
+{% block body_classlist %}bg-light{% endblock%}
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'trafego_ocorrencia_dashboard' %}"></a>
+<div class="d-flex justify-content-between mt-3">
+  <div><h5 class="card-title"><span class="d-none d-lg-inline text-muted">Dashboard: </span><b class="text-purple">Ocorrências</b><sup class="badge bg-primary ms-2">{{metrics.empresa_nome|default:''}}</sup></h5></div>
+  <div class="d-inline-flex">
+    <div class="dropdown">
+      <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown"><span class="d-none d-sm-inline"><b>{{metrics.periodo_de|date:'d/m/y'}}</b> a <b>{{metrics.periodo_ate|date:'d/m/y'}}</b></span><span class="d-inline d-sm-none">Periodo</span></button>
+      <ul class="dropdown-menu fs-7">
+        <li class="bg-light">
+          <div class="row g-1">
+            <div class="col-12 px-2"><input type="date" class="form-control" id="id_periodo_de" name="periodo_de" value="{{metrics.periodo_de|date:'Y-m-d'}}"></div>
+            <div class="col-12 px-2"><input type="date" class="form-control" id="id_periodo_ate"  name="periodo_ate" value="{{metrics.periodo_ate|date:'Y-m-d'}}"></div>
+            <div class="col-12 d-grid px-2"><button type="button" class="btn btn-sm btn-primary" name="button" onclick="filtraPeriodo();">Filtrar</button></div>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="input-group ms-1">
+      <a id="back" class="btn btn-sm btn-purple-light" href="{% url 'trafego_ocorrencias' %}"><i class="fas fa-undo"></i></a>
+      <a id="adicional_filters_link" class="btn btn-sm btn-purple-light" data-bs-toggle="collapse" href="#adicional_filters" role="button"><i class="fas fa-caret-down"></i></a>
+    </div>
   </div>
-  <div class="card-body tab-content">
-    <div class="d-flex justify-content-between">
-      <div><h5 class="card-title mb-3"><span class="d-none d-lg-inline">Dashboard: </span><b class="text-primary">Ocorrência</b><sup class="badge bg-primary ms-2">{{metrics.empresa_nome|default:''}}</sup></h5></div>
+</div>
+<div class="row mb-2">
+  <div class="col collapse" id="adicional_filters">
+    <div class=" d-flex flex-row">
       <div class="dropdown">
-        <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"><span class="d-none d-sm-inline"><b>{{metrics.periodo_de|date:'d/m/y'}}</b> a <b>{{metrics.periodo_ate|date:'d/m/y'}}</b></span><span class="d-inline d-sm-none">Periodo</span></button>
-        <ul class="dropdown-menu fs-7">
-          <li>
-            <div class="row g-1">
-              <div class="col-12 px-2"><input type="date" class="form-control" id="id_periodo_de" name="periodo_de" value="{{metrics.periodo_de|date:'Y-m-d'}}"></div>
-              <div class="col-12 px-2"><input type="date" class="form-control" id="id_periodo_ate"  name="periodo_ate" value="{{metrics.periodo_ate|date:'Y-m-d'}}"></div>
-              <div class="col-12 d-grid px-2"><button type="button" class="btn btn-sm btn-primary" name="button" onclick="filtraPeriodo();">Filtrar</button></div>
-            </div>
-          </li>
+        <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown">Empresa: <b>{{metrics.empresa_nome|default:'Todas'}}</b></button>
+        <ul class="dropdown-menu fs-7" id="id_empresa">
+          <li><a class="dropdown-item" onclick="filter('empresa', '')">Todas</a></li>
         </ul>
-        <a id="adicional_filters_link" class="btn btn-sm btn-dark" data-bs-toggle="collapse" href="#adicional_filters" role="button"><i class="fas fa-caret-down"></i></a>
       </div>
-    </div>
-    
-    <div class="row">
-      <div class="col collapse mb-2" id="adicional_filters">
-        <div class=" d-flex flex-row">
-          <div class="dropdown">
-            <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">Empresa: <b>{{metrics.empresa_nome|default:'Todas'}}</b></button>
-            <ul class="dropdown-menu fs-7" id="id_empresa">
-              <li><a class="dropdown-item" onclick="filter('empresa', '')">Todas</a></li>
-            </ul>
-          </div>
-        </div>        
-      </div>
-    </div>
-    
-    <div class="tab-pane fade show active" id="base" role="tabpanel">
-      <div class="row">
-        <div class="col-lg-3 mb-2">
-          <div class="card text-center bg-primary text-light">
-            <div class="card-header">Total Ocorrências</div>
-            <div class="body py-3"><h1>{{metrics.qtd_ocorrencias|default:0}}</h1></div>            
-          </div>
-        </div>
-        <div class="col-lg-3 mb-2">
-          <div class="card text-center bg-primary text-light">
-            <div class="card-header">Média por Dia</div>
-            <div class="body py-3"><h1>{{metrics.media_dia_ocorrencias|default:0|floatformat:0}}</h1></div>            
-          </div>
-        </div>
-        <div class="col-lg-3 mb-2">
-          <div class="card text-center bg-primary text-light">
-            <div class="card-header">Indisciplina</div>
-            <div class="body py-3"><h1>{{metrics.indisciplina}} <sup class="fs-4">( {{metrics.indisciplina_percentual|floatformat:0}}% )</sup></h1></div>
-          </div>
-        </div>
-        <div class="col-lg-3 mb-2">
-          <div class="card text-center bg-primary text-light">
-            <div class="card-header">Omissão período</div>
-            <div class="body py-3"><h1>{{metrics.omissao}} <sup class="fs-4">( {{metrics.omissao_percentual|floatformat:0}}% )</sup></h1></div>
-          </div>
-        </div>        
-      </div>
-      
-      <div class="row mt-3">
-        <div class="col-lg-6">
-          <div class="border rounded"><canvas id="evolucao_ocorrencias" style="height: 450px;"></canvas></div>
-        </div>
-        <div class="col-lg-3 mt-3 mt-lg-0">
-          <div class="border rounded"><canvas id="empresa_ocorrencias" style="height: 450px;"></canvas></div>
-        </div>
-        <div class="col-lg-3 mt-3 mt-lg-0">
-          <div class="border rounded"><canvas id="gravidade_ocorrencias" style="height: 450px;"></canvas></div>
-        </div>
-      </div>
-      
-      <div class="row mt-3">
-        <div class="col-lg-4">
-          <div class="border rounded"><canvas id="ocorrencias_evento"></canvas></div>
-        </div>
-        <div class="col-lg-8 mt-3 mt-lg-0">
-          <div class="border rounded"><canvas id="ocorrencias_linha" style="height: 450px;"></canvas></div>
-        </div>
-      </div>
-      
-    </div>
-    
+    </div>        
   </div>
+</div>
+<div class="row g-3">
+  <div class="col-lg-4">
+    <div class="row g-2">
+      <div class="col-lg-6">
+        <div class="card widget-flat">
+          <div class="card-body">
+            <div class="float-end"><i class="fas fa-car-crash widget-icon"></i></div>
+            <h6 class="text-muted fw-normal">Total Ocorrências</h6>
+            <h3 class="my-3">{{metrics.qtd_ocorrencias|default:0}}</h3>
+            <p class="mb-0 text-muted"><span class="text-success me-2"></span><span class="text-nowrap"></span></p>        
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card widget-flat">
+          <div class="card-body">
+            <div class="float-end"><i class="fas fa-car-crash widget-icon"></i></div>
+            <h6 class="text-muted fw-normal">Média por Dia</h6>
+            <h3 class="my-3">{{metrics.media_dia_ocorrencias|default:0|floatformat:0}}</h3>
+            <p class="mb-0 text-muted"><span class="text-success me-2"></span><span class="text-nowrap"></span></p>        
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card widget-flat">
+          <div class="card-body">
+            <div class="float-end"><i class="fas fa-car-crash widget-icon"></i></div>
+            <h6 class="text-muted fw-normal">Por indisciplina</h6>
+            <h3 class="my-3">{{metrics.indisciplina}}</h3>
+            <p class="mb-0 text-muted"><span class="text-danger me-2">{{metrics.indisciplina_percentual|floatformat:0}}%</span><span class="text-nowrap fs-7">Sobre o total</span></p>        
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card widget-flat">
+          <div class="card-body">
+            <div class="float-end"><i class="fas fa-car-crash widget-icon"></i></div>
+            <h6 class="text-muted fw-normal">Omissão período</h6>
+            <h3 class="my-3">{{metrics.omissao}}</h3>
+            <p class="mb-0 text-muted"><span class="text-danger me-2">{{metrics.omissao_percentual|floatformat:0}}%</span><span class="text-nowrap fs-7">Sobre o total</span></p>        
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-3">
+    <div class="card widget-flat">
+      <div class="card-body">
+        <div class="float-end d-none d-lg-block"><i class="fas fa-chart-line widget-icon"></i></div>
+        <div class="row"><div class="col"><canvas id="empresa_ocorrencias" style="height: 260px;"></canvas></div></div>        
+      </div>      
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card widget-flat">
+      <div class="card-body">
+        <div class="float-end d-none d-lg-block"><i class="fas fa-chart-line widget-icon"></i></div>
+        <div class="row">
+          <div class="col" style="height: 260px;"><canvas id="evolucao_ocorrencias"></canvas></div>
+        </div>        
+      </div>      
+    </div>
+  </div>
+</div>
+<div class="row mt-1 g-3">
+  <div class="col-lg-6 order-2 order-lg-1">
+    <div class="card widget-flat">
+      <div class="card-body">
+        <a class="btn btn-sm btn-link text-decoration-none text-purple" style="position: absolute; right: 10px; top: 8px;" id="download" href="" title="ALT + &darr;">Baixar <i class="fas fa-download"></i></a>
+        <h6 class="text-muted fw-normal">Resumo por Inspetor</h6>
+        <div class="table-responsive">
+          <table id="table_terceiros" class="table table-nowrap table-hover table-sortable fs-7">
+            <thead>
+              <tr class="text-muted">
+                <th>Inspetor</th>
+                <th>Qtde</th>
+                <th>%</th>
+              </tr>
+            </thead>
+            <tbody style="border-top-width: 0;">
+              {% for inspetor in metrics.ocorrencias_inspetor %}
+              <tr>
+                <td>{{inspetor.usuario__username|title}}</td>
+                <td>{{inspetor.qtd}}</td>
+                <td><div class="progress" style="height: 20px;"><div class="progress-bar bg-purple" role="progressbar" style="width: {{inspetor.qtd|percentual:metrics.qtd_ocorrencias|floatformat:0}}%;">{{inspetor.qtd|percentual:metrics.qtd_ocorrencias|floatformat:0}}%</div></div></td>
+                <!-- <td>{{inspetor.qtd|percentual:metrics.qtd_ocorrencias|floatformat:0}}</td> -->
+              </tr>
+              {% empty %}
+              <tr><td colspan="3">Nenhum registro a exibir</td></tr>
+              {% endfor %}
+            </tbody>            
+          </table>          
+        </div>        
+      </div>      
+    </div>
+  </div>
+  <div class="col-lg-6 order-1 order-lg-2">
+    <div class="row g-3">
+      <div class="col-lg-6">
+        <div class="card widget-flat">
+          <div class="card-body">
+            <div class="row">
+              <div class="col" style="height: 260px;"><canvas id="gravidade_ocorrencias"></canvas></div>
+            </div>        
+          </div>      
+        </div>    
+      </div>
+      <div class="col-lg-6">
+        <div class="card widget-flat">
+          <div class="card-body">
+            <div class="row">
+              <div class="col" style="height: 260px;"><canvas id="ocorrencias_evento"></canvas></div>
+            </div>        
+          </div>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="card widget-flat">
+          <div class="card-body">
+            <div class="row">
+              <div class="col" style="height: 300px;"><canvas id="ocorrencias_linha"></canvas></div>
+            </div>        
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
 </div>
 {% endblock%}
 
 {% block add_script_src %}
 <script src="{% static 'js/vendor/chart.min.js' %}"></script>
 <script src="{% static 'js/update_url.js' %}"></script>
+<script src="{% static 'js/table_extra.js' %}"></script>
 {% endblock %}
 
 
 <script>
   {% block add_script %}
-  
   SHORTCUT_MAP['fFFF'] = '#adicional_filters_link';
   
   function filtraPeriodo(){
@@ -118,7 +190,6 @@
   }
   
   var evolucao_ctx = document.getElementById('evolucao_ocorrencias');
-  evolucao_ctx.style.backgroundColor = '#F7F7F7';
   let evolucao_chart = new Chart(evolucao_ctx, {
     type: 'bar',
     data: {
@@ -127,6 +198,7 @@
         data: {{ metrics.evolucao_ocorrencias.dados }},
         backgroundColor: {{ metrics.evolucao_ocorrencias.bgcolors|safe }},
         borderColor: {{ metrics.evolucao_ocorrencias.bordercolors|safe }},
+        maxBarThickness: 50,
       }],
       labels: {{ metrics.evolucao_ocorrencias.categorias|safe }},
     },
@@ -143,16 +215,16 @@
         legend: {display:false, position: 'bottom'},
         title: {
           display: true,
-          text:'Evolução Ocorrências Dia',
-          font: {size: 18},
-          padding: {top: 10,bottom: 10}
+          align: 'start',
+          text:'EVOLUÇÃO OCORRENCIAS',
+          font: {size: 13},
+          padding: {top: 6,bottom: 10}
         },
       }
     }
   });
   
   var gravidade_ctx = document.getElementById('gravidade_ocorrencias');
-  gravidade_ctx.style.backgroundColor = '#F7F7F7';
   let gravidade_chart = new Chart(gravidade_ctx, {
     type: 'pie',
     data: {
@@ -177,16 +249,16 @@
         legend: {display:true, position: 'bottom'},
         title: {
           display: true,
-          text:'Gravidade',
-          font: {size: 18},
-          padding: {top: 10,bottom: 10}
+          align: 'start',
+          text:'GRAVIDADE',
+          font: {size: 13},
+          padding: {top: 6,bottom: 10}
         },
       }
     }
   });
   
   var empresa_ctx = document.getElementById('empresa_ocorrencias');
-  empresa_ctx.style.backgroundColor = '#F7F7F7';
   let empresa_chart = new Chart(empresa_ctx, {
     type: 'doughnut',
     data: {
@@ -211,16 +283,16 @@
         legend: {display:true, position: 'bottom'},
         title: {
           display: true,
-          text:'Empresa',
-          font: {size: 18},
-          padding: {top: 10,bottom: 10}
+          align: 'start',
+          text:'EMPRESA',
+          font: {size: 13},
+          padding: {top: 6,bottom: 10}
         },
       }
     }
   });
   
   var evento_ctx = document.getElementById('ocorrencias_evento');
-  evento_ctx.style.backgroundColor = '#F7F7F7';
   let evento_chart = new Chart(evento_ctx, {
     type: 'bar',
     data: {
@@ -229,6 +301,7 @@
         data: {{ metrics.ocorrencias_evento.dados }},
         backgroundColor: {{ metrics.ocorrencias_evento.bgcolors|safe }},
         borderColor: {{ metrics.ocorrencias_evento.bordercolors|safe }},
+        maxBarThickness: 70,
       }],
       labels: {{ metrics.ocorrencias_evento.categorias|safe }},
     },
@@ -245,16 +318,16 @@
         legend: {display:false, position: 'bottom'},
         title: {
           display: true,
-          text:'Por Evento',
-          font: {size: 18},
-          padding: {top: 10,bottom: 10}
+          align: 'start',
+          text:'POR EVENTO',
+          font: {size: 13},
+          padding: {top: 6,bottom: 10}
         },
       }
     }
   });
   
   var linha_ctx = document.getElementById('ocorrencias_linha');
-  linha_ctx.style.backgroundColor = '#F7F7F7';
   let linha_chart = new Chart(linha_ctx, {
     type: 'bar',
     data: {
@@ -263,6 +336,7 @@
         data: {{ metrics.ocorrencias_linha.dados }},
         backgroundColor: {{ metrics.ocorrencias_linha.bgcolors|safe }},
         borderColor: {{ metrics.ocorrencias_linha.bordercolors|safe }},
+        maxBarThickness: 50,
       }],
       labels: {{ metrics.ocorrencias_linha.categorias|safe }},
     },
@@ -279,9 +353,9 @@
         legend: {display:false, position: 'bottom'},
         title: {
           display: true,
-          text:'Por Linha',
-          font: {size: 18},
-          padding: {top: 10,bottom: 10}
+          text:'POR LINHA',
+          font: {size: 13},
+          padding: {top: 6,bottom: 10}
         },
       }
     }
@@ -305,7 +379,6 @@
   	xhttp.send();
   }
   carregaEmpresas();
-  
   
   {% endblock %}
 </script>
