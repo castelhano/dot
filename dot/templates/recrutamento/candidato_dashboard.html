@@ -1,168 +1,200 @@
 {% extends "layout/dot.html" %}
 {% load static %}
 {% load tag_extra %}
-{% block title %}Dashboard - Banco{% endblock %}
+{% block title %}Dashboard - Recrutamento{% endblock %}
 {% block model %}Recrutamento{% endblock %}
 {% block navbar_classlist %}navbar-dark bg-purple bg-gradient{% endblock %}
 {% block model_menu %}{% include "_component/menu/recrutamento.html" %}{% endblock%}
 
+{% block body_classlist %}bg-light{% endblock%}
 {% block content_fluid %}
-
-<div class="card mt-2">
-  <div class="card-header">
-    <ul class="nav nav-tabs card-header-tabs">
-      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-chart-line"></i></a></li>
-      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'recrutamento_selecoes' %}"><i class="fas fa-undo"></i></a></li>
-      <li class="nav-item ms-auto"><a class="btn btn-sm btn-secondary" id="clear" href="{% url 'recrutamento_candidato_dashboard' %}">Limpar</a></li>
-      <!-- <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" data-bs-target="#param" href="#"><i class="fas fa-filter"></i></a></li> -->
-    </ul>
+<a class="d-none" id="clear" href="{% url 'recrutamento_candidato_dashboard' %}"></a>
+<div class="d-flex justify-content-between mt-3">
+  <div><h5 class="card-title"><span class="d-none d-lg-inline text-muted">Dashboard: </span><b class="text-purple">Recrutamento</b></h5></div>
+  <div class="d-inline-flex">
+    <div class="dropdown">
+      <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown">{{metrics.periodo_analise_dias|zfill:2}} meses </button>
+      <ul class="dropdown-menu fs-7">
+        <li><a class="dropdown-item pointer" onclick="filter('periodo_analise_dias', 365)">12 meses</a></li>
+        <li><a class="dropdown-item pointer" onclick="filter('periodo_analise_dias', 180)">06 meses</a></li>
+        <li><a class="dropdown-item pointer" onclick="filter('periodo_analise_dias', 90)">03 meses</a></li>
+        <li><a class="dropdown-item dropdown-item-danger pointer" onclick="filter('periodo_analise_dias', 'all')">Todo periodo</a></li>
+      </ul>
+    </div>
+    <div class="input-group ms-1">
+      <a id="back" class="btn btn-sm btn-purple-light" href="{% url 'recrutamento_selecoes' %}"><i class="fas fa-undo"></i></a>
+      <a id="adicional_filters_link" class="btn btn-sm btn-purple-light" data-bs-toggle="collapse" href="#adicional_filters" role="button"><i class="fas fa-caret-down"></i></a>
+    </div>
   </div>
-  <div class="card-body tab-content">
-    <div class="d-flex justify-content-between">
-      <div><h5 class="card-title mb-3"><span class="d-none d-lg-inline">Dashboard: </span><b class="text-purple">Candidatos</b> {% if metrics.cargo_nome != None %}<sup class="badge bg-purple ms-1">{{metrics.cargo_nome}}</sup>{% endif %}</h5></div>
-      <div class="dropdown">
-        <button class="btn btn-sm btn-purple dropdown-toggle" type="button" data-bs-toggle="dropdown">{{metrics.periodo_analise_dias|zfill:2}} meses </button>
-        <ul class="dropdown-menu fs-7">
-          <li><a class="dropdown-item pointer" onclick="filter('periodo_analise_dias', 365)">12 meses</a></li>
-          <li><a class="dropdown-item pointer" onclick="filter('periodo_analise_dias', 180)">06 meses</a></li>
-          <li><a class="dropdown-item pointer" onclick="filter('periodo_analise_dias', 90)">03 meses</a></li>
-          <li><a class="dropdown-item dropdown-item-danger pointer" onclick="filter('periodo_analise_dias', 'all')">Todo periodo</a></li>
-        </ul>
-        <a id="adicional_filters_link" class="btn btn-sm btn-dark" data-bs-toggle="collapse" href="#adicional_filters" role="button" title="Filtros [ F ]"><i class="fas fa-caret-down"></i></a>
+</div>
+<div class="row mb-2">
+  <div class="col collapse" id="adicional_filters">
+    <div class="dropdown">
+      <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown">Cargo: <b>{{metrics.cargo_nome|default:'Todos'}}</b></button>
+      <ul class="dropdown-menu fs-7" id="id_cargos">
+        <li><a class="dropdown-item" href="{% url 'recrutamento_candidato_dashboard' %}?cargo=">Todos</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div class="row g-3">
+  <div class="col-xl-6">
+    <div class="row g-2">
+      <div class="col-sm-6 col-md-4">
+        <div class="card widget-flat">
+          <div class="card-body">
+            <div class="float-end"><i class="fas fa-user widget-icon"></i></div>
+            <h6 class="text-muted fw-normal">Cadastros Banco</h6>
+            <h3 class="my-3">{{metrics.cadastros_banco}}</h3>
+            <p class="mb-0 text-muted"><span class="text-success me-2">{{metrics.candidatos_mulheres|percentual:metrics.cadastros_banco|floatformat:0}}%</span><span class="text-nowrap">{{metrics.candidatos_mulheres}} mulheres</span></p>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-4">
+        <div class="card widget-flat">
+          <div class="card-body">
+            <div class="float-end"><i class="fas fa-user-tag widget-icon"></i></div>
+            <h6 class="text-muted fw-normal">Processos seletivos</h6>
+            <h3 class="my-3">{{metrics.processos_seletivos}}</h3>
+            <p class="mb-0 text-muted"><span class="text-success me-2">{{metrics.percentual_aprovacoes|floatformat:0}}%</span><span class="text-nowrap">aprovação</span></p>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-4">
+        <div class="card widget-flat">
+          <div class="card-body">
+            <div class="float-end"><i class="fab fa-accessible-icon widget-icon"></i></div>
+            <h6 class="text-muted fw-normal">Candidatos PNE</h6>
+            <h3 class="my-3">{{metrics.candidatos_pne}}</h3>
+            <p class="mb-0 text-muted"><span class="text-purple me-2">{{metrics.candidatos_pne|percentual:metrics.cadastros_banco|floatformat:0}}%</span><span class="text-nowrap fs-7">dos cadastros</span></p>        
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-4">
+        <div class="card widget-flat">
+          <div class="card-body">
+            <div class="float-end"><i class="fas fa-check widget-icon"></i></div>
+            <h6 class="text-muted fw-normal">Contratações periodo</h6>
+            <h3 class="my-3">{{metrics.contratacoes_periodo}}</h3>
+            <p class="mb-0 text-muted"><span class="text-danger me-2"></span><span class="text-nowrap fs-7"></span></p>        
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-4">
+        <div class="card widget-flat">
+          <div class="card-body">
+            <div class="float-end"><i class="fas fa-id-card-alt widget-icon"></i></div>
+            <h6 class="text-muted fw-normal">Média de Idade</h6>
+            <h3 class="my-3">{{metrics.media_idade}} anos</h3>
+            <p class="mb-0 text-muted"><span class="text-nowrap fs-7">* dos cadastrados no banco</span></p>        
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-4">
+        <div class="card widget-flat">
+          <div class="card-body">
+            <div class="float-end"><i class="fas fa-link widget-icon"></i></div>
+            <h6 class="text-muted fw-normal">Cadastros Site</h6>
+            <h3 class="my-3">{{metrics.cadastros_site}}</h3>
+            <p class="mb-0 text-muted"><span class="text-purple me-2">{{metrics.cadastros_site|percentual:metrics.cadastros_banco|floatformat:0}}%</span><span class="text-nowrap fs-7">dos cadastros</span></p>        
+          </div>
+        </div>
       </div>
     </div>
-    
-    <div class="row">
-      <div class="col collapse mb-2" id="adicional_filters">
-        <div class="dropdown">
-          <button class="btn btn-sm btn-purple dropdown-toggle" type="button" data-bs-toggle="dropdown">Cargo: <b>{{metrics.cargo_nome|default:'Todos'}}</b></button>
-          <ul class="dropdown-menu fs-7" id="id_cargos">
-            <li><a class="dropdown-item" href="{% url 'recrutamento_candidato_dashboard' %}?cargo=">Todos</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-    
-    <div class="tab-pane fade show active" id="base" role="tabpanel">
-      <div class="row">
-        <div class="col-lg-3 mb-2">
-          <div class="card text-center bg-purple">
-            <div class="card-header">Cadastros Banco</div>
-            <div class="body py-3"><h1>{{metrics.cadastros_banco}}</h1></div>            
-          </div>
-        </div>
-        <div class="col-lg-3 mb-2">
-          <div class="card text-center bg-purple">
-            <div class="card-header">Processos seletivos</div>
-            <div class="body py-3"><h1>{{metrics.processos_seletivos}}</h1></div>
-          </div>
-        </div>
-        <div class="col-lg-3 mb-2">
-          <div class="card text-center bg-purple">
-            <div class="card-header">Percentual aprovação</div>
-            <div class="body py-3"><h1>{{metrics.percentual_aprovacoes}}%</h1></div>
-          </div>
-        </div>
-        <div class="col-lg-3 mb-2">
-          <div class="card text-center bg-purple">
-            <div class="card-header">Contratações periodo</div>
-            <div class="body py-3"><h1>{{metrics.contratacoes_periodo}}</h1></div>
-          </div>
-        </div>
-      </div>
-      <!-- ROW 2 | DETALHAMENTO  -->
-      <div class="row">
-        
-        <div class="col-lg-9 order-2 order-lg-1">
-          <div class="border rounded"><canvas id="banco_evolucao" style="height: 450px;"></canvas></div>
-        </div>
-        
-        <div class="col-lg order-1 order-lg-2 mb-2 mb-lg-0">
-          <div class="row g-1">
-            <div class="col-6">
-              <div class="card text-center bg-light">
-                <div class="card-header">Mulheres</div>
-                <div class="card-body">
-                  <div class="row g-0">
-                    <div class="col-6 fs-5 text-nowrap">{{metrics.contratacoes_mulheres}}</div>
-                    <div class="col-6 fs-5 text-nowrap">{{metrics.percentual_contratacao_mulheres}}%</div>
-                  </div>
-                </div>              
-              </div>
-            </div>
-            <div class="col-6">
-              <div class="col-lg">
-                <div class="card text-center bg-light">
-                  <div class="card-header">PNE</div>
-                  <div class="card-body">
-                    <div class="row g-0">
-                      <div class="col-6 fs-5 text-nowrap">{{metrics.contratacoes_pne}}</div>
-                      <div class="col-6 fs-5 text-nowrap">{{metrics.percentual_contratacao_pne}}%</div>
-                    </div>
-                  </div>              
-                </div>
-              </div>
-            </div>
-            <div class="col-6">
-              <div class="col-lg">
-                <div class="card text-center bg-light">
-                  <div class="card-header">Média Idade</div>
-                  <div class="card-body">
-                    <div class="col fs-5 text-nowrap">{{metrics.media_idade}} anos</div>
-                  </div>              
-                </div>
-              </div>
-            </div>
-            <div class="col-6">
-              <div class="col-lg">
-                <div class="card text-center bg-light">
-                  <div class="card-header">Cadastro site</div>
-                  <div class="card-body">
-                    <div class="row g-0">
-                      <div class="col-6 fs-5 text-nowrap">{{metrics.cadastros_site}}</div>
-                      <div class="col-6 fs-5 text-nowrap">{{metrics.percentual_cadastros_site}}%</div>
-                    </div>
-                  </div>              
-                </div>
-              </div>
-            </div>
-            
-            <div class="col-12">
-              <div class="col-lg">
-                <div class="card bg-light">
-                  <div class="card-header text-center">Critérios Reprovados</div>
-                  <div class="card-body">
-                    {% for k, v in metrics.criterios_reprovados.items %}
-                    <div class="row"><div class="col">{{k}}</div><div class="col-auto text-end">{{v|zfill:2}}</div><div class="col-auto text-end" style="width: 80px;">{{v|percentual:metrics.total_criterios|floatformat:0}} %</div></div>
-                    {% endfor %}
-                  </div>              
-                </div>
-              </div>
-            </div>
-            
-          </div>          
+  </div>
+  <div class="col-xl-6">
+    <div class="card widget-flat">
+      <div class="card-body">
+        <div class="float-end d-none d-lg-block"><i class="fas fa-chart-line widget-icon"></i></div>
+        <div class="row">
+          <div class="col" style="height: 260px;"><canvas id="banco_evolucao"></canvas></div>
         </div>        
       </div>      
     </div>
-    <!-- <div class="tab-pane fade" id="param" role="tabpanel">param</div> -->
   </div>
+</div>
+<div class="row mt-1 g-3">
+  <div class="col-lg-6 order-2 order-lg-1">
+    <div class="card widget-flat">
+      <div class="card-body">
+        <h6 class="text-muted fw-normal">Críterios de reprovação</h6>
+        <div class="table-responsive">
+          <table id="table_terceiros" class="table table-nowrap table-hover">
+            <tbody style="border-top-width: 0;">
+              {% for avaliacao in metrics.criterios_reprovados %}
+              <tr>
+                <td>{{avaliacao.criterio__nome}}</td>
+                <td>{{avaliacao.qtd}}</td>
+                <td class="text-danger text-end">{{avaliacao.qtd|percentual:metrics.total_avaliacoes|floatformat:0}} %</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="3">Nenhum registro a exibir</td></tr>
+              {% endfor %}
+            </tbody>            
+          </table>          
+        </div>        
+      </div>      
+    </div>
+  </div>
+  <div class="col-lg-6 order-1 order-lg-2">
+    <div class="row g-3">
+      <div class="col-lg-6">
+        <div class="card widget-flat">
+          <div class="card-body">
+            <div class="row">
+              <div class="col" style="height: 260px;"><canvas id="origem_contratacoes"></canvas></div>
+            </div>        
+          </div>      
+        </div>    
+      </div>
+      <div class="col-lg-6">
+        <div class="card widget-flat">
+          <div class="card-body">
+            <h6 class="text-muted fw-normal">Resumo Banco Atual</h6>
+            <a class="btn btn-sm btn-link text-decoration-none text-purple" style="position: absolute; right: 10px; top: 8px;" id="download" onclick="download_table_as_csv('main_table',';')" title="ALT + D">Baixar <i class="fas fa-download"></i></a>
+            <div class="table-responsive">
+              <table id="main_table" class="table table-nowrap table-hover table-sortable">
+                <thead>
+                  <th>Vaga</th>
+                  <th>Saldo</th>
+                </thead>
+                <tbody style="border-top-width: 0;">
+                  {% for vaga in metrics.saldo_banco %}
+                  <tr>
+                    <td>{{vaga}}</td>
+                    <td>{{vaga.saldo_banco}}</td>
+                  </tr>
+                  {% empty %}
+                  <tr><td colspan="3">Nenhum registro a exibir</td></tr>
+                  {% endfor %}
+                  <tfoot class="fw-bold table-light">
+                    <td>Total</td>
+                    <td>{{metrics.banco_totalizado}}</td>
+                  </tfoot>
+                </tbody>            
+              </table>          
+            </div>        
+          </div>      
+        </div>
+      </div>
+    </div>
+  </div>
+  
 </div>
 {% endblock%}
 
 {% block add_script_src %}
-<!-- <script src="{% static 'js/table_extra.js' %}"></script> -->
 <script src="{% static 'js/vendor/chart.min.js' %}"></script>
 <script src="{% static 'js/update_url.js' %}"></script>
+<script src="{% static 'js/table_extra.js' %}"></script>
 {% endblock %}
 
 
 <script>
   {% block add_script %}
-  
   SHORTCUT_MAP['fFFF'] = '#adicional_filters_link';
   
   var ctx = document.getElementById('banco_evolucao');
-  ctx.style.backgroundColor = '#F7F7F7';  
   let chart = new Chart(ctx, {
     type: 'bar',
     data: {
@@ -171,6 +203,7 @@
         data: {{ metrics.evolucao_banco.dados }},
         backgroundColor: {{ metrics.evolucao_banco.bgcolors|safe }},
         borderColor: {{ metrics.evolucao_banco.bordercolors|safe }},
+        maxBarThickness: 50,
       }],
       labels: {{ metrics.evolucao_banco.categorias|safe }},
     },
@@ -179,16 +212,55 @@
       scales: {
         y: {
           suggestedMin: 0,
-          ticks: {stepSize: 1}
+          // grace: 1,
+          ticks: {
+            // stepSize: 1,
+            precision: 0
+          }
         }
       },
       plugins: {
         legend: {display:false, position: 'bottom'},
         title: {
           display: true,
-          text:'Cadastros no Banco',
-          font: {size: 18},
-          padding: {top: 10,bottom: 10}
+          align: 'start',
+          text:'CADASTROS BANCO',
+          font: {size: 13},
+          padding: {top: 6,bottom: 10}
+        },
+      }
+    }
+  });
+  
+  var origem_ctx = document.getElementById('origem_contratacoes');
+  let origem_chart = new Chart(origem_ctx, {
+    type: 'pie',
+    data: {
+      datasets: [{
+        label: 'Qtde',
+        data: [{{metrics.cadastros_banco|sub:metrics.cadastros_site}}, {{metrics.cadastros_site}}, 0],
+        backgroundColor: ['#C7C3E9', '#8179CD','#4D42B3'],
+        borderColor: ['#C7C3E9', '#8179CD','#4D42B3'],
+      }],
+      labels: ['Interno', 'Site', 'Outros'],
+    },
+    options: {
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          display: false,
+          // suggestedMin: 0,
+          // ticks: {stepSize: 1}
+        }
+      },
+      plugins: {
+        legend: {display:true, position: 'bottom'},
+        title: {
+          display: true,
+          text:'ORIGEM CADASTRO',
+          align: 'start',
+          font: {size: 13},
+          padding: {top: 6,bottom: 10}
         },
       }
     }

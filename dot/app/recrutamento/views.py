@@ -645,7 +645,7 @@ def get_agendamentos(request):
             agenda = Selecao.objects.filter(data=date.today()).order_by('hora')
         itens = {}
         for item in agenda:
-            itens[item.id] = f'{item.data.strftime("%d/%m/%Y")};{item.hora.strftime("%H:%M")};{item.vaga.cargo.nome};{item.candidato.nome};{item.candidato.fone1};{item.candidato.fone2}'
+            itens[item.id] = f'{item.data.strftime("%d/%m/%Y")};{item.hora.strftime("%H:%M")};{item.vaga.cargo.nome};{item.candidato.nome};{item.candidato.fone1};{item.candidato.fone2};{item.resultado}';
         dataJSON = dumps(itens)
         return HttpResponse(dataJSON)
     except:

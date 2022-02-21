@@ -12,6 +12,8 @@ class Vaga(models.Model):
     visivel = models.BooleanField(default=True)
     def __str__(self):
         return self.cargo.nome
+    def saldo_banco(self):
+        return Candidato.objects.filter(status='B', vagas=self).count()
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='recrutamento.vaga',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)

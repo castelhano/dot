@@ -9,8 +9,8 @@ VERSION: 1.0
 
 .table td.fit,.table th.fit {white-space: nowrap;width: 1%;}
 .table-sortable th {cursor: pointer;}
-.table-sortable .th-sort-asc::after {content: "\2304";}
-.table-sortable .th-sort-desc::after {content: "\2303";}
+.table-sortable .th-sort-asc::after {content: "\025B4";}
+.table-sortable .th-sort-desc::after {content: "\025BE";}
 .table-sortable .th-sort-asc::after,.table-sortable .th-sort-desc::after {margin-left: 5px;}
 .table-sortable .th-sort-asc,.table-sortable .th-sort-desc {background: rgba(0, 0, 0, 0.1);}
 

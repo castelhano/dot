@@ -1,0 +1,15 @@
+# MONTA DICIONARIO MILTIDIMENCIONAL
+# NECESSARIO QUANDO PRECISA DE RESUMO BUSCANDO get_field_display()
+criterios_reprovados = {}
+total_criterios = 0
+for s in selecoes: # Cria resumo de criterios que mais reprovaram no periodo
+    for c in s.avaliacoes().filter(status='R'):
+        if c.criterio.nome in criterios_reprovados:
+            criterios_reprovados[c.criterio.nome] += 1
+        else:
+            criterios_reprovados[c.criterio.nome] = 1
+        total_criterios += 1
+
+sorted_criterios_reprovados = sorted_dict = dict(sorted(criterios_reprovados.items(), key=lambda item: item[1], reverse=True))
+
+# *******************************************************************

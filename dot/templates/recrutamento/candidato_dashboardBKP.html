@@ -1,0 +1,216 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% load tag_extra %}
+{% block title %}Dashboard - Banco{% endblock %}
+{% block model %}Recrutamento{% endblock %}
+{% block navbar_classlist %}navbar-dark bg-purple bg-gradient{% endblock %}
+{% block model_menu %}{% include "_component/menu/recrutamento.html" %}{% endblock%}
+
+{% block content_fluid %}
+
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-chart-line"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'recrutamento_selecoes' %}"><i class="fas fa-undo"></i></a></li>
+      <li class="nav-item ms-auto"><a class="btn btn-sm btn-secondary" id="clear" href="{% url 'recrutamento_candidato_dashboard' %}">Limpar</a></li>
+      <!-- <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" data-bs-target="#param" href="#"><i class="fas fa-filter"></i></a></li> -->
+    </ul>
+  </div>
+  <div class="card-body tab-content">
+    <div class="d-flex justify-content-between">
+      <div><h5 class="card-title mb-3"><span class="d-none d-lg-inline">Dashboard: </span><b class="text-purple">Candidatos</b> {% if metrics.cargo_nome != None %}<sup class="badge bg-purple ms-1">{{metrics.cargo_nome}}</sup>{% endif %}</h5></div>
+      <div class="dropdown">
+        <button class="btn btn-sm btn-purple dropdown-toggle" type="button" data-bs-toggle="dropdown">{{metrics.periodo_analise_dias|zfill:2}} meses </button>
+        <ul class="dropdown-menu fs-7">
+          <li><a class="dropdown-item pointer" onclick="filter('periodo_analise_dias', 365)">12 meses</a></li>
+          <li><a class="dropdown-item pointer" onclick="filter('periodo_analise_dias', 180)">06 meses</a></li>
+          <li><a class="dropdown-item pointer" onclick="filter('periodo_analise_dias', 90)">03 meses</a></li>
+          <li><a class="dropdown-item dropdown-item-danger pointer" onclick="filter('periodo_analise_dias', 'all')">Todo periodo</a></li>
+        </ul>
+        <a id="adicional_filters_link" class="btn btn-sm btn-dark" data-bs-toggle="collapse" href="#adicional_filters" role="button" title="Filtros [ F ]"><i class="fas fa-caret-down"></i></a>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col collapse mb-2" id="adicional_filters">
+        <div class="dropdown">
+          <button class="btn btn-sm btn-purple dropdown-toggle" type="button" data-bs-toggle="dropdown">Cargo: <b>{{metrics.cargo_nome|default:'Todos'}}</b></button>
+          <ul class="dropdown-menu fs-7" id="id_cargos">
+            <li><a class="dropdown-item" href="{% url 'recrutamento_candidato_dashboard' %}?cargo=">Todos</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <div class="tab-pane fade show active" id="base" role="tabpanel">
+      <div class="row">
+        <div class="col-lg-3 mb-2">
+          <div class="card text-center bg-purple">
+            <div class="card-header">Cadastros Banco</div>
+            <div class="body py-3"><h1>{{metrics.cadastros_banco}}</h1></div>            
+          </div>
+        </div>
+        <div class="col-lg-3 mb-2">
+          <div class="card text-center bg-purple">
+            <div class="card-header">Processos seletivos</div>
+            <div class="body py-3"><h1>{{metrics.processos_seletivos}}</h1></div>
+          </div>
+        </div>
+        <div class="col-lg-3 mb-2">
+          <div class="card text-center bg-purple">
+            <div class="card-header">Percentual aprovação</div>
+            <div class="body py-3"><h1>{{metrics.percentual_aprovacoes}}%</h1></div>
+          </div>
+        </div>
+        <div class="col-lg-3 mb-2">
+          <div class="card text-center bg-purple">
+            <div class="card-header">Contratações periodo</div>
+            <div class="body py-3"><h1>{{metrics.contratacoes_periodo}}</h1></div>
+          </div>
+        </div>
+      </div>
+      <!-- ROW 2 | DETALHAMENTO  -->
+      <div class="row">
+        
+        <div class="col-lg-9 order-2 order-lg-1">
+          <div class="border rounded"><canvas id="banco_evolucao" style="height: 450px;"></canvas></div>
+        </div>
+        
+        <div class="col-lg order-1 order-lg-2 mb-2 mb-lg-0">
+          <div class="row g-1">
+            <div class="col-6">
+              <div class="card text-center bg-light">
+                <div class="card-header">Mulheres</div>
+                <div class="card-body">
+                  <div class="row g-0">
+                    <div class="col-6 fs-5 text-nowrap">{{metrics.candidatos_mulheres}}</div>
+                    <div class="col-6 fs-5 text-nowrap">{{metrics.percentual_candidatos_mulheres}}%</div>
+                  </div>
+                </div>              
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="col-lg">
+                <div class="card text-center bg-light">
+                  <div class="card-header">PNE</div>
+                  <div class="card-body">
+                    <div class="row g-0">
+                      <div class="col-6 fs-5 text-nowrap">{{metrics.candidatos_pne}}</div>
+                      <div class="col-6 fs-5 text-nowrap">{{metrics.percentual_candidatos_pne}}%</div>
+                    </div>
+                  </div>              
+                </div>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="col-lg">
+                <div class="card text-center bg-light">
+                  <div class="card-header">Média Idade</div>
+                  <div class="card-body">
+                    <div class="col fs-5 text-nowrap">{{metrics.media_idade}} anos</div>
+                  </div>              
+                </div>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="col-lg">
+                <div class="card text-center bg-light">
+                  <div class="card-header">Cadastro site</div>
+                  <div class="card-body">
+                    <div class="row g-0">
+                      <div class="col-6 fs-5 text-nowrap">{{metrics.cadastros_site}}</div>
+                      <div class="col-6 fs-5 text-nowrap">{{metrics.percentual_cadastros_site}}%</div>
+                    </div>
+                  </div>              
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-12">
+              <div class="col-lg">
+                <div class="card bg-light">
+                  <div class="card-header text-center">Critérios Reprovados</div>
+                  <div class="card-body">
+                    {% for k, v in metrics.criterios_reprovados.items %}
+                    <div class="row"><div class="col">{{k}}</div><div class="col-auto text-end">{{v|zfill:2}}</div><div class="col-auto text-end" style="width: 80px;">{{v|percentual:metrics.total_criterios|floatformat:0}} %</div></div>
+                    {% endfor %}
+                  </div>              
+                </div>
+              </div>
+            </div>
+            
+          </div>          
+        </div>        
+      </div>      
+    </div>
+    <!-- <div class="tab-pane fade" id="param" role="tabpanel">param</div> -->
+  </div>
+</div>
+{% endblock%}
+
+{% block add_script_src %}
+<!-- <script src="{% static 'js/table_extra.js' %}"></script> -->
+<script src="{% static 'js/vendor/chart.min.js' %}"></script>
+<script src="{% static 'js/update_url.js' %}"></script>
+{% endblock %}
+
+
+<script>
+  {% block add_script %}
+  
+  SHORTCUT_MAP['fFFF'] = '#adicional_filters_link';
+  
+  var ctx = document.getElementById('banco_evolucao');
+  ctx.style.backgroundColor = '#F7F7F7';  
+  let chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      datasets: [{
+        label: 'Qtde',
+        data: {{ metrics.evolucao_banco.dados }},
+        backgroundColor: {{ metrics.evolucao_banco.bgcolors|safe }},
+        borderColor: {{ metrics.evolucao_banco.bordercolors|safe }},
+      }],
+      labels: {{ metrics.evolucao_banco.categorias|safe }},
+    },
+    options: {
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          suggestedMin: 0,
+          ticks: {stepSize: 1}
+        }
+      },
+      plugins: {
+        legend: {display:false, position: 'bottom'},
+        title: {
+          display: true,
+          text:'Cadastros no Banco',
+          font: {size: 18},
+          padding: {top: 10,bottom: 10}
+        },
+      }
+    }
+  });
+  
+  
+  function carregaCargosBanco() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if(this.readyState == 4 && this.status == 200){
+        if(this.responseText == ''){}
+        else{
+          let obj = JSON.parse(this.responseText);
+          cargos = document.getElementById("id_cargos")
+          for(key in obj){cargos.innerHTML += `<li><a class="dropdown-item pointer" onclick="filter('cargo','${obj[key]}')">${key}</a></li>`;}
+        }
+      }
+    };
+    xhttp.open("GET", "{% url 'recrutamento_get_vagas' %}?ocultos=True&vazios=True", true);
+    xhttp.send();
+  }
+  carregaCargosBanco();
+  
+  {% endblock %}
+</script>

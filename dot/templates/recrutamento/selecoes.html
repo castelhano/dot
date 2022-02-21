@@ -20,7 +20,7 @@
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
         <ul class="dropdown-menu">
-          <li><a class="dropdown-item pointer" id="download" onclick="download_table_as_csv('main_table',';')" title="ALT + &darr;">Exportar CSV</a></li>
+          <li><a class="dropdown-item pointer" id="download" onclick="download_table_as_csv('main_table',';')" title="ALT + D">Exportar CSV</a></li>
           {% if perms.core.view_log %}
           <li><a class="dropdown-item pointer" href="{% url 'logs' %}?target_model=recrutamento.selecao&mensagem=DELETE" target="_blank">Log de Exclusões</a></li>
           {% endif %}
@@ -171,7 +171,9 @@
   				for(key in obj){
             let dados = obj[key].split(';')
             let action = ``;
-            agendamentos.innerHTML += `<tr><td class="d-none">${dados[0]}</td><td>${dados[1]}</td><td class="d-none d-lg-table-cell">${dados[2]}</td><td>${dados[3]}</td><td class="d-none d-lg-table-cell">${dados[4]}</td><td class="d-none d-lg-table-cell">${dados[5]}</td><td class="text-end fit py-1"><a class="btn btn-sm btn-dark{% if not perms.recrutamento.change_selecao %} disabled{% endif %}" href="recrutamento_selecao_id/${key}"><i class="fas fa-pen"></a></td></tr>`;
+            let resultado_display = dados[6] == '' ? '' : dados[6] == 'A' ? 'table-success' : 'table-danger';
+            console.log(dados[6]);
+            agendamentos.innerHTML += `<tr class="${resultado_display}"><td class="d-none">${dados[0]}</td><td>${dados[1]}</td><td class="d-none d-lg-table-cell">${dados[2]}</td><td>${dados[3]}</td><td class="d-none d-lg-table-cell">${dados[4]}</td><td class="d-none d-lg-table-cell">${dados[5]}</td><td class="text-end fit py-1"><a class="btn btn-sm btn-dark{% if not perms.recrutamento.change_selecao %} disabled{% endif %}" href="recrutamento_selecao_id/${key}"><i class="fas fa-pen"></a></td></tr>`;
           }
           total_agendamentos_dia.innerHTML = Object.keys(obj).length;
   			}
