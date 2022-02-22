@@ -23,12 +23,12 @@ def candidato_dashboard(request):
         selecoes = Selecao.objects.all()
         criterios_reprovados = Avaliacao.objects.filter(status='R')
     
-    cargo = request.GET.get('cargo', None)
-    if cargo:
-        cargo = Cargo.objects.get(id=request.GET['cargo'])
-        candidatos = candidatos.filter(vagas__cargo=cargo)
-        selecoes = selecoes.filter(vaga__cargo=cargo)
-        criterios_reprovados = criterios_reprovados.filter(status='R', selecao__vaga__cargo=cargo)
+    vaga = Vaga.objects.get(id=request.GET['vaga']) if request.GET.get('vaga', None) else None
+    if vaga:
+        # cargo = Cargo.objects.get(id=request.GET['cargo'])
+        candidatos = candidatos.filter(vagas__cargo=vaga.cargo)
+        selecoes = selecoes.filter(vaga__cargo=vaga.cargo)
+        criterios_reprovados = criterios_reprovados.filter(status='R', selecao__vaga__cargo=vaga.cargo)
     
     evolucao_banco = candidatos.annotate(mes=TruncMonth('create_at')).values('mes').annotate(total=Count('mes'))
     total_avaliacoes = criterios_reprovados.count()
@@ -56,7 +56,7 @@ def candidato_dashboard(request):
     
     metrics = {
         'periodo_analise_dias': int(periodo_analise_dias / 30) if periodo_analise_dias != 'all' else '---',
-        'cargo_nome': cargo.nome if cargo else None,
+        'cargo_nome': vaga.cargo.nome if vaga else None,
         'cadastros_banco': candidatos.count(),
         'processos_seletivos': selecoes.count(),
         'contratacoes_periodo': candidatos.filter(status='C').count(),

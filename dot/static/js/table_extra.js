@@ -1,24 +1,22 @@
 // Thanks for Calumah: https://stackoverflow.com/users/1079254/calumah
 // Quick and simple export target #table_id into a csv
-function download_table_as_csv(table_id, separator = ',') {
+function download_table_as_csv(table_id, separator = ';') {
   // Select rows from table_id
   var rows = document.querySelectorAll('table#' + table_id + ' tr');
   // Construct csv
   var csv = [];
   for (var i = 0; i < rows.length; i++) {
-    var row = [], cols = rows[i].querySelectorAll('td, th');
-    for (var j = 0; j < cols.length; j++) {
-      // Clean innertext to remove multiple spaces and jumpline (break csv)
-      var data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, '').replace(/(\s\s)/gm, ' ');
-      // Remove acentuação de caracteres
-      // data = data.normalize("NFD").replace(/[^a-zA-Zs|' ']/g, "");
-      data = data.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-      // Escape double-quote with double-double-quote (see https://stackoverflow.com/questions/17808511/properly-escape-a-double-quote-in-csv)
-      data = data.replace(/"/g, '""');
-      // Push escaped string
-      row.push('"' + data + '"');
+    if(rows[i].style.display == 'none'){}
+    else{
+      var row = [], cols = rows[i].querySelectorAll('td, th');
+      for (var j = 0; j < cols.length; j++) {
+        var data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, '').replace(/(\s\s)/gm, ' '); // Remove multiples espacos e quebra de linha
+        data = data.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // Remove acentuação de caracteres
+        data = data.replace(/"/g, '""'); // Escape double-quote with double-double-quote (see https://stackoverflow.com/questions/17808511/properly-escape-a-double-quote-in-csv)
+        row.push('"' + data + '"'); // Carrega string 'limpa'
+      }
+      csv.push(row.join(separator));
     }
-    csv.push(row.join(separator));
   }
   var csv_string = csv.join('\n');
   // Download it
@@ -63,3 +61,28 @@ document.querySelectorAll(".table-sortable th").forEach(headerCell => {
     sortTable(tableElement, headerIndex, !currentIsAscending);
   });
 });
+
+/* FUNÇÃO filterTable()
+** @param table ID da tabela a ser filtarda
+** @param cols Lista com ordem das colunas a submeter o filtro
+** @param prefix String adicionada antes do criterio
+** @param posfix String acidionada apos o criterio
+*/
+function filterTable(table_id, cols, input, prefix='', posfix=''){
+  const table = document.getElementById(table_id);
+  const filter = `${prefix}${input.value}${posfix}`.toLowerCase();
+  let tr = table.tBodies[0].getElementsByTagName("tr");
+  
+  for (i = 0; i < tr.length; i++) {
+    let row_value = '';
+    for(j=0; j < cols.length;j++) {
+      td = tr[i].getElementsByTagName("td")[cols[j]];
+      row_value += td.textContent || td.innerText;
+    }
+    if (row_value.toLowerCase().indexOf(filter) > -1) {tr[i].style.display = "";}
+    else {tr[i].style.display = "none";}
+  }
+}
+
+
+

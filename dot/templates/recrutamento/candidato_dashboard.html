@@ -10,8 +10,8 @@
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'recrutamento_candidato_dashboard' %}"></a>
 <div class="d-flex justify-content-between mt-3">
-  <div><h5 class="card-title"><span class="d-none d-lg-inline text-muted">Dashboard: </span><b class="text-purple">Recrutamento</b></h5></div>
-  <div class="d-inline-flex">
+  <div><h5 class="card-title"><span class="d-none d-lg-inline text-muted">Dashboard: </span><b class="text-purple">Recrutamento</b>{% if metrics.cargo_nome != None %}<sup class="badge bg-purple-light ms-1">{{metrics.cargo_nome}}</sup>{% endif %}</h5></div>
+  <div class="d-flex align-items-center">
     <div class="dropdown">
       <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown">{{metrics.periodo_analise_dias|zfill:2}} meses </button>
       <ul class="dropdown-menu fs-7">
@@ -275,7 +275,7 @@
         else{
           let obj = JSON.parse(this.responseText);
           cargos = document.getElementById("id_cargos")
-          for(key in obj){cargos.innerHTML += `<li><a class="dropdown-item pointer" onclick="filter('cargo','${obj[key]}')">${key}</a></li>`;}
+          for(key in obj){cargos.innerHTML += `<li><a class="dropdown-item pointer" onclick="filter('vaga','${obj[key]}')">${key}</a></li>`;}
         }
       }
     };
