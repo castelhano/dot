@@ -1,5 +1,5 @@
 from django import forms
-from .models import Linha, Localidade, Evento, Providencia, Ocorrencia
+from .models import Linha, Localidade, Evento, Providencia, Ocorrencia, Planejamento
 from datetime import date, datetime
 
 
@@ -60,3 +60,15 @@ class OcorrenciaForm(forms.ModelForm):
     gravidade = forms.ChoiceField(choices=Ocorrencia.GRAVIDADE_CHOICES, widget=forms.Select(attrs={'class':'form-select'}))
     detalhe = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'','style':'min-height:350px;'}))
     providencia = forms.ModelChoiceField(required=False, queryset = Providencia.objects.all().order_by('nome'), widget=forms.Select(attrs={'class':'form-select'}))
+
+class PlanejamentoForm(forms.ModelForm):
+    class Meta:
+        model = Planejamento
+        fields = ['empresa','linha','codigo','descricao','dia_tipo','ativo','pin']
+    codigo = forms.CharField(error_messages={'required': 'Informe um código para o projeto', 'unique': 'Projeto com esse nome já existe'},max_length=8,widget=forms.TextInput(attrs={'class': 'form-control bg-light fw-bold','placeholder':''}))
+    descricao = forms.CharField(required=False, max_length=60,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
+    dia_tipo = forms.ChoiceField(choices=Planejamento.DIA_TIPO, widget=forms.Select(attrs={'class':'form-select'}))
+    ativo = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
+    pin = forms.BooleanField(required=False, initial=True, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
+    def clean_codigo(self):
+        return self.cleaned_data['codigo'].upper()

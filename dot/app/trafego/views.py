@@ -4,9 +4,9 @@ from json import dumps
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.db.models import Q
-from .models import Linha, Localidade, Patamar, Carro, Viagem, Evento, Providencia, Ocorrencia, FotoOcorrencia
+from .models import Linha, Localidade, Patamar, Carro, Viagem, Evento, Providencia, Ocorrencia, FotoOcorrencia, Planejamento
 from core.models import Empresa
-from .forms import LinhaForm, LocalidadeForm, EventoForm, ProvidenciaForm, OcorrenciaForm
+from .forms import LinhaForm, LocalidadeForm, EventoForm, ProvidenciaForm, OcorrenciaForm, PlanejamentoForm
 from .validators import validate_file_extension
 from core.models import Log
 from django.contrib.auth.decorators import login_required, permission_required
@@ -65,7 +65,8 @@ def linhas(request):
 @login_required
 @permission_required('trafego.view_planejamento')
 def planejamentos(request):
-    return render(request,'trafego/planejamentos.html')
+    planejamentos = Planejamento.objects.all().order_by('linha__codigo', 'data_criacao')    
+    return render(request,'trafego/planejamentos.html', {'planejamentos':planejamentos})
 
 @login_required
 @permission_required('trafego.view_evento')
@@ -252,7 +253,7 @@ def ocorrencia_add(request):
     if request.method == 'POST':
         form = OcorrenciaForm(request.POST)
         if form.is_valid():
-            # try:
+            try:
                 form_clean = form.cleaned_data
                 registro = form.save(commit=False)
                 registro.usuario = request.user
@@ -269,12 +270,39 @@ def ocorrencia_add(request):
                         FotoOcorrencia.objects.create(ocorrencia=registro,foto=foto)
                 messages.success(request,'Ocorrencia inserida')
                 return redirect('trafego_ocorrencias')
-            # except:
-            #     messages.error(request,'Erro ao inserir ocorrencia')
-            #     return redirect('trafego_ocorrencia_add')
+            except:
+                messages.error(request,'Erro ao inserir ocorrencia')
+                return redirect('trafego_ocorrencia_add')
     else:
         form = OcorrenciaForm()
     return render(request,'trafego/ocorrencia_add.html',{'form':form})
+
+@login_required
+@permission_required('trafego.add_planejamento')
+def planejamento_add(request):
+    if request.method == 'POST':
+        form = PlanejamentoForm(request.POST)
+        if form.is_valid():
+            try:
+                form_clean = form.cleaned_data
+                registro = form.save(commit=False)
+                registro.usuario = request.user
+                registro.save()
+                l = Log()
+                l.modelo = "trafego.planejamento"
+                l.objeto_id = registro.id
+                l.objeto_str = registro.codigo
+                l.usuario = request.user
+                l.mensagem = "CREATED"
+                l.save()
+                messages.success(request,'Planejamento <b>' + registro.codigo + '</b> criado')
+                return redirect('trafego_planejamento_id', registro.id)
+            except:
+                messages.error(request,'Erro ao inserir planejamento')
+                return redirect('trafego_planejamento_add')
+    else:
+        form = PlanejamentoForm()
+    return render(request,'trafego/planejamento_add.html',{'form':form})
 
 # METODOS GET
 @login_required
@@ -322,6 +350,13 @@ def tratativa_id(request,id):
     ocorrencia = Ocorrencia.objects.get(pk=id)
     form = OcorrenciaForm(instance=ocorrencia)
     return render(request,'trafego/tratativa_id.html',{'form':form,'ocorrencia':ocorrencia})
+
+@login_required
+@permission_required('trafego.tratar_planejamento')
+def planejamento_id(request,id):
+    planejamento = Planejamento.objects.get(pk=id)
+    form = PlanejamentoForm(instance=planejamento)
+    return render(request,'trafego/planejamento_id.html',{'form':form,'planejamento':planejamento})
 
 
 # METODOS UPDATE
@@ -568,6 +603,25 @@ def tratativa_marcar_todas_tratadas(request):
     messages.warning(request,f'Total de <b>{resposta}</b> ocorrencia(s) tratadas')
     return redirect('trafego_tratativas')
 
+@login_required
+@permission_required('trafego.change_planejamento')
+def planejamento_update(request,id):
+    planejamento = Planejamento.objects.get(pk=id)
+    form = PlanejamentoForm(request.POST, instance=planejamento)
+    if form.is_valid():
+        registro = form.save()
+        l = Log()
+        l.modelo = "trafego.planejamento"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.codigo
+        l.usuario = request.user
+        l.mensagem = "UPDATE"
+        l.save()
+        messages.success(request,'Planejamento <b>' + registro.codigo + '</b> alterado')
+        return redirect('trafego_planejamento_id', id)
+    else:
+        return render(request,'trafego/planejamento_id.html',{'form':form,'planejamento':planejamento})
+
 # METODOS DELETE
 @login_required
 @permission_required('trafego.delete_localidade')
@@ -677,6 +731,25 @@ def foto_delete(request, id):
     except:
         messages.error(request,'ERRO ao apagar foto')
         return redirect('trafego_ocorrencia_id', id_ocorrencia)
+
+@login_required
+@permission_required('trafego.delete_planejamento')
+def planejamento_delete(request,id):
+    try:
+        registro = Planejamento.objects.get(pk=id)
+        l = Log()
+        l.modelo = "trafego.planejamento"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.codigo
+        l.usuario = request.user
+        l.mensagem = "DELETE"
+        l.save()
+        registro.delete()
+        messages.warning(request,'Planejamento apagado. Essa operação não pode ser desfeita')
+        return redirect('trafego_planejamentos')
+    except:
+        messages.error(request,'ERRO ao apagar planejamento')
+        return redirect('trafego_planejamento_id', id)
 
 # METODOS AJAX
 def get_linha(request):

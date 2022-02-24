@@ -65,7 +65,6 @@ class Linha(models.Model):
 
 class Patamar(models.Model):
     linha = models.ForeignKey(Linha, blank=False, null=False, on_delete=models.CASCADE)
-    # faixa = models.PositiveIntegerField(blank=False, null=False)
     inicial = models.PositiveIntegerField(blank=False, null=False)
     final = models.PositiveIntegerField(blank=False, null=False)
     ida = models.PositiveIntegerField(blank=True, null=True)
@@ -75,10 +74,6 @@ class Patamar(models.Model):
         return reversed(logs)
 
 class Planejamento(models.Model):
-    STATUS_CHOICES = (
-    ('A','Ativo'),
-    ('I','Inativo'),
-    )
     DIA_TIPO = (
     ('U','Util'),
     ('S','Sabado'),
@@ -93,7 +88,7 @@ class Planejamento(models.Model):
     dia_tipo = models.CharField(max_length=3,choices=DIA_TIPO, blank=True, default='U')
     usuario = models.ForeignKey(User, blank=True, null=True, on_delete=models.RESTRICT)
     data_criacao = models.DateField(blank=True, null=True, default=datetime.today)
-    status = models.CharField(max_length=3,default='A',choices=STATUS_CHOICES, blank=True)
+    ativo = models.BooleanField(default=False)
     pin = models.BooleanField(default=True)
     def __str__(self):
         return self.codigo
