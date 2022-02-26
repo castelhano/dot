@@ -64,7 +64,7 @@ class OcorrenciaForm(forms.ModelForm):
 class PlanejamentoForm(forms.ModelForm):
     class Meta:
         model = Planejamento
-        fields = ['empresa','linha','codigo','descricao','dia_tipo','ativo','pin']
+        fields = ['empresa','linha','codigo','descricao','dia_tipo','patamares','ativo','pin']
     codigo = forms.CharField(error_messages={'required': 'Informe um código para o projeto', 'unique': 'Projeto com esse nome já existe'},max_length=8,widget=forms.TextInput(attrs={'class': 'form-control bg-light fw-bold','placeholder':''}))
     descricao = forms.CharField(required=False, max_length=60,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
     dia_tipo = forms.ChoiceField(choices=Planejamento.DIA_TIPO, widget=forms.Select(attrs={'class':'form-select'}))

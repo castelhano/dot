@@ -74,6 +74,10 @@
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
   {% endfor %}
+  <div id="dot_alert" class="alert alert-dismissible fade mb-1" role="alert">
+    <span id="dot_alert_message"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
   
   {% if form.errors %}
   {% for field in form %}
@@ -140,6 +144,7 @@
   
   <script src="{% static 'js/vendor/bootstrap.bundle.min.js' %}"></script>
   <script src="{% static 'js/_basicListener.js' %}"></script>
+  <script src="{% static 'js/dot.js' %}"></script>
   {% block add_script_src %}{% endblock %}
   <script>
   {% block add_script %}{% endblock %}

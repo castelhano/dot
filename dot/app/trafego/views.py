@@ -352,7 +352,7 @@ def tratativa_id(request,id):
     return render(request,'trafego/tratativa_id.html',{'form':form,'ocorrencia':ocorrencia})
 
 @login_required
-@permission_required('trafego.tratar_planejamento')
+@permission_required('trafego.change_planejamento')
 def planejamento_id(request,id):
     planejamento = Planejamento.objects.get(pk=id)
     form = PlanejamentoForm(instance=planejamento)

@@ -1,0 +1,91 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Plan{% endblock %}
+{% block model %}Tráfego{% endblock %}
+{% block navbar_classlist %}navbar-dark bg-primary bg-gradient{% endblock %}
+{% block model_menu %}{% include "_component/menu/trafego.html" %}{% endblock%}
+
+{% block content_fluid %}
+<div class="row">
+  <div class="col-lg-3 p-0">
+    <table class="table table-sm table-hover table-striped table-bordered caption-top text-center" style="table-layout: fixed;">
+      <caption class="py-1 ps-1">Patamares</caption>
+      <thead>
+        <tr>
+          <th>Inicio</th>
+          <th>Fim</th>
+          <th>Ida</th>
+          <th>Volta</th>
+          <th>Frota</th>
+          <th>Freq</th>
+        </tr>  
+      </thead>
+      <tbody id="patamares_tbody">
+        {% if planejamento.patamares == '' %}
+        {% for patamar in planejamento.linha.patamares %}
+        <tr>
+          <td class="table-secondary">{{patamar.inicial}}</td>
+          <td class="table-secondary">{{patamar.final}}</td>
+          <td id="{{forloop.counter0}}_2" contenteditable="true" oninput="setPatamar(this.id, this.innerHTML)">{{patamar.ida}}</td>
+          <td id="{{forloop.counter0}}_3" contenteditable="true">{{patamar.volta}}</td>
+          <td id="{{forloop.counter0}}_4" contenteditable="true"></td>
+          <td id="{{forloop.counter0}}_5" contenteditable="true"></td>
+        </tr>
+        {% endfor %}
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+  <div class="col-lg pt-1">
+    <div class="btn-group">
+      <a class="btn btn-sm btn-warning px-3" id="clear" href="{% url 'trafego_planejamento_id' planejamento.id|safe %}" title="Limpar [Alt + L]"><i class="fas fa-sync-alt"></i></a>
+    </div>
+    <div class="btn-group">
+      <a class="btn btn-sm btn-dark px-3" data-bs-toggle="modal" data-bs-target="#planejamento_modal" href="#"><i class="fas fa-sliders-h"></i></a>
+      <a class="btn btn-sm btn-success pointer" onclick="document.getElementById('submit_form_button').click()"><i class="fas fa-save me-1"></i> Salvar</a>
+    </div>
+    
+  </div>
+</div>
+
+
+
+
+{% include 'trafego/_modais_planejamento.html' %}
+{% endblock%}
+
+{% block add_script_src %}{% endblock %}
+
+<script>
+  {% block add_script %}
+  var patamares = [];
+  {% if planejamento.patamares == '' %}
+  {% for patamar in planejamento.linha.patamares %}
+  patamares.push([{{patamar.inicial}}, {{patamar.final}}, {{patamar.ida}}, {{patamar.volta}},0,0]);
+  {% endfor %}
+  {% else %}
+  let tbody = document.getElementById('patamares_tbody');
+  patamares = {{planejamento.patamares}};
+  for(i=0;i < patamares.length;i++){
+    tbody.innerHTML += `<tr><td class="table-secondary">${patamares[i][0]}</td><td class="table-secondary">${patamares[i][1]}</td><td id="${i}_2" contenteditable="true" oninput="setPatamar(this.id, this.innerHTML)">${patamares[i][2]}</td><td id="${i}_3" contenteditable="true" oninput="setPatamar(this.id, this.innerHTML)">${patamares[i][3]}</td><td id="${i}_4" contenteditable="true" oninput="setPatamar(this.id, this.innerHTML)">${patamares[i][4]}</td><td id="${i}_5" contenteditable="true" oninput="setPatamar(this.id, this.innerHTML)">${patamares[i][5]}</td></tr>`;
+  }
+  {% endif %}
+  
+  function submitForm(){
+    document.getElementById('id_patamares').value = JSON.stringify(patamares);
+    return true;
+  }
+  function setPatamar(id, value){
+    let x = id.split('_')[0], y = id.split('_')[1];
+    patamares[x][y] = parseInt(value);
+    patamares[x][5] = calculaFrequencia(patamares[x][2] + patamares[x][3], patamares[x][4]);
+    document.getElementById(`${x}_5`).innerHTML = patamares[x][5]; //Ajusta valor da frequencia calculada
+  }
+  function calculaFrequencia(ciclo, frota){return frota > 0 ? parseFloat(ciclo / frota) : 0;}
+  function getCiclo(faixa){ // Retorna uma lista com o ciclo de ida, volta e total da faixa informada
+    for(i=0;i < patamares.length;i++){
+      if(faixa >= patamares[i][0] && faixa <= patamares[i][1]){return [patamares[i][2], patamares[i][3], patamares[i][2] + patamares[i][3]]}
+    }
+  }
+  {% endblock %}
+</script>

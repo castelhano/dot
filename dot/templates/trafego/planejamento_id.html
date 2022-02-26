@@ -6,121 +6,150 @@
 {% block model_menu %}{% include "_component/menu/trafego.html" %}{% endblock%}
 
 {% block content_fluid %}
-<a class="d-none" id="clear" href="{% url 'trafego_planejamento_id' planejamento.id|safe %}"></a>
-<div class="card mt-2">
-  <div class="card-header">
-    <ul class="nav nav-tabs card-header-tabs">
-      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
-      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'trafego_planejamentos' %}"><i class="fas fa-undo"></i></a></li>
-      <li class="nav-item dropdown ms-auto">
-        <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#history_modal">Historico</a></li>
-          {% if perms.trafego.delete_planejamento %}
-          <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal">Excluir Planejamento</a></li>
+<div class="row mt-2">
+  <div class="col-lg-3 order-2 order-lg-1">
+    <div id="patamares_container" class="collapse show">
+      <table class="table table-sm table-hover table-striped table-bordered text-center fs-7 mb-2" style="table-layout: fixed;">
+        <thead>
+          <tr>
+            <th>Inicio</th>
+            <th>Fim</th>
+            <th>Ida</th>
+            <th>Volta</th>
+            <th>Frota</th>
+            <th>Freq</th>
+          </tr>  
+        </thead>
+        <tbody id="patamares_tbody">
+          {% if planejamento.patamares == '' %}
+          {% for patamar in planejamento.linha.patamares %}
+          <tr>
+            <td class="table-secondary">{{patamar.inicial}}</td>
+            <td class="table-secondary">{{patamar.final}}</td>
+            <td id="{{forloop.counter0}}_2" contenteditable="true" oninput="setPatamar(this.id, this.innerHTML)">{{patamar.ida}}</td>
+            <td id="{{forloop.counter0}}_3" contenteditable="true">{{patamar.volta}}</td>
+            <td id="{{forloop.counter0}}_4" contenteditable="true"></td>
+            <td id="{{forloop.counter0}}_5" contenteditable="true"></td>
+          </tr>
+          {% endfor %}
           {% endif %}
-        </ul>
-      </li>
-    </ul>
-  </div>
-  <form id="trafego_form" action="{% url 'trafego_planejamento_update' planejamento.id|safe %}" method="POST" autocomplete="off">
-    {% csrf_token %}
-    <div class="card-body tab-content">
-      <h5 class="card-title mb-3">Editar Planejamento</h5>
-      <div class="tab-pane fade show active" id="base" role="tabpanel">
-        <div class="row g-1">
-          <div class="col-lg-4">{% include "_component/field/empresa.html" with empresa_atual=planejamento.empresa.id|safe attrs='autofocus' %}</div>
-          <div class="form-floating mb-1 col-lg-2">
-        		{{ form.dia_tipo }}
-        		<label for="id_dia_tipo">Tipo dia</label>
-        	</div>
-        </div>
-        <div class="row g-1"><div class="col-6">{% include "_component/field/linha.html" with id=planejamento.linha.id|safe codigo=planejamento.linha.codigo nome=planejamento.linha.nome required=True %}</div></div>
-        <div class="row g-1">
-        	<div class="form-floating mb-lg-1 col-lg-2">
-        		{{ form.codigo }}
-        		<label for="id_codigo">Código</label>
-        	</div>
-        	<div class="form-floating mb-1 col-lg-4">
-        		{{ form.descricao }}
-        		<label for="id_descricao">Descrição</label>
-        	</div>
-        </div>
-        <div class="form-check form-switch mt-2">
-        	{{form.ativo}}
-        	<label class="form-check-label" for="id_ativo">Planejamento ativo</label>
-        </div>
-        <div class="form-check form-switch">
-        	{{form.pin}}
-        	<label class="form-check-label" for="id_pin">Fixar planejamento</label>
-        </div>
-      </div>
-      <!-- CONTROLES DO FORM -->
-      <div class="row mt-3">
-        <div class="col">
-          <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"><b>G</b>ravar</button>
-        </div>
-      </div>
+        </tbody>
+      </table>
+      <table class="table table-sm table-bordered text-center fs-7" style="table-layout: fixed;">
+        <thead>
+          <tr>
+            <th>1a Viagem Ida</th>
+            <th>1a Viagem Volta</th>
+          </tr>  
+        </thead>
+        <tbody id="patamares_tbody">
+          <tr>
+            <td><input type="time" class="form-control text-center" name="primeira_viagem_ida" id="id_primeira_viagem_ida" value="04:50"></td>
+            <td><input type="time" class="form-control text-center" name="primeira_viagem_volta" id="id_primeira_viagem_volta" value=""></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-  </form>
-</div>
-
-{% if perms.trafego.delete_planejamento %}
-<div class="modal fade" id="delete_modal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="row">
-        <div class="col"><h5 class="ms-3 mt-3"><i class="fas fa-exclamation-triangle text-danger me-2"></i> Excluir Registro</h5></div>
-        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
-      </div>
-      <div class="modal-body">
-        <p><b class="text-danger">Atenção!!</b> Esta operação não pode ser desfeita, confirma a exclusão do registro?</p>
-        <div class="row mt-2">
-          <div class="col text-end">
-            <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
-            <a class="btn btn-danger px-3" href="{% url 'trafego_planejamento_delete' planejamento.id|safe %}">Excluir</a>
-          </div>
-        </div>
-      </div>
-    </div>
+    <table class="table table-sm table-hover table-striped table-bordered text-center fs-7" style="table-layout: fixed;">
+      <thead>
+        <tr>
+          <th>Freq</th>
+          <th>Ida</th>
+          <th>Volta</th>
+          <th>Freq</th>
+          <th>#</th>
+        </tr>  
+      </thead>
+      <tbody id="horarios_corridos_tbody">
+        <tr><td colspan="5" class="text-start">Defina os patamares e cliquem em Gerar</td></tr>
+      </tbody>
+    </table>
+    
   </div>
-</div>
-{% endif %}
-<div class="modal fade" id="history_modal" tabindex="-1">
-  <div class="modal-dialog modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="row">
-        <div class="col"><h5 class="ms-3 mt-3">Histórico de Alterações <sup>(last 15)</sup></h5></div>
-        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
-      </div>
-      <div class="modal-body">
-        <table class="table table-sm">
+  <div class="col-lg order-1 order-lg-2">
+    <div class="btn-group">
+      <a class="btn btn-sm btn-secondary" data-bs-toggle="collapse" href="#patamares_container"><i class="fas fa-arrow-left rotate-lg--90"></i></a>
+      <a class="btn btn-sm btn-warning" id="clear" href="{% url 'trafego_planejamento_id' planejamento.id|safe %}" title="Limpar [Alt + L]"><i class="fas fa-sync-alt"></i></a>
+    </div>
+    <div class="btn-group">
+      <a class="btn btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#planejamento_modal" href="#"><i class="fas fa-sliders-h"></i></a>
+      <a class="btn btn-sm btn-success pointer" onclick="document.getElementById('submit_form_button').click()"><i class="fas fa-save me-1"></i> Salvar</a>
+    </div>
+    <div class="btn-group">
+      <a class="btn btn-sm btn-warning pointer" onclick="gerarFrequencia()"><i class="fas fa-code me-1"></i> Gerar</a>
+    </div>
+    <div class="row">
+      <div class="col mt-2">
+        <table class="table table-sm table-hover table-striped table-bordered text-center fs-7">
           <thead>
             <tr>
-              <th>Data</th>
-              <th>Operação</th>
-              <th>Usuário</th>
-            </tr>
-          </thead>
-          <tbody class="fs-7">
-            {% for i in planejamento.ultimas_alteracoes %}
+              <th colspan="2">1</th>
+              <th colspan="2">2</th>
+              <th colspan="2">3</th>
+            </tr>  
             <tr>
-              <td>{{i.data|date:'d/m/Y H:i:s'}}</td>
-              <td>{{i.mensagem}}</td>
-              <td>{{i.usuario.username|upper}}</td>
+              <th class="bg-light">Ida</th>
+              <th class="bg-light">Volta</th>
+              <th class="bg-light">Ida</th>
+              <th class="bg-light">Volta</th>
+              <th class="bg-light">Ida</th>
+              <th class="bg-light">Volta</th>
+            </tr>  
+          </thead>
+          <tbody>
+            <tr>
+              <td>04:50</td>
+              <td>06:10</td>
+              <td>07:22</td>
             </tr>
-            {% endfor %}
           </tbody>
         </table>
       </div>
     </div>
   </div>
 </div>
+
+
+
+
+{% include 'trafego/_modais_planejamento.html' %}
 {% endblock%}
 
 {% block add_script_src %}{% endblock %}
 
 <script>
-  {% block add_script %}{% endblock %}
+  {% block add_script %}
+  
+  {% include 'trafego/_script_planejamento.js' %}
+  
+  function gerarFrequencia(){
+    let tbody = document.getElementById('horarios_corridos_tbody');
+    let inicioIda = document.getElementById('id_primeira_viagem_ida').value;
+    let faixa = getFaixa(inicioIda);
+    // Adiciona primeira viagem
+    tbody.innerHTML = `<tr><td></td><td>${inicioIda}</td><td>${horaAdd(inicioIda, getPatamar(faixa)[0])}</td><td></td><td></td></tr>`;
+    
+    // Adiciona viagens até fim de operação
+    let freq = getPatamar(faixa)[4];
+    let stop = false;
+    let viagens = 1;
+    if(freq > 0){
+      let proxima_ida = horaAdd(inicioIda,freq);
+      faixa = getFaixa(proxima_ida);
+      tbody.innerHTML += `<tr><td></td><td>${proxima_ida}</td><td>${horaAdd(proxima_ida, getPatamar(getFaixa(proxima_ida))[0])}</td><td></td><td></td></tr>`;
+      viagem ++;
+      
+      while(faixa > 0 && !stop){
+      
+      tbody.innerHTML += `<tr><td></td><td>${proxima_ida}</td><td>${horaAdd(proxima_ida, getPatamar(getFaixa(proxima_ida))[0])}</td><td></td><td></td></tr>`;
+      if(viagens > 5){stop = true;}
+      }
+    
+    }
+    else{dotAlert('warning', 'Faixa com <b>frequência zerada</b>')}
+    
+    
+  }
+  
+  {% endblock %}
 </script>

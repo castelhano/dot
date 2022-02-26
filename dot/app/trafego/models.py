@@ -88,6 +88,7 @@ class Planejamento(models.Model):
     dia_tipo = models.CharField(max_length=3,choices=DIA_TIPO, blank=True, default='U')
     usuario = models.ForeignKey(User, blank=True, null=True, on_delete=models.RESTRICT)
     data_criacao = models.DateField(blank=True, null=True, default=datetime.today)
+    patamares = models.TextField(blank=True)
     ativo = models.BooleanField(default=False)
     pin = models.BooleanField(default=True)
     def __str__(self):
