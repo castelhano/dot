@@ -30,6 +30,7 @@
       else if(cadastro_funcionario && e.key.toLowerCase() == 'c'){e.preventDefault();document.getElementById('cadastro_cargo').click();}
       else if(cadastro_funcionario && e.key.toLowerCase() == 'x'){e.preventDefault();document.getElementById('cadastro_funcaofixa').click();}
       else if(cadastro && e.key.toLowerCase() == 'f')try{submenuToggle(document.getElementById('submenu_funcionario_link'));cadastro_funcionario = true;}catch(err){}
+      else{try{eventLocalHandler(e);}catch(e){}}
     }
   }
 </script>

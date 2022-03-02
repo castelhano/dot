@@ -61,7 +61,10 @@ def usuarios(request):
 def logs(request):
     target_model = request.GET.get('target_model',None)
     mensagem = request.GET.get('mensagem',None)
+    related = request.GET.get('related',None)
     logs = Log.objects.filter(modelo=target_model,mensagem=mensagem)
+    if related:
+        logs = logs.filter(objeto_related=related)
     return render(request,'core/logs.html',{'logs':logs})
 
 @login_required

@@ -17,9 +17,9 @@
       <li class="nav-item"><a class="nav-link" id="menu_funcionario_detalhe" data-bs-toggle="tab" data-bs-target="#detalhe" onclick="setTimeout(function(){document.getElementById('id_detalhe').focus();},220);" href="#" title="Detalhes [Ctrl + 4]"><i class="fas fa-scroll"></i></a></li>
       <li class="nav-item">
         <a class="nav-link" id="menu_funcionario_extras" data-bs-toggle="dropdown" href="#" title="Outros [Ctrl + 5]"><i class="fas fa-caret-down text-dark"></i></a>
-        <ul class="dropdown-menu">
+        <ul id="funcionario_extra_options" class="dropdown-menu">
           {% if perms.pessoal.view_dependente %}
-          <li><a class="dropdown-item" href="{% url 'pessoal_dependentes' funcionario.id|safe%}">Dependentes</a></li>
+          <li><a id="extras_link_dependentes" class="dropdown-item" href="{% url 'pessoal_dependentes' funcionario.id|safe%}"><b>D</b>ependentes</a></li>
           {% endif %}
         </ul>
       </li>
@@ -153,6 +153,12 @@
   
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
   function submitForm(){modal_loading.show();return true;}
+  
+  function eventLocalHandler(e){
+    let extras = false;
+    try{extras = document.getElementById('funcionario_extra_options').classList.contains('show') ? true : false;}catch(err){}
+    if(extras && e.key.toLowerCase() == 'd')try{e.preventDefault();document.getElementById('extras_link_dependentes').click();}catch(err){}
+  }
     
     
   VMasker(document.getElementById("id_cnh")).maskPattern('999.999.999-99');

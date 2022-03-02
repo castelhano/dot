@@ -33,6 +33,7 @@ class Log(models.Model):
     data = models.DateTimeField(default=datetime.now)
     modelo = models.CharField(max_length=50, blank=False)
     objeto_id = models.CharField(max_length=50, blank=False)
+    objeto_related = models.CharField(max_length=30, blank=True)
     objeto_str = models.CharField(max_length=50, blank=False)
     usuario = models.ForeignKey(User, on_delete=models.RESTRICT, null=True)
     mensagem = models.CharField(max_length=50, blank=True)

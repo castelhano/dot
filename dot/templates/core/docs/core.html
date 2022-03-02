@@ -52,7 +52,7 @@
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-book"></i></a></li>
-      <li class="nav-item"><a class="nav-link pointer disabled" id="search" data-bs-toggle="modal" data-bs-target="#search_modal" onclick="setTimeout(function(){document.getElementById('id_pesquisa').focus();},480);" title="CTRL + /"><i class="fas fa-search"></i></a></li>
+      <li class="nav-item"><a class="nav-link pointer disabled" id="search"><i class="fas fa-search"></i></a></li>
     </ul>
   </div>
   <div class="card-body tab-content">
@@ -186,8 +186,8 @@
 <script>
   {% block add_script %}
   function goTo(id){document.getElementById(id).scrollIntoView();}
-  function search(){document.getElementById('main_search').select();}
-  function find(){let target = document.getElementById('main_search').value;}
+  // function search(){document.getElementById('main_search').select();}
+  // function find(){let target = document.getElementById('main_search').value;}
   
   window.addEventListener('scroll', function() {
     if(window.scrollY > 399) {document.getElementById('link_start_page').style.opacity = '1';}

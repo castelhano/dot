@@ -115,13 +115,10 @@
   SHORTCUT_MAP['pFTF'] = '#widget_acidente_capa';
   
   function eventLocalHandler(e){
-    {% include '_component/menu/global_handler.js' %}
-    else{
-      let extras = false;
-      try{extras = document.getElementById('acidente_extra_options').classList.contains('show') ? true : false;}catch(err){}
-      if(extras && e.key.toLowerCase() == 'f')try{e.preventDefault();document.getElementById('extras_link_fotos').click();}catch(err){}
-      else if(extras && e.key.toLowerCase() == 't')try{e.preventDefault();document.getElementById('extras_link_terceiros').click();}catch(err){}
-    }
+    let extras = false;
+    try{extras = document.getElementById('acidente_extra_options').classList.contains('show') ? true : false;}catch(err){}
+    if(extras && e.key.toLowerCase() == 'f')try{e.preventDefault();document.getElementById('extras_link_fotos').click();}catch(err){}
+    else if(extras && e.key.toLowerCase() == 't')try{e.preventDefault();document.getElementById('extras_link_terceiros').click();}catch(err){}
   }
   
   {% endblock %}

@@ -524,6 +524,7 @@ def dependente_delete(request,id):
         l = Log()
         l.modelo = "pessoal.dependente"
         l.objeto_id = registro.id
+        l.objeto_related = registro.funcionario.id
         l.objeto_str = registro.nome[0:48]
         l.usuario = request.user
         l.mensagem = "DELETE"

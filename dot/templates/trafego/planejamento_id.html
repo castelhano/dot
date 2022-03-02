@@ -9,6 +9,15 @@
 <div class="row mt-2">
   <div class="col-lg-3 order-2 order-lg-1">
     <div id="patamares_container" class="collapse show">
+      <table class="table table-sm table-bordered text-center fs-7 mb-1" style="table-layout: fixed;">
+        <tr class="table-light">
+          <td id="patamar_add_inicio" contenteditable="true">0</td>
+          <td id="patamar_add_fim" contenteditable="true">23</td>
+          <td id="patamar_add_ida" contenteditable="true"></td>
+          <td id="patamar_add_volta" contenteditable="true"></td>
+          <td colspan="2"><i class="fas fa-plus text-success fs-6 pointer" title="Adicionar Patamar"></i> <i class="fas fa-eraser fs-6 text-danger ms-2 pointer" title="Limpar Patamares"></i> <i class="fas fa-download text-primary fs-6 ms-2 pointer" title="Carregar patamares da linha"></i></td>
+        </tr>
+      </table>
       <table class="table table-sm table-hover table-striped table-bordered text-center fs-7 mb-2" style="table-layout: fixed;">
         <thead>
           <tr>
@@ -42,7 +51,7 @@
             <th>1a Viagem Volta</th>
           </tr>  
         </thead>
-        <tbody id="patamares_tbody">
+        <tbody>
           <tr>
             <td><input type="time" class="form-control text-center" name="primeira_viagem_ida" id="id_primeira_viagem_ida" value="04:50"></td>
             <td><input type="time" class="form-control text-center" name="primeira_viagem_volta" id="id_primeira_viagem_volta" value=""></td>
@@ -69,11 +78,11 @@
   <div class="col-lg order-1 order-lg-2">
     <div class="">
       <div class="btn-group">
-        <a class="btn btn-sm btn-secondary" data-bs-toggle="collapse" href="#patamares_container"><i class="fas fa-arrow-left rotate-lg--90"></i></a>
+        <a id="display_patamares_link" class="btn btn-sm btn-secondary" data-bs-toggle="collapse" href="#patamares_container" title="Alt + H"><i class="fas fa-arrow-left rotate-lg--90"></i></a>
         <a class="btn btn-sm btn-warning" id="clear" href="{% url 'trafego_planejamento_id' planejamento.id|safe %}" title="Limpar [Alt + L]"><i class="fas fa-sync-alt"></i></a>
       </div>
       <div class="btn-group">
-        <a class="btn btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#planejamento_modal" href="#"><i class="fas fa-sliders-h"></i></a>
+        <a id="planejamento_config" class="btn btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#planejamento_modal" href="#" title="Alt + ENTER"><i class="fas fa-sliders-h"></i></a>
         <a class="btn btn-sm btn-success pointer" onclick="document.getElementById('submit_form_button').click()"><i class="fas fa-save me-1"></i> Salvar</a>
       </div>
       <div class="btn-group">
@@ -127,18 +136,9 @@
   
   {% include 'trafego/_script_planejamento.js' %}
   
-  /*
-  * Descreva o contexto do codigo em poucas linhas
-  *
-  * @version  1.0
-  * @since    05/03/2022
-  * @desc     Decricao abreviada do codigo
-  * @param    {Int} Parametro do codigo
-  * @returns  {Array} Retorno da funcao
-  * @throws   Excessoes lancadas pela funcao
-  * @example  Exemplo de utilizacao da funcao
-  * @see      {@link https://foo.com}
-  */
+  SHORTCUT_MAP['enterTFF'] = '#planejamento_config';
+  SHORTCUT_MAP['hTFF'] = '#display_patamares_link';
+  
   function gerarFrequencia(){
     let tbody = document.getElementById('horarios_corridos_tbody');
     let inicioIda = document.getElementById('id_primeira_viagem_ida').value;

@@ -42,6 +42,8 @@
   <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/dot.css' %}" type="text/css">
   
+  <script src="{% static 'js/_basicListener.js' %}"></script>
+  
   <title>{% block title %}Editor{% endblock %}</title>
 </head>
 <body>
@@ -101,7 +103,6 @@
   {% endif %}
   
   <script src="{% static 'js/vendor/bootstrap.bundle.min.js' %}"></script>
-  <script src="{% static 'js/_basicListener.js' %}"></script>
   {% block add_script_src %}{% endblock %}
   <script>
   {% block add_script %}{% endblock %}

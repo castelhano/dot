@@ -122,9 +122,9 @@
               {% for terceiro in acidente.terceiros %}
               <tr>
                 <td><h6>{{terceiro.nome}}</h6><span class="text-muted fs-7">Pasta: <b>{{acidente.pasta}}</b> - {{terceiro.acidente.data|date:"d M y"}} - <b>{{terceiro.veiculo}}</b></span></td>
-                <td><h6>{{terceiro.acordo}}</h6></td>
-                <td><h6>{{terceiro.despesas}}</h6></td>
-                <td><h6>{{terceiro.despesas|add:terceiro.acordo}}</h6></td>
+                <td><h6>{{terceiro.acordo|floatformat:2}}</h6></td>
+                <td><h6>{{terceiro.despesas|floatformat:2}}</h6></td>
+                <td><h6>{{terceiro.despesas|add:terceiro.acordo|floatformat:2}}</h6></td>
               </tr>
               {% endfor %}
               {% endfor %}

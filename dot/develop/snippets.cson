@@ -481,7 +481,7 @@
 '.source.python':
   'Dome Log':
     'prefix': 'log'
-    'body':'l = Log()\nl.modelo = "app.modelo"\nl.objeto_id = registro.id\nl.objeto_str = registro.nome[0:48]\nl.usuario = request.user\nl.mensagem = "mensagem para o log"[0:98]\nl.save()'
+    'body':'l = Log()\nl.modelo = "app.modelo"\nl.objeto_id = registro.id\n# l.objeto_related = registro.related.id\nl.objeto_str = registro.nome[0:48]\nl.usuario = request.user\nl.mensagem = "mensagem para o log"[0:98]\nl.save()'
   
   'Doc PY':
     'prefix': 'doc'
