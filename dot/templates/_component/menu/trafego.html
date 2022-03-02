@@ -18,11 +18,10 @@
 </li>
 {% endif %}
 <script>
-  var SHORTCUT_MAP = {
-    'cTFF':'#menu_cadastro',
-    'oTFF':'#menu_ocorrencias',
-    'pTFF':'#menu_planejamento',
-  };
+  SHORTCUT_MAP['cTFF'] = '#menu_cadastro';
+  SHORTCUT_MAP['oTFF'] = '#menu_ocorrencias';
+  SHORTCUT_MAP['pTFF'] = '#menu_planejamento';
+  
   if(document.getElementById('cadastro_list_options').childElementCount == 0){document.getElementById('cadastro_list_container').classList.add('d-none');}
   function eventHandler(e){
     {% include '_component/menu/global_handler.js' %}

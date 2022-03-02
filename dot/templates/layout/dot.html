@@ -18,6 +18,7 @@
   @media(min-width: 992px){.navbar-dot{height: 45px;}}
   {% block style %}{% endblock %}
   </style>
+  <script src="{% static 'js/_basicListener.js' %}"></script>
   
   <title>{% block title %}SIT{% endblock %}</title>
 </head>
@@ -143,7 +144,6 @@
   </div>
   
   <script src="{% static 'js/vendor/bootstrap.bundle.min.js' %}"></script>
-  <script src="{% static 'js/_basicListener.js' %}"></script>
   <script src="{% static 'js/dot.js' %}"></script>
   {% block add_script_src %}{% endblock %}
   <script>

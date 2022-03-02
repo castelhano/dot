@@ -27,7 +27,7 @@
     \t\t\t<li class="nav-item dropdown ms-auto">\n
     \t\t\t\t<a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>\n
     \t\t\t\t<ul class="dropdown-menu">\n
-    \t\t\t\t\t<li><a class="dropdown-item pointer" id="download" onclick="download_table_as_csv(\'main_table\',\';\')" title="ALT + D">Exportar CSV</a></li>\n
+    \t\t\t\t\t<li><a class="dropdown-item pointer" id="download" onclick="download_table_as_csv(\'main_table\',\';\')" title="ALT + &darr;">Exportar CSV</a></li>\n
     \t\t\t\t\t{% if perms.core.view_log %}\n
     \t\t\t\t\t<li><a class="dropdown-item pointer" href="{% url \'logs\' %}?target_model=app.modelo&mensagem=DELETE" target="_blank">Log de Exclusões</a></li>\n
     \t\t\t\t\t{% endif %}\n
@@ -90,7 +90,7 @@
     {% endblock%}\n\n
 
     {% block add_script_src %}\n
-    <script src="{% static \'js/table_extra.js\' %}"></script>\n
+    <script src="{% static \'js/table_to_csv.js\' %}"></script>\n
     {% endblock %}'
 
   'Template Add Form':
@@ -371,7 +371,7 @@
   
   'Include Table to CSV':
     'prefix': 'table_csv'
-    'body':'<script src="{% static \'js/table_extra.js\' %}"></script>'
+    'body':'<script src="{% static \'js/table_to_csv.js\' %}"></script>'
   
   'Include Masker JS':
     'prefix': 'mask_include'
@@ -421,7 +421,7 @@
   
   'Chart JS include':
     'prefix': 'chart_include'
-    'body':'<script src="{% static \'js/vendor/chart.min.js\' %}"></script>'
+    'body':'<script src="{% static \'js/vendor/Chart.min.js\' %}"></script>'
   
   'Chart JS body':
     'prefix': 'chart_body'
@@ -467,9 +467,22 @@
 ####################
 # FIM SNIPPETS HTML
 
+'.source.js':
+  'Doc JS':
+    'prefix': 'doc'
+    'body':'/*\n* Descreva o contexto do codigo em poucas linhas\n*\n* @version  1.0\n* @since    05/03/2022\n* @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }\n* @desc     Decricao abreviada do codigo\n* @param    {Int} Parametro do codigo\n* @returns  {Array} Retorno da funcao\n* @throws   Excessoes lancadas pela funcao\n* @example  Exemplo de utilizacao da funcao\n* @see      {@link https://foo.com}\n*/'
+
+'.source.css':
+  'Doc CSS':
+    'prefix': 'doc'
+    'body':'/*\n* Descreva o contexto do codigo em poucas linhas\n*\n* @version  1.0\n* @since    05/03/2022\n* @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }\n* @desc     Decricao abreviada do codigo\n* @param    {Int} Parametro do codigo\n* @returns  {Array} Retorno da funcao\n* @throws   Excessoes lancadas pela funcao\n* @example  Exemplo de utilizacao da funcao\n* @see      {@link https://foo.com}\n*/'
 
 # SNIPPETS PYTHON .py
 '.source.python':
   'Dome Log':
     'prefix': 'log'
     'body':'l = Log()\nl.modelo = "app.modelo"\nl.objeto_id = registro.id\nl.objeto_str = registro.nome[0:48]\nl.usuario = request.user\nl.mensagem = "mensagem para o log"[0:98]\nl.save()'
+  
+  'Doc PY':
+    'prefix': 'doc'
+    'body':'# Descreva o contexto do codigo em poucas linhas\n# --\n# @version  1.0\n# @since    05/03/2022\n# @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }\n# @desc     Decricao abreviada do codigo\n# @param    {Int} Parametro do codigo\n# @returns  {Array} Retorno da funcao\n# @throws   Excessoes lancadas pela funcao\n# @example  Exemplo de utilizacao da funcao\n# @see      {@link https://foo.com}\n'
