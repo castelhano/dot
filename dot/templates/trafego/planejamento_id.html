@@ -27,9 +27,9 @@
             <td class="table-secondary">{{patamar.inicial}}</td>
             <td class="table-secondary">{{patamar.final}}</td>
             <td id="{{forloop.counter0}}_2" contenteditable="true" oninput="setPatamar(this.id, this.innerHTML)">{{patamar.ida}}</td>
-            <td id="{{forloop.counter0}}_3" contenteditable="true">{{patamar.volta}}</td>
-            <td id="{{forloop.counter0}}_4" contenteditable="true"></td>
-            <td id="{{forloop.counter0}}_5" contenteditable="true"></td>
+            <td id="{{forloop.counter0}}_3" contenteditable="true" oninput="setPatamar(this.id, this.innerHTML)">{{patamar.volta}}</td>
+            <td id="{{forloop.counter0}}_4" contenteditable="true" oninput="setPatamar(this.id, this.innerHTML)"></td>
+            <td id="{{forloop.counter0}}_5" class="table-warning text-truncate"></td>
           </tr>
           {% endfor %}
           {% endif %}
@@ -67,16 +67,21 @@
     
   </div>
   <div class="col-lg order-1 order-lg-2">
-    <div class="btn-group">
-      <a class="btn btn-sm btn-secondary" data-bs-toggle="collapse" href="#patamares_container"><i class="fas fa-arrow-left rotate-lg--90"></i></a>
-      <a class="btn btn-sm btn-warning" id="clear" href="{% url 'trafego_planejamento_id' planejamento.id|safe %}" title="Limpar [Alt + L]"><i class="fas fa-sync-alt"></i></a>
-    </div>
-    <div class="btn-group">
-      <a class="btn btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#planejamento_modal" href="#"><i class="fas fa-sliders-h"></i></a>
-      <a class="btn btn-sm btn-success pointer" onclick="document.getElementById('submit_form_button').click()"><i class="fas fa-save me-1"></i> Salvar</a>
-    </div>
-    <div class="btn-group">
-      <a class="btn btn-sm btn-warning pointer" onclick="gerarFrequencia()"><i class="fas fa-code me-1"></i> Gerar</a>
+    <div class="">
+      <div class="btn-group">
+        <a class="btn btn-sm btn-secondary" data-bs-toggle="collapse" href="#patamares_container"><i class="fas fa-arrow-left rotate-lg--90"></i></a>
+        <a class="btn btn-sm btn-warning" id="clear" href="{% url 'trafego_planejamento_id' planejamento.id|safe %}" title="Limpar [Alt + L]"><i class="fas fa-sync-alt"></i></a>
+      </div>
+      <div class="btn-group">
+        <a class="btn btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#planejamento_modal" href="#"><i class="fas fa-sliders-h"></i></a>
+        <a class="btn btn-sm btn-success pointer" onclick="document.getElementById('submit_form_button').click()"><i class="fas fa-save me-1"></i> Salvar</a>
+      </div>
+      <div class="btn-group">
+        <a class="btn btn-sm btn-warning pointer" onclick="gerarFrequencia()"><i class="fas fa-code me-1"></i> Gerar</a>
+      </div>
+      <div class="btn-group float-end">
+        <a class="btn btn-sm btn-secondary" id="back" href="{% url 'trafego_planejamentos' %}">Fechar</a>
+      </div>
     </div>
     <div class="row">
       <div class="col mt-2">
@@ -140,11 +145,11 @@
       viagem ++;
       
       while(faixa > 0 && !stop){
-      
-      tbody.innerHTML += `<tr><td></td><td>${proxima_ida}</td><td>${horaAdd(proxima_ida, getPatamar(getFaixa(proxima_ida))[0])}</td><td></td><td></td></tr>`;
-      if(viagens > 5){stop = true;}
+        
+        tbody.innerHTML += `<tr><td></td><td>${proxima_ida}</td><td>${horaAdd(proxima_ida, getPatamar(getFaixa(proxima_ida))[0])}</td><td></td><td></td></tr>`;
+        if(viagens > 5){stop = true;}
       }
-    
+      
     }
     else{dotAlert('warning', 'Faixa com <b>frequência zerada</b>')}
     
