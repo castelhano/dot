@@ -5,17 +5,28 @@
 {% block navbar_classlist %}navbar-dark bg-primary bg-gradient{% endblock %}
 {% block model_menu %}{% include "_component/menu/trafego.html" %}{% endblock%}
 
+  
+<style media="screen">
+{% block style %}
+.cell-hover{
+  cursor: pointer;
+}
+{% endblock%}
+</style>
+
 {% block content_fluid %}
 <div class="row mt-2">
   <div class="col-lg-3 order-2 order-lg-1">
     <div id="patamares_container" class="collapse show">
       <table class="table table-sm table-bordered text-center fs-7 mb-1" style="table-layout: fixed;">
         <tr class="table-light">
-          <td id="patamar_add_inicio" contenteditable="true">0</td>
-          <td id="patamar_add_fim" contenteditable="true">23</td>
+          <td id="patamar_add_inicio" contenteditable="true"></td>
+          <td id="patamar_add_fim" contenteditable="true"></td>
           <td id="patamar_add_ida" contenteditable="true"></td>
           <td id="patamar_add_volta" contenteditable="true"></td>
-          <td colspan="2"><i class="fas fa-plus text-success fs-6 pointer" title="Adicionar Patamar"></i> <i class="fas fa-eraser fs-6 text-danger ms-2 pointer" title="Limpar Patamares"></i> <i class="fas fa-download text-primary fs-6 ms-2 pointer" title="Carregar patamares da linha"></i></td>
+          <td class="cell-hover bg-success text-light opacity-75" onclick="patamarAdd();" title="Adicionar Patamar"><i class="fas fa-plus fs-6"></i></td>
+          <td class="cell-hover bg-primary text-light opacity-75" onclick="" title="Carregar patamares da linha"><i class="fas fa-download fs-6"></i></td>
+          <!-- <td colspan="2"><i class="fas fa-plus text-success fs-6 pointer" onclick="patamarAdd();" title="Adicionar Patamar"></i><i class="fas fa-download text-primary fs-6 ms-2 pointer" title="Carregar patamares da linha"></i></td> -->
         </tr>
       </table>
       <table class="table table-sm table-hover table-striped table-bordered text-center fs-7 mb-2" style="table-layout: fixed;">

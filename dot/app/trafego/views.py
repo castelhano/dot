@@ -467,7 +467,7 @@ def patamar_update(request):
 def patamar_tratar_conflitos(patamar, patamares):
     try:
         for c in patamares:
-            changed= False
+            changed = False
             if c.inicial >= patamar.inicial and c.inicial <= patamar.final: # TRATA CONFLITO NO PERIODO INCIAL
                 c.inicial = patamar.final + 1
                 changed = True
