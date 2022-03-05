@@ -4,7 +4,6 @@ var patamares = [], frequencia = [], carros = [];
 function buildPatamares(){
   let tbody = document.getElementById('patamares_tbody');  
   tbody.innerHTML = '';
-  console.log(patamares.length);
   for(i=0;i < patamares.length;i++){
     tbody.innerHTML += `<tr><td class="table-secondary">${patamares[i][0]}</td><td class="table-secondary">${patamares[i][1]}</td><td id="${i}_2" contenteditable="true" oninput="setPatamar(this.id, this.innerHTML)">${patamares[i][2]}</td><td id="${i}_3" contenteditable="true" oninput="setPatamar(this.id, this.innerHTML)">${patamares[i][3]}</td><td id="${i}_4" contenteditable="true" oninput="setPatamar(this.id, this.innerHTML)">${patamares[i][4]}</td><td id="${i}_5" class="table-warning text-truncate">${patamares[i][5]}</td></tr>`;
   }
@@ -39,22 +38,29 @@ function patamarCleanForm(){document.getElementById('patamar_add_inicio').innerH
 function patamarUpdate(inicio, fim, ida, volta){
   inicio = parseInt(inicio);fim = parseInt(fim);ida = parseInt(ida);volta = parseInt(volta);
   if(!Number.isInteger(inicio) || !Number.isInteger(fim) || !Number.isInteger(ida) || !Number.isInteger(volta) || inicio < 0 || fim > 23){dotAlert('warning', 'Valores <b>inválidos</b>')}
-  else{    
+  else{
+    let pool = [];
     for(i = 0; i < patamares.length; i++){
       let changed = false;
       if(patamares[i][0] >= inicio && patamares[i][0] <= fim){patamares[i][0] = fim + 1;changed = true;}
       if(patamares[i][1] >= inicio && patamares[i][1] <= fim){patamares[i][1] = inicio - 1;changed = true;}
-      if(patamares[i][0] <= inicio && patamares[i][1] >= fim){patamares.push([fim + 1, patamares[i][1], patamares[i][2], patamares[i][3], 0, 0]);changed = true;patamares[i][1] = inicio - 1;}
+      if(patamares[i][0] <= inicio && patamares[i][1] >= fim){
+        if(patamares[i][0] > patamares[i][1] || (patamares[i][0] < 0 || patamares[i][1] < 0) || (patamares[i][0] > 23 || patamares[i][1] > 23)){}
+        else{pool.push([fim + 1, patamares[i][1], patamares[i][2], patamares[i][3], 0, 0]);changed = true;}
+        patamares[i][1] = inicio - 1;
+      }
       
       if(changed){
         let has_errors = false;
         if(patamares[i][0] > patamares[i][1]){has_errors=true;};
         if(patamares[i][0] < 0 || patamares[i][1] < 0){has_errors=true;};
         if(patamares[i][0] > 23 || patamares[i][1] > 23){has_errors=true;};
-        if(has_errors){delete patamares[i];}
+        if(!has_errors){pool.push(patamares[i]);}
       }
+      else{pool.push(patamares[i]);}
     }
-    // patamares.push([inicio, fim, ida, volta,0,0]);
+    pool.push([inicio, fim, ida, volta,0,0]);
+    patamares = pool;
     patamares.sort(sortPatamares);
     buildPatamares();
   }

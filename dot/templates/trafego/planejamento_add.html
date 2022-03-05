@@ -20,7 +20,7 @@
       <h5 class="card-title mb-3">Novo Planejamento</h5>
       <div class="tab-pane fade show active" id="base" role="tabpanel">
         <div class="row g-1">
-          <div class="col-lg-4">{% include "_component/field/empresa.html" with empresa_atual=planejamento.empresa.id|safe attrs='autofocus' %}</div>
+          <div class="col-lg-4">{% include "_component/field/empresa.html" with empresa_atual=planejamento.empresa.id|safe attrs='onchange="cleanLinha()" autofocus' %}</div>
           <div class="form-floating mb-1 col-lg-2">
         		{{ form.dia_tipo }}
         		<label for="id_dia_tipo">Tipo dia</label>

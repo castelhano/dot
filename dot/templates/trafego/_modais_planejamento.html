@@ -9,7 +9,7 @@
         <form id="planejamento_form" action="{% url 'trafego_planejamento_update' planejamento.id|safe %}" method="POST" autocomplete="off" onsubmit="return submitForm()">
           {% csrf_token %}
         <div class="row g-1">
-          <div class="col-lg-8">{% include "_component/field/empresa.html" with empresa_atual=planejamento.empresa.id|safe attrs='autofocus' %}</div>
+          <div class="col-lg-8">{% include "_component/field/empresa.html" with empresa_atual=planejamento.empresa.id|safe attrs='onchange="cleanLinha()" autofocus' %}</div>
           <div class="form-floating mb-1 col-lg-4">
         		{{ form.dia_tipo }}
         		<label for="id_dia_tipo">Tipo dia</label>
