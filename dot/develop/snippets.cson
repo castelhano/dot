@@ -90,7 +90,7 @@
     {% endblock%}\n\n
 
     {% block add_script_src %}\n
-    <script src="{% static \'js/table_to_csv.js\' %}"></script>\n
+    <script src="{% static \'js/table_extra.js\' %}"></script>\n
     {% endblock %}'
 
   'Template Add Form':
@@ -371,7 +371,7 @@
   
   'Include Table to CSV':
     'prefix': 'table_csv'
-    'body':'<script src="{% static \'js/table_to_csv.js\' %}"></script>'
+    'body':'<script src="{% static \'js/table_extra.js\' %}"></script>'
   
   'Include Masker JS':
     'prefix': 'mask_include'

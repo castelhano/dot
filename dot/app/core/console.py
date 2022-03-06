@@ -33,11 +33,10 @@ def runScript(request, attrs):
         code = re.search(':code=([^\s]+)', attrs).group(1)
         response = f'<span><b class="text-orange">Alert:</b> Code <b>{code}</b> not configured</span>'
         if code == '666':
-            from pessoal.models import Funcionario
-            func = Funcionario.objects.get(matricula='10120')
-            func.status = 'A'
-            func.save()
-            response = f'<span><b class="text-success">Done:</b></span>'
+            from globus.models import Escala, Viagem
+            Escala.objects.all().delete()
+            Viagem.objects.all().delete()
+            response = f'<span><b class="text-danger">PURGE</b> tables</span>'
     return response
 
 def alertaClean(request, attrs):

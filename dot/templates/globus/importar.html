@@ -1,0 +1,74 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Escalas - Globus{% endblock %}
+{% block model %}Globus{% endblock %}
+{% block navbar_classlist %}navbar-dark bg-orange bg-gradient{% endblock %}
+{% block model_menu %}{% include "_component/menu/visitor.html" %}{% endblock%}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'globus_escala_importar' %}"></a>
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active disabled" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'globus_escalas' %}"><i class="fas fa-undo"></i></a></li>
+    </ul>
+  </div>
+  <form id="app_form" action="{% url 'globus_escala_importar' %}" method="POST" autocomplete="off" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="card-body tab-content">
+      <h5 class="card-title mb-3">Importar Escala Globus</h5>
+      <div class="tab-pane fade show active" id="base" role="tabpanel">
+        <div class="row">
+          <div class="col-lg-5">
+            {% include "_component/field/empresa.html" with attrs='autofocus' %}
+            <div class="row g-1">
+              <div class="mb-1 col-12">
+                <input type="file" class="form-control" name="arquivo" id="id_arquivo" accept=".txt , .csv" required>
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col">
+                <button type="submit" id="importar" class="btn btn-primary">Importar</button>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg">
+            {% if erros %}
+            <table class="table table-sm border caption-top table-striped table-hover">
+              <caption class="text-end"><span id="download" class="text-purple pointer" onclick="download_table_as_csv('main_table',';')" title="ALT + D"></span></caption>
+              <thead>
+                <tr>
+                  <th>Mensagem de erro</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for erro in erros %}
+                <tr><td>{{erro}}</td></tr>
+                {% endfor %}
+              </tbody>                  
+            </table>
+            <table class="d-none" id="main_table">
+              {% for row in row_erros %}
+              <tr>
+                <td>{{row}}</td>
+              </tr>
+              {% endfor %}
+            </table>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/table_extra.js' %}"></script>
+{% endblock %}
+
+<script>
+  {% block add_script %}{% endblock %}
+</script>
