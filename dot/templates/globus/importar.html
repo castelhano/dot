@@ -21,19 +21,19 @@
       <div class="tab-pane fade show active" id="base" role="tabpanel">
         <div class="row">
           <div class="col-lg-5">
-            {% include "_component/field/empresa.html" with attrs='autofocus' %}
+            {% include "_component/field/empresa.html" with empresa_atual=empresa|safe attrs='autofocus' %}
             <div class="row g-1">
               <div class="mb-1 col-12">
-                <input type="file" class="form-control" name="arquivo" id="id_arquivo" accept=".txt , .csv">
+                <input type="file" class="form-control" name="arquivo" id="id_arquivo" accept=".txt , .csv" onchange="fileChanged()">
               </div>
             </div>
-            <input type="hidden" name="validado" value="{{validado}}">
+            <input type="hidden" name="validado" id="id_validado" value="{{validado}}">
             <input type="hidden" name="simular" id="id_simular" value="True">
             <input type="hidden" name="dados_validados" id="id_dados_validados" value="{{dados_validados}}">
             <div class="row mt-3">
               <div class="col">
                 <button type="submit" id="validar" class="btn btn-secondary">Validar Arquivo</button>
-                <button type="submit" id="importar" class="btn btn-primary"{% if not validado %}disabled{% endif %} onclick="console.log('FOOO')">Importar</button>
+                <button type="submit" id="importar" class="btn btn-primary"{% if not validado %} disabled{% endif %} onclick="document.getElementById('id_simular').value = 'False'">Importar</button>
               </div>
             </div>
           </div>
@@ -82,5 +82,13 @@
   {% block add_script %}
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
   function submitForm(){modal_loading.show();return true;}
+  
+  function fileChanged(){
+    document.getElementById('id_validado').value = 'False';
+    document.getElementById('id_simular').value = 'True';
+    document.getElementById('importar').disabled = 'True';
+    document.getElementById('id_dados_validados').value = '';    
+  }
+  
   {% endblock %}
 </script>

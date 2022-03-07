@@ -54,19 +54,21 @@ def escala_add(request):
 @login_required
 @permission_required('globus.importar_escala')
 def escala_importar(request):
-    erros = []
-    row_erros = []
-    viagens_importadas = 0
-    validado = False
-    dados_validados = []
     if request.method == 'POST':
+        erros = []
+        row_erros = []
+        viagens_importadas = 0
+        validado = False
+        dados_validados = []
         simular = True if request.POST['simular'] == 'True' else False
-        if request.POST['dados_validados'] != '[]':
+        if request.POST['dados_validados'] != '':
             arquivo = json.loads(request.POST['dados_validados'])
-            print('DADOS VALIDADOS')
         else:
-            print('FILE')
-            arquivo = csv.reader(request.FILES['arquivo'].read().decode('utf8').splitlines(), delimiter=';')
+            try:
+                arquivo = csv.reader(request.FILES['arquivo'].read().decode('utf8').splitlines(), delimiter=';')
+            except:
+                messages.error(request,'Arquivo <b>inválido</b>')
+                return redirect('globus_escala_importar')
         try:
             empresa = Empresa.objects.get(id=request.POST['empresa'])
         except:
@@ -74,6 +76,7 @@ def escala_importar(request):
             return redirect('globus_escala_importar')
         ultima_escala = Escala()
         ultima_escala_termino = ''
+        escalas_analisadas = [] # Ao importar escala, apaga antigas importacoes (caso existirem)
         for row in arquivo:
             error_stat = False
             try:
@@ -113,13 +116,18 @@ def escala_importar(request):
                     escala.tabela = row[4]
                     escala.data = datetime.strptime(row[21], "%d/%m/%Y").strftime("%Y-%m-%d") if row[21] != '' else None
                     escala.local_pegada = row[5]
+                    # Verifica a primeira vez que aparece uma linha se existe escala anterior importada, se sim apaga registros
+                    if escala.linha and Escala.objects.filter(linha=escala.linha, data=escala.data).exists() and not f'{row[0]}_{row[21]}' in escalas_analisadas:
+                        Escala.objects.filter(linha=escala.linha, data=escala.data).delete()
+                    if not f'{row[0]}_{row[21]}' in escalas_analisadas:
+                        escalas_analisadas.append(f'{row[0]}_{row[21]}')
                     escala.save()
                     ultima_escala = escala
                     ultima_escala_termino = escala.termino
                     fields['escala'] = escala            
             if not error_stat: # Caso nao tenha erros, insere a viagem
                 if simular:
-                    dados_validados.append(str(row).replace(', ',';').replace('\'','').replace('[','').replace(']',''))
+                    dados_validados.append(row)
                 else:
                     fields['origem'] = row[5]
                     fields['destino'] = row[6]
@@ -133,6 +141,11 @@ def escala_importar(request):
                     viagens_importadas += 1
             else:
                 row_erros.append(str(row).replace(', ',';').replace('\'','').replace('[','').replace(']',''))
+        # Ao termino do for necessario ajustar o termino da ultima escala baseado na ultima linha do arquivo
+        if ultima_escala.id:
+            ultima_escala.termino = ultima_escala_termino
+            ultima_escala.save()
+        
         erros = list(dict.fromkeys(erros))  # Remove duplicatas
         erros.sort()                        # Ordena array
         if len(erros) > 0:
@@ -146,7 +159,9 @@ def escala_importar(request):
                 validado = True
             else:
                 messages.success(request,f'Importado com sucesso, total de <b>{viagens_importadas}</b> registros')
-    return render(request, 'globus/importar.html',{'erros':erros,'row_erros':row_erros, 'validado':validado, 'dados_validados':dados_validados})    
+        return render(request, 'globus/importar.html',{'erros':erros,'row_erros':row_erros, 'validado':validado, 'dados_validados':json.dumps(dados_validados),'empresa':empresa.id})    
+    else:
+        return render(request, 'globus/importar.html')
 
 
 # METODOS GET
