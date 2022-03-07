@@ -1,4 +1,5 @@
 import csv
+import json
 from django.shortcuts import render, redirect
 from .models import Escala, Viagem
 from trafego.models import Linha
@@ -55,10 +56,17 @@ def escala_add(request):
 def escala_importar(request):
     erros = []
     row_erros = []
-    error_message = ''
-    error_stat = False
+    viagens_importadas = 0
+    validado = False
+    dados_validados = []
     if request.method == 'POST':
-        arquivo = csv.reader(request.FILES['arquivo'].read().decode('utf8').splitlines(), delimiter=';')
+        simular = True if request.POST['simular'] == 'True' else False
+        if request.POST['dados_validados'] != '[]':
+            arquivo = json.loads(request.POST['dados_validados'])
+            print('DADOS VALIDADOS')
+        else:
+            print('FILE')
+            arquivo = csv.reader(request.FILES['arquivo'].read().decode('utf8').splitlines(), delimiter=';')
         try:
             empresa = Empresa.objects.get(id=request.POST['empresa'])
         except:
@@ -67,6 +75,7 @@ def escala_importar(request):
         ultima_escala = Escala()
         ultima_escala_termino = ''
         for row in arquivo:
+            error_stat = False
             try:
                 ultima_stamp = f'{ultima_escala.linha}_{ultima_escala.tabela}_{ultima_escala.data}'
                 row_stamp = f'{row[0]}_{row[4]}_{datetime.strptime(row[21],"%d/%m/%Y").strftime("%Y-%m-%d")}'
@@ -85,19 +94,19 @@ def escala_importar(request):
                 try:
                     escala.linha = Linha.objects.get(codigo=row[0], empresa=empresa, status='A') if row[0] != '' else None
                 except:
-                    error_message = f'Linha {row[0]} não habilitada para empresa {empresa.nome}'
+                    erros.append(f'Linha {row[0]} não habilitada para empresa {empresa.nome}')
                     error_stat = True
                 try:
-                    escala.funcionario = Funcionario.objects.get(matricula=(row[23].lstrip('0'))) if row[23] != '' else None
+                    escala.funcionario = Funcionario.objects.get(matricula=(row[23].lstrip('0')), empresa=empresa, status='A') if row[23] != '' else None
                 except:
-                    error_message = 'Matricula ' + row[23] + ' não cadastrada'
+                    erros.append(f'Matricula {row[23]} não habilitada para empresa {empresa.nome}')
                     error_stat = True
                 try:
-                    escala.veiculo = Frota.objects.get(prefixo=row[22].lstrip('0')) if row[22] != '' else None
+                    escala.veiculo = Frota.objects.get(prefixo=row[22].lstrip('0'), empresa=empresa, status='A') if row[22] != '' else None
                 except:
-                    error_message = 'Veiculo ' + row[22] + ' não cadastrado'
+                    erros.append(f'Veiculo {row[22]} não habilitado para empresa {empresa.nome}')
                     error_stat = True
-                if not error_stat: # Caso nao tenha erros, cria a escala 
+                if not error_stat and not simular: # Caso nao tenha erros, cria a escala 
                     escala.inicio = f'{row[17][0:2]}:{row[17][-2:]}' if row[17] != '' else f'{row[11][0:2]}:{row[11][-2:]}'
                     escala.termino = f'{row[12][0:2]}:{row[12][-2:]}'
                     escala.nome_escala = row[2]
@@ -109,23 +118,35 @@ def escala_importar(request):
                     ultima_escala_termino = escala.termino
                     fields['escala'] = escala            
             if not error_stat: # Caso nao tenha erros, insere a viagem
-                fields['origem'] = row[5]
-                fields['destino'] = row[6]
-                fields['produtiva'] = True if row[9] == '1' else False
-                fields['sentido'] = row[10]
-                fields['inicio'] = f'{row[11][0:2]}:{row[11][-2:]}'
-                fields['termino'] = f'{row[12][0:2]}:{row[12][-2:]}'
-                ultima_escala_termino = fields['termino']
-                fields['extra'] = False
-                Viagem.objects.create(**fields)
-            else:            
-                erros.append(error_message)
+                if simular:
+                    dados_validados.append(str(row).replace(', ',';').replace('\'','').replace('[','').replace(']',''))
+                else:
+                    fields['origem'] = row[5]
+                    fields['destino'] = row[6]
+                    fields['produtiva'] = True if row[9] == '1' else False
+                    fields['sentido'] = row[10]
+                    fields['inicio'] = f'{row[11][0:2]}:{row[11][-2:]}'
+                    fields['termino'] = f'{row[12][0:2]}:{row[12][-2:]}'
+                    ultima_escala_termino = fields['termino']
+                    fields['extra'] = False
+                    Viagem.objects.create(**fields)
+                    viagens_importadas += 1
+            else:
                 row_erros.append(str(row).replace(', ',';').replace('\'','').replace('[','').replace(']',''))
-        if erros:
-            messages.warning(request,'Importado com erros\n')
-        else:            
-            messages.success(request,'Importado com sucesso')
-    return render(request, 'globus/importar.html',{'erros':erros,'row_erros':row_erros})    
+        erros = list(dict.fromkeys(erros))  # Remove duplicatas
+        erros.sort()                        # Ordena array
+        if len(erros) > 0:
+            if simular:
+                messages.warning(request,f'Identificado <b>{len(erros)}</b> erros\n')
+            else:
+                messages.warning(request,f'<b>{viagens_importadas}</b> Registros importados, <b>{len(row_erros)}</b> descartados por erro\n')
+        else:
+            if simular:
+                messages.success(request,f'Nenhum erro identificado')
+                validado = True
+            else:
+                messages.success(request,f'Importado com sucesso, total de <b>{viagens_importadas}</b> registros')
+    return render(request, 'globus/importar.html',{'erros':erros,'row_erros':row_erros, 'validado':validado, 'dados_validados':dados_validados})    
 
 
 # METODOS GET
