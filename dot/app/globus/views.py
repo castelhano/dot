@@ -56,6 +56,7 @@ def escala_add(request):
 def escala_importar(request):
     if request.method == 'POST':
         erros = []
+        alertas = []
         row_erros = []
         viagens_importadas = 0
         validado = False
@@ -109,12 +110,13 @@ def escala_importar(request):
                 except:
                     erros.append(f'Veiculo {row[22]} não habilitado para empresa {empresa.nome}')
                     error_stat = True
+                
+                escala.data = datetime.strptime(row[21], "%d/%m/%Y").strftime("%Y-%m-%d") if row[21] != '' else None
                 if not error_stat and not simular: # Caso nao tenha erros, cria a escala 
                     escala.inicio = f'{row[17][0:2]}:{row[17][-2:]}' if row[17] != '' else f'{row[11][0:2]}:{row[11][-2:]}'
                     escala.termino = f'{row[12][0:2]}:{row[12][-2:]}'
                     escala.nome_escala = row[2]
                     escala.tabela = row[4]
-                    escala.data = datetime.strptime(row[21], "%d/%m/%Y").strftime("%Y-%m-%d") if row[21] != '' else None
                     escala.local_pegada = row[5]
                     # Verifica a primeira vez que aparece uma linha se existe escala anterior importada, se sim apaga registros
                     if escala.linha and Escala.objects.filter(linha=escala.linha, data=escala.data).exists() and not f'{row[0]}_{row[21]}' in escalas_analisadas:
@@ -124,7 +126,12 @@ def escala_importar(request):
                     escala.save()
                     ultima_escala = escala
                     ultima_escala_termino = escala.termino
-                    fields['escala'] = escala            
+                    fields['escala'] = escala
+                elif simular: # Na simulacao verifica se ja nao existe escala importada para data / linha, se sim gera alerta
+                    if escala.linha and Escala.objects.filter(linha=escala.linha, data=escala.data).exists() and not f'{row[0]}_{row[21]}' in escalas_analisadas:
+                        alertas.append(f'ATENÇÃO: Escala para linha {row[0]} em {row[21]} será sobregravada')
+                    if not f'{row[0]}_{row[21]}' in escalas_analisadas:
+                        escalas_analisadas.append(f'{row[0]}_{row[21]}')
             if not error_stat: # Caso nao tenha erros, insere a viagem
                 if simular:
                     dados_validados.append(row)
@@ -155,11 +162,14 @@ def escala_importar(request):
                 messages.warning(request,f'<b>{viagens_importadas}</b> Registros importados, <b>{len(row_erros)}</b> descartados por erro\n')
         else:
             if simular:
-                messages.success(request,f'Nenhum erro identificado')
+                if len(alertas) > 0:
+                    messages.warning(request,f'Verifique os <b>alertas</b> antes de importar')
+                else:
+                    messages.success(request,f'Nenhum erro identificado')
                 validado = True
             else:
                 messages.success(request,f'Importado com sucesso, total de <b>{viagens_importadas}</b> registros')
-        return render(request, 'globus/importar.html',{'erros':erros,'row_erros':row_erros, 'validado':validado, 'dados_validados':json.dumps(dados_validados),'empresa':empresa.id})    
+        return render(request, 'globus/importar.html',{'erros':erros,'row_erros':row_erros,'alertas':alertas, 'validado':validado, 'dados_validados':json.dumps(dados_validados),'empresa':empresa.id})    
     else:
         return render(request, 'globus/importar.html')
 
