@@ -102,8 +102,11 @@ def console(request):
     if request.method == 'POST':
         from .console import Run
         response = Run(request, request.POST['script'])
-        for r in response:
-            c += f'<p class="m-0 d-flex justify-content-between"><span>{r}</span><span>{h}</span></p>'
+        if type(response) is list:
+            for r in response:
+                c += f'<p class="m-0 d-flex justify-content-between"><span>{r}</span><span>{h}</span></p>'
+        else:
+            return render(request, response['path'], response['data'])
     else:
         c = f'<p class="m-0 d-flex justify-content-between"><span>Console DOT system <b>versão 1.0</b>, powered by <a href="https://ace.c9.io/" target="_blank" class="text-danger fw-bold text-decoration-none">Ace Editor&trade;</a></span><span>{h}</span></p>'
     return render(request,'core/console.html',{'console':c})

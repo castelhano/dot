@@ -1,5 +1,6 @@
 import re
 from .models import Alerta, Log
+from .cron import dot_cleaner
 from pessoal.models import Funcionario
 from django.contrib.auth.models import User
 
@@ -7,7 +8,7 @@ def Run(request, script):
     rows = script.split('\n')
     response = []
     for row in rows:
-        try:
+        # try:
             command = re.search(r'@(.*?) ', row).group(1)
             attrs = re.search('{(.*)}', row).group(1)
             if command == 'runscript':
@@ -21,10 +22,13 @@ def Run(request, script):
                 response.append(logs(request, attrs))
             elif command == 'employee':
                 response.append(funcionario(request, attrs))
+            elif command == 'dotcleaner':
+                data = dot_cleaner(request, **parameters_to_dict(attrs)) # Funcao retorna dicionario com resultado das subrotinas
+                return {'path':'core/cron.html', 'data':data}
             else: # Comando nao reconhecido, gera exception de bad formated
                 raise Exception()
-        except:
-            response.append('<span><b class="text-danger">Error:</b> Bad formatted attributes, command aborted</span>')
+        # except:
+        #     response.append('<span><b class="text-danger">Error:</b> Bad formatted attributes, command aborted</span>')
     return response
 
 def runScript(request, attrs):
@@ -42,7 +46,7 @@ def runScript(request, attrs):
 def alertaClean(request, attrs):
     try:
         until = re.search(':until=([^\s]+)', attrs).group(1)
-        qtde = Alerta.objects.filter(lido=True,create_at__lte=until).delete()[0]
+        qtde = Alerta.objects.filter(lido=True,create_at__lte=until, critico=False).delete()[0]
         response = f'<span><b class="text-success">Done:</b> Total of {qtde} alerts deleted</span>'
     except:
         response = '<span><b class="text-danger">Error:</b> Bad formatted attributes, command aborted</span>'
@@ -139,3 +143,11 @@ def funcionario(request, attrs):
     except:
         pass
     return response
+
+def parameters_to_dict(attrs):
+    groups = re.findall(r':[A-z-0-9áàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ,-;=]+', attrs) # Busca todos os parametros (iniciado por  :)
+    kargs = dict()
+    for i in groups:
+        i = i.replace(':','').split('=')
+        kargs[i[0]] = i[1]
+    return kargs

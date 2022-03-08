@@ -30,18 +30,45 @@
     </ul>
   </div>
   <div class="card-body tab-content">
-    <h5 class="card-title mb-3">Escalas <small class="badge bg-primary ms-1">{{escalas.count}}</small></h5>
+    <h5 class="card-title mb-1">Escalas <small class="badge bg-primary ms-1">{{escalas.count}}</small></h5>
+    <div class="row mb-1">
+      <div class="col-md">
+        <div class=" d-flex flex-row">
+          <div class="dropdown">
+            <button class="btn btn-sm btn-orange dropdown-toggle" type="button" data-bs-toggle="dropdown">Empresa: <b>{{metrics.empresa_nome|default:'Todas'}}</b></button>
+            <ul class="dropdown-menu fs-7" id="id_empresa">
+              <li><a class="dropdown-item" onclick="filter('empresa', '')">Todas</a></li>
+            </ul>
+          </div>
+          <div class="dropdown ms-1">
+            <button class="btn btn-sm btn-orange dropdown-toggle" type="button" data-bs-toggle="dropdown">Data: <b>{{metrics.data|date:'d/m/y'}}</b></button>
+            <ul class="dropdown-menu fs-7" id="id_cargos">
+              <li>
+                <div class="row g-1">
+                  <div class="col px-2">
+                    <input type="date" class="form-control" name="data" value="{{metrics.data|date:'Y-m-d'}}" onchange="filter('data', this.value)">
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>          
+        </div>
+      </div>
+      <div class="col-md-auto mt-1 mt-lg-0">
+        <input id="search" type="text" class="form-control form-control-sm" placeholder="Filtrar *" onkeyup="filterTable('main_table', [3, 4, 5, 6], this)">        
+      </div>
+    </div>
     <div class="tab-pane fade show active" id="base" role="tabpanel">
-      <table id="main_table" class="table border table-striped table-hover">
+      <table id="main_table" class="table border table-striped table-hover table-sortable">
         <thead>
           <tr>
             <th class="d-none d-lg-table-cell">Empresa</th>
             <th class="d-none d-lg-table-cell">Data</th>
             <th class="d-none d-lg-table-cell">Status</th>
-            <th>Matric</th>
-            <th class="d-none d-lg-table-cell">Apelido</th>
-            <th>Linha</th>
-            <th class="d-none d-md-table-cell">Veiculo</th>
+            <th>Matric*</th>
+            <th class="d-none d-lg-table-cell">Apelido*</th>
+            <th>Linha*</th>
+            <th class="d-none d-md-table-cell">Veiculo*</th>
             <th class="d-none d-md-table-cell">Tabela</th>
             <th>Inicio</th>
             <th class="d-none d-sm-table-cell">Termino</th>
@@ -62,8 +89,8 @@
             <td>{{escala.linha.codigo}}</td>
             <td class="d-none d-md-table-cell">{{escala.veiculo.prefixo}}</td>
             <td class="d-none d-md-table-cell">{{escala.tabela}}</td>
-            <td>{{escala.inicio}}</td>
-            <td class="d-none d-sm-table-cell">{{escala.termino}}</td>
+            <td>{{escala.inicio|default:''}}</td>
+            <td class="d-none d-sm-table-cell">{{escala.termino|default:''}}</td>
             <td class="d-none d-md-table-cell">{{escala.local_pegada}}</td>
             {% if perms.globus.change_escala %}
             <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'globus_escala_id' escala.id %}"><i class="fas fa-pen"></i></a></td>
@@ -84,4 +111,31 @@
 
 {% block add_script_src %}
 <script src="{% static 'js/table_extra.js' %}"></script>
+<script src="{% static 'js/update_url.js' %}"></script>
 {% endblock %}
+
+  
+<script>
+{% block add_script %}
+SHORTCUT_MAP['/FTF'] = ':searchEscala'
+function searchEscala(){document.getElementById('search').select();}
+
+function carregaEmpresas() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if(this.readyState == 4 && this.status == 200){
+      if(this.responseText == ''){}
+      else{
+        let obj = JSON.parse(this.responseText);
+        empresas = document.getElementById("id_empresa");
+        for(key in obj){empresas.innerHTML += `<li><a class="dropdown-item pointer" onclick="filter('empresa','${obj[key]}')">${key}</a></li>`;}
+      }
+    }
+  };
+  xhttp.open("GET", "{% url 'core_get_empresas' %}", true);
+  xhttp.send();
+}
+carregaEmpresas();
+
+{% endblock %}
+</script>

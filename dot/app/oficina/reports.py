@@ -93,7 +93,7 @@ def frota_dashboard(request):
         frota_idade_metrics['bordercolors'].append(bc.success)
     metrics = {
         'data_simulada':data_simulada,
-        'empresa_nome':'Todas' if not request.GET.get('empresa', None) else Empresa.objects.get(id=request.GET.get('empresa', None)).nome,
+        'empresa_nome':'Todas' if not request.GET.get('empresa', None) else empresa.nome,
         'resumo_por_display':request.GET.get('resumo_por', None).replace('_', ' ').title() if request.GET.get('resumo_por', None) else 'Aniversario',
         'frota_ativa':frota.count(),
         'frota_oficina':frota.filter(status='M').count(),

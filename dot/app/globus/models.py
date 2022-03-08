@@ -34,8 +34,9 @@ class Escala(models.Model):
     inicio = models.TimeField(blank=True, null=True)
     termino = models.TimeField(blank=True, null=True)    
     local_pegada = models.CharField(max_length=50, blank=True, null=True)
+    log_importacao = models.CharField(max_length=50, blank=True, null=True, default=datetime.now())
     def ultimas_alteracoes(self):
-        logs = Log.objects.filter(modelo='globus.escala',objeto_id=self.id).order_by('-data')[:15]
+        logs = Log.objects.filter(modelo='globus.escala',objeto_id=self.log_importacao).order_by('-data')[:15]
         return reversed(logs)
     class Meta:
         permissions = [

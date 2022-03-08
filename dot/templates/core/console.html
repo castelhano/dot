@@ -62,6 +62,7 @@
     <li><a class="dropdown-item d-flex justify-content-between align-items-center pointer" onclick="editorSet(COMPONENTS['funcionario_cancelar_desligamento']);">Cancelar Desligamento <i class="fas fa-chevron-right text-muted ms-3"></i></a></li>
   </ul>
 </div>
+<a class="ps-2 list-group-item list-group-item-action list-group-item-warning d-flex justify-content-between align-items-center pointer" onclick="editorSet(COMPONENTS['dot_cleaner'])">DOT Cleaner<span><i class="fas fa-chevron-right"></i></span></a>
 <a class="ps-2 list-group-item list-group-item-action list-group-item-warning d-flex justify-content-between align-items-center pointer" onclick="editorSet(COMPONENTS['runscript'])">Rodar Script<span><i class="fas fa-chevron-right"></i></span></a>
 <small class="text-muted text-end pe-3 pt-1">* Executa script pre-configurado em console.py</small>
 {% endblock%}
@@ -94,6 +95,7 @@
       'clean_logs':'@logs { #clean :until=aaaa-mm-dd }',
       'clean_logs_model':'@logs { #clean :until=aaaa-mm-dd :model=core.empresa }',
       'funcionario_cancelar_desligamento':'@employee { #matricula !reengage msg:Descrever motivo; }',
+      'dot_cleaner':'@dotcleaner { :until=aaaa-mm-dd :cleanlogs=True :cleanalertas=True :force=False }',
       'runscript':'@runscript { !execute=False :code=00000 }',
     }
     var editor = ace.edit("editor");
@@ -110,7 +112,7 @@
         rules[stateName].unshift(
         {token: 'keyword',regex: '@[a-zA-Z][a-zA-Z0-9]+'}, // Funcoes do sistema, @alert @modal @schedule etc...
         {token: 'variable',regex: ':[A-z-0-9áàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ,-;=]+'}, // Usado para parametros do componente, converte altera ; e _ por espaço
-        {token: 'constant',regex: '!(link|execute|reengage)[=a-zA-Z0-9-_/]*'}, // Usado para informar operacoes e/ou atributos especiais  
+        {token: 'constant',regex: '!(link|execute|reengage|run)[=a-zA-Z0-9-_/]*'}, // Usado para informar operacoes e/ou atributos especiais  
         {token: 'string',regex: '#[A-z-0-9]*'}, // Usado para identificar um compoente, fazendo referencia ao usuario (por exemplo)
         {token: 'invalid',regex: 'danger_syntax'},
         {token: 'comment',regex: 'msg:([a-zA-Z0-9áàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ .,\-<>/=\'!@#$%&])+;'}, // Mensagem generica, aceita espaços, simbolos e caracteres acentuados

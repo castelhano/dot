@@ -1,5 +1,6 @@
 from django import forms
 from .models import Escala
+from datetime import date
 
 
 class EscalaForm(forms.ModelForm):
@@ -9,8 +10,8 @@ class EscalaForm(forms.ModelForm):
     status = forms.ChoiceField(required=False, choices=Escala.STATUS_CHOICES, widget=forms.Select(attrs={'class':'form-select'}))
     dia_tipo = forms.ChoiceField(required=False, choices=Escala.DIA_TIPO, widget=forms.Select(attrs={'class':'form-select'}))
     nome_escala = forms.CharField(required=False, max_length=20, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
-    data = forms.DateField(error_messages={'required': 'Informe a data da escala'}, widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
+    data = forms.DateField(error_messages={'required': 'Informe a data da escala'}, initial=date.today(), widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
     tabela = forms.CharField(required=False, max_length=8, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
-    local_pegada = forms.CharField(required=False, max_length=50, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
+    local_pegada = forms.CharField(required=False, max_length=15, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
     inicio = forms.TimeField(required=False, widget=forms.TextInput(attrs={'class':'form-control','type':'time'}))
     termino = forms.TimeField(required=False, widget=forms.TextInput(attrs={'class':'form-control','type':'time'}))

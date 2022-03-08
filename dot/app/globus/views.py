@@ -10,20 +10,39 @@ from .forms import EscalaForm
 from core.models import Log
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
-from datetime import datetime
+from datetime import datetime, date
 
 
 # METODOS SHOW
 @login_required
 @permission_required('globus.view_escala')
 def escalas(request):
-    escalas = Escala.objects.all().order_by('data')
-    if request.method == 'POST':
-        escalas = Escala.objects.filter(data=request.POST['data']).order_by('data')
-    # else:
-    #     escalas = None
-    return render(request,'globus/escalas.html', {'escalas' : escalas})
+    if request.GET.get('data', None):
+        data = datetime.strptime(request.GET.get('data', None), '%Y-%m-%d').date()
+    else:
+        data = date.today()
     
+    escalas = Escala.objects.filter(data=data).order_by('funcionario__matricula')
+    
+    if request.GET.get('empresa', None):
+        try:
+            if request.user.is_superuser:
+                empresa = Empresa.objects.get(id=request.GET.get('empresa', None))
+            else:
+                empresa = request.user.profile.empresas.filter(id=request.GET.get('empresa', None)).get()
+        except:
+            messages.error(request,'Empresa <b>não encontrada</b> ou <b>não habilitada</b> para o seu usuário')
+            return redirect('globus_escalas')
+        escalas = escalas.filter(empresa=empresa)
+    else:
+        if not request.user.is_superuser:
+            escalas = escalas.filter(empresa__in=request.user.profile.empresas.all())
+    
+    metrics = {
+    'data':data,
+    'empresa_nome':'Todas' if not request.GET.get('empresa', None) else empresa.nome,
+    }
+    return render(request,'globus/escalas.html', {'escalas' : escalas, 'metrics':metrics})    
     
 
 # METODOS ADD
@@ -38,12 +57,12 @@ def escala_add(request):
                 registro = form.save()
                 l = Log()
                 l.modelo = "globus.escala"
-                l.objeto_id = registro.id
+                l.objeto_id = registro.log_importacao
                 l.objeto_str = registro.funcionario.matricula
                 l.usuario = request.user
                 l.mensagem = "CREATED"
                 l.save()
-                messages.success(request,f'Escala <b>{registro.funcionario.matricula}</b> inserida')
+                messages.success(request,f'Escala para <b>{registro.funcionario.matricula}</b> inserida')
                 return redirect('globus_escala_add')
             except:
                 pass
@@ -61,6 +80,7 @@ def escala_importar(request):
         viagens_importadas = 0
         validado = False
         dados_validados = []
+        log_importacao = datetime.now()
         simular = True if request.POST['simular'] == 'True' else False
         if request.POST['dados_validados'] != '':
             arquivo = json.loads(request.POST['dados_validados'])
@@ -123,6 +143,7 @@ def escala_importar(request):
                         Escala.objects.filter(linha=escala.linha, data=escala.data).delete()
                     if not f'{row[0]}_{row[21]}' in escalas_analisadas:
                         escalas_analisadas.append(f'{row[0]}_{row[21]}')
+                    escala.log_importacao = log_importacao
                     escala.save()
                     ultima_escala = escala
                     ultima_escala_termino = escala.termino
@@ -168,6 +189,14 @@ def escala_importar(request):
                     messages.success(request,f'Nenhum erro identificado')
                 validado = True
             else:
+                if viagens_importadas > 0:
+                    l = Log()
+                    l.modelo = "globus.escala"
+                    l.objeto_id = log_importacao
+                    l.objeto_str = 'Importacao GLOBUS'
+                    l.usuario = request.user
+                    l.mensagem = "GLOBUS IMPORT"
+                    l.save()
                 messages.success(request,f'Importado com sucesso, total de <b>{viagens_importadas}</b> registros')
         return render(request, 'globus/importar.html',{'erros':erros,'row_erros':row_erros,'alertas':alertas, 'validado':validado, 'dados_validados':json.dumps(dados_validados),'empresa':empresa.id})    
     else:
@@ -192,12 +221,12 @@ def escala_update(request, id):
         registro = form.save()
         l = Log()
         l.modelo = "globus.escala"
-        l.objeto_id = registro.id
+        l.objeto_id = registro.log_importacao
         l.objeto_str = registro.funcionario.matricula
         l.usuario = request.user
         l.mensagem = "UPDATE"
         l.save()
-        messages.success(request,f'Escala <b>{registro.funcionario.matricula}</b> alterada')
+        messages.success(request,f'Escala funcionário <b>{registro.funcionario.matricula}</b> alterada')
         return redirect('globus_escala_id', id)
     else:
         return render(request,'globus/escala_id.html',{'form':form,'escala':escala})
@@ -211,7 +240,7 @@ def escala_delete(request, id):
         registro = Escala.objects.get(pk=id)
         l = Log()
         l.modelo = "globus.escala"
-        l.objeto_id = registro.id
+        l.objeto_id = registro.log_importacao
         l.objeto_str = registro.funcionario.matricula
         l.usuario = request.user
         l.mensagem = "DELETE"

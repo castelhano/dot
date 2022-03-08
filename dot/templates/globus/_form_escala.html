@@ -1,0 +1,56 @@
+<div class="card-body tab-content">
+  <h5 class="card-title mb-3">Cadastro de Escala</h5>
+  <div class="tab-pane fade show active" id="base" role="tabpanel">
+    <div class="row">
+      <div class="col-lg-8">
+        {% include "_component/field/empresa.html" with empresa_atual=escala.empresa.id|safe attrs='autofocus' %}
+        <div class="row g-1">
+          <div class="form-floating mb-lg-1 col-lg-3">
+            {{ form.data }}
+            <label for="id_data">Data</label>
+          </div>
+          <div class="form-floating mb-lg-1 col-lg-3">
+            {{ form.dia_tipo }}
+            <label for="id_dia_tipo">Dia tipo</label>
+          </div>
+          <div class="form-floating mb-lg-1 col-lg-3">
+            {{ form.status }}
+            <label for="id_status">Status</label>
+          </div>
+          <div class="form-floating mb-1 col-lg-3">
+            {{ form.local_pegada }}
+            <label for="id_local_pegada">Local Pegada</label>
+          </div>
+        </div>
+        {% include "_component/field/funcionario.html" with id=escala.funcionario.id matricula=escala.funcionario.matricula nome=escala.funcionario.nome required=True incluir_inativos=False %}
+        {% include "_component/field/linha.html" with id=escala.linha.id codigo=escala.linha.codigo nome=escala.linha.nome required=False incluir_inativos=False %}
+        <div class="row g-1">
+          <div class="form-floating mb-lg-1 col-lg-4">
+            {{ form.nome_escala }}
+            <label for="id_nome_escala">Nome escala</label>
+          </div>
+          <div class="form-floating mb-lg-1 col-lg-2">
+            {{ form.tabela }}
+            <label for="id_tabela">Tabela</label>
+          </div>
+          <div class="form-floating mb-lg-1 col-lg-3">
+            {{ form.inicio }}
+            <label for="id_inicio">Inicio</label>
+          </div>
+          <div class="form-floating mb-1 col-lg-3">
+            {{ form.termino }}
+            <label for="id_termino">Termino</label>
+          </div>
+        </div>
+        {% include "_component/field/veiculo.html" with id=escala.veiculo.id prefixo=escala.veiculo.prefixo placa=escala.veiculo.placa required=False incluir_inativos=False %}          
+      </div>
+    </div>
+    
+  </div>
+  <!-- CONTROLES DO FORM -->
+  <div class="row mt-3">
+    <div class="col">
+      <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"><b>G</b>ravar</button>
+    </div>
+  </div>
+</div>
