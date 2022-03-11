@@ -17,6 +17,7 @@ class Escala(models.Model):
     )
     STATUS_CHOICES = (
     ('E','Escalado'),
+    ('P','Plantao'),
     ('F','Folga'),
     ('C','Compensacao'),
     ('R','Ferias'),
@@ -42,7 +43,6 @@ class Escala(models.Model):
         permissions = [
             ("consultar_escala", "Consultar escala pessoal"),
             ("localizar_escala", "Consultar outras escalas"),
-            ("parametrizar_escala", "Pode parametrizar escala"),
             ("importar_escala", "Pode importar escala"),
         ]
 
@@ -60,3 +60,11 @@ class Viagem(models.Model):
     inicio = models.TimeField(blank=True, null=True)
     termino = models.TimeField(blank=True, null=True)
     extra = models.BooleanField(default=False)
+
+class Settings(models.Model):
+    empresa = models.ForeignKey(Empresa, blank=True, null=True, on_delete=models.RESTRICT)
+    consulta_escala_inicio = models.DateField(blank=True, null=True, default=None)
+    consulta_escala_fim = models.DateField(blank=True, null=True, default=None)
+    def ultimas_alteracoes(self):
+        logs = Log.objects.filter(modelo='globus.settings',objeto_id=self.id).order_by('-data')[:15]
+        return reversed(logs)

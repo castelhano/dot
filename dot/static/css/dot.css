@@ -32,7 +32,8 @@ VERSION: 1.0
 .bg-success-light{background-color: #64d69f!important;}
 .bg-danger-light{background-color: #ff969f!important;}
 .bg-dark-light{background-color: #262626;}
-
+.bg-hover{opacity: 0.8;}
+.bg-hover:hover{opacity: 1;}
 .border-oil{border-color: #0065A4!important;}
 .border-orange{border-color: #FD7E14!important;}
 

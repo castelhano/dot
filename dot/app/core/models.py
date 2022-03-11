@@ -63,6 +63,7 @@ class Profile(models.Model):
     class Meta:
         permissions = [
             ("console", "Pode abrir o console"),
+            ("docs", "Acessar documentacao do sistema"),
         ]
 
 

@@ -1,0 +1,63 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Escalas - Globus{% endblock %}
+{% block model %}Escala - Globus{% endblock %}
+{% block navbar_classlist %}navbar-dark bg-orange bg-gradient{% endblock %}
+{% block model_menu %}{% include "_component/menu/visitor.html" %}{% endblock%}
+
+{% block content_fluid %}
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'index' %}"><i class="fas fa-undo"></i></a></li>
+    </ul>
+  </div>
+  <div class="card-body tab-content">
+    <h5 class="card-title mb-0 text-truncate">{{funcionario.nome}}</h5>
+    <small class="fs-7">Matricula: <b>{{funcionario.matricula}}</b> - <b>{{funcionario.cargo.nome|default:''}}</b></small><br>
+    <small class="fs-7"><b>{{funcionario.empresa.razao_social|default:funcionario.empresa.nome}}</b></small>
+    <div class="row g-1 my-2">
+      <div class="col-1 text-center pointer user-select-none" style="min-width: 100px;">
+        <div class="bg-secondary bg-hover card h-100" style="padding-top: 10px;"><a class="stretched-link text-light text-decoration-none fs-4" id="clear" href="{% url 'globus_consultar_escala' %}">Hoje</a></div>
+      </div>
+      <div class="form-floating col col-lg-4">
+        <input type="date" class="form-control bg-light" name="data" value="{{data_consulta|date:'Y-m-d'}}" min="{{settings.consulta_escala_inicio|date:'Y-m-d'|default:''}}" max="{{settings.consulta_escala_fim|date:'Y-m-d'|default:''}}" onchange="filter('data', this.value)">
+        <label for="id_data">Data</label>
+      </div>
+    </div>
+    <div class="row">
+      {% for escala in escalas %}
+      <div class="col-lg-4">
+        <div class="card bg-light mb-2 py-1">
+          <div class="container">
+            <div class="row">
+              <div class="col-auto my-auto text-center"><h1 class="mb-0">{{escala.linha.codigo|default:'---'}}</h1><span>{{escala.get_status_display}}</span></div>
+              <div class="col fs-7">
+                <div class="row">
+                  <div class="col-12"><b>{{escala.linha.nome}}</b></div>
+                  <div class="col-12"><b>{{escala.veiculo.prefixo}}</b></div>
+                  <div class="col-xl-auto"><b>{{escala.inicio|default:"--:--"}}</b> a <b>{{escala.termino|default:"--:--"}}</b></div>
+                  <div class="col-xl">Pegada: <b>{{escala.local_pegada}}</b></div>
+                </div>
+              </div>
+              {% if escala.status == 'E' %}
+              <div class="col-auto my-auto p-0"><a class="btn btn-dark fs-3" href="#" title="Viagens"><i class="fas fa-list"></i></a></div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/update_url.js' %}"></script>
+{% endblock %}
+
+<script>
+  {% block add_script %}{% endblock %}
+</script>

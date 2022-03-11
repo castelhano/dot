@@ -1,5 +1,5 @@
 from django import forms
-from .models import Escala
+from .models import Escala, Settings
 from datetime import date
 
 
@@ -15,3 +15,16 @@ class EscalaForm(forms.ModelForm):
     local_pegada = forms.CharField(required=False, max_length=15, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
     inicio = forms.TimeField(required=False, widget=forms.TextInput(attrs={'class':'form-control','type':'time'}))
     termino = forms.TimeField(required=False, widget=forms.TextInput(attrs={'class':'form-control','type':'time'}))
+
+class SettingsForm(forms.ModelForm):
+    class Meta:
+        model = Settings
+        fields = ['empresa','consulta_escala_inicio','consulta_escala_fim']
+    consulta_escala_inicio = forms.DateField(required=False, widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
+    consulta_escala_fim = forms.DateField(required=False, widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
+    def clean(self):
+        cleaned_data = super().clean()
+        consulta_escala_inicio = cleaned_data.get("consulta_escala_inicio")
+        consulta_escala_fim = cleaned_data.get("consulta_escala_fim")
+        if consulta_escala_fim < consulta_escala_inicio:
+            raise forms.ValidationError("Data final precisa ser maior que inicial")

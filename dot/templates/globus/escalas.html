@@ -1,7 +1,7 @@
 {% extends "layout/dot.html" %}
 {% load static %}
 {% block title %}Escalas - Globus{% endblock %}
-{% block model %}Globus{% endblock %}
+{% block model %}Escala - Globus{% endblock %}
 {% block navbar_classlist %}navbar-dark bg-orange bg-gradient{% endblock %}
 {% block model_menu %}{% include "_component/menu/visitor.html" %}{% endblock%}
 
@@ -16,7 +16,10 @@
       <li class="nav-item ms-1"><a class="nav-link border" id="add" href="{% url 'globus_escala_add' %}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
       {% endif %}
       {% if perms.globus.importar_escala %}
-      <li class="nav-item ms-1"><a class="nav-link border" id="add" href="{% url 'globus_escala_importar' %}" title="Importar Escalas"><i class="fas fa-file-import"></i></a></li>
+      <li class="nav-item ms-1"><a class="nav-link border" id="import" href="{% url 'globus_escala_importar' %}" title="Importar Escalas [Alt + E]"><i class="fas fa-file-import"></i></a></li>
+      {% endif %}
+      {% if perms.globus.view_settings %}
+      <li class="nav-item ms-1"><a class="nav-link border" id="settings" href="{% url 'globus_settings' %}" title="Configurações [Alt + G]"><i class="fas fa-cogs text-dark"></i></a></li>
       {% endif %}
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
@@ -118,6 +121,8 @@
 <script>
 {% block add_script %}
 SHORTCUT_MAP['/FTF'] = ':searchEscala'
+SHORTCUT_MAP['eTFF'] = '#import'
+SHORTCUT_MAP['gTFF'] = '#settings'
 function searchEscala(){document.getElementById('search').select();}
 
 function carregaEmpresas() {

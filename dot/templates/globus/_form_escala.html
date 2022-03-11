@@ -22,7 +22,7 @@
             <label for="id_local_pegada">Local Pegada</label>
           </div>
         </div>
-        {% include "_component/field/funcionario.html" with id=escala.funcionario.id matricula=escala.funcionario.matricula nome=escala.funcionario.nome required=True incluir_inativos=False %}
+        {% include "_component/field/funcionario.html" with id=escala.funcionario.id matricula=escala.funcionario.matricula nome=escala.funcionario.nome cargo=escala.funcionario.cargo.nome required=True incluir_inativos=False %}
         {% include "_component/field/linha.html" with id=escala.linha.id codigo=escala.linha.codigo nome=escala.linha.nome required=False incluir_inativos=False %}
         <div class="row g-1">
           <div class="form-floating mb-lg-1 col-lg-4">

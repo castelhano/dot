@@ -1,0 +1,96 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Escalas - Globus{% endblock %}
+{% block model %}Escala - Globus{% endblock %}
+{% block navbar_classlist %}navbar-dark bg-orange bg-gradient{% endblock %}
+{% block model_menu %}{% include "_component/menu/visitor.html" %}{% endblock%}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'globus_localizar_escala' %}"></a>
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'index' %}"><i class="fas fa-undo"></i></a></li>
+    </ul>
+  </div>
+  <form id="app_form" action="{% url 'globus_localizar_escala' %}" method="POST" autocomplete="off">
+    {% csrf_token %}
+    <div class="card-body tab-content">
+      <h5 class="card-title mb-3">Localizar Escala</h5>
+      <div class="tab-pane fade show active" id="base" role="tabpanel">
+        <div class="row g-1">
+          <div class="col-lg-auto">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="tipo" id="id_check_funcionario" value="funcionario" onclick="setTipo('funcionario')" checked>
+              <label class="form-check-label" for="id_check_funcionario">Funcionario</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="tipo" id="id_check_veiculo" value="veiculo" onclick="setTipo('veiculo')">
+              <label class="form-check-label" for="id_check_veiculo">Veiculo</label>
+            </div>
+            <div class="d-grid my-1"><button type="submit" class="btn btn-sm btn-primary" name="button">Pesquisar</button></div>
+          </div>
+          <div class="col-lg ms-0 ms-lg-4">
+            <div class="row g-1">
+              <div class="form-floating mb-1 col-lg-4">
+                <input type="date" class="form-control bg-light" name="data" value="{{data_consulta|date:'Y-m-d'}}">
+                <label for="id_data">Data Escala</label>
+              </div>
+            </div>
+            <div id="funcionario_container" class="row g-1">
+              <div class="form-floating mb-1 col-lg-4">
+                <input type="text" class="form-control" name="funcionario" id="id_funcionario" value="" autofocus>
+                <label for="id_funcionario">Matricula</label>
+              </div>
+            </div>
+            <div id="veiculo_container" class="row g-1 d-none">
+              <div class="form-floating mb-1 col-lg-4">
+                <input type="text" class="form-control" name="veiculo" id="id_veiculo" value="">
+                <label for="id_veiculo">Prefixo</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-3">
+          {% for escala in escalas %}
+          <div class="col-lg-4">
+            <div class="card bg-light mb-2 py-1">
+              <div class="container">
+                <div class="row">
+                  <div class="col-auto my-auto text-center"><h1 class="mb-0">{{escala.linha.codigo|default:'---'}}</h1><span>{{escala.get_status_display}}</span></div>
+                  <div class="col fs-7">
+                    <div class="row">
+                      <div class="col-12"><b>{{escala.linha.nome}}</b></div>
+                      <div class="col-12">Condutor: <b>{{escala.funcionario.matricula}}</b> - <b>{{escala.funcionario.apelido}}</b></div>
+                      <div class="col-12">Veiculo: <b>{{escala.veiculo.prefixo}}</b></div>
+                      <div class="col-xl-auto"><b>{{escala.inicio|default:"--:--"}}</b> a <b>{{escala.termino|default:"--:--"}}</b></div>
+                      <div class="col-xl">Pegada: <b>{{escala.local_pegada}}</b></div>
+                    </div>
+                  </div>
+                  {% if escala.status == 'E' %}
+                  <div class="col-auto my-auto p-0"><a class="btn btn-dark fs-3" href="#" title="Viagens"><i class="fas fa-list"></i></a></div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>        
+      </div>
+    </div>
+  </form>
+</div>
+
+{% endblock%}
+
+{% block add_script_src %}{% endblock %}
+
+<script>
+  {% block add_script %}
+  function setTipo(tipo){
+    if(tipo == 'funcionario'){document.getElementById('veiculo_container').classList.add('d-none');document.getElementById('funcionario_container').classList.remove('d-none');}
+    else if(tipo == 'veiculo'){document.getElementById('veiculo_container').classList.remove('d-none');document.getElementById('funcionario_container').classList.add('d-none');}    
+  }
+  {% endblock %}
+</script>
