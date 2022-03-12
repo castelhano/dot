@@ -1,6 +1,7 @@
 from datetime import date
-import datetime
 from django import template
+from urllib.parse import urlparse, parse_qs
+import datetime
 
 
 register = template.Library()
@@ -37,3 +38,11 @@ def get_field(objeto,field):
 @register.filter
 def dict_value(dict,key):
     return dict.get(key)
+
+@register.filter
+def url_get(request,parameter):
+    parsed_url = urlparse(request.get_full_path())
+    try:
+        return parse_qs(parsed_url.query)[parameter][0]
+    except KeyError as e:
+        return None

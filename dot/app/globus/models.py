@@ -35,7 +35,7 @@ class Escala(models.Model):
     inicio = models.TimeField(blank=True, null=True)
     termino = models.TimeField(blank=True, null=True)    
     local_pegada = models.CharField(max_length=50, blank=True, null=True)
-    log_importacao = models.CharField(max_length=50, blank=True, null=True, default=datetime.now())
+    log_importacao = models.CharField(max_length=50, blank=True, null=True)
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='globus.escala',objeto_id=self.log_importacao).order_by('-data')[:15]
         return reversed(logs)
@@ -49,8 +49,8 @@ class Escala(models.Model):
 class Viagem(models.Model):
     SENTIDO_CHOICES = (
     ('','-----'),
-    ('1','Ida'),
-    ('2','Volta'),
+    ('I','Ida'),
+    ('V','Volta'),
     )
     escala = models.ForeignKey(Escala, on_delete=models.CASCADE)
     origem = models.CharField(max_length=50, blank=True)

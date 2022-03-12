@@ -1,6 +1,7 @@
 import csv
 import json
 from django.urls import reverse
+from django.db.models import Q
 from urllib.parse import urlencode
 from django.shortcuts import render, redirect
 from .models import Escala, Viagem, Settings
@@ -84,7 +85,7 @@ def localizar_escala(request): # Metodo para localizar a escala de um determinad
                 escalas = Escala.objects.filter(data=data_consulta, empresa__in=request.user.profile.empresas.all()).order_by('inicio')
             tipo = request.POST['tipo']
             if tipo == 'funcionario':
-                escalas = escalas.filter(funcionario__matricula=request.POST['funcionario'])
+                escalas = escalas.filter(Q(funcionario__matricula=request.POST['funcionario']) | Q(funcionario__nome__contains=request.POST['funcionario']))
             elif tipo == 'veiculo':
                 escalas = escalas.filter(veiculo__prefixo=request.POST['veiculo'])
             else:
@@ -95,6 +96,13 @@ def localizar_escala(request): # Metodo para localizar a escala de um determinad
         escalas = None
         data_consulta = date.today()
     return render(request,'globus/localizar_escala.html',{'escalas':escalas,'data_consulta':data_consulta})
+
+@login_required
+@permission_required('globus.view_viagem')
+def viagens(request, id):
+    escala = Escala.objects.get(id=id)
+    viagens = Viagem.objects.filter(escala=escala)
+    return render(request,'globus/viagens.html',{'escala':escala, 'viagens':viagens})
 
 @login_required
 @permission_required('globus.view_settings')
@@ -138,9 +146,11 @@ def escala_add(request):
     if request.method == 'POST':
         form = EscalaForm(request.POST)
         if form.is_valid():
-            try:
+            # try:
                 form_clean = form.cleaned_data
-                registro = form.save()
+                registro = form.save(commit=False)
+                registro.log_importacao = datetime.now()
+                registro.save()
                 l = Log()
                 l.modelo = "globus.escala"
                 l.objeto_id = registro.log_importacao
@@ -150,8 +160,8 @@ def escala_add(request):
                 l.save()
                 messages.success(request,f'Escala para <b>{registro.funcionario.matricula}</b> inserida')
                 return redirect('globus_escala_add')
-            except:
-                pass
+            # except:
+            #     messages.error(request,'Erro ao criar escala')
     else:
         form = EscalaForm()
     return render(request,'globus/escala_add.html',{'form':form})

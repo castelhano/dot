@@ -41,8 +41,8 @@
                   <div class="col-xl">Pegada: <b>{{escala.local_pegada}}</b></div>
                 </div>
               </div>
-              {% if escala.status == 'E' %}
-              <div class="col-auto my-auto p-0"><a class="btn btn-dark fs-3" href="#" title="Viagens"><i class="fas fa-list"></i></a></div>
+              {% if escala.status == 'E' and perms.globus.view_viagem %}
+              <div class="col-auto my-auto p-0"><a class="btn btn-dark fs-3" href="{% url 'globus_viagens' escala.id|safe %}?from=consultar_escala" title="Viagens"><i class="fas fa-list"></i></a></div>
               {% endif %}
             </div>
           </div>

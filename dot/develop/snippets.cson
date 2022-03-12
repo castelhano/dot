@@ -208,7 +208,7 @@
     \t<div class="modal-dialog modal-dialog-scrollable">\n
     \t\t<div class="modal-content">\n
     \t\t\t<div class="row">\n
-    \t\t\t\t<div class="col"><h5 class="ms-3 mt-3">Histórico de Alterações <sup>(last 15)</sup></h5></div>\n
+    \t\t\t\t<div class="col"><h5 class="ms-3 mt-3">Histórico <sup>(last 15)</sup></h5></div>\n
     \t\t\t\t\t<div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>\n
     \t\t\t\t</div>\n
     \t\t\t\t<div class="modal-body">\n

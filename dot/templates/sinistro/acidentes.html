@@ -50,7 +50,7 @@
             <th class="d-none">Nome linha</th>
             <th class="d-none d-lg-table-cell">Inspetor</th>
             <th class="d-none">Nome apelido</th>
-            <th>Data</th>
+            <th class="d-none d-sm-table-cell">Data</th>
             <th class="d-none">Hora</th>
             <th>Veiculo</th>
             <th class="d-none d-lg-table-cell">Condutor</th>
@@ -77,7 +77,7 @@
             <td class="d-none">{{acidente.linha.nome}}</td>
             <td class="d-none">{{acidente.inspetor.matricula}}</td>
             <td class="d-none d-lg-table-cell">{{acidente.inspetor.apelido|default:'---'}}</td>
-            <td>{{acidente.data|date:"d/m/y"|default:'---'}}</td>
+            <td class="d-none d-sm-table-cell">{{acidente.data|date:"d/m/y"|default:'---'}}</td>
             <td class="d-none">{{acidente.hora}}</td>
             <td>{{acidente.veiculo.prefixo|default:'---'}}</td>
             <td class="d-none d-lg-table-cell">{{acidente.condutor.matricula|default:'---'}}</td>
@@ -105,7 +105,7 @@
             <td class="d-none">{{terceiro.acidente.linha.nome}}</td>
             <td class="d-none">{{terceiro.acidente.inspetor.matricula}}</td>
             <td class="d-none d-lg-table-cell">{{terceiro.acidente.inspetor.apelido|default:'---'}}</td>
-            <td>{{terceiro.acidente.data|date:"d/m/y"|default:'---'}}</td>
+            <td class="d-none d-sm-table-cell">{{terceiro.acidente.data|date:"d/m/y"|default:'---'}}</td>
             <td class="d-none">{{terceiro.acidente.hora}}</td>
             <td>{{terceiro.acidente.veiculo.prefixo|default:'---'}}</td>
             <td class="d-none d-lg-table-cell">{{terceiro.acidente.condutor.matricula|default:'---'}}</td>
@@ -195,7 +195,7 @@
               </div>              
             </div>
             <div class="row">
-              <div class="col mt-1"><button type="submit" class="btn btn-sm btn-warning">Pesquisa</button></div>
+              <div class="col mt-2"><button type="submit" class="btn btn-warning">Pesquisa</button></div>
             </div>
           </form>
         </div>

@@ -29,7 +29,7 @@
               <input class="form-check-input" type="radio" name="tipo" id="id_check_veiculo" value="veiculo" onclick="setTipo('veiculo')">
               <label class="form-check-label" for="id_check_veiculo">Veiculo</label>
             </div>
-            <div class="d-grid my-1"><button type="submit" class="btn btn-sm btn-primary" name="button">Pesquisar</button></div>
+            <div class="d-grid my-2"><button type="submit" class="btn btn-sm btn-primary" name="button">Pesquisar</button></div>
           </div>
           <div class="col-lg ms-0 ms-lg-4">
             <div class="row g-1">
@@ -41,7 +41,7 @@
             <div id="funcionario_container" class="row g-1">
               <div class="form-floating mb-1 col-lg-4">
                 <input type="text" class="form-control" name="funcionario" id="id_funcionario" value="" autofocus>
-                <label for="id_funcionario">Matricula</label>
+                <label for="id_funcionario">Matricula / Nome</label>
               </div>
             </div>
             <div id="veiculo_container" class="row g-1 d-none">
@@ -62,14 +62,14 @@
                   <div class="col fs-7">
                     <div class="row">
                       <div class="col-12"><b>{{escala.linha.nome}}</b></div>
-                      <div class="col-12">Condutor: <b>{{escala.funcionario.matricula}}</b> - <b>{{escala.funcionario.apelido}}</b></div>
+                      <div class="col-12"><b>{{escala.funcionario.matricula}}</b> - <b>{{escala.funcionario.apelido}}</b></div>
                       <div class="col-12">Veiculo: <b>{{escala.veiculo.prefixo}}</b></div>
                       <div class="col-xl-auto"><b>{{escala.inicio|default:"--:--"}}</b> a <b>{{escala.termino|default:"--:--"}}</b></div>
                       <div class="col-xl">Pegada: <b>{{escala.local_pegada}}</b></div>
                     </div>
                   </div>
                   {% if escala.status == 'E' %}
-                  <div class="col-auto my-auto p-0"><a class="btn btn-dark fs-3" href="#" title="Viagens"><i class="fas fa-list"></i></a></div>
+                  <div class="col-auto my-auto p-0"><a class="btn btn-dark fs-3" href="{% url 'globus_viagens' escala.id|safe %}?from=localizar_escala" title="Viagens"><i class="fas fa-list"></i></a></div>
                   {% endif %}
                 </div>
               </div>

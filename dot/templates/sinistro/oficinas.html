@@ -36,15 +36,15 @@
           <tr>
             <th>#</th>
             <th>Nome</th>
-            <th>Contato</th>
+            <th class="d-none d-md-table-cell">Contato</th>
             <th class="d-none d-lg-table-cell">Fone 1</th>
             <th class="d-none d-lg-table-cell">Fone 2</th>
             <th class="d-none">Email</th>
             <th class="d-none">Razão Social</th>
             <th class="d-none">CNPJ</th>
             <th class="d-none">Endereço</th>
-            <th>Status</th>
-            <th class="text-end d-none d-lg-table-cell ps-4 fit">NF Pendentes</th>
+            <th class="d-none">Status</th>
+            <th class="text-end ps-4 fit">NF Pendente</th>
             {% if perms.sinistro.change_oficina %}
             <th>&nbsp;</th>
             {% endif %}
@@ -55,15 +55,15 @@
           <tr class="{% if not oficina.ativa %}table-danger{% endif %}">
             <td>{{oficina.id|safe}}</td>
             <td>{{oficina.nome}}</td>
-            <td>{{oficina.contato}}</td>
+            <td class="d-none d-md-table-cell">{{oficina.contato}}</td>
             <td class="d-none d-lg-table-cell">{{oficina.fone1}}</td>
             <td class="d-none d-lg-table-cell">{{oficina.fone2}}</td>
             <td class="d-none">{{oficina.email}}</td>
             <td class="d-none">{{oficina.razao_social}}</td>
             <td class="d-none">{{oficina.cnpj}}</td>
             <td class="d-none">{{oficina.endereco}}</td>
-            <td>{{oficina.ativa|yesno:'Ativa,Inativa'}}</td>
-            <td class="d-none d-lg-table-cell text-end">{{oficina.notasPendentes.1|floatformat:2|default:'--'}} [ <label class="fw-bold text-center" style="width:20px;">{{oficina.notasPendentes.0}}</label> ]</td>
+            <td class="d-none">{{oficina.ativa|yesno:'Ativa,Inativa'}}</td>
+            <td class="text-end">{{oficina.notasPendentes.1|floatformat:2|default:'--'}} [ <label class="fw-bold text-center" style="width:20px;">{{oficina.notasPendentes.0}}</label> ]</td>
             {% if perms.sinistro.change_oficina %}
             <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'sinistro_oficina_id' oficina.id|safe %}"><i class="fas fa-pen"></i></a></td>
             {% endif %}

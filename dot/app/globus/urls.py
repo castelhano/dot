@@ -9,6 +9,7 @@ urlpatterns = [
     path('globus_escala_delete/<int:id>/delete',views.escala_delete,name='globus_escala_delete'),
     path('globus_escala_importar',views.escala_importar,name='globus_escala_importar'),
     path('globus_settings',views.settings,name='globus_settings'),
+    path('globus_viagens/<int:id>',views.viagens,name='globus_viagens'),
     path('globus_consultar_escala',views.consultar_escala,name='globus_consultar_escala'),
     path('globus_localizar_escala',views.localizar_escala,name='globus_localizar_escala'),
     path('globus_settings_update/<int:id>',views.settings_update,name='globus_settings_update'),

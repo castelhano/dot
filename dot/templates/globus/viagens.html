@@ -1,0 +1,105 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% load tag_extra %}
+{% block title %}Escalas - Globus{% endblock %}
+{% block model %}Escala - Globus{% endblock %}
+{% block navbar_classlist %}navbar-dark bg-orange bg-gradient{% endblock %}
+{% block model_menu %}{% include "_component/menu/visitor.html" %}{% endblock%}
+
+  
+<style media="screen">
+{% block style %}
+h6{
+  margin: 0px;
+}
+h7{
+  display: block;
+}
+{% endblock%}
+</style>
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{{ request.get_full_path }}"></a>
+
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      {% if perms.globus.add_viagem %}
+      <li class="nav-item ms-1"><a class="nav-link border" id="add" href="url" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
+      {% endif %}
+      {% if request|url_get:'from' == 'consultar_escala' %}
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'globus_consultar_escala' %}?data={{escala.data|date:'Y-m-d'}}"><i class="fas fa-undo"></i></a></li>
+      {% else %}
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'globus_localizar_escala' %}"><i class="fas fa-undo"></i></a></li>
+      {% endif %}
+    </ul>
+  </div>
+  <div class="card-body tab-content">
+    <h5 class="card-title mb-3">Viagens <small class="badge bg-primary ms-1">{{viagens.count}}</small></h5>
+    <div class="tab-pane fade show active" id="base" role="tabpanel">
+      <table id="main_table" class="table border table-striped table-hover fs-7">
+        <thead>
+          <tr>
+            <th class="d-none d-lg-table-cell">Seq</th>
+            <th>Linha</th>
+            <th>Sentido</th>
+            <th>Inicio</th>
+            <th>Fim</th>
+            <th class="d-none d-lg-table-cell">Destino</th>
+            {% if perms.globus.change_viagem %}
+            <th>&nbsp;</th>
+            {% endif %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for viagem in viagens %}
+          <tr>
+            <td class="d-none d-lg-table-cell">{{forloop.counter}}</td>
+            <td><h6>{{viagem.escala.linha.codigo}}</h6><span>{{viagem.get_sentido_display|default:'--'}}</span></td>
+            <td><h7>{{viagem.origem|default:'--'}}</h7><span>{{viagem.destino|default:'--'}}</span></td>
+            <td>{{viagem.inicio}}</td>
+            <td>{{viagem.termino}}</td>
+            <td class="d-none d-lg-table-cell">{{viagem.destino}}</td>
+            {% if perms.globus.change_viagem %}
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="url"><i class="fas fa-pen"></i></a></td>
+            {% endif %}
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="7">Nenhum registro a exibir</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="tab-pane fade" id="param" role="tabpanel">param</div>
+  </div>
+</div>
+
+<div class="modal fade" id="search_modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="row">
+        <div class="col"><h5 class="ms-3 mt-3">Pesquisa</h5></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      </div>
+      <div class="modal-body">
+        <form id="globus_form" action="url" method="POST" autocomplete="off">
+          {% csrf_token %}
+          <div class="row g-1">
+            <div class="form-floating mb-1 col-lg-12">
+              <input type="text" class="form-control" name="pesquisa" value="" id="id_pesquisa" placeholder="">
+              <label for="id_pesquisa">Termo pesquisa</label>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/table_extra.js' %}"></script>
+{% endblock %}

@@ -23,15 +23,15 @@
     </ul>
   </div>
   <div class="card-body tab-content">
-    <h5 class="card-title mb-3">Notas Pendentes <small class="badge bg-primary ms-1">{{terceiros.count}}</small><small class="badge bg-primary ms-1">R$ {{total|default:0|floatformat:2}}</small></h5>
+    <h5 class="card-title mb-3">Notas <small class="badge bg-primary ms-1">{{terceiros.count}}</small><small class="badge bg-primary ms-1">R$ {{total|default:0|floatformat:2}}</small></h5>
     <div class="tab-pane fade show active" id="base" role="tabpanel">
       <table id="main_table" class="table border table-striped table-hover table-sortable">
         <thead>
           <tr>
             <th class="d-none d-lg-table-cell">Seq</th>
-            <th class="d-none d-lg-table-cell">Oficina</th>
+            <th>Oficina</th>
             <th>Pasta</th>
-            <th>Veiculo</th>
+            <th class="d-none d-md-table-cell">Veiculo</th>
             <th class="d-none d-lg-table-cell">Cor</th>
             <th class="d-none d-lg-table-cell">Placa</th>
             <th>Valor</th>
@@ -44,9 +44,9 @@
           {% for terceiro in terceiros %}
           <tr>
             <td class="d-none d-lg-table-cell">{{forloop.counter}}</td>
-            <td class="d-none d-lg-table-cell">{{terceiro.oficina.nome|default:"---"}}</td>
+            <td>{{terceiro.oficina.nome|default:"---"}}</td>
             <td>{{terceiro.acidente.pasta}}</td>
-            <td>{{terceiro.veiculo}}</td>
+            <td class="d-none d-md-table-cell">{{terceiro.veiculo}}</td>
             <td class="d-none d-lg-table-cell">{{terceiro.cor}}</td>
             <td class="d-none d-lg-table-cell">{{terceiro.placa}}</td>
             <td>{{terceiro.acordo}}</td>
