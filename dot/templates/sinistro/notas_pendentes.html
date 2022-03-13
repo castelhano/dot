@@ -31,6 +31,7 @@
             <th class="d-none d-lg-table-cell">Seq</th>
             <th>Oficina</th>
             <th>Pasta</th>
+            <th class="d-none d-sm-table-cell">Data</th>
             <th class="d-none d-md-table-cell">Veiculo</th>
             <th class="d-none d-lg-table-cell">Cor</th>
             <th class="d-none d-lg-table-cell">Placa</th>
@@ -46,6 +47,7 @@
             <td class="d-none d-lg-table-cell">{{forloop.counter}}</td>
             <td>{{terceiro.oficina.nome|default:"---"}}</td>
             <td>{{terceiro.acidente.pasta}}</td>
+            <td class="d-none d-sm-table-cell">{{terceiro.acidente.data|date:"d/m/Y"}}</td>
             <td class="d-none d-md-table-cell">{{terceiro.veiculo}}</td>
             <td class="d-none d-lg-table-cell">{{terceiro.cor}}</td>
             <td class="d-none d-lg-table-cell">{{terceiro.placa}}</td>

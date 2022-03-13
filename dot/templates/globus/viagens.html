@@ -9,12 +9,8 @@
   
 <style media="screen">
 {% block style %}
-h6{
-  margin: 0px;
-}
-h7{
-  display: block;
-}
+h6{margin: 0px;}
+h7{display: block;}
 {% endblock%}
 </style>
 
@@ -26,19 +22,27 @@ h7{
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
       {% if perms.globus.add_viagem %}
-      <li class="nav-item ms-1"><a class="nav-link border" id="add" href="url" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
+      <li class="nav-item ms-1"><a class="nav-link border" id="add" href="{% url 'globus_viagem_add' escala.id|safe %}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
       {% endif %}
       {% if request|url_get:'from' == 'consultar_escala' %}
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'globus_consultar_escala' %}?data={{escala.data|date:'Y-m-d'}}"><i class="fas fa-undo"></i></a></li>
-      {% else %}
+      {% elif request|url_get:'from' == 'localizar_escala' %}
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'globus_localizar_escala' %}"><i class="fas fa-undo"></i></a></li>
+      {% else %}
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'globus_escalas' %}?data={{escala.data|date:'Y-m-d'}}"><i class="fas fa-undo"></i></a></li>
       {% endif %}
     </ul>
   </div>
   <div class="card-body tab-content">
-    <h5 class="card-title mb-3">Viagens <small class="badge bg-primary ms-1">{{viagens.count}}</small></h5>
-    <div class="tab-pane fade show active" id="base" role="tabpanel">
+    <h5 class="card-title mb-0">Viagens <small class="badge bg-primary ms-1">{{viagens.count}}</small></h5>
+    <span class="fs-7 fw-bold text-muted">{{escala.linha.codigo}} - {{escala.linha.nome}} [ {{escala.tabela|default:'---'}} ]<br />{{escala.data|date:'d/m/Y'}}</span>
+    <div class="tab-pane fade show active mt-2" id="base" role="tabpanel">
       <table id="main_table" class="table border table-striped table-hover fs-7">
+        <caption class="fs-7">
+          <div class="row">
+            <div class="col-lg-auto mb-2 mb-lg-0"><span class="px-2 py-1 border rounded" style="background-color: rgb(255, 243, 205);">Leg</span> Improdutiva</div>
+          </div>
+        </caption>
         <thead>
           <tr>
             <th class="d-none d-lg-table-cell">Seq</th>
@@ -46,7 +50,7 @@ h7{
             <th>Sentido</th>
             <th>Inicio</th>
             <th>Fim</th>
-            <th class="d-none d-lg-table-cell">Destino</th>
+            <th class="d-none d-lg-table-cell">Extra</th>
             {% if perms.globus.change_viagem %}
             <th>&nbsp;</th>
             {% endif %}
@@ -54,15 +58,15 @@ h7{
         </thead>
         <tbody>
           {% for viagem in viagens %}
-          <tr>
+          <tr class="{% if not viagem.produtiva %}table-warning{% endif %}">
             <td class="d-none d-lg-table-cell">{{forloop.counter}}</td>
             <td><h6>{{viagem.escala.linha.codigo}}</h6><span>{{viagem.get_sentido_display|default:'--'}}</span></td>
             <td><h7>{{viagem.origem|default:'--'}}</h7><span>{{viagem.destino|default:'--'}}</span></td>
             <td>{{viagem.inicio}}</td>
             <td>{{viagem.termino}}</td>
-            <td class="d-none d-lg-table-cell">{{viagem.destino}}</td>
+            <td class="d-none d-lg-table-cell">{{viagem.extra|yesno:"<b class='text-purple'>Extra</b>,"|safe}}</td>
             {% if perms.globus.change_viagem %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="url"><i class="fas fa-pen"></i></a></td>
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'globus_viagem_id' viagem.id|safe %}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
           </tr>
           {% empty %}

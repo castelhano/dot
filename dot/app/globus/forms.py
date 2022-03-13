@@ -1,5 +1,5 @@
 from django import forms
-from .models import Escala, Settings
+from .models import Escala, Viagem, Settings
 from datetime import date
 
 
@@ -15,6 +15,17 @@ class EscalaForm(forms.ModelForm):
     local_pegada = forms.CharField(required=False, max_length=15, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
     inicio = forms.TimeField(required=False, widget=forms.TextInput(attrs={'class':'form-control','type':'time'}))
     termino = forms.TimeField(required=False, widget=forms.TextInput(attrs={'class':'form-control','type':'time'}))
+
+class ViagemForm(forms.ModelForm):
+    class Meta:
+        model = Viagem
+        fields = ['escala','origem','destino','produtiva','sentido','inicio','termino','extra']
+    origem = forms.CharField(required=False, max_length=20, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
+    destino = forms.CharField(required=False, max_length=20, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
+    produtiva = forms.BooleanField(required=False, initial=True, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch', 'tabindex':'-1'}))
+    inicio = forms.TimeField(required=False, widget=forms.TextInput(attrs={'class':'form-control','type':'time'}))
+    termino = forms.TimeField(required=False, widget=forms.TextInput(attrs={'class':'form-control','type':'time'}))
+    extra = forms.BooleanField(required=False, initial=True, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch', 'tabindex':'-1'}))
 
 class SettingsForm(forms.ModelForm):
     class Meta:

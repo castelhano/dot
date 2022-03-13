@@ -1,0 +1,166 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Horarios{% endblock %}
+{% block model %}Escala - Globus{% endblock %}
+{% block navbar_classlist %}navbar-dark bg-orange bg-gradient{% endblock %}
+{% block model_menu %}{% include "_component/menu/visitor.html" %}{% endblock%}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'globus_planejamento_linha' %}"></a>
+
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+    </ul>
+  </div>
+  <div class="card-body tab-content">
+    <h5 class="card-title mb-3">Horários <small class="badge bg-primary ms-1"></small></h5>
+    <div class="tab-pane fade show active" id="base" role="tabpanel">
+      <div class="row g-1">
+        <div class="col-md-4">
+          <select class="form-select form-select-sm bg-light" id="id_empresa" name="empresa" onchange="carregaLinhas();"></select>
+        </div>
+        <div class="col-6 col-md-2">
+          <select class="form-select form-select-sm bg-light" id="id_linha" name="linha" required><option value="">selecione empresa</option></select>
+        </div>
+        <div class="col-6 col-md-auto">
+          <input type="date" class="form-control form-control-sm bg-light" name="data" id="id_data" value="{{data|date:'Y-m-d'}}" required>
+        </div>
+        <div class="col-md-auto d-grid d-md-block text-center"><button type="button" class="btn btn-sm btn-primary" onclick="submitData()"><i class="fas fa-search"></i> Buscar</button></div>        
+      </div>
+      {% if viagens_ida or viagens_volta %}
+      <div class="form-check form-check-inline mt-2">
+        <input class="form-check-input" type="radio" name="view" id="view_corridos" onclick="changeView('c')" checked>
+        <label class="form-check-label" for="view_corridos">Corridos</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="view" id="view_tabelas" onclick="changeView('t')">
+        <label class="form-check-label" for="view_tabelas">Tabelas</label>
+      </div>
+      {% endif %}
+      <!-- ************************************************* -->
+      <div id="horarios_corridos" class="">
+        {% if viagens_ida or viagens_volta %}
+        <div class="row g-1 text-center mt-2">
+          <div class="col-6 col-md-3 col-lg-2">
+            <div class="bg-light border">Ida: <span class="fw-bold">{{viagens_ida|length}}</span></div>
+            <ul class="list-unstyled border mt-1">
+              {% for viagem in viagens_ida %}
+              <li>{{viagem}}</li>
+              {% endfor %}
+            </ul>
+          </div>
+          <div class="col-6 col-md-3 col-lg-2">
+            <div class="bg-light border">Volta: <span class="fw-bold">{{viagens_volta|length}}</span></div>
+            <ul class="list-unstyled border mt-1">
+              {% for viagem in viagens_volta %}
+              <li>{{viagem}}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      <div id="horarios_por_tabela" class="d-none">
+        <div class="row mt-2 g-1">
+          {% for tabela, viagens in tabelas.items %}
+          <div class="col-12 col-sm-4 col-md-3 col-lg-2">
+            <div class="card">
+              <div class="card-header text-center">
+                <h6 class="m-0">Tabela: <b>{{tabela}}</b></h6>
+                <small>[ {{viagens.2}} ] {{viagens.3.matricula}} {{viagens.3.apelido}}</small>
+              </div>
+              <div class="card-body text-center pt-1">
+                <div class="row">
+                  <div class="col-6">
+                    <ul class="list-unstyled">
+                      {% for viagem in viagens.0 %}
+                      <li>{% autoescape off %}{{viagem}}{% endautoescape %}</li>
+                      {% endfor %}                
+                    </ul>
+                  </div>
+                  <div class="col-6">
+                    <ul class="list-unstyled">
+                      {% for viagem in viagens.1 %}
+                      <li>{% autoescape off %}{{viagem}}{% endautoescape %}</li>
+                      {% endfor %}                
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}      
+        </div>        
+      </div>
+      
+    </div>
+  </div>
+</div>
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/update_url.js' %}"></script>
+{% endblock %}
+<script>  
+  {% block add_script %}
+  function submitData(){
+    let linha = document.getElementById('id_linha').value;
+    let data = document.getElementById('id_data').value;
+    if(linha != '' && data != ''){
+      filters(['linha', 'data'], [linha, data]);
+    }
+    else{dotAlert('warning', 'Selecione <b>linha</b> e <b>data</b> para consulta');}
+    
+  }
+  
+  function changeView(view){
+    let corridos = document.getElementById('horarios_corridos');
+    let tabelas = document.getElementById('horarios_por_tabela');
+    if(view == 'c'){tabelas.classList.add('d-none');corridos.classList.remove('d-none');}
+    else if(view == 't'){corridos.classList.add('d-none');tabelas.classList.remove('d-none');}
+  }
+  
+  function carregaEmpresas() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if(this.readyState == 4 && this.status == 200){
+        if(this.responseText == ''){}
+        else{
+          let obj = JSON.parse(this.responseText);
+          let empresas = document.getElementById("id_empresa");
+          let empresa_atual = '{{linha.empresa.id}}';
+          for(key in obj){empresas.innerHTML += `<option value="${obj[key]}" ${obj[key] == empresa_atual ? 'selected' : ''}>${key}</option>`;}
+          carregaLinhas();
+        }
+      }
+    };
+    xhttp.open("GET", "{% url 'core_get_empresas' %}", true);
+    xhttp.send();
+  }
+  carregaEmpresas();
+  
+  function carregaLinhas() {
+    let empresa = document.getElementById('id_empresa').value;
+    let linhas = document.getElementById('id_linha');
+    if(empresa == ''){linhas.innerHTML = '<option value="">selecione empresa</option>';}
+    else{
+      linhas.innerHTML = '';
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if(this.readyState == 4 && this.status == 200){
+          if(this.responseText == ''){}
+          else{
+            let obj = JSON.parse(this.responseText);
+            let linha_atual = '{{linha.id}}';
+            for(key in obj){linhas.innerHTML += `<option value="${obj[key]}" ${obj[key] == linha_atual ? 'selected' : ''}>${key}</option>`;}
+          }
+        }
+      };
+      xhttp.open("GET", "{% url 'trafego_get_linhas_empresa' %}?empresa=" + empresa, true);
+      xhttp.send();
+    }
+  }
+  {% endblock %}
+</script>

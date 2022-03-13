@@ -86,16 +86,16 @@
           <p>É possivel importar dados em lote diretamente para o sistema. O arquivo de importação deve estar em formato <a href="https://www.json.org/json-en.html" target="_blank">json</a> conforme o exemplo abaixo.</p>
           <div class="code pb-0">
             <code><pre>
-          [
-            {"model":"core.funcionario","fields":{
-              "nome": "Rafael Alves",
-              "email": "castelhano.rafael@gmail.com"
-            }},
-            {"model":"core.funcionario","fields":{
-              "nome": "Joao da Silva",
-              "cpf": "055.556.556-66"
-            }}
-          ]</pre></code>
+[
+  {"model":"core.funcionario","fields":{
+    "nome": "Rafael Alves",
+    "email": "castelhano.rafael@gmail.com"
+  }},
+  {"model":"core.funcionario","fields":{
+    "nome": "Joao da Silva",
+    "cpf": "055.556.556-66"
+  }}
+]</pre></code>
           </div>
           <div class="callout callout-orange mb-3"><span class="text-orange fw-bold">Dica!</span> Existem serviços online como o <a href="https://beautifytools.com/excel-to-json-converter.php" target="_blank">beautifytools</a> que convertem registros tabulares salvos em uma planilha excel (por exemplo) para o formato json.<br />
             No arquivo gerado, é necessário realizar pequenos ajustes, informando antes de cada registro o modelo a ser utilizado <code>{"model":"core.funcionario","fields":{</code> além de realizar o fechamento correto do registro <code>}</code>, com um editor de texto moderno (<a href="https://atom.io/" target="_blank">Atom</a> ou <a href="https://www.sublimetext.com/" target="_blank">Sublime Text</a>) é possivel fazer estes ajustes com facilidade.</div>

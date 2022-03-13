@@ -9,7 +9,7 @@ from trafego.models import Linha
 from oficina.models import Frota
 from pessoal.models import Funcionario
 from core.models import Empresa
-from .forms import EscalaForm, SettingsForm
+from .forms import EscalaForm, ViagemForm, SettingsForm
 from core.models import Log
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
@@ -99,10 +99,49 @@ def localizar_escala(request): # Metodo para localizar a escala de um determinad
 
 @login_required
 @permission_required('globus.view_viagem')
-def viagens(request, id):
+def viagens(request, id): # Metodo retorna as viagens de uma escala (tabela) em especifico
     escala = Escala.objects.get(id=id)
     viagens = Viagem.objects.filter(escala=escala)
     return render(request,'globus/viagens.html',{'escala':escala, 'viagens':viagens})
+
+@login_required
+@permission_required('globus.view_viagem')
+def planejamento_linha(request): # Retorna o planejamento da linha para um dia especifico (ou hoje se omitido)
+    if request.GET.get('linha', None):
+        data = datetime.strptime(request.GET['data'],'%Y-%m-%d').date() if request.GET.get('data', None) else None
+        linha = Linha.objects.get(id=request.GET['linha'])
+        viagens = Viagem.objects.filter(escala__linha=linha, escala__data=data).order_by('escala__tabela', 'inicio')
+        tabelas = {}
+        viagens_ida = []
+        viagens_volta = []
+        for v in viagens:
+            if v.escala.tabela in tabelas:
+                if v.sentido == 'I':
+                    tabelas[v.escala.tabela][0].append(v.inicio) if v.produtiva == 1 else tabelas[v.escala.tabela][0].append(f'<b class="text-danger">{v.inicio.strftime("%H:%M")}</b>')
+                    if v.produtiva == 1:
+                        viagens_ida.append(v.inicio)
+                else:
+                    tabelas[v.escala.tabela][1].append(v.inicio)
+                    if v.produtiva == 1:
+                        viagens_volta.append(v.inicio)
+            else:
+                if v.sentido == 'I':
+                    tabelas[v.escala.tabela] = [[v.inicio],[], v.escala.veiculo.prefixo, v.escala.funcionario]
+                    if v.produtiva == 1:
+                        viagens_ida.append(v.inicio)
+                else:
+                    tabelas[v.escala.tabela] = [['---'],[v.inicio], v.escala.veiculo.prefixo, v.escala.funcionario]
+                    if v.produtiva == 1:
+                        viagens_volta.append(v.inicio)
+        viagens_ida.sort()
+        viagens_volta.sort()
+    else:
+        linha = None
+        tabelas = None
+        viagens_ida = None
+        viagens_volta = None
+        data = date.today()
+    return render(request,'globus/planejamento_linha.html',{'linha':linha, 'tabelas':tabelas, 'data':data,'viagens_ida':viagens_ida, 'viagens_volta':viagens_volta})
 
 @login_required
 @permission_required('globus.view_settings')
@@ -146,7 +185,7 @@ def escala_add(request):
     if request.method == 'POST':
         form = EscalaForm(request.POST)
         if form.is_valid():
-            # try:
+            try:
                 form_clean = form.cleaned_data
                 registro = form.save(commit=False)
                 registro.log_importacao = datetime.now()
@@ -160,8 +199,8 @@ def escala_add(request):
                 l.save()
                 messages.success(request,f'Escala para <b>{registro.funcionario.matricula}</b> inserida')
                 return redirect('globus_escala_add')
-            # except:
-            #     messages.error(request,'Erro ao criar escala')
+            except:
+                messages.error(request,'Erro ao criar escala')
     else:
         form = EscalaForm()
     return render(request,'globus/escala_add.html',{'form':form})
@@ -298,7 +337,31 @@ def escala_importar(request):
     else:
         return render(request, 'globus/importar.html')
 
-
+@login_required
+@permission_required('globus.add_viagem')
+def viagem_add(request, id):
+    if request.method == 'POST':
+        form = ViagemForm(request.POST)
+        if form.is_valid():
+            # try:
+                form_clean = form.cleaned_data
+                registro = form.save()
+                l = Log()
+                l.modelo = "globus.escala"
+                l.objeto_id = registro.escala.log_importacao
+                l.objeto_str = f'{registro.inicio} a {registro.termino}'
+                l.usuario = request.user
+                l.mensagem = "VIAGEM ADD"
+                l.save()
+                messages.success(request,f'Viagem inserida')
+                return redirect('globus_viagens', registro.escala.id )
+            # except:
+            #     messages.error(request,'Erro ao inserir viagem')
+    else:
+        escala = Escala.objects.get(id=id)
+        form = ViagemForm()
+    return render(request,'globus/viagem_add.html',{'form':form, 'escala':escala})
+    
 # METODOS GET
 @login_required
 @permission_required('globus.change_escala')
@@ -306,6 +369,13 @@ def escala_id(request, id):
     escala = Escala.objects.get(id=id)
     form = EscalaForm(instance=escala)
     return render(request,'globus/escala_id.html',{'form':form,'escala':escala})
+
+@login_required
+@permission_required('globus.change_viagem')
+def viagem_id(request, id):
+    viagem = Viagem.objects.get(id=id)
+    form = ViagemForm(instance=viagem)
+    return render(request,'globus/viagem_id.html',{'form':form,'viagem':viagem})
 
 # METODOS UPDATE
 @login_required
@@ -323,9 +393,28 @@ def escala_update(request, id):
         l.mensagem = "UPDATE"
         l.save()
         messages.success(request,f'Escala funcionário <b>{registro.funcionario.matricula}</b> alterada')
-        return redirect('globus_escala_id', id)
+        return redirect('globus_viagens', registro.id )
     else:
         return render(request,'globus/escala_id.html',{'form':form,'escala':escala})
+
+@login_required
+@permission_required('globus.change_viagem')
+def viagem_update(request, id):
+    viagem = Viagem.objects.get(pk=id)
+    form = ViagemForm(request.POST, instance=viagem)
+    if form.is_valid():
+        registro = form.save()
+        l = Log()
+        l.modelo = "globus.escala"
+        l.objeto_id = registro.escala.log_importacao
+        l.objeto_str = f'{registro.inicio} a {registro.termino}'
+        l.usuario = request.user
+        l.mensagem = "VIAGEM UPDATE"
+        l.save()
+        messages.success(request,f'Viagem alterada')
+        return redirect('globus_viagem_id', id)
+    else:
+        return render(request,'globus/viagem_id.html',{'form':form,'viagem':viagem})
 
 @login_required
 @permission_required('globus.change_settings')
@@ -372,3 +461,22 @@ def escala_delete(request, id):
     except:
         messages.error(request,'<b>Erro</b> ao apagar escala.')
         return redirect('globus_escala_id', id)
+
+@login_required
+@permission_required('globus.delete_viagem')
+def viagem_delete(request, id):
+    try:
+        registro = Viagem.objects.get(pk=id)
+        l = Log()
+        l.modelo = "globus.viagem"
+        l.objeto_id = registro.escala.log_importacao
+        l.objeto_str = f'{registro.inicio} a {registro.termino}'
+        l.usuario = request.user
+        l.mensagem = "VIAGEM DELETE"
+        l.save()
+        registro.delete()
+        messages.warning(request,'Viagem excluida. Essa operação não pode ser desfeita')
+        return redirect('globus_viagens', registro.escala.id )
+    except:
+        messages.error(request,'<b>Erro</b> ao apagar viagem.')
+        return redirect('globus_viagem_id', id)
