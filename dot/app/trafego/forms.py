@@ -33,7 +33,7 @@ class LinhaForm(forms.ModelForm):
     recolhe_destino_minutos = forms.IntegerField(required=False,initial=0, widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':'0','max':'1000', 'onfocus':'this.select();'}))
     intervalo_ida = forms.IntegerField(required=False,initial=5, widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':'1','max':'60', 'onfocus':'this.select();'}))
     intervalo_volta = forms.IntegerField(required=False,initial=5, widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':'1','max':'60', 'onfocus':'this.select();'}))
-    detalhe = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'Detalhes', 'rows':4,'tabindex':'-1'}))
+    detalhe = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'Detalhes', 'rows':4}))
 
 class EventoForm(forms.ModelForm):
     class Meta:
