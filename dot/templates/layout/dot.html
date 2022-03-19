@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/dot.css' %}" type="text/css">
   {% block style_src %}{% endblock %}
+  <script>{% block script_preload %}{% endblock %}</script>
   
   <style media="screen">
   @media(min-width: 992px){.navbar-dot{height: 45px;}}
@@ -151,6 +152,6 @@
   <script>
   {% block add_script %}{% endblock %}
 </script>
-
+<p class="py-5 d-block d-lg-none">&nbsp;</p>
 </body>
 </html>

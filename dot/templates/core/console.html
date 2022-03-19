@@ -1,6 +1,18 @@
 {% extends "layout/editor.html" %}
 {% load static %}
 
+  
+<script>
+{% block script_preload %}
+let width = window.screen.width;
+// PAGINA NAO DISPONIVEL PARA DISPOSIIVOS MOVEIS
+// REDIRECIONA PARA PAGINA DE ALERTA
+console.log(width);
+if(width < 1000){window.location.replace("{% url 'handler' 110 %}");}
+{% endblock %}
+</script>
+
+
 {% block model %}Console{% endblock %}
 {% block model_menu %}
 <!-- <li class="nav-item">

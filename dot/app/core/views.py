@@ -442,11 +442,8 @@ def logout(request):
     auth.logout(request)
     return redirect('index')
 
-def handle404(request):
-    return render(request,'404.html')
-
-def handle500(request):
-    return render(request,'500.html')
+def handler(request, code):
+    return render(request,f'{code}.html')
 
 def password_valid(password):
     if len(password) < 8:

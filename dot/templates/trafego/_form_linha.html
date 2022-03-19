@@ -42,11 +42,6 @@
             <label for="id_destino">Destino</label>
           </div>
         </div>
-        <div class="row g-1">
-        	<div class="mb-1 col-12">
-        		{{ form.detalhe }}
-        	</div>
-        </div>
       </div>
       <div class="tab-pane fade" id="extensoes" role="tabpanel">
         <div class="row g-1">
@@ -120,48 +115,50 @@
     </div>      
   </div>
   <div class="col-lg-4">
+    {% if 'linha_id' in request.get_full_path %}
     <div class="card-body pt-0">
       <table class="table border table-striped table-hover table-sortable caption-top">
         <caption>
           <div class="d-flex justify-content-between align-items-center">
             <div class="fw-bold">Patamares</div>
             <a class="btn btn-sm btn-success pointer" style="width: 35px;" id="add" onclick="patamarUpdate();"><i class="fas fa-plus"></i></a></div>
-        </caption>
-        <thead>
-          <tr>
-            <th>Inicial</th>
-            <th>Final</th>
-            <th>Ida</th>
-            <th>Volta</th>
-            {% if perms.trafego.change_patamar %}<th>&nbsp;</th>{% endif %}
-          </tr>
-        </thead>
-        <tbody>
-          {% for patamar in linha.patamares %}
-          <tr>
-            <td class="table-secondary">{{patamar.inicial}}</td>  
-            <td class="table-secondary">{{patamar.final}}</td>  
-            <td>{{patamar.ida}}</td>  
-            <td>{{patamar.volta}}</td>  
-            {% if perms.trafego.change_patamar %}
-            <td class="fit py-1 text-end"><a class="btn btn-sm btn-dark pointer" style="width: 35px;" onclick="patamarUpdate({{patamar.inicial}}, {{patamar.final}}, {{patamar.ida}}, {{patamar.volta}}, {{patamar.id}});"><i class="fas fa-pen"></i></a></td>
-            {% endif %}
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="5">Nenhum patamar cadastrado para linha</td>
-          </tr>
-          {% endfor %}
-        </tbody>          
-      </table>
-    </div>    
+          </caption>
+          <thead>
+            <tr>
+              <th>Inicial</th>
+              <th>Final</th>
+              <th>Ida</th>
+              <th>Volta</th>
+              {% if perms.trafego.change_patamar %}<th>&nbsp;</th>{% endif %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for patamar in linha.patamares %}
+            <tr>
+              <td class="table-secondary">{{patamar.inicial}}</td>  
+              <td class="table-secondary">{{patamar.final}}</td>  
+              <td>{{patamar.ida}}</td>  
+              <td>{{patamar.volta}}</td>  
+              {% if perms.trafego.change_patamar %}
+              <td class="fit py-1 text-end"><a class="btn btn-sm btn-dark pointer" style="width: 35px;" onclick="patamarUpdate({{patamar.inicial}}, {{patamar.final}}, {{patamar.ida}}, {{patamar.volta}}, {{patamar.id}});"><i class="fas fa-pen"></i></a></td>
+              {% endif %}
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="5">Nenhum patamar cadastrado para linha</td>
+            </tr>
+            {% endfor %}
+          </tbody>          
+        </table>
+      </div>    
+      {% endif %}
+    </div>
   </div>
-</div>
-
-<script>
-  var TAB_ON_ENTER = true;
   
-  SHORTCUT_MAP['1FTF'] = '#tab_link_base';
-  SHORTCUT_MAP['2FTF'] = '#tab_link_extensoes';
-  
-</script>
+  <script>
+    var TAB_ON_ENTER = true;
+    
+    SHORTCUT_MAP['1FTF'] = '#tab_link_base';
+    SHORTCUT_MAP['2FTF'] = '#tab_link_extensoes';
+    
+  </script>

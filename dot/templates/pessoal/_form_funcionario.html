@@ -21,16 +21,17 @@
           </div></div>
           {% if 'funcionario_id' in request.get_full_path %}
           <div class="col-auto">
-            <button type="button" class="btn btn-sm" data-bs-toggle="dropdown"><i class="fas fa-angle-down text-light"></i></button>
-            <ul class="dropdown-menu fs-7">
+            <button type="button" id="menu_funcionario_extras" class="btn btn-sm" data-bs-toggle="dropdown"><i class="fas fa-angle-down text-light"></i></button>
+            <ul id="funcionario_extra_options" class="dropdown-menu fs-7">
               <li><a class="dropdown-item" href="{% url 'pessoal_export_funcionario_csv' funcionario.id|safe %}">Baixar CSV</a></li>
-                {% if perms.pessoal.view_afastamento %}
-                <li><a class="dropdown-item" href="{% url 'pessoal_afastamentos' funcionario.id|safe %}">Afastamentos</a></li>
-                {% endif %}
-                {% if perms.pessoal.funcionario_desligar and funcionario.status == 'A' %}
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item dropdown-item-danger" data-bs-toggle="modal" data-bs-target="#modal_desligamento" href="#">Desligar Funcionário</a></li>
-                {% endif %}
+              {% if perms.pessoal.view_dependente %}<li><a id="extras_link_dependentes" class="dropdown-item" href="{% url 'pessoal_dependentes' funcionario.id|safe%}"><b>D</b>ependentes</a></li>{% endif %}
+              {% if perms.pessoal.view_afastamento %}
+              <li><a class="dropdown-item" href="{% url 'pessoal_afastamentos' funcionario.id|safe %}">Afastamentos</a></li>
+              {% endif %}
+              {% if perms.pessoal.funcionario_desligar and funcionario.status == 'A' %}
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item dropdown-item-danger" data-bs-toggle="modal" data-bs-target="#modal_desligamento" href="#">Desligar Funcionário</a></li>
+              {% endif %}
             </ul>
           </div>
           {% endif %}
@@ -110,14 +111,14 @@
           </div>
           {% if funcionario.status == 'D' %}
           <div class="row g-1">
-          	<div class="form-floating mb-lg-1 col-lg-4">
-          		<input type="date" class="form-control bg-light fw-bold" id="id_data_desligamento" value="{{funcionario.data_desligamento|date:'Y-m-d'}}" disabled>
-          		<label for="id_data_desligamento">Data Desligamento</label>
-          	</div>
-          	<div class="form-floating mb-1 col-lg">
-          		<input type="text" class="form-control bg-light fw-bold" id="id_motivo_desligamento" value=" {{funcionario.get_motivo_desligamento_display }}" disabled>
-          		<label for="id_motivo_desligamento">Motivo Desligamento</label>
-          	</div>
+            <div class="form-floating mb-lg-1 col-lg-4">
+              <input type="date" class="form-control bg-light fw-bold" id="id_data_desligamento" value="{{funcionario.data_desligamento|date:'Y-m-d'}}" disabled>
+              <label for="id_data_desligamento">Data Desligamento</label>
+            </div>
+            <div class="form-floating mb-1 col-lg">
+              <input type="text" class="form-control bg-light fw-bold" id="id_motivo_desligamento" value=" {{funcionario.get_motivo_desligamento_display }}" disabled>
+              <label for="id_motivo_desligamento">Motivo Desligamento</label>
+            </div>
           </div>
           {% endif %}
           <div class="row g-1">
@@ -138,8 +139,8 @@
             </div>
           </div>
           <div class="form-check form-switch mt-2">
-          	{{form.pne}}
-          	<label class="form-check-label" for="id_pne">PNE Portador de necessidades especiais</label>
+            {{form.pne}}
+            <label class="form-check-label" for="id_pne">PNE Portador de necessidades especiais</label>
           </div>
         </div>
         <div class="tab-pane fade" id="docs" role="tabpanel">

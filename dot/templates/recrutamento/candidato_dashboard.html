@@ -10,7 +10,10 @@
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'recrutamento_candidato_dashboard' %}"></a>
 <div class="d-flex justify-content-between mt-3">
-  <div><h5 class="card-title"><span class="d-none d-lg-inline text-muted">Dashboard: </span><b class="text-purple">Recrutamento</b>{% if metrics.cargo_nome != None %}<sup class="badge bg-purple-light ms-1">{{metrics.cargo_nome}}</sup>{% endif %}</h5></div>
+  <div>
+    <h5 class="card-title"><span class="d-none d-lg-inline text-muted">Dashboard: </span><b class="text-purple">Recrutamento</b></h5>
+    <p class="fs-6 fw-bold text-muted">{{metrics.cargo_nome|default:''}}</p>
+  </div>
   <div class="d-flex align-items-center">
     <div class="dropdown">
       <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown">{{metrics.periodo_analise_dias|zfill:2}} meses </button>

@@ -35,9 +35,9 @@
       <table id="main_table" class="table border table-striped table-hover table-sortable">
         <thead>
           <tr>
-            <th>#</th>
+            <th class="d-none d-md-table-cell">#</th>
             <th>Nome</th>
-            <th>Setor</th>
+            <th class="d-none d-sm-table-cell">Setor</th>
             <th>Ativos</th>
             {% if perms.pessoal.change_cargo %}
             <th>&nbsp;</th>
@@ -47,9 +47,9 @@
         <tbody>
           {% for cargo in cargos %}
           <tr>
-            <td>{{cargo.id|safe}}</td>
+            <td class="d-none d-md-table-cell">{{cargo.id|safe}}</td>
             <td>{{cargo.nome}}</td>
-            <td>{{cargo.setor.nome}}</td>
+            <td class="d-none d-sm-table-cell">{{cargo.setor.nome}}</td>
             <td>{{cargo.ativos}}</td>
             {% if perms.pessoal.change_cargo %}
             <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'pessoal_cargo_id' cargo.id|safe %}"><i class="fas fa-pen"></i></a></td>

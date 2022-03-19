@@ -10,7 +10,12 @@
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'trafego_ocorrencia_dashboard' %}"></a>
 <div class="d-flex justify-content-between mt-3">
-  <div><h5 class="card-title"><span class="d-none d-lg-inline text-muted">Dashboard: </span><b class="text-purple">Ocorrências</b><sup class="badge bg-purple-light ms-2">{{metrics.empresa_nome|default:''}}</sup></h5></div>
+  <div>
+    <h5 class="card-title">
+      <span class="d-none d-lg-inline text-muted">Dashboard: </span><b class="text-purple">Ocorrências</b>
+      <p class="fs-6 fw-bold text-muted">{{metrics.empresa_nome|default:''}}</p>
+    </h5>
+  </div>
   <div class="d-flex align-items-center">
     <div class="dropdown">
       <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown"><span class="d-none d-sm-inline"><b>{{metrics.periodo_de|date:'d/m/y'}}</b> a <b>{{metrics.periodo_ate|date:'d/m/y'}}</b></span><span class="d-inline d-sm-none">Periodo</span></button>
@@ -45,7 +50,7 @@
 <div class="row g-3">
   <div class="col-lg-4">
     <div class="row g-2">
-      <div class="col-lg-6">
+      <div class="col-sm-6">
         <div class="card widget-flat">
           <div class="card-body">
             <div class="float-end"><i class="fas fa-car-crash widget-icon"></i></div>
@@ -55,7 +60,7 @@
           </div>
         </div>
       </div>
-      <div class="col-lg-6">
+      <div class="col-sm-6">
         <div class="card widget-flat">
           <div class="card-body">
             <div class="float-end"><i class="fas fa-car-crash widget-icon"></i></div>
@@ -65,7 +70,7 @@
           </div>
         </div>
       </div>
-      <div class="col-lg-6">
+      <div class="col-sm-6">
         <div class="card widget-flat">
           <div class="card-body">
             <div class="float-end"><i class="fas fa-car-crash widget-icon"></i></div>
@@ -75,7 +80,7 @@
           </div>
         </div>
       </div>
-      <div class="col-lg-6">
+      <div class="col-sm-6">
         <div class="card widget-flat">
           <div class="card-body">
             <div class="float-end"><i class="fas fa-car-crash widget-icon"></i></div>
