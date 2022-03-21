@@ -2,9 +2,10 @@ from django.db import models
 from django.db.models import Sum
 from datetime import datetime
 from oficina.models import Frota
-from core.models import Empresa, Log
+from core.models import Empresa, Log, FileField as core_FileField
 from trafego.models import Linha
 from pessoal.models import Funcionario
+from .validators import validate_excluded_files
 from django.contrib.auth.models import User
 
 class Classificacao(models.Model):
@@ -67,6 +68,14 @@ class Acidente(models.Model):
 class Foto(models.Model):
     acidente = models.ForeignKey(Acidente, on_delete=models.CASCADE)
     foto = models.ImageField(upload_to="sinistro/%Y/%m/%d")
+    def url(self):
+        return self.foto.url
+    def url_abbr(self):
+        return self.foto.url.replace("/media/sinistro/","")
+
+class File(models.Model):
+    acidente = models.ForeignKey(Acidente, on_delete=models.CASCADE)
+    file = core_FileField(upload_to="sinistro/files/%Y/%m/%d",blank=True, validators=[validate_excluded_files])
     def url(self):
         return self.foto.url
     def url_abbr(self):
