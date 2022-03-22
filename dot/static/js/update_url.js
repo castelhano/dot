@@ -23,6 +23,7 @@ function updateUrl(uri, key, value) {
 }
 // USAGE: filter('nome', 'rafael')
 function filter(filter, value){location.href = updateUrl(window.location.href, filter, value);}
+function urlFilter(url, filter, value){location.href = updateUrl(url, filter, value);}
 // USAGE: filters(['filtro1', 'filtro2'], ['foo', 'bar'])
 function filters(filters, values){let h = window.location.href;for(i=0;i < filters.length; i++){h = updateUrl(h , filters[i], values[i]);}location.href = h;}
 function urlHasParam(param){

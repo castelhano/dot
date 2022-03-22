@@ -2,14 +2,14 @@ import os
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from json import dumps
-from .models import Acidente, Foto, Oficina, Classificacao, Terceiro, TipoDespesa, Despesa, Forma, Termo, Paragrafo
+from .models import Acidente, Foto, File,  Oficina, Classificacao, Terceiro, TipoDespesa, Despesa, Forma, Termo, Paragrafo
 from .forms import AcidenteForm, ClassificacaoForm, OficinaForm, TerceiroForm, TipoDespesaForm, DespesaForm, FormaForm, TermoForm
 from core.models import Log, Empresa
 from oficina.models import Frota
 from pessoal.models import Funcionario
 from trafego.models import Linha
 from django.contrib.auth.decorators import login_required, permission_required
-from .validators import validate_file_extension
+from .validators import validate_file_extension, validate_excluded_files
 from django.contrib import messages
 from django.db.models import Q, Sum, Count
 from datetime import date
@@ -96,6 +96,13 @@ def fotos(request, id):
     acidente = Acidente.objects.get(pk=id)
     fotos = Foto.objects.filter(acidente__id=id)
     return render(request,'sinistro/fotos.html', {'fotos':fotos,'acidente':acidente})
+
+@login_required
+@permission_required('sinistro.view_file')
+def files(request, id):
+    acidente = Acidente.objects.get(pk=id)
+    files = File.objects.filter(acidente__id=id)
+    return render(request,'sinistro/files.html', {'files':files,'acidente':acidente})
 
 @login_required
 @permission_required('sinistro.view_terceiro')
@@ -247,6 +254,27 @@ def foto_add(request, id):
         l.save()
         messages.success(request,'Fotos adicionadas')
         return redirect('sinistro_fotos',acidente.id)
+    else:
+        messages.error(request,'Operacao invalida')
+        return redirect('sinistro_acidentes')
+
+@login_required
+@permission_required('sinistro.add_file')
+def file_add(request, id):
+    if request.method == 'POST':
+        acidente = Acidente.objects.get(id=id)
+        for file in request.FILES.getlist('files'):
+            if validate_excluded_files(file):
+                File.objects.create(acidente=acidente,file=file)
+        l = Log()
+        l.modelo = "sinistro.acidente"
+        l.objeto_id = acidente.id
+        l.objeto_str = acidente.pasta
+        l.usuario = request.user
+        l.mensagem = "ADD FOTO"
+        l.save()
+        messages.success(request,'Arquivos adicionados')
+        return redirect('sinistro_files',acidente.id)
     else:
         messages.error(request,'Operacao invalida')
         return redirect('sinistro_acidentes')
@@ -465,6 +493,15 @@ def termo_id(request, id):
     termo = Termo.objects.get(id=id)
     form = TermoForm(instance=termo)
     return render(request,'sinistro/termo_id.html',{'form':form,'termo':termo})
+
+@login_required
+@permission_required('sinistro.view_file')
+def file_download(request, id):
+    file = File.objects.get(pk=id)
+    filename = file.file.name.split('/')[-1]
+    response = HttpResponse(file.file)
+    response['Content-Disposition'] = 'attachment; filename="' + filename + '"'
+    return response
     
 # METODOS UPDATE
 @login_required
@@ -793,6 +830,27 @@ def foto_delete(request, id):
         return redirect('sinistro_fotos',acidente.id)
     except:
         messages.error(request,'ERRO ao apagar foto')
+        return redirect('sinistro_acidentes')
+
+@login_required
+@permission_required('sinistro.delete_file')
+def file_delete(request):
+    try:
+        registro = File.objects.get(pk=request.GET['file'])
+        acidente = registro.acidente
+        os.remove(registro.file.path) # REMOVE ARQUIVO FISICO
+        l = Log()
+        l.modelo = "sinistro.file"
+        l.objeto_id = registro.id
+        l.objeto_str = "PASTA: " + registro.acidente.pasta
+        l.usuario = request.user
+        l.mensagem = "DELETE"
+        registro.delete()
+        l.save()
+        messages.warning(request,'Arquivo <b>excluido</b>, essa operação não pode ser desfeita')
+        return redirect('sinistro_files',acidente.id)
+    except:
+        messages.error(request,'ERRO ao apagar file')
         return redirect('sinistro_acidentes')
 
 @login_required

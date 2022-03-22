@@ -1,3 +1,4 @@
+import os
 from django.db import models
 from django.db.models import Sum
 from datetime import datetime
@@ -77,9 +78,13 @@ class File(models.Model):
     acidente = models.ForeignKey(Acidente, on_delete=models.CASCADE)
     file = core_FileField(upload_to="sinistro/files/%Y/%m/%d",blank=True, validators=[validate_excluded_files])
     def url(self):
-        return self.foto.url
+        return self.file.url
     def url_abbr(self):
-        return self.foto.url.replace("/media/sinistro/","")
+        return self.file.url.replace("/media/sinistro/","")
+    def file_extensao(self):
+        return self.file.url[-3:]
+    def filename(self):
+        return os.path.basename(self.file.name)
 
 
 class Oficina(models.Model):

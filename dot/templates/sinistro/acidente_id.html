@@ -17,6 +17,7 @@
         <ul id="acidente_extra_options" class="dropdown-menu">
           {% if perms.sinistro.view_foto %}<li><a id="extras_link_fotos" class="dropdown-item pointer" href="{% url 'sinistro_fotos' acidente.id|safe %}"><i class="fas fa-camera text-muted me-1"></i> <b>F</b>otos</a></li>{% endif %}
           {% if perms.sinistro.view_terceiro %}<li><a id="extras_link_terceiros" class="dropdown-item pointer" href="{% url 'sinistro_terceiros' acidente.id|safe %}"><i class="fas fa-user-injured text-muted me-1"></i> <b>T</b>erceiros</a></li>{% endif %}
+          {% if perms.sinistro.view_file %}<li><a id="extras_link_files" class="dropdown-item pointer" href="{% url 'sinistro_files' acidente.id|safe %}"><i class="fas fa-file text-muted me-1"></i> <b>A</b>rquivos</a></li>{% endif %}
         </ul>
       </li>
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'sinistro_acidentes' %}"><i class="fas fa-undo"></i></a></li>
@@ -119,6 +120,7 @@
     try{extras = document.getElementById('acidente_extra_options').classList.contains('show') ? true : false;}catch(err){}
     if(extras && e.key.toLowerCase() == 'f')try{e.preventDefault();document.getElementById('extras_link_fotos').click();}catch(err){}
     else if(extras && e.key.toLowerCase() == 't')try{e.preventDefault();document.getElementById('extras_link_terceiros').click();}catch(err){}
+    else if(extras && e.key.toLowerCase() == 'a')try{e.preventDefault();document.getElementById('extras_link_files').click();}catch(err){}
   }
   
   {% endblock %}

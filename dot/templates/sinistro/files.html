@@ -1,0 +1,117 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Arquivos{% endblock %}
+{% block model %}Sinistro{% endblock %}
+{% block navbar_classlist %}navbar-dark bg-primary bg-gradient{% endblock %}
+{% block model_menu %}{% include "_component/menu/sinistro.html" %}{% endblock%}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'sinistro_files' acidente.id|safe %}"></a>
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active disabled" data-bs-toggle="tab" data-bs-target="#files" href="#"><i class="fas fa-file"></i></a></li>
+      <li class="nav-item"><a class="nav-link border pointer ms-1" id="add" data-bs-toggle="modal" data-bs-target="#files_modal" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'sinistro_acidente_id' acidente.id|safe%}"><i class="fas fa-undo"></i></a></li>
+      <li class="nav-item"><a id="acidentes_link" class="nav-link" href="{% url 'sinistro_acidentes' %}" title="Fechar: Acidentes"><i class="fas fa-reply-all"></i></a></li>
+    </ul>
+  </div>
+  <div class="card-body tab-content">
+    <div class="tab-pane fade show active" id="files" role="tabpanel">
+      <h4>Arquivos</h4>
+      <h6>Pasta: <b class="text-primary">{{acidente.pasta}}</b></h6>
+      <h6>Carro: <b class="text-primary">{{acidente.veiculo.prefixo}}</b></h6>
+      <div class="row">
+        {% for file in files %}
+        <div class="card-widget col-md-6 col-lg-4 col-xl-3 btn-dark" title="Ctrl + C">
+          {% if perms.sinistro.delete_file %}
+          <a class="widget-control text-light mt-2 me-2" data-bs-toggle="dropdown" role="button"><i class="fas fa-ellipsis-v"></i></a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal" onclick="target_id={{file.id|safe}}">Excluir Arquivo</a></li>
+          </ul>
+          {% endif %}
+          <div class="row mt-2">
+            <div class="col-auto">
+              <i class="fas fa-file text-muted mt-1 ms-2" style="font-size:3.5rem;"></i>
+            </div>
+            <div class="col">
+              <h5>{{file.filename|truncatechars:15}}</h5>
+              <span class="badge bg-light text-dark fs-6">{{file.file_extensao}}</span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12"><a class="text-decoration-none text-light stretched-link" href="{% url 'sinistro_file_download' file.id|safe %}">{{file.url|truncatechars:37}}</a></div>
+          </div>
+        </div>
+        {% empty %}
+        <p>Nenhum arquivo</p>
+        {% endfor %}      
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="files_modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="row">
+        <div class="col"><h5 class="ms-3 mt-3"><i class="fas fa-file text-success me-2"></i> Adicionar Arquivos</h5></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      </div>
+      <div class="modal-body">
+        <form id="file_form" action="{% url 'sinistro_file_add' acidente.id|safe %}" method="POST" autocomplete="off" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="row mt-2 g-1">
+            <div class="mb-1 col-lg-12">
+              <input type="file" class="form-control" name="files" multiple>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col text-end">
+              <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
+              <button type="submit" class="btn btn-primary" name="button">Adicionar</button>
+            </div>
+          </div>
+        </form>        
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if perms.sinistro.delete_file %}
+<div class="modal fade" id="delete_modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="row">
+        <div class="col"><h5 class="ms-3 mt-3"><i class="fas fa-exclamation-triangle text-danger me-2"></i> Excluir Arquivo</h5></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      </div>
+      <div class="modal-body">
+        <p><b class="text-danger">Atenção!!</b> Esta operação não pode ser desfeita, confirma a exclusão do arquivo?</p>
+        <div class="row mt-2">
+          <div class="col text-end">
+            <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
+            <button type="button" class="btn btn-danger px-3" onclick="deleteFile();">Excluir</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/update_url.js' %}"></script>
+{% endblock %}
+
+<script>
+  {% block add_script %}
+  SHORTCUT_MAP['fTFF'] = '#acidentes_link';
+  var target_id = null;
+  function deleteFile(){
+    urlFilter("{% url 'sinistro_file_delete' %}", 'file', target_id);    
+  } 
+  {% endblock %}
+</script>
