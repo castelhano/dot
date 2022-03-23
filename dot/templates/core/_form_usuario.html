@@ -4,17 +4,17 @@
     <div class="row">
       <div class="col-lg-8">
         <div class="row g-1">
-          <div class="form-floating mb-1 col-lg">
+          <div class="form-floating mb-lg-1 col-lg">
             {{ form.username }}
             <label for="id_username">Username</label>
           </div>
           {% if 'usuario_add' in request.get_full_path %}
-          <div class="form-floating mb-1 col-lg d-none d-lg-block">
+          <div class="form-floating mb-1 col-lg">
             <input type="password" class="form-control bg-light" name="password" id="id_password">
             <label for="id_password">Password</label>
           </div>
           {% else %}
-          <div class="form-floating mb-1 col-lg d-none d-lg-block">
+          <div class="form-floating mb-1 col-lg">
             <input type="text" class="form-control" name="reset_password" id="id_reset_password" placeholder="" disabled>
             <label for="id_reset_password">Password Reset</label>
           </div>

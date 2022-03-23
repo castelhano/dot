@@ -81,8 +81,8 @@ class File(models.Model):
         return self.file.url
     def url_abbr(self):
         return self.file.url.replace("/media/sinistro/","")
-    def file_extensao(self):
-        return self.file.url[-3:]
+    def extensao(self):
+        return os.path.splitext(self.file.url)[1]
     def filename(self):
         return os.path.basename(self.file.name)
 

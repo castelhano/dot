@@ -119,7 +119,7 @@
             <td class="d-none">{{terceiro.oficina.nome|default:'---'}}</td>
             <td class="d-none">{{terceiro.concluido|yesno:'Concluido, Aberto'}}</td>
             <td class="text-end fit py-1">
-            {% if perms.sinistro.change_acidente and acidente.created_by == user or perms.sinistro.tratar_acidente %}<a class="btn btn-sm btn-dark" href="{% url 'sinistro_acidente_id' terceiro.acidente.id|safe%}"><i class="fas fa-pen"></i></a>{% endif %}
+            {% if perms.sinistro.change_acidente and terceiro.acidente.created_by == user or perms.sinistro.tratar_acidente %}<a class="btn btn-sm btn-dark" href="{% url 'sinistro_acidente_id' terceiro.acidente.id|safe%}"><i class="fas fa-pen"></i></a>{% endif %}
             {% if perms.sinistro.view_terceiro %}<a class="btn btn-sm btn-dark" href="{% url 'sinistro_terceiro_id' terceiro.id|safe%}"><i class="fas fa-user"></i></a>{% endif %}
           </td>
           </tr>

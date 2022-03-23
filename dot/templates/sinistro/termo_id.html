@@ -29,7 +29,6 @@
           <ul class="dropdown-menu fs-7">
             <li><a id="modal_link_cabecalhos" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#cabecalhos_modal" href="#" title="Alt + ENTER">Cabeçalhos</a></li>
             {% if perms.sinistro.delete_termo %}<li><hr class="dropdown-divider"></li><li><a class="dropdown-item dropdown-item-danger" data-bs-toggle="modal" data-bs-target="#delete_modal" href="#">Excluir Termo</a></li>{% endif %}
-            
           </ul>
         </div>
         <div class="dropdown ms-1">
@@ -49,7 +48,6 @@
         <a class="btn btn-sm btn-secondary ms-1" id="back" href="{% url 'sinistro_termos' %}"><i class="fas fa-undo"></i></a>
       </div>
     </control-A4>
-    
     <!-- INICIO PAGE -->
     <page size="A4" class="mt-2 px-3 py-2 px-xl-5 py-xl-3 d-flex flex-column position-relative">
       <span class="position-absolute badge rounded bg-primary" style="left: 6px;top:8px;">{{termo.nome}}</span>
@@ -105,8 +103,6 @@
     </page>
   </div>
 </div>
-
-
 {% include 'sinistro/_extract_termo_modais.html' %}
 {% include "_component/modal/loading.html" with message='Registrando termo....' %}
 {% endblock%}

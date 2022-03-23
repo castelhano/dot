@@ -263,17 +263,28 @@ def foto_add(request, id):
 def file_add(request, id):
     if request.method == 'POST':
         acidente = Acidente.objects.get(id=id)
+        arquivos_aceitos = False
+        arquivos_rejeitados = False
         for file in request.FILES.getlist('files'):
             if validate_excluded_files(file):
                 File.objects.create(acidente=acidente,file=file)
-        l = Log()
-        l.modelo = "sinistro.acidente"
-        l.objeto_id = acidente.id
-        l.objeto_str = acidente.pasta
-        l.usuario = request.user
-        l.mensagem = "ADD FOTO"
-        l.save()
-        messages.success(request,'Arquivos adicionados')
+                arquivos_aceitos = True
+            else:
+                arquivos_rejeitados = True
+        if arquivos_aceitos:
+            l = Log()
+            l.modelo = "sinistro.acidente"
+            l.objeto_id = acidente.id
+            l.objeto_str = acidente.pasta
+            l.usuario = request.user
+            l.mensagem = "ADD FILE"
+            l.save()
+        if arquivos_aceitos and not arquivos_rejeitados:
+            messages.success(request,'Arquivos adicionados')
+        elif arquivos_aceitos and arquivos_rejeitados:
+            messages.warning(request,'Um ou mais arquivo <b>não foram adicionados</b> pois violam as <b>politicas de segurança</b>')
+        else:
+            messages.error(request,'Arquivos <b>não adicionados</b> pois violam as <b>politicas de segurança</b>')
         return redirect('sinistro_files',acidente.id)
     else:
         messages.error(request,'Operacao invalida')

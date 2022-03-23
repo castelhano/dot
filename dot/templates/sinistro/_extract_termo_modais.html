@@ -210,11 +210,13 @@
   var cabecalho_label = document.getElementById('clipboard_label_cabecalho'); 
   
   function copyField(text, separator=false){
-    if(!separator){navigator.clipboard.writeText(text);}
-    else{navigator.clipboard.writeText(text.split(':')[0]);}
-    if(document.getElementById('paragrafo_add_modal').style.display == 'block'){add_label.classList.remove('d-none');setTimeout(function(){add_label.classList.add('d-none');},2400);} 
-    else if(document.getElementById('paragrafo_update_modal').style.display == 'block'){update_label.classList.remove('d-none');setTimeout(function(){update_label.classList.add('d-none');},2400);} 
-    else if(document.getElementById('cabecalhos_modal').style.display == 'block'){cabecalho_label.classList.remove('d-none');setTimeout(function(){cabecalho_label.classList.add('d-none');},2400);} 
+    try {
+      if(!separator){navigator.clipboard.writeText(text);}
+      else{navigator.clipboard.writeText(text.split(':')[0]);}
+      if(document.getElementById('paragrafo_add_modal').style.display == 'block'){add_label.classList.remove('d-none');setTimeout(function(){add_label.classList.add('d-none');},2400);} 
+      else if(document.getElementById('paragrafo_update_modal').style.display == 'block'){update_label.classList.remove('d-none');setTimeout(function(){update_label.classList.add('d-none');},2400);} 
+      else if(document.getElementById('cabecalhos_modal').style.display == 'block'){cabecalho_label.classList.remove('d-none');setTimeout(function(){cabecalho_label.classList.add('d-none');},2400);} 
+    } catch(e){alert('Clipboard restrito a páginas SSL https//');}
   }
   
 </script>
