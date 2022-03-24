@@ -1,161 +1,89 @@
-{% extends "layout/editor.html" %}
+{% extends "layout/dot.html" %}
 {% load static %}
-
-  
-<script>
-{% block script_preload %}
-let width = window.screen.width;
-// PAGINA NAO DISPONIVEL PARA DISPOSIIVOS MOVEIS
-// REDIRECIONA PARA PAGINA DE ALERTA
-console.log(width);
-if(width < 1000){window.location.replace("{% url 'handler' 110 %}");}
-{% endblock %}
-</script>
-
-
+{% block title %}Console{% endblock %}
 {% block model %}Console{% endblock %}
-{% block model_menu %}
-<!-- <li class="nav-item">
-  <div class="btn-group" role="group">
-    <button type="button" class="btn btn-sm btn-outline-light border-0"><i class="fas fa-plus"></i></button>
-    <button type="button" class="btn btn-sm btn-outline-light border-0"><i class="fas fa-clone"></i></button>
+{% block model_menu %}{% include "_component/menu/visitor.html" %}{% endblock%}
+
+
+<style media="screen">
+  {% block style %}
+  .badge{margin-right:3px; margin-bottom:3px;}
+  {% endblock%}
+</style>
+
+{% block content_fluid %}
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-code"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="url"><i class="fas fa-undo"></i></a></li>
+    </ul>
   </div>
-</li> -->
-<li class="nav-item" style="margin-left:185px;">
-  <form id="script_form" action="{% url 'console' %}" method="POST" autocomplete="off" onsubmit="return submitForm();">
+  <form id="app_form" action="url" method="POST" autocomplete="off">
     {% csrf_token %}
-    <button type="submit" class="btn btn-sm btn-success border-0" title="Rodar Script"><i class="fas fa-eraser me-2"></i> Run</button>
-    <input type="hidden" id="id_script" name="script" value="">
+    <div class="card-body tab-content">
+      <h5 class="card-title mb-3">Admin Console</h5>
+      <div class="row mb-3">
+        <div class="col">
+          <button type="button" id="clear" class="btn btn-sm btn-warning" title="Limpar" onclick="console_clean()"><i class="fas fa-backspace"></i></button>
+          <button type="button" class="btn btn-sm btn-success" onclick="console_submit()"><i class="fas fa-code"></i> Executar</button>
+          <div class="btn-group" role="group">
+            <button id="id_sys" type="button" class="btn btn-sm btn-dark dropdown-toggle" data-bs-toggle="dropdown" title="Core"><i class="fas fa-terminal"></i></button>
+            <ul class="dropdown-menu fs-7">
+              <li><h6 class="dropdown-header bg-light">Alertas</h6></li>
+              <li><span class="dropdown-item pointer" onclick="console_add('alerta')">Simples</span></li>
+              <li><span class="dropdown-item pointer" onclick="console_add('cleaner')">Cleaner</span></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><span class="dropdown-item pointer text-danger" onclick="console_add('runscript')">Runscript</span></li>
+            </ul>
+          </div>
+          <div class="btn-group" role="group">
+            <button id="id_pessoal" type="button" class="btn btn-sm btn-purple dropdown-toggle" data-bs-toggle="dropdown" title="Pessoal"><i class="fas fa-users"></i> </button>
+            <ul class="dropdown-menu fs-7">
+              <li><a class="dropdown-item" href="#">Cancelar Desligam</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane fade show active" id="base" role="tabpanel">
+        <div class="row">
+          <div class="col">
+            <div class="border rounded py-2 px-3 bg-light" id="console">
+              <span class="badge bg-orange text-uppercase">@alert</span>
+              <span class="badge bg-success" contenteditable="true">username=username</span>
+              <span class="badge bg-primary">is_active=True</span>
+              <span class="badge bg-primary" contenteditable="true">critico=False</span>
+              <span class="badge bg-secondary" contenteditable="true">titulo=informe um titulo</span>
+              <span class="badge bg-secondary" contenteditable="true">mensagem=escreva a mensagem do alerta aqui..</span>
+              <small class="text-muted">Console V1.0</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </form>
-</li>
-<li class="nav-item">
-  <div class="btn-group ms-3" role="group">
-    <button type="button" class="btn btn-sm btn-outline-light border-0" disabled><i class="fas fa-spell-check"></i></button>
-    <a href="{% url 'console' %}" id="clear" class="btn btn-sm btn-outline-light border-0" title="Reiniciar Console"><i class="fas fa-eraser"></i></a>
-    <a href="{% url 'index' %}" id="back" class="btn btn-sm btn-outline-warning px-3 border-0 fw-bold" title="Salvar e Fechar">Sair</a>
-  </div>
-</li>
+</div>
+
 {% endblock%}
 
-{% block editor %}
-<div id="editor"></div>
-{% endblock%}
-
-{% block nav_editor %}
-<div class="btn-group">
-  <a class="ps-2 list-group-item list-group-item-action list-group-item-light d-flex justify-content-between align-items-center pointer" style="border-bottom-width: 0;" onclick="editorSet(COMPONENTS['alert'])">Alerta<span><i class="fas fa-chevron-right"></i></span></a>
-  <button type="button" class="btn btn-light border border-bottom-0 pe-3 dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
-    <span class="visually-hidden">Toggle Dropdown</span>
-  </button>
-  <ul class="dropdown-menu fs-7">
-    <li><a class="dropdown-item d-flex justify-content-between align-items-center pointer" onclick="editorSet(COMPONENTS['alert_link'])">Com link<i class="fas fa-chevron-right text-muted"></i></a></li>
-    <li><a class="dropdown-item d-flex justify-content-between align-items-center pointer" onclick="editorSet(COMPONENTS['alert_class'])">Estilizado<i class="fas fa-chevron-right text-muted"></i></a></li>
-    <li><a class="dropdown-item d-flex justify-content-between align-items-center pointer" onclick="editorSet(COMPONENTS['alert_full'])">Completo<i class="fas fa-chevron-right text-muted"></i></a></li>
-    <li><a class="dropdown-item dropdown-item-danger d-flex justify-content-between align-items-center pointer" onclick="editorSet(COMPONENTS['alert_all'])">Geral<i class="fas fa-chevron-right"></i></a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item dropdown-item-danger d-flex justify-content-between align-items-center pointer" onclick="editorSet(COMPONENTS['clean_alerts'])">Limpar Alertas<i class="fas fa-chevron-right"></i></a></li>
-  </ul>
-</div>
-<div class="btn-group">
-  <a class="ps-2 list-group-item list-group-item-action list-group-item-light d-flex justify-content-between align-items-center pointer" style="border-bottom-width: 0;" onclick="editorSet(COMPONENTS['clean_logs'])">Limpar Logs<span><i class="fas fa-chevron-right"></i></span></a>
-  <button type="button" class="btn btn-light border pe-3 dropdown-toggle dropdown-toggle-split border-bottom-0" data-bs-toggle="dropdown">
-    <span class="visually-hidden">Toggle Dropdown</span>
-  </button>
-  <ul class="dropdown-menu fs-7">
-    <li><a class="dropdown-item d-flex justify-content-between align-items-center pointer" onclick="editorSet(COMPONENTS['clean_logs_model']);carregaContentTypes();">Filtrar modelo<i class="fas fa-chevron-right text-muted"></i></a></li>
-  </ul>
-</div>
-<div class="btn-group">
-  <a class="ps-2 list-group-item list-group-item-action list-group-item-light d-flex justify-content-between align-items-center disabled">Funcionários</a>
-  <button type="button" class="btn btn-light border pe-3 dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
-    <span class="visually-hidden">Toggle Dropdown</span>
-  </button>
-  <ul class="dropdown-menu fs-7">
-    <li><a class="dropdown-item d-flex justify-content-between align-items-center pointer" onclick="editorSet(COMPONENTS['funcionario_cancelar_desligamento']);">Cancelar Desligamento <i class="fas fa-chevron-right text-muted ms-3"></i></a></li>
-  </ul>
-</div>
-<a class="ps-2 list-group-item list-group-item-action list-group-item-warning d-flex justify-content-between align-items-center pointer" onclick="editorSet(COMPONENTS['dot_cleaner'])">DOT Cleaner<span><i class="fas fa-chevron-right"></i></span></a>
-<a class="ps-2 list-group-item list-group-item-action list-group-item-warning d-flex justify-content-between align-items-center pointer" onclick="editorSet(COMPONENTS['runscript'])">Rodar Script<span><i class="fas fa-chevron-right"></i></span></a>
-<small class="text-muted text-end pe-3 pt-1">* Executa script pre-configurado em console.py</small>
-{% endblock%}
-
-{% block add_script_src %}
-<script src="{% static 'js/vendor/ace/ace.js' %}"></script>
-{% endblock %}
+{% block add_script_src %}{% endblock %}
 
 <script>
   {% block add_script %}
-  SHORTCUT_MAP['iTFF'] = '#back';
-  function eventHandler(e){
-    {% include '_component/menu/global_handler.js' %}
-    else{}}
-    
-    function submitForm(){
-      document.getElementById('id_script').value = editor.getValue();
-      document.getElementById('console_display').innerHTML += '<p class="fw-bold">Aguarde, processando requisição</p>';
-      return true;
-    }
-    // --------------------------------------------------------------------
-    // incluido no layout metodos editorSet(code)
-    const COMPONENTS = {
-      'alert':'@alert { #username :titulo=Titulo_do_Alert :critico=False msg:Mensagem do Alerta; }',
-      'alert_link':'@alert { #username :titulo=Titulo_do_Alert !link=view_name :critico=False msg:Mensagem do Alerta; }',
-      'alert_class':'@alert { #username :titulo=Titulo_do_Alert :alert_class_list=bg-orange;text-light :action_class_list=btn;btn-sm;btn-info :critico=False msg:Mensagem do Alerta; }',
-      'alert_full':'@alert { #username :titulo=Titulo_do_Alert !link=view_name :alert_class_list=style1;style2 :action_class_list=style1;style2 :critico=False msg:Mensagem do Alerta; }',
-      'alert_all':'@alert { #all :titulo=Titulo_do_Alert msg:Mensagem do Alerta; }',
-      'clean_alerts':'@alert { #clean :until=aaaa-mm-dd }',
-      'clean_logs':'@logs { #clean :until=aaaa-mm-dd }',
-      'clean_logs_model':'@logs { #clean :until=aaaa-mm-dd :model=core.empresa }',
-      'funcionario_cancelar_desligamento':'@employee { #matricula !reengage msg:Descrever motivo; }',
-      'dot_cleaner':'@dotcleaner { :until=aaaa-mm-dd :cleanlogs=True :cleanalertas=True :force=False }',
-      'runscript':'@runscript { !execute=False :code=00000 }',
-    }
-    var editor = ace.edit("editor");
-    editor.setTheme("ace/theme/ambiance");
-    editor.session.setMode("ace/mode/text");
-    editor.renderer.setScrollMargin(14)
-    editor.setShowPrintMargin(false);
-    document.getElementById('editor').style.fontSize='0.9rem';
-    
-    
-    var rules = editor.session.$mode.$highlightRules.getRules();
-    for (var stateName in rules) {
-      if (Object.prototype.hasOwnProperty.call(rules, stateName)) {
-        rules[stateName].unshift(
-        {token: 'keyword',regex: '@[a-zA-Z][a-zA-Z0-9]+'}, // Funcoes do sistema, @alert @modal @schedule etc...
-        {token: 'variable',regex: ':[A-z-0-9áàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ,-;=]+'}, // Usado para parametros do componente, converte altera ; e _ por espaço
-        {token: 'constant',regex: '!(link|execute|reengage|run)[=a-zA-Z0-9-_/]*'}, // Usado para informar operacoes e/ou atributos especiais  
-        {token: 'string',regex: '#[A-z-0-9]*'}, // Usado para identificar um compoente, fazendo referencia ao usuario (por exemplo)
-        {token: 'invalid',regex: 'danger_syntax'},
-        {token: 'comment',regex: 'msg:([a-zA-Z0-9áàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ .,\-<>/=\'!@#$%&])+;'}, // Mensagem generica, aceita espaços, simbolos e caracteres acentuados
-        {token: 'custom',regex: 'foo'},
-        );
-      }
-    }
-    
-    editor.session.$mode.$tokenizer = null;
-    editor.session.bgTokenizer.setTokenizer(editor.session.$mode.getTokenizer());
-    editor.session.bgTokenizer.start(0);
-    
-    display = document.getElementById("console_display");
-    function carregaContentTypes() {
-    	var xhttp = new XMLHttpRequest();
-    	xhttp.onreadystatechange = function() {
-    		if(this.readyState == 4 && this.status == 200){
-    			if(this.responseText == ''){}
-    			else{
-    				let obj = JSON.parse(this.responseText);    				
-            models = '[auth.user][auth.group]'
-            for(key in obj){models += `[${key}]`;}
-            display.innerHTML = `<p class="fw-bold text-primary m-0">Available Models:</p>`
-            display.innerHTML += `<p class="fw-bold">${models}</p>`
-            
-    			}
-    		}
-    	};
-    	xhttp.open("GET", "{% url 'core_get_contenttypes' %}", true);
-    	xhttp.send();
-    }
-    
-    {% endblock %}
-  </script>
+  var models = {
+    'alerta':'<span class="badge bg-orange text-uppercase">@alert</span><span class="badge bg-success" contenteditable="true">username=username</span><span class="badge bg-primary">is_active=True</span><span class="badge bg-primary" contenteditable="true">critico=False</span><span class="badge bg-secondary" contenteditable="true">titulo=informe um titulo</span><span class="badge bg-secondary" contenteditable="true">mensagem=escreva a mensagem do alerta aqui..</span>',
+  };
+  var dotConsole = document.getElementById('console'); 
+  function console_add(key){dotConsole.innerHTML = models[key];}
+  function console_clean(){dotConsole.innerHTML = '<small class="text-muted">Console V1.0</small>';}
+  
+  function console_submit(){
+    console.log(dotConsole.textContent);
+  }
+  
+  
+  
+  
+  
+  {% endblock %}
+</script>
