@@ -12,52 +12,53 @@
 </style>
 
 {% block content_fluid %}
+<a id="clear" href="{% url 'console' %}"></a>
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-code"></i></a></li>
-      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="url"><i class="fas fa-undo"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'index' %}"><i class="fas fa-undo"></i></a></li>
     </ul>
   </div>
-  <form id="app_form" action="url" method="POST" autocomplete="off">
+  <form id="console_form" action="console" method="POST" autocomplete="off">
     {% csrf_token %}
+    <input type="hidden" name="script" id="id_script" value="">
     <div class="card-body tab-content">
       <h5 class="card-title mb-3">Admin Console</h5>
       <div class="row mb-3">
         <div class="col">
-          <button type="button" id="clear" class="btn btn-sm btn-warning" title="Limpar" onclick="console_clean()"><i class="fas fa-backspace"></i></button>
+          <button type="button" class="btn btn-sm btn-warning" title="Limpar" onclick="console_clean()"><i class="fas fa-backspace"></i></button>
           <button type="button" class="btn btn-sm btn-success" onclick="console_submit()"><i class="fas fa-code"></i> Executar</button>
+          <button type="button" id="add_param_btn" class="btn btn-sm btn-success px-3 d-none" onclick="console_addParam()"><i class="fas fa-plus"></i></button>
           <div class="btn-group" role="group">
             <button id="id_sys" type="button" class="btn btn-sm btn-dark dropdown-toggle" data-bs-toggle="dropdown" title="Core"><i class="fas fa-terminal"></i></button>
             <ul class="dropdown-menu fs-7">
-              <li><h6 class="dropdown-header bg-light">Alertas</h6></li>
-              <li><span class="dropdown-item pointer" onclick="console_add('alerta')">Simples</span></li>
-              <li><span class="dropdown-item pointer" onclick="console_add('cleaner')">Cleaner</span></li>
+              <li><a class="dropdown-item d-flex justify-content-between align-items-center pointer" data-bs-toggle="dropdown"><span>Alerta</span><i class="fas fa-chevron-right fs-8"></i></a>
+                <ul class="submenu submenu-alt dropdown-menu fs-7">
+                  <li><span class="dropdown-item pointer" onclick="console_model('alerta')">Simples</span></li>                  
+                  <li><span class="dropdown-item pointer" onclick="console_model('alerta_link')">Com Link</span></li>                  
+                  <li><span class="dropdown-item pointer" onclick="console_model('alerta_style')">Estilizado</span></li>
+                </ul>
+              </li>
+              <li><span class="dropdown-item pointer" onclick="console_model('dotCleaner')">Cleaner</span></li>
               <li><hr class="dropdown-divider"></li>
-              <li><span class="dropdown-item pointer text-danger" onclick="console_add('runscript')">Runscript</span></li>
+              <li><span class="dropdown-item pointer text-danger" onclick="console_model('runscript')">Runscript</span></li>
             </ul>
           </div>
           <div class="btn-group" role="group">
             <button id="id_pessoal" type="button" class="btn btn-sm btn-purple dropdown-toggle" data-bs-toggle="dropdown" title="Pessoal"><i class="fas fa-users"></i> </button>
             <ul class="dropdown-menu fs-7">
-              <li><a class="dropdown-item" href="#">Cancelar Desligam</a></li>
+              <li><span class="dropdown-item pointer" onclick="console_model('pessoal_cancelar_desligamento')">Cancelar Desligam</span></li>
             </ul>
           </div>
         </div>
       </div>
       <div class="tab-pane fade show active" id="base" role="tabpanel">
         <div class="row">
-          <div class="col">
-            <div class="border rounded py-2 px-3 bg-light" id="console">
-              <span class="badge bg-orange text-uppercase">@alert</span>
-              <span class="badge bg-success" contenteditable="true">username=username</span>
-              <span class="badge bg-primary">is_active=True</span>
-              <span class="badge bg-primary" contenteditable="true">critico=False</span>
-              <span class="badge bg-secondary" contenteditable="true">titulo=informe um titulo</span>
-              <span class="badge bg-secondary" contenteditable="true">mensagem=escreva a mensagem do alerta aqui..</span>
-              <small class="text-muted">Console V1.0</small>
-            </div>
+          <div class="col-12">
+            <div class="border rounded py-2 px-3 bg-light" id="console"><small class="text-muted">Console V1.0</small></div>
           </div>
+          <small id="id_console_help" class="mt-2"></small>
         </div>
       </div>
     </div>
@@ -71,14 +72,39 @@
 <script>
   {% block add_script %}
   var models = {
-    'alerta':'<span class="badge bg-orange text-uppercase">@alert</span><span class="badge bg-success" contenteditable="true">username=username</span><span class="badge bg-primary">is_active=True</span><span class="badge bg-primary" contenteditable="true">critico=False</span><span class="badge bg-secondary" contenteditable="true">titulo=informe um titulo</span><span class="badge bg-secondary" contenteditable="true">mensagem=escreva a mensagem do alerta aqui..</span>',
+    'alerta':'<span class="badge bg-orange text-uppercase">@alert</span>\n<span class="badge bg-success">operation=new</span>\n<span class="badge bg-success" contenteditable="true">username=username</span>\n<span class="badge bg-primary" contenteditable="true">critico=False</span>\n<span class="badge bg-secondary" contenteditable="true">titulo=informe um titulo</span>\n<span class="badge bg-secondary" contenteditable="true">mensagem=escreva a mensagem do alerta aqui..</span>',
+    'alerta_link':'<span class="badge bg-orange text-uppercase">@alert</span>\n<span class="badge bg-success">operation=new</span>\n<span class="badge bg-success" contenteditable="true">username=username</span>\n<span class="badge bg-primary" contenteditable="true">critico=False</span>\n<span class="badge bg-primary" contenteditable="true">link=url_pagina</span>\n<span class="badge bg-secondary" contenteditable="true">titulo=informe um titulo</span>\n<span class="badge bg-secondary" contenteditable="true">mensagem=escreva a mensagem do alerta aqui..</span>',
+    'alerta_style':'<span class="badge bg-orange text-uppercase">@alert</span>\n<span class="badge bg-success">operation=new</span>\n<span class="badge bg-success" contenteditable="true">username=username</span>\n<span class="badge bg-primary" contenteditable="true">critico=False</span>\n<span class="badge bg-primary" contenteditable="true">alert_class_list=bg-dark-alt border border-4 border-oil text-light</span>\n<span class="badge bg-primary" contenteditable="true">action_class_list=btn btn-sm btn-secondary opacity-75 rounded-0</span>\n<span class="badge bg-secondary" contenteditable="true">titulo=informe um titulo</span>\n<span class="badge bg-secondary" contenteditable="true">mensagem=escreva a mensagem do alerta aqui..</span>',
+    'runscript':'<span class="badge bg-orange text-uppercase">@runscript</span>\n<span class="badge bg-success" contenteditable="true">code=000000</span>\n',
+    'dotCleaner':'<span class="badge bg-orange text-uppercase">@dotCleaner</span>\n<span class="badge bg-success" contenteditable="true">until=aaaa-mm-dd</span>\n<span class="badge bg-primary" contenteditable="true">cleanlogs=True</span>\n<span class="badge bg-primary" contenteditable="true">cleanalertas=True</span>\n<span class="badge bg-success" contenteditable="true">force=False</span>',
+    'pessoal_cancelar_desligamento':'<span class="badge bg-orange text-uppercase">@pessoal</span>\n<span class="badge bg-success">operation=reengage</span>\n<span class="badge bg-primary" contenteditable="true">matricula=00000</span>\n',
   };
   var dotConsole = document.getElementById('console'); 
-  function console_add(key){dotConsole.innerHTML = models[key];}
-  function console_clean(){dotConsole.innerHTML = '<small class="text-muted">Console V1.0</small>';}
+  var help_label = document.getElementById('id_console_help'); 
+  var addParam = document.getElementById('add_param_btn'); 
+  var form_script = document.getElementById('id_script'); 
+  function console_model(key){
+    dotConsole.innerHTML = models[key];addParam.classList.remove('d-none');
+    if(key.includes('alerta')){help_label.innerHTML = '<i class="fas fa-info-circle text-muted"></i> <b>Dica:</b> <span class="badge bg-success">username=all</span> cria alerta para <b>todos</b> os <b>usuarios ativos</b>.';}
+    if(key.includes('dotCleaner')){help_label.innerHTML = '<i class="fas fa-info text-muted"></i> <b>Atenção:</b> Após executar a página será redirecionada para o relatório de coclusão da rotina</b>.';}
+    else{help_label.innerHTML = '';}
+  }
+  function console_clean(){dotConsole.innerHTML = '<small class="text-muted">Console V1.0</small>';addParam.classList.add('d-none');}
+  function console_addParam(){dotConsole.innerHTML += '\n<span class="badge bg-primary" contenteditable="true">param=value</span>';}
   
   function console_submit(){
-    console.log(dotConsole.textContent);
+    let list = dotConsole.textContent.split('\n');
+    let operation = String(list[0]);
+    let raw_params = list.slice(1, list.length);
+    let parameters = {};
+    for(i=0;i < raw_params.length; i++){
+      let row = raw_params[i].split('=');
+      parameters[row[0]] = row[1];
+    }
+    let formated_script = {};
+    formated_script[operation] = parameters;
+    form_script.value = JSON.stringify(formated_script);
+    document.getElementById('console_form').submit();
   }
   
   

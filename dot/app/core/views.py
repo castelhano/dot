@@ -7,10 +7,11 @@ from django.contrib.contenttypes.models import ContentType
 from .models import Empresa, Log, Alerta
 from .forms import EmpresaForm, UserForm, GroupForm
 from .extras import clean_request
+from .console import Run
 from datetime import datetime
 from django.http import HttpResponse
 from django.core import serializers
-from json import dumps
+from json import dumps, loads
 # from django.core.serializers.json import DjangoJSONEncoder
 
 
@@ -97,19 +98,16 @@ def alertas(request):
 @login_required
 @permission_required('core.console')
 def console(request):
-    h = datetime.now().strftime('%H:%M:%S')
-    c = ''
     if request.method == 'POST':
-        from .console import Run
-        response = Run(request, request.POST['script'])
+        response = Run(request, loads(request.POST['script']))
         if type(response) is list:
-            for r in response:
-                c += f'<p class="m-0 d-flex justify-content-between"><span>{r}</span><span>{h}</span></p>'
+            if response[0]:
+                messages.success(request,response[1])
+            else:
+                messages.error(request,response[1])
         else:
             return render(request, response['path'], response['data'])
-    else:
-        c = f'<p class="m-0 d-flex justify-content-between"><span>Console DOT system <b>versão 1.0</b>, powered by <a href="https://ace.c9.io/" target="_blank" class="text-danger fw-bold text-decoration-none">Ace Editor&trade;</a></span><span>{h}</span></p>'
-    return render(request,'core/console.html',{'console':c})
+    return render(request,'core/console.html')
 
 
 # METODOS ADD
