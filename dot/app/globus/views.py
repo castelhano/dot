@@ -186,7 +186,6 @@ def escala_add(request):
         form = EscalaForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save(commit=False)
                 registro.log_importacao = datetime.now()
                 registro.save()
@@ -343,8 +342,7 @@ def viagem_add(request, id):
     if request.method == 'POST':
         form = ViagemForm(request.POST)
         if form.is_valid():
-            # try:
-                form_clean = form.cleaned_data
+            try:
                 registro = form.save()
                 l = Log()
                 l.modelo = "globus.escala"
@@ -355,8 +353,8 @@ def viagem_add(request, id):
                 l.save()
                 messages.success(request,f'Viagem inserida')
                 return redirect('globus_viagens', registro.escala.id )
-            # except:
-            #     messages.error(request,'Erro ao inserir viagem')
+            except:
+                messages.error(request,'Erro ao inserir viagem')
     else:
         escala = Escala.objects.get(id=id)
         form = ViagemForm()

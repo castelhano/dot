@@ -107,7 +107,6 @@ def setor_add(request):
         form = SetorForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save()
                 l = Log()
                 l.modelo = "pessoal.setor"
@@ -132,7 +131,6 @@ def cargo_add(request):
         form = CargoForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save()
                 l = Log()
                 l.modelo = "pessoal.cargo"
@@ -157,7 +155,6 @@ def funcionario_add(request):
         form = FuncionarioForm(request.POST, request.FILES)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save()
                 l = Log()
                 l.modelo = "pessoal.funcionario"
@@ -182,7 +179,6 @@ def afastamento_add(request, id):
         form = AfastamentoForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save(commit=False)
                 resp = registro.funcionario.afastar(registro)
                 if resp[0]:
@@ -214,7 +210,6 @@ def dependente_add(request, id):
         form = DependenteForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save()
                 l = Log()
                 l.modelo = "pessoal.dependente"
@@ -240,7 +235,6 @@ def funcao_fixa_add(request):
         form = FuncaoFixaForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save()
                 l = Log()
                 l.modelo = "pessoal.funcao_fixa"

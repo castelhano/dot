@@ -86,7 +86,7 @@
   function console_model(key){
     dotConsole.innerHTML = models[key];addParam.classList.remove('d-none');
     if(key.includes('alerta')){help_label.innerHTML = '<i class="fas fa-info-circle text-muted"></i> <b>Dica:</b> <span class="badge bg-success">username=all</span> cria alerta para <b>todos</b> os <b>usuarios ativos</b>.';}
-    if(key.includes('dotCleaner')){help_label.innerHTML = '<i class="fas fa-info text-muted"></i> <b>Atenção:</b> Após executar a página será redirecionada para o relatório de coclusão da rotina</b>.';}
+    if(key.includes('dotCleaner')){help_label.innerHTML = '<i class="fas fa-info text-muted"></i> <b>Atenção:</b> Após executar, a página será redirecionada para o relatório de coclusão da rotina</b>.<br/><span class="badge bg-success">force=True</span>irá remover inclusive alertas criticos';}
     else{help_label.innerHTML = '';}
   }
   function console_clean(){dotConsole.innerHTML = '<small class="text-muted">Console V1.0</small>';addParam.classList.add('d-none');}

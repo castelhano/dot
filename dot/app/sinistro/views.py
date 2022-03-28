@@ -162,7 +162,6 @@ def acidente_add(request):
         form = AcidenteForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save(commit=False)
                 registro.created_on = date.today()
                 registro.created_by = request.user
@@ -196,7 +195,6 @@ def classificacao_add(request):
         form = ClassificacaoForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save()
                 l = Log()
                 l.modelo = "sinistro.classificacao"
@@ -220,7 +218,6 @@ def oficina_add(request):
         form = OficinaForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save()
                 l = Log()
                 l.modelo = "sinistro.oficina"
@@ -297,7 +294,6 @@ def terceiro_add(request, id):
         form = TerceiroForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save()
                 l = Log()
                 l.modelo = "sinistro.terceiro"
@@ -322,7 +318,6 @@ def tipo_despesa_add(request):
         form = TipoDespesaForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save()
                 l = Log()
                 l.modelo = "sinistro.tipodespesa"
@@ -346,7 +341,6 @@ def forma_add(request):
         form = FormaForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save()
                 l = Log()
                 l.modelo = "sinistro.forma"
@@ -370,7 +364,6 @@ def despesa_add(request, terceiro):
         form = DespesaForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save()
                 l = Log()
                 l.modelo = "sinistro.despesa"

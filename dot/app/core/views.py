@@ -118,7 +118,6 @@ def empresa_add(request):
         form = EmpresaForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save()
                 l = Log()
                 l.modelo = "core.empresa"
@@ -143,7 +142,6 @@ def usuario_add(request):
         form = UserForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save(commit=False)
                 registro.set_password(request.POST['password'])
                 registro.save()
@@ -181,7 +179,6 @@ def grupo_add(request):
         form = GroupForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save()
                 l = Log()
                 l.modelo = "auth.group"

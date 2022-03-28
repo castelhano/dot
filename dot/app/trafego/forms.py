@@ -1,5 +1,5 @@
 from django import forms
-from .models import Linha, Localidade, Evento, Providencia, Ocorrencia, Planejamento
+from .models import Linha, Localidade, Evento, Providencia, Ocorrencia, Planejamento, Orgao, Agente, Enquadramento, Notificacao
 from datetime import date, datetime
 
 
@@ -72,3 +72,38 @@ class PlanejamentoForm(forms.ModelForm):
     pin = forms.BooleanField(required=False, initial=True, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
     def clean_codigo(self):
         return self.cleaned_data['codigo'].upper()
+
+class OrgaoForm(forms.ModelForm):
+    class Meta:
+        model = Orgao
+        fields = ['nome']
+    nome = forms.CharField(error_messages={'required': 'Informe o nome do orgão'},widget=forms.TextInput(attrs={'class': 'form-control','autofocus':'autofocus','placeholder':''}))
+
+class AgenteForm(forms.ModelForm):
+    class Meta:
+        model = Agente
+        fields = ['matricula','nome','orgao']
+    
+    matricula = forms.CharField(error_messages={'required': 'Informe a matricula do agente'},widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
+    nome = forms.CharField(error_messages={'required': 'Informe o nome do orgão'},widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
+
+class EnquadramentoForm(forms.ModelForm):
+    class Meta:
+        model = Enquadramento
+        fields = ['codigo','nome']
+    codigo = forms.CharField(error_messages={'required': 'Informe o codigo do enquadramento'},widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'', 'autofocus':'autofocus'}))
+    nome = forms.CharField(error_messages={'required': 'Informe o nome do orgão'},widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
+
+class NotificacaoForm(forms.ModelForm):
+    class Meta:
+        model = Notificacao
+        fields = ['empresa','tipo','codigo','data','hora','veiculo','linha','funcionario','agente','enquadramento','local','valor','prazo','detalhe','tratativa']
+    dia_tipo = forms.ChoiceField(choices=Notificacao.TIPO_CHOICES, widget=forms.Select(attrs={'class':'form-select'}))
+    codigo = forms.CharField(error_messages={'required': 'Informe o codigo do enquadramento'},widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'', 'autofocus':'autofocus'}))
+    data = forms.DateField(error_messages={'required': 'Informe a data da notificação'},initial=date.today(),widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
+    hora = forms.TimeField(required=False, initial=datetime.now().strftime('%H:%M'), widget=forms.TextInput(attrs={'class':'form-control','type':'time'}))
+    local = forms.ModelChoiceField(required=False, queryset = Localidade.objects.filter(ponto_de_controle=True).order_by('nome'), widget=forms.Select(attrs={'class':'form-select'}))
+    valor = forms.DecimalField(required=False,initial=0, widget=forms.TextInput(attrs={'class': 'form-control','onfocus':'this.select();'}))
+    prazo = forms.DateField(required=False,widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
+    detalhe = forms.CharField(required=False, max_length=200, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
+    tratativa = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','style':'min-height:200px;','placeholder':''}))

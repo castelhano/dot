@@ -187,7 +187,7 @@ class Ocorrencia(models.Model):
             ("dashboard_ocorrencia", "Pode ver dashboard ocorrencia"),
             ("tratar_ocorrencia", "Pode tratar ocorrencia"),
         ]
-
+    
 class FotoOcorrencia(models.Model):
     ocorrencia = models.ForeignKey(Ocorrencia, on_delete=models.CASCADE)
     foto = core_ImageField(upload_to='trafego/ocorrencias/%Y/%m/%d', validators=[validate_file_extension])
@@ -195,3 +195,50 @@ class FotoOcorrencia(models.Model):
         return self.foto.url
     def url_abbr(self):
         return self.foto.url.replace("/media/trafego/","")
+
+class Orgao(models.Model):
+    nome = models.CharField(max_length=40, blank=False)
+    def __str__(self):
+        return self.nome
+
+class Agente(models.Model):
+    matricula = models.CharField(max_length=15, unique=True, blank=False)
+    nome = models.CharField(max_length=50, blank=False)
+    orgao = models.ForeignKey(Orgao, on_delete=models.RESTRICT)
+    def __str__(self):
+        return self.matricula
+
+class Enquadramento(models.Model):
+    codigo = models.CharField(max_length=15, unique=True, blank=False)
+    nome = models.CharField(max_length=50, blank=False)
+    def __str__(self):
+        return self.codigo
+
+class Notificacao(models.Model):
+    TIPO_CHOICES = (
+    ('N','Notificacao'),
+    ('G','Multa Gestor'),
+    ('T','Multa Transito'),
+    )
+    empresa = models.ForeignKey(Empresa, on_delete=models.RESTRICT)
+    tipo = models.CharField(max_length=2,choices=TIPO_CHOICES, blank=True, default='N')
+    codigo = models.CharField(max_length=40,blank=True)
+    data = models.DateField(default=datetime.today)
+    hora = models.TimeField(null=True)
+    veiculo = models.ForeignKey(Frota, blank=True, null=True, on_delete=models.RESTRICT)
+    linha = models.ForeignKey(Linha, blank=True, null=True, on_delete=models.RESTRICT)
+    funcionario = models.ForeignKey(Funcionario, blank=True, null=True, on_delete=models.RESTRICT)
+    agente = models.ForeignKey(Agente, blank=True, null=True, on_delete=models.RESTRICT)
+    enquadramento = models.ForeignKey(Enquadramento, blank=True, null=True, on_delete=models.RESTRICT)
+    local = models.ForeignKey(Localidade, blank=True, null=True, on_delete=models.RESTRICT)
+    valor = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+    prazo = models.PositiveIntegerField(null=True)
+    detalhe = models.CharField(max_length=200,blank=True)
+    tratativa = models.TextField(blank=True)
+    validado_por = models.ForeignKey(User, related_name='usuario_notificacao_close', blank=True, null=True, on_delete=models.RESTRICT)
+    created_on = models.DateField(blank=True, null=True, default=datetime.today)
+    create_by = models.ForeignKey(User, related_name='usuario_notificacao_create', blank=True, null=True, on_delete=models.RESTRICT)
+    class Meta:
+        permissions = [
+            ("concluir_notificacao", "Pode concluir notificacao"),
+        ]

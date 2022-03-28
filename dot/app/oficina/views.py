@@ -135,7 +135,6 @@ def frota_add(request):
         form = FrotaForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save()
                 l = Log()
                 l.modelo = "oficina.frota"
@@ -159,7 +158,6 @@ def marca_add(request):
         form = MarcaForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save()
                 l = Log()
                 l.modelo = "oficina.marca"
@@ -183,7 +181,6 @@ def classificacao_add(request):
         form = ClassificacaoForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save()
                 l = Log()
                 l.modelo = "oficina.classificacao"
@@ -207,7 +204,6 @@ def categoria_add(request):
         form = CategoriaForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save()
                 l = Log()
                 l.modelo = "oficina.categoria"
@@ -231,7 +227,6 @@ def componente_add(request):
         form = ComponenteForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save()
                 l = Log()
                 l.modelo = "oficina.componente"
@@ -255,7 +250,6 @@ def carroceria_add(request):
         form = CarroceriaForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save()
                 l = Log()
                 l.modelo = "oficina.carroceria"
@@ -279,7 +273,6 @@ def modelo_add(request):
         form = ModeloForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save()
                 l = Log()
                 l.modelo = "oficina.modelo"

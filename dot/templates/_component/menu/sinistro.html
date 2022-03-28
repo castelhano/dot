@@ -29,8 +29,6 @@
   function eventHandler(e){
     {% include '_component/menu/global_handler.js' %}
     else{
-      let cadastro = false;
-      let cadastro_sinistro = false;
       try{cadastro = document.getElementById('menu_cadastro').classList.contains('show') ? true : false;}catch(err){}
       try{cadastro_sinistro = document.getElementById('cadastro_sinistro_list_options').style.display == 'block' ? true : false;}catch(err){}
       try{cadastro_docs = document.getElementById('cadastro_docs_list_options').style.display == 'block' ? true : false;}catch(err){}

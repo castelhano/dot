@@ -39,7 +39,7 @@ class TerceiroForm(forms.ModelForm):
     endereco = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
     bairro = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
     cidade = forms.CharField(required=False, initial='Cuiabá', widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
-    uf = forms.CharField(required=False, initial='MT', max_length=2,widget=forms.TextInput(attrs={'class': 'form-control text-center','placeholder':''}))
+    uf = forms.CharField(required=False, initial='MT', max_length=2,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
     veiculo = forms.CharField(required=False, max_length=15,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
     placa = forms.CharField(required=False,widget=forms.TextInput(attrs={'class':'form-control','placeholder':''}))
     cor = forms.CharField(required=False, max_length=15,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))

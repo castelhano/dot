@@ -4,9 +4,9 @@ from json import dumps
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.db.models import Q
-from .models import Linha, Localidade, Patamar, Carro, Viagem, Evento, Providencia, Ocorrencia, FotoOcorrencia, Planejamento
+from .models import Linha, Localidade, Patamar, Carro, Viagem, Evento, Providencia, Ocorrencia, FotoOcorrencia, Planejamento, Orgao, Agente, Enquadramento, Notificacao
 from core.models import Empresa
-from .forms import LinhaForm, LocalidadeForm, EventoForm, ProvidenciaForm, OcorrenciaForm, PlanejamentoForm
+from .forms import LinhaForm, LocalidadeForm, EventoForm, ProvidenciaForm, OcorrenciaForm, PlanejamentoForm, OrgaoForm, AgenteForm, EnquadramentoForm, NotificacaoForm
 from .validators import validate_file_extension
 from core.models import Log
 from django.contrib.auth.decorators import login_required, permission_required
@@ -147,6 +147,40 @@ def tratativas(request):
         ocorrencias = ocorrencias.filter(tratado=False, indisciplina_condutor=True)
     return render(request,'trafego/tratativas.html',{'ocorrencias':ocorrencias})
 
+@login_required
+@permission_required('trafego.view_orgao')
+def orgaos(request):
+    orgaos = Orgao.objects.all().order_by('nome')
+    if request.method == 'POST':
+        orgaos = orgaos.filter(nome__contains=request.POST['pesquisa'])
+    return render(request, 'trafego/orgaos.html', {'orgaos':orgaos})
+
+@login_required
+@permission_required('trafego.view_agente')
+def agentes(request):
+    agentes = Agente.objects.all().order_by('nome')
+    if request.method == 'POST':
+        agentes = agentes.filter(Q(nome__contains=request.POST['pesquisa']) | Q(matricula__contains=request.POST['pesquisa']))
+    return render(request, 'trafego/agentes.html', {'agentes':agentes})
+
+@login_required
+@permission_required('trafego.view_enquadramento')
+def enquadramentos(request):
+    enquadramentos = Enquadramento.objects.all().order_by('nome')
+    if request.method == 'POST':
+        enquadramentos = enquadramentos.filter(Q(nome__contains=request.POST['pesquisa']) | Q(codigo__contains=request.POST['pesquisa']))
+    return render(request, 'trafego/enquadramentos.html', {'enquadramentos':enquadramentos})
+
+@login_required
+@permission_required('trafego.view_notificacao')
+def notificacoes(request):
+    notificacoes = Notificacao.objects.all().order_by('data','hora')
+    if request.method == 'POST':
+        pass
+    else:
+        notificacoes = notificacoes.filter(data=datetime.today())
+    return render(request, 'trafego/notificacoes.html', {'notificacoes':notificacoes})
+        
 
 # METODOS ADD
 @login_required
@@ -156,7 +190,6 @@ def localidade_add(request):
         form = LocalidadeForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save()
                 l = Log()
                 l.modelo = "trafego.localidade"
@@ -180,7 +213,6 @@ def linha_add(request):
         form = LinhaForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save()
                 l = Log()
                 l.modelo = "trafego.linha"
@@ -204,7 +236,6 @@ def evento_add(request):
         form = EventoForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save()
                 l = Log()
                 l.modelo = "trafego.evento"
@@ -229,7 +260,6 @@ def providencia_add(request):
         form = ProvidenciaForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save()
                 l = Log()
                 l.modelo = "trafego.providencia"
@@ -254,7 +284,6 @@ def ocorrencia_add(request):
         form = OcorrenciaForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save(commit=False)
                 registro.usuario = request.user
                 registro.save()
@@ -284,7 +313,6 @@ def planejamento_add(request):
         form = PlanejamentoForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save(commit=False)
                 registro.usuario = request.user
                 registro.save()
@@ -303,6 +331,102 @@ def planejamento_add(request):
     else:
         form = PlanejamentoForm()
     return render(request,'trafego/planejamento_add.html',{'form':form})
+
+@login_required
+@permission_required('trafego.add_orgao')
+def orgao_add(request):
+    if request.method == 'POST':
+        form = OrgaoForm(request.POST)
+        if form.is_valid():
+            try:
+                registro = form.save()
+                l = Log()
+                l.modelo = "trafego.orgao"
+                l.objeto_id = registro.id
+                l.objeto_str = registro.nome
+                l.usuario = request.user
+                l.mensagem = "CREATED"
+                l.save()
+                messages.success(request,'Orgao <b>' + registro.nome + '</b> criado')
+                return redirect('trafego_orgao_add')
+            except:
+                messages.error(request,'Erro ao inserir orgao')
+                return redirect('trafego_orgao_add')
+    else:
+        form = OrgaoForm()
+    return render(request,'trafego/orgao_add.html',{'form':form})
+
+@login_required
+@permission_required('trafego.add_agente')
+def agente_add(request):
+    if request.method == 'POST':
+        form = AgenteForm(request.POST)
+        if form.is_valid():
+            try:
+                registro = form.save()
+                l = Log()
+                l.modelo = "trafego.agente"
+                l.objeto_id = registro.id
+                l.objeto_str = registro.matricula
+                l.usuario = request.user
+                l.mensagem = "CREATED"
+                l.save()
+                messages.success(request,'Agente <b>' + registro.matricula + '</b> cadastrado')
+                return redirect('trafego_agente_add')
+            except:
+                messages.error(request,'Erro ao inserir agente')
+                return redirect('trafego_agente_add')
+    else:
+        form = AgenteForm()
+    return render(request,'trafego/agente_add.html',{'form':form})
+
+@login_required
+@permission_required('trafego.add_enquadramento')
+def enquadramento_add(request):
+    if request.method == 'POST':
+        form = EnquadramentoForm(request.POST)
+        if form.is_valid():
+            try:
+                registro = form.save()
+                l = Log()
+                l.modelo = "trafego.enquadramento"
+                l.objeto_id = registro.id
+                l.objeto_str = registro.codigo
+                l.usuario = request.user
+                l.mensagem = "CREATED"
+                l.save()
+                messages.success(request,'Enquadramento <b>' + registro.codigo + '</b> cadastrado')
+                return redirect('trafego_enquadramento_add')
+            except:
+                messages.error(request,'Erro ao inserir enquadramento')
+                return redirect('trafego_enquadramento_add')
+    else:
+        form = EnquadramentoForm()
+    return render(request,'trafego/enquadramento_add.html',{'form':form})
+
+@login_required
+@permission_required('trafego.add_notificacao')
+def notificacao_add(request):
+    if request.method == 'POST':
+        form = NotificacaoForm(request.POST)
+        if form.is_valid():
+            try:
+                registro = form.save()
+                l = Log()
+                l.modelo = "trafego.notificacao"
+                l.objeto_id = registro.id
+                l.objeto_str = registro.codigo if registro.codigo else 'Nao Informado'
+                l.usuario = request.user
+                l.mensagem = "CREATED"
+                l.save()
+                messages.success(request,'Notificacao <b>' + l.objeto_str + '</b> inserida')
+                return redirect('trafego_notificacao_add')
+            except:
+                messages.error(request,'Erro ao inserir notificacao')
+                return redirect('trafego_notificacao_add')
+    else:
+        form = NotificacaoForm()
+    return render(request,'trafego/notificacao_add.html',{'form':form})
 
 # METODOS GET
 @login_required
@@ -358,6 +482,33 @@ def planejamento_id(request,id):
     form = PlanejamentoForm(instance=planejamento)
     return render(request,'trafego/planejamento_id.html',{'form':form,'planejamento':planejamento})
 
+@login_required
+@permission_required('trafego.change_orgao')
+def orgao_id(request,id):
+    orgao = Orgao.objects.get(pk=id)
+    form = OrgaoForm(instance=orgao)
+    return render(request,'trafego/orgao_id.html',{'form':form,'orgao':orgao})
+
+@login_required
+@permission_required('trafego.change_agente')
+def agente_id(request,id):
+    agente = Agente.objects.get(pk=id)
+    form = AgenteForm(instance=agente)
+    return render(request,'trafego/agente_id.html',{'form':form,'agente':agente})
+
+@login_required
+@permission_required('trafego.change_enquadramento')
+def enquadramento_id(request,id):
+    enquadramento = Enquadramento.objects.get(pk=id)
+    form = EnquadramentoForm(instance=enquadramento)
+    return render(request,'trafego/enquadramento_id.html',{'form':form,'enquadramento':enquadramento})
+
+@login_required
+@permission_required('trafego.change_notificacao')
+def notificacao_id(request,id):
+    notificacao = Notificacao.objects.get(pk=id)
+    form = NotificacaoForm(instance=notificacao)
+    return render(request,'trafego/notificacao_id.html',{'form':form,'notificacao':notificacao})
 
 # METODOS UPDATE
 @login_required
@@ -622,6 +773,82 @@ def planejamento_update(request,id):
     else:
         return render(request,'trafego/planejamento_id.html',{'form':form,'planejamento':planejamento})
 
+@login_required
+@permission_required('trafego.change_orgao')
+def orgao_update(request,id):
+    orgao = Orgao.objects.get(pk=id)
+    form = OrgaoForm(request.POST, instance=orgao)
+    if form.is_valid():
+        registro = form.save()
+        l = Log()
+        l.modelo = "trafego.orgao"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.nome
+        l.usuario = request.user
+        l.mensagem = "UPDATE"
+        l.save()
+        messages.success(request,'Orgao <b>' + registro.nome + '</b> alterado')
+        return redirect('trafego_orgao_id', id)
+    else:
+        return render(request,'trafego/orgao_id.html',{'form':form,'orgao':orgao})
+
+@login_required
+@permission_required('trafego.change_agente')
+def agente_update(request,id):
+    agente = Agente.objects.get(pk=id)
+    form = AgenteForm(request.POST, instance=agente)
+    if form.is_valid():
+        registro = form.save()
+        l = Log()
+        l.modelo = "trafego.agente"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.matricula
+        l.usuario = request.user
+        l.mensagem = "UPDATE"
+        l.save()
+        messages.success(request,'Agente <b>' + registro.matricula + '</b> alterado')
+        return redirect('trafego_agente_id', id)
+    else:
+        return render(request,'trafego/agente_id.html',{'form':form,'agente':agente})
+
+@login_required
+@permission_required('trafego.change_enquadramento')
+def enquadramento_update(request,id):
+    enquadramento = Enquadramento.objects.get(pk=id)
+    form = EnquadramentoForm(request.POST, instance=enquadramento)
+    if form.is_valid():
+        registro = form.save()
+        l = Log()
+        l.modelo = "trafego.enquadramento"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.codigo
+        l.usuario = request.user
+        l.mensagem = "UPDATE"
+        l.save()
+        messages.success(request,'Enquadramento <b>' + registro.codigo + '</b> alterado')
+        return redirect('trafego_enquadramento_id', id)
+    else:
+        return render(request,'trafego/enquadramento_id.html',{'form':form,'enquadramento':enquadramento})
+
+@login_required
+@permission_required('trafego.change_notificacao')
+def notificacao_update(request,id):
+    notificacao = Notificacao.objects.get(pk=id)
+    form = NotificacaoForm(request.POST, instance=notificacao)
+    if form.is_valid():
+        registro = form.save()
+        l = Log()
+        l.modelo = "trafego.notificacao"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.codigo if registro.codigo else 'Nao Informado'
+        l.usuario = request.user
+        l.mensagem = "UPDATE"
+        l.save()
+        messages.success(request,'Notificacao <b>' + l.objeto_str + '</b> alterado')
+        return redirect('trafego_notificacao_id', id)
+    else:
+        return render(request,'trafego/notificacao_id.html',{'form':form,'notificacao':notificacao})
+
 # METODOS DELETE
 @login_required
 @permission_required('trafego.delete_localidade')
@@ -750,6 +977,82 @@ def planejamento_delete(request,id):
     except:
         messages.error(request,'ERRO ao apagar planejamento')
         return redirect('trafego_planejamento_id', id)
+
+@login_required
+@permission_required('trafego.delete_orgao')
+def orgao_delete(request,id):
+    try:
+        registro = Orgao.objects.get(pk=id)
+        l = Log()
+        l.modelo = "trafego.orgao"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.nome
+        l.usuario = request.user
+        l.mensagem = "DELETE"
+        l.save()
+        registro.delete()
+        messages.warning(request,'Orgao apagado. Essa operação não pode ser desfeita')
+        return redirect('trafego_orgaos')
+    except:
+        messages.error(request,'ERRO ao apagar orgao')
+        return redirect('trafego_orgao_id', id)
+
+@login_required
+@permission_required('trafego.delete_agente')
+def agente_delete(request,id):
+    try:
+        registro = Agente.objects.get(pk=id)
+        l = Log()
+        l.modelo = "trafego.agente"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.matricula
+        l.usuario = request.user
+        l.mensagem = "DELETE"
+        l.save()
+        registro.delete()
+        messages.warning(request,'Agente apagado. Essa operação não pode ser desfeita')
+        return redirect('trafego_agentes')
+    except:
+        messages.error(request,'ERRO ao apagar agente')
+        return redirect('trafego_agente_id', id)
+
+@login_required
+@permission_required('trafego.delete_enquadramento')
+def enquadramento_delete(request,id):
+    try:
+        registro = Enquadramento.objects.get(pk=id)
+        l = Log()
+        l.modelo = "trafego.enquadramento"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.codigo
+        l.usuario = request.user
+        l.mensagem = "DELETE"
+        l.save()
+        registro.delete()
+        messages.warning(request,'Enquadramento apagado. Essa operação não pode ser desfeita')
+        return redirect('trafego_enquadramentos')
+    except:
+        messages.error(request,'ERRO ao apagar enquadramento')
+        return redirect('trafego_enquadramento_id', id)
+
+@login_required
+@permission_required('trafego.delete_notificacao')
+def notificacao_delete(request,id):
+    try:
+        registro = Notificacao.objects.get(pk=id)
+        l = Log()
+        l.modelo = "trafego.notificacao"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.codigo if registro.codigo else 'Nao Informado'
+        l.usuario = request.user
+        l.mensagem = "DELETE"
+        l.save()
+        registro.delete()
+        messages.warning(request,'Notificacao apagada. Essa operação não pode ser desfeita')
+        return redirect('trafego_notificacoes')
+    except:
+        messages.error(request,'ERRO ao apagar notificacao')
+        return redirect('trafego_notificacao_id', id)
 
 # METODOS AJAX
 def get_linha(request):

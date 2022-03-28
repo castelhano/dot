@@ -113,7 +113,6 @@ def cadastro_site(request):
         form = CandidatoForm(request.POST, request.FILES)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save()
                 registro.origem = 'S'
                 registro.apresentacao = request.POST['apresentacao']
@@ -154,7 +153,6 @@ def candidato_add(request):
         form = CandidatoForm(request.POST,request.FILES)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save()
                 l = Log()
                 l.modelo = "recrutamento.candidato"
@@ -179,7 +177,6 @@ def selecao_add(request):
         form = SelecaoForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save(commit=False)
                 if registro.candidato.status != 'B' or Selecao.objects.filter(candidato=registro.candidato.id, vaga=registro.vaga.id, resultado='').exists():
                     messages.warning(request,'Canditado precisa estar no banco e não pode ter outros processos seletivos em aberto')
@@ -242,7 +239,6 @@ def vaga_add(request):
         form = VagaForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save(commit=False)
                 if Vaga.objects.filter(cargo=registro.cargo).exists():
                     messages.warning(request,'Já existe vaga registrada para este cargo')
@@ -270,7 +266,6 @@ def criterio_add(request):
         form = CriterioForm(request.POST)
         if form.is_valid():
             try:
-                form_clean = form.cleaned_data
                 registro = form.save()
                 l = Log()
                 l.modelo = "recrutamento.criterio"
