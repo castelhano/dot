@@ -1,0 +1,57 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Agente{% endblock %}
+{% block model %}Tráfego{% endblock %}
+{% block navbar_classlist %}navbar-dark bg-primary bg-gradient{% endblock %}
+{% block model_menu %}{% include "_component/menu/trafego.html" %}{% endblock%}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'trafego_agente_add' %}"></a>
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'trafego_agentes' %}"><i class="fas fa-undo"></i></a></li>
+    </ul>
+  </div>
+  <form id="app_form" action="{% url 'trafego_agente_add' %}" method="POST" autocomplete="off">
+    {% csrf_token %}
+    <div class="card-body tab-content">
+      <h5 class="card-title mb-3">Cadastro de Agente</h5>
+      <div class="tab-pane fade show active" id="base" role="tabpanel">
+        <div class="row g-1">
+        	<div class="form-floating mb-1 col-lg-6">
+        		{{ form.orgao }}
+        		<label for="id_orgao">Orgão</label>
+        	</div>
+        </div>
+        <div class="row g-1">
+          <div class="form-floating mb-lg-1 col-lg-2">
+            {{ form.matricula }}
+            <label for="id_matricula">Matricula</label>
+          </div>
+          <div class="form-floating mb-1 col-lg-4">
+            {{ form.nome }}
+            <label for="id_nome">Nome</label>
+          </div>
+        </div>
+      </div>
+      <!-- CONTROLES DO FORM -->
+      <div class="row mt-3">
+        <div class="col">
+          <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"><b>G</b>ravar</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+{% endblock%}
+
+{% block add_script_src %}{% endblock %}
+
+<script>
+  {% block add_script %}
+  var TAB_ON_ENTER = true;
+  {% endblock %}
+</script>

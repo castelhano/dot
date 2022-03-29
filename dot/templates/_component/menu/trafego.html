@@ -12,8 +12,18 @@
     <li id="cadastro_ocorrencia_list_container">
       <a id="submenu_ocorrencia_link" class="dropdown-item d-flex justify-content-between align-items-center pointer" data-bs-toggle="dropdown"><span><b>O</b>corrência</span><i class="fas fa-chevron-right fs-8"></i></a>
       <ul id="cadastro_ocorrencia_list_options" class="submenu dropdown-menu dropdown-menu-dark">
+        {% if perms.trafego.view_ocorrencia %}<li><a class="dropdown-item" id="cadastro_ocorrencia" href="{% url 'trafego_ocorrencias' %}"><b>O</b>corrência</a></li>{% endif %}
         {% if perms.trafego.view_evento %}<li><a class="dropdown-item" id="cadastro_evento" href="{% url 'trafego_eventos' %}"><b>E</b>vento</a></li>{% endif %}
         {% if perms.trafego.view_providencia %}<li><a class="dropdown-item" id="cadastro_providencia" href="{% url 'trafego_providencias' %}"><b>P</b>rovidência</a></li>{% endif %}
+      </ul>
+    </li>
+    <li id="cadastro_notificacao_list_container">
+      <a id="submenu_notificacao_link" class="dropdown-item d-flex justify-content-between align-items-center pointer" data-bs-toggle="dropdown"><span><b>N</b>otificações</span><i class="fas fa-chevron-right fs-8"></i></a>
+      <ul id="cadastro_notificacao_list_options" class="submenu dropdown-menu dropdown-menu-dark">
+        {% if perms.trafego.view_notificacao %}<li><a class="dropdown-item" id="cadastro_notificacao" href="{% url 'trafego_notificacoes' %}"><b>N</b>otificações</a></li>{% endif %}
+        {% if perms.trafego.view_orgao %}<li><a class="dropdown-item" id="cadastro_orgao" href="{% url 'trafego_orgaos' %}">Or<b>g</b>ãos</a></li>{% endif %}
+        {% if perms.trafego.view_agente %}<li><a class="dropdown-item" id="cadastro_agente" href="{% url 'trafego_agentes' %}"><b>A</b>gentes</a></li>{% endif %}
+        {% if perms.trafego.view_enquadramento %}<li><a class="dropdown-item" id="cadastro_enquadramento" href="{% url 'trafego_enquadramentos' %}"><b>E</b>nquadramentos</a></li>{% endif %}
       </ul>
     </li>
   </ul>
@@ -23,29 +33,32 @@
   <a class="nav-link" id="menu_planejamento" href="{% url 'trafego_planejamentos' %}" title="ALT + P"><i class="fas fa-route me-1"></i> <b>P</b>lanejamento</a>
 </li>
 {% endif %}
-{% if perms.trafego.view_ocorrencia %}
-<li class="nav-item">
-  <a class="nav-link" id="menu_ocorrencias" href="{% url 'trafego_ocorrencias' %}" title="ALT + O"><i class="fas fa-check-square me-1"></i> <b>O</b>corrências</a>
-</li>
-{% endif %}
 <script>
   SHORTCUT_MAP['cTFF'] = '#menu_cadastro';
-  SHORTCUT_MAP['oTFF'] = '#menu_ocorrencias';
   SHORTCUT_MAP['pTFF'] = '#menu_planejamento';
   
-  if(document.getElementById('cadastro_list_options').childElementCount == 0){document.getElementById('cadastro_list_container').classList.add('d-none');}
+  if(document.getElementById('cadastro_linha_list_options').childElementCount == 0){document.getElementById('cadastro_linha_list_container').classList.add('d-none');}
+  if(document.getElementById('cadastro_ocorrencia_list_options').childElementCount == 0){document.getElementById('cadastro_ocorrencia_list_container').classList.add('d-none');}
+  if(document.getElementById('cadastro_notificacao_list_options').childElementCount == 0){document.getElementById('cadastro_notificacao_list_container').classList.add('d-none');}
   function eventHandler(e){
     {% include '_component/menu/global_handler.js' %}
     else{
       try{cadastro = document.getElementById('menu_cadastro').classList.contains('show') ? true : false;}catch(err){}
       try{cadastro_linha = document.getElementById('cadastro_linha_list_options').style.display == 'block' ? true : false;}catch(err){}
       try{cadastro_ocorrencia = document.getElementById('cadastro_ocorrencia_list_options').style.display == 'block' ? true : false;}catch(err){}
+      try{cadastro_notificacao = document.getElementById('cadastro_notificacao_list_options').style.display == 'block' ? true : false;}catch(err){}
       if(cadastro_linha && e.key.toLowerCase() == 'l')try{e.preventDefault();document.getElementById('app_root').click();}catch(err){}
       else if(cadastro_linha && e.key.toLowerCase() == 'c')try{e.preventDefault();document.getElementById('cadastro_localidade').click();}catch(err){}
+      else if(cadastro_ocorrencia && e.key.toLowerCase() == 'o')try{e.preventDefault();document.getElementById('cadastro_ocorrencia').click();}catch(err){}
       else if(cadastro_ocorrencia && e.key.toLowerCase() == 'e')try{e.preventDefault();document.getElementById('cadastro_evento').click();}catch(err){}
       else if(cadastro_ocorrencia && e.key.toLowerCase() == 'p')try{e.preventDefault();document.getElementById('cadastro_providencia').click();}catch(err){}
+      else if(cadastro_notificacao && e.key.toLowerCase() == 'n')try{e.preventDefault();document.getElementById('cadastro_notificacao').click();}catch(err){}
+      else if(cadastro_notificacao && e.key.toLowerCase() == 'g')try{e.preventDefault();document.getElementById('cadastro_orgao').click();}catch(err){}
+      else if(cadastro_notificacao && e.key.toLowerCase() == 'a')try{e.preventDefault();document.getElementById('cadastro_agente').click();}catch(err){}
+      else if(cadastro_notificacao && e.key.toLowerCase() == 'e')try{e.preventDefault();document.getElementById('cadastro_enquadramento').click();}catch(err){}
       else if(cadastro && e.key.toLowerCase() == 'l')try{submenuToggle(document.getElementById('submenu_linha_link'));cadastro_linha = true;}catch(err){}
       else if(cadastro && e.key.toLowerCase() == 'o')try{submenuToggle(document.getElementById('submenu_ocorrencia_link'));cadastro_ocorrencia = true;}catch(err){}
+      else if(cadastro && e.key.toLowerCase() == 'n')try{submenuToggle(document.getElementById('submenu_notificacao_link'));cadastro_ocorrencia = true;}catch(err){}
     }
   }
 </script>

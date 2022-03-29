@@ -200,6 +200,9 @@ class Orgao(models.Model):
     nome = models.CharField(max_length=40, blank=False)
     def __str__(self):
         return self.nome
+    def ultimas_alteracoes(self):
+        logs = Log.objects.filter(modelo='trafego.orgao',objeto_id=self.id).order_by('-data')[:15]
+        return reversed(logs)
 
 class Agente(models.Model):
     matricula = models.CharField(max_length=15, unique=True, blank=False)
@@ -207,12 +210,18 @@ class Agente(models.Model):
     orgao = models.ForeignKey(Orgao, on_delete=models.RESTRICT)
     def __str__(self):
         return self.matricula
+    def ultimas_alteracoes(self):
+        logs = Log.objects.filter(modelo='trafego.agente',objeto_id=self.id).order_by('-data')[:15]
+        return reversed(logs)
 
 class Enquadramento(models.Model):
     codigo = models.CharField(max_length=15, unique=True, blank=False)
     nome = models.CharField(max_length=50, blank=False)
     def __str__(self):
-        return self.codigo
+        return self.nome
+    def ultimas_alteracoes(self):
+        logs = Log.objects.filter(modelo='trafego.enquadramento',objeto_id=self.id).order_by('-data')[:15]
+        return reversed(logs)
 
 class Notificacao(models.Model):
     TIPO_CHOICES = (
@@ -232,12 +241,16 @@ class Notificacao(models.Model):
     enquadramento = models.ForeignKey(Enquadramento, blank=True, null=True, on_delete=models.RESTRICT)
     local = models.ForeignKey(Localidade, blank=True, null=True, on_delete=models.RESTRICT)
     valor = models.DecimalField(default=0, max_digits=10, decimal_places=2)
-    prazo = models.PositiveIntegerField(null=True)
+    prazo = models.DateField(blank=True, null=True)
     detalhe = models.CharField(max_length=200,blank=True)
     tratativa = models.TextField(blank=True)
+    veiculo_lacrado = models.BooleanField(default=False)
     validado_por = models.ForeignKey(User, related_name='usuario_notificacao_close', blank=True, null=True, on_delete=models.RESTRICT)
     created_on = models.DateField(blank=True, null=True, default=datetime.today)
     create_by = models.ForeignKey(User, related_name='usuario_notificacao_create', blank=True, null=True, on_delete=models.RESTRICT)
+    def ultimas_alteracoes(self):
+        logs = Log.objects.filter(modelo='trafego.notificacao',objeto_id=self.id).order_by('-data')[:15]
+        return reversed(logs)
     class Meta:
         permissions = [
             ("concluir_notificacao", "Pode concluir notificacao"),

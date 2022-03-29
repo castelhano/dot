@@ -85,7 +85,8 @@ class AgenteForm(forms.ModelForm):
         fields = ['matricula','nome','orgao']
     
     matricula = forms.CharField(error_messages={'required': 'Informe a matricula do agente'},widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
-    nome = forms.CharField(error_messages={'required': 'Informe o nome do orgão'},widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
+    nome = forms.CharField(error_messages={'required': 'Informe o nome do agente'},widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
+    orgao = forms.ModelChoiceField(error_messages={'required': 'Informe o nome do orgão'}, queryset = Orgao.objects.all().order_by('nome'), widget=forms.Select(attrs={'class':'form-select bg-light', 'autofocus':'autofocus'}))
 
 class EnquadramentoForm(forms.ModelForm):
     class Meta:
@@ -97,13 +98,15 @@ class EnquadramentoForm(forms.ModelForm):
 class NotificacaoForm(forms.ModelForm):
     class Meta:
         model = Notificacao
-        fields = ['empresa','tipo','codigo','data','hora','veiculo','linha','funcionario','agente','enquadramento','local','valor','prazo','detalhe','tratativa']
-    dia_tipo = forms.ChoiceField(choices=Notificacao.TIPO_CHOICES, widget=forms.Select(attrs={'class':'form-select'}))
-    codigo = forms.CharField(error_messages={'required': 'Informe o codigo do enquadramento'},widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'', 'autofocus':'autofocus'}))
-    data = forms.DateField(error_messages={'required': 'Informe a data da notificação'},initial=date.today(),widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
+        fields = ['empresa','tipo','codigo','data','hora','veiculo','linha','funcionario','agente','enquadramento','local','valor','prazo','detalhe','tratativa','veiculo_lacrado']
+    tipo = forms.ChoiceField(choices=Notificacao.TIPO_CHOICES, widget=forms.Select(attrs={'class':'form-select bg-light fw-bold'}))
+    codigo = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
+    data = forms.DateField(error_messages={'required': 'Informe a data da notificação'}, initial=date.today(),widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
     hora = forms.TimeField(required=False, initial=datetime.now().strftime('%H:%M'), widget=forms.TextInput(attrs={'class':'form-control','type':'time'}))
+    enquadramento = forms.ModelChoiceField(required=False, queryset = Enquadramento.objects.all().order_by('nome'), widget=forms.Select(attrs={'class':'form-select bg-light fw-bold'}))
     local = forms.ModelChoiceField(required=False, queryset = Localidade.objects.filter(ponto_de_controle=True).order_by('nome'), widget=forms.Select(attrs={'class':'form-select'}))
     valor = forms.DecimalField(required=False,initial=0, widget=forms.TextInput(attrs={'class': 'form-control','onfocus':'this.select();'}))
     prazo = forms.DateField(required=False,widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
     detalhe = forms.CharField(required=False, max_length=200, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
-    tratativa = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','style':'min-height:200px;','placeholder':''}))
+    tratativa = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','style':'min-height:305px;','placeholder':'Tratativas'}))
+    veiculo_lacrado = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))

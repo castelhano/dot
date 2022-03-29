@@ -1,7 +1,7 @@
 <div class="row g-1" id="veiculo_container"{% if hide %} style="display:none"{% endif %}>
   <div class="form-floating mb-1 col" style="max-width: 130px;">
     <input type="text" class="form-control" name="prefixo" maxlength="6" id="id_prefixo_veiculo" value="{{prefixo}}" placeholder="" onfocusout="getVeiculo();{{onfocusout}}"{% if autofocus %} autofocus{% endif %}{% if required %} REQUIRED{% endif %}>
-    <label for="id_prefixo_veiculo">Cod Veiculo</label>
+    <label for="id_prefixo_veiculo">Prefixo</label>
   </div>
   <div class="form-floating mb-lg-1 col col-lg-6">
     <input type="text" class="form-control" name="placa_veiculo" id="id_placa_veiculo" value="{{placa}}" disabled>

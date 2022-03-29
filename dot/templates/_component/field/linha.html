@@ -1,7 +1,7 @@
 <div class="row g-1" id="linha_container"{% if hide %} style="display:none"{% endif %}>
   <div class="form-floating mb-1 col" style="max-width: 130px;">
-    <input type="text" class="form-control" name="codigo" maxlength="5" id="id_codigo_linha" value="{{codigo}}" placeholder="" onfocusout="getLinha();{{onfocusout}}"{% if autofocus %} autofocus{% endif %}{% if required %} REQUIRED{% endif %}>
-    <label for="id_codigo_linha">Cod Linha</label>
+    <input type="text" class="form-control" name="codigo_linha" maxlength="5" id="id_codigo_linha" value="{{codigo}}" placeholder="" onfocusout="getLinha();{{onfocusout}}"{% if autofocus %} autofocus{% endif %}{% if required %} REQUIRED{% endif %}>
+    <label for="id_codigo_linha">Linha</label>
   </div>
   <div class="form-floating mb-1 col">
     <input type="text" class="form-control" name="nome_linha" id="id_nome_linha" value="{{nome}}" disabled>

@@ -11,7 +11,7 @@ from .validators import validate_file_extension
 from core.models import Log
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
-from datetime import date
+from datetime import date, datetime
 
 
 # METODOS SHOW
@@ -160,7 +160,10 @@ def orgaos(request):
 def agentes(request):
     agentes = Agente.objects.all().order_by('nome')
     if request.method == 'POST':
-        agentes = agentes.filter(Q(nome__contains=request.POST['pesquisa']) | Q(matricula__contains=request.POST['pesquisa']))
+        if request.POST['pesquisa'] != '':
+            agentes = agentes.filter(Q(nome__contains=request.POST['pesquisa']) | Q(matricula__contains=request.POST['pesquisa']))
+        if request.POST['orgao'] != '':
+            agentes = agentes.filter(orgao__id=request.POST['orgao'])
     return render(request, 'trafego/agentes.html', {'agentes':agentes})
 
 @login_required
@@ -176,7 +179,14 @@ def enquadramentos(request):
 def notificacoes(request):
     notificacoes = Notificacao.objects.all().order_by('data','hora')
     if request.method == 'POST':
-        pass
+        if request.POST['pesquisa'] != '':
+            notificacoes = notificacoes.filter(codigo=request.POST['pesquisa'])
+        if request.POST['orgao'] != '':
+            notificacoes = notificacoes.filter(agente__orgao__id=request.POST['orgao'])
+        if request.POST['tipo'] != '':
+            notificacoes = notificacoes.filter(tipo=request.POST['tipo'])
+        if request.POST['periodo_de'] != '' and request.POST['periodo_ate'] != '':
+            notificacoes = notificacoes.filter(data__range=[request.POST['periodo_de'],request.POST['periodo_ate']])
     else:
         notificacoes = notificacoes.filter(data=datetime.today())
     return render(request, 'trafego/notificacoes.html', {'notificacoes':notificacoes})
@@ -411,7 +421,9 @@ def notificacao_add(request):
         form = NotificacaoForm(request.POST)
         if form.is_valid():
             try:
-                registro = form.save()
+                registro = form.save(commit=False)
+                registro.create_by = request.user
+                registro.save()
                 l = Log()
                 l.modelo = "trafego.notificacao"
                 l.objeto_id = registro.id
@@ -1091,6 +1103,25 @@ def get_eventos(request):
             itens[item.nome] = item.id
         dataJSON = dumps(itens)
         return HttpResponse(dataJSON)
+    except:
+        return HttpResponse('')
+
+def get_orgaos(request):
+    try:
+        orgaos = Orgao.objects.all().order_by('nome')
+        itens = {}
+        for item in orgaos:
+            itens[item.nome] = item.id
+        dataJSON = dumps(itens)
+        return HttpResponse(dataJSON)
+    except:
+        return HttpResponse('')
+
+def get_agente(request):
+    try:
+        matricula = request.GET.get('matricula',None)
+        agente = Agente.objects.get(matricula=request.GET['matricula'])
+        return HttpResponse(str(agente.id) + ';' + str(agente.nome) + ';' + str(agente.orgao.nome))
     except:
         return HttpResponse('')
 

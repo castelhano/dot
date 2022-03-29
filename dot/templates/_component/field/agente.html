@@ -1,0 +1,57 @@
+<div class="row g-1" id="agente_container"{% if hide %} style="display:none"{% endif %}>
+  <div class="form-floating mb-1 col" style="max-width: 130px;">
+    <input type="text" class="form-control" name="matricula" maxlength="6" id="id_matricula_agente" value="{{matricula}}" placeholder="" onfocusout="getAgente();{{onfocusout}}"{% if autofocus %} autofocus{% endif %}{% if required %} REQUIRED{% endif %}>
+    <label for="id_matricula_agente">Agente</label>
+  </div>
+  <div class="form-floating mb-1 col">
+    <input type="text" class="form-control" name="nome_agente" id="id_nome_agente" value="{{nome}}" disabled>
+    <label for="id_nome_agente">Nome Agente</label>
+  </div>
+  <div class="form-floating mb-1 col-4 d-none d-lg-block">
+    <input type="text" class="form-control" name="orgao_agente" id="id_orgao_agente" value="{{orgao}}" disabled>
+    <label for="id_orgao_agente">Orgão</label>
+  </div>
+  <input type="hidden" name="agente" id="id_agente" value="{{id|safe}}">
+</div>
+<script>
+        
+  function cleanAgente(){
+    document.getElementById('id_matricula_agente').value = '';
+    if(document.getElementById('id_matricula_agente').classList.contains('is-invalid')){
+      document.getElementById('id_matricula_agente').classList.remove('is-invalid');      
+    }
+    document.getElementById('id_nome_agente').value = '';
+    document.getElementById('id_orgao_agente').value = '';
+  };
+  
+  
+  function getAgente() {
+    empresa = document.getElementById('id_empresa');
+    matricula = document.getElementById('id_matricula_agente');
+    nome = document.getElementById("id_nome_agente");
+    orgao = document.getElementById("id_orgao_agente");
+    agente = document.getElementById("id_agente");
+    if(matricula.value != ''){
+      var xhttp_agente = new XMLHttpRequest();
+    	xhttp_agente.onreadystatechange = function() {
+    		if(this.readyState == 4 && this.status == 200){
+    			if(this.responseText == ''){
+            document.getElementById("id_matricula_agente").classList.add('is-invalid');
+            nome.value = 'Agente não cadastrado';  
+            orgao.value = '';  
+            agente.value = '';
+          }
+    			else{
+            matricula.classList.remove('is-invalid');
+            nome.value = this.responseText.split(';')[1];
+            agente.value = this.responseText.split(';')[0];
+            orgao.value = this.responseText.split(';')[2];
+          }
+    		}
+    	};
+    	xhttp_agente.open("GET", "{% url 'trafego_get_agente' %}?matricula=" + matricula.value, true);
+    	xhttp_agente.send();  
+    }
+    else{cleanAgente();}
+  }  
+</script>
