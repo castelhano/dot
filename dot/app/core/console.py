@@ -1,6 +1,7 @@
 from .models import Alerta, Log
 from .cron import dot_cleaner
 from pessoal.models import Funcionario
+from globus.models import Escala
 from django.contrib.auth.models import User
 
 def Run(request, script):
@@ -12,6 +13,8 @@ def Run(request, script):
             message = runScript(v)
         elif k == '@pessoal':
             message = pessoal(request, v)
+        elif k == '@globus':
+            message = globus(request, v)
         elif k == '@dotCleaner':
             data = dot_cleaner(request, **v) # Funcao retorna dicionario com resultado das subrotinas
             return {'path':'core/cron.html', 'data':data}
@@ -60,6 +63,17 @@ def pessoal(request, params):
                 return [False, f'Funcionário <b>{funcionario.matricula}</b> não está desligado']
     except Exception as e:
         return [False, '<b>Operação inválida</b>, verifique os dados digitados']
+
+def globus(request, params):
+    try:
+        if params['operation'] == 'clean':
+            escalas = Escala.objects.filter(data__lte=params['until']).delete()
+            return [True, '<b>Concluido</b> limpeza das escalas']
+        else:
+            return [False, 'Operação <b>inválida</b>']
+    except Exception as e:
+        return [False, '<b>Operação inválida</b>, verifique os dados digitados']
+
 def runScript(params):
     try:
         if params['code'] == '666':

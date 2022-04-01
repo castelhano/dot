@@ -48,6 +48,11 @@
           <div class="btn-group" role="group">
             <button id="id_pessoal" type="button" class="btn btn-sm btn-purple dropdown-toggle" data-bs-toggle="dropdown" title="Pessoal"><i class="fas fa-users"></i> </button>
             <ul class="dropdown-menu fs-7">
+              <li><a class="dropdown-item d-flex justify-content-between align-items-center pointer" data-bs-toggle="dropdown"><span>Globus</span><i class="fas fa-chevron-right fs-8"></i></a>
+                <ul class="submenu submenu-alt dropdown-menu fs-7">
+                  <li><span class="dropdown-item pointer" onclick="console_model('escala_clean')">Limpar Escalas</span></li>                  
+                </ul>
+              </li>
               <li><span class="dropdown-item pointer" onclick="console_model('pessoal_cancelar_desligamento')">Cancelar Desligam</span></li>
             </ul>
           </div>
@@ -65,6 +70,7 @@
   </form>
 </div>
 
+{% include "_component/modal/loading.html" with message='Executando....' %}
 {% endblock%}
 
 {% block add_script_src %}{% endblock %}
@@ -76,8 +82,9 @@
     'alerta_link':'<span class="badge bg-orange text-uppercase">@alert</span>\n<span class="badge bg-success">operation=new</span>\n<span class="badge bg-success" contenteditable="true">username=username</span>\n<span class="badge bg-primary" contenteditable="true">critico=False</span>\n<span class="badge bg-primary" contenteditable="true">link=url_pagina</span>\n<span class="badge bg-secondary" contenteditable="true">titulo=informe um titulo</span>\n<span class="badge bg-secondary" contenteditable="true">mensagem=escreva a mensagem do alerta aqui..</span>',
     'alerta_style':'<span class="badge bg-orange text-uppercase">@alert</span>\n<span class="badge bg-success">operation=new</span>\n<span class="badge bg-success" contenteditable="true">username=username</span>\n<span class="badge bg-primary" contenteditable="true">critico=False</span>\n<span class="badge bg-primary" contenteditable="true">alert_class_list=bg-dark-alt border border-4 border-oil text-light</span>\n<span class="badge bg-primary" contenteditable="true">action_class_list=btn btn-sm btn-secondary opacity-75 rounded-0</span>\n<span class="badge bg-secondary" contenteditable="true">titulo=informe um titulo</span>\n<span class="badge bg-secondary" contenteditable="true">mensagem=escreva a mensagem do alerta aqui..</span>',
     'runscript':'<span class="badge bg-orange text-uppercase">@runscript</span>\n<span class="badge bg-success" contenteditable="true">code=000000</span>\n',
-    'dotCleaner':'<span class="badge bg-orange text-uppercase">@dotCleaner</span>\n<span class="badge bg-success" contenteditable="true">until=aaaa-mm-dd</span>\n<span class="badge bg-primary" contenteditable="true">cleanlogs=True</span>\n<span class="badge bg-primary" contenteditable="true">cleanalertas=True</span>\n<span class="badge bg-success" contenteditable="true">force=False</span>',
+    'dotCleaner':'<span class="badge bg-orange text-uppercase">@dotCleaner</span>\n<span class="badge bg-success" contenteditable="true">until=aaaa-mm-dd</span>\n<span class="badge bg-primary" contenteditable="true">cleanlogs=True</span>\n<span class="badge bg-primary" contenteditable="true">cleanalertas=True</span>\n<span class="badge bg-primary" contenteditable="true">cleanescalas=True</span>\n<span class="badge bg-success" contenteditable="true">force=False</span>',
     'pessoal_cancelar_desligamento':'<span class="badge bg-orange text-uppercase">@pessoal</span>\n<span class="badge bg-success">operation=reengage</span>\n<span class="badge bg-primary" contenteditable="true">matricula=00000</span>\n',
+    'escala_clean':'<span class="badge bg-orange text-uppercase">@globus</span>\n<span class="badge bg-success">operation=clean</span>\n<span class="badge bg-success" contenteditable="true">until=aaaa-mm-dd</span>',
   };
   var dotConsole = document.getElementById('console'); 
   var help_label = document.getElementById('id_console_help'); 
@@ -86,13 +93,15 @@
   function console_model(key){
     dotConsole.innerHTML = models[key];addParam.classList.remove('d-none');
     if(key.includes('alerta')){help_label.innerHTML = '<i class="fas fa-info-circle text-muted"></i> <b>Dica:</b> <span class="badge bg-success">username=all</span> cria alerta para <b>todos</b> os <b>usuarios ativos</b>.';}
-    if(key.includes('dotCleaner')){help_label.innerHTML = '<i class="fas fa-info text-muted"></i> <b>Atenção:</b> Após executar, a página será redirecionada para o relatório de coclusão da rotina</b>.<br/><span class="badge bg-success">force=True</span>irá remover inclusive alertas criticos';}
+    else if(key.includes('escala_clean')){help_label.innerHTML = '<i class="fas fa-info text-danger"></i> <b>Atenção:</b> Este processo pode demorar vários minutos dependendo do período informado.';}
+    else if(key.includes('dotCleaner')){help_label.innerHTML = '<i class="fas fa-info text-muted"></i> <b>Atenção:</b> Após executar, a página será redirecionada para o relatório de coclusão da rotina</b>.<br/><span class="badge bg-success">force=True</span>irá remover inclusive alertas criticos';}
     else{help_label.innerHTML = '';}
   }
   function console_clean(){dotConsole.innerHTML = '<small class="text-muted">Console V1.0</small>';addParam.classList.add('d-none');}
   function console_addParam(){dotConsole.innerHTML += '\n<span class="badge bg-primary" contenteditable="true">param=value</span>';}
   
   function console_submit(){
+    let modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
     let list = dotConsole.textContent.split('\n');
     let operation = String(list[0]);
     let raw_params = list.slice(1, list.length);
@@ -101,15 +110,12 @@
       let row = raw_params[i].split('=');
       parameters[row[0]] = row[1];
     }
+    
     let formated_script = {};
     formated_script[operation] = parameters;
     form_script.value = JSON.stringify(formated_script);
+    modal_loading.show();
     document.getElementById('console_form').submit();
   }
-  
-  
-  
-  
-  
   {% endblock %}
 </script>

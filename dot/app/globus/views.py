@@ -121,16 +121,17 @@ def planejamento_linha(request): # Retorna o planejamento da linha para um dia e
                     if v.produtiva == 1:
                         viagens_ida.append(v.inicio)
                 else:
-                    tabelas[v.escala.tabela][1].append(v.inicio)
+                    tabelas[v.escala.tabela][1].append(v.inicio) if v.produtiva == 1 else tabelas[v.escala.tabela][1].append(f'<b class="text-danger">{v.inicio.strftime("%H:%M")}</b>')
+                    # tabelas[v.escala.tabela][1].append(v.inicio)
                     if v.produtiva == 1:
                         viagens_volta.append(v.inicio)
             else:
                 if v.sentido == 'I':
-                    tabelas[v.escala.tabela] = [[v.inicio],[], v.escala.veiculo.prefixo, v.escala.funcionario]
+                    tabelas[v.escala.tabela] = [[v.inicio],[], v.escala.veiculo, v.escala.funcionario]
                     if v.produtiva == 1:
                         viagens_ida.append(v.inicio)
                 else:
-                    tabelas[v.escala.tabela] = [['---'],[v.inicio], v.escala.veiculo.prefixo, v.escala.funcionario]
+                    tabelas[v.escala.tabela] = [['---'],[v.inicio], v.escala.veiculo, v.escala.funcionario]
                     if v.produtiva == 1:
                         viagens_volta.append(v.inicio)
         viagens_ida.sort()
@@ -192,11 +193,11 @@ def escala_add(request):
                 l = Log()
                 l.modelo = "globus.escala"
                 l.objeto_id = registro.log_importacao
-                l.objeto_str = registro.funcionario.matricula
+                l.objeto_str = registro.funcionario.matricula if registro.funcionario else 'ESC EM BRANCO'
                 l.usuario = request.user
                 l.mensagem = "CREATED"
                 l.save()
-                messages.success(request,f'Escala para <b>{registro.funcionario.matricula}</b> inserida')
+                messages.success(request,f'Escala para <b>{l.objeto_str}</b> inserida')
                 return redirect('globus_escala_add')
             except:
                 messages.error(request,'Erro ao criar escala')
@@ -352,7 +353,7 @@ def viagem_add(request, id):
                 l.mensagem = "VIAGEM ADD"
                 l.save()
                 messages.success(request,f'Viagem inserida')
-                return redirect('globus_viagens', registro.escala.id )
+                return redirect('globus_viagem_add', registro.escala.id)
             except:
                 messages.error(request,'Erro ao inserir viagem')
     else:

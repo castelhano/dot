@@ -115,7 +115,7 @@ def console(request):
 @permission_required('core.add_empresa')
 def empresa_add(request):
     if request.method == 'POST':
-        form = EmpresaForm(request.POST)
+        form = EmpresaForm(request.POST, request.FILES)
         if form.is_valid():
             try:
                 registro = form.save()
@@ -230,7 +230,7 @@ def alerta_id(request, id):
 @permission_required('core.change_empresa')
 def empresa_update(request, id):
     empresa = Empresa.objects.get(pk=id)
-    form = EmpresaForm(request.POST, instance=empresa)
+    form = EmpresaForm(request.POST, request.FILES, instance=empresa)
     if form.is_valid():
         registro = form.save()
         l = Log()

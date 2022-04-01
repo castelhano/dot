@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .models import Alerta, Log
+from globus.models import Escala
 from datetime import datetime, date, timedelta
 
 # Funcao principal do modulo cron, recebe parametros via get e/ou **kargs e chama as rotinas correspondente
@@ -26,6 +27,8 @@ def dot_cleaner(request, **kargs):
         response.append(clean_alertas(**kargs))
     if 'cleanlogs' in kargs and kargs['cleanlogs'] == 'True':
         response.append(clean_logs(**kargs))
+    if 'cleanescalas' in kargs and kargs['cleanescalas'] == 'True':
+        response.append(clean_escalas(**kargs))
     header['termino'] = datetime.now()
     if request.method == 'GET':
         return render(request, 'core/cron.html',{'response':response,'header':header})
@@ -52,3 +55,11 @@ def clean_logs(**kargs):
         return [True, 'clean_logs',f'until:<b class="text-primary"> {until}</b>','<b class="text-success">Success</b>', f'Total de <b>{qtde[0]}</b> logs removidos.']
     except Exception as e:
         return [False, 'clean_logs',f'until:<b class="text-primary"> {until}</b>','<b class="text-danger">Error</b>', list(e)[0]]
+
+def clean_escalas(**kargs):
+    until = kargs['until'] if 'until' in kargs else date.today() - timedelta(days=30)
+    try:
+        qtde = Escala.objects.filter(data__lte=until).delete()
+        return [True, 'clean_escalas',f'until:<b class="text-primary"> {until}</b>','<b class="text-success">Success</b>', f'Total de <b>{qtde[0]}</b> escalas removidas.']
+    except Exception as e:
+        return [False, 'clean_escalas',f'until:<b class="text-primary"> {until}</b>','<b class="text-danger">Error</b>', list(e)[0]]

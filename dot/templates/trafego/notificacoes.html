@@ -35,6 +35,7 @@
           <tr>
             <th class="d-none d-lg-table-cell">Empresa</th>
             <th>Tipo</th>
+            <th class="d-none">Orgão</th>
             <th>Codigo</th>
             <th class="d-none d-sm-table-cell">Data</th>
             <th class="d-none d-lg-table-cell">Hora</th>
@@ -56,6 +57,7 @@
           <tr>
             <td class="d-none d-md-table-cell">{{notificacao.empresa.nome}}</td>
             <td>{{notificacao.get_tipo_display}}</td>
+            <td>{{notificacao.agente.orgao.nome}}</td>
             <td>{{notificacao.codigo}}</td>
             <td class="d-none d-sm-table-cell">{{notificacao.data|date:'d/m/Y'}}</td>
             <td class="d-none d-lg-table-cell">{{notificacao.hora}}</td>

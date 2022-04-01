@@ -187,6 +187,8 @@ def notificacoes(request):
             notificacoes = notificacoes.filter(tipo=request.POST['tipo'])
         if request.POST['periodo_de'] != '' and request.POST['periodo_ate'] != '':
             notificacoes = notificacoes.filter(data__range=[request.POST['periodo_de'],request.POST['periodo_ate']])
+        elif request.POST['pesquisa'] == '':
+            notificacoes = notificacoes.filter(data=datetime.today())
     else:
         notificacoes = notificacoes.filter(data=datetime.today())
     return render(request, 'trafego/notificacoes.html', {'notificacoes':notificacoes})

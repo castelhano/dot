@@ -19,7 +19,7 @@
     <div class="tab-pane fade show active" id="base" role="tabpanel">
       <div class="row g-1">
         <div class="col-md-4">
-          <select class="form-select form-select-sm bg-light" id="id_empresa" name="empresa" onchange="carregaLinhas();"></select>
+          <select class="form-select form-select-sm bg-light" id="id_empresa" name="empresa" onchange="carregaLinhas();" autofocus></select>
         </div>
         <div class="col-6 col-md-2">
           <select class="form-select form-select-sm bg-light" id="id_linha" name="linha" required><option value="">selecione empresa</option></select>
@@ -92,9 +92,9 @@
             </div>
           </div>
           {% endfor %}      
-        </div>        
+        </div>
+        <small><span class="badge bg-danger">Leg</span> Improdutiva</small>
       </div>
-      
     </div>
   </div>
 </div>

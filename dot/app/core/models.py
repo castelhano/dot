@@ -1,8 +1,32 @@
+import os
 from django.db import models
 from django.contrib.auth.models import User, Group
 from datetime import datetime
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+
+# EXTENDED **********************************************
+class ImageField(models.ImageField):
+    class Meta:
+        abstract = True
+    def save_form_data(self, instance, data):
+        if data is not None: 
+            file = getattr(instance, self.attname)
+            if file != data:
+                file.delete(save=False)
+        super(ImageField, self).save_form_data(instance, data)
+
+class FileField(models.FileField):
+    class Meta:
+        abstract = True
+    def save_form_data(self, instance, data):
+        if data is not None: 
+            file = getattr(instance, self.attname)
+            if file != data:
+                file.delete(save=False)
+        super(FileField, self).save_form_data(instance, data)
+
+# **********************************************
 
 class Empresa(models.Model):
     nome = models.CharField(max_length=50, unique=True, blank=False)
@@ -19,8 +43,11 @@ class Empresa(models.Model):
     cep = models.CharField(max_length=10, blank=True)
     fone = models.CharField(max_length=20, blank=True)
     fax = models.CharField(max_length=20, blank=True)
+    logo = ImageField(upload_to="core/logos/", blank=True)
     def __str__(self):
         return self.nome
+    def logo_filename(self):
+        return os.path.basename(self.logo.name)
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='core.empresa',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
@@ -66,7 +93,6 @@ class Profile(models.Model):
             ("docs", "Acessar documentacao do sistema"),
         ]
 
-
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
@@ -75,24 +101,3 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
-
-# EXTENDED **********************************************
-class ImageField(models.ImageField):
-    class Meta:
-        abstract = True
-    def save_form_data(self, instance, data):
-        if data is not None: 
-            file = getattr(instance, self.attname)
-            if file != data:
-                file.delete(save=False)
-        super(ImageField, self).save_form_data(instance, data)
-
-class FileField(models.FileField):
-    class Meta:
-        abstract = True
-    def save_form_data(self, instance, data):
-        if data is not None: 
-            file = getattr(instance, self.attname)
-            if file != data:
-                file.delete(save=False)
-        super(FileField, self).save_form_data(instance, data)

@@ -77,6 +77,18 @@ function urlFilter(url, filter, value){location.href = updateUrl(url, filter, va
 function filters(filters, values){let h = window.location.href;for(i=0;i < filters.length; i++){h = updateUrl(h , filters[i], values[i]);}location.href = h;}
 
 /*
+* urlRedirect Carrega os filtros na url atual para uma nova url
+*
+* @version  1.0
+* @since    01/04/2022
+* @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }
+* @param    {String} url URL para redirecionamento
+* @example  urlRedirect('fei.com')
+*/
+function urlRedirect(url){location.href = url + window.location.search;}
+
+
+/*
 * urlHasParam Retorna se o parametro esta informado na url
 *
 * @version  1.0

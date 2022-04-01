@@ -105,7 +105,7 @@
   <div class="col-lg-6 order-2 order-lg-1">
     <div class="card widget-flat">
       <div class="card-body">
-        <a class="btn btn-sm btn-link text-decoration-none text-purple" style="position: absolute; right: 10px; top: 8px;" id="download" href="{% url 'sinistro_export_acidentes_csv' %}" title="ALT + D">Baixar <i class="fas fa-download"></i></a>
+        <span class="btn btn-sm btn-link text-decoration-none text-purple" style="position: absolute; right: 10px; top: 8px;" id="download" onclick="urlRedirect('{% url 'sinistro_export_acidentes_csv' %}')" title="ALT + D">Baixar <i class="fas fa-download"></i></span>
         <h6 class="text-muted fw-normal">Custos com Terceiros</h6>
         <div class="table-responsive">
           <table id="table_terceiros" class="table table-centered table-nowrap table-hover table-sortable">
@@ -348,6 +348,7 @@
         data: {{ metrics.acidentes_linha.dados }},
         backgroundColor: {{ metrics.acidentes_linha.bgcolors|safe }},
         borderColor: {{ metrics.acidentes_linha.bordercolors|safe }},
+        maxBarThickness: 50,
       }],
       labels: {{ metrics.acidentes_linha.categorias|safe }},
     },

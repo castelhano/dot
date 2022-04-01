@@ -587,9 +587,10 @@ def acidente_dashboard(request):
 @permission_required('sinistro.view_acidente')
 def export_acidentes_csv(request):
     try:
-        response = HttpResponse(content_type='text/csv; charset=utf-8')
+        response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="acidentes.csv"'
 
+        response.write(u'\ufeff'.encode('utf8'))
         writer = csv.writer(response, delimiter =';')
         writer.writerow(['#','Empresa','Pasta','Classificacao','Data','Hora','Veiculo','Linha','Nome linha','Condutor','Nome condutor','Inspetor','Nome inspetor','Endereco','Bairro','Cidade','UF','Culpabilidade','Concluido','Terceiro','CPF','Veiculo Terceiro','Placa','Cor','Ano','Forma','Oficina','Acordo','Despesas','Custo Total'])
         

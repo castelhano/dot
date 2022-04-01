@@ -15,7 +15,7 @@
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'core_empresas' %}"><i class="fas fa-undo"></i></a></li>
     </ul>
   </div>
-  <form id="app_form" action="{% url 'core_empresa_add' %}" method="POST" autocomplete="off">
+  <form id="app_form" action="{% url 'core_empresa_add' %}" enctype="multipart/form-data" method="POST" autocomplete="off">
     {% csrf_token %}
     {% include 'core/_form_empresa.html' %}
   </form>
@@ -32,5 +32,24 @@
   VMasker(document.getElementById("id_cnpj")).maskPattern('99.999.999/9999-99');
   VMasker(document.getElementById("id_cep")).maskPattern('99.999-999');
   
+   // FONE MASK
+   function inputHandler(masks, max, event) {
+   	var c = event.target;
+   	var v = c.value.replace(/D/g, '');
+   	var m = c.value.length > max ? 1 : 0;
+   	VMasker(c).unMask();
+   	VMasker(c).maskPattern(masks[m]);
+   	c.value = VMasker.toPattern(v, masks[m]);
+   }
+   var telMask = ['(99) 9999-99999', '(99) 99999-9999'];
+   var fone = document.getElementById('id_fone');
+   var fax = document.getElementById('id_fax');
+   VMasker(fone).maskPattern(telMask[0]);
+   VMasker(fax).maskPattern(telMask[0]);
+   fone.addEventListener('input', inputHandler.bind(undefined, telMask, 14), false);
+   fax.addEventListener('input', inputHandler.bind(undefined, telMask, 14), false);
+   fone.dispatchEvent(new Event("input"));
+   fax.dispatchEvent(new Event("input"));
+
   {% endblock %}
 </script>
