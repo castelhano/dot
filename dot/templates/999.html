@@ -1,0 +1,33 @@
+{% extends "layout/dot.html" %}
+ {% load static %}
+ {% block title %}Titulo{% endblock %}
+ {% block model %}Modulo{% endblock %}
+ {% block model_menu %}{% include "_component/menu/core.html" %}{% endblock%}
+ 
+ {% block style_src %}
+ <link rel="stylesheet" href="{% static 'css/widget_chat.css' %}" type="text/css">
+ {% endblock%}
+
+ {% block content_fluid %}
+ <a class="d-none" id="clear" href="{% url 'handler' '999' %}"></a>
+ <div class="card mt-2">
+ 	<div class="card-header">
+ 		<ul class="nav nav-tabs card-header-tabs">
+ 			<li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+ 			<li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="url"><i class="fas fa-undo"></i></a></li>
+ 		</ul>
+ 	</div>
+ 		<div class="card-body tab-content">
+ 			<div class="tab-pane fade show active" id="base" role="tabpanel">
+        {% include "_component/widget/chat.html" with foo='foo' %}
+ 			</div>
+ 		</div>
+ </div>
+
+ {% endblock%}
+
+ {% block add_script_src %}{% endblock %}
+
+ <script>
+ {% block add_script %}{% endblock %}
+ </script>

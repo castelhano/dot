@@ -1,20 +1,4 @@
-/*
-* Funcoes para manipulacao e captura da url
-*/
-
-/* UPDATE URL
-** RAFAEL GUSTAVO 
-** VERSÃO 1.0
-** BIBLIOTECA DE OPERAÇÕES COM URL:
-** updateUrl(): METODO INTERNO, ADICIONA OU ATUALIZA VALOR DE VARIAVEL NA URL
-** filter(): INFORMA VARIAVEL E VALOR PARA ADIÇÃO (OU UPDATE) NA URL E SUBMETE PAGINA
-** urlHasParam(): RETORNA BOOLEANO SE VARIAVEL ESTA PRESENTE NA URL
-** urlParams(): RETORNA STRING COM TODOS OS PARAMETROS DA URL
-** urlSetFiltersActive() METODO RECEBE UM DICIONARIO E MARCA COM CLASS active OS ID COM VARIAVEL CORRESPONDENTE NA URL (PASSOS A SEGUIR):
-** 1) CRIE UM DICIONARIO COM A KEY SENDO O NOME DA VARIAVEL E O VALOR O ID DO ELEMENTO QUE VAI RECEBER A CLASS active
-**    ex:   const = filters = {'meu_param':'id_meu_param'}
-**    ex2:  const = filters = {'meu_param=Foo':'id_meu_param'} NESTE CASO VALIDA PARAMETRO + VALOR
-**/
+// Funcoes para manipulacao e captura da url
 
 /*
 * updateUrl Adiciona (ou atualiza) parametro na url (metodo GET) 
@@ -65,7 +49,7 @@ function filter(filter, value){location.href = updateUrl(window.location.href, f
 function urlFilter(url, filter, value){location.href = updateUrl(url, filter, value);}
 
 /*
-* filters() Atualiza url corrente multiplos parametros 
+* filters() Atualiza url corrente com multiplos parametros 
 *
 * @version  1.0
 * @since    10/02/2022

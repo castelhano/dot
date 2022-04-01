@@ -96,7 +96,6 @@
   'Template Add Form':
     'prefix': '_add'
     'body':'{% extends "layout/dot.html" %}\n
-    {% load static %}\n
     {% block title %}Titulo{% endblock %}\n
     {% block model %}Modulo{% endblock %}\n
     {% block model_menu %}{% include "_component/menu/core.html" %}{% endblock%}\n\n
@@ -244,6 +243,13 @@
     'prefix': 'row'
     'body':'<div class="row">\n\t<div class="col">${1:aqui}</div>\n</div>'
   
+  'Timeline':
+    'prefix': 'timeline'
+    'body':'<ul class="timeline">\n\t<li class="event" data-date="20/05/22 - 14h05">\n\t\t<h5>Titulo</h5>\n\t\t<p>Texto do evento...</p>\n\t</li>\n</ul>'
+  
+  'Timeline horizontal':
+    'prefix': 'timeline_h'
+    'body':'<ul class="timeline-h">\n\t<li></li>\n\t<li class="active"><a class="stretched-link" href="#">5</a></li>\n\t<li>End</li>\n</ul>'  
   
   # FORMULARIOS
   'Form Imput':
