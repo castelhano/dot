@@ -15,6 +15,8 @@ class Indicador(models.Model):
     evolucao = models.IntegerField(choices=EVOLUCAO_CHOICES, blank=True, null=True)
     quanto_maior_melhor = models.BooleanField(default=True)
     ativo = models.BooleanField(default=True)
+    def __str__(self):
+        return self.nome
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='gestao.indicador',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
@@ -27,9 +29,9 @@ class Apontamento(models.Model):
 
 class Staff(models.Model):
     ROLE_CHOICES = (
-    ('D','Diretor'),
-    ('G','Gestor'),
-    ('S','Supervisor'),
+    ('M','Manager'),
+    ('E','Extrategico'),
+    ('G','Gerencial'),
     ('O','Operacional'),
     )
     usuario = models.OneToOneField(User, on_delete=models.RESTRICT)
@@ -38,7 +40,15 @@ class Staff(models.Model):
         logs = Log.objects.filter(modelo='gestao.staff',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
     def planos_em_progresso(self):
-        return Plano.objects.filter(staff=self.usuario, status__in=['E','P'])
+        if self.role == 'O':
+            return Plano.objects.filter(staff=self.usuario, status__in=['E','P'])
+        else:
+            return Plano.objects.filter(status__in=['E','P'])
+    def planos_em_avaliacao(self):
+        if self.role == 'O':
+            return Plano.objects.filter(staff=self.usuario, status='A')
+        else:
+            return Plano.objects.filter(status='A')
 
 class Label(models.Model):
     nome = models.CharField(max_length=20, unique=True, blank=False)
@@ -95,8 +105,8 @@ class Plano(models.Model):
     detalhe = models.TextField(blank=True)
     inicio = models.DateField(blank=True, null=True, default=datetime.today)
     termino = models.DateField(blank=True, null=True)
-    responsavel = models.ForeignKey(User, blank=True, null=True, related_name='plano_responsavel', on_delete=models.PROTECT)
-    staff = models.ManyToManyField(User, related_name='plano_staff')
+    responsavel = models.ForeignKey(Staff, blank=True, null=True, related_name='plano_responsavel', on_delete=models.PROTECT)
+    staff = models.ManyToManyField(Staff, related_name='plano_staff', blank=True)
     status = models.CharField(max_length=3,choices=STATUS_CHOICES, default='E')
     conclusao = models.IntegerField(default=0)
     avaliacao = models.IntegerField(default=0)
@@ -106,3 +116,9 @@ class Plano(models.Model):
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='gestao.plano',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
+    def staff_disponivel(self):
+        if self.id:
+            return Staff.objects.filter(id__in=self.staff.all()).exclude(usuario__is_active=False)
+            return None
+        else:
+            return Staff.objects.all().exclude(usuario__is_active=False)

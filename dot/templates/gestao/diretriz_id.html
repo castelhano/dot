@@ -1,45 +1,61 @@
 {% extends "layout/dot.html" %}
 {% load static %}
-{% block title %}Staff{% endblock %}
+{% block title %}Diretriz{% endblock %}
 {% block model %}Gestão{% endblock %}
 {% block model_menu %}{% include "_component/menu/visitor.html" %}{% endblock%}
 
 {% block content_fluid %}
-<a class="d-none" id="clear" href="{% url 'gestao_staff_id' staff.id|safe %}"></a>
+<a class="d-none" id="clear" href="{% url 'gestao_diretriz_id' diretriz.id|safe %}"></a>
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
-      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'gestao_staffs' %}"><i class="fas fa-undo"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'gestao_dashboard' %}"><i class="fas fa-undo"></i></a></li>
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
         <ul class="dropdown-menu">
           <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#history_modal">Historico</a></li>
-          {% if perms.gestao.delete_staff %}
+          {% if perms.gestao.delete_diretriz %}
           <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal">Excluir Staff</a></li>
+          <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal">Excluir Diretriz</a></li>
           {% endif %}
         </ul>
       </li>
     </ul>
   </div>
-  <form id="gestao_form" action="{% url 'gestao_staff_update' staff.id|safe %}" method="POST" autocomplete="off">
+  <form id="gestao_form" action="{% url 'gestao_diretriz_update' diretriz.id|safe %}" method="POST" autocomplete="off">
     {% csrf_token %}
     <div class="card-body tab-content">
-      <h5 class="card-title mb-3">Cadastro de Staff</h5>
+      <h5 class="card-title mb-3">Cadastro de Diretriz</h5>
       <div class="tab-pane fade show active" id="base" role="tabpanel">
-        <div class="row g-1">
-        	<div class="form-floating mb-1 col-lg-4">
-        		<input type="text" class="form-control" value="{{staff.usuario.username|title}}" disabled>
-        		<label for="id_usuario">Usuario</label>
-        	</div>
+        <div class="row g-2">
+          <div class="col-lg">
+            <div class="row g-1">
+            	<div class="form-floating mb-1 col-lg-12">
+            		{{ form.titulo }}
+            		<label for="id_titulo">Titulo</label>
+            	</div>
+            </div>
+            <div class="row g-1">
+            	<div class="form-floating mb-lg-1 col">
+            		{{ form.indicador }}
+            		<label for="id_indicador">Indicador</label>
+            	</div>
+            	<div class="form-floating mb-1 col-4" style="max-width: 150px;">
+            		<input type="text" class="form-control" name="analise" id="id_analise" value="{{diretriz.analise.id|default:''}}">
+            		<label for="id_analise">Analise</label>
+            	</div>
+            </div>
+            <div class="form-check form-switch mt-2">
+            	{{form.ativo}}
+            	<label class="form-check-label" for="id_ativo">Diretriz ativa</label>
+            </div>
+          </div>
+          <div class="col-lg">
+            {{ form.detalhe }}
+          </div>
         </div>
-        <div class="row g-1">
-        	<div class="form-floating mb-1 col-lg-4">
-        		{{ form.role }}
-        		<label for="id_role">Perfil</label>
-        	</div>
-        </div>        
+        
       </div>
       <!-- CONTROLES DO FORM -->
       <div class="row mt-3">
@@ -48,24 +64,23 @@
         </div>
       </div>
     </div>
-    <input type="hidden" name="usuario" value="{{staff.usuario.id}}">
   </form>
 </div>
 
-{% if perms.gestao.delete_staff %}
+{% if perms.gestao.delete_diretriz %}
 <div class="modal fade" id="delete_modal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="row">
         <div class="col"><h5 class="ms-3 mt-3"><i class="fas fa-exclamation-triangle text-danger me-2"></i> Excluir Registro</h5></div>
-        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-staff="Close"></button></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
       </div>
       <div class="modal-body">
-        <p><b class="text-danger">Atenção!!</b> Esta operação não pode ser desfeita, confirma a exclusão da staff?</p>
+        <p><b class="text-danger">Atenção!!</b> Esta operação não pode ser desfeita, confirma a exclusão da diretriz?</p>
         <div class="row mt-2">
           <div class="col text-end">
-            <a class="btn btn-secondary" data-bs-dismiss="modal" aria-staff="Close">Cancelar</a>
-            <a class="btn btn-danger px-3" href="{% url 'gestao_staff_delete' staff.id|safe %}">Excluir</a>
+            <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
+            <a class="btn btn-danger px-3" href="{% url 'gestao_diretriz_delete' diretriz.id|safe %}">Excluir</a>
           </div>
         </div>
       </div>
@@ -78,7 +93,7 @@
     <div class="modal-content">
       <div class="row">
         <div class="col"><h5 class="ms-3 mt-3">Histórico <sup>(last 15)</sup></h5></div>
-        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-staff="Close"></button></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
       </div>
       <div class="modal-body">
         <table class="table table-sm">
@@ -90,7 +105,7 @@
             </tr>
           </thead>
           <tbody class="fs-7">
-            {% for i in staff.ultimas_alteracoes %}
+            {% for i in diretriz.ultimas_alteracoes %}
             <tr>
               <td>{{i.data|date:'d/m/Y H:i:s'}}</td>
               <td>{{i.mensagem}}</td>
@@ -106,7 +121,3 @@
 {% endblock%}
 
 {% block add_script_src %}{% endblock %}
-
-<script>
-  {% block add_script %}{% endblock %}
-</script>

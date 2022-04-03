@@ -1,71 +1,48 @@
 {% extends "layout/dot.html" %}
 {% load static %}
-{% block title %}Staff{% endblock %}
+{% block title %}Plano{% endblock %}
 {% block model %}Gestão{% endblock %}
 {% block model_menu %}{% include "_component/menu/visitor.html" %}{% endblock%}
 
 {% block content_fluid %}
-<a class="d-none" id="clear" href="{% url 'gestao_staff_id' staff.id|safe %}"></a>
+<a class="d-none" id="clear" href="{% url 'gestao_plano_id' plano.id|safe %}"></a>
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
-      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'gestao_staffs' %}"><i class="fas fa-undo"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'gestao_dashboard' %}"><i class="fas fa-undo"></i></a></li>
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
         <ul class="dropdown-menu">
           <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#history_modal">Historico</a></li>
-          {% if perms.gestao.delete_staff %}
+          {% if perms.gestao.delete_plano %}
           <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal">Excluir Staff</a></li>
+          <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal">Excluir Plano</a></li>
           {% endif %}
         </ul>
       </li>
     </ul>
   </div>
-  <form id="gestao_form" action="{% url 'gestao_staff_update' staff.id|safe %}" method="POST" autocomplete="off">
+  <form id="gestao_form" action="{% url 'gestao_plano_update' plano.id|safe %}" method="POST" autocomplete="off" onsubmit="return submitForm();">
     {% csrf_token %}
-    <div class="card-body tab-content">
-      <h5 class="card-title mb-3">Cadastro de Staff</h5>
-      <div class="tab-pane fade show active" id="base" role="tabpanel">
-        <div class="row g-1">
-        	<div class="form-floating mb-1 col-lg-4">
-        		<input type="text" class="form-control" value="{{staff.usuario.username|title}}" disabled>
-        		<label for="id_usuario">Usuario</label>
-        	</div>
-        </div>
-        <div class="row g-1">
-        	<div class="form-floating mb-1 col-lg-4">
-        		{{ form.role }}
-        		<label for="id_role">Perfil</label>
-        	</div>
-        </div>        
-      </div>
-      <!-- CONTROLES DO FORM -->
-      <div class="row mt-3">
-        <div class="col">
-          <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"><b>G</b>ravar</button>
-        </div>
-      </div>
-    </div>
-    <input type="hidden" name="usuario" value="{{staff.usuario.id}}">
+    {% include 'gestao/_form_plano.html' %}
   </form>
 </div>
 
-{% if perms.gestao.delete_staff %}
+{% if perms.gestao.delete_plano %}
 <div class="modal fade" id="delete_modal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="row">
         <div class="col"><h5 class="ms-3 mt-3"><i class="fas fa-exclamation-triangle text-danger me-2"></i> Excluir Registro</h5></div>
-        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-staff="Close"></button></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-plano="Close"></button></div>
       </div>
       <div class="modal-body">
-        <p><b class="text-danger">Atenção!!</b> Esta operação não pode ser desfeita, confirma a exclusão da staff?</p>
+        <p><b class="text-danger">Atenção!!</b> Esta operação não pode ser desfeita, confirma a exclusão da plano?</p>
         <div class="row mt-2">
           <div class="col text-end">
-            <a class="btn btn-secondary" data-bs-dismiss="modal" aria-staff="Close">Cancelar</a>
-            <a class="btn btn-danger px-3" href="{% url 'gestao_staff_delete' staff.id|safe %}">Excluir</a>
+            <a class="btn btn-secondary" data-bs-dismiss="modal" aria-plano="Close">Cancelar</a>
+            <a class="btn btn-danger px-3" href="{% url 'gestao_plano_delete' plano.id|safe %}">Excluir</a>
           </div>
         </div>
       </div>
@@ -78,7 +55,7 @@
     <div class="modal-content">
       <div class="row">
         <div class="col"><h5 class="ms-3 mt-3">Histórico <sup>(last 15)</sup></h5></div>
-        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-staff="Close"></button></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-plano="Close"></button></div>
       </div>
       <div class="modal-body">
         <table class="table table-sm">
@@ -90,7 +67,7 @@
             </tr>
           </thead>
           <tbody class="fs-7">
-            {% for i in staff.ultimas_alteracoes %}
+            {% for i in plano.ultimas_alteracoes %}
             <tr>
               <td>{{i.data|date:'d/m/Y H:i:s'}}</td>
               <td>{{i.mensagem}}</td>

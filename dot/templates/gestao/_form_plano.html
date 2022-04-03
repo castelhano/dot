@@ -1,0 +1,82 @@
+<div class="card-body tab-content">
+  <h5 class="card-title mb-0">Plano de Ação</h5>
+  <p class="fs-7 text-muted mb-2 text-truncate">{{plano.diretriz.titulo}}</p>
+  <div class="tab-pane fade show active" id="base" role="tabpanel">
+    <div class="row g-2">
+      <div class="col-lg">
+        <div class="row g-1">
+          <div class="form-floating mb-1 col-lg-12">
+            {{ form.titulo }}
+            <label for="id_titulo">Titulo</label>
+          </div>
+        </div>
+        <div class="row g-1">
+          <div class="mb-1 col-lg">
+            <select class="form-control" id="staff_disponivel" style="min-height:180px;" multiple>
+              {% for staff in plano.staff_disponivel %}
+              <option value="{{staff.id}}">{{staff.usuario.username|title}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-lg-auto">
+            <div class="d-flex justify-content-center d-lg-grid gap-1">
+              <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add" onclick="addSelected();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-right rotate-lg-90"></i></a>
+              <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add_all" onclick="addAll();"><i class="fas fa-angle-double-right rotate-lg-90"></i></a>
+              <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove" onclick="removeSelected();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-left rotate-lg-90"></i></a>
+              <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove_all" onclick="removeAll();"><i class="fas fa-angle-double-left rotate-lg-90"></i></a>
+            </div>
+          </div>
+          <div class="mb-1 col-lg">
+            <select class="form-control" name="staff" id="id_staff" style="min-height:180px;" multiple>
+              {% if plano.id %}
+                {% for staff in plano.staff.all %}
+                  <option value="{{staff.id}}">{{staff.username}}</option>
+                {% endfor %}
+              {% endif %}
+            </select>
+          </div>
+        </div>
+        <div class="row g-1">
+          <div class="form-floating mb-lg-1 col-lg">
+            <select class="form-select" id="id_responsavel" name="responsavel">
+              <option value="" selected>---------</option>
+            </select>
+            <label for="id_responsavel">Responsável</label>
+          </div>
+          <div class="form-floating mb-lg-1 col-lg">
+            {{ form.inicio }}
+            <label for="id_inicio">Inicio</label>
+          </div>
+          <div class="form-floating mb-1 col-lg">
+            {{ form.termino }}
+            <label for="id_termino">Termino</label>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg">
+        {{form.detalhe}}
+      </div>
+    </div>        
+  </div>
+  <!-- CONTROLES DO FORM -->
+  <div class="row mt-3">
+    <div class="col">
+      <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"><b>G</b>ravar</button>
+    </div>
+  </div>
+</div>
+<input type="hidden" name="diretriz" value="{{plano.diretriz.id|safe}}">
+
+<script>
+  {% block add_script %}
+  disponiveis = document.getElementById("staff_disponivel");
+  selecionados = document.getElementById("id_staff");
+  function submitForm(){options = selecionados.options;for(i=0; i < options.length; i++){options[i].selected = "true";}return true;}
+  
+  function addAll(){selecionados.innerHTML += disponiveis.innerHTML;disponiveis.innerHTML = '';}
+  function removeAll(){disponiveis.innerHTML += selecionados.innerHTML;selecionados.innerHTML = '';}
+  function addSelected(){residual = document.createElement("select");for(var i=0; i < disponiveis.length; i++){if(disponiveis[i].selected){let newOption = new Option(disponiveis[i].text,disponiveis[i].value);selecionados.add(newOption);}else{let newOption = new Option(disponiveis[i].text,disponiveis[i].value);residual.add(newOption);}}disponiveis.innerHTML = residual.innerHTML;}
+  function removeSelected(){residual = document.createElement("select");for(var i=0; i < selecionados.length; i++){if(selecionados[i].selected){let newOption = new Option(selecionados[i].text,selecionados[i].value);disponiveis.add(newOption);}else{let newOption = new Option(selecionados[i].text,selecionados[i].value);residual.add(newOption);}}selecionados.innerHTML = residual.innerHTML;}
+  
+  {% endblock %}
+</script>

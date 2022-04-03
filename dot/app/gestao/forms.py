@@ -32,10 +32,11 @@ class StaffForm(forms.ModelForm):
 class DiretrizForm(forms.ModelForm):
     class Meta:
         model = Diretriz
-        fields = ['indicador','titulo','detalhe']
-    indicador = forms.ModelChoiceField(error_messages={'required': 'Selecione o indicador'}, queryset = Indicador.objects.filter(ativo=True).order_by('nome'), widget=forms.Select(attrs={'class':'form-select','autofocus':'autofocus'}))
-    titulo = forms.CharField(error_messages={'required': 'Informe o titulo'},widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
+        fields = ['indicador','analise','titulo','detalhe','ativo']
+    titulo = forms.CharField(error_messages={'required': 'Informe o titulo'},widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'','autofocus':'autofocus'}))
+    indicador = forms.ModelChoiceField(error_messages={'required': 'Selecione o indicador'}, queryset = Indicador.objects.filter(ativo=True).order_by('nome'), widget=forms.Select(attrs={'class':'form-select'}))
     detalhe = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'Detalhamento', 'style':'min-height:300px'}))
+    ativo = forms.BooleanField(required=False, initial=True, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
 
 class LabelForm(forms.ModelForm):
     class Meta:
@@ -57,12 +58,11 @@ class AnaliseForm(forms.ModelForm):
 class PlanoForm(forms.ModelForm):
     class Meta:
         model = Plano
-        fields = ['diretriz','analise','titulo','detalhe','inicio','termino','responsavel','staff','status']
-    diretriz = forms.ModelChoiceField(error_messages={'required': 'Selecione o diretriz'}, queryset = Diretriz.objects.filter(ativo=True).order_by('id'), widget=forms.Select(attrs={'class':'form-select','autofocus':'autofocus'}))
-    analise = forms.ModelChoiceField(required=False, queryset = Analise.objects.filter(concluido=False).order_by('id'), widget=forms.Select(attrs={'class':'form-select'}))
-    titulo = forms.CharField(error_messages={'required': 'Informe o titulo'}, max_length=80, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
+        fields = ['diretriz','analise','titulo','detalhe','inicio','termino','responsavel','staff']
+    titulo = forms.CharField(error_messages={'required': 'Informe o titulo'}, max_length=80, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'','autofocus':'autofocus'}))
+    diretriz = forms.ModelChoiceField(error_messages={'required': 'Selecione o diretriz'}, queryset = Diretriz.objects.filter(ativo=True))
+    analise = forms.ModelChoiceField(required=False, queryset = Analise.objects.filter(concluido=False))
     detalhe = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'Detalhamento', 'style':'min-height:300px'}))
     inicio = forms.DateField(required=False, initial=date.today(), widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
     termino = forms.DateField(required=False, widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
     responsavel = forms.ModelChoiceField(required=False, queryset = User.objects.filter(is_active=True, is_staff=True).order_by('username'), widget=forms.Select(attrs={'class':'form-select'}))
-    status = forms.ChoiceField(error_messages={'required': 'Selecione o status'}, initial='E', choices=Plano.STATUS_CHOICES, widget=forms.Select(attrs={'class':'form-select'}))

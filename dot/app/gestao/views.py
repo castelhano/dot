@@ -8,21 +8,23 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from core.models import Log
 from core.extras import clean_request
+# from datetime import date
 
 
 # METODOS SHOW
 @login_required
 @permission_required('gestao.dashboard')
 def dashboard(request):
-    # try:
+    try:
         staff = Staff.objects.get(usuario=request.user)
-        return render(request,'gestao/dashboard.html',{'staff':staff})
-    # except:
-    #     messages.warning(request,'Seu usuário precisa fazer parte da <b>Staff</b> para acessar este recurso.')
-    #     if request.user.has_perm('gestao.view_staff'):
-    #         return redirect('gestao_staffs')
-    #     else:
-    #         return redirect('index')
+        diretrizes = Diretriz.objects.filter(ativo=True).order_by('created_on')
+        return render(request,'gestao/dashboard.html',{'staff':staff,'diretrizes':diretrizes})
+    except:
+        messages.warning(request,'Seu usuário precisa fazer parte da <b>Staff</b> para acessar este recurso.')
+        if request.user.has_perm('gestao.view_staff'):
+            return redirect('gestao_staffs')
+        else:
+            return redirect('index')
 
 @login_required
 @permission_required('gestao.view_indicador')
@@ -166,7 +168,9 @@ def diretriz_add(request):
         form = DiretrizForm(request.POST)
         if form.is_valid():
             try:
-                registro = form.save()
+                registro = form.save(commit=False)
+                registro.created_by = request.user
+                registro.save()
                 l = Log()
                 l.modelo = "gestao.diretriz"
                 l.objeto_id = registro.id
@@ -174,7 +178,7 @@ def diretriz_add(request):
                 l.usuario = request.user
                 l.mensagem = "CREATED"
                 l.save()
-                messages.success(request,'Diretriz <b>' + registro.id + '</b> criada')
+                messages.success(request,'Diretriz <b>' + str(registro.id) + '</b> criada')
                 return redirect('gestao_diretriz_add')
             except:
                 messages.error(request,'Erro ao inserir diretriz')
@@ -233,12 +237,14 @@ def analise_add(request):
 
 @login_required
 @permission_required('gestao.add_plano')
-def plano_add(request):
+def plano_add(request, diretriz):
     if request.method == 'POST':
         form = PlanoForm(request.POST)
         if form.is_valid():
             try:
                 registro = form.save()
+                registro.created_by = request.user
+                registro.save()
                 l = Log()
                 l.modelo = "gestao.plano"
                 l.objeto_id = registro.id
@@ -247,13 +253,20 @@ def plano_add(request):
                 l.mensagem = "CREATED"
                 l.save()
                 messages.success(request,'Plano <b>criado</b>')
-                return redirect('gestao_diretrizes')
+                return redirect('gestao_dashboard')
             except:
                 messages.error(request,'Erro ao inserir plano')
-                return redirect('gestao_plano_add')
+                return redirect('gestao_dashboard')
+        else:
+            d = Diretriz.objects.get(id=diretriz)
+            p = Plano()
+            p.diretriz = d
     else:
-        form = PlanoForm()
-    return render(request,'gestao/plano_add.html',{'form':form})
+        p = Plano()
+        d = Diretriz.objects.get(id=diretriz)
+        p.diretriz = d
+        form = PlanoForm(instance=p)
+    return render(request,'gestao/plano_add.html',{'form':form,'plano':p})
 
 # METODOS GET
 @login_required
@@ -511,7 +524,7 @@ def diretriz_delete(request,id):
         registro.delete()
         l.save()
         messages.warning(request,f'Diretriz <b>apagada</b>. Essa operação não pode ser desfeita')
-        return redirect('gestao_diretrizs')
+        return redirect('gestao_dashboard')
     except:
         messages.error(request,'ERRO ao apagar diretriz')
         return redirect('gestao_diretriz_id', id)
