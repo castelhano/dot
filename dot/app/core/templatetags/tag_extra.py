@@ -16,7 +16,7 @@ def remove_char(value, char):
 
 @register.filter
 def now_until_date(value):
-    return (value - date.today()).days
+    return (value - date.today()).days if value else '--'
 
 @register.filter
 def sub(minuendo, subtraendo):
@@ -38,6 +38,33 @@ def get_field(objeto,field):
 @register.filter
 def dict_value(dict,key):
     return dict.get(key)
+
+# filter indicatorArrow
+# @desc     Retorna icone de arrow correspondente ao valor (use filter |safe para exibir html correspondente)
+# @param    {Number} value Valor alvo
+# @param    {Bool} maior_melhor (opcional) Se definido como False inverte a ordem das arrows
+# @returns  {html} Tag html correspondente ao valor
+# @example  obj.value|indicatorArrow|safe ou obj.value|indicatorArrow:True|safe
+@register.filter
+def indicatorArrow(value, maior_melhor=True):
+    if value < 0:
+        return f'<i class="fas fa-arrow-down text-danger"></i>' if maior_melhor else f'<i class="fas fa-arrow-down text-success"></i>'
+    elif value > 0:
+        return f'<i class="fas fa-arrow-up text-success"></i>' if maior_melhor else f'<i class="fas fa-arrow-up text-danger"></i>'
+    else:
+        return f'<i class="fas fa-minus text-secondary"></i>'
+
+# filter stars
+# @desc     Retorna icone de stars correspondente a quantidade informada (use filter |safe para exibir html correspondente)
+# @param    {Int} value Avaliacao
+# @returns  {html} Tag html correspondente ao valor
+# @example  obj.value|stars|safe ou obj.value|indicatorArrow:True|safe
+@register.filter
+def stars(value):
+    s = ''
+    for x in range(5):
+        s += '<i class="fas fa-star"></i>' if value >= x + 1 else '<i class="far fa-star"></i>'
+    return s
 
 @register.filter
 def url_get(request,parameter):

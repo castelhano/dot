@@ -15,6 +15,7 @@ INSTALLED_APPS = [
     'trafego',
     'sinistro',
     'globus',
+    'gestao',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

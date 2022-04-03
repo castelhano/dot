@@ -1,0 +1,103 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% load tag_extra %}
+{% block title %}Gerencial{% endblock %}
+{% block model %}Gestão{% endblock %}
+{% block model_menu %}{% include "_component/menu/gestao.html" %}{% endblock%}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'gestao_dashboard' %}"></a>
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-columns"></i></a></li>
+      <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" data-bs-target="#indicadores" href="#"><i class="fas fa-chart-bar" title="Indicadores"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="url"><i class="fas fa-undo"></i></a></li>
+    </ul>
+  </div>
+  <form id="app_form" action="url" method="POST" autocomplete="off">
+    {% csrf_token %}
+    <div class="card-body tab-content">
+      <h5 class="card-title mb-0">Dashboard: <b class="text-purple">{{user.username|title}}</b></h5>
+      <p class="mb-3 fw-bold text-muted">{{staff.get_role_display}}</p>
+      <div class="tab-pane fade show active" id="base" role="tabpanel">
+        <div class="row g-3">
+          <div class="col-lg order-2 order-lg-1">
+            <div class="card h-100">
+              <div class="card-header text-muted fs-7">
+                <div class="row">
+                  <div class="col">Em Progresso</div>
+                  <div class="col-auto">
+                    <a class="text-muted" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-ellipsis-h"></i></a>
+                    <ul class="dropdown-menu fs-7">
+                      <li><a class="dropdown-item pointer">Concluidos</a></li>
+                      <li><a class="dropdown-item pointer">Foo</a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body p-0 pb-2 fs-7">
+                {% for plano in staff.planos_em_progresso %}
+                <div class="border-top border-bottom p-2 mt-2 bg-light">
+                  <div class="row">
+                    <div class="col text-truncate"><a class="fw-bold text-decoration-none mb-0" href="{% url 'gestao_plano_id' plano.id %}">{{plano.titulo}}</a></div>
+                    <div class="col-auto">
+                      <a class="text-muted px-2" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-caret-down"></i></a>
+                      <ul class="dropdown-menu dropdown-menu-end fs-7">
+                        <li><a class="dropdown-item pointer" href="#">Foo</a></li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div class="row mt-1">
+                    <div class="col text-truncate">{{plano.get_status_display}} <span class="badge bg-secondary">{{plano.termino|now_until_date}} dias</span></div>
+                    <div class="col-auto"><span class="badge bg-dark">{{plano.responsavel.username|default:'--'|title}}</span> <span class="badge bg-primary">+ {{plano.staff.count}}</span></div>
+                  </div>
+                  <div class="row mt-1">
+                    <div class="col text-success">{{plano.avaliacao|default:0|stars|safe}}</div>
+                    <div class="col-6 col-lg-4 text-end">
+                      <div class="progress mt-1"><div class="progress-bar" role="progressbar" style="width: {{plano.conclusao|safe}}%">{{plano.conclusao|safe}}%</div></div>                      
+                    </div>
+                  </div>
+                  <div class="row mt-1">
+                    <div class="col text-truncate">
+                      {% if perms.gestao.view_diretriz %}
+                      <a class="text-decoration-none text-muted hover-purple" href="{% url 'gestao_diretriz_id' plano.diretriz.id|safe %}"><i class="fas fa-link"></i> {{plano.diretriz.titulo}}</a>
+                      {% endif %}
+                    </div>
+                    <div class="col-auto text-muted fs-8">{{plano.created_by|title}} - {{plano.created_on|date:'M y'}}</div>
+                  </div>
+                </div>
+                {% empty %}
+                <p>Nenhum plano de ação em progresso</p>                
+                {% endfor %}                
+              </div>
+            </div>
+          </div>
+          <div class="col-lg order-3 order-lg-2">
+            <div class="card h-100">
+              <div class="card-header text-muted fs-7">Em revisão</div>
+              <div class="card-body">Fei <br><br><br></div>
+            </div>
+          </div>
+          <div class="col-lg order-1 order-lg-3">
+            <div class="card text-dark bg-light h-100">
+              <div class="card-header fs-7">Diretrizes</div>
+              <div class="card-body">Fei <br><br><br></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="indicadores" role="tabpanel">
+        Indicadores
+      </div>      
+    </div>
+  </form>
+</div>
+
+{% endblock%}
+
+{% block add_script_src %}{% endblock %}
+
+<script>
+  {% block add_script %}{% endblock %}
+</script>

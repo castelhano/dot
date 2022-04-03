@@ -1,30 +1,108 @@
 from django.db import models
 from datetime import datetime
+from core.models import Log
+from django.contrib.auth.models import User
 
+
+class Indicador(models.Model):
+    EVOLUCAO_CHOICES = (
+    (1,'Melhorou'),
+    (0,'Manteve'),
+    (-1,'Piorou'),
+    )
+    nome = models.CharField(max_length=80, unique=True, blank=False)
+    meta = models.DecimalField(default=None, max_digits=10, decimal_places=2)
+    evolucao = models.IntegerField(choices=EVOLUCAO_CHOICES, blank=True, null=True)
+    quanto_maior_melhor = models.BooleanField(default=True)
+    ativo = models.BooleanField(default=True)
+    def ultimas_alteracoes(self):
+        logs = Log.objects.filter(modelo='gestao.indicador',objeto_id=self.id).order_by('-data')[:15]
+        return reversed(logs)
 
 class Apontamento(models.Model):
-    referencia = models.DateField()
+    indicador = models.ForeignKey(Indicador, on_delete=models.CASCADE)
+    referencia = models.CharField(max_length=80, blank=False)
     valor = models.DecimalField(default=0, max_digits=10, decimal_places=2)
     meta = models.DecimalField(default=None, max_digits=10, decimal_places=2)
 
-class Indicador(models.Model):
-    pass
-
 class Staff(models.Model):
-    pass
-    
-class Diretriz(models.Model):
-    created_on = models.DateField(blank=True, null=True, default=datetime.today)
-    created_by = models.ForeignKey(User, blank=True, null=True, on_delete=models.RESTRICT)
-
-class Plano(models.Model):
-    pass
+    ROLE_CHOICES = (
+    ('D','Diretor'),
+    ('G','Gestor'),
+    ('S','Supervisor'),
+    ('O','Operacional'),
+    )
+    usuario = models.OneToOneField(User, on_delete=models.RESTRICT)
+    role = models.CharField(max_length=3,choices=ROLE_CHOICES, default='O')
+    def ultimas_alteracoes(self):
+        logs = Log.objects.filter(modelo='gestao.staff',objeto_id=self.id).order_by('-data')[:15]
+        return reversed(logs)
+    def planos_em_progresso(self):
+        return Plano.objects.filter(staff=self.usuario, status__in=['E','P'])
 
 class Label(models.Model):
-    pass
-
+    nome = models.CharField(max_length=20, unique=True, blank=False)
+    cor = models.CharField(max_length=30, blank=True)
+    fonte = models.CharField(max_length=30, blank=True)
+    def ultimas_alteracoes(self):
+        logs = Log.objects.filter(modelo='gestao.label',objeto_id=self.id).order_by('-data')[:15]
+        return reversed(logs)
+    
 class Analise(models.Model):
-    pass
+    TIPO_CHOICES = (
+    ('L','Lembrete'),
+    ('M','Melhoria'),
+    ('N','Nao Conformidade'),
+    )
+    indicador = models.ForeignKey(Indicador, on_delete=models.RESTRICT)
+    descricao = models.TextField(blank=False)
+    critico = models.BooleanField(default=False)
+    concluido = models.BooleanField(default=False)
+    created_on = models.DateField(blank=True, null=True, default=datetime.today)
+    created_by = models.ForeignKey(User, blank=True, null=True, on_delete=models.RESTRICT)
+    def ultimas_alteracoes(self):
+        logs = Log.objects.filter(modelo='gestao.analise',objeto_id=self.id).order_by('-data')[:15]
+        return reversed(logs)
 
-class Analise(models.Model):
-    pass
+class Diretriz(models.Model):
+    indicador = models.ForeignKey(Indicador, on_delete=models.RESTRICT)
+    analise = models.ForeignKey(Analise, blank=True, null=True, on_delete=models.RESTRICT)
+    titulo = models.CharField(max_length=100, blank=False)
+    detalhe = models.TextField(blank=True)
+    ativo = models.BooleanField(default=True)
+    created_on = models.DateField(blank=True, null=True, default=datetime.today)
+    created_by = models.ForeignKey(User, blank=True, null=True, on_delete=models.RESTRICT)
+    def ultimas_alteracoes(self):
+        logs = Log.objects.filter(modelo='gestao.diretriz',objeto_id=self.id).order_by('-data')[:15]
+        return reversed(logs)
+    def planos(self):
+        return Plano.objects.filter(diretriz=self).order_by('inicio','termino')
+    class Meta:
+        permissions = [
+            ("dashboard", "Pode ver dashboard"),
+        ]
+    
+class Plano(models.Model):
+    STATUS_CHOICES = (
+    ('E','Em andamento'),
+    ('P','Prorrogado'),
+    ('A','Avaliação'),
+    ('C','Concluido'),
+    ('D','Cancelado'),
+    )
+    diretriz = models.ForeignKey(Diretriz, on_delete=models.RESTRICT)
+    titulo = models.CharField(max_length=150, blank=False)
+    detalhe = models.TextField(blank=True)
+    inicio = models.DateField(blank=True, null=True, default=datetime.today)
+    termino = models.DateField(blank=True, null=True)
+    responsavel = models.ForeignKey(User, blank=True, null=True, related_name='plano_responsavel', on_delete=models.PROTECT)
+    staff = models.ManyToManyField(User, related_name='plano_staff')
+    status = models.CharField(max_length=3,choices=STATUS_CHOICES, default='E')
+    conclusao = models.IntegerField(default=0)
+    avaliacao = models.IntegerField(default=0)
+    labels = models.ManyToManyField(Label)
+    created_on = models.DateField(blank=True, null=True, default=datetime.today)
+    created_by = models.ForeignKey(User, related_name='plano_created_by', blank=True, null=True, on_delete=models.RESTRICT)
+    def ultimas_alteracoes(self):
+        logs = Log.objects.filter(modelo='gestao.plano',objeto_id=self.id).order_by('-data')[:15]
+        return reversed(logs)

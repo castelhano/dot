@@ -49,6 +49,8 @@ VERSION: 1.0
 
 .text-orange{color: #FF5722!important;}
 .text-purple{color: #6f42c1!important;}
+.hover-orange:hover{color: #FF5722!important;}
+.hover-purple:hover{color: #6f42c1!important;}
 
 .dropdown-item-danger {color: #DC3545!important;}
 .dropdown-item-danger:hover, .dropdown-item-danger:focus {color: #fff!important;background-color: #DC3545!important;}

@@ -1,0 +1,48 @@
+{% include "_component/layout/submenulist.html" %}
+<li>
+  <a class="nav-link text-light" id="app_root" href="{% url 'gestao_dashboard' %}" title="Dashboard [ctrl .]"><i class="fas fa-columns fs-5"></i></a>
+</li>
+<li id="cadastro_list_container" class="nav-item dropdown">
+  <a class="nav-link dropdown-toggle" id="menu_cadastro" href="#" data-bs-toggle="dropdown" title="ALT + C"><b>C</b>adastro</a>
+  <ul id="cadastro_list_options" class="dropdown-menu dropdown-menu-dark">
+    <li id="cadastro_indicador_list_container">
+      <a id="submenu_indicador_link" class="dropdown-item d-flex justify-content-between align-items-center pointer" data-bs-toggle="dropdown"><span><b>I</b>ndicador</span><i class="fas fa-chevron-right fs-8"></i></a>
+      <ul id="cadastro_indicador_list_options" class="submenu dropdown-menu dropdown-menu-dark">
+        {% if perms.gestao.view_indicador %}<li><a class="dropdown-item" id="cadastro_indicador" href="{% url 'gestao_indicadores' %}"><b>I</b>ndicadores</a></li>{% endif %}
+        {% if perms.gestao.view_staff %}<li><a class="dropdown-item" id="cadastro_staff" href="{% url 'gestao_staffs' %}"><b>S</b>taff</a></li>{% endif %}
+        {% if perms.gestao.view_label %}<li><a class="dropdown-item" id="cadastro_label" href="{% url 'gestao_labels' %}"><b>L</b>abel</a></li>{% endif %}
+      </ul>
+    </li>
+    <li id="cadastro_gestao_list_container">
+      <a id="submenu_gestao_link" class="dropdown-item d-flex justify-content-between align-items-center pointer" data-bs-toggle="dropdown"><span><b>G</b>estão</span><i class="fas fa-chevron-right fs-8"></i></a>
+      <ul id="cadastro_gestao_list_options" class="submenu dropdown-menu dropdown-menu-dark">
+        {% if perms.gestao.view_diretriz %}<li><a class="dropdown-item" id="cadastro_diretriz" href="{% url 'gestao_diretrizes' %}"><b>D</b>iretrizes</a></li>{% endif %}
+        {% if perms.gestao.view_analise %}<li><a class="dropdown-item" id="cadastro_analise" href="{% url 'gestao_analises' %}"><b>A</b>nálises</a></li>{% endif %}
+      </ul>
+    </li>
+  </ul>
+</li>
+<script>
+  SHORTCUT_MAP['cTFF'] = '#menu_cadastro';
+  
+  if(document.getElementById('cadastro_indicador_list_options').childElementCount == 0){document.getElementById('cadastro_indicador_list_container').classList.add('d-none');}
+  if(document.getElementById('cadastro_gestao_list_options').childElementCount == 0){document.getElementById('cadastro_gestao_list_container').classList.add('d-none');}
+  
+  function eventHandler(e){
+    {% include '_component/menu/global_handler.js' %}
+    else{
+      try{cadastro = document.getElementById('menu_cadastro').classList.contains('show') ? true : false;}catch(err){}
+      try{cadastro_indicador = document.getElementById('cadastro_indicador_list_options').style.display == 'block' ? true : false;}catch(err){}
+      try{cadastro_gestao = document.getElementById('cadastro_gestao_list_options').style.display == 'block' ? true : false;}catch(err){}
+
+      if(cadastro_indicador && e.key.toLowerCase() == 'i')try{e.preventDefault();document.getElementById('cadastro_indicador').click();}catch(err){}
+      else if(cadastro_indicador && e.key.toLowerCase() == 's')try{e.preventDefault();document.getElementById('cadastro_staff').click();}catch(err){}
+      else if(cadastro_indicador && e.key.toLowerCase() == 'l')try{e.preventDefault();document.getElementById('cadastro_label').click();}catch(err){}
+      else if(cadastro_gestao && e.key.toLowerCase() == 'd')try{e.preventDefault();document.getElementById('cadastro_diretriz').click();}catch(err){}
+      else if(cadastro_gestao && e.key.toLowerCase() == 'a')try{e.preventDefault();document.getElementById('cadastro_analise').click();}catch(err){}
+      else if(cadastro && e.key.toLowerCase() == 'i')try{submenuToggle(document.getElementById('submenu_indicador_link'));cadastro_indicador = true;}catch(err){}
+      else if(cadastro && e.key.toLowerCase() == 'g')try{submenuToggle(document.getElementById('submenu_gestao_link'));cadastro_indicador = true;}catch(err){}
+    }
+  }
+  
+</script>

@@ -1,0 +1,60 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Staff{% endblock %}
+{% block model %}Gestão{% endblock %}
+{% block model_menu %}{% include "_component/menu/gestao.html" %}{% endblock%}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'gestao_staff_add' %}"></a>
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'gestao_staffs' %}"><i class="fas fa-undo"></i></a></li>
+    </ul>
+  </div>
+  <form id="app_form" action="{% url 'gestao_staff_add' %}" method="POST" autocomplete="off">
+    {% csrf_token %}
+    <div class="card-body tab-content">
+      <h5 class="card-title mb-3">Cadastro de Staff</h5>
+      <div class="tab-pane fade show active" id="base" role="tabpanel">
+        <div class="row g-1">
+        	<div class="form-floating mb-1 col-lg-4">
+        		{{ form.usuario }}
+        		<label for="id_usuario">Usuario</label>
+        	</div>
+        </div>
+        <div class="row g-1">
+        	<div class="form-floating mb-1 col-lg-4">
+        		{{ form.role }}
+        		<label for="id_role">Perfil</label>
+        	</div>
+        </div>        
+      </div>
+      <!-- CONTROLES DO FORM -->
+      <div class="row mt-3">
+        <div class="col">
+          <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"><b>G</b>ravar</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+{% endblock%}
+
+{% block add_script_src %}{% endblock %}
+
+<script>
+  {% block add_script %}
+  var txt = document.getElementById('id_nome');
+  var bg = document.getElementById('id_cor');
+  var ft = document.getElementById('id_fonte');
+  var staff = document.getElementById('id_staff_preview');
+  function staffPreview(){
+    staff.innerHTML = txt.value;
+    staff.style.backgroundColor = bg.value;
+    staff.style.color = ft.value;
+  }
+  {% endblock %}
+</script>
