@@ -54,6 +54,8 @@ class Label(models.Model):
     nome = models.CharField(max_length=20, unique=True, blank=False)
     cor = models.CharField(max_length=30, blank=True)
     fonte = models.CharField(max_length=30, blank=True)
+    def __str__(self):
+        return self.nome
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='gestao.label',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
@@ -118,7 +120,11 @@ class Plano(models.Model):
         return reversed(logs)
     def staff_disponivel(self):
         if self.id:
-            return Staff.objects.filter(id__in=self.staff.all()).exclude(usuario__is_active=False)
-            return None
+            return Staff.objects.all().exclude(usuario__is_active=False).exclude(id__in=self.staff.all())
         else:
             return Staff.objects.all().exclude(usuario__is_active=False)
+    def labels_disponiveis(self):
+        if self.id:
+            return Label.objects.all().exclude(id__in=self.labels.all())
+        else:
+            return Label.objects.all()

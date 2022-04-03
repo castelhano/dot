@@ -1,6 +1,23 @@
 <div class="card-body tab-content">
-  <h5 class="card-title mb-0">Plano de Ação</h5>
-  <p class="fs-7 text-muted mb-2 text-truncate">{{plano.diretriz.titulo}}</p>
+  <h5 class="card-title m-0">Plano de Ação</h5>
+  <p class="fs-7 text-muted m-0 text-truncate">{{plano.diretriz.titulo}}</p>
+  <div class="row mb-2">
+    <div class="col-lg-6 pe-auto pe-lg-1 fs-7 d-flex justify-content-between">
+      <div id="id_labels_container" class="text-truncate">
+        {% for label in plano.labels.all %}
+        <span class="badge me-1" style="background-color:{{label.cor}};color:{{label.fonte}}" data-id="{{label.id|safe}}" onclick="removeLabel(this.outerHTML);this.remove();">{{label.nome}}</span>
+        {% endfor %}        
+      </div>
+      <div class="dropdown">
+        <button class="btn btn-sm btn-purple-light py-0 px-3" type="button" data-bs-toggle="dropdown"><i class="fas fa-tags"></i></button>
+        <ul id="menu_labels_disponiveis" class="dropdown-menu dropdown-menu-end text-center">
+          {% for label in plano.labels_disponiveis %}
+          <li class="dropdown-item pointer" onclick="addLabel(this.innerHTML);this.remove();"><span class="badge d-block" data-id="{{label.id}}" style="background-color:{{label.cor}};color: {{label.fonte}};">{{label.nome}}</span></li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
   <div class="tab-pane fade show active" id="base" role="tabpanel">
     <div class="row g-2">
       <div class="col-lg">
@@ -27,11 +44,11 @@
             </div>
           </div>
           <div class="mb-1 col-lg">
-            <select class="form-control" name="staff" id="id_staff" style="min-height:180px;" multiple>
+            <select class="form-control" name="staff" id="id_staff" style="min-height:180px;" onchange="loadResponsavelBox()" multiple>
               {% if plano.id %}
-                {% for staff in plano.staff.all %}
-                  <option value="{{staff.id}}">{{staff.username}}</option>
-                {% endfor %}
+              {% for staff in plano.staff.all %}
+              <option value="{{staff.id}}">{{staff.usuario.username|title}}</option>
+              {% endfor %}
               {% endif %}
             </select>
           </div>
@@ -65,6 +82,7 @@
     </div>
   </div>
 </div>
+{{form.labels}}
 <input type="hidden" name="diretriz" value="{{plano.diretriz.id|safe}}">
 
 <script>
@@ -73,10 +91,36 @@
   selecionados = document.getElementById("id_staff");
   function submitForm(){options = selecionados.options;for(i=0; i < options.length; i++){options[i].selected = "true";}return true;}
   
-  function addAll(){selecionados.innerHTML += disponiveis.innerHTML;disponiveis.innerHTML = '';}
-  function removeAll(){disponiveis.innerHTML += selecionados.innerHTML;selecionados.innerHTML = '';}
-  function addSelected(){residual = document.createElement("select");for(var i=0; i < disponiveis.length; i++){if(disponiveis[i].selected){let newOption = new Option(disponiveis[i].text,disponiveis[i].value);selecionados.add(newOption);}else{let newOption = new Option(disponiveis[i].text,disponiveis[i].value);residual.add(newOption);}}disponiveis.innerHTML = residual.innerHTML;}
-  function removeSelected(){residual = document.createElement("select");for(var i=0; i < selecionados.length; i++){if(selecionados[i].selected){let newOption = new Option(selecionados[i].text,selecionados[i].value);disponiveis.add(newOption);}else{let newOption = new Option(selecionados[i].text,selecionados[i].value);residual.add(newOption);}}selecionados.innerHTML = residual.innerHTML;}
+  function addAll(){selecionados.innerHTML += disponiveis.innerHTML;disponiveis.innerHTML = '';loadResponsavelBox();}
+  function removeAll(){disponiveis.innerHTML += selecionados.innerHTML;selecionados.innerHTML = '';loadResponsavelBox();}
+  function addSelected(){residual = document.createElement("select");for(var i=0; i < disponiveis.length; i++){if(disponiveis[i].selected){let newOption = new Option(disponiveis[i].text,disponiveis[i].value);selecionados.add(newOption);}else{let newOption = new Option(disponiveis[i].text,disponiveis[i].value);residual.add(newOption);}}disponiveis.innerHTML = residual.innerHTML;loadResponsavelBox();}
+  function removeSelected(){residual = document.createElement("select");for(var i=0; i < selecionados.length; i++){if(selecionados[i].selected){let newOption = new Option(selecionados[i].text,selecionados[i].value);disponiveis.add(newOption);}else{let newOption = new Option(selecionados[i].text,selecionados[i].value);residual.add(newOption);}}selecionados.innerHTML = residual.innerHTML;loadResponsavelBox();}
   
+  var responsavelAtual = '{{plano.responsavel.id|safe}}';
+  var resp = document.getElementById('id_responsavel');
+  function loadResponsavelBox(){
+    resp.innerHTML = '<option value="" selected>---------</option>' + selecionados.innerHTML;
+    if(responsavelAtual != ''){
+      resp.value = responsavelAtual;
+      if(resp.value == ''){resp.value = '';}
+    }
+  }
+  loadResponsavelBox();
+  
+  var container = document.getElementById('id_labels_container');
+  var labels = document.getElementById('id_labels');
+  var menu = document.getElementById('menu_labels_disponiveis');
+  
+  function addLabel(label){
+    container.innerHTML += label.replace('d-block','me-1').replace('">','" onclick="removeLabel(this.outerHTML);this.remove();">');
+    let id = label.match('data-id="\([0-9]*)\"')[1];
+    labels.querySelector(`[value="${id}"]`).selected = true;
+  }
+  function removeLabel(label){
+    let l = label.replace('me-1','d-block').replace('" onclick="removeLabel(this.outerHTML);this.remove();">','">');
+    menu.innerHTML += `<li class="dropdown-item pointer" onclick="addLabel(this.innerHTML);this.remove();">${l}</li>`;
+    let id = label.match('data-id="\([0-9]*)\"')[1];
+    labels.querySelector(`[value="${id}"]`).selected = false;
+  }
   {% endblock %}
 </script>

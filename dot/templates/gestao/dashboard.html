@@ -49,10 +49,10 @@
                   </div>
                   <div class="row mt-1">
                     <div class="col text-truncate">{{plano.get_status_display}} <span class="badge bg-secondary">{{plano.termino|now_until_date}} dias</span></div>
-                    <div class="col-auto"><span class="badge bg-dark">{{plano.responsavel.username|default:'--'|title}}</span> <span class="badge bg-primary">+ {{plano.staff.count}}</span></div>
+                    <div class="col-auto"><span class="badge bg-dark">{{plano.responsavel.usuario.username|default:'--'|title}}</span> <span class="badge bg-primary">+ {{plano.staff.count}}</span></div>
                   </div>
                   <div class="row mt-1">
-                    <div class="col text-success">{{plano.avaliacao|default:0|stars|safe}}</div>
+                    <div class="col text-truncate">{% for label in plano.labels.all %}<span class="badge me-1" style="background:{{label.cor}};color:{{label.fonte}}">{{label.nome}}</span>{% endfor %}</div>
                     <div class="col-6 col-lg-4">
                       <div class="progress mt-1"><div class="progress-bar" role="progressbar" style="width: {{plano.conclusao|safe}}%">{{plano.conclusao|safe}}%</div></div>                      
                     </div>

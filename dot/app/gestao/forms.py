@@ -58,11 +58,12 @@ class AnaliseForm(forms.ModelForm):
 class PlanoForm(forms.ModelForm):
     class Meta:
         model = Plano
-        fields = ['diretriz','analise','titulo','detalhe','inicio','termino','responsavel','staff']
+        fields = ['diretriz','analise','titulo','detalhe','inicio','termino','responsavel','staff','labels']
     titulo = forms.CharField(error_messages={'required': 'Informe o titulo'}, max_length=80, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'','autofocus':'autofocus'}))
     diretriz = forms.ModelChoiceField(error_messages={'required': 'Selecione o diretriz'}, queryset = Diretriz.objects.filter(ativo=True))
     analise = forms.ModelChoiceField(required=False, queryset = Analise.objects.filter(concluido=False))
     detalhe = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'Detalhamento', 'style':'min-height:300px'}))
     inicio = forms.DateField(required=False, initial=date.today(), widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
     termino = forms.DateField(required=False, widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
-    responsavel = forms.ModelChoiceField(required=False, queryset = User.objects.filter(is_active=True, is_staff=True).order_by('username'), widget=forms.Select(attrs={'class':'form-select'}))
+    responsavel = forms.ModelChoiceField(required=False, queryset = Staff.objects.filter(usuario__is_active=True, usuario__is_staff=True))
+    labels = forms.ModelMultipleChoiceField(required=False, queryset = Label.objects.all(), widget=forms.widgets.SelectMultiple(attrs={'class':'d-none'}))

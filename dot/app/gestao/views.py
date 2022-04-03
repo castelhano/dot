@@ -581,7 +581,7 @@ def plano_delete(request,id):
         registro.delete()
         l.save()
         messages.warning(request,f'Plano <b>apagado</b>. Essa operação não pode ser desfeita')
-        return redirect('gestao_planos')
+        return redirect('gestao_dashboard')
     except:
         messages.error(request,'ERRO ao apagar plano')
         return redirect('gestao_plano_id', id)
