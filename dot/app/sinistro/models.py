@@ -73,6 +73,8 @@ class Foto(models.Model):
         return self.foto.url
     def url_abbr(self):
         return self.foto.url.replace("/media/sinistro/","")
+    class Meta:
+        default_permissions = [('view','add','delete')]
 
 class File(models.Model):
     acidente = models.ForeignKey(Acidente, on_delete=models.CASCADE)
@@ -85,6 +87,8 @@ class File(models.Model):
         return os.path.splitext(self.file.url)[1]
     def filename(self):
         return os.path.basename(self.file.name)
+    class Meta:
+        default_permissions = [('view','add','delete')]
 
 
 class Oficina(models.Model):
@@ -205,3 +209,5 @@ class Paragrafo(models.Model):
     termo = models.ForeignKey(Termo, on_delete=models.CASCADE)
     ordem = models.PositiveIntegerField(blank=False, null=False)
     texto = models.TextField(blank=True)
+    class Meta:
+        default_permissions = [('add','change','delete')]

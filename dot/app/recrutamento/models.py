@@ -157,3 +157,5 @@ class Settings(models.Model):
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='recrutamento.settings',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
+    class Meta:
+        default_permissions = [('view','change')]

@@ -2,7 +2,7 @@
 {% load static %}
 {% block title %}Indicador{% endblock %}
 {% block model %}Gestão{% endblock %}
-{% block model_menu %}{% include "_component/menu/visitor.html" %}{% endblock%}
+{% block model_menu %}{% include "_component/menu/gestao.html" %}{% endblock%}
 
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'gestao_indicador_id' indicador.id|safe %}"></a>

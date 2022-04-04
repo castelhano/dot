@@ -27,7 +27,7 @@ def dashboard(request):
             return redirect('index')
 
 @login_required
-@permission_required('gestao.view_indicador')
+@permission_required('gestao.dashboard')
 def indicadores(request):
     indicadores = Indicador.objects.all().order_by('nome')
     fields = ['ativo','evolucao']
@@ -40,13 +40,13 @@ def indicadores(request):
         return redirect('gestao_indicadores')
 
 @login_required
-@permission_required('gestao.view_apontamento')
+@permission_required('gestao.dashboard')
 def apontamentos(request, indicador):
     apontamentos = Apontamento.objects.filter(indicador__id=indicador).order_by('referencia')
     return render(request,'gestao/apontamentos.html', {'apontamentos' : apontamentos})
 
 @login_required
-@permission_required('gestao.view_staff')
+@permission_required('gestao.dashboard')
 def staffs(request):
     staffs = Staff.objects.all().order_by('usuario__username')
     fields = ['role','usuario__is_active']
@@ -59,7 +59,7 @@ def staffs(request):
         return redirect('gestao_staffs')
 
 @login_required
-@permission_required('gestao.view_diretriz')
+@permission_required('gestao.dashboard')
 def diretrizes(request):
     diretrizes = Diretriz.objects.all().order_by('indicador','created_on')
     if request.method == 'POST':
@@ -69,7 +69,7 @@ def diretrizes(request):
     return render(request,'gestao/diretrizes.html', {'diretrizes' : diretrizes})
 
 @login_required
-@permission_required('gestao.view_label')
+@permission_required('gestao.dashboard')
 def labels(request):
     labels = Label.objects.all().order_by('nome')
     if request.method == 'POST' and request.POST['pesquisa'] != '':
@@ -77,7 +77,7 @@ def labels(request):
     return render(request,'gestao/labels.html', {'labels' : labels})
 
 @login_required
-@permission_required('gestao.view_analise')
+@permission_required('gestao.dashboard')
 def analises(request):
     analises = Analise.objects.all().order_by('created_on')
     if request.method == 'POST' and request.POST['pesquisa'] != '':
@@ -88,7 +88,7 @@ def analises(request):
 
 # METODOS ADD
 @login_required
-@permission_required('gestao.add_indicador')
+@permission_required('gestao.dashboard')
 def indicador_add(request):
     if request.method == 'POST':
         form = IndicadorForm(request.POST)
@@ -112,7 +112,7 @@ def indicador_add(request):
     return render(request,'gestao/indicador_add.html',{'form':form})
 
 @login_required
-@permission_required('gestao.add_apontamento')
+@permission_required('gestao.dashboard')
 def apontamento_add(request):
     if request.method == 'POST':
         form = ApontamentoForm(request.POST)
@@ -138,7 +138,7 @@ def apontamento_add(request):
     return render(request,'gestao/apontamento_add.html',{'form':form})
 
 @login_required
-@permission_required('gestao.add_staff')
+@permission_required('gestao.dashboard')
 def staff_add(request):
     if request.method == 'POST':
         form = StaffForm(request.POST)
@@ -162,7 +162,7 @@ def staff_add(request):
     return render(request,'gestao/staff_add.html',{'form':form})
 
 @login_required
-@permission_required('gestao.add_diretriz')
+@permission_required('gestao.dashboard')
 def diretriz_add(request):
     if request.method == 'POST':
         form = DiretrizForm(request.POST)
@@ -188,7 +188,7 @@ def diretriz_add(request):
     return render(request,'gestao/diretriz_add.html',{'form':form})
 
 @login_required
-@permission_required('gestao.add_label')
+@permission_required('gestao.dashboard')
 def label_add(request):
     if request.method == 'POST':
         form = LabelForm(request.POST)
@@ -212,7 +212,7 @@ def label_add(request):
     return render(request,'gestao/label_add.html',{'form':form})
 
 @login_required
-@permission_required('gestao.add_analise')
+@permission_required('gestao.dashboard')
 def analise_add(request):
     if request.method == 'POST':
         form = AnaliseForm(request.POST)
@@ -236,7 +236,7 @@ def analise_add(request):
     return render(request,'gestao/analise_add.html',{'form':form})
 
 @login_required
-@permission_required('gestao.add_plano')
+@permission_required('gestao.dashboard')
 def plano_add(request, diretriz):
     if request.method == 'POST':
         form = PlanoForm(request.POST)
@@ -270,49 +270,49 @@ def plano_add(request, diretriz):
 
 # METODOS GET
 @login_required
-@permission_required('gestao.change_indicador')
+@permission_required('gestao.dashboard')
 def indicador_id(request,id):
     indicador = Indicador.objects.get(pk=id)
     form = IndicadorForm(instance=indicador)
     return render(request,'gestao/indicador_id.html',{'form':form,'indicador':indicador})
 
 @login_required
-@permission_required('gestao.change_apontamento')
+@permission_required('gestao.dashboard')
 def apontamento_id(request,id):
     apontamento = Apontamento.objects.get(pk=id)
     form = ApontamentoForm(instance=apontamento)
     return render(request,'gestao/apontamento_id.html',{'form':form,'apontamento':apontamento})
 
 @login_required
-@permission_required('gestao.change_staff')
+@permission_required('gestao.dashboard')
 def staff_id(request,id):
     staff = Staff.objects.get(pk=id)
     form = StaffForm(instance=staff)
     return render(request,'gestao/staff_id.html',{'form':form,'staff':staff})
 
 @login_required
-@permission_required('gestao.change_diretriz')
+@permission_required('gestao.dashboard')
 def diretriz_id(request,id):
     diretriz = Diretriz.objects.get(pk=id)
     form = DiretrizForm(instance=diretriz)
     return render(request,'gestao/diretriz_id.html',{'form':form,'diretriz':diretriz})
 
 @login_required
-@permission_required('gestao.change_label')
+@permission_required('gestao.dashboard')
 def label_id(request,id):
     label = Label.objects.get(pk=id)
     form = LabelForm(instance=label)
     return render(request,'gestao/label_id.html',{'form':form,'label':label})
 
 @login_required
-@permission_required('gestao.change_analise')
+@permission_required('gestao.dashboard')
 def analise_id(request,id):
     analise = Analise.objects.get(pk=id)
     form = AnaliseForm(instance=analise)
     return render(request,'gestao/analise_id.html',{'form':form,'analise':analise})
 
 @login_required
-@permission_required('gestao.change_plano')
+@permission_required('gestao.dashboard')
 def plano_id(request,id):
     plano = Plano.objects.get(pk=id)
     form = PlanoForm(instance=plano)
@@ -320,7 +320,7 @@ def plano_id(request,id):
 
 # METODOS UPDATE
 @login_required
-@permission_required('gestao.change_indicador')
+@permission_required('gestao.dashboard')
 def indicador_update(request,id):
     indicador = Indicador.objects.get(pk=id)
     form = IndicadorForm(request.POST, instance=indicador)
@@ -339,7 +339,7 @@ def indicador_update(request,id):
         return render(request,'gestao/indicador_id.html',{'form':form,'indicador':indicador})
 
 @login_required
-@permission_required('gestao.change_apontamento')
+@permission_required('gestao.dashboard')
 def apontamento_update(request,id):
     apontamento = Apontamento.objects.get(pk=id)
     form = ApontamentoForm(request.POST, instance=apontamento)
@@ -358,7 +358,7 @@ def apontamento_update(request,id):
         return render(request,'gestao/apontamento_id.html',{'form':form,'apontamento':apontamento})
 
 @login_required
-@permission_required('gestao.change_staff')
+@permission_required('gestao.dashboard')
 def staff_update(request,id):
     staff = Staff.objects.get(pk=id)
     form = StaffForm(request.POST, instance=staff)
@@ -377,7 +377,7 @@ def staff_update(request,id):
         return render(request,'gestao/staff_id.html',{'form':form,'staff':staff})
 
 @login_required
-@permission_required('gestao.change_diretriz')
+@permission_required('gestao.dashboard')
 def diretriz_update(request,id):
     diretriz = Diretriz.objects.get(pk=id)
     form = DiretrizForm(request.POST, instance=diretriz)
@@ -396,7 +396,7 @@ def diretriz_update(request,id):
         return render(request,'gestao/diretriz_id.html',{'form':form,'diretriz':diretriz})
 
 @login_required
-@permission_required('gestao.change_label')
+@permission_required('gestao.dashboard')
 def label_update(request,id):
     label = Label.objects.get(pk=id)
     form = LabelForm(request.POST, instance=label)
@@ -415,7 +415,7 @@ def label_update(request,id):
         return render(request,'gestao/label_id.html',{'form':form,'label':label})
 
 @login_required
-@permission_required('gestao.change_analise')
+@permission_required('gestao.dashboard')
 def analise_update(request,id):
     analise = Analise.objects.get(pk=id)
     form = AnaliseForm(request.POST, instance=analise)
@@ -434,7 +434,7 @@ def analise_update(request,id):
         return render(request,'gestao/analise_id.html',{'form':form,'analise':analise})
 
 @login_required
-@permission_required('gestao.change_plano')
+@permission_required('gestao.dashboard')
 def plano_update(request,id):
     plano = Plano.objects.get(pk=id)
     form = PlanoForm(request.POST, instance=plano)
@@ -454,7 +454,7 @@ def plano_update(request,id):
 
 # METODOS DELETE
 @login_required
-@permission_required('gestao.delete_indicador')
+@permission_required('gestao.dashboard')
 def indicador_delete(request,id):
     try:
         registro = Indicador.objects.get(pk=id)
@@ -473,7 +473,7 @@ def indicador_delete(request,id):
         return redirect('gestao_indicador_id', id)
 
 @login_required
-@permission_required('gestao.delete_apontamento')
+@permission_required('gestao.dashboard')
 def apontamento_delete(request,id):
     try:
         registro = Apontamento.objects.get(pk=id)
@@ -492,7 +492,7 @@ def apontamento_delete(request,id):
         return redirect('gestao_apontamento_id', id)
 
 @login_required
-@permission_required('gestao.delete_staff')
+@permission_required('gestao.dashboard')
 def staff_delete(request,id):
     try:
         registro = Staff.objects.get(pk=id)
@@ -511,7 +511,7 @@ def staff_delete(request,id):
         return redirect('gestao_staff_id', id)
 
 @login_required
-@permission_required('gestao.delete_diretriz')
+@permission_required('gestao.dashboard')
 def diretriz_delete(request,id):
     try:
         registro = Diretriz.objects.get(pk=id)
@@ -530,7 +530,7 @@ def diretriz_delete(request,id):
         return redirect('gestao_diretriz_id', id)
 
 @login_required
-@permission_required('gestao.delete_label')
+@permission_required('gestao.dashboard')
 def label_delete(request,id):
     try:
         registro = Label.objects.get(pk=id)
@@ -549,7 +549,7 @@ def label_delete(request,id):
         return redirect('gestao_label_id', id)
 
 @login_required
-@permission_required('gestao.delete_analise')
+@permission_required('gestao.dashboard')
 def analise_delete(request,id):
     try:
         registro = Analise.objects.get(pk=id)
@@ -568,7 +568,7 @@ def analise_delete(request,id):
         return redirect('gestao_analise_id', id)
 
 @login_required
-@permission_required('gestao.delete_plano')
+@permission_required('gestao.dashboard')
 def plano_delete(request,id):
     try:
         registro = Plano.objects.get(pk=id)

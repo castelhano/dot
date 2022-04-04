@@ -72,6 +72,8 @@ class Patamar(models.Model):
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='trafego.patamar',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
+    class Meta:
+        default_permissions = [('change')]
 
 class Planejamento(models.Model):
     DIA_TIPO = (
@@ -114,6 +116,8 @@ class Carro(models.Model):
     inclusivo = models.BooleanField(default=False)
     def viagens(self):
         return Viagem.objects.filter(carro=self)
+    class Meta:
+        default_permissions = []
 
 class Viagem(models.Model):
     SENTIDO_CHOICES = (
@@ -136,6 +140,8 @@ class Viagem(models.Model):
     tipo = models.CharField(max_length=3,choices=TIPO_CHOICES, blank=True, default='1')
     dia_inicio = models.PositiveIntegerField(blank=True, null=True, default=1)
     dia_termino = models.PositiveIntegerField(blank=True, null=True, default=1)
+    class Meta:
+        default_permissions = []
 
 class Evento(models.Model):
     nome = models.CharField(max_length=80, unique=True, blank=False)
@@ -195,6 +201,8 @@ class FotoOcorrencia(models.Model):
         return self.foto.url
     def url_abbr(self):
         return self.foto.url.replace("/media/trafego/","")
+    class Meta:
+        default_permissions = [('add','view','delete')]
 
 class Orgao(models.Model):
     nome = models.CharField(max_length=40, blank=False)

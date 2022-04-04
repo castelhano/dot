@@ -64,6 +64,8 @@ class Log(models.Model):
     objeto_str = models.CharField(max_length=50, blank=False)
     usuario = models.ForeignKey(User, on_delete=models.RESTRICT, null=True)
     mensagem = models.CharField(max_length=50, blank=True)
+    class Meta:
+        default_permissions = [('view')]
     
 class Alerta(models.Model):
     titulo = models.CharField(max_length=50, blank=True)
@@ -92,6 +94,7 @@ class Profile(models.Model):
             ("console", "Pode abrir o console"),
             ("docs", "Acessar documentacao do sistema"),
         ]
+        default_permissions = []
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

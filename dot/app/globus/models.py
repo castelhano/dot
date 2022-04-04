@@ -60,6 +60,8 @@ class Viagem(models.Model):
     inicio = models.TimeField(blank=True, null=True)
     termino = models.TimeField(blank=True, null=True)
     extra = models.BooleanField(default=False)
+    class Meta:
+        default_permissions = []
 
 class Settings(models.Model):
     empresa = models.ForeignKey(Empresa, blank=True, null=True, on_delete=models.RESTRICT)
@@ -68,3 +70,5 @@ class Settings(models.Model):
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='globus.settings',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
+    class Meta:
+        default_permissions = [('view','change')]

@@ -4,9 +4,11 @@
   <div class="row mb-2">
     <div class="col-lg-6 pe-auto pe-lg-1 fs-7 d-flex justify-content-between">
       <div id="id_labels_container" class="text-truncate">
-        {% for label in plano.labels.all %}
-        <span class="badge me-1" style="background-color:{{label.cor}};color:{{label.fonte}}" data-id="{{label.id|safe}}" onclick="removeLabel(this.outerHTML);this.remove();">{{label.nome}}</span>
-        {% endfor %}        
+        {% if plano.id %}
+          {% for label in plano.labels.all %}
+          <span class="badge me-1" style="background-color:{{label.cor}};color:{{label.fonte}}" data-id="{{label.id|safe}}" onclick="removeLabel(this.outerHTML);this.remove();">{{label.nome}}</span>
+          {% endfor %}
+        {% endif %}
       </div>
       <div class="dropdown">
         <button class="btn btn-sm btn-purple-light py-0 px-3" type="button" data-bs-toggle="dropdown"><i class="fas fa-tags"></i></button>

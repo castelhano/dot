@@ -20,12 +20,16 @@ class Indicador(models.Model):
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='gestao.indicador',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
+    class Meta:
+        default_permissions = []
 
 class Apontamento(models.Model):
     indicador = models.ForeignKey(Indicador, on_delete=models.CASCADE)
     referencia = models.CharField(max_length=80, blank=False)
     valor = models.DecimalField(default=0, max_digits=10, decimal_places=2)
     meta = models.DecimalField(default=None, max_digits=10, decimal_places=2)
+    class Meta:
+        default_permissions = []
 
 class Staff(models.Model):
     ROLE_CHOICES = (
@@ -41,14 +45,16 @@ class Staff(models.Model):
         return reversed(logs)
     def planos_em_progresso(self):
         if self.role == 'O':
-            return Plano.objects.filter(staff=self.usuario, status__in=['E','P'])
+            return Plano.objects.filter(staff=self, status__in=['E','P'])
         else:
             return Plano.objects.filter(status__in=['E','P'])
     def planos_em_avaliacao(self):
         if self.role == 'O':
-            return Plano.objects.filter(staff=self.usuario, status='A')
+            return Plano.objects.filter(staff=self, status='A')
         else:
             return Plano.objects.filter(status='A')
+    class Meta:
+        default_permissions = []
 
 class Label(models.Model):
     nome = models.CharField(max_length=20, unique=True, blank=False)
@@ -59,6 +65,10 @@ class Label(models.Model):
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='gestao.label',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
+    class Meta:
+        ordering = ('nome',)
+    class Meta:
+        default_permissions = []
     
 class Analise(models.Model):
     TIPO_CHOICES = (
@@ -75,6 +85,8 @@ class Analise(models.Model):
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='gestao.analise',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
+    class Meta:
+        default_permissions = []
 
 class Diretriz(models.Model):
     indicador = models.ForeignKey(Indicador, on_delete=models.RESTRICT)
@@ -93,6 +105,7 @@ class Diretriz(models.Model):
         permissions = [
             ("dashboard", "Pode ver dashboard"),
         ]
+        default_permissions = []
     
 class Plano(models.Model):
     STATUS_CHOICES = (
@@ -128,3 +141,5 @@ class Plano(models.Model):
             return Label.objects.all().exclude(id__in=self.labels.all())
         else:
             return Label.objects.all()
+    class Meta:
+        default_permissions = []
