@@ -36,5 +36,6 @@ urlpatterns = [
     path('gestao_plano_add/<int:diretriz>',views.plano_add,name='gestao_plano_add'),
     path('gestao_plano_id/<int:id>',views.plano_id,name='gestao_plano_id'),
     path('gestao_plano_update/<int:id>',views.plano_update,name='gestao_plano_update'),
+    path('gestao_plano_movimentar/<int:id>',views.plano_movimentar,name='gestao_plano_movimentar'),
     path('gestao_plano_delete/<int:id>/delete',views.plano_delete,name='gestao_plano_delete'),
 ]

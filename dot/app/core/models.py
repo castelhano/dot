@@ -89,6 +89,8 @@ class Profile(models.Model):
     def alertas(self):
         alertas = Alerta.objects.filter(to_user=self.user,lido=False).order_by('data')
         return alertas
+    def allow_empresa(self, id): # Verifica se empresa esta habilitada para usuario
+        return self.empresas.filter(pk=id).exists()
     class Meta:
         permissions = [
             ("console", "Pode abrir o console"),

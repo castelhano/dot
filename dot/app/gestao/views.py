@@ -17,45 +17,59 @@ from core.extras import clean_request
 def dashboard(request):
     try:
         staff = Staff.objects.get(usuario=request.user)
-        diretrizes = Diretriz.objects.filter(ativo=True).order_by('created_on')
-        return render(request,'gestao/dashboard.html',{'staff':staff,'diretrizes':diretrizes})
-    except:
-        messages.warning(request,'Seu usuário precisa fazer parte da <b>Staff</b> para acessar este recurso.')
-        if request.user.has_perm('gestao.view_staff'):
-            return redirect('gestao_staffs')
-        else:
-            return redirect('index')
+        diretrizes = Diretriz.objects.filter(ativo=True, empresa__in=staff.usuario.profile.empresas.all()).order_by('created_on')
+    except Exception as e:
+        staff = None
+        diretrizes = None
+    return render(request,'gestao/dashboard.html',{'staff':staff,'diretrizes':diretrizes})
 
 @login_required
 @permission_required('gestao.dashboard')
 def indicadores(request):
     indicadores = Indicador.objects.all().order_by('nome')
-    fields = ['ativo','evolucao']
+    fields = ['ativo']
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+        if not staff.role in ['M','E','G']:
+            raise Exception('Perfil não liberado para este recurso')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
     try:
         params = clean_request(request.GET, fields)
         indicadores = indicadores.filter(**params)
-        return render(request,'gestao/indicadores.html', {'indicadores' : indicadores})
+        return render(request,'gestao/indicadores.html', {'indicadores' : indicadores,'staff':staff})
     except:
-        messages.warning(request,'<b class="text-danger">Erro</b> ao filtrar indicadores')
+        messages.warning(request,'<b>Erro</b> ao filtrar indicadores')
         return redirect('gestao_indicadores')
 
 @login_required
 @permission_required('gestao.dashboard')
 def apontamentos(request, indicador):
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+        raise Exception('É necessário fazer parte da Staff')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
     apontamentos = Apontamento.objects.filter(indicador__id=indicador).order_by('referencia')
-    return render(request,'gestao/apontamentos.html', {'apontamentos' : apontamentos})
+    return render(request,'gestao/apontamentos.html', {'apontamentos' : apontamentos,'staff':staff})
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.staff')
 def staffs(request):
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+    except Exception as e:
+        staff = None
     staffs = Staff.objects.all().order_by('usuario__username')
     fields = ['role','usuario__is_active']
     try:
         params = clean_request(request.GET, fields)
         staffs = staffs.filter(**params)
-        return render(request,'gestao/staffs.html', {'staffs' : staffs})
+        return render(request,'gestao/staffs.html', {'staffs' : staffs, 'staff':staff})
     except:
-        messages.warning(request,'<b class="text-danger">Erro</b> ao filtrar staff')
+        messages.warning(request,'<b>Erro</b> ao filtrar staff')
         return redirect('gestao_staffs')
 
 @login_required
@@ -71,14 +85,28 @@ def diretrizes(request):
 @login_required
 @permission_required('gestao.dashboard')
 def labels(request):
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+        if staff.role != 'M':
+            raise Exception('Perfil não liberado para este recurso')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
     labels = Label.objects.all().order_by('nome')
     if request.method == 'POST' and request.POST['pesquisa'] != '':
         labels = labels.filter(nome__contains=request.POST['pesquisa'])
-    return render(request,'gestao/labels.html', {'labels' : labels})
+    return render(request,'gestao/labels.html', {'labels' : labels,'staff':'staff'})
 
 @login_required
 @permission_required('gestao.dashboard')
 def analises(request):
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+        if not staff.role in ['M','E','G']:
+            raise Exception('Perfil não liberado para este recurso')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
     analises = Analise.objects.all().order_by('created_on')
     if request.method == 'POST' and request.POST['pesquisa'] != '':
         pass
@@ -90,6 +118,13 @@ def analises(request):
 @login_required
 @permission_required('gestao.dashboard')
 def indicador_add(request):
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+        if not staff.role in ['M']:
+            raise Exception('Perfil não liberado para este recurso')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
     if request.method == 'POST':
         form = IndicadorForm(request.POST)
         if form.is_valid():
@@ -114,6 +149,13 @@ def indicador_add(request):
 @login_required
 @permission_required('gestao.dashboard')
 def apontamento_add(request):
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+        if not staff.role in ['M','E','G']:
+            raise Exception('Perfil não liberado para este recurso')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
     if request.method == 'POST':
         form = ApontamentoForm(request.POST)
         if form.is_valid():
@@ -138,7 +180,7 @@ def apontamento_add(request):
     return render(request,'gestao/apontamento_add.html',{'form':form})
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.staff')
 def staff_add(request):
     if request.method == 'POST':
         form = StaffForm(request.POST)
@@ -164,6 +206,13 @@ def staff_add(request):
 @login_required
 @permission_required('gestao.dashboard')
 def diretriz_add(request):
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+        if not staff.role in ['M','E']:
+            raise Exception('Perfil não liberado para este recurso')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
     if request.method == 'POST':
         form = DiretrizForm(request.POST)
         if form.is_valid():
@@ -190,6 +239,13 @@ def diretriz_add(request):
 @login_required
 @permission_required('gestao.dashboard')
 def label_add(request):
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+        if not staff.role in ['M']:
+            raise Exception('Perfil não liberado para este recurso')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
     if request.method == 'POST':
         form = LabelForm(request.POST)
         if form.is_valid():
@@ -214,11 +270,20 @@ def label_add(request):
 @login_required
 @permission_required('gestao.dashboard')
 def analise_add(request):
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+        if not staff.role in ['M','E']:
+            raise Exception('Perfil não liberado para este recurso')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
     if request.method == 'POST':
         form = AnaliseForm(request.POST)
         if form.is_valid():
             try:
-                registro = form.save()
+                registro = form.save(commit=False)
+                registro.created_by = request.user
+                registro.save()
                 l = Log()
                 l.modelo = "gestao.analise"
                 l.objeto_id = registro.id
@@ -238,6 +303,13 @@ def analise_add(request):
 @login_required
 @permission_required('gestao.dashboard')
 def plano_add(request, diretriz):
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+        if not staff.role in ['M','E','G']:
+            raise Exception('Perfil não liberado para este recurso')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
     if request.method == 'POST':
         form = PlanoForm(request.POST)
         if form.is_valid():
@@ -272,6 +344,13 @@ def plano_add(request, diretriz):
 @login_required
 @permission_required('gestao.dashboard')
 def indicador_id(request,id):
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+        if not staff.role in ['M']:
+            raise Exception('Perfil não liberado para este recurso')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
     indicador = Indicador.objects.get(pk=id)
     form = IndicadorForm(instance=indicador)
     return render(request,'gestao/indicador_id.html',{'form':form,'indicador':indicador})
@@ -279,12 +358,19 @@ def indicador_id(request,id):
 @login_required
 @permission_required('gestao.dashboard')
 def apontamento_id(request,id):
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+        if not staff.role in ['M','E','G']:
+            raise Exception('Perfil não liberado para este recurso')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
     apontamento = Apontamento.objects.get(pk=id)
     form = ApontamentoForm(instance=apontamento)
     return render(request,'gestao/apontamento_id.html',{'form':form,'apontamento':apontamento})
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.staff')
 def staff_id(request,id):
     staff = Staff.objects.get(pk=id)
     form = StaffForm(instance=staff)
@@ -293,6 +379,11 @@ def staff_id(request,id):
 @login_required
 @permission_required('gestao.dashboard')
 def diretriz_id(request,id):
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+    except Exception as e:
+        messages.error(request, f'É necessário fazer parte da <b>Staff</b>')
+        return redirect('gestao_dashboard')
     diretriz = Diretriz.objects.get(pk=id)
     form = DiretrizForm(instance=diretriz)
     return render(request,'gestao/diretriz_id.html',{'form':form,'diretriz':diretriz})
@@ -300,6 +391,13 @@ def diretriz_id(request,id):
 @login_required
 @permission_required('gestao.dashboard')
 def label_id(request,id):
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+        if not staff.role in ['M']:
+            raise Exception('Perfil não liberado para este recurso')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
     label = Label.objects.get(pk=id)
     form = LabelForm(instance=label)
     return render(request,'gestao/label_id.html',{'form':form,'label':label})
@@ -307,6 +405,13 @@ def label_id(request,id):
 @login_required
 @permission_required('gestao.dashboard')
 def analise_id(request,id):
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+        if not staff.role in ['M','E']:
+            raise Exception('Perfil não liberado para este recurso')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
     analise = Analise.objects.get(pk=id)
     form = AnaliseForm(instance=analise)
     return render(request,'gestao/analise_id.html',{'form':form,'analise':analise})
@@ -314,7 +419,15 @@ def analise_id(request,id):
 @login_required
 @permission_required('gestao.dashboard')
 def plano_id(request,id):
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+    except Exception as e:
+        messages.error(request,f'É necessário fazer parte da <b>Staff</b> {e}')
+        return redirect('gestao_dashboard')
     plano = Plano.objects.get(pk=id)
+    if not staff.usuario.profile.allow_empresa(plano.diretriz.empresa.id): # Verifica se usuario tem acesso a empresa definida na diretriz
+        messages.error(request,'Empresa não habilitada para seu usuário')
+        return redirect('gestao_dashboard')
     form = PlanoForm(instance=plano)
     return render(request,'gestao/plano_id.html',{'form':form,'plano':plano})
 
@@ -322,6 +435,13 @@ def plano_id(request,id):
 @login_required
 @permission_required('gestao.dashboard')
 def indicador_update(request,id):
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+        if not staff.role in ['M','E']:
+            raise Exception('Perfil não liberado para este recurso')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
     indicador = Indicador.objects.get(pk=id)
     form = IndicadorForm(request.POST, instance=indicador)
     if form.is_valid():
@@ -341,7 +461,16 @@ def indicador_update(request,id):
 @login_required
 @permission_required('gestao.dashboard')
 def apontamento_update(request,id):
-    apontamento = Apontamento.objects.get(pk=id)
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+        apontamento = Apontamento.objects.get(pk=id)
+        if not staff.role in ['M','E','G']:
+            raise Exception('Perfil não liberado para este recurso')
+        if not staff.usuario.profile.allow_empresa(apontamento.empresa.id): # Verifica se usuario tem acesso a empresa
+            raise Exception('Empresa não habilitada para seu usuário')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
     form = ApontamentoForm(request.POST, instance=apontamento)
     if form.is_valid():
         registro = form.save()
@@ -358,7 +487,7 @@ def apontamento_update(request,id):
         return render(request,'gestao/apontamento_id.html',{'form':form,'apontamento':apontamento})
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.staff')
 def staff_update(request,id):
     staff = Staff.objects.get(pk=id)
     form = StaffForm(request.POST, instance=staff)
@@ -379,6 +508,13 @@ def staff_update(request,id):
 @login_required
 @permission_required('gestao.dashboard')
 def diretriz_update(request,id):
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+        if not staff.role in ['M','E']:
+            raise Exception('Perfil não liberado para atualizar diretriz')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
     diretriz = Diretriz.objects.get(pk=id)
     form = DiretrizForm(request.POST, instance=diretriz)
     if form.is_valid():
@@ -398,6 +534,13 @@ def diretriz_update(request,id):
 @login_required
 @permission_required('gestao.dashboard')
 def label_update(request,id):
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+        if not staff.role in ['M']:
+            raise Exception('Perfil não liberado para este recurso')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
     label = Label.objects.get(pk=id)
     form = LabelForm(request.POST, instance=label)
     if form.is_valid():
@@ -417,7 +560,14 @@ def label_update(request,id):
 @login_required
 @permission_required('gestao.dashboard')
 def analise_update(request,id):
-    analise = Analise.objects.get(pk=id)
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+        analise = Analise.objects.get(pk=id)
+        if analise.created_by != request.user and not staff.role in ['M']:
+            raise Exception(f'Só pode ser editada pelo <b>responsável</b>: {analise.created_by.username.title()}')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
     form = AnaliseForm(request.POST, instance=analise)
     if form.is_valid():
         registro = form.save()
@@ -436,7 +586,16 @@ def analise_update(request,id):
 @login_required
 @permission_required('gestao.dashboard')
 def plano_update(request,id):
-    plano = Plano.objects.get(pk=id)
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+        plano = Plano.objects.get(pk=id)
+        if not staff.role in ['M','E'] and plano.responsavel != staff:
+            raise Exception(f'Somente o responsável pode editar: <b>{plano.responsavel.usuario.username}</b>')
+        if not staff.usuario.profile.allow_empresa(plano.empresa.id): # Verifica se usuario tem acesso a empresa
+            raise Exception('Empresa não habilitada para seu usuário')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
     form = PlanoForm(request.POST, instance=plano)
     if form.is_valid():
         registro = form.save()
@@ -452,10 +611,52 @@ def plano_update(request,id):
     else:
         return render(request,'gestao/plano_id.html',{'form':form,'plano':plano})
 
+@login_required
+@permission_required('gestao.dashboard')
+def plano_movimentar(request,id):
+    operacao = request.GET.get('operacao', None)
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+        plano = Plano.objects.get(id=id)
+        if operacao == 'execucao' and not staff.role in ['M','E']:
+            raise Exception('Perfil não liberado para este recurso')
+        if operacao == 'revisao' and (not staff.role in ['M','E'] or request.user != staff.usuario):
+            raise Exception('Somente o responsável pode enviar para revisão')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
+    try:
+        l = Log()
+        l.modelo = "gestao.plano"
+        l.objeto_id = plano.id
+        l.objeto_str = plano.titulo[0:40]
+        l.usuario = request.user
+        if operacao == 'revisao':
+            plano.status = 'A'
+            l.mensagem = "ENVIADO REVISAO"
+        elif operacao == 'execucao':
+            plano.status = 'E'
+            l.mensagem = "RETORNADO"
+        else:
+            messages.error(request,f'Operação <b>inválida</b>')
+            return redirect('gestao_dashboard')
+        plano.save()
+        l.save()
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b>: {e}')
+    return redirect('gestao_dashboard')
+
 # METODOS DELETE
 @login_required
 @permission_required('gestao.dashboard')
 def indicador_delete(request,id):
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+        if not staff.role in ['M']:
+            raise Exception('Perfil não liberado para este recurso')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
     try:
         registro = Indicador.objects.get(pk=id)
         l = Log()
@@ -477,6 +678,15 @@ def indicador_delete(request,id):
 def apontamento_delete(request,id):
     try:
         registro = Apontamento.objects.get(pk=id)
+        staff = Staff.objects.get(usuario=request.user)
+        if not staff.role in ['M','E','G']:
+            raise Exception('Perfil não liberado para este recurso')
+        if not staff.usuario.profile.allow_empresa(regitro.empresa.id): # Verifica se usuario tem acesso a empresa
+            raise Exception('Empresa não habilitada para seu usuário')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
+    try:
         l = Log()
         l.modelo = "gestao.indicador"
         l.objeto_id = registro.indicador.id
@@ -492,7 +702,7 @@ def apontamento_delete(request,id):
         return redirect('gestao_apontamento_id', id)
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.staff')
 def staff_delete(request,id):
     try:
         registro = Staff.objects.get(pk=id)
@@ -514,7 +724,16 @@ def staff_delete(request,id):
 @permission_required('gestao.dashboard')
 def diretriz_delete(request,id):
     try:
+        staff = Staff.objects.get(usuario=request.user)
         registro = Diretriz.objects.get(pk=id)
+        if not staff.role in ['M','E']:
+            raise Exception('Perfil não liberado para este recurso')
+        if not staff.usuario.profile.allow_empresa(registro.empresa.id): # Verifica se usuario tem acesso a empresa
+            raise Exception('Empresa não habilitada para seu usuário')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
+    try:
         l = Log()
         l.modelo = "gestao.diretriz"
         l.objeto_id = registro.id
@@ -532,6 +751,13 @@ def diretriz_delete(request,id):
 @login_required
 @permission_required('gestao.dashboard')
 def label_delete(request,id):
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+        if not staff.role in ['M']:
+            raise Exception('Perfil não liberado para este recurso')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
     try:
         registro = Label.objects.get(pk=id)
         l = Log()
@@ -552,6 +778,14 @@ def label_delete(request,id):
 @permission_required('gestao.dashboard')
 def analise_delete(request,id):
     try:
+        staff = Staff.objects.get(usuario=request.user)
+        analise = Analise.objects.get(pk=id)
+        if analise.created_by != request.user and not staff.role in ['M']:
+            raise Exception(f'Só pode ser excluida pelo <b>responsável</b>: {analise.created_by.username.title()}')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
+    try:
         registro = Analise.objects.get(pk=id)
         l = Log()
         l.modelo = "gestao.analise"
@@ -571,7 +805,16 @@ def analise_delete(request,id):
 @permission_required('gestao.dashboard')
 def plano_delete(request,id):
     try:
+        staff = Staff.objects.get(usuario=request.user)
         registro = Plano.objects.get(pk=id)
+        if not staff.role in ['M']:
+            raise Exception('Perfil não liberado para este recurso')
+        if not staff.usuario.profile.allow_empresa(registro.diretriz.empresa.id): # Verifica se usuario tem acesso a empresa
+            raise Exception('Empresa não habilitada para seu usuário')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
+    try:
         l = Log()
         l.modelo = "gestao.plano"
         l.objeto_id = registro.id

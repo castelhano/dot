@@ -44,7 +44,6 @@
                 <th>Nome*</th>
                 <th class="d-none d-md-table-cell">Meta</th>
                 <th class="d-none d-sm-table-cell">Atual</th>
-                <th>Evolução</th>
                 <th class="d-none d-sm-table-cell">Melhor</th>
                 {% if perms.gestao.change_indicador %}
                 <th>&nbsp;</th>
@@ -58,7 +57,6 @@
                 <td>{{indicador.nome}}</td>
                 <td class="d-none d-md-table-cell">{{indicador.meta}}</td>
                 <td class="d-none d-sm-table-cell">{{indicador.ultimo_apontamento|default:'--'}}</td>
-                <td>{{indicador.evolucao|default:0|indicatorArrow|safe}}</td>
                 <td class="d-none d-sm-table-cell">{% if indicador.quanto_maior_melhor %}{{1|indicatorArrow|safe}}{% else %}{{-1|indicatorArrow:False|safe}}{% endif %}</td>
                 {% if perms.gestao.change_indicador %}
                 <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'gestao_indicador_id' indicador.id|safe %}"><i class="fas fa-pen"></i></a></td>
@@ -77,10 +75,6 @@
         <div class="filter-container">
           <h6 class="text-muted d-flex justify-content-between">Filtros:<a class="text-muted text-decoration-none fs-8" id="clear" href="{% url 'gestao_indicadores' %}">Limpar</a></h6>
           <ul class="list-unstyled">
-            <li><a id="id_melhor" onclick="filter('evolucao',1)">Melhoraram</a></li>
-            <li><a id="id_manteve" onclick="filter('evolucao',0)">Manteram</a></li>
-            <li><a id="id_pior" onclick="filter('evolucao',-1)">Pioraram</a></li>
-            <hr class="my-1" />
             <li><a id="id_ativos" onclick="filter('ativo','True')">Ativos</a></li>
             <li><a id="id_inativos" onclick="filter('ativo','False')">Inativos</a></li>
           </ul>
@@ -102,9 +96,6 @@
   function indicadorSearch(){document.getElementById('id_pesquisa').select()}
   
   const staff_filters = {
-    'evolucao=1':'id_melhor',
-    'evolucao=0':'id_manteve',
-    'evolucao=-1':'id_pior',
     'ativo=True':'id_ativos',
     'ativo=False':'id_inativos'
   }

@@ -30,6 +30,7 @@
       <div class="tab-pane fade show active" id="base" role="tabpanel">
         <div class="row g-2">
           <div class="col-lg">
+            {% include "_component/field/empresa.html" with empresa_atual=diretriz.empresa.id|safe attrs='autofocus' %}
             <div class="row g-1">
             	<div class="form-floating mb-1 col-lg-12">
             		{{ form.titulo }}
@@ -60,7 +61,7 @@
       <!-- CONTROLES DO FORM -->
       <div class="row mt-3">
         <div class="col">
-          <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"><b>G</b>ravar</button>
+          <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"{% if not staff.role == 'M' and not staff.role == 'E' %} disabled{% endif %}><b>G</b>ravar</button>
         </div>
       </div>
     </div>
@@ -120,4 +121,6 @@
 </div>
 {% endblock%}
 
-{% block add_script_src %}{% endblock %}
+{% block add_script %}
+var TAB_ON_ENTER = true;
+{% endblock %}

@@ -16,7 +16,7 @@ class IndicadorForm(forms.ModelForm):
 class ApontamentoForm(forms.ModelForm):
     class Meta:
         model = Apontamento
-        fields = ['indicador','referencia','valor','meta']
+        fields = ['empresa','indicador','referencia','valor','meta']
     indicador = forms.ModelChoiceField(error_messages={'required': 'Selecione o indicador'}, queryset = Indicador.objects.filter(ativo=True).order_by('nome'), widget=forms.Select(attrs={'class':'form-select','autofocus':'autofocus'}))
     valor = forms.DecimalField(required=False,initial=0,widget=forms.TextInput(attrs={'class': 'form-control','onfocus':'this.select();'}))
     meta = forms.DecimalField(required=False,initial=0,widget=forms.TextInput(attrs={'class': 'form-control','onfocus':'this.select();'}))
@@ -32,8 +32,8 @@ class StaffForm(forms.ModelForm):
 class DiretrizForm(forms.ModelForm):
     class Meta:
         model = Diretriz
-        fields = ['indicador','analise','titulo','detalhe','ativo']
-    titulo = forms.CharField(error_messages={'required': 'Informe o titulo'},widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'','autofocus':'autofocus'}))
+        fields = ['empresa','indicador','analise','titulo','detalhe','ativo']
+    titulo = forms.CharField(error_messages={'required': 'Informe o titulo'},widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
     indicador = forms.ModelChoiceField(error_messages={'required': 'Selecione o indicador'}, queryset = Indicador.objects.filter(ativo=True).order_by('nome'), widget=forms.Select(attrs={'class':'form-select'}))
     detalhe = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'Detalhamento', 'style':'min-height:300px'}))
     ativo = forms.BooleanField(required=False, initial=True, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
@@ -49,7 +49,7 @@ class LabelForm(forms.ModelForm):
 class AnaliseForm(forms.ModelForm):
     class Meta:
         model = Analise
-        fields = ['indicador','descricao','critico','concluido']
+        fields = ['empresa','indicador','descricao','critico','concluido']
     indicador = forms.ModelChoiceField(error_messages={'required': 'Selecione o indicador'}, queryset = Indicador.objects.filter(ativo=True).order_by('nome'), widget=forms.Select(attrs={'class':'form-select','autofocus':'autofocus'}))
     descricao = forms.CharField(error_messages={'required': 'É necessário informar algo na descrição'}, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'Detalhamento', 'style':'min-height:300px'}))
     critico = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
