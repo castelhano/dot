@@ -12,9 +12,7 @@
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
       <li class="nav-item"><a class="nav-link pointer" id="search" data-bs-toggle="modal" data-bs-target="#search_modal" onclick="setTimeout(function(){document.getElementById('id_pesquisa').focus();},480);" title="CTRL + /"><i class="fas fa-search"></i></a></li>
-      {% if perms.gestao.add_label %}
       <li class="nav-item"><a class="nav-link border" id="add" href="{% url 'gestao_label_add' %}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
-      {% endif %}
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'gestao_dashboard' %}"><i class="fas fa-undo"></i></a></li>
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
@@ -35,9 +33,7 @@
           <tr>
             <th>Nome</th>
             <th>Estilo</th>
-            {% if perms.gestao.change_label %}
             <th>&nbsp;</th>
-            {% endif %}
           </tr>
         </thead>
         <tbody>
@@ -45,9 +41,7 @@
           <tr>
             <td>{{label.nome}}</td>
             <td><span class="badge" style="background-color:{{label.cor}};color:{{label.fonte}}">{{label.nome}}</span></td>
-            {% if perms.gestao.change_label %}
             <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'gestao_label_id' label.id|safe %}"><i class="fas fa-pen"></i></a></td>
-            {% endif %}
           </tr>
           {% empty %}
           <tr>

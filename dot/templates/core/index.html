@@ -17,8 +17,10 @@
   {% if perms.sinistro.view_acidente %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-primary"><i class="fas fa-car-crash lead-image"></i><a id="widget_action_acidente" class="widget-label stretched-link" href="{% url 'sinistro_acidentes' %}">Sinistro<kbd class="float-end fs-9">ctrl k</kbd></a></div>{% endif %}
   {% if perms.globus.view_escala %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-orange"><i class="fas fa-file-import lead-image"></i><a id="widget_action_globus" class="widget-label stretched-link" href="{% url 'globus_escalas' %}">Escalas (Globus)</a></div>{% endif %}
   {% if perms.globus.consultar_escala %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-orange"><i class="fas fa-user-clock lead-image"></i><a id="widget_action_consultar_escala" class="widget-label stretched-link" href="{% url 'globus_consultar_escala' %}">Consultar Escala</a></div>{% endif %}
-  {% if perms.globus.localizar_escala %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-orange"><i class="fas fa-search lead-image"></i><a id="widget_action_consultar_escala" class="widget-label stretched-link" href="{% url 'globus_localizar_escala' %}">Pesquisa Escala</a></div>{% endif %}
-  {% if perms.globus.view_viagem %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-orange"><i class="fas fa-clipboard-list lead-image"></i><a id="widget_action_planejamento_linha" class="widget-label stretched-link" href="{% url 'globus_planejamento_linha' %}">Horários Linha</a></div>{% endif %}
+  {% if perms.globus.localizar_escala %}
+  <div class="card-widget col-6 col-lg-4 col-xl-2 btn-orange"><i class="fas fa-search lead-image"></i><a id="widget_action_consultar_escala" class="widget-label stretched-link" href="{% url 'globus_localizar_escala' %}">Pesquisa Escala</a></div>
+  <div class="card-widget col-6 col-lg-4 col-xl-2 btn-orange"><i class="fas fa-clipboard-list lead-image"></i><a id="widget_action_planejamento_linha" class="widget-label stretched-link" href="{% url 'globus_planejamento_linha' %}">Horários Linha</a></div>
+  {% endif %}
 </div>
 {% endblock%}
 

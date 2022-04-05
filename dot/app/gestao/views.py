@@ -429,7 +429,7 @@ def plano_id(request,id):
         messages.error(request,'Empresa não habilitada para seu usuário')
         return redirect('gestao_dashboard')
     form = PlanoForm(instance=plano)
-    return render(request,'gestao/plano_id.html',{'form':form,'plano':plano})
+    return render(request,'gestao/plano_id.html',{'form':form,'plano':plano,'staff':staff})
 
 # METODOS UPDATE
 @login_required
@@ -590,8 +590,8 @@ def plano_update(request,id):
         staff = Staff.objects.get(usuario=request.user)
         plano = Plano.objects.get(pk=id)
         if not staff.role in ['M','E'] and plano.responsavel != staff:
-            raise Exception(f'Somente o responsável pode editar: <b>{plano.responsavel.usuario.username}</b>')
-        if not staff.usuario.profile.allow_empresa(plano.empresa.id): # Verifica se usuario tem acesso a empresa
+            raise Exception(f'Somente o <b>responsável ou gestor</b> pode editar este plano')
+        if not staff.usuario.profile.allow_empresa(plano.diretriz.empresa.id): # Verifica se usuario tem acesso a empresa
             raise Exception('Empresa não habilitada para seu usuário')
     except Exception as e:
         messages.error(request,f'<b>Erro</b> {e}')
