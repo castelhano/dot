@@ -77,10 +77,10 @@
         <div class="filter-container">
           <h6 class="text-muted d-flex justify-content-between">Filtros:<a class="text-muted text-decoration-none fs-8" id="clear" href="{% url 'gestao_staffs' %}">Limpar</a></h6>
           <ul class="list-unstyled">
-            <li><a id="id_diretor" onclick="filter('role','D')">Diretor</a></li>
-            <li><a id="id_gestor" onclick="filter('role','G')">Gestor</a></li>
-            <li><a id="id_supervisor" onclick="filter('role','S')">Supervisor</a></li>
+            <li><a id="id_estrat" onclick="filter('role','E')">Estratégico</a></li>
+            <li><a id="id_gerenc" onclick="filter('role','G')">Gerencial</a></li>
             <li><a id="id_operacional" onclick="filter('role','O')">Operacional</a></li>
+            <li><a id="id_manager" onclick="filter('role','M')">Manager</a></li>
             <hr class="my-1" />
             <li><a id="id_ativos" onclick="filter('usuario__is_active','True')">Ativos</a></li>
             <li><a id="id_inativos" onclick="filter('usuario__is_active','False')">Inativos</a></li>
@@ -129,9 +129,9 @@
                 <tr><td>Visualizar todos os planos</td><td class="table-danger">NAO</td><td class="table-success">SIM</td><td class="table-success">SIM</td><td class="table-success">SIM</td></tr>
                 <tr><td>Criar diretriz</td><td class="table-danger">NAO</td><td class="table-danger">NAO</td><td class="table-success">SIM</td><td class="table-success">SIM</td></tr>
                 <tr><td>Criar plano</td><td class="table-danger">NAO</td><td class="table-success">SIM</td><td class="table-success">SIM</td><td class="table-success">SIM</td></tr>
-                <tr><td>Gerir todos os planos</td><td class="table-danger">NAO</td><td class="table-danger">NAO</td><td class="table-success">SIM</td><td class="table-success">SIM</td></tr>
+                <tr><td>Gerir planos</td><td class="table-primary">SIM</td><td class="table-primary">SIM</td><td class="table-success">SIM</td><td class="table-success">SIM</td></tr>
                 <tr><td>Associar Flags</td><td class="table-danger">NAO</td><td class="table-danger">NAO</td><td class="table-danger">NAO</td><td class="table-success">SIM</td></tr>
-                <tr><td>Enviar p/ Avaliação</td><td class="table-danger">NAO</td><td class="table-primary">SIM</td><td class="table-success">SIM</td><td class="table-success">SIM</td></tr>
+                <tr><td>Enviar p/ Avaliação</td><td class="table-primary">SIM</td><td class="table-primary">SIM</td><td class="table-success">SIM</td><td class="table-success">SIM</td></tr>
                 <tr><td>Avaliar Plano</td><td class="table-danger">NAO</td><td class="table-danger">NAO</td><td class="table-success">SIM</td><td class="table-success">SIM</td></tr>
                 <tr><td>Concluir Plano</td><td class="table-danger">NAO</td><td class="table-danger">NAO</td><td class="table-danger">NAO</td><td class="table-success">SIM</td></tr>
                 <tr><td>Concluir Diretriz</td><td class="table-danger">NAO</td><td class="table-danger">NAO</td><td class="table-danger">NAO</td><td class="table-success">SIM</td></tr>
@@ -162,10 +162,10 @@
   function staffSearch(){document.getElementById('id_pesquisa').select()}
   
   const staff_filters = {
-    'role=D':'id_diretor',
-    'role=G':'id_gestor',
-    'role=S':'id_supervisor',
+    'role=E':'id_estrat',
+    'role=G':'id_gerenc',
     'role=O':'id_operacional',
+    'role=M':'id_manager',
     'usuario__is_active=True':'id_ativos',
     'usuario__is_active=False':'id_inativos'
   }

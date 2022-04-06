@@ -620,7 +620,7 @@ def plano_movimentar(request,id):
         plano = Plano.objects.get(id=id)
         if operacao == 'execucao' and not staff.role in ['M','E']:
             raise Exception('Perfil não liberado para este recurso')
-        if operacao == 'revisao' and (not staff.role in ['M','E'] or request.user != staff.usuario):
+        if operacao == 'revisao' and not staff.role in ['M','E'] and request.user != plano.responsavel.usuario:
             raise Exception('Somente o responsável pode enviar para revisão')
     except Exception as e:
         messages.error(request,f'<b>Erro</b> {e}')

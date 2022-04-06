@@ -35,7 +35,7 @@ class Apontamento(models.Model):
 class Staff(models.Model):
     ROLE_CHOICES = (
     ('M','Manager'),
-    ('E','Extrategico'),
+    ('E','Estrategico'),
     ('G','Gerencial'),
     ('O','Operacional'),
     )
