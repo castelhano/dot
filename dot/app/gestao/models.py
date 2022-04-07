@@ -2,6 +2,7 @@ from django.db import models
 from datetime import datetime
 from core.models import Log, Empresa
 from django.contrib.auth.models import User
+from django.db.models import Avg
 
 
 class Indicador(models.Model):
@@ -54,6 +55,11 @@ class Staff(models.Model):
             return Plano.objects.filter(staff=self, status='A')
         else:
             return Plano.objects.filter(status='A')
+    def planos_arquivados(self):
+        if self.role == 'O':
+            return Plano.objects.filter(staff=self, status='C')
+        else:
+            return Plano.objects.filter(status='C')
     class Meta:
         default_permissions = []
 
@@ -104,9 +110,15 @@ class Diretriz(models.Model):
         return reversed(logs)
     def planos(self):
         return Plano.objects.filter(diretriz=self).order_by('inicio','termino')
+    def progresso(self):
+        try:
+            return int(Plano.objects.filter(diretriz=self).aggregate(Avg('conclusao'))['conclusao__avg'])
+        except Exception as e:
+            return 0
     class Meta:
         permissions = [
             ("dashboard", "Pode ver dashboard"),
+            ("roadmap", "Pode ver roadmap"),
             ("staff", "Gerir a Staff"),
         ]
         default_permissions = []
@@ -115,7 +127,7 @@ class Plano(models.Model):
     STATUS_CHOICES = (
     ('E','Em andamento'),
     ('P','Prorrogado'),
-    ('A','Avaliação'),
+    ('A','Avaliacao'),
     ('C','Concluido'),
     ('D','Cancelado'),
     )

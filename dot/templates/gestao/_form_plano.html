@@ -6,11 +6,11 @@
       <div id="id_labels_container" class="text-truncate">
         {% if plano.id %}
           {% for label in plano.labels.all %}
-          <span class="badge me-1" style="background-color:{{label.cor}};color:{{label.fonte}}" data-id="{{label.id|safe}}"{% if staff.role == 'M' %} onclick="removeLabel(this.outerHTML);this.remove();"{% endif %}>{{label.nome}}</span>
+          <span class="badge me-1" style="background-color:{{label.cor}};color:{{label.fonte}}" data-id="{{label.id|safe}}"{% if staff.role == 'M' and plano.diretriz.ativo %} onclick="removeLabel(this.outerHTML);this.remove();"{% endif %}>{{label.nome}}</span>
           {% endfor %}
         {% endif %}
       </div>
-      {% if staff.role == 'M' %}
+      {% if staff.role == 'M' and plano.diretriz.ativo %}
       <div class="dropdown">
         <button class="btn btn-sm btn-purple-light py-0 px-3" type="button" data-bs-toggle="dropdown"><i class="fas fa-tags"></i></button>
         <ul id="menu_labels_disponiveis" class="dropdown-menu dropdown-menu-end text-center">
@@ -82,7 +82,11 @@
   <!-- CONTROLES DO FORM -->
   <div class="row mt-3">
     <div class="col">
+      {% if plano.diretriz.ativo %}
       <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"{% if plano.responsavel != staff and staff.role != 'M' and staff.role != 'E' and 'plano_id' in request.get_full_path %} disabled{% endif %}><b>G</b>ravar</button>
+      {% else %}
+      <button type="submit" class="btn btn-sm btn-primary" disabled>Diretriz <b>finalizada</b></button>{% if staff.role != 'O' %} <a class="btn btn-sm btn-primary" href="{% url 'gestao_diretriz_id' plano.diretriz.id|safe %}"><i class="fas fa-arrow-right"></i> Diretriz</a>{% endif %}
+      {% endif %}
     </div>
   </div>
 </div>
@@ -111,7 +115,7 @@
   }
   loadResponsavelBox();
   
-  {% if staff.role == 'M' %}
+  {% if staff.role == 'M' and plano.diretriz.ativo %}
   var container = document.getElementById('id_labels_container');
   var labels = document.getElementById('id_labels');
   var menu = document.getElementById('menu_labels_disponiveis');

@@ -26,9 +26,9 @@
               <div class="card-header text-muted fs-7">
                 <div class="row">
                   <div class="col">Em Progresso</div>
-                  <div class="col-auto">
+                  <div id="menu_progresso_container" class="col-auto d-none">
                     <a class="text-muted" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-ellipsis-h"></i></a>
-                    <ul class="dropdown-menu fs-7">
+                    <ul id="menu_progresso_options" class="dropdown-menu fs-7">
                       <li><a class="dropdown-item pointer">Concluidos</a></li>
                     </ul>
                   </div>
@@ -43,7 +43,8 @@
                     <div class="col-auto">
                       <a class="text-muted px-2" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-caret-down"></i></a>
                       <ul class="dropdown-menu dropdown-menu-end fs-7">
-                        <li><a class="dropdown-item pointer" href="{% url 'gestao_plano_movimentar' plano.id|safe %}?operacao=revisao"><i class="fas fa-arrow-right text-success me-1"></i> Para revisão</a></li>
+                        <li><a class="dropdown-item pointer" href="{% url 'gestao_plano_movimentar' plano.id|safe %}?operacao=revisao" onclick="modal_loading.show()"><i class="fas fa-arrow-right text-success me-1"></i> Para revisão</a></li>
+                        {% if staff.role == 'M' %}<li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#avaliar_modal" onclick="setAvaliacaoPlano({{plano.id|safe}}, {{plano.conclusao|safe}},{{plano.avaliacao|safe}})" href="#"><i class="fas fa-star text-primary me-1"></i> Avaliar</a></li>{% endif %}
                       </ul>
                     </div>
                     {% endif %}
@@ -69,6 +70,11 @@
                 <p class="p-2">Nenhum plano de ação em progresso</p>                
                 {% endfor %}                
               </div>
+              {% if staff and staff.role != 'O' %}
+              <div class="row">
+                <div class="col text-end pb-2 pe-4 fs-7"><a class="text-decoration-none" href="{% url 'gestao_planos_arquivados' %}">Arquivo</a></div>
+              </div>
+              {% endif %}
             </div>
           </div>
           <div class="col-lg order-3 order-lg-2">
@@ -83,8 +89,8 @@
                     <div class="col-auto">
                       <a class="text-muted px-2" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-caret-down"></i></a>
                       <ul class="dropdown-menu dropdown-menu-end fs-7">
-                        <li><a class="dropdown-item pointer" href="#"><i class="fas fa-star text-primary me-1"></i> Avaliar</a></li>
-                        <li><a class="dropdown-item pointer" href="{% url 'gestao_plano_movimentar' plano.id|safe %}?operacao=execucao"><i class="fas fa-arrow-left text-danger me-1"></i> Retornar</a></li>
+                        <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#avaliar_modal" onclick="setAvaliacaoPlano({{plano.id|safe}}, {{plano.conclusao|safe}},{{plano.avaliacao|safe}})" href="#"><i class="fas fa-star text-primary me-1"></i> Avaliar</a></li>
+                        <li><a class="dropdown-item pointer" href="{% url 'gestao_plano_movimentar' plano.id|safe %}?operacao=execucao" onclick="modal_loading.show()"><i class="fas fa-arrow-left text-danger me-1"></i> Retornar</a></li>
                       </ul>
                     </div>
                     {% endif %}
@@ -117,9 +123,9 @@
               <div class="card-header text-muted fs-7">
                 <div class="row">
                   <div class="col">Diretrizes</div>
-                  <div class="col-auto">
+                  <div id="menu_diretriz_container" class="col-auto">
                     <a class="text-muted" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-ellipsis-h"></i></a>
-                    <ul class="dropdown-menu fs-7">
+                    <ul id="menu_diretriz_options" class="dropdown-menu fs-7">
                       {% if staff.role == 'M' or staff.role == 'E' %}<li><a class="dropdown-item pointer" href="{% url 'gestao_diretriz_add' %}"><i class="fas fa-plus text-success me-1"></i> Diretriz</a></li>{% endif %}
                       {% if staff.role == 'M' or staff.role == 'E' or staff.role == 'G' %}<li><a class="dropdown-item pointer" href="{% url 'gestao_indicadores' %}"><i class="fas fa-chart-line me-1"></i> Indicadores</a></li>{% endif %}
                       {% if perms.gestao.staff %}<li><a class="dropdown-item pointer" href="{% url 'gestao_staffs' %}"><i class="fas fa-users me-1"></i> Staff</a></li>{% endif %}
@@ -137,7 +143,8 @@
                     <div class="col-auto">
                       <a class="text-muted px-2" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-caret-down"></i></a>
                       <ul class="dropdown-menu dropdown-menu-end fs-7">
-                        <li><a class="dropdown-item pointer" href="{% url 'gestao_plano_add' diretriz.id|safe %}"><i class="fas fa-plus text-success me-1"></i> Plano</a></li>
+                        <li><a class="dropdown-item" href="{% url 'gestao_plano_add' diretriz.id|safe %}"><i class="fas fa-plus text-success me-1"></i> Plano</a></li>
+                        {% if staff.role == 'M' %}<li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#diretriz_finalizar_modal" onclick="setDiretrizPlano({{diretriz.id|safe}})" href="#"><i class="fas fa-download text-danger me-1"></i> Finalizar</a></li>{% endif %}
                       </ul>
                     </div>
                     {% endif %}
@@ -147,7 +154,7 @@
                   </div>
                   <div class="row">
                     <div class="col-6">
-                      <div class="progress mt-1"><div class="progress-bar" role="progressbar" style="width: 15%">15%</div></div>
+                      <div class="progress mt-1"><div class="progress-bar" role="progressbar" style="width: {{diretriz.progresso|safe}}%">{{diretriz.progresso|safe}}%</div></div>
                     </div>
                     <div class="col-6 fs-8 text-muted text-end">
                       {{diretriz.created_by|title}} - {{diretriz.created_on|date:'M y'}}
@@ -165,11 +172,17 @@
     </div>
   </form>
 </div>
-
+{% include 'gestao/_modais_dashboard.html' %}
+{% include "_component/modal/loading.html" with message='Salvando....' %}
 {% endblock%}
 
 {% block add_script_src %}{% endblock %}
 
 <script>
-  {% block add_script %}{% endblock %}
+  {% block add_script %}
+  if(document.getElementById('menu_diretriz_options').childElementCount == 0){document.getElementById('menu_diretriz_container').classList.add('d-none');}
+  if(document.getElementById('menu_progresso_options').childElementCount == 0){document.getElementById('menu_progresso_container').classList.add('d-none');}
+  
+  var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
+  {% endblock %}
 </script>

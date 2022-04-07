@@ -11,7 +11,7 @@
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
-      {% if perms.gestao.add_indicador %}
+      {% if staff.role == 'M' %}
       <li class="nav-item ms-1"><a class="nav-link border" id="add" href="{% url 'gestao_indicador_add' %}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
       {% endif %}
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'gestao_dashboard' %}"><i class="fas fa-undo"></i></a></li>
@@ -45,7 +45,7 @@
                 <th class="d-none d-md-table-cell">Meta</th>
                 <th class="d-none d-sm-table-cell">Atual</th>
                 <th class="d-none d-sm-table-cell">Melhor</th>
-                {% if perms.gestao.change_indicador %}
+                {% if staff.role == 'M' or staff.role == 'E' %}
                 <th>&nbsp;</th>
                 {% endif %}
               </tr>
@@ -58,7 +58,7 @@
                 <td class="d-none d-md-table-cell">{{indicador.meta}}</td>
                 <td class="d-none d-sm-table-cell">{{indicador.ultimo_apontamento|default:'--'}}</td>
                 <td class="d-none d-sm-table-cell">{% if indicador.quanto_maior_melhor %}{{1|indicatorArrow|safe}}{% else %}{{-1|indicatorArrow:False|safe}}{% endif %}</td>
-                {% if perms.gestao.change_indicador %}
+                {% if staff.role == 'M' or staff.role == 'E' %}
                 <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'gestao_indicador_id' indicador.id|safe %}"><i class="fas fa-pen"></i></a></td>
                 {% endif %}
               </tr>

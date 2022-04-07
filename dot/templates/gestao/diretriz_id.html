@@ -32,43 +32,46 @@
           <div class="col-lg">
             {% include "_component/field/empresa.html" with empresa_atual=diretriz.empresa.id|safe attrs='autofocus' %}
             <div class="row g-1">
-            	<div class="form-floating mb-1 col-lg-12">
-            		{{ form.titulo }}
-            		<label for="id_titulo">Titulo</label>
-            	</div>
+              <div class="form-floating mb-1 col-lg-12">
+                {{ form.titulo }}
+                <label for="id_titulo">Titulo</label>
+              </div>
             </div>
             <div class="row g-1">
-            	<div class="form-floating mb-lg-1 col">
-            		{{ form.indicador }}
-            		<label for="id_indicador">Indicador</label>
-            	</div>
-            	<div class="form-floating mb-1 col-4" style="max-width: 150px;">
-            		<input type="text" class="form-control" name="analise" id="id_analise" value="{{diretriz.analise.id|default:''}}">
-            		<label for="id_analise">Analise</label>
-            	</div>
+              <div class="form-floating mb-lg-1 col">
+                {{ form.indicador }}
+                <label for="id_indicador">Indicador</label>
+              </div>
+              <div class="form-floating mb-1 col-4" style="max-width: 150px;">
+                <input type="text" class="form-control" name="analise" id="id_analise" value="{{diretriz.analise.id|default:''}}">
+                <label for="id_analise">Analise</label>
+              </div>
             </div>
             <div class="form-check form-switch mt-2">
-            	{{form.ativo}}
-            	<label class="form-check-label" for="id_ativo">Diretriz ativa</label>
+              {{form.ativo}}
+              <label class="form-check-label" for="id_ativo">Diretriz ativa</label>
             </div>
           </div>
           <div class="col-lg">
             {{ form.detalhe }}
           </div>
         </div>
-        
       </div>
       <!-- CONTROLES DO FORM -->
-      <div class="row mt-3">
+      <div class="row">
         <div class="col">
+          {% if diretriz.ativo %}
           <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"{% if not staff.role == 'M' and not staff.role == 'E' %} disabled{% endif %}><b>G</b>ravar</button>
+          {% elif staff.role == 'M' %}
+          <a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#diretriz_reativar_modal" href="#">Reativar</a>
+          {% endif %}
         </div>
       </div>
     </div>
   </form>
 </div>
 
-{% if perms.gestao.delete_diretriz %}
+{% if staff.role == 'M' %}
 <div class="modal fade" id="delete_modal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -82,6 +85,26 @@
           <div class="col text-end">
             <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
             <a class="btn btn-danger px-3" href="{% url 'gestao_diretriz_delete' diretriz.id|safe %}">Excluir</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="diretriz_reativar_modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="row">
+        <div class="col"><h5 class="ms-3 mt-3"><i class="fas fa-upload text-danger me-1"></i> Reativar Diretriz</h5></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      </div>
+      <div class="modal-body">
+        <p><b class="text-danger">Atenção:</b> Ao confirmar, a diretriz será <b>reativada</b> juntamente com todos os planos de ação atrelados a ela, confirma a operação?</p>
+        <div class="row mt-2">
+          <div class="col text-end">
+            <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
+            <a class="btn btn-danger" href="{% url 'gestao_diretriz_reativar' diretriz.id|safe %}" onclick="modal_loading.show();">Reativar</a>
           </div>
         </div>
       </div>
@@ -119,8 +142,14 @@
     </div>
   </div>
 </div>
+
+{% include "_component/modal/loading.html" with message='Reativando diretriz....' background='' spinner_classlist='' message_classlist='' %}
 {% endblock%}
 
-{% block add_script %}
-var TAB_ON_ENTER = true;
-{% endblock %}
+
+<script>
+  {% block add_script %}
+  var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
+  var TAB_ON_ENTER = true;
+  {% endblock %}
+</script>

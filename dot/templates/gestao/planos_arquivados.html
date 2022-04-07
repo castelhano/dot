@@ -1,0 +1,73 @@
+{% extends "layout/dot.html" %}
+ {% load static %}
+ {% block title %}Titulo{% endblock %}
+ {% block model %}Modulo{% endblock %}
+ {% block model_menu %}{% include "_component/menu/core.html" %}{% endblock%}
+
+ {% block content_fluid %}
+ <a class="d-none" id="clear" href="{% url 'gestao_planos_arquivados' %}"></a>
+
+ <div class="card mt-2">
+ 	<div class="card-header">
+ 		<ul class="nav nav-tabs card-header-tabs">
+ 			<li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'gestao_dashboard' %}"><i class="fas fa-undo"></i></a></li>
+ 			<li class="nav-item dropdown ms-auto">
+ 				<a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
+ 			</li>
+ 		</ul>
+ 	</div>
+ 	<div class="card-body tab-content">
+    <h5 class="card-title mb-0">Arquivo (planos): <b class="text-purple">{{user.username|title}}</b> <small class="badge bg-primary ms-1">{{planos.count}}</small></h5>
+    <p class="mb-3 fw-bold text-muted">{{staff.get_role_display}}</p>
+ 		<div class="tab-pane fade show active" id="base" role="tabpanel">
+      <div class="row">
+        <div class="col mb-1"><input id="id_pesquisa" type="text" class="form-control form-control-sm" placeholder="Filtrar" onkeyup="filterTable('main_table', [1, 2], this)" autofocus></div>
+      </div>
+ 			<table id="main_table" class="table border table-striped table-hover fs-7">
+ 				<thead>
+ 					<tr>
+ 						<th>#</th>
+ 						<th>Empresa</th>
+ 						<th>Titulo</th>
+ 						<th>Responsavel</th>
+ 						<th>Inicio</th>
+ 						<th>Termino</th>
+ 						<th>&nbsp;</th>
+ 					</tr>
+ 				</thead>
+ 				<tbody>
+ 					{% for plano in planos %}
+ 					<tr>
+ 						<td>{{plano.id|safe}}</td>
+ 						<td>{{plano.diretriz.empresa.nome}}</td>
+ 						<td>{{plano.titulo|truncatechars:30}}</td>
+ 						<td>{{plano.responsavel.usuario.username|title|default:'--'}}</td>
+            <td>{{plano.inicio|date:'d/m/Y'|default:'--'}}</td>
+            <td>{{plano.termino|date:'d/m/Y'|default:'--'}}</td>
+ 						<td class="text-end fit py-1"><a class="btn btn-sm btn-secondary" href="{% url 'gestao_plano_id' plano.id %}"><i class="fas fa-pen"></i></a></td>
+ 					</tr>
+ 					{% empty %}
+ 					<tr>
+ 						<td colspan="7">Nenhum registro a exibir</td>
+ 					</tr>
+ 					{% endfor %}
+ 				</tbody>
+ 			</table>
+ 		</div>
+ 	</div>
+ </div>
+ {% endblock%}
+
+ {% block add_script_src %}
+ <script src="{% static 'js/table_extra.js' %}"></script>
+ {% endblock %}
+ 
+ 
+ <script>
+ {% block add_script %}
+ SHORTCUT_MAP['/FTF'] = ':planoSearch';
+ function planoSearch(){document.getElementById('id_pesquisa').select()}
+ {% endblock %}
+</script>
+
