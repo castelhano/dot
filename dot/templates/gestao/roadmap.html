@@ -1,0 +1,36 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% load tag_extra %}
+{% block title %}Roadmap{% endblock %}
+{% block model %}Gestão{% endblock %}
+{% block model_menu %}{% include "_component/menu/gestao.html" %}{% endblock%}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'gestao_analytics' %}"></a>
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link text-muted" href="{% url 'gestao_dashboard' %}"><i class="fas fa-columns"></i></a></li>
+      <li class="nav-item ms-1" title="Roadmap"><a class="nav-link text-success active disabled" href="#"><i class="fas fa-sliders-h me-1"></i> <small class="fw-bold">Roadmap</small></a></li>
+      <li class="nav-item ms-1" title="Analytics"><a class="nav-link text-purple" href="{% url 'gestao_analytics' %}"><i class="fas fa-chart-bar"></i></a></li>
+    </ul>
+  </div>
+  <form id="app_form" action="url" method="POST" autocomplete="off">
+    {% csrf_token %}
+    <div class="card-body tab-content">
+      <h5 class="card-title mb-0">Roadmap: <b class="text-purple">{{user.username|title}}</b></h5>
+      <p class="mb-3 fw-bold text-muted">{{staff.get_role_display}}</p>
+      <div class="tab-pane fade show active" id="base" role="tabpanel"></div>
+    </div>
+  </form>
+</div>
+{% include "_component/modal/loading.html" with message='Preocessando....' %}
+{% endblock%}
+
+{% block add_script_src %}{% endblock %}
+
+<script>
+  {% block add_script %}
+  var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
+  {% endblock %}
+</script>

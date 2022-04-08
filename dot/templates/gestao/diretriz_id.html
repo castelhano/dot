@@ -47,10 +47,6 @@
                 <label for="id_analise">Analise</label>
               </div>
             </div>
-            <div class="form-check form-switch mt-2">
-              {{form.ativo}}
-              <label class="form-check-label" for="id_ativo">Diretriz ativa</label>
-            </div>
           </div>
           <div class="col-lg">
             {{ form.detalhe }}
@@ -151,5 +147,13 @@
   {% block add_script %}
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
   var TAB_ON_ENTER = true;
+  
+  {% if staff.role != 'M' and staff.role != 'E' %}
+  document.getElementById('id_empresa').classList.add('readonly');
+  document.getElementById('id_indicador').classList.add('readonly');
+  document.getElementById('id_titulo').readOnly = true;
+  document.getElementById('id_analise').readOnly = true;
+  document.getElementById('id_detalhe').readOnly = true;
+  {% endif %}
   {% endblock %}
 </script>

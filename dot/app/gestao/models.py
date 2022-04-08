@@ -118,7 +118,6 @@ class Diretriz(models.Model):
     class Meta:
         permissions = [
             ("dashboard", "Pode ver dashboard"),
-            ("roadmap", "Pode ver roadmap"),
             ("staff", "Gerir a Staff"),
         ]
         default_permissions = []

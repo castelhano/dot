@@ -88,6 +88,39 @@ function urlHasParam(param){
 }
 
 /*
+* urlMap Retorna dicionario com todas as variaveis na url
+*
+* @version  1.0
+* @since    07/04/2022
+* @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }
+* @returns  {Dict} Dicionario com parametros da url
+* @example  let map = urlMap()
+*/
+function urlMap(){
+  let list = window.location.search.replace('?','').split('&').filter(n => n);
+  let dict = {};
+  for(i=0;i < list.length;i++){dict[list[i].split('=')[0]] = list[i].split('=')[1];}
+  return dict;
+}
+
+/*
+* urlGetParam Retorna o valor do na url
+*
+* @version  1.0
+* @since    07/04/2022
+* @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }
+* @param    {String} param Nome do parametro
+* @returns  {Generic} Retorno caso parametro nao seja encontrado na url, default = null
+* @example  let param = urlGetParam('nome')
+*/
+function urlGetParam(param, if_null=null){
+  const urlParams = new URLSearchParams(window.location.search);
+  let value = urlParams.get(param);
+  if(value == null){return if_null}
+  else{return value}
+}
+
+/*
 * urlParams Retorna string com todos os parametros da url
 *
 * @version  1.0
@@ -97,6 +130,23 @@ function urlHasParam(param){
 * @example  let params = urlParams()
 */
 function urlParams(){return window.location.search;}
+
+/*
+* urlPlot Plota direto no document os valores das variaveis na url
+*
+* @version  1.0
+* @since    07/04/2022
+* @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }
+* @example  urlPlot(); ou urlPlot('--') no html: <dotPlot data="foo"></dotPlot>
+* @see      {@link https://stackoverflow.com/questions/62382939/vanilla-htmljs-dynamic-interpolation}
+*/
+function urlPlot(if_null=''){
+  let map = urlMap();
+  [...document.querySelectorAll("*[dot-plot]")].forEach(el => {
+    if(map[el.getAttribute('dot-plot')] != undefined){el.innerText = map[el.getAttribute('dot-plot')];}
+    else{el.innerText = if_null}
+   })
+}
 
 /*
 * urlSetFiltersActive | Para todos os paramentros da url, adiciona a classe 'active' ao classList do elemento correspondente

@@ -272,6 +272,10 @@
     'prefix': 'form_switch'
     'body':'<div class="form-check form-switch">\n\t<input class="form-check-input" type="checkbox" role="switch" name="switch" id="id_switch">\n\t<label class="form-check-label" for="id_switch">Opcao1</label>\n</div>'
   
+  'Dot JS Plot':
+    'prefix': 'plotjs'
+    'body':'<label dot-plot="foo"></label>'
+  
   'Component Empresa':
     'prefix': 'component_empresa'
     'body':'{% include "_component/field/empresa.html" with empresa_atual=linha.empresa.id|safe attrs=\'autofocus\' %}'

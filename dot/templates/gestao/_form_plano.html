@@ -115,6 +115,11 @@
   }
   loadResponsavelBox();
   
+  {% if staff.role != 'M' and staff.role != 'E' %}
+  document.getElementById('id_inicio').readOnly = true;
+  document.getElementById('id_termino').readOnly = true;
+  document.getElementById('id_responsavel').classList.add('readonly');
+  {% endif %}
   {% if staff.role == 'M' and plano.diretriz.ativo %}
   var container = document.getElementById('id_labels_container');
   var labels = document.getElementById('id_labels');

@@ -1,0 +1,79 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% load tag_extra %}
+{% block title %}Analytics{% endblock %}
+{% block model %}Gestão{% endblock %}
+{% block model_menu %}{% include "_component/menu/gestao.html" %}{% endblock%}
+
+
+<style media="screen">
+  {% block style %}
+  h6{
+    margin:0px;
+    font-weight: normal;
+  }
+  {% endblock%}
+</style>
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'gestao_analytics' %}"></a>
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link text-muted" href="{% url 'gestao_dashboard' %}"><i class="fas fa-columns"></i></a></li>
+      <li class="nav-item ms-1" title="Roadmap"><a class="nav-link text-success" href="{% url 'gestao_roadmap' %}"><i class="fas fa-sliders-h"></i></a></li>
+      <li class="nav-item ms-1" title="Analytics"><a class="nav-link text-purple active disabled" href="#"><i class="fas fa-chart-bar me-1"></i> <small class="fw-bold">Analytics</small></a></li>
+    </ul>
+  </div>
+  <div class="card-body tab-content">
+    <h5 class="card-title mb-0">Analytics: <b class="text-purple">{{user.username|title}}</b></h5>
+    <p class="mb-1 fw-bold text-muted">{{staff.get_role_display}}</p>
+    <div class="row mb-2">
+      <div class="col">
+        <div class="dropdown">
+          <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown">Periodo: <label class="fw-bold" dot-plot="periodo"></label></button>
+          <ul class="dropdown-menu fs-7">
+            <li><span class="dropdown-item pointer" onclick="filter('periodo',180)">6 meses</span></li>
+            <li><span class="dropdown-item pointer" onclick="filter('periodo',360)">12 meses</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane fade show active" id="base" role="tabpanel">
+      <table class="table border table-hover">
+        <thead>
+          <tr>
+            <th>Indicador</th>
+            <th>Meta</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for indicador in indicadores %}
+          <tr>
+            <td><h6>{{indicador.nome}}</h6><small>{{indicador.quanto_maior_melhor|yesno:'1,-1'|indicatorArrow|safe}} melhor</small></td>
+            <td><h6>{{indicador.meta}}</h6><small>{{-1|indicatorArrow|safe}} 2,5%</small></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% include "_component/modal/loading.html" with message='Preocessando....' %}
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/update_url.js' %}"></script>
+{% endblock %}
+
+<script>
+  {% block add_script %}
+  var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
+  var map = {
+    'foo':55,
+    'fei':22
+  }
+  urlPlot();
+  
+  {% endblock %}
+</script>

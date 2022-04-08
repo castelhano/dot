@@ -25,6 +25,31 @@ def dashboard(request):
 
 @login_required
 @permission_required('gestao.dashboard')
+def roadmap(request):
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+        if not staff.role in ['M','E','G']:
+            raise Exception('Perfil não liberado para este recurso')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
+    return render(request,'gestao/roadmap.html',{'staff':staff})
+
+@login_required
+@permission_required('gestao.dashboard')
+def analytics(request):
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+        if not staff.role in ['M','E','G']:
+            raise Exception('Perfil não liberado para este recurso')
+        indicadores = Indicador.objects.filter(ativo=True)
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
+    return render(request,'gestao/analytics.html',{'staff':staff,'indicadores':indicadores})
+    
+@login_required
+@permission_required('gestao.dashboard')
 def indicadores(request):
     indicadores = Indicador.objects.all().order_by('nome')
     fields = ['ativo']

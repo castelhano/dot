@@ -47,9 +47,9 @@ def dict_value(dict,key):
 # @example  obj.value|indicatorArrow|safe ou obj.value|indicatorArrow:True|safe
 @register.filter
 def indicatorArrow(value, maior_melhor=True):
-    if value < 0:
+    if int(value) < 0:
         return f'<i class="fas fa-arrow-down text-danger"></i>' if maior_melhor else f'<i class="fas fa-arrow-down text-success"></i>'
-    elif value > 0:
+    elif int(value) > 0:
         return f'<i class="fas fa-arrow-up text-success"></i>' if maior_melhor else f'<i class="fas fa-arrow-up text-danger"></i>'
     else:
         return f'<i class="fas fa-minus text-secondary"></i>'

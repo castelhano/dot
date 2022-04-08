@@ -1,7 +1,7 @@
 {% extends "layout/dot.html" %}
 {% load static %}
 {% load tag_extra %}
-{% block title %}Gerencial{% endblock %}
+{% block title %}Dashboard{% endblock %}
 {% block model %}Gestão{% endblock %}
 {% block model_menu %}{% include "_component/menu/gestao.html" %}{% endblock%}
 
@@ -10,167 +10,167 @@
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
-      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-columns"></i></a></li>
-      <li class="nav-item ms-1"><a class="nav-link" href="#"><i class="fas fa-chart-bar" title="Indicadores"></i></a></li>
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-columns me-1"></i> <small class="fw-bold">Dashboard</small></a></li>
+      {% if staff.role != 'O' %}
+      <li class="nav-item ms-1" title="Roadmap"><a class="nav-link text-success" href="{% url 'gestao_roadmap' %}"><i class="fas fa-sliders-h"></i></a></li>
+      <li class="nav-item ms-1" title="Analytics"><a class="nav-link text-purple" href="{% url 'gestao_analytics' %}"><i class="fas fa-chart-bar"></i></a></li>
+      {% endif %}
     </ul>
   </div>
-  <form id="app_form" action="url" method="POST" autocomplete="off">
-    {% csrf_token %}
-    <div class="card-body tab-content">
-      <h5 class="card-title mb-0">Dashboard: <b class="text-purple">{{user.username|title}}</b></h5>
-      <p class="mb-3 fw-bold text-muted">{{staff.get_role_display}}</p>
-      <div class="tab-pane fade show active" id="base" role="tabpanel">
-        <div class="row g-3">
-          <div class="col-lg order-2 order-lg-1">
-            <div class="card h-100">
-              <div class="card-header text-muted fs-7">
-                <div class="row">
-                  <div class="col">Em Progresso</div>
-                  <div id="menu_progresso_container" class="col-auto d-none">
-                    <a class="text-muted" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-ellipsis-h"></i></a>
-                    <ul id="menu_progresso_options" class="dropdown-menu fs-7">
-                      <li><a class="dropdown-item pointer">Concluidos</a></li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <div class="card-body p-0 pb-2 fs-7">
-                {% for plano in staff.planos_em_progresso %}
-                <div class="border-top border-bottom p-2 mt-2 bg-light">
-                  <div class="row">
-                    <div class="col text-truncate"><a class="fw-bold text-decoration-none mb-0" href="{% url 'gestao_plano_id' plano.id %}">{{plano.titulo}}</a></div>
-                    {% if plano.responsavel == staff or staff.role == 'M' or staff.role == 'E' %}
-                    <div class="col-auto">
-                      <a class="text-muted px-2" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-caret-down"></i></a>
-                      <ul class="dropdown-menu dropdown-menu-end fs-7">
-                        <li><a class="dropdown-item pointer" href="{% url 'gestao_plano_movimentar' plano.id|safe %}?operacao=revisao" onclick="modal_loading.show()"><i class="fas fa-arrow-right text-success me-1"></i> Para revisão</a></li>
-                        {% if staff.role == 'M' %}<li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#avaliar_modal" onclick="setAvaliacaoPlano({{plano.id|safe}}, {{plano.conclusao|safe}},{{plano.avaliacao|safe}})" href="#"><i class="fas fa-star text-primary me-1"></i> Avaliar</a></li>{% endif %}
-                      </ul>
-                    </div>
-                    {% endif %}
-                  </div>
-                  <div class="row mt-1">
-                    <div class="col text-truncate">{{plano.get_status_display}} <span class="badge bg-secondary">{{plano.termino|now_until_date}} dias</span></div>
-                    <div class="col-auto"><span class="badge bg-orange">{{plano.diretriz.empresa.nome|default:'--'}}</span> <span class="badge bg-dark">{{plano.responsavel.usuario.username|default:'--'|title}}</span> <span class="badge bg-primary">+ {{plano.staff.count}}</span></div>
-                  </div>
-                  <div class="row mt-1">
-                    <div class="col text-truncate">{% for label in plano.labels.all %}<span class="badge me-1" style="background:{{label.cor}};color:{{label.fonte}}">{{label.nome}}</span>{% endfor %}</div>
-                    <div class="col-6 col-lg-4">
-                      <div class="progress mt-1"><div class="progress-bar" role="progressbar" style="width: {{plano.conclusao|safe}}%">{{plano.conclusao|safe}}%</div></div>                      
-                    </div>
-                  </div>
-                  <div class="row mt-1">
-                    <div class="col text-truncate">
-                      <a class="text-decoration-none text-muted hover-purple" href="{% url 'gestao_diretriz_id' plano.diretriz.id|safe %}"><i class="fas fa-link"></i> {{plano.diretriz.titulo}}</a>
-                    </div>
-                    <div class="col-auto text-muted fs-8">{{plano.created_by|title}} - {{plano.created_on|date:'M y'}}</div>
-                  </div>
-                </div>
-                {% empty %}
-                <p class="p-2">Nenhum plano de ação em progresso</p>                
-                {% endfor %}                
-              </div>
-              {% if staff and staff.role != 'O' %}
+  <div class="card-body tab-content">
+    <h5 class="card-title mb-0">Dashboard: <b class="text-purple">{{user.username|title}}</b></h5>
+    <p class="mb-3 fw-bold text-muted">{{staff.get_role_display}}</p>
+    <div class="tab-pane fade show active" id="base" role="tabpanel">
+      <div class="row g-3">
+        <div class="col-lg order-2 order-lg-1">
+          <div class="card h-100">
+            <div class="card-header text-muted fs-7">
               <div class="row">
-                <div class="col text-end pb-2 pe-4 fs-7"><a class="text-decoration-none" href="{% url 'gestao_planos_arquivados' %}">Arquivo</a></div>
+                <div class="col">Em Progresso</div>
+                <!-- <div id="menu_progresso_container" class="col-auto d-none">
+                <a class="text-muted" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-ellipsis-h"></i></a>
+                <ul id="menu_progresso_options" class="dropdown-menu fs-7">
+                <li><a class="dropdown-item pointer">Concluidos</a></li>
+              </ul>
+            </div> -->
+          </div>
+        </div>
+        <div class="card-body p-0 pb-2 fs-7">
+          {% for plano in staff.planos_em_progresso %}
+          <div class="border-top border-bottom p-2 mt-2 bg-light">
+            <div class="row">
+              <div class="col text-truncate"><a class="fw-bold text-decoration-none mb-0" href="{% url 'gestao_plano_id' plano.id %}">{{plano.titulo}}</a></div>
+              {% if plano.responsavel == staff or staff.role == 'M' or staff.role == 'E' %}
+              <div class="col-auto">
+                <a class="text-muted px-2" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-caret-down"></i></a>
+                <ul class="dropdown-menu dropdown-menu-end fs-7">
+                  <li><a class="dropdown-item pointer" href="{% url 'gestao_plano_movimentar' plano.id|safe %}?operacao=revisao" onclick="modal_loading.show()"><i class="fas fa-arrow-right text-success me-1"></i> Para revisão</a></li>
+                  {% if staff.role == 'M' %}<li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#avaliar_modal" onclick="setAvaliacaoPlano({{plano.id|safe}}, {{plano.conclusao|safe}},{{plano.avaliacao|safe}})" href="#"><i class="fas fa-star text-primary me-1"></i> Avaliar</a></li>{% endif %}
+                </ul>
               </div>
               {% endif %}
             </div>
-          </div>
-          <div class="col-lg order-3 order-lg-2">
-            <div class="card h-100">
-              <div class="card-header text-muted fs-7">Em revisão</div>
-              <div class="card-body p-0 pb-2 fs-7">
-                {% for plano in staff.planos_em_avaliacao %}
-                <div class="border-top border-bottom p-2 mt-2 bg-light">
-                  <div class="row">
-                    <div class="col text-truncate"><a class="fw-bold text-decoration-none mb-0" href="{% url 'gestao_plano_id' plano.id %}">{{plano.titulo}}</a></div>
-                    {% if staff.role == 'M' or staff.role == 'E' %}
-                    <div class="col-auto">
-                      <a class="text-muted px-2" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-caret-down"></i></a>
-                      <ul class="dropdown-menu dropdown-menu-end fs-7">
-                        <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#avaliar_modal" onclick="setAvaliacaoPlano({{plano.id|safe}}, {{plano.conclusao|safe}},{{plano.avaliacao|safe}})" href="#"><i class="fas fa-star text-primary me-1"></i> Avaliar</a></li>
-                        <li><a class="dropdown-item pointer" href="{% url 'gestao_plano_movimentar' plano.id|safe %}?operacao=execucao" onclick="modal_loading.show()"><i class="fas fa-arrow-left text-danger me-1"></i> Retornar</a></li>
-                      </ul>
-                    </div>
-                    {% endif %}
-                  </div>
-                  <div class="row mt-1">
-                    <div class="col text-truncate">{{plano.get_status_display}} <span class="badge bg-secondary">{{plano.termino|now_until_date}} dias</span></div>
-                    <div class="col-auto"><span class="badge bg-orange">{{plano.diretriz.empresa.nome|default:'--'}}</span> <span class="badge bg-dark">{{plano.responsavel.usuario.username|default:'--'|title}}</span> <span class="badge bg-primary">+ {{plano.staff.count}}</span></div>
-                  </div>
-                  <div class="row mt-1">
-                    <div class="col text-success">{{plano.avaliacao|default:0|stars|safe}}</div>
-                    <div class="col-6 col-lg-4">
-                      <div class="progress mt-1"><div class="progress-bar" role="progressbar" style="width: {{plano.conclusao|safe}}%">{{plano.conclusao|safe}}%</div></div>
-                    </div>
-                  </div>
-                  <div class="row mt-1">
-                    <div class="col text-truncate">
-                      <a class="text-decoration-none text-muted hover-purple" href="{% url 'gestao_diretriz_id' plano.diretriz.id|safe %}"><i class="fas fa-link"></i> {{plano.diretriz.titulo}}</a>
-                    </div>
-                    <div class="col-auto text-muted fs-8">{{plano.created_by|title}} - {{plano.created_on|date:'M y'}}</div>
-                  </div>
-                </div>
-                {% empty %}
-                <p class="p-2">Nenhum plano em avaliação</p>                
-                {% endfor %} 
+            <div class="row mt-1">
+              <div class="col text-truncate">{{plano.get_status_display}} <span class="badge bg-secondary">{{plano.termino|now_until_date}} dias</span></div>
+              <div class="col-auto"><span class="badge bg-orange">{{plano.diretriz.empresa.nome|default:'--'}}</span> <span class="badge bg-dark">{{plano.responsavel.usuario.username|default:'--'|title}}</span> <span class="badge bg-primary">+ {{plano.staff.count}}</span></div>
+            </div>
+            <div class="row mt-1">
+              <div class="col text-truncate">{% for label in plano.labels.all %}<span class="badge me-1" style="background:{{label.cor}};color:{{label.fonte}}">{{label.nome}}</span>{% endfor %}</div>
+              <div class="col-6 col-lg-4">
+                <div class="progress mt-1"><div class="progress-bar" role="progressbar" style="width: {{plano.conclusao|safe}}%">{{plano.conclusao|safe}}%</div></div>                      
               </div>
             </div>
-          </div>
-          <div class="col-lg order-1 order-lg-3">
-            <div class="card text-dark bg-light h-100">
-              <div class="card-header text-muted fs-7">
-                <div class="row">
-                  <div class="col">Diretrizes</div>
-                  <div id="menu_diretriz_container" class="col-auto">
-                    <a class="text-muted" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-ellipsis-h"></i></a>
-                    <ul id="menu_diretriz_options" class="dropdown-menu fs-7">
-                      {% if staff.role == 'M' or staff.role == 'E' %}<li><a class="dropdown-item pointer" href="{% url 'gestao_diretriz_add' %}"><i class="fas fa-plus text-success me-1"></i> Diretriz</a></li>{% endif %}
-                      {% if staff.role == 'M' or staff.role == 'E' or staff.role == 'G' %}<li><a class="dropdown-item pointer" href="{% url 'gestao_indicadores' %}"><i class="fas fa-chart-line me-1"></i> Indicadores</a></li>{% endif %}
-                      {% if perms.gestao.staff %}<li><a class="dropdown-item pointer" href="{% url 'gestao_staffs' %}"><i class="fas fa-users me-1"></i> Staff</a></li>{% endif %}
-                      {% if staff.role == 'M' %}<li><a class="dropdown-item pointer" href="{% url 'gestao_labels' %}"><i class="fas fa-tags me-1"></i> Labels</a></li>{% endif %}
-                    </ul>
-                  </div>
-                </div>
+            <div class="row mt-1">
+              <div class="col text-truncate">
+                <a class="text-decoration-none text-muted hover-purple" href="{% url 'gestao_diretriz_id' plano.diretriz.id|safe %}"><i class="fas fa-link"></i> {{plano.diretriz.titulo}}</a>
               </div>
-              <div class="card-body p-0 pb-2 fs-7">
-                {% for diretriz in diretrizes %}
-                <div class="border-top border-bottom p-2 mt-2 bg-white">
-                  <div class="row">
-                    <div class="col text-truncate"><a class="fw-bold text-decoration-none mb-0" href="{% url 'gestao_diretriz_id' diretriz.id %}">{{diretriz.titulo}}</a></div>
-                    {% if staff.role != 'O' %}
-                    <div class="col-auto">
-                      <a class="text-muted px-2" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-caret-down"></i></a>
-                      <ul class="dropdown-menu dropdown-menu-end fs-7">
-                        <li><a class="dropdown-item" href="{% url 'gestao_plano_add' diretriz.id|safe %}"><i class="fas fa-plus text-success me-1"></i> Plano</a></li>
-                        {% if staff.role == 'M' %}<li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#diretriz_finalizar_modal" onclick="setDiretrizPlano({{diretriz.id|safe}})" href="#"><i class="fas fa-download text-danger me-1"></i> Finalizar</a></li>{% endif %}
-                      </ul>
-                    </div>
-                    {% endif %}
-                  </div>
-                  <div class="row">
-                    <div class="col-12">{{diretriz.indicador.nome}} <span class="badge bg-orange ms-1">{{diretriz.empresa.nome}}</span></div>
-                  </div>
-                  <div class="row">
-                    <div class="col-6">
-                      <div class="progress mt-1"><div class="progress-bar" role="progressbar" style="width: {{diretriz.progresso|safe}}%">{{diretriz.progresso|safe}}%</div></div>
-                    </div>
-                    <div class="col-6 fs-8 text-muted text-end">
-                      {{diretriz.created_by|title}} - {{diretriz.created_on|date:'M y'}}
-                    </div>
-                  </div>
-                </div>
-                {% empty %}
-                <p class="p-2">Nenhuma diretriz ativa</p>                
-                {% endfor %} 
-              </div>
+              <div class="col-auto text-muted fs-8">{{plano.created_by|title}} - {{plano.created_on|date:'M y'}}</div>
             </div>
           </div>
+          {% empty %}
+          <p class="p-2">Nenhum plano de ação em progresso</p>                
+          {% endfor %}                
+        </div>
+        {% if staff and staff.role != 'O' %}
+        <div class="row">
+          <div class="col text-end pb-2 pe-4 fs-7"><a class="text-decoration-none" href="{% url 'gestao_planos_arquivados' %}">Arquivo</a></div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    <div class="col-lg order-3 order-lg-2">
+      <div class="card h-100">
+        <div class="card-header text-muted fs-7">Em revisão</div>
+        <div class="card-body p-0 pb-2 fs-7">
+          {% for plano in staff.planos_em_avaliacao %}
+          <div class="border-top border-bottom p-2 mt-2 bg-light">
+            <div class="row">
+              <div class="col text-truncate"><a class="fw-bold text-decoration-none mb-0" href="{% url 'gestao_plano_id' plano.id %}">{{plano.titulo}}</a></div>
+              {% if staff.role == 'M' or staff.role == 'E' %}
+              <div class="col-auto">
+                <a class="text-muted px-2" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-caret-down"></i></a>
+                <ul class="dropdown-menu dropdown-menu-end fs-7">
+                  <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#avaliar_modal" onclick="setAvaliacaoPlano({{plano.id|safe}}, {{plano.conclusao|safe}},{{plano.avaliacao|safe}})" href="#"><i class="fas fa-star text-primary me-1"></i> Avaliar</a></li>
+                  <li><a class="dropdown-item pointer" href="{% url 'gestao_plano_movimentar' plano.id|safe %}?operacao=execucao" onclick="modal_loading.show()"><i class="fas fa-arrow-left text-danger me-1"></i> Retornar</a></li>
+                </ul>
+              </div>
+              {% endif %}
+            </div>
+            <div class="row mt-1">
+              <div class="col text-truncate">{{plano.get_status_display}} <span class="badge bg-secondary">{{plano.termino|now_until_date}} dias</span></div>
+              <div class="col-auto"><span class="badge bg-orange">{{plano.diretriz.empresa.nome|default:'--'}}</span> <span class="badge bg-dark">{{plano.responsavel.usuario.username|default:'--'|title}}</span> <span class="badge bg-primary">+ {{plano.staff.count}}</span></div>
+            </div>
+            <div class="row mt-1">
+              <div class="col text-success">{{plano.avaliacao|default:0|stars|safe}}</div>
+              <div class="col-6 col-lg-4">
+                <div class="progress mt-1"><div class="progress-bar" role="progressbar" style="width: {{plano.conclusao|safe}}%">{{plano.conclusao|safe}}%</div></div>
+              </div>
+            </div>
+            <div class="row mt-1">
+              <div class="col text-truncate">
+                <a class="text-decoration-none text-muted hover-purple" href="{% url 'gestao_diretriz_id' plano.diretriz.id|safe %}"><i class="fas fa-link"></i> {{plano.diretriz.titulo}}</a>
+              </div>
+              <div class="col-auto text-muted fs-8">{{plano.created_by|title}} - {{plano.created_on|date:'M y'}}</div>
+            </div>
+          </div>
+          {% empty %}
+          <p class="p-2">Nenhum plano em avaliação</p>                
+          {% endfor %} 
         </div>
       </div>
     </div>
-  </form>
+    <div class="col-lg order-1 order-lg-3">
+      <div class="card text-dark bg-light h-100">
+        <div class="card-header text-muted fs-7">
+          <div class="row">
+            <div class="col">Diretrizes</div>
+            <div id="menu_diretriz_container" class="col-auto">
+              <a class="text-muted" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-ellipsis-h"></i></a>
+              <ul id="menu_diretriz_options" class="dropdown-menu fs-7">
+                {% if staff.role == 'M' or staff.role == 'E' %}<li><a class="dropdown-item pointer" href="{% url 'gestao_diretriz_add' %}"><i class="fas fa-plus text-success me-1"></i> Diretriz</a></li>{% endif %}
+                {% if staff.role == 'M' or staff.role == 'E' or staff.role == 'G' %}<li><a class="dropdown-item pointer" href="{% url 'gestao_indicadores' %}"><i class="fas fa-chart-line me-1"></i> Indicadores</a></li>{% endif %}
+                {% if perms.gestao.staff %}<li><a class="dropdown-item pointer" href="{% url 'gestao_staffs' %}"><i class="fas fa-users me-1"></i> Staff</a></li>{% endif %}
+                {% if staff.role == 'M' %}<li><a class="dropdown-item pointer" href="{% url 'gestao_labels' %}"><i class="fas fa-tags me-1"></i> Labels</a></li>{% endif %}
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="card-body p-0 pb-2 fs-7">
+          {% for diretriz in diretrizes %}
+          <div class="border-top border-bottom p-2 mt-2 bg-white">
+            <div class="row">
+              <div class="col text-truncate"><a class="fw-bold text-decoration-none mb-0" href="{% url 'gestao_diretriz_id' diretriz.id %}">{{diretriz.titulo}}</a></div>
+              {% if staff.role != 'O' %}
+              <div class="col-auto">
+                <a class="text-muted px-2" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-caret-down"></i></a>
+                <ul class="dropdown-menu dropdown-menu-end fs-7">
+                  <li><a class="dropdown-item" href="{% url 'gestao_plano_add' diretriz.id|safe %}"><i class="fas fa-plus text-success me-1"></i> Plano</a></li>
+                  {% if staff.role == 'M' %}<li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#diretriz_finalizar_modal" onclick="setDiretrizPlano({{diretriz.id|safe}})" href="#"><i class="fas fa-download text-danger me-1"></i> Finalizar</a></li>{% endif %}
+                </ul>
+              </div>
+              {% endif %}
+            </div>
+            <div class="row">
+              <div class="col-12">{{diretriz.indicador.nome}} <span class="badge bg-orange ms-1">{{diretriz.empresa.nome}}</span></div>
+            </div>
+            <div class="row">
+              <div class="col-6">
+                <div class="progress mt-1"><div class="progress-bar" role="progressbar" style="width: {{diretriz.progresso|safe}}%">{{diretriz.progresso|safe}}%</div></div>
+              </div>
+              <div class="col-6 fs-8 text-muted text-end">
+                {{diretriz.created_by|title}} - {{diretriz.created_on|date:'M y'}}
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <p class="p-2">Nenhuma diretriz ativa</p>                
+          {% endfor %} 
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
 </div>
 {% include 'gestao/_modais_dashboard.html' %}
 {% include "_component/modal/loading.html" with message='Salvando....' %}
@@ -181,7 +181,7 @@
 <script>
   {% block add_script %}
   if(document.getElementById('menu_diretriz_options').childElementCount == 0){document.getElementById('menu_diretriz_container').classList.add('d-none');}
-  if(document.getElementById('menu_progresso_options').childElementCount == 0){document.getElementById('menu_progresso_container').classList.add('d-none');}
+  // if(document.getElementById('menu_progresso_options').childElementCount == 0){document.getElementById('menu_progresso_container').classList.add('d-none');}
   
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
   {% endblock %}

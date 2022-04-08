@@ -32,11 +32,10 @@ class StaffForm(forms.ModelForm):
 class DiretrizForm(forms.ModelForm):
     class Meta:
         model = Diretriz
-        fields = ['empresa','indicador','analise','titulo','detalhe','ativo']
+        fields = ['empresa','indicador','analise','titulo','detalhe']
     titulo = forms.CharField(error_messages={'required': 'Informe o titulo'},widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
     indicador = forms.ModelChoiceField(error_messages={'required': 'Selecione o indicador'}, queryset = Indicador.objects.filter(ativo=True).order_by('nome'), widget=forms.Select(attrs={'class':'form-select'}))
     detalhe = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'Detalhamento', 'style':'min-height:300px'}))
-    ativo = forms.BooleanField(required=False, initial=True, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
 
 class LabelForm(forms.ModelForm):
     class Meta:
