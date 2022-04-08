@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from core.models import Log
 from core.extras import clean_request
-# from datetime import date
+from datetime import date, datetime, timedelta
 
 
 # METODOS SHOW
@@ -43,6 +43,14 @@ def analytics(request):
         if not staff.role in ['M','E','G']:
             raise Exception('Perfil não liberado para este recurso')
         indicadores = Indicador.objects.filter(ativo=True)
+        periodo = int(request.GET.get('periodo', 3))
+        meses = [date.today().strftime("%B").title()]
+        now = datetime.now()
+        for _ in range(1, periodo):
+            now = now.replace(day=1) - timedelta(days=1)
+            meses.append(now.strftime("%B").title())
+        meses.reverse()
+        print(meses)
     except Exception as e:
         messages.error(request,f'<b>Erro</b> {e}')
         return redirect('gestao_dashboard')

@@ -55,8 +55,8 @@
               <tr class="{% if not indicador.ativo %}table-warning{% endif %}">
                 <td class="d-none">{{indicador.id|safe}}</td>
                 <td>{{indicador.nome}}</td>
-                <td class="d-none d-md-table-cell">{{indicador.meta}}</td>
-                <td class="d-none d-sm-table-cell">{{indicador.ultimo_apontamento|default:'--'}}</td>
+                <td class="d-none d-md-table-cell">{{indicador.meta}} {{indicador.medida}}</td>
+                <td class="d-none d-sm-table-cell">{{indicador.ultimo_apontamento|default:'--'}} {{indicador.medida}}</td>
                 <td class="d-none d-sm-table-cell">{% if indicador.quanto_maior_melhor %}{{1|indicatorArrow|safe}}{% else %}{{-1|indicatorArrow:False|safe}}{% endif %}</td>
                 {% if staff.role == 'M' or staff.role == 'E' %}
                 <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'gestao_indicador_id' indicador.id|safe %}"><i class="fas fa-pen"></i></a></td>

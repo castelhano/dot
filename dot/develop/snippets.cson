@@ -274,7 +274,7 @@
   
   'Dot JS Plot':
     'prefix': 'plot_tag'
-    'body':'<label dot-data="foo" mask="cur" translate="\'180\':\'06 meses\',\'360\':\'12 meses\'"></label>'
+    'body':'<label dot-data="foo" mask="cur" translate=\'"180":"06 meses","360":"12 meses"\' default="feii"></label>'
   
   'Component Empresa':
     'prefix': 'component_empresa'

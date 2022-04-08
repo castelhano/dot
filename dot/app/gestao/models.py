@@ -8,6 +8,7 @@ from django.db.models import Avg
 class Indicador(models.Model):
     nome = models.CharField(max_length=80, unique=True, blank=False)
     meta = models.DecimalField(default=None, max_digits=10, decimal_places=2)
+    medida = models.CharField(max_length=6, blank=True)
     quanto_maior_melhor = models.BooleanField(default=True)
     ativo = models.BooleanField(default=True)
     def __str__(self):
@@ -15,6 +16,11 @@ class Indicador(models.Model):
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='gestao.indicador',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
+    def get_apontamento(self, ref):
+        try:
+            return Apontamento.objects.get(indicador=self, referencia=ref)
+        except Exception as e:
+            return None
     class Meta:
         default_permissions = []
 

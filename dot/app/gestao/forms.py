@@ -7,11 +7,13 @@ from django.contrib.auth.models import User
 class IndicadorForm(forms.ModelForm):
     class Meta:
         model = Indicador
-        fields = ['nome','meta','quanto_maior_melhor','ativo']
+        fields = ['nome','meta','medida','quanto_maior_melhor','ativo']
     nome = forms.CharField(error_messages={'required': 'Informe o nome do indicador','unique': 'Já existe indicador com este nome'},widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'','autofocus':'autofocus'}))
     meta = forms.DecimalField(required=False,initial=0,widget=forms.TextInput(attrs={'class': 'form-control','onfocus':'this.select();'}))
+    medida = forms.CharField(required=False, max_length=6, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
     quanto_maior_melhor = forms.BooleanField(required=False, initial=True, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
     ativo = forms.BooleanField(required=False, initial=True, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
+    percentual = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
 
 class ApontamentoForm(forms.ModelForm):
     class Meta:

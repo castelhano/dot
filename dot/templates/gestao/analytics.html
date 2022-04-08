@@ -5,7 +5,6 @@
 {% block model %}Gestão{% endblock %}
 {% block model_menu %}{% include "_component/menu/gestao.html" %}{% endblock%}
 
-
 <style media="screen">
   {% block style %}
   h6{
@@ -28,13 +27,23 @@
   <div class="card-body tab-content">
     <h5 class="card-title mb-0">Analytics: <b class="text-purple">{{user.username|title}}</b></h5>
     <p class="mb-1 fw-bold text-muted">{{staff.get_role_display}}</p>
-    <div class="row mb-2">
-      <div class="col">
+    <div class="row mb-2 g-1">
+      <div class="col-auto">
         <div class="dropdown">
-          <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown">Periodo: <label class="fw-bold" dot-data="periodo" translate='{"180":"06 meses","360":"12 meses"}'></label></button>
+          <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown"><label class="fw-bold text-capitalize" dot-data="view" default="analise"></label></button>
           <ul class="dropdown-menu fs-7">
-            <li><span class="dropdown-item pointer" onclick="filter('periodo',180)">6 meses</span></li>
-            <li><span class="dropdown-item pointer" onclick="filter('periodo',360)">12 meses</span></li>
+            <li><span class="dropdown-item pointer">Analise</span></li>
+            <li><span class="dropdown-item pointer">Edicao</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-auto">
+        <div class="dropdown">
+          <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown">Periodo: <label class="fw-bold" dot-data="periodo" default="3" mask="00" posfix="meses"></label></button>
+          <ul class="dropdown-menu fs-7">
+            <li><span class="dropdown-item pointer" onclick="filter('periodo',3)">03 meses</span></li>
+            <li><span class="dropdown-item pointer" onclick="filter('periodo',6)">06 meses</span></li>
+            <li><span class="dropdown-item pointer" onclick="filter('periodo',12)">12 meses</span></li>
           </ul>
         </div>
       </div>
@@ -45,13 +54,15 @@
           <tr>
             <th>Indicador</th>
             <th>Meta</th>
+            <th>Maio</th>
           </tr>
         </thead>
         <tbody>
           {% for indicador in indicadores %}
           <tr>
             <td><h6>{{indicador.nome}}</h6><small>{{indicador.quanto_maior_melhor|yesno:'1,-1'|indicatorArrow|safe}} melhor</small></td>
-            <td><h6>{{indicador.meta}}</h6><small>{{-1|indicatorArrow|safe}} 2,5%</small></td>
+            <td><h6>{{indicador.meta}}</h6><small>{{indicador.medida}}</small></td>
+            <td><h6>--</h6><small>{{-1|indicatorArrow|safe}} 2,5%</small></td>
           </tr>
           {% endfor %}
         </tbody>
@@ -70,11 +81,7 @@
 <script>
   {% block add_script %}
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
-  var map = {
-    'foo':55,
-    'fei':22
-  }
-  urlPlot();
   
+  urlPlot();
   {% endblock %}
 </script>
