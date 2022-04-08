@@ -31,7 +31,7 @@
     <div class="row mb-2">
       <div class="col">
         <div class="dropdown">
-          <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown">Periodo: <label class="fw-bold" dot-plot="periodo"></label></button>
+          <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown">Periodo: <label class="fw-bold" dot-data="periodo" translate='{"180":"06 meses","360":"12 meses"}'></label></button>
           <ul class="dropdown-menu fs-7">
             <li><span class="dropdown-item pointer" onclick="filter('periodo',180)">6 meses</span></li>
             <li><span class="dropdown-item pointer" onclick="filter('periodo',360)">12 meses</span></li>
@@ -63,7 +63,8 @@
 {% endblock%}
 
 {% block add_script_src %}
-<script src="{% static 'js/update_url.js' %}"></script>
+<script src="{% static 'js/url.js' %}"></script>
+<script src="{% static 'js/interpolate.js' %}"></script>
 {% endblock %}
 
 <script>

@@ -45,7 +45,7 @@
                 <a class="text-muted px-2" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-caret-down"></i></a>
                 <ul class="dropdown-menu dropdown-menu-end fs-7">
                   <li><a class="dropdown-item pointer" href="{% url 'gestao_plano_movimentar' plano.id|safe %}?operacao=revisao" onclick="modal_loading.show()"><i class="fas fa-arrow-right text-success me-1"></i> Para revisão</a></li>
-                  {% if staff.role == 'M' %}<li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#avaliar_modal" onclick="setAvaliacaoPlano({{plano.id|safe}}, {{plano.conclusao|safe}},{{plano.avaliacao|safe}})" href="#"><i class="fas fa-star text-primary me-1"></i> Avaliar</a></li>{% endif %}
+                  {% if staff.role == 'M' %}<li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#avaliar_modal" onclick="setAvaliacaoPlano({{plano.id|safe}}, {{plano.conclusao|safe}},{{plano.avaliacao|safe}}, false)" href="#"><i class="fas fa-star text-primary me-1"></i> Avaliar</a></li>{% endif %}
                 </ul>
               </div>
               {% endif %}

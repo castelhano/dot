@@ -132,23 +132,6 @@ function urlGetParam(param, if_null=null){
 function urlParams(){return window.location.search;}
 
 /*
-* urlPlot Plota direto no document os valores das variaveis na url
-*
-* @version  1.0
-* @since    07/04/2022
-* @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }
-* @example  urlPlot(); ou urlPlot('--') no html: <dotPlot data="foo"></dotPlot>
-* @see      {@link https://stackoverflow.com/questions/62382939/vanilla-htmljs-dynamic-interpolation}
-*/
-function urlPlot(if_null=''){
-  let map = urlMap();
-  [...document.querySelectorAll("*[dot-plot]")].forEach(el => {
-    if(map[el.getAttribute('dot-plot')] != undefined){el.innerText = map[el.getAttribute('dot-plot')];}
-    else{el.innerText = if_null}
-   })
-}
-
-/*
 * urlSetFiltersActive | Para todos os paramentros da url, adiciona a classe 'active' ao classList do elemento correspondente
 *
 * @version  1.0

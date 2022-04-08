@@ -12,7 +12,7 @@
           <p id="modal_avaliar_plano_titulo" class="fw-bold text-muted">Plano nome sera aqui</p>
           <label for="id_conclusao" class="form-label mb-0">Progresso <span id="modal_avaliar_plano_conclusao" class="fw-bold">0%</span></label>
           <input type="range" class="form-range" min="0" max="100" step="10" value="" id="id_conclusao" name="conclusao" onchange="setConclusaoLabel();">
-          <div class="row">
+          <div id="modal_avaliar_plano_stars_container" class="row">
             <label>Avaliação</label>
             <div class="col"> <i id="star_clear" class="far fa-stop-circle fw-bold" onclick="setStarsClear()"></i> <i id="star_1" class="fas fa-star text-muted" onclick="setStars(1)"></i> <i id="star_2" class="fas fa-star text-muted" onclick="setStars(2)"></i> <i id="star_3" class="fas fa-star text-muted" onclick="setStars(3)"></i> <i id="star_4" class="fas fa-star text-muted" onclick="setStars(4)"></i> <i id="star_5" class="fas fa-star text-muted" onclick="setStars(5)"></i></div>
           </div>
@@ -61,6 +61,7 @@
   var plano = document.getElementById('modal_avaliacao_id_plano');
   var diretriz = document.getElementById('modal_diretriz_finalizar_id');
   var avaliacao = document.getElementById('modal_avaliacao_id_avaliacao');
+  var stars_container = document.getElementById('modal_avaliar_plano_stars_container');
   var stars_atual = 0;
   function setConclusaoLabel(){label_conclusao.innerHTML = `${conclusao.value}%`}
   function setStars(int){
@@ -70,7 +71,7 @@
   }
   function setStarsClear(){avaliacao.value = '';for(i=1;i < 6;i++){document.getElementById(`star_${i}`).classList.replace('text-success', 'text-muted');}}
   
-  function setAvaliacaoPlano(id,progress,stars){plano.value = id;conclusao.value = progress;setConclusaoLabel();setStars(stars);}
+  function setAvaliacaoPlano(id,progress,stars, view_stars=true){plano.value = id;conclusao.value = progress;setConclusaoLabel();setStars(stars);if(view_stars){stars_container.classList.remove('d-none');}else{stars_container.classList.add('d-none');}}
   
   function setDiretrizPlano(id){diretriz.value = id;}
   

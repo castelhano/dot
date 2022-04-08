@@ -16,7 +16,7 @@
 *    extra_today(0,0,0,true);       Retorna data atual no formato native (yyyy-mm-dd)
 *    extra_today(0,0,0,false, el);  Insere a data atual no atributo value (ou innerHTML) do elemento informando
 */
-function extra_today(dias=0, meses=0, anos=0, native=false, el=null){
+function today(dias=0, meses=0, anos=0, native=false, el=null){
   var today = new Date();
   today.setDate(today.getDate() + dias);
   today.setMonth(today.getMonth() + meses + 1);

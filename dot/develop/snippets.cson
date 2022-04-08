@@ -90,7 +90,7 @@
     {% endblock%}\n\n
 
     {% block add_script_src %}\n
-    <script src="{% static \'js/table_extra.js\' %}"></script>\n
+    <script src="{% static \'js/table.js\' %}"></script>\n
     {% endblock %}'
 
   'Template Add Form':
@@ -273,8 +273,8 @@
     'body':'<div class="form-check form-switch">\n\t<input class="form-check-input" type="checkbox" role="switch" name="switch" id="id_switch">\n\t<label class="form-check-label" for="id_switch">Opcao1</label>\n</div>'
   
   'Dot JS Plot':
-    'prefix': 'plotjs'
-    'body':'<label dot-plot="foo"></label>'
+    'prefix': 'plot_tag'
+    'body':'<label dot-data="foo" mask="cur" translate="\'180\':\'06 meses\',\'360\':\'12 meses\'"></label>'
   
   'Component Empresa':
     'prefix': 'component_empresa'
@@ -363,25 +363,17 @@
     'prefix': 'perm'
     'body':'{% if perms.${1:app}.add_${2:modelo} %} disabled{% endif %}'
   
-  'Block Body Atributes':
-    'prefix': 'block_body_attr'
-    'body':'{% block body_attrs %}{% endblock %}'
-  
-  'Include Basic Listener':
-    'prefix': 'listener_basic'
-    'body':'{% include "_partial/_basicListener.js" %}'  
-  
-  'Include Message':
-    'prefix': 'message'
-    'body':'{% include "_partial/_message.html" %}'
-  
   'Include Extra Tags':
     'prefix': 'extra_tags'
     'body':'{% load tag_extras %}'
   
-  'Include Table to CSV':
-    'prefix': 'table_csv'
-    'body':'<script src="{% static \'js/table_extra.js\' %}"></script>'
+  'Include Script':
+    'prefix': 'include_script'
+    'body':'<script src="{% static \'js/interpolate.js\' %}"></script>'
+  
+  'Include CSS':
+    'prefix': 'include_css'
+    'body':'<link rel="stylesheet" href="{% static \'css/dot.css\' %}" type="text/css">'
   
   'Include Masker JS':
     'prefix': 'mask_include'
@@ -427,7 +419,6 @@
     // }\n\n
     // // Inicia mascara para valores ja carregados\n
     // mask_number(true,target);\n'
-  
   
   'Chart JS include':
     'prefix': 'chart_include'

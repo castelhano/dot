@@ -380,7 +380,7 @@ def plano_add(request, diretriz):
         d = Diretriz.objects.get(id=diretriz)
         p.diretriz = d
         form = PlanoForm(instance=p)
-    return render(request,'gestao/plano_add.html',{'form':form,'plano':p})
+    return render(request,'gestao/plano_add.html',{'form':form,'plano':p,'staff':staff})
 
 # METODOS GET
 @login_required
