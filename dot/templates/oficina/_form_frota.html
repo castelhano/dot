@@ -182,6 +182,16 @@
             </ul>
           </div>
         </div>
+        <div class="row g-1">
+        	<div class="col-lg-12">
+            <small>CRLV: {% if frota.crlv %}<a class="text-decoration-none fw-bold ms-1" href="{{frota.crlv.url}}" target="_blank">Baixar</a> <span><em>{{frota.crlv}}</em></span>{% endif %}</small>
+        		{{ form.crlv }}
+        	</div>
+        	<div class="col-lg-12 mt-2">
+            <small>Foto Chassi: {% if frota.foto_chassi %}<a class="text-decoration-none fw-bold ms-1" href="{{frota.foto_chassi.url}}" target="_blank">Baixar</a> <span><em>{{frota.foto_chassi}}</em></span>{% endif %}</small>
+        		{{ form.foto_chassi }}
+        	</div>
+        </div>
       </div>
     </div>    
   </div>
@@ -191,26 +201,6 @@
   {% if 'frota_id' in request.get_full_path %}
   if(document.getElementById('movimentar_frota_list').childElementCount == 0){document.getElementById('movimentar_frota_list').classList.add('d-none');}
   {% endif %}
-  // function carregaEmpresas() {
-  //   var xhttp = new XMLHttpRequest();
-  //   xhttp.onreadystatechange = function() {
-  //     if(this.readyState == 4 && this.status == 200){
-  //       if(this.responseText == ''){}
-  //       else{
-  //         let obj = JSON.parse(this.responseText);
-  //         let empresas = document.getElementById("id_empresa");
-  //         let empresa_atual = '{{frota.empresa.id|safe}}';
-  //         for(key in obj){
-  //           selected = empresa_atual == obj[key] ? ' selected' : '';
-  //           empresas.innerHTML += `<option value="${obj[key]}"${selected}>${key}</option>`;
-  //         }
-  //       }
-  //     }
-  //   };
-  //   xhttp.open("GET", "{% url 'core_get_empresas' %}", true);
-  //   xhttp.send();
-  // }
-  // carregaEmpresas();
   
   function carregaMarcas(loading_page=false) {
     var xhttp = new XMLHttpRequest();

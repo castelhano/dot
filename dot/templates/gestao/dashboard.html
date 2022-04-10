@@ -67,7 +67,7 @@
             </div>
             {% if staff and staff.role != 'O' %}
             <div class="row">
-              <div class="col text-end pb-2 pe-4 fs-7"><a class="text-decoration-none" href="{% url 'gestao_planos_arquivados' %}">Arquivo</a></div>
+              <div class="col text-end pb-2 pe-4 fs-7"><a class="text-decoration-none" href="{% url 'gestao_planos_arquivo' %}">Arquivo</a></div>
             </div>
             {% endif %}
           </div>
@@ -166,7 +166,12 @@
               </div>
               {% empty %}
               <p class="p-2">Nenhuma diretriz ativa</p>                
-              {% endfor %} 
+              {% endfor %}
+              {% if staff and staff.role != 'O' %}
+              <div class="row">
+                <div class="col text-end pt-2 pe-4 fs-7"><a class="text-decoration-none" href="{% url 'gestao_diretrizes' %}">Arquivo</a></div>
+              </div>
+              {% endif %}
             </div>
           </div>
         </div>

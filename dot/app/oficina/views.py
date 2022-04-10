@@ -132,7 +132,7 @@ def modelos(request):
 @permission_required('oficina.add_frota')
 def frota_add(request):
     if request.method == 'POST':
-        form = FrotaForm(request.POST)
+        form = FrotaForm(request.POST, request.FILES)
         if form.is_valid():
             try:
                 registro = form.save()
@@ -358,7 +358,7 @@ def frota_update(request, id):
             frota = Frota.objects.get(empresa__in=request.user.profile.empresas.all(), pk=id)
     except:
         messages.warning(request,'Veiculo não encontrado ou não altorizado para alteração')
-    form = FrotaForm(request.POST, instance=frota)
+    form = FrotaForm(request.POST, request.FILES, instance=frota)
     if form.is_valid():
         registro = form.save()
         l = Log()
@@ -371,7 +371,7 @@ def frota_update(request, id):
         messages.success(request,'Frota <b>' + registro.prefixo + '</b> alterada')
         return redirect('oficina_frota_id',registro.id)
     else:
-        return render(request,'oficina/oficina.html',{'form':form,'frota':frota})
+        return render(request,'oficina/frota_id.html',{'form':form,'frota':frota})
 
 @login_required
 @permission_required('oficina.change_frota')

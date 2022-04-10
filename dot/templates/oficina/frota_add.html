@@ -17,7 +17,7 @@
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'oficina_frotas' %}"><i class="fas fa-undo"></i></a></li>
     </ul>
   </div>
-  <form id="app_form" action="{% url 'oficina_frota_add' %}" method="POST" autocomplete="off" onsubmit="return submitForm();">
+  <form id="app_form" action="{% url 'oficina_frota_add' %}" enctype="multipart/form-data" method="POST" autocomplete="off" onsubmit="return submitForm();">
     {% csrf_token %}
     {% include 'oficina/_form_frota.html' %}
   </form>

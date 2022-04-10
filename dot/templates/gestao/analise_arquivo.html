@@ -1,0 +1,144 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Arquivo{% endblock %}
+{% block model %}Gestão{% endblock %}
+{% block model_menu %}{% include "_component/menu/gestao.html" %}{% endblock%}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'gestao_analise_arquivo' %}"></a>
+
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'gestao_analises' %}"><i class="fas fa-undo"></i></a></li>
+    </ul>
+  </div>
+  <div class="card-body tab-content">
+    <h5 class="card-title mb-0">Arquivo (analises): <b class="text-purple">{{user.username|title}}</b> <small class="badge bg-primary ms-1">{{analises.count}}</small></h5>
+    <p class="mb-1 fw-bold text-muted">{{staff.get_role_display}}</p>
+    <div class="row mb-2 g-1">
+      <div class="col-auto">
+        <div class="dropdown">
+          <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown"><label class="fw-bold text-capitalize pointer">{{empresa.nome|default:'Empresa'}}</label></button>
+          <ul class="dropdown-menu fs-7">
+            {% for empresa in empresas %}
+            <li><span class="dropdown-item pointer" onclick="filter('empresa',{{empresa.id}})">{{empresa.nome}}</span></li>
+            {% endfor %}            
+          </ul>
+        </div>
+      </div>
+      <div class="col-auto">
+        <div class="dropdown">
+          <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown"><label class="fw-bold text-capitalize pointer">{{tipo_display|default:'Tipo'}}</label></button>
+          <ul class="dropdown-menu fs-7">
+            <li><span class="dropdown-item pointer" onclick="filter('tipo','L')">Lembrete</span></li>            
+            <li><span class="dropdown-item pointer" onclick="filter('tipo','M')">Melhoria</span></li>            
+            <li><span class="dropdown-item pointer" onclick="filter('tipo','N')">Não conforme</span></li>            
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane fade show active" id="base" role="tabpanel">
+      <div class="row">
+        <div class="col mb-1"><input id="id_pesquisa" type="text" class="form-control form-control-sm" placeholder="Filtrar" onkeyup="filterTable('main_table', [1, 4, 6], this)" autofocus></div>
+      </div>
+      <table id="main_table" class="table border table-striped table-hover fs-7">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Responsavel</th>
+            <th class="d-none">Empresa</th>
+            <th class="d-none">Tipo</th>
+            <th>Indicador</th>
+            <th>Criado em</th>
+            <th>Critico</th>
+            <th>&nbsp;</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for analise in analises %}
+          <tr>
+            <td>{{analise.id|safe}}</td>
+            <td>{{analise.created_by.username|title}}</td>
+            <td class="d-none">{{analise.empresa.nome}}</td>
+            <td class="d-none">{{analise.get_tipo_display}}</td>
+            <td>{{analise.indicador.nome}}</td>
+            <td>{{analise.created_on|date:'d/m/Y'}}</td>
+            <td>{{analise.critico|yesno:'Critico,--'}}</td>
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#view_modal" onclick="analiseView('{{analise.id|safe}}','{{analise.indicador.nome}}','{{analise.tipo}}',{{analise.critico|yesno:'true,false'}},'{{analise.descricao}}')" href="#"><i class="fas fa-eye"></i></a></td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="8">Selecione os filtro para pesquisa</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="view_modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="row">
+        <div class="col"><h5 class="ms-3 mt-3">Análise: <span class="text-purple" id="modal_analise_indicador_nome"></span></h5></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      </div>
+      <div class="modal-body">
+        <div class="row g-1 mb-1">
+          <div class="col-12">
+            <textarea class="form-control" name="descricao" id="id_descricao" rows="4" disabled></textarea>
+          </div>
+        </div>
+        <div class="row g-1">
+          <div class="mb-1 col-6">
+            <select class="form-select form-select-sm bg-light" name="tipo" id="id_analise_tipo" disabled>
+              <option value="L">Lembrete</option>
+              <option value="M">Melhoria</option>
+              <option value="N">Não conforme</option>                
+            </select>
+          </div>
+          <div class="col-6 pt-1 ps-2">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" role="switch" name="critico" id="id_critico">
+              <label class="form-check-label" for="id_critico">Item crítico</label>
+            </div>              
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col text-end">
+            <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/url.js' %}"></script>
+{% endblock %}
+
+
+<script>
+  {% block add_script %}
+  SHORTCUT_MAP['/FTF'] = ':analiseSearch';
+  
+  function analiseView(id, nome, tipo, critico, descricao){
+    try {
+      document.getElementById('modal_analise_indicador_nome').innerHTML = nome;
+      document.getElementById('id_analise_tipo').value = tipo;
+      let swt = document.getElementById('id_critico');
+      if(swt.checked && !critico || !swt.checked && critico){swt.click();}
+      document.getElementById('id_descricao').value = descricao;
+    }catch(e){console.log(e);}
+  }
+  
+  
+  function analiseSearch(){document.getElementById('id_pesquisa').select()}
+  {% endblock %}
+</script>

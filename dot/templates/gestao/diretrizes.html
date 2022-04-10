@@ -1,0 +1,72 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Arquivo{% endblock %}
+{% block model %}Gestão{% endblock %}
+{% block model_menu %}{% include "_component/menu/gestao.html" %}{% endblock%}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'gestao_diretrizes' %}"></a>
+
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'gestao_diretrizes' %}"><i class="fas fa-undo"></i></a></li>
+    </ul>
+  </div>
+  <div class="card-body tab-content">
+    <h5 class="card-title mb-0">Arquivo (diretriz): <b class="text-purple">{{user.username|title}}</b> <small class="badge bg-primary ms-1">{{diretrizes.count}}</small></h5>
+    <p class="mb-3 fw-bold text-muted">{{staff.get_role_display}}</p>
+    <div class="tab-pane fade show active" id="base" role="tabpanel">
+      <div class="row">
+        <div class="col mb-1"><input id="id_pesquisa" type="text" class="form-control form-control-sm" placeholder="Filtrar" onkeyup="filterTable('main_table', [1, 4, 6], this)" autofocus></div>
+      </div>
+      <table id="main_table" class="table border table-striped table-hover fs-7">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th class="d-none d-lg-table-cell">Empresa</th>
+            <th class="d-none d-md-table-cell">Titulo</th>
+            <th class="d-none d-lg-table-cell">Indicador</th>
+            <th>Criado por</th>
+            <th>Criado em</th>
+            <th class="d-none d-md-table-cell">Analise</th>
+            <th>&nbsp;</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for diretriz in diretrizes %}
+          <tr>
+            <td>{{diretriz.id|safe}}</td>
+            <td class="d-none d-lg-table-cell">{{diretriz.empresa.nome}}</td>
+            <td class="d-none d-md-table-cell">{{diretriz.titulo|truncatechars:20}}</td>
+            <td class="d-none d-md-table-cell">{{diretriz.indicador.nome}}</td>
+            <td>{{diretriz.created_by.username|title}}</td>
+            <td>{{diretriz.created_on|date:"d/m/Y"}}</td>
+            <td class="d-none d-md-table-cell">{{diretriz.analise.id|default:'--'}}</td>            
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-secondary" href="{% url 'gestao_diretriz_id' diretriz.id|safe %}"><i class="fas fa-pen"></i></a></td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="8">Selecione os filtro para pesquisa</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/url.js' %}"></script>
+{% endblock %}
+
+
+<script>
+  {% block add_script %}
+  SHORTCUT_MAP['/FTF'] = ':diretrizSearch';
+  function diretrizSearch(){document.getElementById('id_pesquisa').select()}
+  {% endblock %}
+</script>

@@ -43,7 +43,7 @@ class ModeloForm(forms.ModelForm):
 class FrotaForm(forms.ModelForm):
     class Meta:
         model = Frota
-        fields = ['empresa','prefixo','placa','renavan','chassi','modelo','capacidade_tanque','catraca_inicial','media_ideal','categoria','carroceria','classificacao','ano_fabricacao','ano_modelo','aniversario','inicio_operacao','km_inicial','componentes','detalhe']
+        fields = ['empresa','prefixo','placa','renavan','chassi','modelo','capacidade_tanque','catraca_inicial','media_ideal','categoria','carroceria','classificacao','ano_fabricacao','ano_modelo','aniversario','inicio_operacao','km_inicial','componentes','crlv','foto_chassi','detalhe']
     prefixo = forms.CharField(error_messages={'required': 'É necessário informar um prefixo para o veiculo'},widget=forms.TextInput(attrs={'class':'form-control bg-light fw-bold','placeholder':''}))
     placa = forms.CharField(required=False,widget=forms.TextInput(attrs={'class':'form-control','placeholder':''}))
     renavan = forms.CharField(required=False, max_length=11, widget=forms.TextInput(attrs={'class':'form-control','placeholder':''}))
@@ -58,6 +58,8 @@ class FrotaForm(forms.ModelForm):
     ano_fabricacao = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':'1980','max':'2100'}))
     ano_modelo = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':'1980','max':'2100'}))
     inicio_operacao = forms.DateField(required=False,initial=date.today(),widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
+    crlv = forms.FileField(required=False, widget=forms.FileInput(attrs={'class': 'form-control','accept':'.pdf,.png,.jpg,.jpeg'}))
+    foto_chassi = forms.ImageField(required=False, widget=forms.FileInput(attrs={'class': 'form-control','accept':'image/*'}))
     aniversario = forms.DateField(required=False,widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
     km_inicial = forms.CharField(required=False,initial=0,widget=forms.TextInput(attrs={'class':'form-control','placeholder':'','onfocus':'this.select();'}))
     detalhe = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'Detalhes', 'style':'min-height:300px'}))

@@ -1,6 +1,7 @@
 from django.db import models
-from core.models import Empresa, Log
+from core.models import Empresa, Log, ImageField as core_ImageField, FileField as core_FileField
 from datetime import datetime, date
+from .validators import validate_file_extension, validate_image_extension
 
 
 class Marca(models.Model):
@@ -93,6 +94,8 @@ class Frota(models.Model):
     inicio_operacao = models.DateField(blank=True, null=True)
     componentes = models.ManyToManyField(Componente, related_name="frota_componentes")
     data_venda = models.DateField(blank=True, null=True)
+    crlv = core_FileField(upload_to="frota/files/crlv/",blank=True, validators=[validate_file_extension])
+    foto_chassi = core_ImageField(upload_to='frota/files/chassi/', blank=True, validators=[validate_image_extension])
     comprador = models.CharField(max_length=255, blank=True)
     valor_venda = models.DecimalField(default=0, max_digits=10, decimal_places=2)
     detalhe = models.TextField(blank=True)

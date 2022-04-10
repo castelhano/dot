@@ -27,7 +27,7 @@
       </li>
     </ul>
   </div>
-  <form id="oficina_form" action="{% url 'oficina_frota_update' frota.id|safe %}" method="POST" autocomplete="off" onsubmit="return submitForm();">
+  <form id="oficina_form" action="{% url 'oficina_frota_update' frota.id|safe %}" enctype="multipart/form-data" method="POST" autocomplete="off" onsubmit="return submitForm();">
     {% csrf_token %}
     {% include 'oficina/_form_frota.html' %}
   </form>

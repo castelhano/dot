@@ -98,20 +98,7 @@ def indicadores(request):
 
 @login_required
 @permission_required('gestao.dashboard')
-def apontamentos(request, indicador):
-    try:
-        staff = Staff.objects.get(usuario=request.user)
-        if not staff.role in ['M','E','G']:
-            raise Exception('Perfil não liberado para este recurso')
-    except Exception as e:
-        messages.error(request,f'<b>Erro</b> {e}')
-        return redirect('gestao_dashboard')
-    apontamentos = Apontamento.objects.filter(indicador__id=indicador).order_by('referencia')
-    return render(request,'gestao/apontamentos.html', {'apontamentos' : apontamentos,'staff':staff})
-
-@login_required
-@permission_required('gestao.dashboard')
-def planos_arquivados(request):
+def planos_arquivo(request):
     try:
         staff = Staff.objects.get(usuario=request.user)
         if not staff.role in ['M','E','G']:
@@ -119,7 +106,7 @@ def planos_arquivados(request):
         planos = staff.planos_arquivados()
         if request.method == 'POST':
             pass
-        return render(request,'gestao/planos_arquivados.html', {'planos':planos,'staff':staff})    
+        return render(request,'gestao/planos_arquivo.html', {'planos':planos,'staff':staff})
     except Exception as e:
         messages.error(request,f'<b>Erro</b> {e}')
     return redirect('gestao_dashboard')
@@ -145,12 +132,15 @@ def staffs(request):
 @login_required
 @permission_required('gestao.dashboard')
 def diretrizes(request):
-    diretrizes = Diretriz.objects.all().order_by('indicador','created_on')
-    if request.method == 'POST':
-        pass
-    else:
-        diretrizes = diretrizes.filter(ativo=True)
-    return render(request,'gestao/diretrizes.html', {'diretrizes' : diretrizes})
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+        if not staff.role in ['M','E','G']:
+            raise Exception('Perfil não liberado para este recurso')        
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
+    diretrizes = Diretriz.objects.filter(ativo=False).order_by('created_on','indicador__nome')
+    return render(request,'gestao/diretrizes.html', {'diretrizes' : diretrizes, 'staff':staff})
 
 @login_required
 @permission_required('gestao.dashboard')
@@ -202,6 +192,35 @@ def analises(request):
         messages.error(request,f'<b>Erro</b> {e}')
         return redirect('gestao_dashboard')
     return render(request,'gestao/analises.html', metrics)
+
+@login_required
+@permission_required('gestao.dashboard')
+def analise_arquivo(request):
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+        if not staff.role in ['M','E','G']:
+            raise Exception('Perfil não liberado para este recurso')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
+    try:
+        metrics = {
+        'staff':staff,
+        'empresas':staff.usuario.profile.empresas.all(),
+        'empresa':None if not request.GET.get('empresa', None) else Empresa.objects.get(id=request.GET['empresa']),
+        'tipo_display':None if not request.GET.get('tipo', None) else dict(Analise.TIPO_CHOICES)[request.GET['tipo']]
+        }
+        if metrics['empresa'] and metrics['tipo_display']:            
+            analises = Analise.objects.filter(empresa=metrics['empresa'],tipo=request.GET['tipo'])            
+            if staff.role != 'M':
+                analises = analises.filter(created_by=request.user)
+            metrics['analises'] = analises        
+        return render(request,'gestao/analise_arquivo.html',metrics)
+    except Empresa.DoesNotExist as e:
+        messages.error(request,'<b>Erro</b> empresa não encontrada ou não habilitada')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+    return render(request,'gestao/analise_arquivo.html')
 
 # METODOS ADD
 @login_required
@@ -562,20 +581,6 @@ def label_id(request,id):
 
 @login_required
 @permission_required('gestao.dashboard')
-def analise_id(request,id):
-    try:
-        staff = Staff.objects.get(usuario=request.user)
-        if not staff.role in ['M','E']:
-            raise Exception('Perfil não liberado para este recurso')
-    except Exception as e:
-        messages.error(request,f'<b>Erro</b> {e}')
-        return redirect('gestao_dashboard')
-    analise = Analise.objects.get(pk=id)
-    form = AnaliseForm(instance=analise)
-    return render(request,'gestao/analise_id.html',{'form':form,'analise':analise})
-
-@login_required
-@permission_required('gestao.dashboard')
 def plano_id(request,id):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -920,33 +925,33 @@ def indicador_delete(request,id):
         messages.error(request,'ERRO ao apagar indicador')
         return redirect('gestao_indicador_id', id)
 
-@login_required
-@permission_required('gestao.dashboard')
-def apontamento_delete(request,id):
-    try:
-        registro = Apontamento.objects.get(pk=id)
-        staff = Staff.objects.get(usuario=request.user)
-        if not staff.role in ['M','E','G']:
-            raise Exception('Perfil não liberado para este recurso')
-        if not staff.usuario.profile.allow_empresa(regitro.empresa.id): # Verifica se usuario tem acesso a empresa
-            raise Exception('Empresa não habilitada para seu usuário')
-    except Exception as e:
-        messages.error(request,f'<b>Erro</b> {e}')
-        return redirect('gestao_dashboard')
-    try:
-        l = Log()
-        l.modelo = "gestao.indicador"
-        l.objeto_id = registro.indicador.id
-        l.objeto_str = f'{registro.indicador.id}_{registro.referencia}'
-        l.usuario = request.user
-        l.mensagem = "APONTAMENTO DELETE"
-        registro.delete()
-        l.save()
-        messages.warning(request,f'Apontamento <b>excluido</b>. Essa operação não pode ser desfeita')
-        return redirect('gestao_apontamentos')
-    except:
-        messages.error(request,'ERRO ao apagar apontamento')
-        return redirect('gestao_apontamento_id', id)
+# @login_required
+# @permission_required('gestao.dashboard')
+# def apontamento_delete(request,id):
+#     try:
+#         registro = Apontamento.objects.get(pk=id)
+#         staff = Staff.objects.get(usuario=request.user)
+#         if not staff.role in ['M','E','G']:
+#             raise Exception('Perfil não liberado para este recurso')
+#         if not staff.usuario.profile.allow_empresa(regitro.empresa.id): # Verifica se usuario tem acesso a empresa
+#             raise Exception('Empresa não habilitada para seu usuário')
+#     except Exception as e:
+#         messages.error(request,f'<b>Erro</b> {e}')
+#         return redirect('gestao_dashboard')
+#     try:
+#         l = Log()
+#         l.modelo = "gestao.indicador"
+#         l.objeto_id = registro.indicador.id
+#         l.objeto_str = f'{registro.indicador.id}_{registro.referencia}'
+#         l.usuario = request.user
+#         l.mensagem = "APONTAMENTO DELETE"
+#         registro.delete()
+#         l.save()
+#         messages.warning(request,f'Apontamento <b>excluido</b>. Essa operação não pode ser desfeita')
+#         return redirect('gestao_apontamentos')
+#     except:
+#         messages.error(request,'ERRO ao apagar apontamento')
+#         return redirect('gestao_apontamento_id', id)
 
 @login_required
 @permission_required('gestao.staff')

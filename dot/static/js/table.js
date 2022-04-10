@@ -104,14 +104,15 @@ function filterTable(table_id, cols, input, prefix='', posfix=''){
   const table = document.getElementById(table_id);
   const filter = `${prefix}${input.value}${posfix}`.toLowerCase();
   let tr = table.tBodies[0].getElementsByTagName("tr");
-  
-  for (i = 0; i < tr.length; i++) {
-    let row_value = '';
-    for(j=0; j < cols.length;j++) {
-      td = tr[i].getElementsByTagName("td")[cols[j]];
-      row_value += td.textContent || td.innerText;
+  try {
+    for (i = 0; i < tr.length; i++) {
+      let row_value = '';
+      for(j=0; j < cols.length;j++) {
+        td = tr[i].getElementsByTagName("td")[cols[j]];
+        row_value += td.textContent || td.innerText;
+      }
+      if (row_value.toLowerCase().indexOf(filter) > -1) {tr[i].style.display = "";}
+      else {tr[i].style.display = "none";}
     }
-    if (row_value.toLowerCase().indexOf(filter) > -1) {tr[i].style.display = "";}
-    else {tr[i].style.display = "none";}
-  }
+  }catch(e){} 
 }
