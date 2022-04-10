@@ -9,7 +9,7 @@
       <div class="modal-body">
         <form id="modal_avaliacao_form" action="{% url 'gestao_plano_avaliar' %}" method="POST" autocomplete="off" onsubmit="modal_loading.show();">
           {% csrf_token %}
-          <p id="modal_avaliar_plano_titulo" class="fw-bold text-muted">Plano nome sera aqui</p>
+          <p id="modal_avaliar_plano_titulo" class="fw-bold text-muted"></p>
           <label for="id_conclusao" class="form-label mb-0">Progresso <span id="modal_avaliar_plano_conclusao" class="fw-bold">0%</span></label>
           <input type="range" class="form-range" min="0" max="100" step="10" value="" id="id_conclusao" name="conclusao" onchange="setConclusaoLabel();">
           <div id="modal_avaliar_plano_stars_container" class="row">
@@ -61,6 +61,7 @@
   var plano = document.getElementById('modal_avaliacao_id_plano');
   var diretriz = document.getElementById('modal_diretriz_finalizar_id');
   var avaliacao = document.getElementById('modal_avaliacao_id_avaliacao');
+  var titulo_plano = document.getElementById('modal_avaliar_plano_titulo');
   var stars_container = document.getElementById('modal_avaliar_plano_stars_container');
   var stars_atual = 0;
   function setConclusaoLabel(){label_conclusao.innerHTML = `${conclusao.value}%`}
@@ -71,7 +72,7 @@
   }
   function setStarsClear(){avaliacao.value = '';for(i=1;i < 6;i++){document.getElementById(`star_${i}`).classList.replace('text-success', 'text-muted');}}
   
-  function setAvaliacaoPlano(id,progress,stars, view_stars=true){plano.value = id;conclusao.value = progress;setConclusaoLabel();setStars(stars);if(view_stars){stars_container.classList.remove('d-none');}else{stars_container.classList.add('d-none');}}
+  function setAvaliacaoPlano(id,progress,stars,titulo,view_stars=true){plano.value = id;titulo_plano.innerHTML = titulo;conclusao.value = progress;setConclusaoLabel();setStars(stars);if(view_stars){stars_container.classList.remove('d-none');}else{stars_container.classList.add('d-none');}}
   
   function setDiretrizPlano(id){diretriz.value = id;}
   

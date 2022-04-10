@@ -1,0 +1,277 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Analises{% endblock %}
+{% block model %}Gestão{% endblock %}
+{% block model_menu %}{% include "_component/menu/gestao.html" %}{% endblock%}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'gestao_analises' %}"></a>
+
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active disabled" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item" title="Dashboard"><a class="nav-link text-muted" href="{% url 'gestao_dashboard' %}"><i class="fas fa-columns"></i></a></li>
+      <li class="nav-item ms-1" title="Roadmap"><a class="nav-link text-success" href="{% url 'gestao_roadmap' %}"><i class="fas fa-sliders-h"></i></a></li>
+      <li class="nav-item ms-1" title="Analytics"><a id="back" class="nav-link text-purple" href="{% url 'gestao_analytics' %}" onclick="analytics_loading.show()"><i class="fas fa-chart-bar"></i></a></li>
+      {% if perms.core.view_log %}
+      <li class="nav-item dropdown ms-auto">
+        <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item pointer" href="{% url 'logs' %}?target_model=gestao.analise&mensagem=DELETE" target="_blank">Analises Excluidas</a></li>
+        </ul>
+      </li>
+      {% endif %}
+    </ul>
+  </div>
+  <div class="card-body tab-content">
+    <h5 class="card-title mb-0">Análises: <b class="text-purple">{{user.username|title}}</b></h5>
+    <p class="mb-2 fw-bold text-muted">{{staff.get_role_display}}</p>
+    <div class="row mb-2 g-1">
+      <div class="col-auto">
+        <div class="dropdown">
+          <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown"><label class="fw-bold text-capitalize pointer">{{empresa.nome|default:'Empresa'}}</label></button>
+          <ul class="dropdown-menu fs-7">
+            {% for empresa in user.profile.empresas.all %}
+            <li><span class="dropdown-item pointer" onclick="filter('empresa',{{empresa.id}})">{{empresa.nome}}</span></li>
+            {% endfor %}            
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane fade show active" id="base" role="tabpanel">
+      <div class="row g-3">
+        <div class="col-lg">
+          <div class="card h-100">
+            <div class="card-header fs-7">
+              <div class="row">
+                <div class="col text-muted fw-bold"><i class="fas fa-exclamation text-purple me-2"></i>Não Conforme</div>
+              </div>
+            </div>
+            <div class="card-body p-0 mb-2 fs-7">
+              {% for analise in nao_conforme %}
+              <div class="border-top border-bottom p-2 mt-2 bg-light">
+                <div class="row">
+                  <div class="col"><b>{{analise.indicador.nome}}</b> <span class="badge bg-dark ms-1"><b>{{analise.id}}</b></span><span class="badge bg-orange ms-1">{{analise.empresa.nome}}</span>{% if analise.critico %}<span class="badge bg-danger ms-1">Critico</span>{% endif %}</div>
+                  <div class="col-auto">
+                    <a class="text-muted px-2" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-caret-down"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end fs-7 analise_menu">
+                      {% if staff.role == 'M' or analise.created_by == user %}
+                      <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#editar_modal" onclick="analiseEditar('{{analise.id|safe}}','{{analise.indicador.nome}}','{{analise.tipo}}',{{analise.critico|yesno:'true,false'}},'{{analise.descricao}}')" href="#"><i class="fas fa-pen fa-fw"></i> Editar</a></li>
+                      <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#arquivar_modal" onclick="analiseArquivar({{analise.id|safe}})" href="#"><i class="fas fa-check text-success fa-fw"></i> Concluir</a></li>
+                      <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal" onclick="analiseDelete({{analise.id|safe}})" href="#"><i class="fas fa-times fa-fw"></i> Excluir</a></li>
+                      {% endif %}
+                    </ul>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12">{{analise.descricao}}</div>
+                  <div class="col-12 text-muted fs-8"><b>{{analise.created_by.username|title}}</b> em <b>{{analise.created_on|date:"d/m/y"}}</b></div>
+                </div>
+              </div>
+              {% empty %}
+              <p class="p-2">Nenhuma avaliação</p>                
+              {% endfor %}                
+            </div>
+            
+          </div>
+        </div>
+        <div class="col-lg">
+          <div class="card h-100">
+            <div class="card-header fs-7">
+              <div class="row">
+                <div class="col text-muted fw-bold"><i class="fas fa-chart-bar text-purple me-2"></i>Melhorias</div>
+              </div>
+            </div>
+            <div class="card-body p-0 mb-2 fs-7">
+              {% for analise in melhorias %}
+              <div class="border-top border-bottom p-2 mt-2 bg-light">
+                <div class="row">
+                  <div class="col"><b>{{analise.indicador.nome}}</b> <span class="badge bg-dark ms-1"><b>{{analise.id}}</b></span><span class="badge bg-orange ms-1">{{analise.empresa.nome}}</span>{% if analise.critico %}<span class="badge bg-danger ms-1">Critico</span>{% endif %}</div>
+                  <div class="col-auto">
+                    <a class="text-muted px-2" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-caret-down"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end analise_menu fs-7">
+                      {% if staff.role == 'M' or analise.created_by == user %}
+                      <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#editar_modal" onclick="analiseEditar('{{analise.id|safe}}','{{analise.indicador.nome}}','{{analise.tipo}}',{{analise.critico|yesno:'true,false'}},'{{analise.descricao}}')" href="#"><i class="fas fa-pen fa-fw"></i> Editar</a></li>
+                      <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#arquivar_modal" onclick="analiseArquivar({{analise.id|safe}})" href="#"><i class="fas fa-check text-success fa-fw"></i> Concluir</a></li>
+                      <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal" onclick="analiseDelete({{analise.id|safe}})" href="#"><i class="fas fa-times fa-fw"></i> Excluir</a></li>
+                      {% endif %}
+                    </ul>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12">{{analise.descricao}}</div>
+                  <div class="col-12 text-muted fs-8"><b>{{analise.created_by.username|title}}</b> em <b>{{analise.created_on|date:"d/m/y"}}</b></div>
+                </div>
+              </div>
+              {% empty %}
+              <p class="p-2">Nenhuma avaliação</p>                
+              {% endfor %}                
+            </div>
+          </div>
+        </div>
+        <div class="col-lg">
+          <div class="card h-100">
+            <div class="card-header fs-7">
+              <div class="row">
+                <div class="col text-muted fw-bold"><i class="fas fa-comment-dots text-purple me-2"></i>Lembretes</div>
+              </div>
+            </div>
+            <div class="card-body p-0 mb-2 fs-7">
+              {% for analise in lembretes %}
+              <div class="border-top border-bottom p-2 mt-2 bg-light">
+                <div class="row">
+                  <div class="col"><b>{{analise.indicador.nome}}</b> <span class="badge bg-dark ms-1"><b>{{analise.id}}</b></span><span class="badge bg-orange ms-1">{{analise.empresa.nome}}</span>{% if analise.critico %}<span class="badge bg-danger ms-1">Critico</span>{% endif %}</div>
+                  <div class="col-auto">
+                    <a class="text-muted px-2" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-caret-down"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end analise_menu fs-7">
+                      {% if staff.role == 'M' or analise.created_by == user %}
+                      <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#editar_modal" onclick="analiseEditar('{{analise.id|safe}}','{{analise.indicador.nome}}','{{analise.tipo}}',{{analise.critico|yesno:'true,false'}},'{{analise.descricao}}')" href="#"><i class="fas fa-pen fa-fw"></i> Editar</a></li>
+                      <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#arquivar_modal" onclick="analiseArquivar({{analise.id|safe}})" href="#"><i class="fas fa-check text-success fa-fw"></i> Concluir</a></li>
+                      <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal" onclick="analiseDelete({{analise.id|safe}})" href="#"><i class="fas fa-times fa-fw"></i> Excluir</a></li>
+                      {% endif %}
+                    </ul>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12">{{analise.descricao}}</div>
+                  <div class="col-12 text-muted fs-8"><b>{{analise.created_by.username|title}}</b> em <b>{{analise.created_on|date:"d/m/y"}}</b></div>
+                </div>
+              </div>
+              {% empty %}
+              <p class="p-2">Nenhuma avaliação</p>                
+              {% endfor %}                
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% if staff.role == 'M' or analise.created_by == user %}
+
+<div class="modal fade" id="editar_modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="row">
+        <div class="col"><h5 class="ms-3 mt-3">Análise: <span class="text-purple" id="modal_analise_indicador_nome"></span></h5></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      </div>
+      <div class="modal-body">
+        <form id="modal_analise_form" action="{% url 'gestao_analise_update' %}" method="POST" autocomplete="off">
+          {% csrf_token %}
+          <div class="row g-1 mb-1">
+          	<div class="col-12">
+          		<textarea class="form-control" name="descricao" id="id_descricao" rows="4"></textarea>
+          	</div>
+          </div>
+          <div class="row g-1">
+          	<div class="mb-1 col-6">
+          		<select class="form-select form-select-sm bg-light" name="tipo" id="id_analise_tipo">
+                <option value="L">Lembrete</option>
+                <option value="M">Melhoria</option>
+                <option value="N">Não conforme</option>                
+              </select>
+          	</div>
+            <div class="col-6 pt-1 ps-2">
+              <div class="form-check form-switch">
+              	<input class="form-check-input" type="checkbox" role="switch" name="critico" id="id_critico">
+              	<label class="form-check-label" for="id_critico">Item crítico</label>
+              </div>              
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col text-end">
+              <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
+              <button type="submit" class="btn btn-primary">Gravar</button>
+            </div>
+          </div>
+          <input type="hidden" id="id_analise_editar" name="id" value="">
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="arquivar_modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="row">
+        <div class="col"><h5 class="ms-3 mt-3"><i class="fas fa-check text-success me-2"></i> Concluir Análise</h5></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'gestao_analise_movimentar' %}" method="POST" autocomplete="off">
+          {% csrf_token %}
+          <p>Confirma a conlusão da análise?</p>
+          <div class="row mt-2">
+            <div class="col text-end">
+              <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
+              <button type="submit" class="btn btn-success">Concluir</button>
+            </div>
+          </div>
+          <input type="hidden" name="operacao" value="concluir">
+          <input type="hidden" name="id" id="id_analise_arquivar" value="">
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="delete_modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="row">
+        <div class="col"><h5 class="ms-3 mt-3"><i class="fas fa-exclamation-triangle text-danger me-2"></i> Excluir Analise</h5></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'gestao_analise_delete' %}" method="POST" autocomplete="off">
+          {% csrf_token %}
+          <p><b class="text-danger">Atenção!!</b> Esta operação não pode ser desfeita, confirma a exclusão da análise?</p>
+          <div class="row mt-2">
+            <div class="col text-end">
+              <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
+              <button type="submit" class="btn btn-danger">Excluir</button>
+            </div>
+          </div>
+          <input type="hidden" name="id" id="id_analise_delete" value="">
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% include "_component/modal/loading.html" with message='Carregando indicadores....' id='analytics_loading' %}
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/url.js' %}"></script>
+{% endblock %}
+
+
+<script>
+  {% block add_script %}
+  var analytics_loading = new bootstrap.Modal(document.getElementById('analytics_loading'), {keyboard: false});
+  
+  var analises_list = document.querySelectorAll(".analise_menu");
+  for (var i = 0; i < analises_list.length; i++){
+    if(analises_list[i].childElementCount == 0){analises_list[i].parentElement.classList.add('d-none');}
+  }
+  
+  function analiseDelete(id){document.getElementById('id_analise_delete').value = id;}
+  function analiseArquivar(id){document.getElementById('id_analise_arquivar').value = id;}
+  
+  function analiseEditar(id, nome, tipo, critico, descricao){
+    try {
+      document.getElementById('id_analise_editar').value = id;
+      document.getElementById('modal_analise_indicador_nome').innerHTML = nome;
+      document.getElementById('id_analise_tipo').value = tipo;
+      let swt = document.getElementById('id_critico');
+      if(swt.checked && !critico || !swt.checked && critico){swt.click();}
+      document.getElementById('id_descricao').value = descricao;
+    }catch(e){console.log(e);}
+  }
+  
+  {% endblock %}
+</script>

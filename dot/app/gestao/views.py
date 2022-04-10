@@ -1,15 +1,17 @@
 # from django.http import HttpResponse
 # from json import dumps
+import re
+from django.urls import reverse
+from urllib.parse import urlencode
 from django.shortcuts import render, redirect
 from .models import Indicador, Apontamento, Staff, Diretriz, Label, Analise, Plano
-from .forms import IndicadorForm, ApontamentoForm, StaffForm, DiretrizForm, LabelForm, AnaliseForm, PlanoForm
+from .forms import IndicadorForm, ApontamentoForm, StaffForm, DiretrizForm, LabelForm, PlanoForm
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.contrib.auth.models import User
-from core.models import Log
+from core.models import Log, Empresa
 from core.extras import clean_request
 from datetime import date, datetime, timedelta
-
 
 # METODOS SHOW
 @login_required
@@ -42,19 +44,37 @@ def analytics(request):
         staff = Staff.objects.get(usuario=request.user)
         if not staff.role in ['M','E','G']:
             raise Exception('Perfil não liberado para este recurso')
-        indicadores = Indicador.objects.filter(ativo=True)
-        periodo = int(request.GET.get('periodo', 3))
-        meses = [date.today().strftime("%B").title()]
+        empresa = request.GET.get('empresa', None)
+        empresas = request.user.profile.empresas.all()
+        if empresa:
+            empresa = Empresa.objects.get(id=empresa)
+        elif empresas.count() > 0:
+            empresa = empresas.first()
+        else:
+            messages.warning(request,'É necessário ter pelo menos uma <b>empresa</b> habilitada para seu usuario')
+            return redirect('gestao_dashboard')
         now = datetime.now()
-        for _ in range(1, periodo):
+        current_month = now.month
+        current_year = now.year
+        metrics = {
+            'empresa':empresa,
+            'empresas':empresas,
+            'indicadores':Indicador.objects.filter(ativo=True).order_by('nome'),
+            'periodo':int(request.GET.get('periodo', 3)),
+            'meses':[date.today().strftime("%B").title()],
+            'referencias':[f'{now.year}_{str(now.month).zfill(2)}'],
+            'apontamento_form':ApontamentoForm(),
+        }
+        for _ in range(1, metrics['periodo']):
             now = now.replace(day=1) - timedelta(days=1)
-            meses.append(now.strftime("%B").title())
-        meses.reverse()
-        print(meses)
+            metrics['meses'].append(now.strftime("%B").title())
+            metrics['referencias'].append(f'{now.year}_{str(now.month).zfill(2)}')
+        metrics['meses'].reverse()
+        metrics['referencias'].reverse()
     except Exception as e:
         messages.error(request,f'<b>Erro</b> {e}')
         return redirect('gestao_dashboard')
-    return render(request,'gestao/analytics.html',{'staff':staff,'indicadores':indicadores})
+    return render(request,'gestao/analytics.html',{'staff':staff,'metrics':metrics})
     
 @login_required
 @permission_required('gestao.dashboard')
@@ -157,12 +177,31 @@ def analises(request):
     except Exception as e:
         messages.error(request,f'<b>Erro</b> {e}')
         return redirect('gestao_dashboard')
-    analises = Analise.objects.all().order_by('created_on')
-    if request.method == 'POST' and request.POST['pesquisa'] != '':
-        pass
-    else:
-        analises = analises.filter(concluido=False)        
-    return render(request,'gestao/analises.html', {'analises' : analises})
+    try:
+        analises = Analise.objects.all().order_by('created_on')
+        if request.GET.get('indicador', None):
+            analises = analises.filter(indicador__id=request.GET['indicador'])        
+        if request.GET.get('archive', None) != 'True':
+            analises = analises.filter(concluido=False)
+        if request.GET.get('empresa', None):
+            empresa = request.user.profile.empresas.get(id=request.GET['empresa'])
+            analises = analises.filter(empresa=empresa)
+        else:
+            empresa = None
+        metrics = {
+            'staff':staff,
+            'lembretes' : analises.filter(tipo='L'),
+            'melhorias' : analises.filter(tipo='M'),
+            'nao_conforme' : analises.filter(tipo='N'),
+            'empresa' : empresa
+        }
+    except Empresa.DoesNotExist as e:
+        messages.error(request,'Empresa não <b>encontrada ou não habilitada</b>')
+        return redirect('gestao_analises')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard')
+    return render(request,'gestao/analises.html', metrics)
 
 # METODOS ADD
 @login_required
@@ -196,8 +235,24 @@ def indicador_add(request):
         form = IndicadorForm()
     return render(request,'gestao/indicador_add.html',{'form':form})
 
+def gte(v1, v2, qmm=True):
+    if qmm:
+        if v1 > v2:
+            return 1
+        elif v2 > v1:
+            return -1
+        else:
+            return 0
+    else:
+        if v1 > v2:
+            return -1
+        elif v2 > v1:
+            return 1
+        else:
+            return 0
+
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.add_apontamento')
 def apontamento_add(request):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -211,23 +266,62 @@ def apontamento_add(request):
         if form.is_valid():
             try:
                 registro = form.save(commit=False)
-                registro.referencia = f"{request.POST['ano']}_{request.POST['mes']}"
-                registro.save()
-                l = Log()
-                l.modelo = "gestao.indicador"
-                l.objeto_id = registro.indicador.id
-                l.objeto_str = f'{registro.indicador.id}_{registro.referencia}'
-                l.usuario = request.user
-                l.mensagem = "APONTAMENTO ADD"
-                l.save()
-                messages.success(request,'Apontamento <b>inserido</b>')
-                return redirect('gestao_apontamento_add')
-            except:
-                messages.error(request,'Erro ao inserir apontamento')
-                return redirect('gestao_apontamento_add')
+                ano = request.POST['ano']
+                mes = request.POST['mes'].zfill(2)
+                # Verifica se ano e mes tem formato valido
+                if re.search('^(19|20)\d{2}$', ano) and mes in ['01','02','03','04','05','06','07','08','09','10','11','12']:
+                    registro.referencia = f"{ano}_{mes}"
+                    registro.meta = registro.indicador.meta
+                    # Levanta se indicador tem registro no mes anterior para comparar evolucao
+                    if int(mes) > 0:
+                        ultima_referencia = f"{ano}_{str(int(mes) - 1).zfill(2)}"
+                    else:
+                        ultima_referencia = f"{int(ano) - 1}_12"
+                    if Apontamento.objects.filter(empresa=registro.empresa,indicador=registro.indicador,referencia=ultima_referencia).exists():
+                        mes_anterior = Apontamento.objects.get(empresa=registro.empresa,indicador=registro.indicador,referencia=ultima_referencia)
+                        registro.evolucao = gte(float(registro.valor),float(mes_anterior.valor),registro.indicador.quanto_maior_melhor)
+                    else:
+                        registro.evolucao = 0
+                    # Verifica se apontamento ja existe, se sim faz update no registro atual
+                    if not Apontamento.objects.filter(empresa=registro.empresa,indicador=registro.indicador,referencia=registro.referencia).exists():
+                        registro.save()
+                        messages.success(request,'Apontamento <b>inserido</b>')
+                    else: # Caso exista, atualiza apontamento
+                        apontamento = Apontamento.objects.filter(empresa=registro.empresa,indicador=registro.indicador,referencia=registro.referencia).get()
+                        apontamento.valor = registro.valor
+                        apontamento.evolucao = registro.evolucao
+                        apontamento.save()
+                        registro = apontamento
+                        messages.success(request,'Apontamento <b>atualizado</b>')
+                    # Verifica se existe apontamentos posteriores ao lancado, se sim atualiza no mes subsequente
+                    if int(mes) < 12:
+                        proxima_referencia = f"{ano}_{str(int(mes) + 1).zfill(2)}"
+                    else:
+                        proxima_referencia = f"{int(ano) + 1}_01"
+                    if Apontamento.objects.filter(empresa=registro.empresa,indicador=registro.indicador,referencia=proxima_referencia).exists():
+                        apontamento_posterior = Apontamento.objects.filter(empresa=registro.empresa,indicador=registro.indicador,referencia=proxima_referencia).get()
+                        apontamento_posterior.evolucao = gte(float(apontamento_posterior.valor),float(registro.valor),registro.indicador.quanto_maior_melhor)
+                        apontamento_posterior.save()
+                    l = Log()
+                    l.modelo = "gestao.indicador"
+                    l.objeto_id = registro.indicador.id
+                    l.objeto_str = f'{registro.indicador.id}_{registro.referencia}'
+                    l.usuario = request.user
+                    l.mensagem = "APONTAMENTO ADD"
+                    l.save()
+                else:
+                    raise Exception('Período informado <b>inválido</b>')
+                base_url = reverse('gestao_analytics')
+                query_string =  urlencode({'empresa': registro.empresa.id})
+                url = '{}?{}'.format(base_url, query_string)
+                return redirect(url)
+            except Exception as e:
+                messages.error(request,f'Erro: {e}')
+                return redirect('gestao_analytics')
+        return render(request, 'core/index.html',{'form':form})
     else:
-        form = ApontamentoForm()
-    return render(request,'gestao/apontamento_add.html',{'form':form})
+        messages.error(request,'Operação inválida')
+        return redirect('index')
 
 @login_required
 @permission_required('gestao.staff')
@@ -281,7 +375,7 @@ def diretriz_add(request):
                 return redirect('gestao_diretriz_add')
             except:
                 messages.error(request,'Erro ao inserir diretriz')
-                return redirect('gestao_diretriz_add')
+                return redirect('gestao_diretriz_add')            
     else:
         form = DiretrizForm()
     return render(request,'gestao/diretriz_add.html',{'form':form})
@@ -328,27 +422,34 @@ def analise_add(request):
         messages.error(request,f'<b>Erro</b> {e}')
         return redirect('gestao_dashboard')
     if request.method == 'POST':
-        form = AnaliseForm(request.POST)
-        if form.is_valid():
-            try:
-                registro = form.save(commit=False)
-                registro.created_by = request.user
-                registro.save()
-                l = Log()
-                l.modelo = "gestao.analise"
-                l.objeto_id = registro.id
-                l.objeto_str = 'Nao aplicavel'
-                l.usuario = request.user
-                l.mensagem = "CREATED"
-                l.save()
-                messages.success(request,'Analise <b>' + registro.id + '</b> inserida')
-                return redirect('gestao_analise_add') # AQUI ESTA ERRADO !!!!
-            except:
-                messages.error(request,'Erro ao inserir analise')
-                return redirect('gestao_analise_add')
+        try:
+            analise = Analise()
+            analise.empresa = Empresa.objects.get(id=request.POST['empresa'])
+            analise.indicador = Indicador.objects.get(id=request.POST['indicador'])
+            if 'critico' in request.POST:
+                analise.critico = True
+            analise.tipo = request.POST['tipo']
+            analise.descricao = request.POST['descricao']
+            analise.created_by = request.user
+            analise.save()
+            l = Log()
+            l.modelo = "gestao.analise"
+            l.objeto_id = analise.id
+            l.objeto_str = f'{analise.id}_{analise.created_by.username.upper()}_{analise.created_on}'
+            l.usuario = request.user
+            l.mensagem = "CREATED"
+            l.save()
+            messages.success(request,f'Analise ID: <b>{analise.id}</b> inserida')
+            base_url = reverse('gestao_analytics')
+            query_string =  urlencode({'empresa': analise.empresa.id})
+            url = '{}?{}'.format(base_url, query_string)
+            return redirect(url)
+        except Exception as e:
+            messages.error(request,f'Erro: {e}')
+            return redirect('gestao_analytics')
     else:
-        form = AnaliseForm()
-    return render(request,'gestao/analise_add.html',{'form':form})
+        messages.error(request,'Requisição inválida')
+    return redirect('gestao_dashboard')
 
 @login_required
 @permission_required('gestao.dashboard')
@@ -404,20 +505,6 @@ def indicador_id(request,id):
     indicador = Indicador.objects.get(pk=id)
     form = IndicadorForm(instance=indicador)
     return render(request,'gestao/indicador_id.html',{'form':form,'indicador':indicador,'staff':staff})
-
-@login_required
-@permission_required('gestao.dashboard')
-def apontamento_id(request,id):
-    try:
-        staff = Staff.objects.get(usuario=request.user)
-        if not staff.role in ['M','E','G']:
-            raise Exception('Perfil não liberado para este recurso')
-    except Exception as e:
-        messages.error(request,f'<b>Erro</b> {e}')
-        return redirect('gestao_dashboard')
-    apontamento = Apontamento.objects.get(pk=id)
-    form = ApontamentoForm(instance=apontamento)
-    return render(request,'gestao/apontamento_id.html',{'form':form,'apontamento':apontamento})
 
 @login_required
 @permission_required('gestao.staff')
@@ -507,34 +594,6 @@ def indicador_update(request,id):
         return redirect('gestao_indicador_id', id)
     else:
         return render(request,'gestao/indicador_id.html',{'form':form,'indicador':indicador})
-
-@login_required
-@permission_required('gestao.dashboard')
-def apontamento_update(request,id):
-    try:
-        staff = Staff.objects.get(usuario=request.user)
-        apontamento = Apontamento.objects.get(pk=id)
-        if not staff.role in ['M','E','G']:
-            raise Exception('Perfil não liberado para este recurso')
-        if not staff.usuario.profile.allow_empresa(apontamento.empresa.id): # Verifica se usuario tem acesso a empresa
-            raise Exception('Empresa não habilitada para seu usuário')
-    except Exception as e:
-        messages.error(request,f'<b>Erro</b> {e}')
-        return redirect('gestao_dashboard')
-    form = ApontamentoForm(request.POST, instance=apontamento)
-    if form.is_valid():
-        registro = form.save()
-        l = Log()
-        l.modelo = "gestao.indicador"
-        l.objeto_id = registro.indicador.id
-        l.objeto_str = f'{registro.indicador.id}_{registro.referencia}'
-        l.usuario = request.user
-        l.mensagem = "APONTAMENTO UPDATE"
-        l.save()
-        messages.success(request,'Apontamento <b>alterado</b>')
-        return redirect('gestao_apontamento_id', id)
-    else:
-        return render(request,'gestao/apontamento_id.html',{'form':form,'apontamento':apontamento})
 
 @login_required
 @permission_required('gestao.staff')
@@ -659,29 +718,65 @@ def label_update(request,id):
 
 @login_required
 @permission_required('gestao.dashboard')
-def analise_update(request,id):
+def analise_update(request):
     try:
         staff = Staff.objects.get(usuario=request.user)
-        analise = Analise.objects.get(pk=id)
+        analise = Analise.objects.get(pk=request.POST['id'])
         if analise.created_by != request.user and not staff.role in ['M']:
             raise Exception(f'Só pode ser editada pelo <b>responsável</b>: {analise.created_by.username.title()}')
     except Exception as e:
         messages.error(request,f'<b>Erro</b> {e}')
         return redirect('gestao_dashboard')
-    form = AnaliseForm(request.POST, instance=analise)
-    if form.is_valid():
-        registro = form.save()
+    try:
+        analise.descricao = request.POST['descricao']
+        analise.tipo = request.POST['tipo']
+        if 'critico' in request.POST:
+            analise.critico = True
+        else:
+            analise.critico = False
+        analise.save()
         l = Log()
         l.modelo = "gestao.analise"
-        l.objeto_id = registro.id
-        l.objeto_str = 'Nao aplicavel'
+        l.objeto_id = analise.id
+        l.objeto_str = f'{analise.id}_{analise.created_by.username.upper()}_{analise.created_on}'
         l.usuario = request.user
         l.mensagem = "UPDATE"
         l.save()
-        messages.success(request,f'Analise <b>{registro.id}</b> alterada')
-        return redirect('gestao_analise_id', id)
-    else:
-        return render(request,'gestao/analise_id.html',{'form':form,'analise':analise})
+        messages.success(request,f'Analise <b>{analise.id}</b> alterada')
+    except Exception as e:
+        messages.error(request,f'<b>Erro:</b> {e}')
+    return redirect('gestao_analises')
+
+@login_required
+@permission_required('gestao.dashboard')
+def analise_movimentar(request):
+    try:
+        operacao = request.POST['operacao']
+        staff = Staff.objects.get(usuario=request.user)
+        analise = Analise.objects.get(id=request.POST['id'])
+        if not staff.role in ['M'] and analise.created_by != request.user:
+            raise Exception(f'Somente o responsável pode editar: <b>{analise.created_by.username.title()}</b>')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_analises')
+    try:
+        l = Log()
+        l.modelo = "gestao.analise"
+        l.objeto_id = analise.id
+        l.objeto_str = f'{analise.id}_{analise.created_by.username.upper()}_{analise.created_on}'
+        l.usuario = request.user
+        if operacao == 'concluir':
+            analise.concluido = True
+            l.mensagem = "CONCLUIDO"
+            messages.success(request,f'Análise <b>concluída</b>')
+        else:
+            messages.error(request,f'Operação <b>inválida</b>')
+            return redirect('gestao_analises')
+        analise.save()
+        l.save()
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b>: {e}')
+    return redirect('gestao_analises')
 
 @login_required
 @permission_required('gestao.dashboard')
@@ -693,6 +788,8 @@ def plano_update(request,id):
             raise Exception(f'Somente o <b>responsável ou gestor</b> pode editar este plano')
         if not staff.usuario.profile.allow_empresa(plano.diretriz.empresa.id): # Verifica se usuario tem acesso a empresa
             raise Exception('Empresa não habilitada para seu usuário')
+        if plano.bloqueado and not staff.role == 'M':
+            raise Exception('Plano bloqueado para edição')
     except Exception as e:
         messages.error(request,f'<b>Erro</b> {e}')
         return redirect('gestao_dashboard')
@@ -718,7 +815,7 @@ def plano_movimentar(request,id):
     try:
         staff = Staff.objects.get(usuario=request.user)
         plano = Plano.objects.get(id=id)
-        if operacao == 'execucao' and not staff.role in ['M','E']:
+        if operacao in ['execucao','lock','unlock'] and not staff.role in ['M','E']:
             raise Exception('Perfil não liberado para este recurso')
         if operacao == 'revisao' and not staff.role in ['M','E'] and request.user != plano.responsavel.usuario:
             raise Exception('Somente o responsável pode enviar para revisão')
@@ -737,6 +834,12 @@ def plano_movimentar(request,id):
         elif operacao == 'execucao':
             plano.status = 'E'
             l.mensagem = "RETORNADO"
+        elif operacao == 'lock':
+            plano.bloqueado = True
+            l.mensagem = "BLOQUEADO"
+        elif operacao == 'unlock':
+            plano.bloqueado = False
+            l.mensagem = "DESBLOQUEADO"
         else:
             messages.error(request,f'Operação <b>inválida</b>')
             return redirect('gestao_dashboard')
@@ -899,30 +1002,29 @@ def label_delete(request,id):
 
 @login_required
 @permission_required('gestao.dashboard')
-def analise_delete(request,id):
+def analise_delete(request):
     try:
         staff = Staff.objects.get(usuario=request.user)
-        analise = Analise.objects.get(pk=id)
-        if analise.created_by != request.user and not staff.role in ['M']:
-            raise Exception(f'Só pode ser excluida pelo <b>responsável</b>: {analise.created_by.username.title()}')
+        analise = Analise.objects.get(pk=request.POST['id'])
+        if analise.created_by != request.user and not staff.role == 'M':
+            raise Exception(f'Só pode ser excluida pelo responsável: <b>{analise.created_by.username.title()}</b>')
     except Exception as e:
         messages.error(request,f'<b>Erro</b> {e}')
-        return redirect('gestao_dashboard')
+        return redirect('gestao_analises')
     try:
-        registro = Analise.objects.get(pk=id)
         l = Log()
         l.modelo = "gestao.analise"
-        l.objeto_id = registro.id
-        l.objeto_str = 'Nao aplicavel'
+        l.objeto_id = analise.id
+        l.objeto_str = f'{analise.id}_{analise.created_by.username.upper()}_{analise.created_on}'
         l.usuario = request.user
         l.mensagem = "DELETE"
-        registro.delete()
+        analise.delete()
         l.save()
         messages.warning(request,f'Analise <b>apagada</b>. Essa operação não pode ser desfeita')
         return redirect('gestao_analises')
     except:
         messages.error(request,'ERRO ao apagar analise')
-        return redirect('gestao_analise_id', id)
+        return redirect('gestao_analises')
 
 @login_required
 @permission_required('gestao.dashboard')

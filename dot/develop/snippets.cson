@@ -487,3 +487,7 @@
   'Doc PY':
     'prefix': 'doc'
     'body':'# Descreva o contexto do codigo em poucas linhas\n# --\n# @version  1.0\n# @since    05/03/2022\n# @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }\n# @desc     Decricao abreviada do codigo\n# @param    {Int} Parametro do codigo\n# @returns  {Array} Retorno da funcao\n# @throws   Excessoes lancadas pela funcao\n# @example  Exemplo de utilizacao da funcao\n# @see      {@link https://foo.com}\n'
+  
+  'Redirect Variables':
+    'prefix': 'redirect_extra'
+    'body':'#from django.urls import reverse\n#from urllib.parse import urlencode\nbase_url = reverse(\'globus_settings\')\nquery_string =  urlencode({\'empresa\': registro.empresa.id})\nurl = \'{}?{}\'.format(base_url, query_string)\nreturn redirect(url)'

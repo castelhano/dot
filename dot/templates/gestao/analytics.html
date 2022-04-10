@@ -19,9 +19,16 @@
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
-      <li class="nav-item"><a class="nav-link text-muted" href="{% url 'gestao_dashboard' %}"><i class="fas fa-columns"></i></a></li>
-      <li class="nav-item ms-1" title="Roadmap"><a class="nav-link text-success" href="{% url 'gestao_roadmap' %}"><i class="fas fa-sliders-h"></i></a></li>
-      <li class="nav-item ms-1" title="Analytics"><a class="nav-link text-purple active disabled" href="#"><i class="fas fa-chart-bar me-1"></i> <small class="fw-bold">Analytics</small></a></li>
+      <li class="nav-item" title="Dashboard"><a id="dashboard_link" class="nav-link text-muted" href="{% url 'gestao_dashboard' %}"><i class="fas fa-columns"></i></a></li>
+      <li class="nav-item ms-1" title="Roadmap"><a id="roadmap_link" class="nav-link text-success" href="{% url 'gestao_roadmap' %}"><i class="fas fa-sliders-h"></i></a></li>
+      <li class="nav-item ms-1" title="Analytics">
+        <div id="analytics_menu_extra_container">
+          <a class="nav-link text-purple active" data-bs-toggle="dropdown" data-bs-offset="50,5" href="#"><i class="fas fa-chart-bar me-1"></i> <small class="fw-bold">Analytics</small><i class="fas fa-caret-down ms-2"></i></a>
+          <ul id="analytics_menu_extra" class="dropdown-menu dropdown-menu-end fs-7">
+            <li><a class="dropdown-item pointer" href="{% url 'gestao_analises' %}"><i class="fas fa-check-double fa-fw"></i>Análises</a></li>
+          </ul>
+        </div>
+      </li>
     </ul>
   </div>
   <div class="card-body tab-content">
@@ -30,10 +37,11 @@
     <div class="row mb-2 g-1">
       <div class="col-auto">
         <div class="dropdown">
-          <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown"><label class="fw-bold text-capitalize" dot-data="view" default="analise"></label></button>
+          <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown"><label class="fw-bold text-capitalize pointer">{{metrics.empresa.nome|default:'Empresa'}}</label></button>
           <ul class="dropdown-menu fs-7">
-            <li><span class="dropdown-item pointer">Analise</span></li>
-            <li><span class="dropdown-item pointer">Edicao</span></li>
+            {% for empresa in metrics.empresas %}
+            <li><span class="dropdown-item pointer" onclick="filter('empresa',{{empresa.id}})">{{empresa.nome}}</span></li>
+            {% endfor %}            
           </ul>
         </div>
       </div>
@@ -47,41 +55,68 @@
           </ul>
         </div>
       </div>
+      {% if perms.gestao.add_apontamento %}
+      <div class="col-auto">
+        <a class="btn btn-sm btn-purple" id="add" data-bs-toggle="modal" data-bs-target="#apontamento_modal" onclick="setTimeout(function(){document.getElementById('id_indicador').focus();},480);" href="#"><i class="fas fa-pen"></i></a>        
+      </div>
+      {% endif %}
     </div>
     <div class="tab-pane fade show active" id="base" role="tabpanel">
+      {% if metrics.empresa %}
       <table class="table border table-hover">
         <thead>
           <tr>
             <th>Indicador</th>
             <th>Meta</th>
-            <th>Maio</th>
+            {% for mes in metrics.meses %}
+            <th>{{mes}}</th>
+            {% endfor %}
           </tr>
         </thead>
         <tbody>
-          {% for indicador in indicadores %}
+          {% for indicador in metrics.indicadores %}
           <tr>
-            <td><h6>{{indicador.nome}}</h6><small>{{indicador.quanto_maior_melhor|yesno:'1,-1'|indicatorArrow|safe}} melhor</small></td>
+            {% call_method indicador 'analises_pendentes' metrics.empresa.id as analises_pendentes %}
+            <td><h6>{{indicador.nome}}</h6><small>{{indicador.quanto_maior_melhor|yesno:'1,-1'|indicatorArrow|safe}} melhor{% if staff.role == 'E' or staff.role == 'M' %}<span class="badge bg-purple ms-2 pointer" data-bs-toggle="modal" data-bs-target="#analise_modal" onclick="analiseAdd({{indicador.id|safe}},'{{indicador.nome}}')"><i class="fas fa-plus me-2"></i>{{analises_pendentes.count}}</span>{% endif %}</small></td>
             <td><h6>{{indicador.meta}}</h6><small>{{indicador.medida}}</small></td>
-            <td><h6>--</h6><small>{{-1|indicatorArrow|safe}} 2,5%</small></td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+            {% for referencia in metrics.referencias %}
+            {% call_method indicador 'get_apontamento' referencia metrics.empresa.id as apontamento %}
+            <td><h6>
+              <span class="me-1{% if apontamento.indicador.quanto_maior_melhor and apontamento.valor >= apontamento.meta or not apontamento.indicador.quanto_maior_melhor and apontamento.valor <= apontamento.meta %} text-success{% else %} text-danger{% endif %}">{{apontamento.valor|default:'--'}}</span> {{apontamento.evolucao|indicatorArrow|safe}}</h6><small>{% if apontamento.valor and apontamento.meta %}Meta: <b>{{apontamento.meta|default:'--'}}</b>{% endif %}</small></td>
+              {% endfor %}
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="3">Nenhum indicador ativo</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <p class="mt-4">Selecione uma empresa</p>
+        {% endif %}
+      </div>
     </div>
   </div>
-</div>
-{% include "_component/modal/loading.html" with message='Preocessando....' %}
-{% endblock%}
-
-{% block add_script_src %}
-<script src="{% static 'js/url.js' %}"></script>
-<script src="{% static 'js/interpolate.js' %}"></script>
-{% endblock %}
-
-<script>
-  {% block add_script %}
-  var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
   
-  urlPlot();
+  {% include "gestao/_modais_analytics.html" %}
+  {% include "_component/modal/loading.html" with message='Salvando....' %}
+  {% endblock%}
+  
+  {% block add_script_src %}
+  <script src="{% static 'js/url.js' %}"></script>
+  <script src="{% static 'js/interpolate.js' %}"></script>
+  <script src="{% static 'js/vendor/mask.js' %}"></script>
   {% endblock %}
-</script>
+  
+  <script>
+    {% block add_script %}
+    var TAB_ON_ENTER = true;
+    SHORTCUT_MAP['1FTF'] = '#dashboard_link';
+    SHORTCUT_MAP['2FTF'] = '#roadmap_link';
+    var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
+    
+    urlPlot();
+    {% if perms.gestao.add_apontamento %}VMasker(document.getElementById("id_valor")).maskMoney();{% endif %}
+    {% endblock %}
+  </script>

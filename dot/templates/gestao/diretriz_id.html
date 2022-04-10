@@ -47,6 +47,12 @@
                 <label for="id_analise">Analise</label>
               </div>
             </div>
+            <div class="row g-1">
+            	<div class="col-12 mb-2">
+            		<textarea name="name" class="form-control fs-7" rows="4" disabled>{{diretriz.analise.descricao}}</textarea>
+                {% if diretriz.analise.concluido %}<small><b class="text-danger">Atenção!</b> Análise já concluída</small>{% endif %}
+            	</div>
+            </div>
           </div>
           <div class="col-lg">
             {{ form.detalhe }}

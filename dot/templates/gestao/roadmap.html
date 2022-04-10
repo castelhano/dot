@@ -6,13 +6,13 @@
 {% block model_menu %}{% include "_component/menu/gestao.html" %}{% endblock%}
 
 {% block content_fluid %}
-<a class="d-none" id="clear" href="{% url 'gestao_analytics' %}"></a>
+<a class="d-none" id="clear" href="{% url 'gestao_roadmap' %}"></a>
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
-      <li class="nav-item"><a class="nav-link text-muted" href="{% url 'gestao_dashboard' %}"><i class="fas fa-columns"></i></a></li>
-      <li class="nav-item ms-1" title="Roadmap"><a class="nav-link text-success active disabled" href="#"><i class="fas fa-sliders-h me-1"></i> <small class="fw-bold">Roadmap</small></a></li>
-      <li class="nav-item ms-1" title="Analytics"><a class="nav-link text-purple" href="{% url 'gestao_analytics' %}"><i class="fas fa-chart-bar"></i></a></li>
+      <li class="nav-item" title="Dashboard"><a id="dashboard_link" class="nav-link text-muted" href="{% url 'gestao_dashboard' %}"><i class="fas fa-columns"></i></a></li>
+      <li class="nav-item ms-1"><a class="nav-link text-success active disabled" href="#"><i class="fas fa-sliders-h me-1"></i> <small class="fw-bold">Roadmap</small></a></li>
+      <li class="nav-item ms-1" title="Analytics"><a id="analytics_link" class="nav-link text-purple" href="{% url 'gestao_analytics' %}"><i class="fas fa-chart-bar"></i></a></li>
     </ul>
   </div>
   <form id="app_form" action="url" method="POST" autocomplete="off">
@@ -24,13 +24,15 @@
     </div>
   </form>
 </div>
-{% include "_component/modal/loading.html" with message='Preocessando....' %}
+{% include "_component/modal/loading.html" with message='Processando requisição....' %}
 {% endblock%}
 
 {% block add_script_src %}{% endblock %}
 
 <script>
   {% block add_script %}
+  SHORTCUT_MAP['1FTF'] = '#dashboard_link';
+  SHORTCUT_MAP['3FTF'] = '#analytics_link';
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
   {% endblock %}
 </script>

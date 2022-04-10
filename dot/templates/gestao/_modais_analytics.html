@@ -1,0 +1,113 @@
+{% if perms.gestao.add_apontamento %}
+<div class="modal fade" id="apontamento_modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="row">
+        <div class="col"><h5 class="ms-3 mt-3"><i class="fas fa-arrow-right text-success"></i> Apontamento</h5></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      </div>
+      <div class="modal-body">
+        <form id="modal_avaliacao_form" action="{% url 'gestao_apontamento_add' %}" method="POST" autocomplete="off" onsubmit="return apontamentoSubmit();">
+          {% csrf_token %}
+          <div class="row g-1">
+          	<div class="form-floating mb-1 col-12">
+          		{{ metrics.apontamento_form.indicador }}
+          		<label for="id_indicador">Indicador</label>
+          	</div>
+          </div>
+          <div class="row g-1">
+            <div class="form-floating mb-lg-1 col">
+          		<input type="number" class="form-control" name="ano" id="id_ano" min="1900" max="2099" value="">
+          		<label for="id_ano">Ano</label>
+          	</div>
+          	<div class="form-floating mb-lg-1 col">
+          		<input type="number" class="form-control" name="mes" id="id_mes" min="1" max="12" value="">
+          		<label for="id_mes">Mês</label>
+          	</div>
+          	<div class="form-floating mb-1 col">
+          		{{ metrics.apontamento_form.valor }}
+          		<label for="id_valor">Valor</label>
+          	</div>
+          </div>          
+          <div class="row mt-2">
+            <div class="col text-end">
+              <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
+              <button type="submit" class="btn btn-primary">Gravar</button>
+            </div>
+          </div>
+          <input type="hidden" name="empresa" value="{{metrics.empresa.id|safe}}">
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function apontamentoSubmit(){
+    try {
+      modal_loading.show();
+      document.getElementById('id_valor').value = parseFloat(document.getElementById('id_valor').value.replace('.','').replace(',','.'));
+      return true;
+    }catch(e){console.log(e);return false;}    
+  }
+  document.getElementById('id_ano').value = new Date().getFullYear();
+  document.getElementById('id_mes').value = new Date().getMonth() + 1;
+</script>
+{% endif %}
+
+{% if staff.role == 'M' or staff.role == 'E' %}
+<div class="modal fade" id="analise_modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="row">
+        <div class="col"><h5 class="ms-3 mt-3">Análise: <span class="text-purple" id="modal_analise_indicador_nome"></span></h5></div>
+        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      </div>
+      <div class="modal-body">
+        <form id="modal_analise_form" action="{% url 'gestao_analise_add' %}" method="POST" autocomplete="off">
+          {% csrf_token %}
+          <div class="row g-1 mb-1">
+          	<div class="col-12">
+          		<textarea class="form-control" name="descricao" id="id_descricao" rows="4"></textarea>
+          	</div>
+          </div>
+          <div class="row g-1">
+          	<div class="mb-1 col-6">
+          		<select class="form-select form-select-sm bg-light" name="tipo" id="id_analise_tipo">
+                <option value="L">Lembrete</option>
+                <option value="M">Melhoria</option>
+                <option value="N">Não conforme</option>                
+              </select>
+          	</div>
+            <div class="col-6 pt-1 ps-2">
+              <div class="form-check form-switch">
+              	<input class="form-check-input" type="checkbox" role="switch" name="critico" id="id_critico">
+              	<label class="form-check-label" for="id_critico">Item crítico</label>
+              </div>              
+            </div>
+          </div>
+           
+          <div class="row mt-3">
+            <div class="col text-end">
+              <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
+              <button type="submit" class="btn btn-primary">Gravar</button>
+            </div>
+          </div>
+          <input type="hidden" name="empresa" value="{{metrics.empresa.id|safe}}">
+          <input type="hidden" id="id_indicador_analise" name="indicador" value="">
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function analiseAdd(id, nome){
+    try {
+      document.getElementById('id_indicador_analise').value = id;
+      document.getElementById('modal_analise_indicador_nome').innerHTML = nome;
+      setTimeout(function(){document.getElementById('id_descricao').focus();},480);
+    }catch(e){console.log(e);}
+  }
+</script>
+{% endif %}

@@ -16,11 +16,13 @@ class Indicador(models.Model):
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='gestao.indicador',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
-    def get_apontamento(self, ref):
+    def get_apontamento(self, ref, empresa):
         try:
-            return Apontamento.objects.get(indicador=self, referencia=ref)
+            return Apontamento.objects.get(indicador=self, referencia=ref, empresa__id=empresa)
         except Exception as e:
             return None
+    def analises_pendentes(self, empresa):
+        return Analise.objects.filter(indicador=self,empresa__id=empresa,concluido=False).order_by('created_on')
     class Meta:
         default_permissions = []
 
@@ -37,7 +39,7 @@ class Apontamento(models.Model):
     meta = models.DecimalField(default=None, max_digits=10, decimal_places=2)
     evolucao = models.IntegerField(choices=EVOLUCAO_CHOICES, blank=True, null=True)
     class Meta:
-        default_permissions = []
+        default_permissions = ['add']
 
 class Staff(models.Model):
     ROLE_CHOICES = (
@@ -91,6 +93,7 @@ class Analise(models.Model):
     )
     empresa = models.ForeignKey(Empresa, blank=True, null=True, on_delete=models.RESTRICT)
     indicador = models.ForeignKey(Indicador, on_delete=models.RESTRICT)
+    tipo = models.CharField(max_length=3,choices=TIPO_CHOICES, default='L')
     descricao = models.TextField(blank=False)
     critico = models.BooleanField(default=False)
     concluido = models.BooleanField(default=False)
@@ -147,6 +150,7 @@ class Plano(models.Model):
     conclusao = models.IntegerField(default=0)
     avaliacao = models.IntegerField(default=0)
     labels = models.ManyToManyField(Label)
+    bloqueado = models.BooleanField(default=False)
     created_on = models.DateField(blank=True, null=True, default=datetime.today)
     created_by = models.ForeignKey(User, related_name='plano_created_by', blank=True, null=True, on_delete=models.RESTRICT)
     def ultimas_alteracoes(self):

@@ -6,6 +6,14 @@ import datetime
 
 register = template.Library()
 
+@register.simple_tag
+def call_method(obj, method_name, *args):
+    try:
+        method = getattr(obj, method_name)
+        return method(*args)
+    except Exception as e:
+        return 'err'
+    
 @register.filter
 def add_days(value, days):
     return value + datetime.timedelta(days=days)
@@ -31,11 +39,6 @@ def zfill(valor,casas):
     return str(valor).zfill(int(casas))
 
 @register.filter
-def get_field(objeto,field):
-    # NAO ACEITA METODOS
-    return getattr(objeto, field)
-
-@register.filter
 def dict_value(dict,key):
     return dict.get(key)
 
@@ -47,12 +50,15 @@ def dict_value(dict,key):
 # @example  obj.value|indicatorArrow|safe ou obj.value|indicatorArrow:True|safe
 @register.filter
 def indicatorArrow(value, maior_melhor=True):
-    if int(value) < 0:
-        return f'<i class="fas fa-arrow-down text-danger"></i>' if maior_melhor else f'<i class="fas fa-arrow-down text-success"></i>'
-    elif int(value) > 0:
-        return f'<i class="fas fa-arrow-up text-success"></i>' if maior_melhor else f'<i class="fas fa-arrow-up text-danger"></i>'
-    else:
-        return f'<i class="fas fa-minus text-secondary"></i>'
+    try:
+        if int(value) < 0:
+            return f'<i class="fas fa-arrow-down text-danger"></i>' if maior_melhor else f'<i class="fas fa-arrow-down text-success"></i>'
+        elif int(value) > 0:
+            return f'<i class="fas fa-arrow-up text-success"></i>' if maior_melhor else f'<i class="fas fa-arrow-up text-danger"></i>'
+        else:
+            return f'<i class="fas fa-minus text-muted"></i>'
+    except Exception as e:
+        return ''
 
 # filter stars
 # @desc     Retorna icone de stars correspondente a quantidade informada (use filter |safe para exibir html correspondente)

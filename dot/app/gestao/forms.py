@@ -18,8 +18,8 @@ class IndicadorForm(forms.ModelForm):
 class ApontamentoForm(forms.ModelForm):
     class Meta:
         model = Apontamento
-        fields = ['empresa','indicador','referencia','valor','meta']
-    indicador = forms.ModelChoiceField(error_messages={'required': 'Selecione o indicador'}, queryset = Indicador.objects.filter(ativo=True).order_by('nome'), widget=forms.Select(attrs={'class':'form-select','autofocus':'autofocus'}))
+        fields = ['empresa','indicador','valor']
+    indicador = forms.ModelChoiceField(error_messages={'required': 'Selecione o indicador'}, queryset = Indicador.objects.filter(ativo=True).order_by('nome'), widget=forms.Select(attrs={'class':'form-select'}))
     valor = forms.DecimalField(required=False,initial=0,widget=forms.TextInput(attrs={'class': 'form-control','onfocus':'this.select();'}))
     meta = forms.DecimalField(required=False,initial=0,widget=forms.TextInput(attrs={'class': 'form-control','onfocus':'this.select();'}))
 
@@ -46,15 +46,6 @@ class LabelForm(forms.ModelForm):
     nome = forms.CharField(error_messages={'required': 'Informe o nome da label'}, max_length=15, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'','autofocus':'autofocus','onkeyup':'labelPreview()'}))
     cor = forms.CharField(required=False, initial='#F1F1F1', widget=forms.TextInput(attrs={'class': 'form-control','type':'color','onchange':'labelPreview()'}))
     fonte = forms.CharField(required=False, initial='#000', widget=forms.TextInput(attrs={'class': 'form-control','type':'color','onchange':'labelPreview()'}))
-
-class AnaliseForm(forms.ModelForm):
-    class Meta:
-        model = Analise
-        fields = ['empresa','indicador','descricao','critico','concluido']
-    indicador = forms.ModelChoiceField(error_messages={'required': 'Selecione o indicador'}, queryset = Indicador.objects.filter(ativo=True).order_by('nome'), widget=forms.Select(attrs={'class':'form-select','autofocus':'autofocus'}))
-    descricao = forms.CharField(error_messages={'required': 'É necessário informar algo na descrição'}, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'Detalhamento', 'style':'min-height:300px'}))
-    critico = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
-    concluido = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
 
 class PlanoForm(forms.ModelForm):
     class Meta:
