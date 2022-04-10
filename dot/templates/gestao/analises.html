@@ -56,7 +56,7 @@
                   <div class="col-auto">
                     <a class="text-muted px-2" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu dropdown-menu-end fs-7 analise_menu">
-                      {% if staff.role == 'M' or analise.created_by == user %}
+                      {% if staff.role == 'M' or staff.role == 'E' and analise.created_by == user %}
                       <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#editar_modal" onclick="analiseEditar('{{analise.id|safe}}','{{analise.indicador.nome}}','{{analise.tipo}}',{{analise.critico|yesno:'true,false'}},'{{analise.descricao}}')" href="#"><i class="fas fa-pen fa-fw"></i> Editar</a></li>
                       <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#arquivar_modal" onclick="analiseArquivar({{analise.id|safe}})" href="#"><i class="fas fa-check text-success fa-fw"></i> Concluir</a></li>
                       <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal" onclick="analiseDelete({{analise.id|safe}})" href="#"><i class="fas fa-times fa-fw"></i> Excluir</a></li>
@@ -91,7 +91,7 @@
                   <div class="col-auto">
                     <a class="text-muted px-2" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu dropdown-menu-end analise_menu fs-7">
-                      {% if staff.role == 'M' or analise.created_by == user %}
+                      {% if staff.role == 'M' or staff.role == 'E' and analise.created_by == user %}
                       <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#editar_modal" onclick="analiseEditar('{{analise.id|safe}}','{{analise.indicador.nome}}','{{analise.tipo}}',{{analise.critico|yesno:'true,false'}},'{{analise.descricao}}')" href="#"><i class="fas fa-pen fa-fw"></i> Editar</a></li>
                       <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#arquivar_modal" onclick="analiseArquivar({{analise.id|safe}})" href="#"><i class="fas fa-check text-success fa-fw"></i> Concluir</a></li>
                       <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal" onclick="analiseDelete({{analise.id|safe}})" href="#"><i class="fas fa-times fa-fw"></i> Excluir</a></li>
@@ -121,13 +121,12 @@
               {% for analise in lembretes %}
               <div class="border-top border-bottom p-2 mt-2 bg-light">
                 <div class="row">
-                  <div class="col"><b>{{analise.indicador.nome}}</b> <span class="badge bg-dark ms-1"><b>{{analise.id}}</b></span><span class="badge bg-orange ms-1">{{analise.empresa.nome}}</span>{% if analise.critico %}<span class="badge bg-danger ms-1">Critico</span>{% endif %}</div>
+                  <div class="col"><b>{{analise.indicador.nome}}</b> <span class="badge bg-orange ms-1">{{analise.empresa.nome}}</span>{% if analise.critico %}<span class="badge bg-danger ms-1">Critico</span>{% endif %}</div>
                   <div class="col-auto">
                     <a class="text-muted px-2" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu dropdown-menu-end analise_menu fs-7">
-                      {% if staff.role == 'M' or analise.created_by == user %}
+                      {% if staff.role == 'M' or staff.role == 'E' and analise.created_by == user %}
                       <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#editar_modal" onclick="analiseEditar('{{analise.id|safe}}','{{analise.indicador.nome}}','{{analise.tipo}}',{{analise.critico|yesno:'true,false'}},'{{analise.descricao}}')" href="#"><i class="fas fa-pen fa-fw"></i> Editar</a></li>
-                      <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#arquivar_modal" onclick="analiseArquivar({{analise.id|safe}})" href="#"><i class="fas fa-check text-success fa-fw"></i> Concluir</a></li>
                       <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal" onclick="analiseDelete({{analise.id|safe}})" href="#"><i class="fas fa-times fa-fw"></i> Excluir</a></li>
                       {% endif %}
                     </ul>
@@ -139,7 +138,7 @@
                 </div>
               </div>
               {% empty %}
-              <p class="p-2">Nenhuma avaliação</p>                
+              <p class="p-2">Nenhume lembrete</p>                
               {% endfor %}                
             </div>
           </div>

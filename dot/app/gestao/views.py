@@ -9,7 +9,7 @@ from .forms import IndicadorForm, ApontamentoForm, StaffForm, DiretrizForm, Labe
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.contrib.auth.models import User
-from core.models import Log, Empresa
+from core.models import Log, Empresa, Alerta
 from core.extras import clean_request
 from datetime import date, datetime, timedelta
 
@@ -190,7 +190,7 @@ def analises(request):
             empresa = None
         metrics = {
             'staff':staff,
-            'lembretes' : analises.filter(tipo='L'),
+            'lembretes' : analises.filter(tipo='L', created_by=request.user),
             'melhorias' : analises.filter(tipo='M'),
             'nao_conforme' : analises.filter(tipo='N'),
             'empresa' : empresa
@@ -371,6 +371,16 @@ def diretriz_add(request):
                 l.usuario = request.user
                 l.mensagem = "CREATED"
                 l.save()
+                # Cria alerta para pessoal na staff sobre nova diretriz
+                staffs = Staff.objects.filter(usuario__is_active=True, usuario__profile__empresas=registro.empresa).exclude(usuario=request.user)
+                params = {
+                    'titulo':'Nova Diretriz criada',
+                    'mensagem':f'<b>{registro.titulo}</b><br />Empresa: <b>{registro.empresa.nome}</b> <br />Indicador: <b>{registro.indicador.nome}</b>',
+                    'link': 'gestao_dashboard'
+                }
+                for item in staffs:
+                    params['usuario'] = item.usuario                    
+                    Alerta.objects.create(**params)
                 messages.success(request,'Diretriz <b>' + str(registro.id) + '</b> criada')
                 return redirect('gestao_diretriz_add')
             except:
@@ -439,6 +449,17 @@ def analise_add(request):
             l.usuario = request.user
             l.mensagem = "CREATED"
             l.save()
+            # Se analise for nao conforme ou melhoria gera alerta para staffs no grupo Manager informando da nova analise
+            if analise.tipo in ['N','M']:
+                staffs = Staff.objects.filter(role__in=['M','E','G'], usuario__is_active=True).exclude(usuario=analise.created_by)
+                params = {
+                    'titulo':'Nova análise crítica inserida',
+                    'mensagem':f'ID: <b>{analise.id}</b> <br />Tipo: <b>{analise.get_tipo_display()}</b> <br />Critico: <b>{analise.critico}</b> <br />Responsável: <b>{analise.created_by.username.title()}</b>',
+                    'link': 'gestao_analises'
+                }
+                for item in staffs:
+                    params['usuario'] = item.usuario                    
+                    Alerta.objects.create(**params)
             messages.success(request,f'Analise ID: <b>{analise.id}</b> inserida')
             base_url = reverse('gestao_analytics')
             query_string =  urlencode({'empresa': analise.empresa.id})
@@ -638,7 +659,7 @@ def diretriz_update(request,id):
         messages.success(request,f'Diretriz <b>{registro.id}</b> alterada')
         return redirect('gestao_diretriz_id', id)
     else:
-        return render(request,'gestao/diretriz_id.html',{'form':form,'diretriz':diretriz})
+        return render(request,'gestao/diretriz_id.html',{'form':form,'diretriz':diretriz,'staff':staff})
 
 @login_required
 @permission_required('gestao.dashboard')

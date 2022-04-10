@@ -22,7 +22,7 @@ class Indicador(models.Model):
         except Exception as e:
             return None
     def analises_pendentes(self, empresa):
-        return Analise.objects.filter(indicador=self,empresa__id=empresa,concluido=False).order_by('created_on')
+        return Analise.objects.filter(indicador=self,empresa__id=empresa,concluido=False).exclude(tipo='L').order_by('created_on')
     class Meta:
         default_permissions = []
 
@@ -158,9 +158,9 @@ class Plano(models.Model):
         return reversed(logs)
     def staff_disponivel(self):
         if self.id:
-            return Staff.objects.all().exclude(usuario__is_active=False).exclude(id__in=self.staff.all())
+            return Staff.objects.filter(usuario__profile__empresas=self.diretriz.empresa).exclude(usuario__is_active=False).exclude(id__in=self.staff.all())
         else:
-            return Staff.objects.all().exclude(usuario__is_active=False)
+            return Staff.objects.filter(usuario__profile__empresas=self.diretriz.empresa).exclude(usuario__is_active=False)
     def labels_disponiveis(self):
         if self.id:
             return Label.objects.all().exclude(id__in=self.labels.all())

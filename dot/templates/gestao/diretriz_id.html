@@ -15,7 +15,7 @@
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
         <ul class="dropdown-menu">
           <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#history_modal">Historico</a></li>
-          {% if perms.gestao.delete_diretriz %}
+          {% if staff.role == 'M' %}
           <li><hr class="dropdown-divider"></li>
           <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal">Excluir Diretriz</a></li>
           {% endif %}
