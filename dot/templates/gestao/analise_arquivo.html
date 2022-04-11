@@ -50,9 +50,9 @@
             <th>Responsavel</th>
             <th class="d-none">Empresa</th>
             <th class="d-none">Tipo</th>
-            <th>Indicador</th>
+            <th class="d-none d-sm-table-cell">Indicador</th>
             <th>Criado em</th>
-            <th>Critico</th>
+            <th class="d-none d-md-table-cell">Critico</th>
             <th>&nbsp;</th>
           </tr>
         </thead>
@@ -63,9 +63,9 @@
             <td>{{analise.created_by.username|title}}</td>
             <td class="d-none">{{analise.empresa.nome}}</td>
             <td class="d-none">{{analise.get_tipo_display}}</td>
-            <td>{{analise.indicador.nome}}</td>
+            <td class="d-none d-sm-table-cell">{{analise.indicador.nome}}</td>
             <td>{{analise.created_on|date:'d/m/Y'}}</td>
-            <td>{{analise.critico|yesno:'Critico,--'}}</td>
+            <td class="d-none d-md-table-cell">{{analise.critico|yesno:'Critico,--'}}</td>
             <td class="text-end fit py-1"><a class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#view_modal" onclick="analiseView('{{analise.id|safe}}','{{analise.indicador.nome}}','{{analise.tipo}}',{{analise.critico|yesno:'true,false'}},'{{analise.descricao}}')" href="#"><i class="fas fa-eye"></i></a></td>
           </tr>
           {% empty %}

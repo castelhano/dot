@@ -23,6 +23,11 @@ class Indicador(models.Model):
             return None
     def analises_pendentes(self, empresa):
         return Analise.objects.filter(indicador=self,empresa__id=empresa,concluido=False).exclude(tipo='L').order_by('created_on')
+    def planos_ativos(self, empresa_id):
+        try:
+            return Plano.objects.filter(diretriz__empresa__id=empresa_id, diretriz__ativo=True, diretriz__indicador=self).order_by('inicio','termino')
+        except Exception as e:
+            return None
     class Meta:
         default_permissions = []
 

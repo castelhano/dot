@@ -41,6 +41,16 @@ def add_days(value, days):
 def now_until_date(value):
     return (value - date.today()).days if value else '--'
 
+# days_since Retorna a quantidade de dias entre duas datas
+# --
+# @version  1.0
+# @since    10/04/2022
+# @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }
+# @example  {{data|now_until_date}} dias
+@register.filter
+def days_since(v1, v2):
+    return (v2 - v1).days if v1 and v2 else None
+
 # sub Subtrai dois valores
 # --
 # @version  1.0

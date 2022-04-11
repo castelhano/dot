@@ -45,7 +45,7 @@
           </ul>
         </div>
       </div>
-      <div class="col-auto">
+      <div class="col-auto d-none d-lg-block">
         <div class="dropdown">
           <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown">Periodo: <label class="fw-bold" dot-data="periodo" default="3" mask="00" posfix="meses"></label></button>
           <ul class="dropdown-menu fs-7">
@@ -67,9 +67,9 @@
         <thead>
           <tr>
             <th>Indicador</th>
-            <th>Meta</th>
+            <th class="d-none d-sm-table-cell">Meta</th>
             {% for mes in metrics.meses %}
-            <th>{{mes}}</th>
+            <th class="{% if forloop.last %}{% else %}d-none d-lg-table-cell{% endif %}">{{mes}}</th>
             {% endfor %}
           </tr>
         </thead>
@@ -78,10 +78,10 @@
           <tr>
             {% call_method indicador 'analises_pendentes' metrics.empresa.id as analises_pendentes %}
             <td><h6>{{indicador.nome}}</h6><small>{{indicador.quanto_maior_melhor|yesno:'1,-1'|indicatorArrow|safe}} melhor{% if staff.role == 'E' or staff.role == 'M' %}<span class="badge bg-purple ms-2 pointer" data-bs-toggle="modal" data-bs-target="#analise_modal" onclick="analiseAdd({{indicador.id|safe}},'{{indicador.nome}}')"><i class="fas fa-plus me-2"></i>{{analises_pendentes.count}}</span>{% endif %}</small></td>
-            <td><h6>{{indicador.meta}}</h6><small>{{indicador.medida}}</small></td>
+            <td class="d-none d-sm-table-cell"><h6>{{indicador.meta}}</h6><small>{{indicador.medida}}</small></td>
             {% for referencia in metrics.referencias %}
             {% call_method indicador 'get_apontamento' referencia metrics.empresa.id as apontamento %}
-            <td><h6>
+            <td class="{% if forloop.last %}{% else %}d-none d-lg-table-cell{% endif %}"><h6>
               <span class="me-1{% if apontamento.indicador.quanto_maior_melhor and apontamento.valor >= apontamento.meta or not apontamento.indicador.quanto_maior_melhor and apontamento.valor <= apontamento.meta %} text-success{% else %} text-danger{% endif %}">{{apontamento.valor|default:'--'}}</span> {{apontamento.evolucao|indicatorArrow|safe}}</h6><small>{% if apontamento.valor and apontamento.meta %}Meta: <b>{{apontamento.meta|default:'--'}}</b>{% endif %}</small></td>
               {% endfor %}
             </tr>

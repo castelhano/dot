@@ -3,7 +3,8 @@
 {% load tag_extra %}
 {% block title %}Roadmap{% endblock %}
 {% block model %}Gestão{% endblock %}
-{% block model_menu %}{% include "_component/menu/gestao.html" %}{% endblock%}
+{% block model_menu %}{% include "_component/menu/gestao.html" %}{% endblock%}  
+{% block style %}{% include 'gestao/roadmap.css' %}{% endblock%}
 
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'gestao_roadmap' %}"></a>
@@ -15,22 +16,65 @@
       <li class="nav-item ms-1" title="Analytics"><a id="analytics_link" class="nav-link text-purple" href="{% url 'gestao_analytics' %}"><i class="fas fa-chart-bar"></i></a></li>
     </ul>
   </div>
-  <form id="app_form" action="url" method="POST" autocomplete="off">
-    {% csrf_token %}
-    <div class="card-body tab-content">
-      <h5 class="card-title mb-0">Roadmap: <b class="text-purple">{{user.username|title}}</b></h5>
-      <p class="mb-3 fw-bold text-muted">{{staff.get_role_display}}</p>
-      <div class="tab-pane fade show active" id="base" role="tabpanel"></div>
+  <div class="card-body tab-content">
+    <h5 class="card-title mb-0">Roadmap: <b class="text-purple">{{user.username|title}}</b></h5>
+    <p class="mb-1 fw-bold text-muted">{{staff.get_role_display}}</p>
+    <div class="tab-pane fade show active" id="base" role="tabpanel">
+      <div class="row mb-2 d-flex d-md-none">
+        <div class="col p-0">
+          {% for indicador in indicadores %}<span class="badge c{{forloop.counter}} me-1">{{indicador.nome}}</span>{% endfor %}          
+        </div>
+      </div>
+      <div class="row mb-1 fs-7">
+        <div class="col-2 d-none d-md-flex text-center bg-light py-2" style="max-width: 180px;">
+          <span class="">Indicador</span>
+        </div>
+        <div class="col rm-container py-2 px-0">
+          <div class="row ps-2">
+            {% for mes, abbr in meses %}
+            <div class="col rm-header"><span class="d-none d-md-block">{{mes}}</span><span class="d-block d-md-none">{{abbr}}</span></div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      
+      {% for indicador in indicadores %}
+      {% with seq=forloop.counter %}
+      <div class="row fs-7 mb-2">
+        <div class="col-2 d-none d-md-flex justify-content-center align-items-center c{{seq}}" style="max-width: 180px;min-height: 50px;">
+          <span class="">{{indicador.nome}}</span>
+        </div>
+        <div class="col bg-light">
+          {% call_method indicador 'planos_ativos' empresa.id as planos_ativos %}
+          {% for plano in planos_ativos %}
+          <div class="row rm-container">
+            <div class="col-auto" style="padding:0px;position:relative;width: {{plano.inicio|days_since:plano.termino|percentual:dias_plot|floatformat:0}}%;left:{{inicio_plot|days_since:plano.inicio|percentual:dias_plot|floatformat:0}}%">
+              <div class="progress c{{seq}}-75" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="{{plano.titulo}}<br><b>{{plano.inicio|date:'d/m/y'}}</b> a <b>{{plano.termino|date:'d/m/y'}}</b>">
+                <div class="progress-bar c{{seq}}-50" role="progressbar" style="width: {{plano.conclusao}}%">{{plano.conclusao}}%</div>
+                <span class="rm-item-label">{% if plano.status == 'E' %}{{plano.termino|now_until_date}} dias{% else %}<i class="fas fa-star"></i>{% endif %}</span>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endwith %}
+      {% endfor %}
+      
     </div>
-  </form>
+  </div>
 </div>
 {% include "_component/modal/loading.html" with message='Processando requisição....' %}
 {% endblock%}
 
-{% block add_script_src %}{% endblock %}
+{% block add_script_src %}
+<script src="{% static 'js/app/gestao/roadmap.js' %}"></script>
+{% endblock %}
 
 <script>
   {% block add_script %}
+  
+  tooltipActivate();
   SHORTCUT_MAP['1FTF'] = '#dashboard_link';
   SHORTCUT_MAP['3FTF'] = '#analytics_link';
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
