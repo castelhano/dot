@@ -4,7 +4,20 @@
 {% block title %}Roadmap{% endblock %}
 {% block model %}Gestão{% endblock %}
 {% block model_menu %}{% include "_component/menu/gestao.html" %}{% endblock%}  
-{% block style %}{% include 'gestao/roadmap.css' %}{% endblock%}
+{% block style_src %}<link rel="stylesheet" href="{% static 'css/color_extra.css' %}" type="text/css">{% endblock%}
+
+{% block style %}
+.rm-container{background-color: #F5F6F6;margin-bottom:4px;}
+.rm-container:last-of-type{margin-bottom:0px;}
+.progress{height:22px;position:relative;color: inherit;}
+.rm-header{text-align: center;border-right: 1px solid #d6d6d6;}
+.rm-header:last-of-type{border: 0px;}
+.rm-item-label{position: absolute; right:8px; padding-top:2px;color: inherit;}
+
+@media(max-width: 992px){
+.progress-bar,.rm-item-label{color: transparent;}
+}
+{% endblock%}
 
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'gestao_roadmap' %}"></a>
@@ -47,8 +60,8 @@
         <div class="col bg-light">
           {% call_method indicador 'planos_ativos' empresa.id as planos_ativos %}
           {% for plano in planos_ativos %}
-          <div class="row rm-container">
-            <div class="col-auto" style="padding:0px;position:relative;width: {{plano.inicio|days_since:plano.termino|percentual:dias_plot|floatformat:0}}%;left:{{inicio_plot|days_since:plano.inicio|percentual:dias_plot|floatformat:0}}%">
+          <div class="row rm-container pe-1 pe-lg-3">
+            <div class="col-auto" style="padding:0px;position:relative;width: {{plano.inicio|days_since:plano.termino|percentual:dias_plot|parseInt}}%;left:{{inicio_plot|days_since:plano.inicio|percentual:dias_plot|parseInt}}%">
               <div class="progress c{{seq}}-75" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="{{plano.titulo}}<br><b>{{plano.inicio|date:'d/m/y'}}</b> a <b>{{plano.termino|date:'d/m/y'}}</b>">
                 <div class="progress-bar c{{seq}}-50" role="progressbar" style="width: {{plano.conclusao}}%">{{plano.conclusao}}%</div>
                 <span class="rm-item-label">{% if plano.status == 'E' %}{{plano.termino|now_until_date}} dias{% else %}<i class="fas fa-star"></i>{% endif %}</span>
@@ -66,10 +79,6 @@
 </div>
 {% include "_component/modal/loading.html" with message='Processando requisição....' %}
 {% endblock%}
-
-{% block add_script_src %}
-<script src="{% static 'js/app/gestao/roadmap.js' %}"></script>
-{% endblock %}
 
 <script>
   {% block add_script %}

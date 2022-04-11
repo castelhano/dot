@@ -42,9 +42,12 @@ def roadmap(request):
             messages.warning(request,'É necessário ter pelo menos uma <b>empresa</b> habilitada para seu usuario')
             return redirect('gestao_dashboard')
         indicadores = Indicador.objects.filter(ativo=True).order_by('nome')
+        if not Plano.objects.filter(diretriz__empresa=empresa, diretriz__ativo=True).exclude(inicio=None).exclude(termino=None).exists():
+            messages.warning(request,'<b>Atenção</b> Não existe nenhum plano (com prazo) ativo para exibir no roadmap')
+            return redirect('gestao_dashboard')        
         inicio = Plano.objects.filter(diretriz__empresa=empresa, diretriz__ativo=True).order_by('inicio').first().inicio
         termino = Plano.objects.filter(diretriz__empresa=empresa, diretriz__ativo=True).order_by('termino').last().termino
-        view_range = (termino.month - inicio.month) + 1
+        view_range = ((termino.month - inicio.month) + (termino.year - inicio.year) * 12) + 1
         meses = []
         for _ in range(0, view_range):
             meses.append([f'{termino.strftime("%b").title()} {termino.strftime("%y").title()}',termino.strftime("%m")])

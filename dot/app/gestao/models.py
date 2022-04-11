@@ -59,17 +59,17 @@ class Staff(models.Model):
         logs = Log.objects.filter(modelo='gestao.staff',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
     def planos_em_progresso(self):
-        if self.role == 'O':
+        if self.role in ['O','G']:
             return Plano.objects.filter(staff=self, status__in=['E','P'])
         else:
             return Plano.objects.filter(status__in=['E','P'], diretriz__empresa__in=self.usuario.profile.empresas.all())
     def planos_em_avaliacao(self):
-        if self.role == 'O':
+        if self.role in ['O','G']:
             return Plano.objects.filter(staff=self, status='A')
         else:
             return Plano.objects.filter(status='A')
     def planos_arquivados(self):
-        if self.role == 'O':
+        if self.role in ['O','G']:
             return Plano.objects.filter(staff=self, status='C')
         else:
             return Plano.objects.filter(status='C')

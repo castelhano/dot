@@ -10,8 +10,8 @@
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
-      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-columns me-1"></i> <small class="fw-bold">Dashboard</small></a></li>
-      {% if staff.role != 'O' %}
+      <li class="nav-item"><a class="nav-link active disabled" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-columns me-1"></i> <small class="fw-bold">Dashboard</small></a></li>
+      {% if staff and staff.role != 'O' %}
       <li class="nav-item ms-1" title="Roadmap"><a id="roadmap_link" class="nav-link text-success" href="{% url 'gestao_roadmap' %}"><i class="fas fa-sliders-h"></i></a></li>
       <li class="nav-item ms-1" title="Analytics"><a id="analytics_link" class="nav-link text-purple" href="{% url 'gestao_analytics' %}" onclick="analytics_loading.show()"><i class="fas fa-chart-bar"></i></a></li>
       {% endif %}
@@ -127,7 +127,7 @@
                   <a class="text-muted" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-ellipsis-h"></i></a>
                   <ul id="menu_diretriz_options" class="dropdown-menu fs-7">
                     {% if staff.role == 'M' or staff.role == 'E' %}<li><a class="dropdown-item pointer" href="{% url 'gestao_diretriz_add' %}"><i class="fas fa-plus text-success me-1"></i> Diretriz</a></li>{% endif %}
-                    {% if staff.role != 'O' %}
+                    {% if staff and staff.role != 'O' %}
                     <li><a class="dropdown-item pointer" href="{% url 'gestao_indicadores' %}"><i class="fas fa-chart-line me-1"></i> Indicadores</a></li>
                     <li><a class="dropdown-item pointer" href="{% url 'gestao_analises' %}"><i class="fas fa-check-double me-1"></i> Análises</a></li>
                     {% endif %}

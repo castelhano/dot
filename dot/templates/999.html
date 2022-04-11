@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>900 Test Page</title>
+  <link rel="shortcut icon" href="{% static 'img/favicon.ico'%}">
+  <link rel="stylesheet" href="{% static 'css/dot.css' %}" type="text/css">
+  <link rel="stylesheet" href="{% static 'css/vendor/all.min.css' %}" type="text/css">
+  <link rel="stylesheet" href="{% static 'css/vendor/fontawesome.min.css' %}" type="text/css">
+  <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.min.css' %}" type="text/css">
+  <link rel="stylesheet" href="{% static 'css/color_extra.css' %}" type="text/css">
+  
+  <style media="screen">
+    body{background-color: #F4F6F9;}
+    h3{font-size: 1.5rem;}
+    @media(min-width: 768px){
+      .texto{max-width: 370px;}
+    }
+  </style>
+</head>
+<body>
+  <a class="d-none" id="clear" href="{% url 'handler' '999' %}"></a>
+  <div class="container-fluid">
+    <div class="row pt-2">
+      <div class="col"><h3 class="text-muted">999 Test Page</h3></div>
+      <div class="col-auto mb-3 mb-md-5"><a id="home" href="{% url 'index' %}">Dot</a>&nbsp;&nbsp;/&nbsp;&nbsp;999 Teste Page</div>
+    </div>
+    <h5>COLOR EXTRA</h5>
+    <hr class="mt-0">
+    {% with ''|center:15 as range %}
+    {% for _ in range %}
+    <div class="row text-center" style="height: 40px;"><div class="col c{{forloop.counter}}">C{{forloop.counter}}</div><div class="col c{{forloop.counter}}-50">C{{forloop.counter}}-50</div><div class="col c{{forloop.counter}}-75">C{{forloop.counter}}-75</div></div>
+    {% endfor %}
+    {% endwith %}
+  </div>
+  
+<script src="{% static 'js/listener.js' %}"></script>
+</body>
+</html>

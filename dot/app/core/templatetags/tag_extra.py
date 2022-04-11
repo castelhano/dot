@@ -71,6 +71,16 @@ def sub(minuendo, subtraendo):
 def percentual(valor, total):
     return (valor / total) * 100 if total > 0 else '---'
 
+# parseInt Retorna o inteiro correspondente ao valor
+# --
+# @version  1.0
+# @since    11/04/2022
+# @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }
+# @example  {{valor|parseInt}}
+@register.filter
+def parseInt(valor):
+    return int(valor)
+
 # zfill Retorna valor completando com zeros n vezes
 # --
 # @version  1.0
