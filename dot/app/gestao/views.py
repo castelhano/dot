@@ -428,7 +428,7 @@ def diretriz_add(request):
                 params = {
                     'titulo':'Nova Diretriz criada',
                     'mensagem':f'<b>{registro.titulo}</b><br />Empresa: <b>{registro.empresa.nome}</b> <br />Indicador: <b>{registro.indicador.nome}</b>',
-                    'link': 'gestao_dashboard'
+                    'link': f'gestao_diretriz_id/{registro.id}'
                 }
                 for item in staffs:
                     params['usuario'] = item.usuario                    
@@ -958,33 +958,29 @@ def indicador_delete(request,id):
         messages.error(request,'ERRO ao apagar indicador')
         return redirect('gestao_indicador_id', id)
 
-# @login_required
-# @permission_required('gestao.dashboard')
-# def apontamento_delete(request,id):
-#     try:
-#         registro = Apontamento.objects.get(pk=id)
-#         staff = Staff.objects.get(usuario=request.user)
-#         if not staff.role in ['M','E','G']:
-#             raise Exception('Perfil não liberado para este recurso')
-#         if not staff.usuario.profile.allow_empresa(regitro.empresa.id): # Verifica se usuario tem acesso a empresa
-#             raise Exception('Empresa não habilitada para seu usuário')
-#     except Exception as e:
-#         messages.error(request,f'<b>Erro</b> {e}')
-#         return redirect('gestao_dashboard')
-#     try:
-#         l = Log()
-#         l.modelo = "gestao.indicador"
-#         l.objeto_id = registro.indicador.id
-#         l.objeto_str = f'{registro.indicador.id}_{registro.referencia}'
-#         l.usuario = request.user
-#         l.mensagem = "APONTAMENTO DELETE"
-#         registro.delete()
-#         l.save()
-#         messages.warning(request,f'Apontamento <b>excluido</b>. Essa operação não pode ser desfeita')
-#         return redirect('gestao_apontamentos')
-#     except:
-#         messages.error(request,'ERRO ao apagar apontamento')
-#         return redirect('gestao_apontamento_id', id)
+@login_required
+@permission_required('gestao.add_apontamento')
+def apontamento_delete(request):
+    try:
+        ano = request.POST['ano']
+        mes = request.POST['mes'].zfill(2)
+        # Verifica se ano e mes tem formato valido
+        if not re.search('^(19|20)\d{2}$', ano) or mes not in ['01','02','03','04','05','06','07','08','09','10','11','12']:
+            raise Exception('Periodo inválido, verifique os dados digitados')
+        referencia = f"{ano}_{mes}"
+        l = Log()
+        l.modelo = "gestao.indicador"
+        registro = Apontamento.objects.filter(empresa__id=request.POST['empresa'],indicador__id=request.POST['indicador'], referencia=referencia).get()
+        l.objeto_id = registro.indicador.id
+        l.objeto_str = f'{registro.indicador.id}_{registro.referencia}'
+        l.usuario = request.user
+        l.mensagem = "APONTAMENTO DELETE"
+        registro.delete()
+        l.save()
+        messages.warning(request,f'Apontamento <b>excluido</b>')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+    return redirect('gestao_analytics')
 
 @login_required
 @permission_required('gestao.staff')
@@ -1022,7 +1018,7 @@ def diretriz_delete(request,id):
         l = Log()
         l.modelo = "gestao.diretriz"
         l.objeto_id = registro.id
-        l.objeto_str = 'Nao aplicavel'
+        l.objeto_str = registro.titulo[0:40]
         l.usuario = request.user
         l.mensagem = "DELETE"
         registro.delete()

@@ -12,6 +12,14 @@
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'gestao_dashboard' %}"><i class="fas fa-undo"></i></a></li>
+      {% if perms.core.view_log %}
+      <li class="nav-item dropdown ms-auto">
+        <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item pointer" href="{% url 'logs' %}?target_model=gestao.diretriz&mensagem=DELETE" target="_blank">Log de Exclusões</a></li>
+        </ul>
+      </li>
+      {% endif %}
     </ul>
   </div>
   <div class="card-body tab-content">

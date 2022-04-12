@@ -118,6 +118,14 @@
   {% if staff.role != 'M' and staff.role != 'E' %}
   document.getElementById('id_inicio').readOnly = true;
   document.getElementById('id_termino').readOnly = true;
+  document.getElementById('id_titulo').readOnly = true;
+  document.getElementById('id_detalhe').readOnly = true;
+  document.getElementById('select_multiple_add').classList.add('disabled');
+  document.getElementById('select_multiple_add_all').classList.add('disabled');
+  document.getElementById('select_multiple_remove').classList.add('disabled');
+  document.getElementById('select_multiple_remove_all').classList.add('disabled');
+  document.getElementById('staff_disponivel').classList.add('readonly');
+  document.getElementById('id_staff').classList.add('readonly');
   document.getElementById('id_responsavel').classList.add('readonly');
   {% endif %}
   

@@ -33,13 +33,18 @@
               {% for plano in staff.planos_em_progresso %}
               <div class="border-top border-bottom p-2 mt-2 bg-light">
                 <div class="row">
-                  <div class="col text-truncate"><a class="fw-bold text-decoration-none mb-0" href="{% url 'gestao_plano_id' plano.id %}">{{plano.titulo}}</a></div>
+                  <div class="col text-truncate">{% if plano.bloqueado %}<i class="fas fa-lock text-muted me-1"></i>{% endif %}<a class="fw-bold text-decoration-none mb-0" href="{% url 'gestao_plano_id' plano.id %}">{{plano.titulo}}</a></div>
                   {% if plano.responsavel == staff or staff.role == 'M' or staff.role == 'E' %}
                   <div class="col-auto">
                     <a class="text-muted px-2" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu dropdown-menu-end fs-7">
                       <li><a class="dropdown-item pointer" href="{% url 'gestao_plano_movimentar' plano.id|safe %}?operacao=revisao" onclick="modal_loading.show()"><i class="fas fa-arrow-right fa-fw text-success"></i> Para revisão</a></li>
                       {% if staff.role == 'M' %}<li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#avaliar_modal" onclick="setAvaliacaoPlano({{plano.id|safe}}, {{plano.conclusao|safe}},{{plano.avaliacao|safe}},'{{plano.titulo}}', false)" href="#"><i class="fas fa-star fa-fw text-primary"></i> Avaliar</a></li>{% endif %}
+                      {% if plano.bloqueado and staff.role == 'M' %}
+                      <li><a class="dropdown-item pointer" href="{% url 'gestao_plano_movimentar' plano.id|safe %}?operacao=unlock" onclick="modal_loading.show()"><i class="fas fa-lock-open fa-fw"></i> Desbloquear</a></li>
+                      {% elif staff.role == 'M' %}
+                      <li><a class="dropdown-item pointer" href="{% url 'gestao_plano_movimentar' plano.id|safe %}?operacao=lock" onclick="modal_loading.show()"><i class="fas fa-lock fa-fw"></i> Bloquear</a></li>
+                      {% endif %}
                     </ul>
                   </div>
                   {% endif %}

@@ -9,30 +9,37 @@
       <div class="modal-body">
         <form id="modal_avaliacao_form" action="{% url 'gestao_apontamento_add' %}" method="POST" autocomplete="off" onsubmit="return apontamentoSubmit();">
           {% csrf_token %}
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="operation" value="add" id="operation_add" tabindex="-1" onclick="setOperation(this.value);" checked><label class="form-check-label noselect" for="operation_add">Inclusão</label>
+          </div>
+          <div class="form-check form-check-inline mb-2">
+            <input class="form-check-input" type="radio" name="operation" value="delete" id="operation_delete"  onclick="setOperation(this.value);" tabindex="-1"><label class="form-check-label noselect" for="operation_delete">Exclusão</label>
+          </div>
           <div class="row g-1">
-          	<div class="form-floating mb-1 col-12">
-          		{{ metrics.apontamento_form.indicador }}
-          		<label for="id_indicador">Indicador</label>
-          	</div>
+            <div class="form-floating mb-1 col-12">
+              {{ metrics.apontamento_form.indicador }}
+              <label for="id_indicador">Indicador</label>
+            </div>
           </div>
           <div class="row g-1">
             <div class="form-floating mb-lg-1 col">
-          		<input type="number" class="form-control" name="ano" id="id_ano" min="1900" max="2099" value="">
-          		<label for="id_ano">Ano</label>
-          	</div>
-          	<div class="form-floating mb-lg-1 col">
-          		<input type="number" class="form-control" name="mes" id="id_mes" min="1" max="12" value="">
-          		<label for="id_mes">Mês</label>
-          	</div>
-          	<div class="form-floating mb-1 col">
-          		{{ metrics.apontamento_form.valor }}
-          		<label for="id_valor">Valor</label>
-          	</div>
+              <input type="number" class="form-control" name="ano" id="id_ano" min="1900" max="2099" value="">
+              <label for="id_ano">Ano</label>
+            </div>
+            <div class="form-floating mb-lg-1 col">
+              <input type="number" class="form-control" name="mes" id="id_mes" min="1" max="12" value="">
+              <label for="id_mes">Mês</label>
+            </div>
+            <div class="form-floating mb-1 col">
+              {{ metrics.apontamento_form.valor }}
+              <label for="id_valor">Valor</label>
+            </div>
           </div>          
           <div class="row mt-2">
             <div class="col text-end">
-              <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
-              <button type="submit" class="btn btn-primary">Gravar</button>
+              <a class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</a>
+              <button type="submit" id="apontamento_btn_add" class="btn btn-primary">Gravar</button>
+              <button type="submit" class="btn btn-danger d-none" id="apontamento_btn_delete">Excluir</button>
             </div>
           </div>
           <input type="hidden" name="empresa" value="{{metrics.empresa.id|safe}}">
@@ -67,26 +74,26 @@
         <form id="modal_analise_form" action="{% url 'gestao_analise_add' %}" method="POST" autocomplete="off">
           {% csrf_token %}
           <div class="row g-1 mb-1">
-          	<div class="col-12">
-          		<textarea class="form-control" name="descricao" id="id_descricao" rows="4"></textarea>
-          	</div>
+            <div class="col-12">
+              <textarea class="form-control" name="descricao" id="id_descricao" rows="4"></textarea>
+            </div>
           </div>
           <div class="row g-1">
-          	<div class="mb-1 col-6">
-          		<select class="form-select form-select-sm bg-light" name="tipo" id="id_analise_tipo">
+            <div class="mb-1 col-6">
+              <select class="form-select form-select-sm bg-light" name="tipo" id="id_analise_tipo">
                 <option value="L">Lembrete</option>
                 <option value="M">Melhoria</option>
                 <option value="N">Não conforme</option>                
               </select>
-          	</div>
+            </div>
             <div class="col-6 pt-1 ps-2">
               <div class="form-check form-switch">
-              	<input class="form-check-input" type="checkbox" role="switch" name="critico" id="id_critico">
-              	<label class="form-check-label" for="id_critico">Item crítico</label>
+                <input class="form-check-input" type="checkbox" role="switch" name="critico" id="id_critico">
+                <label class="form-check-label" for="id_critico">Item crítico</label>
               </div>              
             </div>
           </div>
-           
+          
           <div class="row mt-3">
             <div class="col text-end">
               <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
@@ -102,6 +109,28 @@
 </div>
 
 <script>
+  
+  
+  function setOperation(oper){
+    var form = document.getElementById('modal_avaliacao_form');
+    var add_btn = document.getElementById('apontamento_btn_add');
+    var del_btn = document.getElementById('apontamento_btn_delete');
+    var valor = document.getElementById('id_valor');
+    if(oper == 'add'){
+      add_btn.classList.remove('d-none');
+      del_btn.classList.add('d-none');
+      valor.disabled = false;
+      form.action = '{% url 'gestao_apontamento_add' %}';
+    }
+    else if(oper == 'delete'){
+      add_btn.classList.add('d-none');
+      del_btn.classList.remove('d-none');
+      valor.disabled = true;
+      form.action = '{% url 'gestao_apontamento_delete' %}';
+    }
+    
+    
+  }
   function analiseAdd(id, nome){
     try {
       document.getElementById('id_indicador_analise').value = id;
