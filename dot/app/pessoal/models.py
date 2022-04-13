@@ -253,3 +253,41 @@ class Dependente(models.Model):
             return hoje.year - self.data_nascimento.year - ((hoje.month, hoje.day) < (self.data_nascimento.month, self.data_nascimento.day))
         else:
             return ''
+
+class Apontamento(models.Model):
+    funcionario = models.ForeignKey(Funcionario, on_delete=models.RESTRICT)
+    inicio = models.TimeField(blank=True, null=True)
+    termino = models.TimeField(blank=True, null=True)
+    geolocation = models.CharField(max_length=230, blank=True)
+    foto = core_ImageField(upload_to='pessoal/frequencia/%Y/%m/%d', blank=True)
+
+class Evento(models.Model):
+    TIPO_CHOICES = (
+    ('PR','Produtivo'),
+    ('FO','Folga'),
+    ('FE','Ferias'),
+    ('FA','Falta'),
+    )
+    nome = models.CharField(max_length=80, blank=True)
+    tipo = models.CharField(max_length=3,choices=TIPO_CHOICES, default='PR')
+
+class Frequencia(models.Model):
+    funcionario = models.ForeignKey(Funcionario, on_delete=models.RESTRICT)
+    evento = models.ForeignKey(Evento, on_delete=models.RESTRICT)
+    detalhe = models.CharField(max_length=200, blank=True)
+    validado = models.BooleanField(default=False)
+
+class Apontamento(models.Model):
+    TIPO_CHOICES = (
+    ('EN','Entrada'),
+    ('II','Inicio intervalo'),
+    ('TI','Termino intervalo'),
+    ('TR','Saida'),
+    )
+    frequencia = models.ForeignKey(Frequencia, on_delete=models.CASCADE)
+    tipo = models.CharField(max_length=3,choices=TIPO_CHOICES)
+    data = models.DateField()
+    hora = models.TimeField(blank=True, null=True)
+    info = models.CharField(max_length=200, blank=True)
+    geolocation = models.CharField(max_length=230, blank=True)
+    foto = core_ImageField(upload_to='pessoal/frequencia/%Y/%m/%d', blank=True)

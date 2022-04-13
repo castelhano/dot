@@ -977,6 +977,15 @@ def apontamento_delete(request):
         l.mensagem = "APONTAMENTO DELETE"
         registro.delete()
         l.save()
+        # Verifica se existe apontamento posterior, se sim atualiza a evolucao
+        if int(mes) < 12:
+            proxima_referencia = f"{ano}_{str(int(mes) + 1).zfill(2)}"
+        else:
+            proxima_referencia = f"{int(ano) + 1}_01"
+        if Apontamento.objects.filter(empresa=registro.empresa,indicador=registro.indicador,referencia=proxima_referencia).exists():
+            mes_posterior = Apontamento.objects.get(empresa=registro.empresa,indicador=registro.indicador,referencia=proxima_referencia)
+            mes_posterior.evolucao = 0
+            mes_posterior.save()
         messages.warning(request,f'Apontamento <b>excluido</b>')
     except Exception as e:
         messages.error(request,f'<b>Erro</b> {e}')
