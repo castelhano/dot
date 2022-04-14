@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from json import dumps
-from .models import Setor, Cargo, Funcionario, FuncaoFixa, Afastamento, Dependente
-from .forms import SetorForm, CargoForm, FuncionarioForm, FuncaoFixaForm, AfastamentoForm, DependenteForm
+from .models import Setor, Cargo, Funcionario, FuncaoFixa, Afastamento, Dependente, Evento
+from .forms import SetorForm, CargoForm, FuncionarioForm, FuncaoFixaForm, AfastamentoForm, DependenteForm, EventoForm
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from core.models import Log
@@ -98,6 +98,12 @@ def dependentes(request, id):
 def funcoes_fixas(request):
     funcoes_fixas = FuncaoFixa.objects.all()
     return render(request,'pessoal/funcoes_fixas.html', {'funcoes_fixas' : funcoes_fixas})
+
+@login_required
+@permission_required('pessoal.view_evento')
+def eventos(request):
+    eventos = Evento.objects.all().order_by('nome')
+    return render(request,'pessoal/eventos.html', {'eventos' : eventos})
 
 # METODOS ADD
 @login_required
@@ -252,6 +258,29 @@ def funcao_fixa_add(request):
     cargos = Cargo.objects.all().order_by('nome')
     return render(request,'pessoal/funcao_fixa_add.html',{'form':form,'cargos':cargos})
 
+@login_required
+@permission_required('pessoal.add_evento')
+def evento_add(request):
+    if request.method == 'POST':
+        form = EventoForm(request.POST)
+        if form.is_valid():
+            try:
+                registro = form.save()
+                l = Log()
+                l.modelo = "pessoal.evento"
+                l.objeto_id = registro.id
+                l.objeto_str = registro.nome
+                l.usuario = request.user
+                l.mensagem = "CREATED"
+                l.save()
+                messages.success(request,f'Evento <b>{registro.nome}</b> criado')
+                return redirect('pessoal_evento_add')
+            except:
+                pass
+    else:
+        form = EventoForm()
+    return render(request,'pessoal/evento_add.html',{'form':form})
+
 # METODOS GET
 @login_required
 @permission_required('pessoal.change_setor')
@@ -294,6 +323,13 @@ def funcao_fixa_id(request, id):
     funcao_fixa = FuncaoFixa.objects.get(id=id)
     form = FuncaoFixaForm(instance=funcao_fixa)
     return render(request,'pessoal/funcao_fixa_id.html',{'form':form,'funcao_fixa':funcao_fixa})
+
+@login_required
+@permission_required('pessoal.change_evento')
+def evento_id(request, id):
+    evento = Evento.objects.get(id=id)
+    form = EventoForm(instance=evento)
+    return render(request,'pessoal/evento_id.html',{'form':form,'evento':evento})
 
 # METODOS UPDATE
 @login_required
@@ -428,6 +464,25 @@ def funcao_fixa_update(request, id):
     else:
         return render(request,'pessoal/funcao_fixa_id.html',{'form':form,'funcao_fixa':funcao_fixa})
 
+@login_required
+@permission_required('pessoal.change_evento')
+def evento_update(request, id):
+    evento = Evento.objects.get(pk=id)
+    form = EventoForm(request.POST, instance=evento)
+    if form.is_valid():
+        registro = form.save()
+        l = Log()
+        l.modelo = "pessoal.evento"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.nome
+        l.usuario = request.user
+        l.mensagem = "UPDATE"
+        l.save()
+        messages.success(request,f'Evento <b>{registro.nome}</b> alterado')
+        return redirect('pessoal_evento_id', registro.id)
+    else:
+        return render(request,'pessoal/evento_id.html',{'form':form,'evento':evento})
+
 # METODOS DELETE
 @login_required
 @permission_required('pessoal.delete_setor')
@@ -549,6 +604,25 @@ def funcao_fixa_delete(request, id):
     except:
         messages.error(request,'ERRO ao apagar função fixa')
         return redirect('pessoal_funcao_fixa_id', id)
+
+@login_required
+@permission_required('pessoal.delete_evento')
+def evento_delete(request, id):
+    try:
+        registro = Evento.objects.get(id=id)
+        l = Log()
+        l.modelo = "pessoal.evento"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.nome
+        l.usuario = request.user
+        l.mensagem = "DELETE"
+        registro.delete()
+        l.save()
+        messages.warning(request,'Evento apagado. Essa operação não pode ser desfeita')
+        return redirect('pessoal_eventos')
+    except:
+        messages.error(request,'ERRO ao apagar evento')
+        return redirect('pessoal_evento_id', id)
 
 # OUTROS METODOS
 @login_required

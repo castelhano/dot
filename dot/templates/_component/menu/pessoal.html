@@ -11,6 +11,12 @@
         {% if perms.pessoal.view_funcaofixa %}<li><a class="dropdown-item" id="cadastro_funcaofixa" href="{% url 'pessoal_funcoes_fixas' %}">Função Fi<b>x</b>a</a></li>{% endif %}        
       </ul>
     </li>    
+    <li id="cadastro_frequencia_list_container">
+      <a id="submenu_frequencia_link" class="dropdown-item d-flex justify-content-between align-items-center pointer" data-bs-toggle="dropdown"><span>Fre<b>q</b>uência</span><i class="fas fa-chevron-right fs-8"></i></a>
+      <ul id="cadastro_frequencia_list_options" class="submenu dropdown-menu dropdown-menu-dark">
+        {% if perms.pessoal.view_evento %}<li><a class="dropdown-item" id="cadastro_evento" href="{% url 'pessoal_eventos' %}"><b>E</b>ventos</a></li>{% endif %}
+      </ul>
+    </li>    
   </ul>
 </li>
 
@@ -23,13 +29,17 @@
     else{
       let cadastro = false;
       let cadastro_funcionario = false;
+      let cadastro_frequencia = false;
       try{cadastro = document.getElementById('menu_cadastro').classList.contains('show') ? true : false;}catch(err){}
       try{cadastro_funcionario = document.getElementById('cadastro_funcionario_list_options').style.display == 'block' ? true : false;}catch(err){}
+      try{cadastro_frequencia = document.getElementById('cadastro_frequencia_list_options').style.display == 'block' ? true : false;}catch(err){}
       if(cadastro_funcionario && e.key.toLowerCase() == 'f'){e.preventDefault();document.getElementById('app_root').click();}
       else if(cadastro_funcionario && e.key.toLowerCase() == 's'){e.preventDefault();document.getElementById('cadastro_setor').click();}
       else if(cadastro_funcionario && e.key.toLowerCase() == 'c'){e.preventDefault();document.getElementById('cadastro_cargo').click();}
       else if(cadastro_funcionario && e.key.toLowerCase() == 'x'){e.preventDefault();document.getElementById('cadastro_funcaofixa').click();}
+      else if(cadastro_frequencia && e.key.toLowerCase() == 'e'){e.preventDefault();document.getElementById('cadastro_evento').click();}
       else if(cadastro && e.key.toLowerCase() == 'f')try{submenuToggle(document.getElementById('submenu_funcionario_link'));cadastro_funcionario = true;}catch(err){}
+      else if(cadastro && e.key.toLowerCase() == 'q')try{submenuToggle(document.getElementById('submenu_frequencia_link'));cadastro_frequencia = true;}catch(err){}
       else{try{eventLocalHandler(e);}catch(e){}}
     }
   }

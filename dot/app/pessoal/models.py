@@ -254,13 +254,6 @@ class Dependente(models.Model):
         else:
             return ''
 
-class Apontamento(models.Model):
-    funcionario = models.ForeignKey(Funcionario, on_delete=models.RESTRICT)
-    inicio = models.TimeField(blank=True, null=True)
-    termino = models.TimeField(blank=True, null=True)
-    geolocation = models.CharField(max_length=230, blank=True)
-    foto = core_ImageField(upload_to='pessoal/frequencia/%Y/%m/%d', blank=True)
-
 class Evento(models.Model):
     TIPO_CHOICES = (
     ('PR','Produtivo'),
@@ -270,6 +263,9 @@ class Evento(models.Model):
     )
     nome = models.CharField(max_length=80, blank=True)
     tipo = models.CharField(max_length=3,choices=TIPO_CHOICES, default='PR')
+    def ultimas_alteracoes(self):
+        logs = Log.objects.filter(modelo='pessoal.evento',objeto_id=self.id).order_by('-data')[:15]
+        return reversed(logs)
 
 class Frequencia(models.Model):
     funcionario = models.ForeignKey(Funcionario, on_delete=models.RESTRICT)
