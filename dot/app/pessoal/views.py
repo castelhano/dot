@@ -31,6 +31,11 @@ def cargos(request):
     return render(request,'pessoal/cargos.html',{'cargos':cargos})
 
 @login_required
+@permission_required('pessoal.view_frequencia')
+def ponto(request):
+    return render(request,'pessoal/ponto.html')
+
+@login_required
 @permission_required('pessoal.view_funcionario')
 def funcionarios(request):
     funcionarios = None

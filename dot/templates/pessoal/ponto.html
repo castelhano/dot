@@ -1,0 +1,102 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Ponto{% endblock %}
+{% block model %}Ponto{% endblock %}
+{% block navbar_classlist %}navbar-dark bg-purple bg-gradient{% endblock %}
+{% block model_menu %}{% include "_component/menu/visitor.html" %}{% endblock%}
+
+{% block style %}
+p, h6{margin:0px;}
+.card-widget{max-width: 230px;}
+{% endblock%}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'pessoal_ponto' %}"></a>
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active disabled" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'index' %}"><i class="fas fa-undo"></i></a></li>
+    </ul>
+  </div>
+  <form id="app_form" action="url" method="POST" autocomplete="off">
+    {% csrf_token %}
+    <div class="card-body tab-content">
+      <h5 class="card-title mb-3">Registro de Ponto</h5>
+      <div class="tab-pane fade show active" id="base" role="tabpanel">
+        <div class="row g-2">
+          <div class="col-auto" style="max-width:180px;">
+            <img src="{% static 'img/default_user.jpg' %}" class="img-thumbnail" alt="">
+            <div class="row g-1">
+              <div class="form-floating mt-2 col">
+                <input type="date" class="form-control" name="data" id="id_data" value="{{data}}">
+                <label for="id_data">Data</label>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <h6>Rafael Gustavo Alves</h6>
+            <p>Coordenador de Planejamento</p>
+            <p>Pantanal Transportes</p>
+          </div>
+          <div class="col-lg-auto">
+            <div class="row">
+              <div class="col">
+                <div class="card-widget card-widget-sm border rounded p-2 btn-light">
+                  <h6>Entrada</h6>
+                  <div class="row fs-7">
+                    <div class="col-auto">
+                      <ul class="list-unstyled">
+                        <li>Data:</li>
+                        <li>Hora:</li>
+                      </ul>
+                    </div>
+                    <div class="col fw-bold">
+                      <ul class="list-unstyled">
+                        <li>22/04/2022</li>
+                        <li>14:22</li>
+                      </ul>
+                    </div>
+                  </div>
+                  <a class="btn btn-sm btn-success" href="#"><i class="fas fa-map-marked-alt"></i></a>
+                  <a class="btn btn-sm btn-outline-secondary ms-1" href="#"><i class="fas fa-camera"></i></a>
+                </div>  
+              </div>
+              <div class="col">
+                <div class="card-widget card-widget-sm border rounded p-2 btn-light">
+                  <h6>Inicio Intervalo</h6>
+                  <div class="row fs-7">
+                    <div class="col-auto">
+                      <ul class="list-unstyled">
+                        <li>Data:</li>
+                        <li>Hora:</li>
+                      </ul>
+                    </div>
+                    <div class="col fw-bold">
+                      <ul class="list-unstyled">
+                        <li>--</li>
+                        <li>--</li>
+                      </ul>
+                    </div>
+                  </div>
+                  <a class="btn btn-sm btn-outline-secondary" href="#"><i class="fas fa-map-marked-alt"></i></a>
+                  <a class="widget-label" href="">Entrada</a>
+                </div>  
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </form>
+</div>
+
+{% endblock%}
+
+{% block add_script_src %}{% endblock %}
+
+<script>
+  {% block add_script %}{% endblock %}
+</script>

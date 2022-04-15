@@ -12,6 +12,7 @@ urlpatterns = [
     path('pessoal_cargo_id/<int:id>',views.cargo_id,name='pessoal_cargo_id'),
     path('pessoal_cargo_update/<int:id>',views.cargo_update,name='pessoal_cargo_update'),
     path('pessoal_cargo_delete/<int:id>/delete',views.cargo_delete,name='pessoal_cargo_delete'),
+    path('pessoal_ponto',views.ponto,name='pessoal_ponto'),
     path('pessoal_funcionarios',views.funcionarios,name='pessoal_funcionarios'),
     path('pessoal_funcionario_add',views.funcionario_add,name='pessoal_funcionario_add'),
     path('pessoal_funcionario_id/<int:id>',views.funcionario_id,name='pessoal_funcionario_id'),

@@ -272,6 +272,9 @@ class Frequencia(models.Model):
     evento = models.ForeignKey(Evento, on_delete=models.RESTRICT)
     detalhe = models.CharField(max_length=200, blank=True)
     validado = models.BooleanField(default=False)
+    def ultimas_alteracoes(self):
+        logs = Log.objects.filter(modelo='pessoal.frequencia',objeto_id=self.id).order_by('-data')[:15]
+        return reversed(logs)
 
 class Apontamento(models.Model):
     TIPO_CHOICES = (
