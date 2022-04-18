@@ -7,7 +7,9 @@
 
 {% block style %}
 p, h6{margin:0px;}
-.card-widget{max-width: 230px;}
+@media(min-width: 768px){
+.card-widget{min-width: 180px;}
+}
 {% endblock%}
 
 {% block content_fluid %}
@@ -39,55 +41,51 @@ p, h6{margin:0px;}
             <p>Coordenador de Planejamento</p>
             <p>Pantanal Transportes</p>
           </div>
-          <div class="col-lg-auto">
-            <div class="row">
-              <div class="col">
-                <div class="card-widget card-widget-sm border rounded p-2 btn-light">
-                  <h6>Entrada</h6>
-                  <div class="row fs-7">
-                    <div class="col-auto">
-                      <ul class="list-unstyled">
-                        <li>Data:</li>
-                        <li>Hora:</li>
-                      </ul>
-                    </div>
-                    <div class="col fw-bold">
-                      <ul class="list-unstyled">
-                        <li>22/04/2022</li>
-                        <li>14:22</li>
-                      </ul>
-                    </div>
-                  </div>
-                  <a class="btn btn-sm btn-success" href="#"><i class="fas fa-map-marked-alt"></i></a>
-                  <a class="btn btn-sm btn-outline-secondary ms-1" href="#"><i class="fas fa-camera"></i></a>
-                </div>  
+        </div>
+        <div class="row mt-2 g-1">
+          <div class="col-6 col-md-auto">
+            <div class="card-widget card-widget-sm border rounded p-2 btn-light">
+              <h6>Entrada</h6>
+              <div class="row fs-7">
+                <div class="col-auto">
+                  <ul class="list-unstyled">
+                    <li>Data:</li>
+                    <li>Hora:</li>
+                  </ul>
+                </div>
+                <div class="col fw-bold">
+                  <ul class="list-unstyled">
+                    <li>22/04/2022</li>
+                    <li>14:22</li>
+                  </ul>
+                </div>
               </div>
-              <div class="col">
-                <div class="card-widget card-widget-sm border rounded p-2 btn-light">
-                  <h6>Inicio Intervalo</h6>
-                  <div class="row fs-7">
-                    <div class="col-auto">
-                      <ul class="list-unstyled">
-                        <li>Data:</li>
-                        <li>Hora:</li>
-                      </ul>
-                    </div>
-                    <div class="col fw-bold">
-                      <ul class="list-unstyled">
-                        <li>--</li>
-                        <li>--</li>
-                      </ul>
-                    </div>
-                  </div>
-                  <a class="btn btn-sm btn-outline-secondary" href="#"><i class="fas fa-map-marked-alt"></i></a>
-                  <a class="widget-label" href="">Entrada</a>
-                </div>  
+              <a class="btn btn-sm btn-success" href="#"><i class="fas fa-map-marked-alt"></i></a>
+              <a class="btn btn-sm btn-outline-secondary ms-1" href="#"><i class="fas fa-camera"></i></a>
+            </div>  
+          </div>
+          <div class="col-6 col-md-auto">
+            <div class="card-widget card-widget-sm border rounded p-2 btn-light">
+              <h6>Inicio Intervalo</h6>
+              <div class="row fs-7">
+                <div class="col-auto">
+                  <ul class="list-unstyled">
+                    <li>Data:</li>
+                    <li>Hora:</li>
+                  </ul>
+                </div>
+                <div class="col fw-bold">
+                  <ul class="list-unstyled">
+                    <li>--</li>
+                    <li>--</li>
+                  </ul>
+                </div>
               </div>
-            </div>
-            
+              <a class="btn btn-sm btn-outline-secondary" href="#"><i class="fas fa-map-marked-alt"></i></a>
+              <a class="widget-label" href="">Entrada</a>
+            </div>  
           </div>
         </div>
-        
       </div>
     </div>
   </form>
