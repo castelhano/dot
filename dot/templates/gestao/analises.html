@@ -11,8 +11,8 @@
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a class="nav-link active disabled" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
-      <li class="nav-item" title="Dashboard"><a class="nav-link text-muted" href="{% url 'gestao_dashboard' %}"><i class="fas fa-columns"></i></a></li>
-      <li class="nav-item ms-1" title="Roadmap"><a class="nav-link text-success" href="{% url 'gestao_roadmap' %}"><i class="fas fa-sliders-h"></i></a></li>
+      <li class="nav-item" title="Dashboard"><a class="nav-link text-muted" id="dashboard_link" href="{% url 'gestao_dashboard' %}"><i class="fas fa-columns"></i></a></li>
+      <li class="nav-item ms-1" title="Roadmap"><a class="nav-link text-success" id="roadmap_link" href="{% url 'gestao_roadmap' %}"><i class="fas fa-sliders-h"></i></a></li>
       <li class="nav-item ms-1" title="Analytics"><a id="back" class="nav-link text-purple" href="{% url 'gestao_analytics' %}" onclick="analytics_loading.show()"><i class="fas fa-chart-bar"></i></a></li>
       {% if perms.core.view_log %}
       <li class="nav-item dropdown ms-auto">
@@ -255,6 +255,10 @@
 <script>
   {% block add_script %}
   var analytics_loading = new bootstrap.Modal(document.getElementById('analytics_loading'), {keyboard: false});
+  
+  SHORTCUT_MAP['1FTF'] = '#dashboard_link';
+  SHORTCUT_MAP['2FTF'] = '#roadmap_link';
+  SHORTCUT_MAP['3FTF'] = '#back';
   
   var analises_list = document.querySelectorAll(".analise_menu");
   for (var i = 0; i < analises_list.length; i++){

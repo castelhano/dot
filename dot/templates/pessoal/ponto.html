@@ -10,6 +10,9 @@ p, h6{margin:0px;}
 @media(min-width: 768px){
 .card-widget{min-width: 180px;}
 }
+@media(max-width: 768px){
+.text-left-lg{text-align: center;}
+}
 {% endblock%}
 
 {% block content_fluid %}
@@ -24,10 +27,9 @@ p, h6{margin:0px;}
   <form id="app_form" action="url" method="POST" autocomplete="off">
     {% csrf_token %}
     <div class="card-body tab-content">
-      <h5 class="card-title mb-3">Registro de Ponto</h5>
       <div class="tab-pane fade show active" id="base" role="tabpanel">
         <div class="row g-2">
-          <div class="col-auto" style="max-width:180px;">
+          <div class="col-md-auto order-2 order-md-1 mx-auto" style="max-width:200px;">
             <img src="{% static 'img/default_user.jpg' %}" class="img-thumbnail" alt="">
             <div class="row g-1">
               <div class="form-floating mt-2 col">
@@ -36,10 +38,10 @@ p, h6{margin:0px;}
               </div>
             </div>
           </div>
-          <div class="col">
-            <h6>Rafael Gustavo Alves</h6>
-            <p>Coordenador de Planejamento</p>
-            <p>Pantanal Transportes</p>
+          <div class="col-md order-1 order-md-2 text-left-lg">
+            <h5 class="fw-bold">2534 Rafael Gustavo Alves</h5>
+            <p class="small">Coordenador de Planejamento</p>
+            <p class="small text-orange">Pantanal Transportes</p>
           </div>
         </div>
         <div class="row mt-2 g-1">
@@ -60,9 +62,10 @@ p, h6{margin:0px;}
                   </ul>
                 </div>
               </div>
-              <a class="btn btn-sm btn-success" href="#"><i class="fas fa-map-marked-alt"></i></a>
-              <a class="btn btn-sm btn-outline-secondary ms-1" href="#"><i class="fas fa-camera"></i></a>
-            </div>  
+              <span class="rounded px-2 py-1 bg-success text-light"><i class="fas fa-map-marked-alt"></i></span>
+              <span class="rounded px-2 py-1 bg-secondary text-light"><i class="fas fa-camera"></i></span>
+              <span class="rounded px-2 py-1 bg-secondary text-light"><i class="fas fa-check"></i></span>
+            </div>
           </div>
           <div class="col-6 col-md-auto">
             <div class="card-widget card-widget-sm border rounded p-2 btn-light">
@@ -81,8 +84,50 @@ p, h6{margin:0px;}
                   </ul>
                 </div>
               </div>
-              <a class="btn btn-sm btn-outline-secondary" href="#"><i class="fas fa-map-marked-alt"></i></a>
-              <a class="widget-label" href="">Entrada</a>
+              <span class="rounded px-2 py-1 bg-secondary text-light"><i class="fas fa-map-marked-alt"></i></span>
+            </div>  
+          </div>
+        </div>
+        <div class="row mt-1 g-1">
+          <div class="col-6 col-md-auto">
+            <div class="card-widget card-widget-sm border rounded p-2 btn-light">
+              <h6>Fim Intervalo</h6>
+              <div class="row fs-7">
+                <div class="col-auto">
+                  <ul class="list-unstyled">
+                    <li>Data:</li>
+                    <li>Hora:</li>
+                  </ul>
+                </div>
+                <div class="col fw-bold">
+                  <ul class="list-unstyled">
+                    <li>22/04/2022</li>
+                    <li>14:22</li>
+                  </ul>
+                </div>
+              </div>
+              <span class="rounded px-2 py-1 bg-success text-light"><i class="fas fa-map-marked-alt"></i></span>
+              <span class="rounded px-2 py-1 bg-secondary text-light"><i class="fas fa-camera"></i></span>
+            </div>
+          </div>
+          <div class="col-6 col-md-auto">
+            <div class="card-widget card-widget-sm border rounded p-2 btn-light">
+              <h6>Saída</h6>
+              <div class="row fs-7">
+                <div class="col-auto">
+                  <ul class="list-unstyled">
+                    <li>Data:</li>
+                    <li>Hora:</li>
+                  </ul>
+                </div>
+                <div class="col fw-bold">
+                  <ul class="list-unstyled">
+                    <li>--</li>
+                    <li>--</li>
+                  </ul>
+                </div>
+              </div>
+              <span class="rounded px-2 py-1 bg-secondary text-light"><i class="fas fa-map-marked-alt"></i></span>
             </div>  
           </div>
         </div>

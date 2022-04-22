@@ -135,7 +135,7 @@ def cadastro_site(request):
         status = ''
         form = CandidatoForm()
         vagas = Vaga.objects.filter(visivel=True, quantidade__gt=0)
-        try: # Carrega conficuracoes do app
+        try: # Carrega configuracoes do app
             settings = Settings.objects.all().get()
         except: # Caso nao gerado configuracoes iniciais carrega definicoes basicas
             settings = Settings()        

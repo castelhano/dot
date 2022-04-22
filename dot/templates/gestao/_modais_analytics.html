@@ -71,7 +71,7 @@
         <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
       </div>
       <div class="modal-body">
-        <form id="modal_analise_form" action="{% url 'gestao_analise_add' %}" method="POST" autocomplete="off">
+        <form id="modal_analise_form" action="{% url 'gestao_analise_add' %}" method="POST" autocomplete="off" onsubmit="modal_loading.show()">
           {% csrf_token %}
           <div class="row g-1 mb-1">
             <div class="col-12">

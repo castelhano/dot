@@ -42,4 +42,6 @@ urlpatterns = [
     path('gestao_plano_movimentar/<int:id>',views.plano_movimentar,name='gestao_plano_movimentar'),
     path('gestao_plano_avaliar',views.plano_avaliar,name='gestao_plano_avaliar'),
     path('gestao_plano_delete/<int:id>/delete',views.plano_delete,name='gestao_plano_delete'),
+    path('gestao_settings',views.settings,name='gestao_settings'),
+    path('gestao_settings_update/<int:id>',views.settings_update,name='gestao_settings_update'),
 ]

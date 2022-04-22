@@ -131,13 +131,16 @@
                 <div id="menu_diretriz_container" class="col-auto">
                   <a class="text-muted" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-ellipsis-h"></i></a>
                   <ul id="menu_diretriz_options" class="dropdown-menu fs-7">
-                    {% if staff.role == 'M' or staff.role == 'E' %}<li><a class="dropdown-item pointer" href="{% url 'gestao_diretriz_add' %}"><i class="fas fa-plus text-success me-1"></i> Diretriz</a></li>{% endif %}
+                    {% if staff.role == 'M' or staff.role == 'E' %}<li><a class="dropdown-item pointer" href="{% url 'gestao_diretriz_add' %}"><i class="fas fa-plus text-success fa-fw"></i> Diretriz</a></li>{% endif %}
                     {% if staff and staff.role != 'O' %}
-                    <li><a class="dropdown-item pointer" href="{% url 'gestao_indicadores' %}"><i class="fas fa-chart-line me-1"></i> Indicadores</a></li>
-                    <li><a class="dropdown-item pointer" href="{% url 'gestao_analises' %}"><i class="fas fa-check-double me-1"></i> Análises</a></li>
+                    <li><a class="dropdown-item pointer" href="{% url 'gestao_indicadores' %}"><i class="fas fa-chart-line fa-fw"></i> Indicadores</a></li>
+                    <li><a class="dropdown-item pointer" href="{% url 'gestao_analises' %}"><i class="fas fa-check-double fa-fw"></i> Análises</a></li>
                     {% endif %}
-                    {% if perms.gestao.staff %}<li><a class="dropdown-item pointer" href="{% url 'gestao_staffs' %}"><i class="fas fa-users me-1"></i> Staff</a></li>{% endif %}
-                    {% if staff.role == 'M' %}<li><a class="dropdown-item pointer" href="{% url 'gestao_labels' %}"><i class="fas fa-tags me-1"></i> Labels</a></li>{% endif %}
+                    {% if perms.gestao.staff %}<li><a class="dropdown-item pointer" href="{% url 'gestao_staffs' %}"><i class="fas fa-users fa-fw"></i> Staff</a></li>{% endif %}
+                    {% if staff.role == 'M' %}
+                    <li><a class="dropdown-item pointer" href="{% url 'gestao_labels' %}"><i class="fas fa-tags fa-fw"></i> Labels</a></li>
+                    <li><a class="dropdown-item dropdown-item-purple pointer" href="{% url 'gestao_settings' %}"><i class="fas fa-cogs fa-fw"></i> Settings</a></li>
+                    {% endif %}
                   </ul>
                 </div>
               </div>

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Indicador, Apontamento, Staff, Diretriz, Label, Analise, Plano
+from .models import Indicador, Apontamento, Staff, Diretriz, Label, Analise, Plano, Settings
 from datetime import date
 from django.contrib.auth.models import User
 
@@ -60,3 +60,9 @@ class PlanoForm(forms.ModelForm):
     termino = forms.DateField(required=False, widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
     responsavel = forms.ModelChoiceField(required=False, queryset = Staff.objects.filter(usuario__is_active=True, usuario__is_staff=True))
     labels = forms.ModelMultipleChoiceField(required=False, queryset = Label.objects.all(), widget=forms.widgets.SelectMultiple(attrs={'class':'d-none'}))
+
+class SettingsForm(forms.ModelForm):
+    class Meta:
+        model = Settings
+        fields = ['analytics_foco_mes_atual']
+    analytics_foco_mes_atual = forms.BooleanField(required=False, initial=True, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch'}))

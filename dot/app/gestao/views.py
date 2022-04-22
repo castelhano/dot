@@ -4,8 +4,8 @@ import re
 from django.urls import reverse
 from urllib.parse import urlencode
 from django.shortcuts import render, redirect
-from .models import Indicador, Apontamento, Staff, Diretriz, Label, Analise, Plano
-from .forms import IndicadorForm, ApontamentoForm, StaffForm, DiretrizForm, LabelForm, PlanoForm
+from .models import Indicador, Apontamento, Staff, Diretriz, Label, Analise, Plano, Settings
+from .forms import IndicadorForm, ApontamentoForm, StaffForm, DiretrizForm, LabelForm, PlanoForm, SettingsForm
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -86,29 +86,65 @@ def analytics(request):
         else:
             messages.warning(request,'É necessário ter pelo menos uma <b>empresa</b> habilitada para seu usuario')
             return redirect('gestao_dashboard')
-        now = datetime.now()
-        current_month = now.month
-        current_year = now.year
+        try: # Carrega configuracoes do app
+            settings = Settings.objects.all().get()
+        except: # Caso nao gerado configuracoes iniciais carrega definicoes basicas
+            settings = Settings()
+        
+        # Exibe ultimo conforme definido nas configuracoes (mes atual ou anterior)
+        if settings.analytics_foco_mes_atual:
+            target = datetime.now()
+        else:
+            target = (datetime.now().replace(day=1) - timedelta(days=1)).replace(day=1)
         metrics = {
             'empresa':empresa,
             'empresas':empresas,
             'indicadores':Indicador.objects.filter(ativo=True).order_by('nome'),
             'periodo':int(request.GET.get('periodo', 3)),
-            'meses':[date.today().strftime("%B").title()],
-            'referencias':[f'{now.year}_{str(now.month).zfill(2)}'],
+            'meses':[target.strftime("%B").title()],
+            'referencias':[f'{target.year}_{str(target.month).zfill(2)}'],
             'apontamento_form':ApontamentoForm(),
         }
         for _ in range(1, metrics['periodo']):
-            now = now.replace(day=1) - timedelta(days=1)
-            metrics['meses'].append(now.strftime("%B").title())
-            metrics['referencias'].append(f'{now.year}_{str(now.month).zfill(2)}')
+            target = target.replace(day=1) - timedelta(days=1)
+            metrics['meses'].append(target.strftime("%B").title())
+            metrics['referencias'].append(f'{target.year}_{str(target.month).zfill(2)}')
         metrics['meses'].reverse()
         metrics['referencias'].reverse()
     except Exception as e:
         messages.error(request,f'<b>Erro</b> {e}')
         return redirect('gestao_dashboard')
     return render(request,'gestao/analytics.html',{'staff':staff,'metrics':metrics})
-    
+
+@login_required
+def settings(request):
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+        if not staff.role in ['M']:
+            raise Exception('Perfil não liberado para este recurso')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard') 
+    try: # Busca configuracao do app
+        settings = Settings.objects.all().get()
+    except: # Caso ainda nao configurado, inicia com configuracao basica
+        if Settings.objects.all().count() == 0:
+            settings = Settings()
+            settings.save()
+            l = Log()
+            l.modelo = "gestao.settings"
+            l.objeto_id = settings.id
+            l.objeto_str = 'n/a'
+            l.usuario = request.user
+            l.mensagem = "AUTO CREATED"
+            l.save()
+            messages.warning(request,'<b>Informativo:</b> App configurado pela primeira vez')
+        else:
+            settings = None
+            messages.error(request,'<b>Erro::</b> Identificado duplicatas nas configurações do sistema, entre em contato com o administrador.')
+    form = SettingsForm(instance=settings)
+    return render(request,'gestao/settings.html',{'form':form,'settings':settings})
+
 @login_required
 @permission_required('gestao.dashboard')
 def indicadores(request):
@@ -931,6 +967,31 @@ def plano_avaliar(request):
         messages.error(request,f'<b>Erro:</b> {e}')
     return redirect('gestao_dashboard') 
 
+@login_required
+def settings_update(request, id):
+    try:
+        staff = Staff.objects.get(usuario=request.user)
+        if not staff.role in ['M']:
+            raise Exception('Perfil não liberado para este recurso')
+    except Exception as e:
+        messages.error(request,f'<b>Erro</b> {e}')
+        return redirect('gestao_dashboard') 
+    settings = Settings.objects.get(pk=id)
+    form = SettingsForm(request.POST, instance=settings)
+    if form.is_valid():
+        registro = form.save()
+        l = Log()
+        l.modelo = "gestao.settings"
+        l.objeto_id = registro.id
+        l.objeto_str = 'n/a'
+        l.usuario = request.user
+        l.mensagem = "UPDATE"
+        l.save()
+        messages.success(request,'Settings <b>gestao</b> alterado')
+        return redirect('gestao_settings')
+    else:
+        return render(request,'gestao/settings.html',{'form':form,'settings':settings})
+        
 # METODOS DELETE
 @login_required
 @permission_required('gestao.dashboard')

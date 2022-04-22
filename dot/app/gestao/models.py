@@ -173,3 +173,11 @@ class Plano(models.Model):
             return Label.objects.all()
     class Meta:
         default_permissions = []
+
+class Settings(models.Model):
+    analytics_foco_mes_atual = models.BooleanField(default=False)
+    def ultimas_alteracoes(self):
+        logs = Log.objects.filter(modelo='gestao.settings',objeto_id=self.id).order_by('-data')[:15]
+        return reversed(logs)
+    class Meta:
+        default_permissions = []

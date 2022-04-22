@@ -57,6 +57,8 @@ VERSION: 1.0
 .dropdown-item-danger:hover, .dropdown-item-danger:focus {color: #fff!important;background-color: #DC3545!important;}
 .dropdown-item-success {color: #198754!important;}
 .dropdown-item-success:hover, .dropdown-item-success:focus {color: #fff!important;background-color: #198754!important;}
+.dropdown-item-purple {color: #6f42c1!important;}
+.dropdown-item-purple:hover, .dropdown-item-purple:focus {color: #fff!important;background-color: #6f42c1!important;}
 
 .widget-thumb-img{position: relative;height: 150px;border: 3px solid #dee2e6;border-radius: .25rem;}
 .widget-thumb-controls{margin-top: 5px;}
@@ -74,6 +76,7 @@ VERSION: 1.0
   .dropdown-menu li{position: relative;}
   .dropdown-menu > li:hover, .dropdown-menu > li.hover{background-color: #F1F1F1;}
   .dropdown-menu-dark > li:hover, .dropdown-menu-dark > li.hover{background-color: #52575D;}
+  .placeholder-end-lg::placeholder {text-align: right;font-weight: bold;color: #999;}
 }
 
 /* Estilos breakpoint LG- */
@@ -85,12 +88,15 @@ VERSION: 1.0
   .widget-thumb-controls{margin-top: 0px;}
   .submenu-alt{display: block;position: relative;padding: 0px;margin-top: 4px;margin-bottom: 4px;border-left: 0px;border-right: 0px;border-radius: 0px;background-color: rgb(248, 249, 250);color: rgb(108, 117, 125);}
   .filter-container{padding-bottom: 0px;margin-bottom: 5px;}
+  .placeholder-end-lg::placeholder {color: transparent;}
 }
 .fs-7{font-size: 0.9rem;}
 .fs-8{font-size: 0.8rem;}
 .fs-9{font-size: 0.7rem;}
 
 .text-justify{text-align: justify;}
+
+.placeholder-end::placeholder {text-align: right;font-weight: bold;color: #999;}
 
 .is-invalid{color: #832129!important;background-color: #FBEFF0;padding-left: 10px;border-left: 2px solid #832129;}
 
