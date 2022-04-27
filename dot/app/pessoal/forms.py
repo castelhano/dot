@@ -1,5 +1,5 @@
 from django import forms
-from .models import Setor, Cargo, Funcionario, FuncaoFixa, Afastamento, Dependente, Evento
+from .models import Setor, Cargo, Funcionario, FuncaoFixa, Afastamento, Dependente
 from django.contrib.auth.models import User
 from datetime import date
 
@@ -23,13 +23,6 @@ class FuncaoFixaForm(forms.ModelForm):
         model = FuncaoFixa
         fields = ['nome','cargos']
     nome = forms.ChoiceField(error_messages={'unique': 'Função Fixa para está função já tem associações'},choices=FuncaoFixa.FFIXA_CHOICES, widget=forms.Select(attrs={'class':'form-select bg-light fw-bold','autofocus':'autofocus'}))
-
-class EventoForm(forms.ModelForm):
-    class Meta:
-        model = Evento
-        fields = ['nome','tipo']
-    tipo = forms.ChoiceField(error_messages={'required': 'Selecione um tipo para evento'}, choices=Evento.TIPO_CHOICES, widget=forms.Select(attrs={'class':'form-select','autofocus':'autofocus'}))
-    nome = forms.CharField(error_messages={'required': 'Preencha o nome do evento'},widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
 
 class AfastamentoForm(forms.ModelForm):
     class Meta:
