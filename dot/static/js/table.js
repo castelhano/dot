@@ -60,12 +60,10 @@ function sortTable(table, column, asc=true) {
   const modifier = asc ? 1 : -1;
   const tBody = table.tBodies[0];
   const rows = Array.from(tBody.querySelectorAll("tr"));
-  
   const sortedRows = rows.sort((a, b) => {
-    const aColText = a.querySelector(`td:nth-child(${ column + 1 })`).textContent.trim();
-    const bColText = b.querySelector(`td:nth-child(${ column + 1 })`).textContent.trim();
-    
-    return aColText > bColText ? (1 * modifier) : (-1 * modifier);
+  const aColText = a.querySelector(`td:nth-child(${ column + 1 })`).textContent.trim();
+  const bColText = b.querySelector(`td:nth-child(${ column + 1 })`).textContent.trim();  
+  return aColText > bColText ? (1 * modifier) : (-1 * modifier);
   });
   
   tBody.innerHTML = ''; // Limpa das rows da tabela
@@ -76,13 +74,13 @@ function sortTable(table, column, asc=true) {
   table.querySelector(`th:nth-child(${ column + 1})`).classList.toggle("th-sort-desc", !asc);
 }
 
+// Adiciona listener para evento de click nos cabeçalhos de tabelas que contenham a classe table-sortable
 document.querySelectorAll(".table-sortable th").forEach(headerCell => {
   headerCell.addEventListener("click", () => {
-    const tableElement = headerCell.parentElement.parentElement.parentElement;
-    const headerIndex = Array.prototype.indexOf.call(headerCell.parentElement.children, headerCell);
-    const currentIsAscending = headerCell.classList.contains("th-sort-asc");
-    
-    sortTable(tableElement, headerIndex, !currentIsAscending);
+  const tableElement = headerCell.parentElement.parentElement.parentElement;
+  const headerIndex = Array.prototype.indexOf.call(headerCell.parentElement.children, headerCell);
+  const currentIsAscending = headerCell.classList.contains("th-sort-asc");  
+  sortTable(tableElement, headerIndex, !currentIsAscending);
   });
 });
 

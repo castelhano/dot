@@ -459,9 +459,9 @@ def get_empresas(request):
             usuario = User()
         else:
             usuario = request.user if request.GET.get('usuario', None) == None else User.objects.get(id=request.GET.get('usuario', None))
-        if usuario.is_superuser: # Caso superusuario retorna todas as empresas
-            empresas = Empresa.objects.all().order_by('nome')
-        elif tipo == None or tipo == 'cadastrados': # Retorna as empresas cadastradas para usuario
+        # if usuario.is_superuser: # Caso superusuario retorna todas as empresas
+        #     empresas = Empresa.objects.all().order_by('nome')
+        if tipo == None or tipo == 'cadastrados': # Retorna as empresas cadastradas para usuario
             empresas = usuario.profile.empresas.all().order_by('nome')
         elif tipo == 'disponiveis':
             if request.GET.get('usuario', None) == 'new':

@@ -46,10 +46,7 @@ def linhas(request):
     
     if request.GET.get('empresa', None) and request.GET['empresa'] != 'all':
         try:
-            if request.user.is_superuser:
-                empresa = Empresa.objects.get(id=request.GET.get('empresa', None))
-            else:
-                empresa = request.user.profile.empresas.filter(id=request.GET.get('empresa', None)).get()
+            empresa = request.user.profile.empresas.filter(id=request.GET.get('empresa', None)).get()
         except:
             messages.error(request,'Empresa <b>não encontrada</b> ou <b>não habilitada</b>')
             return redirect('trafego_linhas')
@@ -57,8 +54,7 @@ def linhas(request):
         empresa_display = empresa.nome
     else:
         empresa_display = 'Todas'
-        if not request.user.is_superuser:
-            linhas = linhas.filter(empresa__in=request.user.profile.empresas.all())
+        linhas = linhas.filter(empresa__in=request.user.profile.empresas.all())
     metrics = dict(status_display='Ativas' if status == 'A' else 'Inativas', empresa_display = empresa_display)
     return render(request,'trafego/linhas.html', {'linhas' : linhas, 'metrics':metrics})
 
@@ -97,10 +93,7 @@ def ocorrencias(request):
             ocorrencias = ocorrencias.filter(data=date.today())            
         if request.POST['empresa'] != '':
             try:
-                if request.user.is_superuser:
-                    empresa = Empresa.objects.get(id=request.POST['empresa'])
-                else:
-                    empresa = request.user.profile.empresas.filter(id=request.POST['empresa']).get()
+                empresa = request.user.profile.empresas.filter(id=request.POST['empresa']).get()
             except:
                 messages.error(request,'Empresa <b>não encontrada</b> ou <b>não habilitada</b>')
                 return redirect('trafego_linhas')
@@ -108,8 +101,7 @@ def ocorrencias(request):
             empresa_display = empresa.nome
         else:
             empresa_display = 'Todas'
-            if not request.user.is_superuser:
-                ocorrencias = ocorrencias.filter(empresa__in=request.user.profile.empresas.all())
+            ocorrencias = ocorrencias.filter(empresa__in=request.user.profile.empresas.all())
         if request.POST['evento'] != '':
             ocorrencias = ocorrencias.filter(evento__id=request.POST['evento'])
         if request.POST['gravidade'] != '':

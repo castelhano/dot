@@ -29,18 +29,14 @@ def escalas(request):
     
     if request.GET.get('empresa', None):
         try:
-            if request.user.is_superuser:
-                empresa = Empresa.objects.get(id=request.GET.get('empresa', None))
-            else:
-                empresa = request.user.profile.empresas.filter(id=request.GET.get('empresa', None)).get()
+            empresa = request.user.profile.empresas.filter(id=request.GET.get('empresa', None)).get()
         except:
             messages.error(request,'Empresa <b>não encontrada</b> ou <b>não habilitada</b> para o seu usuário')
             return redirect('globus_escalas')
         escalas = escalas.filter(empresa=empresa)
     else:
-        if not request.user.is_superuser:
-            escalas = escalas.filter(empresa__in=request.user.profile.empresas.all())
-    
+        escalas = escalas.filter(empresa__in=request.user.profile.empresas.all())
+        
     metrics = {
     'data':data,
     'empresa_nome':'Todas' if not request.GET.get('empresa', None) else empresa.nome,
@@ -79,10 +75,7 @@ def localizar_escala(request): # Metodo para localizar a escala de um determinad
     if request.method == 'POST':
         try:
             data_consulta = datetime.strptime(request.POST['data'],'%Y-%m-%d').date()
-            if request.user.is_superuser: # Filtra as empresas habilitadas para o usuario
-                escalas = Escala.objects.filter(data=data_consulta).order_by('inicio')
-            else:
-                escalas = Escala.objects.filter(data=data_consulta, empresa__in=request.user.profile.empresas.all()).order_by('inicio')
+            escalas = Escala.objects.filter(data=data_consulta, empresa__in=request.user.profile.empresas.all()).order_by('inicio')
             tipo = request.POST['tipo']
             if tipo == 'funcionario':
                 escalas = escalas.filter(Q(funcionario__matricula=request.POST['funcionario']) | Q(funcionario__nome__contains=request.POST['funcionario']))
@@ -149,10 +142,7 @@ def planejamento_linha(request): # Retorna o planejamento da linha para um dia e
 def settings(request):
     if request.GET.get('empresa', None):
         try: # Carrega a empresa selecionada
-            if request.user.is_superuser:
-                empresa = Empresa.objects.get(id=request.GET.get('empresa', None))
-            else:
-                empresa = request.user.profile.empresas.filter(id=request.GET.get('empresa', None)).get()
+            empresa = request.user.profile.empresas.filter(id=request.GET.get('empresa', None)).get()
         except:
             messages.error(request,'Empresa <b>não encontrada</b> ou <b>não habilitada</b>')
             return redirect('globus_settings')

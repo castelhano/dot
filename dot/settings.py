@@ -70,6 +70,7 @@ USE_TZ = True
 USE_THOUSAND_SEPARATOR = True
 
 STATIC_URL = '/static/'
+# STATIC_ROOT = "D:/staticfiles"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'dot/static')]
 
 FIXTURE_DIRS = [

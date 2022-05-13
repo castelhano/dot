@@ -623,7 +623,7 @@ def get_funcionario(request):
         funcionario = Funcionario.objects.get(**params)
         if incluir_inativos == 'False' and funcionario.status != 'A':
             raise Exception('')
-        return HttpResponse(str(funcionario.id) + ';' + str(funcionario.nome) + ';' + str(funcionario.cargo.nome) + ';' + str(funcionario.status))
+        return HttpResponse(str(funcionario.id) + ';' + str(funcionario.nome) + ';' + (str(funcionario.cargo.nome) if funcionario.cargo else '--') + ';' + str(funcionario.status))
     except:
         return HttpResponse('')
 

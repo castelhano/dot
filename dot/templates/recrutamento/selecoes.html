@@ -31,7 +31,8 @@
   <div class="card-body tab-content">
     <h5 class="card-title mb-3">Seleções <small class="badge bg-primary ms-1">{{selecoes.count}}</small></h5>
     <div class="tab-pane fade show active" id="base" role="tabpanel">
-      <table id="main_table" class="table border table-striped table-hover table-sortable">
+      <table id="main_table" class="table border table-striped table-hover table-sortable caption-top">
+        <caption class=""><input type="text" class="form-control" placeholder="Filtrar candidato" onkeyup="filterTable('main_table', [1], this)"></caption>
         <thead>
           <tr>
             <th class="d-none d-lg-table-cell">#</th>
@@ -77,7 +78,7 @@
       </div>
       <div class="row mt-1">
         <div class="col-12">
-          <table class="table border table-striped table-hover table-sortable caption-top">
+          <table id="agendamentos_table" class="table border table-striped table-hover table-sortable caption-top">
             <caption>Agendados do dia: <span class="badge bg-dark ms-1" id="total_agendamentos_dia"></span></caption>
             <thead>
               <tr>
@@ -172,11 +173,11 @@
             let dados = obj[key].split(';')
             let action = ``;
             let resultado_display = dados[6] == '' ? '' : dados[6] == 'A' ? 'table-success' : 'table-danger';
-            console.log(dados[6]);
             agendamentos.innerHTML += `<tr class="${resultado_display}"><td class="d-none">${dados[0]}</td><td>${dados[1]}</td><td class="d-none d-lg-table-cell">${dados[2]}</td><td>${dados[3]}</td><td class="d-none d-lg-table-cell">${dados[4]}</td><td class="d-none d-lg-table-cell">${dados[5]}</td><td class="text-end fit py-1"><a class="btn btn-sm btn-dark{% if not perms.recrutamento.change_selecao %} disabled{% endif %}" href="recrutamento_selecao_id/${key}"><i class="fas fa-pen"></a></td></tr>`;
           }
           total_agendamentos_dia.innerHTML = Object.keys(obj).length;
   			}
+        sortTable(document.getElementById('agendamentos_table'), 1); // Classifica por ordem de horario
   		}
   	};
   	xhttp.open("GET", "{% url 'recrutamento_get_agendamentos' %}?data_agendamento=" + data_agendamento, true);

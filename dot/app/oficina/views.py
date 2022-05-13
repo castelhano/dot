@@ -15,18 +15,12 @@ from .forms import FrotaForm, MarcaForm, CategoriaForm, ComponenteForm, ModeloFo
 @permission_required('oficina.view_frota')
 def frotas(request):
     if request.method == 'POST':
-        if request.user.is_superuser:
-            frotas = Frota.objects.all().order_by('prefixo')
-        else:
-            frotas = Frota.objects.filter(empresa__in=request.user.profile.empresas.all()).order_by('prefixo')
+        frotas = Frota.objects.filter(empresa__in=request.user.profile.empresas.all()).order_by('prefixo')
         validado = False #Precisa informar pelo menos um filtro, ou metodo retorna None
         if(request.POST['pesquisa'] != '' and len(request.POST['pesquisa']) > 2):
             if request.POST['pesquisa'][0] == '#':
                 try:
-                    if request.user.is_superuser:
-                        veiculo = Frota.objects.get(prefixo=request.POST['pesquisa'][1:])
-                    else:
-                        veiculo = Frota.objects.get(empresa__in=request.user.profile.empresas.all(), prefixo=request.POST['pesquisa'][1:])
+                    veiculo = Frota.objects.get(empresa__in=request.user.profile.empresas.all(), prefixo=request.POST['pesquisa'][1:])
                     return redirect('oficina_frota_id', veiculo.id)
                 except:
                     messages.warning(request,'Veiculo não encontrado')
@@ -294,10 +288,7 @@ def modelo_add(request):
 @permission_required('oficina.view_frota')
 def frota_id(request, id):
     try:
-        if request.user.is_superuser:
-            frota = Frota.objects.get(id=id)
-        else:
-            frota = Frota.objects.get(empresa__in=request.user.profile.empresas.all(),id=id)
+        frota = Frota.objects.get(empresa__in=request.user.profile.empresas.all(),id=id)
     except:
         messages.warning(request,'Veiculo não encontrado ou não liberado para visualização')
         return redirect('oficina_frotas')
@@ -352,10 +343,7 @@ def modelo_id(request, id):
 @permission_required('oficina.change_frota')
 def frota_update(request, id):
     try:
-        if request.user.is_superuser:
-            frota = Frota.objects.get(pk=id)
-        else:
-            frota = Frota.objects.get(empresa__in=request.user.profile.empresas.all(), pk=id)
+        frota = Frota.objects.get(empresa__in=request.user.profile.empresas.all(), pk=id)
     except:
         messages.warning(request,'Veiculo não encontrado ou não altorizado para alteração')
     form = FrotaForm(request.POST, request.FILES, instance=frota)
@@ -516,10 +504,7 @@ def modelo_update(request, id):
 @permission_required('oficina.delete_frota')
 def frota_delete(request, id):
     try:
-        if request.user.is_superuser:
-            registro = Frota.objects.get(pk=id)
-        else:
-            registro = Frota.objects.get(empresa__in=request.user.profile.empresas.all(), pk=id)
+        registro = Frota.objects.get(empresa__in=request.user.profile.empresas.all(), pk=id)
         l = Log()
         l.modelo = "oficina.frota"
         l.objeto_id = registro.id
