@@ -55,9 +55,9 @@
         <tbody>
           {% for notificacao in notificacoes %}
           <tr>
-            <td class="d-none d-md-table-cell">{{notificacao.empresa.nome}}</td>
+            <td class="d-none d-lg-table-cell">{{notificacao.empresa.nome}}</td>
             <td>{{notificacao.get_tipo_display}}</td>
-            <td>{{notificacao.agente.orgao.nome}}</td>
+            <td class="d-none">{{notificacao.agente.orgao.nome}}</td>
             <td>{{notificacao.codigo}}</td>
             <td class="d-none d-sm-table-cell">{{notificacao.data|date:'d/m/Y'}}</td>
             <td class="d-none d-lg-table-cell">{{notificacao.hora}}</td>
