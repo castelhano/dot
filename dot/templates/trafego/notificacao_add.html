@@ -32,7 +32,7 @@
   
   VMasker(document.getElementById("id_valor")).maskMoney();
   let valor = document.getElementById('id_valor');
-  function submitForm(){valor.value = valor.value.replace(',','.');return true;}
+  function submitForm(){valor.value = valor.value.replace('.','').replace(',','.');return true;}
   
   {% endblock %}
 </script>

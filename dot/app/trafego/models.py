@@ -231,6 +231,15 @@ class Enquadramento(models.Model):
         logs = Log.objects.filter(modelo='trafego.enquadramento',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
 
+class Predefinido(models.Model):
+    abbr = models.CharField(max_length=80, blank=False)
+    detalhe = models.TextField(blank=True)
+    def __str__(self):
+        return self.abbr
+    def ultimas_alteracoes(self):
+        logs = Log.objects.filter(modelo='trafego.predefinido',objeto_id=self.id).order_by('-data')[:15]
+        return reversed(logs)
+
 class Notificacao(models.Model):
     TIPO_CHOICES = (
     ('N','Notificacao'),

@@ -1,36 +1,57 @@
 {% extends "layout/dot.html" %}
 {% load static %}
-{% block title %}Notificacao{% endblock %}
+{% block title %}MSG Predefinida{% endblock %}
 {% block model %}Tráfego{% endblock %}
 {% block navbar_classlist %}navbar-dark bg-primary bg-gradient{% endblock %}
 {% block model_menu %}{% include "_component/menu/trafego.html" %}{% endblock%}
 
 {% block content_fluid %}
-<a class="d-none" id="clear" href="{% url 'trafego_notificacao_id' notificacao.id|safe %}"></a>
+<a class="d-none" id="clear" href="{% url 'trafego_predefinido_id' predefinido.id|safe %}"></a>
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
-      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'trafego_notificacoes' %}"><i class="fas fa-undo"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'trafego_predefinidos' %}"><i class="fas fa-undo"></i></a></li>
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
         <ul class="dropdown-menu">
           <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#history_modal">Historico</a></li>
-          {% if perms.trafego.delete_notificacao %}
+          {% if perms.trafego.delete_predefinido %}
           <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal">Excluir Notificação</a></li>
+          <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal">Excluir Mensagem</a></li>
           {% endif %}
         </ul>
       </li>
     </ul>
   </div>
-  <form id="trafego_form" action="{% url 'trafego_notificacao_update' notificacao.id|safe %}" method="POST" autocomplete="off" onsubmit="return submitForm();">
+  <form id="trafego_form" action="{% url 'trafego_predefinido_update' predefinido.id|safe %}" method="POST" autocomplete="off">
     {% csrf_token %}
-    {% include 'trafego/_form_notificacao.html' %}
+    <div class="card-body tab-content">
+      <h5 class="card-title mb-3">Cadastro de MSG Predefinida</h5>
+      <div class="tab-pane fade show active" id="base" role="tabpanel">
+        <div class="row g-1">
+          <div class="form-floating mb-lg-1 col-lg-12">
+            {{ form.abbr }}
+            <label for="id_abbr">Abreviado</label>
+          </div>
+        </div>
+        <div class="row g-1">
+        	<div class="col-lg-12">
+        		{{ form.detalhe }}
+        	</div>
+        </div>
+      </div>
+      <!-- CONTROLES DO FORM -->
+      <div class="row mt-3">
+        <div class="col">
+          <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"><b>G</b>ravar</button>
+        </div>
+      </div>
+    </div>
   </form>
 </div>
 
-{% if perms.trafego.delete_notificacao %}
+{% if perms.trafego.delete_predefinido %}
 <div class="modal fade" id="delete_modal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -43,7 +64,7 @@
         <div class="row mt-2">
           <div class="col text-end">
             <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
-            <a class="btn btn-danger px-3" href="{% url 'trafego_notificacao_delete' notificacao.id|safe %}">Excluir</a>
+            <a class="btn btn-danger px-3" href="{% url 'trafego_predefinido_delete' predefinido.id|safe %}">Excluir</a>
           </div>
         </div>
       </div>
@@ -68,7 +89,7 @@
             </tr>
           </thead>
           <tbody class="fs-7">
-            {% for i in notificacao.ultimas_alteracoes %}
+            {% for i in predefinido.ultimas_alteracoes %}
             <tr>
               <td>{{i.data|date:'d/m/Y H:i:s'}}</td>
               <td>{{i.mensagem}}</td>
@@ -83,27 +104,10 @@
 </div>
 {% endblock%}
 
-{% block add_script_src %}
-<script src="{% static 'js/vendor/mask.js' %}"></script>
-{% endblock %}
+{% block add_script_src %}{% endblock %}
 
 <script>
   {% block add_script %}
   var TAB_ON_ENTER = true;
-  SHORTCUT_MAP['pTFF'] = '#capa_print';
-  
-  VMasker(document.getElementById("id_valor")).maskMoney();
-  let valor = document.getElementById('id_valor');
-  function submitForm(){valor.value = valor.value.replace('.','').replace(',','.');return true;}
-  
-  function msg_predefinida(){
-    let msg = document.getElementById('id_msg_predefinida');
-    let tratativas = document.getElementById('id_tratativa');
-    if(msg.value != ''){
-      if(tratativas.value == ''){tratativas.innerHTML = msg.options[msg.selectedIndex].dataset.message;}
-      else{tratativas.value += '\n\n' + msg.options[msg.selectedIndex].dataset.message;}
-    }
-    msg.value = '';
-  }
   {% endblock %}
 </script>

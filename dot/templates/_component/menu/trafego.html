@@ -28,14 +28,8 @@
     </li>
   </ul>
 </li>
-{% if perms.trafego.view_planejamento %}
-<li class="nav-item">
-  <a class="nav-link" id="menu_planejamento" href="{% url 'trafego_planejamentos' %}" title="ALT + P"><i class="fas fa-route me-1"></i> <b>P</b>lanejamento</a>
-</li>
-{% endif %}
 <script>
   SHORTCUT_MAP['cTFF'] = '#menu_cadastro';
-  SHORTCUT_MAP['pTFF'] = '#menu_planejamento';
   
   if(document.getElementById('cadastro_linha_list_options').childElementCount == 0){document.getElementById('cadastro_linha_list_container').classList.add('d-none');}
   if(document.getElementById('cadastro_ocorrencia_list_options').childElementCount == 0){document.getElementById('cadastro_ocorrencia_list_container').classList.add('d-none');}

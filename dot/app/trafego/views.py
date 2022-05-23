@@ -1,14 +1,13 @@
 import os
-import json
+# import json
 from json import dumps
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.db.models import Q
-from .models import Linha, Localidade, Patamar, Carro, Viagem, Evento, Providencia, Ocorrencia, FotoOcorrencia, Planejamento, Orgao, Agente, Enquadramento, Notificacao
-from core.models import Empresa
-from .forms import LinhaForm, LocalidadeForm, EventoForm, ProvidenciaForm, OcorrenciaForm, PlanejamentoForm, OrgaoForm, AgenteForm, EnquadramentoForm, NotificacaoForm
+from core.models import Empresa, Log
+from .models import Linha, Localidade, Patamar, Carro, Viagem, Evento, Providencia, Ocorrencia, FotoOcorrencia, Planejamento, Orgao, Agente, Enquadramento, Notificacao, Predefinido
+from .forms import LinhaForm, LocalidadeForm, EventoForm, ProvidenciaForm, OcorrenciaForm, PlanejamentoForm, OrgaoForm, AgenteForm, EnquadramentoForm, NotificacaoForm, PredefinidoForm
 from .validators import validate_file_extension
-from core.models import Log
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from datetime import date, datetime
@@ -140,6 +139,14 @@ def tratativas(request):
     return render(request,'trafego/tratativas.html',{'ocorrencias':ocorrencias})
 
 @login_required
+@permission_required('trafego.view_predefinido')
+def predefinidos(request):
+    predefinidos = Predefinido.objects.all().order_by('abbr')
+    if request.method == 'POST':
+        predefinidos = predefinidos.filter(detalhe__contains=request.POST['pesquisa'])
+    return render(request, 'trafego/predefinidos.html', {'predefinidos':predefinidos})
+
+@login_required
 @permission_required('trafego.view_orgao')
 def orgaos(request):
     orgaos = Orgao.objects.all().order_by('nome')
@@ -172,7 +179,11 @@ def notificacoes(request):
     notificacoes = Notificacao.objects.all().order_by('data','hora')
     if request.method == 'POST':
         if request.POST['pesquisa'] != '':
-            notificacoes = notificacoes.filter(codigo=request.POST['pesquisa'])
+            try:
+                notificacao = Notificacao.objects.get(codigo=request.POST['pesquisa'])
+                return redirect('trafego_notificacao_id', notificacao.id)
+            except Exception as e:
+                notificacoes = notificacoes.filter(veiculo__prefixo=request.POST['pesquisa'])
         if request.POST['orgao'] != '':
             notificacoes = notificacoes.filter(agente__orgao__id=request.POST['orgao'])
         if request.POST['tipo'] != '':
@@ -337,6 +348,30 @@ def planejamento_add(request):
     return render(request,'trafego/planejamento_add.html',{'form':form})
 
 @login_required
+@permission_required('trafego.add_predefinido')
+def predefinido_add(request):
+    if request.method == 'POST':
+        form = PredefinidoForm(request.POST)
+        if form.is_valid():
+            try:
+                registro = form.save()
+                l = Log()
+                l.modelo = "trafego.predefinido"
+                l.objeto_id = registro.id
+                l.objeto_str = registro.abbr[0:35]
+                l.usuario = request.user
+                l.mensagem = "CREATED"
+                l.save()
+                messages.success(request,'Mensagem predefinida inserida')
+                return redirect('trafego_predefinido_add')
+            except:
+                messages.error(request,'Erro ao inserir mensagem predefinida')
+                return redirect('trafego_predefinido_add')
+    else:
+        form = PredefinidoForm()
+    return render(request,'trafego/predefinido_add.html',{'form':form})
+
+@login_required
 @permission_required('trafego.add_orgao')
 def orgao_add(request):
     if request.method == 'POST':
@@ -489,6 +524,13 @@ def planejamento_id(request,id):
     return render(request,'trafego/planejamento_id.html',{'form':form,'planejamento':planejamento})
 
 @login_required
+@permission_required('trafego.change_predefinido')
+def predefinido_id(request,id):
+    predefinido = Predefinido.objects.get(pk=id)
+    form = PredefinidoForm(instance=predefinido)
+    return render(request,'trafego/predefinido_id.html',{'form':form,'predefinido':predefinido})
+
+@login_required
 @permission_required('trafego.change_orgao')
 def orgao_id(request,id):
     orgao = Orgao.objects.get(pk=id)
@@ -514,7 +556,8 @@ def enquadramento_id(request,id):
 def notificacao_id(request,id):
     notificacao = Notificacao.objects.get(pk=id)
     form = NotificacaoForm(instance=notificacao)
-    return render(request,'trafego/notificacao_id.html',{'form':form,'notificacao':notificacao})
+    predefinidas = Predefinido.objects.all()
+    return render(request,'trafego/notificacao_id.html',{'form':form,'notificacao':notificacao,'predefinidas':predefinidas})
 
 # METODOS UPDATE
 @login_required
@@ -780,6 +823,25 @@ def planejamento_update(request,id):
         return render(request,'trafego/planejamento_id.html',{'form':form,'planejamento':planejamento})
 
 @login_required
+@permission_required('trafego.change_predefinido')
+def predefinido_update(request,id):
+    predefinido = Predefinido.objects.get(pk=id)
+    form = PredefinidoForm(request.POST, instance=predefinido)
+    if form.is_valid():
+        registro = form.save()
+        l = Log()
+        l.modelo = "trafego.predefinido"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.abbr[0:35]
+        l.usuario = request.user
+        l.mensagem = "UPDATE"
+        l.save()
+        messages.success(request,'Mensagem predefinida alterada')
+        return redirect('trafego_predefinido_id', id)
+    else:
+        return render(request,'trafego/predefinido_id.html',{'form':form,'predefinido':orgao})
+
+@login_required
 @permission_required('trafego.change_orgao')
 def orgao_update(request,id):
     orgao = Orgao.objects.get(pk=id)
@@ -983,6 +1045,25 @@ def planejamento_delete(request,id):
     except:
         messages.error(request,'ERRO ao apagar planejamento')
         return redirect('trafego_planejamento_id', id)
+
+@login_required
+@permission_required('trafego.delete_predefinido')
+def predefinido_delete(request,id):
+    try:
+        registro = Predefinido.objects.get(pk=id)
+        l = Log()
+        l.modelo = "trafego.predefinido"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.abbr[0:35]
+        l.usuario = request.user
+        l.mensagem = "DELETE"
+        l.save()
+        registro.delete()
+        messages.warning(request,'Mensagem predefinido apagada. Essa operação não pode ser desfeita')
+        return redirect('trafego_predefinidos')
+    except:
+        messages.error(request,'ERRO ao apagar mensagem predefinida')
+        return redirect('trafego_predefinido_id', id)
 
 @login_required
 @permission_required('trafego.delete_orgao')

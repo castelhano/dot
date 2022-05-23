@@ -1,5 +1,5 @@
 from django import forms
-from .models import Linha, Localidade, Evento, Providencia, Ocorrencia, Planejamento, Orgao, Agente, Enquadramento, Notificacao
+from .models import Linha, Localidade, Evento, Providencia, Ocorrencia, Planejamento, Orgao, Agente, Enquadramento, Notificacao, Predefinido
 from datetime import date, datetime
 
 
@@ -94,6 +94,13 @@ class EnquadramentoForm(forms.ModelForm):
         fields = ['codigo','nome']
     codigo = forms.CharField(error_messages={'required': 'Informe o codigo do enquadramento'},widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'', 'autofocus':'autofocus'}))
     nome = forms.CharField(error_messages={'required': 'Informe o nome do orgão'},widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
+
+class PredefinidoForm(forms.ModelForm):
+    class Meta:
+        model = Predefinido
+        fields = ['abbr','detalhe']
+    abbr = forms.CharField(error_messages={'required': 'Informe a descricao abreviada'}, max_length=40, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'', 'autofocus':'autofocus'}))
+    detalhe = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'Detalhes', 'rows':4}))
 
 class NotificacaoForm(forms.ModelForm):
     class Meta:

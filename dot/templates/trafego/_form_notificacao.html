@@ -63,15 +63,32 @@
           <div class="col-12">
             {{ form.tratativa }}
           </div>
+          {% if 'notificacao_id' in request.get_full_path %}
+          <div class="col">
+        		<select class="form-select bg-light" id="id_msg_predefinida" onchange="msg_predefinida();">
+        			<option value="" selected>---------</option>
+              {% for msg in predefinidas %}
+              <option value="{{msg.id|safe}}" data-message="{{msg.detalhe}}">{{msg.abbr}}</option>
+              {% endfor %}              
+        		</select>
+        	</div>
+          {% if perms.trafego.view_predefinido %}
+          <div class="col-auto">
+            <a class="btn btn-warning" href="{% url 'trafego_predefinidos' %}"><i class="fas fa-list"></i></a>
+          </div>
+          {% endif %}
+          {% endif %}
         </div>
       </div>
     </div>
-    
   </div>
   <!-- CONTROLES DO FORM -->
   <div class="row mt-3">
     <div class="col">
       <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"><b>G</b>ravar</button>
+      {% if 'notificacao_id' in request.get_full_path %}
+      <a id="capa_print" class="btn btn-dark" href="{% url 'trafego_notificacao_capa' %}?notificacao={{notificacao.id|safe}}" title="Capa [Alt + P]"><i class="fas fa-print"></i></a>
+      {% endif %}
     </div>
   </div>
 </div>

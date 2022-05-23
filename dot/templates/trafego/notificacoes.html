@@ -60,7 +60,7 @@
             <td class="d-none">{{notificacao.agente.orgao.nome}}</td>
             <td>{{notificacao.codigo}}</td>
             <td class="d-none d-sm-table-cell">{{notificacao.data|date:'d/m/Y'}}</td>
-            <td class="d-none d-lg-table-cell">{{notificacao.hora}}</td>
+            <td class="d-none d-lg-table-cell">{{notificacao.hora|default:'--'}}</td>
             <td class="d-none d-lg-table-cell">{{notificacao.veiculo.prefixo}}</td>
             <td class="d-none">{{notificacao.linha.codigo}}</td>
             <td class="d-none">{{notificacao.funcionario.matricula}}</td>
@@ -87,7 +87,7 @@
         <div class="row g-1">
           <div class="form-floating mb-1 col-lg-4">
             <input type="text" class="form-control" name="pesquisa" id="id_pesquisa" placeholder="">
-            <label for="id_pesquisa">No Notificação</label>
+            <label for="id_pesquisa">No Notificação / prefixo</label>
           </div>
         </div>
         <div class="row g-1">
