@@ -183,7 +183,7 @@ def notificacoes(request):
                 notificacao = Notificacao.objects.get(codigo=request.POST['pesquisa'])
                 return redirect('trafego_notificacao_id', notificacao.id)
             except Exception as e:
-                notificacoes = notificacoes.filter(veiculo__prefixo=request.POST['pesquisa'])
+                notificacoes = notificacoes.filter(Q(veiculo__prefixo=request.POST['pesquisa']) | Q(veiculo__placa__contains=request.POST['pesquisa']))
         if request.POST['orgao'] != '':
             notificacoes = notificacoes.filter(agente__orgao__id=request.POST['orgao'])
         if request.POST['tipo'] != '':

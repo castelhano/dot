@@ -16,6 +16,14 @@
       {% if perms.trafego.add_notificacao %}
       <li class="nav-item ms-1"><a class="nav-link border" id="add" href="{% url 'trafego_notificacao_add' %}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
       {% endif %}
+      {% if perms.trafego.view_predefinido %}
+      <li class="nav-item ms-1">
+        <a class="nav-link" data-bs-toggle="dropdown" role="button"><i class="fas fa-caret-down text-dark"></i></a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item pointer" href="{% url 'trafego_predefinidos' %}">MSG Predefinidas</a></li>
+        </ul>
+      </li>
+      {% endif %}
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
         <ul class="dropdown-menu">
