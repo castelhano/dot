@@ -11,50 +11,28 @@
   <link rel="stylesheet" href="{% static 'css/vendor/fontawesome.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.min.css' %}" type="text/css">
   
-  <style media="screen">
-    body{background-color: #F4F6F9;}
-    h3{font-size: 1.5rem;}
-    @media(min-width: 768px){
-      .texto{max-width: 370px;}
-    }
-    
-    /* Set the size of the div element that contains the map */
-#map {
-  height: 400px;
-  /* The height is 400 pixels */
-  width: 100%;
-  /* The width is the width of the web page */
-}
-
-  </style>
 </head>
 <body>
-  <h3>My Google Maps Demo</h3>
-      <!--The div element for the map -->
-      <div id="map"></div>
-
-      <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
-      <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap&v=weekly" async></script>
-
+  <a id="home" href="{% url 'index' %}"></a>
+  <a id="clear" href="{% url 'handler' '999' %}"></a>
   
-<script src="{% static 'js/listener.js' %}"></script>
-<script type="text/javascript">
-// Initialize and add the map
-function initMap() {
-  // The location of Uluru
-  const uluru = { lat: -25.344, lng: 131.036 };
-  // The map, centered at Uluru
-  const map = new google.maps.Map(document.getElementById("map"), {
-    zoom: 4,
-    center: uluru,
-  });
-  // The marker, positioned at Uluru
-  const marker = new google.maps.Marker({
-    position: uluru,
-    map: map,
-  });
-}
-
+  <div class="container-fluid">
+    
+    <div class="row m-3 g-1">
+    	<div class="form-floating mb-1 col-lg-4">
+    		<select class="form-select readonly" id="id_foo" name="foo">
+    			<option value="" selected>---------</option>
+    			<option value="1">Teste</option>
+    		</select>
+    		<label for="id_foo">Item</label>
+    	</div>
+    </div>
+    
+  </div>
+  
+  <script src="{% static 'js/listener.js' %}"></script>
+  <script>
+  var TAB_ON_ENTER = true;
 </script>
 </body>
 </html>

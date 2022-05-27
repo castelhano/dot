@@ -69,6 +69,7 @@ urlpatterns = [
     path('trafego_get_linha',views.get_linha,name='trafego_get_linha'),
     path('trafego_get_linhas_empresa',views.get_linhas_empresa,name='trafego_get_linhas_empresa'),
     path('trafego_get_ocorrencia',views.get_ocorrencia,name='trafego_get_ocorrencia'),
+    path('trafego_get_localidades',views.get_localidades,name='trafego_get_localidades'),
     path('trafego_get_eventos',views.get_eventos,name='trafego_get_eventos'),
     path('trafego_get_orgaos',views.get_orgaos,name='trafego_get_orgaos'),
     path('trafego_get_agente',views.get_agente,name='trafego_get_agente'),

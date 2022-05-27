@@ -1,0 +1,38 @@
+<div class="form-floating mb-1 {{breakpoint|default:'col-lg-12'}}">
+	<input type="hidden" id="id_local" name="local" value="{{id|safe}}">
+	<input type="text" autocomplete="off" class="form-control" list="localidade_datalist" id="id_local_nome" value="{{nome}}" oninput="localidadeGetList()">
+  <label for="id_local_nome">Local</label>
+  <datalist id="localidade_datalist"></datalist>
+  <div id="localidade_spinner" class="spinner-grow text-success d-none" style="position: absolute; top:12px; right:15px; z-index:10;" role="status"></div>
+</div>
+
+<script>
+  const local_id = document.getElementById('id_local');
+  const local_nome = document.getElementById('id_local_nome');
+  const local_spinner = document.getElementById('localidade_spinner');
+  
+  function localidadeGetList(){
+    if(local_nome.value.length > 2){
+      last_search_value = local_nome.value;
+      local_spinner.classList.remove('d-none');
+      
+    	var xhttp = new XMLHttpRequest();
+    	xhttp.onreadystatechange = function() {
+    		if(this.readyState == 4 && this.status == 200){
+    			if(this.responseText == '' || this.responseText == '{}'){local_nome.classList.add('is-invalid');}
+    			else{
+    				let obj = JSON.parse(this.responseText);
+    				let locais = document.getElementById("localidade_datalist");
+            locais.innerHTML = '';
+    				for(key in obj){locais.innerHTML += '<option value="' + key + '" data-id="' + obj[key] + '">';}
+    			}
+    		}
+        local_spinner.classList.add('d-none');
+    	};
+    	xhttp.open("GET", "{% url 'trafego_get_localidades' %}?filtro=CTR&pesquisa="+local_nome.value, true);
+    	xhttp.send();
+    }else{document.getElementById("localidade_datalist").innerHTML = '';local_nome.classList.remove('is-invalid');}
+  }
+  
+  
+</script>

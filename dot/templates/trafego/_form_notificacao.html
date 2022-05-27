@@ -44,10 +44,7 @@
             {{ form.enquadramento }}
             <label for="id_enquadramento">Enquadramento</label>
           </div>
-          <div class="form-floating mb-1 col-lg-6">
-            {{ form.local }}
-            <label for="id_local">Local</label>
-          </div>
+          {% include "_component/field/localidade.html" with id=notificacao.local.id nome=notificacao.local.nome required=False filtro='CTR' breakpoint='col-lg-6' %}
         </div>
         <div class="row g-1">
           <div class="form-floating mb-lg-1 col-lg-6">

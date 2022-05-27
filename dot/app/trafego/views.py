@@ -1170,6 +1170,26 @@ def get_linhas_empresa(request):
     except:
         return HttpResponse('')
 
+def get_localidades(request):
+    try:
+        localidades = Localidade.objects.filter(nome__contains=request.GET['pesquisa']).order_by('nome')
+        filtro = request.GET.get('filtro', None);
+        filtros = ['CTR','GAR','TRC']
+        if filtro and request.GET.get('filtro', None) in filtros:
+            if filtro == 'CTR':
+                localidades = localidades.filter(ponto_de_controle=True)
+            elif filtro == 'GAR':
+                localidades = localidades.filter(eh_garagem=True)
+            elif filtro == 'TRC':
+                localidades = localidades.filter(troca_turno=True)
+        itens = {}
+        for item in localidades:
+            itens[item.nome] = item.id
+        dataJSON = dumps(itens)
+        return HttpResponse(dataJSON)
+    except:
+        return HttpResponse('')
+
 def get_eventos(request):
     try:
         eventos = Evento.objects.all().order_by('nome')

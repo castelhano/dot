@@ -112,6 +112,8 @@ VERSION: 1.0
 .fa-fw{margin-right: 4px;}
 .breadcrumb-item > a{text-decoration: none;}
 .alert{position: fixed;width: 100%;bottom: -4px;}
+.form-floating-display{padding: 1rem 0.75rem;border: 1px solid #ced4da;border-radius: 0.25rem;background-color: #e9ecef;}
+.form-floating-display, .form-floating-control{height: calc(3.5rem + 2px);line-height: 1.25;}
 .form-check-label{user-select: none;}
 .code{background-color: #F8F9FA;border: 1px solid #dee2e6;border-radius: .25rem;padding: 5px 10px;margin-bottom: 15px;user-select: all;}
 .code-multiline{background-color: #F8F9FA;border: 1px solid #dee2e6;border-radius: .25rem;padding: 8px 20px;margin-bottom: 15px;user-select: all;}
@@ -136,6 +138,10 @@ ol.code-multiline li.list-ident-2::before {margin-right: 80px;}
 .widget-icon {color: #727cf5;background-color: rgba(114,124,245,.25);font-size: 20px;height: 40px;width: 40px;text-align: center;line-height: 40px;border-radius: 3px;display: inline-block;}
 .widget-icon-success {color: #42b78e;background-color: #d6fff0;}
 .widget-icon-primary {color: #0D6EFD;background-color: #bad6ff;}
+
+datalist{
+  font-size: 20px;
+}
 
 .tooltip {
   position: relative;

@@ -24,7 +24,8 @@ var SHORTCUT_MAP = {'vTFF':'#back','nTFF':'#add','lTFF':'#clear','gTFF':'#submit
 document.addEventListener('keydown', (e) => {
 	// console.log(e);
   // 1) ETAPA
-  let command = e.key.toLowerCase();command += e.altKey == true ? 'T': 'F';command += e.ctrlKey == true ? 'T': 'F';command += e.shiftKey == true ? 'T': 'F';
+  let command = null;
+  try {command = e.key.toLowerCase();command += e.altKey == true ? 'T': 'F';command += e.ctrlKey == true ? 'T': 'F';command += e.shiftKey == true ? 'T': 'F';}catch(err){command = '';}
   if(SHORTCUT_MAP[command]){
     if(SHORTCUT_MAP[command].charAt(0) == '#'){
       e.preventDefault();
