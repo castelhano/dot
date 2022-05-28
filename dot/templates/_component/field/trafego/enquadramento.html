@@ -1,0 +1,51 @@
+<div class="form-floating mb-1 {{breakpoint|default:'col-lg-12'}}">
+	<input type="hidden" id="id_enquadramento" name="enquadramento" value="{{id|safe}}">
+	<input type="text" autocomplete="off" class="form-control bg-light fw-bold" list="enquadramento_datalist" id="id_enquadramento_nome" value="{{nome}}" oninput="cleanEnquadramentoID();enquadramentoGetList()" onblur="validadeEnquadramento()" onfocus="this.select()" {% if required %} required{% endif %}>
+  <label for="id_enquadramento_nome">Enquadramento</label>
+  <datalist id="enquadramento_datalist"></datalist>
+  <div id="enquadramento_spinner" class="spinner-grow text-success d-none" style="position: absolute; top:12px; right:15px; z-index:10;"></div>
+</div>
+
+<script>
+  const enquadramento_id = document.getElementById('id_enquadramento');
+  const enquadramento_nome = document.getElementById('id_enquadramento_nome');
+  const enquadramento_spinner = document.getElementById('enquadramento_spinner');
+  
+	function cleanEnquadramentoID(){enquadramento_id.value = '';}
+  
+	function enquadramentoGetList(){
+    if(enquadramento_nome.value.length > 2){
+      enquadramento_spinner.classList.remove('d-none');
+      
+    	var xhttp = new XMLHttpRequest();
+    	xhttp.onreadystatechange = function() {
+    		if(this.readyState == 4 && this.status == 200){
+    			if(this.responseText == '' || this.responseText == '{}'){enquadramento_nome.classList.add('is-invalid');}
+    			else{
+						enquadramento_nome.classList.remove('is-invalid');
+    				let obj = JSON.parse(this.responseText);
+    				let enquadramentos = document.getElementById("enquadramento_datalist");
+            enquadramentos.innerHTML = '';
+    				for(key in obj){enquadramentos.innerHTML += '<option value="' + key + '" data-id="' + obj[key] + '">';}
+    			}
+    		}
+        enquadramento_spinner.classList.add('d-none');
+    	};
+    	xhttp.open("GET", "{% url 'trafego_get_enquadramentos' %}?pesquisa="+enquadramento_nome.value, true);
+    	xhttp.send();
+    }else{document.getElementById("enquadramento_datalist").innerHTML = '';enquadramento_nome.classList.remove('is-invalid');}
+  }
+	
+	function validadeEnquadramento(){
+		if(enquadramento_nome.value != ''){
+			let options = document.getElementById("enquadramento_datalist").getElementsByTagName('option');
+			let valid = false, i = 0;
+			while(!valid && i < options.length){
+				if(options[i].value == enquadramento_nome.value){valid = true;enquadramento_id.value = options[i].dataset.id;};
+				i++;
+			}
+			if(!valid){enquadramento_nome.classList.add('is-invalid');}
+		}
+	}
+	if(enquadramento_nome.value != ''){enquadramentoGetList();} // Carrega localidade no datalist se form ja preenchido (update)
+</script>

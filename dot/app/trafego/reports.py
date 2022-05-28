@@ -225,7 +225,9 @@ def notificacao_capa(request):
         info_current_h -= info_line_gap
         canvas.drawString(indice_start,info_current_h,'Carro:')
         canvas.setFont("Helvetica-Bold", 12)
-        canvas.drawString(info_start,info_current_h, f'{notificacao.veiculo.prefixo}   {notificacao.veiculo.placa}' if notificacao.veiculo else '--')
+        veiculo_text = f'{notificacao.veiculo.prefixo}   {notificacao.veiculo.placa}' if notificacao.veiculo else '--'
+        veiculo_text += '   [ LACRADO ]' if notificacao.veiculo_lacrado else ''
+        canvas.drawString(info_start,info_current_h, veiculo_text)
         
         indice_size = stringWidth('Linha:',"Helvetica", 12)
         indice_start = 140 - indice_size
@@ -288,6 +290,9 @@ def notificacao_capa(request):
         canvas.setLineWidth(0)
         canvas.line(MX + 30,530, PAGE_WIDTH - 60,530)
         
+        # Adiciona Detalhes da Notificacao
+        P = Paragraph(notificacao.detalhe.replace('\n','<br />') + '<br />---<br />', paragrafo_style)
+        flowables.append(P)
         P = Paragraph(notificacao.tratativa.replace('\n','<br />'), paragrafo_style)
         flowables.append(P)
         

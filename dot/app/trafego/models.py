@@ -248,7 +248,7 @@ class Notificacao(models.Model):
     )
     empresa = models.ForeignKey(Empresa, on_delete=models.RESTRICT)
     tipo = models.CharField(max_length=2,choices=TIPO_CHOICES, blank=True, default='N')
-    codigo = models.CharField(max_length=40,blank=True)
+    codigo = models.CharField(max_length=40,blank=False,unique=True)
     data = models.DateField(default=datetime.today)
     hora = models.TimeField(null=True)
     veiculo = models.ForeignKey(Frota, blank=True, null=True, on_delete=models.RESTRICT)

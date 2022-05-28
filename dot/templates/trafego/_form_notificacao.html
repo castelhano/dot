@@ -26,7 +26,7 @@
         {% include "_component/field/linha.html" with id=notificacao.linha.id codigo=notificacao.linha.codigo nome=notificacao.linha.nome required=False incluir_inativos=False %}
         {% include "_component/field/veiculo.html" with id=notificacao.veiculo.id prefixo=notificacao.veiculo.prefixo placa=notificacao.veiculo.placa required=False incluir_inativos=False %}
         {% include "_component/field/funcionario.html" with id=notificacao.funcionario.id matricula=notificacao.funcionario.matricula nome=notificacao.funcionario.nome cargo=notificacao.funcionario.cargo.nome required=False incluir_inativos=False %}
-        {% include "_component/field/agente.html" with id=notificacao.agente.id matricula=notificacao.agente.matricula nome=notificacao.agente.nome required=False incluir_inativos=False %}
+        {% include "_component/field/trafego/agente.html" with id=notificacao.agente.id matricula=notificacao.agente.matricula nome=notificacao.agente.nome orgao=notificacao.agente.orgao.nome required=False incluir_inativos=False %}
         <div class="row g-1">
           <div class="form-floating mb-1 col-lg-12">
             {{ form.detalhe }}
@@ -40,10 +40,7 @@
       </div>
       <div class="col-lg-5 mt-0 mt-lg-2">
         <div class="row g-1">
-          <div class="form-floating mb-lg-1 col-lg-6">
-            {{ form.enquadramento }}
-            <label for="id_enquadramento">Enquadramento</label>
-          </div>
+          {% include "_component/field/trafego/enquadramento.html" with id=notificacao.enquadramento.id nome=notificacao.enquadramento.nome required=False breakpoint='col-lg-6' %}
           {% include "_component/field/localidade.html" with id=notificacao.local.id nome=notificacao.local.nome required=False filtro='CTR' breakpoint='col-lg-6' %}
         </div>
         <div class="row g-1">

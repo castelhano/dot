@@ -54,7 +54,6 @@ class OcorrenciaForm(forms.ModelForm):
     evento = forms.ModelChoiceField(error_messages={'required': 'Selecione uma ocorrencia'}, queryset = Evento.objects.all().order_by('nome'), widget=forms.Select(attrs={'class':'form-select bg-light fw-bold'}))
     data = forms.DateField(error_messages={'required': 'Informe a data da ocorrencia'},initial=date.today(),widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
     hora = forms.TimeField(error_messages={'required': 'Informe a hora da ocorrencia'}, initial=datetime.now().strftime('%H:%M'), widget=forms.TextInput(attrs={'class':'form-control','type':'time'}))
-    local = forms.ModelChoiceField(required=False, queryset = Localidade.objects.filter(ponto_de_controle=True).order_by('nome'), widget=forms.Select(attrs={'class':'form-select'}))
     indisciplina_condutor = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch'}))
     viagem_omitida = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch'}))
     gravidade = forms.ChoiceField(choices=Ocorrencia.GRAVIDADE_CHOICES, widget=forms.Select(attrs={'class':'form-select'}))
@@ -107,11 +106,9 @@ class NotificacaoForm(forms.ModelForm):
         model = Notificacao
         fields = ['empresa','tipo','codigo','data','hora','veiculo','linha','funcionario','agente','enquadramento','local','valor','prazo','detalhe','tratativa','veiculo_lacrado']
     tipo = forms.ChoiceField(choices=Notificacao.TIPO_CHOICES, widget=forms.Select(attrs={'class':'form-select bg-light fw-bold'}))
-    codigo = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
+    codigo = forms.CharField(error_messages={'required': 'Informe o cod da notificação'}, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
     data = forms.DateField(error_messages={'required': 'Informe a data da notificação'}, initial=date.today(),widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
     hora = forms.TimeField(required=False, initial=datetime.now().strftime('%H:%M'), widget=forms.TextInput(attrs={'class':'form-control','type':'time'}))
-    enquadramento = forms.ModelChoiceField(required=False, queryset = Enquadramento.objects.all().order_by('nome'), widget=forms.Select(attrs={'class':'form-select bg-light fw-bold'}))
-    # local = forms.ModelChoiceField(required=False, queryset = Localidade.objects.filter(ponto_de_controle=True).order_by('nome'), widget=forms.Select(attrs={'class':'form-select'}))
     valor = forms.DecimalField(required=False,initial=0, widget=forms.TextInput(attrs={'class': 'form-control','onfocus':'this.select();'}))
     prazo = forms.DateField(required=False,widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
     detalhe = forms.CharField(required=False, max_length=200, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))

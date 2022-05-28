@@ -14,7 +14,7 @@
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
       <li class="nav-item"><a class="nav-link pointer" id="search" data-bs-toggle="modal" data-bs-target="#search_modal" onclick="setTimeout(function(){document.getElementById('id_pesquisa').focus();},480);" title="CTRL + /"><i class="fas fa-search"></i></a></li>
       {% if perms.sinistro.add_termo %}
-      <li class="nav-item"><a class="nav-link border" id="add" data-bs-toggle="modal" data-bs-target="#add_termo_modal" onclick="setTimeout(function(){document.getElementById('id_nome').focus();},480);" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
+      <li class="nav-item"><a class="nav-link border pointer" id="add" data-bs-toggle="modal" data-bs-target="#add_termo_modal" onclick="setTimeout(function(){document.getElementById('id_nome').focus();},480);" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
       {% endif %}
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
@@ -59,7 +59,7 @@
           </tr>
           {% empty %}
           <tr>
-            <td colspan="6">Nenhum registro a exibir</td>
+            <td colspan="7">Nenhum registro a exibir</td>
           </tr>
           {% endfor %}
         </tbody>

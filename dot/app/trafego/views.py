@@ -1175,7 +1175,7 @@ def get_localidades(request):
         localidades = Localidade.objects.filter(nome__contains=request.GET['pesquisa']).order_by('nome')
         filtro = request.GET.get('filtro', None);
         filtros = ['CTR','GAR','TRC']
-        if filtro and request.GET.get('filtro', None) in filtros:
+        if filtro and filtro in filtros:
             if filtro == 'CTR':
                 localidades = localidades.filter(ponto_de_controle=True)
             elif filtro == 'GAR':
@@ -1184,6 +1184,18 @@ def get_localidades(request):
                 localidades = localidades.filter(troca_turno=True)
         itens = {}
         for item in localidades:
+            itens[item.nome] = item.id
+        dataJSON = dumps(itens)
+        return HttpResponse(dataJSON)
+    except:
+
+        return HttpResponse('')
+
+def get_enquadramentos(request):
+    try:
+        enquadramentos = Enquadramento.objects.filter(nome__contains=request.GET['pesquisa']).order_by('nome')
+        itens = {}
+        for item in enquadramentos:
             itens[item.nome] = item.id
         dataJSON = dumps(itens)
         return HttpResponse(dataJSON)
