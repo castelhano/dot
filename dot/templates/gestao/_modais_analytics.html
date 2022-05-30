@@ -54,7 +54,8 @@
     try {
       modal_loading.show();
       document.getElementById('id_valor').value = parseFloat(document.getElementById('id_valor').value.replace('.','').replace(',','.'));
-      return true;
+      console.log(document.getElementById('id_valor').value);
+      return false;
     }catch(e){console.log(e);return false;}    
   }
   document.getElementById('id_ano').value = new Date().getFullYear();

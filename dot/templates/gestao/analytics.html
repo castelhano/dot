@@ -80,7 +80,7 @@
           {% for indicador in metrics.indicadores %}
           <tr>
             {% call_method indicador 'analises_pendentes' metrics.empresa.id as analises_pendentes %}
-            <td><h6>{{indicador.nome}}</h6><small>{{indicador.quanto_maior_melhor|yesno:'1,-1'|indicatorArrow|safe}} melhor{% if staff.role == 'E' or staff.role == 'M' %}<span class="badge bg-purple ms-2 pointer" data-bs-toggle="modal" data-bs-target="#analise_modal" onclick="analiseAdd({{indicador.id|safe}},'{{indicador.nome}}')"><i class="fas fa-plus me-2"></i>{{analises_pendentes.count}}</span>{% endif %}</small></td>
+            <td><h6><a class="text-decoration-none text-purple" onclick="modal_loading.show();" href="{% url 'gestao_stratified' %}?empresa={{metrics.empresa.id|safe}}&indicador={{indicador.id|safe}}">{{indicador.nome}}</a></h6><small>{{indicador.quanto_maior_melhor|yesno:'1,-1'|indicatorArrow|safe}} melhor{% if staff.role == 'E' or staff.role == 'M' %}<span class="badge bg-purple ms-2 pointer" data-bs-toggle="modal" data-bs-target="#analise_modal" onclick="analiseAdd({{indicador.id|safe}},'{{indicador.nome}}')"><i class="fas fa-plus me-2"></i>{{analises_pendentes.count}}</span>{% endif %}</small></td>
             <td class="d-none d-sm-table-cell"><h6>{{indicador.meta}}</h6><small>{{indicador.medida}}</small></td>
             {% for referencia in metrics.referencias %}
             {% call_method indicador 'get_apontamento' referencia metrics.empresa.id as apontamento %}

@@ -117,6 +117,67 @@ def analytics(request):
     return render(request,'gestao/analytics.html',{'staff':staff,'metrics':metrics})
 
 @login_required
+@permission_required('gestao.dashboard')
+def stratified(request):
+    try:
+        indicador = Indicador.objects.get(id=request.GET['indicador'])
+        empresas = request.user.profile.empresas.all()
+        empresa = empresas.get(id=request.GET['empresa'])
+    except:
+        messages.error(request,f'<b>Erro</b> Indicador ou empresa inválido')
+        return redirect('gestao_analytics')
+    de = request.GET.get('de', None)
+    ate = request.GET.get('ate', None)
+    if not de or not ate:
+        intervalo = 12
+        today_m = date.today().month - 1 if date.today().month > 1 else 12
+        today_y = date.today().year if date.today().month > 1 else date.today().year - 1
+        de_m = today_m - (intervalo - 1)
+        de_y = today_y
+        while de_m < 0:
+            de_m += 12
+            de_y -= 1        
+        de = f'{de_y}_{str(de_m).zfill(2)}'
+        ate = f'{today_y}_{str(today_m).zfill(2)}'
+    else:
+        de = de.replace('-','_')
+        ate = ate.replace('-','_')
+    apontamentos = Apontamento.objects.filter(referencia__range=(de,ate), indicador=indicador, empresa=empresa)
+    
+    from core.chart_metrics import backgrounds as bg, borders as bc, COLORS as color
+    evolucao_indicador = {
+        'categorias':[],
+        'dados':[],
+        'bgcolors':[],
+        'bordercolors':[]
+        }
+    min = None
+    max = None
+    for row in apontamentos:
+        evolucao_indicador['categorias'].append(row.referencia)
+        evolucao_indicador['dados'].append(float(row.valor))
+        evolucao_indicador['bgcolors'].append(bg.purple)
+        evolucao_indicador['bordercolors'].append(bc.purple)
+        if not min or row.valor < min:
+            min = row.valor
+        if not max or row.valor < max:
+            max = row.valor
+    
+    metrics = {
+    'indicador':indicador,
+    'empresa':empresa,
+    'de':de.replace('_','-'),
+    'ate':ate.replace('_','-'),
+    'empresas':empresas,
+    'apontamentos':apontamentos,
+    'indicadores':Indicador.objects.all().exclude(id=indicador.id),
+    'evolucao_indicador':evolucao_indicador,
+    'chart_min': str(round(float(min) * 0.98,1)) if min else '',
+    'chart_max': str(round(float(max) * 1.02,1)) if max else '',
+    }
+    return render(request, 'gestao/stratified.html', metrics)
+    
+@login_required
 def settings(request):
     try:
         staff = Staff.objects.get(usuario=request.user)

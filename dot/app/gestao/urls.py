@@ -5,6 +5,7 @@ urlpatterns = [
     path('gestao_dashboard',views.dashboard,name='gestao_dashboard'),
     path('gestao_roadmap',views.roadmap,name='gestao_roadmap'),
     path('gestao_analytics',views.analytics,name='gestao_analytics'),
+    path('gestao_stratified',views.stratified,name='gestao_stratified'),
     path('gestao_indicadores',views.indicadores,name='gestao_indicadores'),
     path('gestao_indicador_add',views.indicador_add,name='gestao_indicador_add'),
     path('gestao_indicador_id/<int:id>',views.indicador_id,name='gestao_indicador_id'),

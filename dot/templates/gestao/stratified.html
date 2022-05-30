@@ -1,0 +1,150 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% load tag_extra %}
+{% block title %}Analytics{% endblock %}
+{% block model %}Gestão{% endblock %}
+{% block model_menu %}{% include "_component/menu/gestao.html" %}{% endblock%}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" onclick="beforeLoad();" href="{% url 'gestao_stratified' %}?empresa={{empresa.id|safe}}&indicador={{indicador.id|safe}}"></a>
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-chart-line"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'gestao_analytics' %}?empresa={{empresa.id|safe}}"><i class="fas fa-undo"></i></a></li>
+    </ul>
+  </div>
+  <div class="card-body tab-content">
+    <h5 class="card-title mb-3">Analytics: <b class="text-purple">{{indicador.nome}}</b> {{indicador.quanto_maior_melhor|yesno:'1,-1'|indicatorArrow|safe}}
+      <a class="text-dark ms-2" data-bs-toggle="dropdown" href="#"><i class="fas fa-caret-down"></i></a>
+      <ul class="dropdown-menu fs-7">
+        {% for indicador in indicadores %}
+        <li><a class="dropdown-item pointer" onclick="beforeLoad();filter('indicador',{{indicador.id|safe}})">{{indicador.nome}}</a></li>
+        {% endfor %}
+      </ul>
+    </h5>
+    <div class="row g-1 mb-2">
+      <div class="col-auto">
+        <div class="dropdown">
+          <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown"><b>{{empresa.nome}}</b></button>
+          <ul class="dropdown-menu fs-7">
+            {% for e in empresas %}
+            <li><a class="dropdown-item pointer" onclick="beforeLoad();filter('empresa', {{e.id|safe}})">{{e.nome}}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      <div class="col-auto">
+        <div class="dropdown">
+          <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown"><i class="fas fa-calendar-alt pe-2"></i></button>
+          <ul class="dropdown-menu fs-7">
+            <li class="bg-light">
+              <div class="row g-1">
+                <div class="col-12 px-2"><input type="month" class="form-control" id="id_periodo_de" name="periodo_de" value="{{de}}"></div>
+                <div class="col-12 px-2"><input type="month" class="form-control" id="id_periodo_ate"  name="periodo_ate" value="{{ate}}"></div>
+                <div class="col-12 d-grid px-2"><button type="button" class="btn btn-sm btn-purple-light" name="button" onclick="beforeLoad();filtraPeriodo();">Filtrar</button></div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane fade show active" id="base" role="tabpanel">
+      <div class="row">
+        <div class="col-auto">
+          <table id="evolucao_table" class="table table-sm border table-hover table-striped">
+            <caption class="text-end pt-0"><span class="text-decoration-none text-purple pointer fs-7 pe-1" onclick="download_table_as_csv('evolucao_table',';')"><i class="fas fa-download"></i> CSV</span></caption>
+            <thead>
+              <tr>
+                <th class="pe-4">Referência</th>
+                <th class="pe-4">Meta</th>
+                <th class="pe-4">Valor</th>
+                <th class="pe-4">&nbsp;</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for apontamento in apontamentos %}
+              <tr>
+                <td>{{apontamento.referencia}}</td>
+                <td>{{apontamento.meta}}</td>
+                <td class="{% if apontamento.meta > 0 and apontamento.indicador.quanto_maior_melhor and apontamento.valor >= apontamento.meta or not apontamento.indicador.quanto_maior_melhor and apontamento.valor <= apontamento.meta %} text-success{% elif apontamento.meta > 0 %} text-danger{% endif %}">{{apontamento.valor}}</td>
+                <td>{{apontamento.evolucao|indicatorArrow|safe}}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div class="col">
+          <div class="row">
+            <div class="col-12" style="height: 260px;"><canvas id="evolucao_indicador"></div>
+            <div class="col-12">outros</div>
+          </div>          
+        </div>
+      </div>      
+    </div>
+  </div>
+</div>
+
+{% include "_component/modal/loading.html" with message='Processando....' %}
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/url.js' %}"></script>
+<script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/vendor/chart.min.js' %}"></script>
+{% endblock %}
+
+<script>
+  {% block add_script %}
+  
+  var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
+  function beforeLoad(){modal_loading.show();}
+  
+  function filtraPeriodo(){
+    let periodos = [document.getElementById('id_periodo_de').value,document.getElementById('id_periodo_ate').value]
+    filters(['de','ate'], periodos);
+  }
+  
+  
+  {% if apontamentos.count > 0 %}
+  var evolucao_ctx = document.getElementById('evolucao_indicador');
+  let evolucao_chart = new Chart(evolucao_ctx, {
+    type: 'bar',
+    data: {
+      datasets: [{
+        label: '{{indicador.medida}}',
+        data: {{ evolucao_indicador.dados }},
+        backgroundColor: {{ evolucao_indicador.bgcolors|safe }},
+        borderColor: {{ evolucao_indicador.bordercolors|safe }},
+        maxBarThickness: 50,
+      }],
+      labels: {{ evolucao_indicador.categorias|safe }},
+    },
+    options: {
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          min: {{chart_min}},
+          // grace: 1,
+          ticks: {
+            // stepSize: 1,
+            // precision: 0
+          }
+        }
+      },
+      plugins: {
+        legend: {display:false, position: 'bottom'},
+        title: {
+          display: true,
+          text:'EVOLUÇÃO INDICADOR',
+          align: 'start',
+          font: {size: 13},
+          padding: {top: 6,bottom: 10}
+        },
+      }
+    }
+  });
+  {% endif %}
+    
+  {% endblock %}
+</script>
