@@ -66,8 +66,8 @@
               {% for apontamento in apontamentos %}
               <tr>
                 <td>{{apontamento.referencia}}</td>
-                <td>{{apontamento.meta}}</td>
-                <td class="{% if apontamento.meta > 0 and apontamento.indicador.quanto_maior_melhor and apontamento.valor >= apontamento.meta or not apontamento.indicador.quanto_maior_melhor and apontamento.valor <= apontamento.meta %} text-success{% elif apontamento.meta > 0 %} text-danger{% endif %}">{{apontamento.valor}}</td>
+                <td>{{apontamento.meta|floatformat:apontamento.indicador.precisao}}</td>
+                <td class="{% if apontamento.meta > 0 and apontamento.indicador.quanto_maior_melhor and apontamento.valor >= apontamento.meta or not apontamento.indicador.quanto_maior_melhor and apontamento.valor <= apontamento.meta %} text-success{% elif apontamento.meta > 0 %} text-danger{% endif %}">{{apontamento.valor|floatformat:apontamento.indicador.precisao}}</td>
                 <td>{{apontamento.evolucao|indicatorArrow|safe}}</td>
               </tr>
               {% endfor %}
@@ -77,8 +77,7 @@
         <div class="col">
           <div class="row">
             <div class="col-12" style="height: 260px;"><canvas id="evolucao_indicador"></div>
-            <div class="col-12">outros</div>
-          </div>          
+          </div>
         </div>
       </div>      
     </div>
@@ -109,14 +108,22 @@
   {% if apontamentos.count > 0 %}
   var evolucao_ctx = document.getElementById('evolucao_indicador');
   let evolucao_chart = new Chart(evolucao_ctx, {
-    type: 'bar',
     data: {
       datasets: [{
+        type: 'bar',
         label: '{{indicador.medida}}',
         data: {{ evolucao_indicador.dados }},
         backgroundColor: {{ evolucao_indicador.bgcolors|safe }},
         borderColor: {{ evolucao_indicador.bordercolors|safe }},
         maxBarThickness: 50,
+      },{
+        type: 'line',
+        label: 'Meta',
+        data: {{ evolucao_indicador.metas }},
+        pointBorderWidth: 4,
+        hoverBorderWidth: 8,
+        pointHitRadius: 8,
+        borderColor: 'rgba(111, 66, 193, 0.8)',
       }],
       labels: {{ evolucao_indicador.categorias|safe }},
     },
@@ -124,7 +131,7 @@
       maintainAspectRatio: false,
       scales: {
         y: {
-          min: {{chart_min}},
+          {% if chart_min %}min: {{chart_min}},{% endif %}
           // grace: 1,
           ticks: {
             // stepSize: 1,
@@ -135,7 +142,7 @@
       plugins: {
         legend: {display:false, position: 'bottom'},
         title: {
-          display: true,
+          display: false,
           text:'EVOLUÇÃO INDICADOR',
           align: 'start',
           font: {size: 13},

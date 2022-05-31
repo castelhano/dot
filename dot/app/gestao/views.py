@@ -148,20 +148,19 @@ def stratified(request):
     evolucao_indicador = {
         'categorias':[],
         'dados':[],
+        'metas':[],
         'bgcolors':[],
         'bordercolors':[]
         }
     min = None
-    max = None
     for row in apontamentos:
         evolucao_indicador['categorias'].append(row.referencia)
         evolucao_indicador['dados'].append(float(row.valor))
+        evolucao_indicador['metas'].append(float(row.meta) if row.meta > 0 else None)
         evolucao_indicador['bgcolors'].append(bg.purple)
         evolucao_indicador['bordercolors'].append(bc.purple)
-        if not min or row.valor < min:
-            min = row.valor
-        if not max or row.valor < max:
-            max = row.valor
+        if not min or row.valor < min or (row.meta < min and row.meta > 0):
+            min = row.valor if row.valor < row.meta else row.meta
     
     metrics = {
     'indicador':indicador,
@@ -173,7 +172,6 @@ def stratified(request):
     'indicadores':Indicador.objects.all().exclude(id=indicador.id),
     'evolucao_indicador':evolucao_indicador,
     'chart_min': str(round(float(min) * 0.98,1)) if min else '',
-    'chart_max': str(round(float(max) * 1.02,1)) if max else '',
     }
     return render(request, 'gestao/stratified.html', metrics)
     

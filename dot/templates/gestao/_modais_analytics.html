@@ -17,7 +17,13 @@
           </div>
           <div class="row g-1">
             <div class="form-floating mb-1 col-12">
-              {{ metrics.apontamento_form.indicador }}
+              <!-- metrics.apontamento_form.indicador -->
+              <select class="form-select" name="indicador" id="id_indicador" onchange="indicadorSetPrecision()">
+                <option value="" data-precision="0" selected>---</option>
+                {% for indicador in metrics.indicadores %}
+                <option value="{{indicador.id|safe}}" data-precision="{{indicador.precisao}}">{{indicador}}</option>
+                {% endfor %}
+              </select>
               <label for="id_indicador">Indicador</label>
             </div>
           </div>
@@ -53,10 +59,14 @@
   function apontamentoSubmit(){
     try {
       modal_loading.show();
-      document.getElementById('id_valor').value = parseFloat(document.getElementById('id_valor').value.replace('.','').replace(',','.'));
-      console.log(document.getElementById('id_valor').value);
-      return false;
+      document.getElementById('id_valor').value = document.getElementById('id_valor').value.replaceAll('.','').replaceAll(',','.');
+      return true;
     }catch(e){console.log(e);return false;}    
+  }
+  function indicadorSetPrecision(){
+    let ind = document.getElementById("id_indicador");
+    document.getElementById("id_valor").value = 0;
+    VMasker(document.getElementById("id_valor")).maskMoney({precision : parseInt(ind.options[ind.selectedIndex].dataset.precision)});
   }
   document.getElementById('id_ano').value = new Date().getFullYear();
   document.getElementById('id_mes').value = new Date().getMonth() + 1;

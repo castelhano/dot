@@ -7,10 +7,11 @@ from django.contrib.auth.models import User
 class IndicadorForm(forms.ModelForm):
     class Meta:
         model = Indicador
-        fields = ['nome','meta','medida','quanto_maior_melhor','ativo']
+        fields = ['nome','meta','medida','precisao','quanto_maior_melhor','ativo']
     nome = forms.CharField(error_messages={'required': 'Informe o nome do indicador','unique': 'Já existe indicador com este nome'},widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'','autofocus':'autofocus'}))
     meta = forms.DecimalField(required=False,initial=0,widget=forms.TextInput(attrs={'class': 'form-control','onfocus':'this.select();'}))
     medida = forms.CharField(required=False, max_length=6, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
+    precisao = forms.CharField(error_messages={'required': 'Informe a precisão do indicador'}, initial=2, widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':0,'max':4,'step':1,'placeholder':''}))
     quanto_maior_melhor = forms.BooleanField(required=False, initial=True, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
     ativo = forms.BooleanField(required=False, initial=True, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
     percentual = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
@@ -19,7 +20,7 @@ class ApontamentoForm(forms.ModelForm):
     class Meta:
         model = Apontamento
         fields = ['empresa','indicador','valor']
-    indicador = forms.ModelChoiceField(error_messages={'required': 'Selecione o indicador'}, queryset = Indicador.objects.filter(ativo=True).order_by('nome'), widget=forms.Select(attrs={'class':'form-select'}))
+    # indicador = forms.ModelChoiceField(error_messages={'required': 'Selecione o indicador'}, queryset = Indicador.objects.filter(ativo=True).order_by('nome'), widget=forms.Select(attrs={'class':'form-select'}))
     valor = forms.DecimalField(required=False,initial=0,widget=forms.TextInput(attrs={'class': 'form-control','onfocus':'this.select();'}))
     meta = forms.DecimalField(required=False,initial=0,widget=forms.TextInput(attrs={'class': 'form-control','onfocus':'this.select();'}))
 

@@ -9,6 +9,7 @@ class Indicador(models.Model):
     nome = models.CharField(max_length=80, unique=True, blank=False)
     meta = models.DecimalField(default=None, max_digits=10, decimal_places=2)
     medida = models.CharField(max_length=6, blank=True)
+    precisao = models.IntegerField(default=2)
     quanto_maior_melhor = models.BooleanField(default=True)
     ativo = models.BooleanField(default=True)
     def __str__(self):
