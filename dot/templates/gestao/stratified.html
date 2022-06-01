@@ -119,7 +119,7 @@
       },{
         type: 'line',
         label: 'Meta',
-        data: {{ evolucao_indicador.metas }},
+        data: {{ evolucao_indicador.metas|replace:'None,null' }},
         pointBorderWidth: 4,
         hoverBorderWidth: 8,
         pointHitRadius: 8,

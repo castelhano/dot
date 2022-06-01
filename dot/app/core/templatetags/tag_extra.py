@@ -143,3 +143,13 @@ def url_get(request,parameter):
         return parse_qs(parsed_url.query)[parameter][0]
     except KeyError as e:
         return None
+
+# replace Retorna string trocando um valor por outro
+# @version  1.0
+# @since    01/06/2022
+# @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }
+# @example  {{ model.field|replace:'foo,bar'}}
+@register.filter
+def replace(value, criterio):
+    c = criterio.split(',')
+    return str(value).replace(c[0],c[1])
