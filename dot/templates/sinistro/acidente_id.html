@@ -43,6 +43,7 @@
         <div class="row mx-2 mb-3 mb-lg-0">
           <div class="card-widget card-widget-sm col-lg-6 btn-dark"><i class="fas fa-file-code lead-image"></i><a id="widget_acidente_capa" class="widget-label stretched-link" href="{% url 'sinistro_capa_resumo' %}?acidente={{acidente.id|safe}}">Capa<kbd class="float-end fs-9 bg-light text-dark py-0 mt-1">ctrl p</kbd></a></div>
           {% if acidente.veiculo.crlv %}<div class="card-widget card-widget-sm col-lg-6 btn-secondary"><i class="fas fa-file-invoice lead-image"></i><a class="widget-label stretched-link" href="{{acidente.veiculo.crlv.url}}" target="_blank">CRLV</a></div>{% endif %}
+          {% if acidente.veiculo.foto_chassi %}<div class="card-widget card-widget-sm col-lg-6 btn-secondary"><i class="fas fa-bus-alt lead-image"></i><a class="widget-label stretched-link" href="{{acidente.veiculo.foto_chassi.url}}" target="_blank">CHASSI</a></div>{% endif %}
         </div>
       </div>
     </div>

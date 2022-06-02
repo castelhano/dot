@@ -15,7 +15,7 @@
     </ul>
   </div>
   <div class="card-body tab-content">
-    <h5 class="card-title mb-3">Analytics: <b class="text-purple">{{indicador.nome}}</b> {{indicador.quanto_maior_melhor|yesno:'1,-1'|indicatorArrow|safe}}
+    <h5 class="card-title mb-3"><span class="d-none d-lg-inline-block">Analytics: </span> <b class="text-purple">{{indicador.nome}}</b> {{indicador.quanto_maior_melhor|yesno:'1,-1'|indicatorArrow|safe}}
       <a class="text-dark ms-2" data-bs-toggle="dropdown" href="#"><i class="fas fa-caret-down"></i></a>
       <ul class="dropdown-menu fs-7">
         {% for indicador in indicadores %}

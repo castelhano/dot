@@ -94,6 +94,7 @@ class Profile(models.Model):
     class Meta:
         permissions = [
             ("console", "Pode abrir o console"),
+            ("debug", "DEBUG System"),
             ("docs", "Acessar documentacao do sistema"),
         ]
         default_permissions = []

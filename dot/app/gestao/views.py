@@ -142,7 +142,7 @@ def stratified(request):
     else:
         de = de.replace('-','_')
         ate = ate.replace('-','_')
-    apontamentos = Apontamento.objects.filter(referencia__range=(de,ate), indicador=indicador, empresa=empresa)
+    apontamentos = Apontamento.objects.filter(referencia__range=(de,ate), indicador=indicador, empresa=empresa).order_by('referencia')
     
     from core.chart_metrics import backgrounds as bg, borders as bc, COLORS as color
     evolucao_indicador = {

@@ -1,4 +1,4 @@
-<div class="form-floating mb-1 {{breakpoint|default:'col-lg-12'}}">
+<div class="form-floating {{breakpoint|default:'col-lg-12 mb-1'}}">
 	<input type="hidden" id="id_enquadramento" name="enquadramento" value="{{id|safe}}">
 	<input type="text" autocomplete="off" class="form-control bg-light fw-bold" list="enquadramento_datalist" id="id_enquadramento_nome" value="{{nome}}" oninput="cleanEnquadramentoID();enquadramentoGetList()" onblur="validadeEnquadramento()" onfocus="this.select()" {% if required %} required{% endif %}>
   <label for="id_enquadramento_nome">Enquadramento</label>
