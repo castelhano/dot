@@ -30,8 +30,22 @@
     </ul>
   </div>
   <div class="card-body tab-content">
-    <h5 class="card-title mb-0">Roadmap: <b class="text-purple">{{user.username|title}}</b></h5>
-    <p class="mb-1 fw-bold text-muted">{{staff.get_role_display}}</p>
+    <div class="row">
+      <div class="col">
+        <h5 class="card-title mb-0">Roadmap: <b class="text-purple">{{user.username|title}}</b></h5>
+        <p class="mb-1 fw-bold text-muted">{{staff.get_role_display}}</p>
+      </div>
+      <div class="col-auto">
+        <div class="dropdown">
+          <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown"><label class="fw-bold text-capitalize pointer">{{empresa.nome}}</label></button>
+          <ul class="dropdown-menu fs-7">
+            {% for empresa in empresas %}
+            <li><span class="dropdown-item pointer" onclick="filter('empresa',{{empresa.id}})">{{empresa.nome}}</span></li>
+            {% endfor %}            
+          </ul>
+        </div>
+      </div>
+    </div>
     <div class="tab-pane fade show active" id="base" role="tabpanel">
       <div class="row mb-2 d-flex d-md-none">
         <div class="col p-0">
@@ -79,6 +93,10 @@
 </div>
 {% include "_component/modal/loading.html" with message='Processando requisição....' %}
 {% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/url.js' %}"></script>
+{% endblock %}
 
 <script>
   {% block add_script %}

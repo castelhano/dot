@@ -42,18 +42,20 @@ def roadmap(request):
             messages.warning(request,'É necessário ter pelo menos uma <b>empresa</b> habilitada para seu usuario')
             return redirect('gestao_dashboard')
         indicadores = Indicador.objects.filter(ativo=True).order_by('nome')
-        if not Plano.objects.filter(diretriz__empresa=empresa, diretriz__ativo=True).exclude(inicio=None).exclude(termino=None).exists():
-            messages.warning(request,'<b>Atenção</b> Não existe nenhum plano (com prazo) ativo para exibir no roadmap')
-            return redirect('gestao_dashboard')        
-        inicio = Plano.objects.filter(diretriz__empresa=empresa, diretriz__ativo=True).order_by('inicio').first().inicio
-        termino = Plano.objects.filter(diretriz__empresa=empresa, diretriz__ativo=True).order_by('termino').last().termino
-        view_range = ((termino.month - inicio.month) + (termino.year - inicio.year) * 12) + 1
-        meses = []
-        for _ in range(0, view_range):
-            meses.append([f'{termino.strftime("%b").title()} {termino.strftime("%y").title()}',termino.strftime("%m")])
-            termino = termino.replace(day=1) - timedelta(days=1)
-        meses.reverse()
-
+        if Plano.objects.filter(diretriz__empresa=empresa, diretriz__ativo=True).exclude(inicio=None).exclude(termino=None).exists():
+            inicio = Plano.objects.filter(diretriz__empresa=empresa, diretriz__ativo=True).order_by('inicio').first().inicio
+            termino = Plano.objects.filter(diretriz__empresa=empresa, diretriz__ativo=True).order_by('termino').last().termino
+            view_range = ((termino.month - inicio.month) + (termino.year - inicio.year) * 12) + 1
+            meses = []
+            for _ in range(0, view_range):
+                meses.append([f'{termino.strftime("%b").title()} {termino.strftime("%y").title()}',termino.strftime("%m")])
+                termino = termino.replace(day=1) - timedelta(days=1)
+            meses.reverse()
+        else:
+            messages.warning(request,'<b>Atenção</b> Nenhum plano ativo com prazo para empresa selecionada')
+            meses = None
+            view_range = 1
+            inicio = date.today()
         metrics = {
             'staff':staff,
             'empresa':empresa,
@@ -61,7 +63,7 @@ def roadmap(request):
             'indicadores':indicadores,
             'meses':meses,
             'dias_plot':view_range * 30,
-            'inicio_plot':inicio.replace(day=1),
+            'inicio_plot':inicio.replace(day=1) ,
         }
     except Empresa.DoesNotExist:
         messages.error(request,f'<b>Erro</b> Empresa não encontrada ou não habilitada')
