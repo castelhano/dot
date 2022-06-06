@@ -57,7 +57,10 @@
       </div>
       {% if perms.gestao.add_apontamento %}
       <div class="col-auto">
-        <a class="btn btn-sm btn-purple" id="add" data-bs-toggle="modal" data-bs-target="#apontamento_modal" onclick="setTimeout(function(){document.getElementById('id_indicador').focus();},480);" href="#" title="Ctrl + N"><i class="fas fa-pen"></i></a>
+        <div class="input-group">
+          <a class="btn btn-sm btn-purple" id="add" data-bs-toggle="modal" data-bs-target="#apontamento_modal" onclick="setTimeout(function(){document.getElementById('id_indicador').focus();},480);" href="#" title="Ctrl + N"><i class="fas fa-pen"></i></a>
+          <a class="btn btn-sm btn-purple" href="{% url 'gestao_apontamento_add' %}" title="Formulário de Inserção"><i class="fas fa-angle-right"></i></a>
+        </div>
       </div>
       {% endif %}
       <div class="col">
@@ -81,11 +84,11 @@
           <tr>
             {% call_method indicador 'analises_pendentes' metrics.empresa.id as analises_pendentes %}
             <td><h6><a class="text-decoration-none text-purple" onclick="modal_loading.show();" href="{% url 'gestao_stratified' %}?empresa={{metrics.empresa.id|safe}}&indicador={{indicador.id|safe}}">{{indicador.nome}}</a></h6><small>{{indicador.quanto_maior_melhor|yesno:'1,-1'|indicatorArrow|safe}} melhor{% if staff.role == 'E' or staff.role == 'M' %}<span class="badge bg-purple ms-2 pointer" data-bs-toggle="modal" data-bs-target="#analise_modal" onclick="analiseAdd({{indicador.id|safe}},'{{indicador.nome}}')"><i class="fas fa-plus me-2"></i>{{analises_pendentes.count}}</span>{% endif %}</small></td>
-            <td class="d-none d-sm-table-cell"><h6>{{indicador.meta|floatformat:indicador.precisao}}</h6><small>{{indicador.medida}}</small></td>
+            <td class="d-none d-sm-table-cell"><h6>{{indicador.meta|floatformat:indicador.precisao|default:'--'}}</h6><small>{{indicador.medida}}</small></td>
             {% for referencia in metrics.referencias %}
             {% call_method indicador 'get_apontamento' referencia metrics.empresa.id as apontamento %}
             <td class="{% if forloop.last %}{% else %}d-none d-lg-table-cell{% endif %}"><h6>
-              <span class="me-1{% if apontamento.meta > 0 and apontamento.indicador.quanto_maior_melhor and apontamento.valor >= apontamento.meta or not apontamento.indicador.quanto_maior_melhor and apontamento.valor <= apontamento.meta %} text-success{% elif apontamento.meta > 0 %} text-danger{% endif %}">
+              <span class="me-1{% if apontamento.meta and apontamento.indicador.quanto_maior_melhor and apontamento.valor >= apontamento.meta or not apontamento.indicador.quanto_maior_melhor and apontamento.valor <= apontamento.meta %} text-success{% elif apontamento.meta > 0 %} text-danger{% endif %}">
                 {{apontamento.valor|floatformat:indicador.precisao|default:'--'}}
               </span> {{apontamento.evolucao|indicatorArrow|safe}}</h6>
               <small>{% if apontamento.valor and apontamento.meta > 0 %}Meta: <b>{{apontamento.meta|default:'--'}}</b>{% endif %}</small></td>

@@ -20,9 +20,7 @@ class ApontamentoForm(forms.ModelForm):
     class Meta:
         model = Apontamento
         fields = ['empresa','indicador','valor']
-    # indicador = forms.ModelChoiceField(error_messages={'required': 'Selecione o indicador'}, queryset = Indicador.objects.filter(ativo=True).order_by('nome'), widget=forms.Select(attrs={'class':'form-select'}))
     valor = forms.DecimalField(required=False,initial=0,widget=forms.TextInput(attrs={'class': 'form-control','onfocus':'this.select();'}))
-    meta = forms.DecimalField(required=False,initial=0,widget=forms.TextInput(attrs={'class': 'form-control','onfocus':'this.select();'}))
 
 class StaffForm(forms.ModelForm):
     class Meta:

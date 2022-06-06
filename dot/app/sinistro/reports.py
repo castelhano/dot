@@ -447,7 +447,7 @@ def termo_modelos(request, id):
         modelo = request.GET.get('modelo', None)
         if modelo == 'mod1' and Paragrafo.objects.filter(termo=termo).count() == 0:
             mod1 = []
-            mod1.append('De um lado, como primeiro acordante temos, {{empresa.nome}} pessoa jurídica de direito privado, estabelecida na {{empresa.endereco}} - bairro {{empresa.bairro}} - CEP: {{empresa.cep}}, {{empresa.cidade}} {{empresa.uf}}, incrita no CNPJ/MF {{empresa.cnpj}},')
+            mod1.append('De um lado, como primeiro acordante temos, {{empresa.razao_social}} pessoa jurídica de direito privado, estabelecida na {{empresa.endereco}} - bairro {{empresa.bairro}} - CEP: {{empresa.cep}}, {{empresa.cidade}} {{empresa.uf}}, incrita no CNPJ/MF {{empresa.cnpj}},')
             mod1.append('e, segundo acordante, {{terceiro.nome}}, portador do CPF: {{terceiro.cpf}}, residente e domiciliado à {{terceiro.endereco}}, bairro {{terceiro.bairro}} em {{terceiro.cidade}} {{terceiro.uf}}.')
             mod1.append('<br />{{Dos Fatos}}<br />')
             mod1.append('O presente termo é lavrado ante a ocorrência de colisão entre o veículo ônibus de prefixo {{acidente.veiculo}}, placa {{veiculo.placa}}, e o veículo de propriedade do segundo acordante, cuja marca/modelo se descreve: {{terceiro.veiculo}}, cor {{terceiro.cor}}, ano {{terceiro.ano}}, placa {{terceiro.placa}} - sendo o local do acidente ocorrido em {{acidente.endereco}}, {{acidente.bairro}}, {{acidente.cidade}} {{acidente.uf}}, na data de {{acidente.data}}, aproximadamente às {{acidente.hora}}')
@@ -512,7 +512,7 @@ def acidente_dashboard(request):
         }
     dias = 0
     for row in evolucao_acidentes:
-        evolucao_acidentes_metrics['categorias'].append(row['data'].day)
+        evolucao_acidentes_metrics['categorias'].append(f'{str(row["data"].day).zfill(2)}/{str(row["data"].month).zfill(2)}')
         evolucao_acidentes_metrics['dados'].append(float(row['qtd']))
         evolucao_acidentes_metrics['bgcolors'].append(bg.purple)
         evolucao_acidentes_metrics['bordercolors'].append(bc.purple)

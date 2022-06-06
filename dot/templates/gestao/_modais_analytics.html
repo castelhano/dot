@@ -29,11 +29,11 @@
           </div>
           <div class="row g-1">
             <div class="form-floating mb-lg-1 col">
-              <input type="number" class="form-control" name="ano" id="id_ano" min="1900" max="2099" value="">
+              <input type="number" class="form-control" name="ano" id="id_ano" min="1900" max="2099" onfocus="this.select()" value="">
               <label for="id_ano">Ano</label>
             </div>
             <div class="form-floating mb-lg-1 col">
-              <input type="number" class="form-control" name="mes" id="id_mes" min="1" max="12" value="">
+              <input type="number" class="form-control" name="mes" id="id_mes" min="1" max="12" onfocus="this.select()" value="">
               <label for="id_mes">Mês</label>
             </div>
             <div class="form-floating mb-1 col">
@@ -61,15 +61,15 @@
       modal_loading.show();
       document.getElementById('id_valor').value = document.getElementById('id_valor').value.replaceAll('.','').replaceAll(',','.');
       return true;
-    }catch(e){console.log(e);return false;}    
+    }catch(e){return false;}    
   }
   function indicadorSetPrecision(){
     let ind = document.getElementById("id_indicador");
     document.getElementById("id_valor").value = 0;
     VMasker(document.getElementById("id_valor")).maskMoney({precision : parseInt(ind.options[ind.selectedIndex].dataset.precision)});
   }
-  document.getElementById('id_ano').value = new Date().getFullYear();
-  document.getElementById('id_mes').value = new Date().getMonth() + 1;
+  document.getElementById('id_ano').value = new Date().getFullYear(); // Innitial para Ano
+  document.getElementById('id_mes').value = new Date().getMonth(); // Innitial para Mes
 </script>
 {% endif %}
 

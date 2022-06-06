@@ -95,6 +95,8 @@
 
 <script>
   {% block add_script %}
+  
+  var TAB_ON_ENTER = true;
   disponiveis = document.getElementById("staff_disponivel");
   selecionados = document.getElementById("id_staff");
   function submitForm(){options = selecionados.options;for(i=0; i < options.length; i++){options[i].selected = "true";}return true;}
@@ -119,7 +121,6 @@
   document.getElementById('id_inicio').readOnly = true;
   document.getElementById('id_termino').readOnly = true;
   document.getElementById('id_titulo').readOnly = true;
-  document.getElementById('id_detalhe').readOnly = true;
   document.getElementById('select_multiple_add').classList.add('disabled');
   document.getElementById('select_multiple_add_all').classList.add('disabled');
   document.getElementById('select_multiple_remove').classList.add('disabled');
@@ -128,6 +129,11 @@
   document.getElementById('id_staff').classList.add('readonly');
   document.getElementById('id_responsavel').classList.add('readonly');
   {% endif %}
+  
+  {% if staff.role != 'M' and staff.role != 'E' and plano.responsavel.id != user.id %}
+  document.getElementById('id_detalhe').readOnly = true;
+  {% endif %}
+  
   
   {% if staff.role == 'M' and plano.diretriz.ativo %}
   var container = document.getElementById('id_labels_container');

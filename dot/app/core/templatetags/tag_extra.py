@@ -69,7 +69,7 @@ def sub(minuendo, subtraendo):
 # @example  {{valor|percentual:total}}
 @register.filter
 def percentual(valor, total):
-    return (valor / total) * 100 if total > 0 else '---'
+    return (valor / total) * 100 if total > 0 and valor else '---'
 
 # parseInt Retorna o inteiro correspondente ao valor
 # --
@@ -79,7 +79,10 @@ def percentual(valor, total):
 # @example  {{valor|parseInt}}
 @register.filter
 def parseInt(valor):
-    return int(valor)
+    try:
+        return int(valor)
+    except:
+        return valor
 
 # zfill Retorna valor completando com zeros n vezes
 # --

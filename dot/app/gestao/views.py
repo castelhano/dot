@@ -43,8 +43,8 @@ def roadmap(request):
             return redirect('gestao_dashboard')
         indicadores = Indicador.objects.filter(ativo=True).order_by('nome')
         if Plano.objects.filter(diretriz__empresa=empresa, diretriz__ativo=True).exclude(inicio=None).exclude(termino=None).exists():
-            inicio = Plano.objects.filter(diretriz__empresa=empresa, diretriz__ativo=True).order_by('inicio').first().inicio
-            termino = Plano.objects.filter(diretriz__empresa=empresa, diretriz__ativo=True).order_by('termino').last().termino
+            inicio = Plano.objects.filter(diretriz__empresa=empresa, diretriz__ativo=True).exclude(inicio=None).order_by('inicio').first().inicio
+            termino = Plano.objects.filter(diretriz__empresa=empresa, diretriz__ativo=True).exclude(termino=None).order_by('termino').last().termino
             view_range = ((termino.month - inicio.month) + (termino.year - inicio.year) * 12) + 1
             meses = []
             for _ in range(0, view_range):
@@ -460,17 +460,49 @@ def apontamento_add(request):
                     l.save()
                 else:
                     raise Exception('Período informado <b>inválido</b>')
-                base_url = reverse('gestao_analytics')
-                query_string =  urlencode({'empresa': registro.empresa.id})
-                url = '{}?{}'.format(base_url, query_string)
-                return redirect(url)
+                if 'gestao_analytics' in request.META['HTTP_REFERER']:
+                    base_url = reverse('gestao_analytics')
+                    query_string =  urlencode({'empresa': registro.empresa.id})
+                    url = '{}?{}'.format(base_url, query_string)
+                    return redirect(url)
+                else:
+                    metrics = {
+                        'empresa':registro.empresa,
+                        'empresas':request.user.profile.empresas.all(),
+                        'indicadores':Indicador.objects.filter(ativo=True).order_by('nome'),
+                        'form':ApontamentoForm(),
+                    }
+                    return render(request, 'gestao/apontamento_add.html', metrics)
+                    
             except Exception as e:
                 messages.error(request,f'Erro: {e}')
                 return redirect('gestao_analytics')
-        return render(request, 'core/index.html',{'form':form})
+        else:
+            return render(request, 'gestao/apontamento_add.html', {'form':form})
     else:
-        messages.error(request,'Operação inválida')
-        return redirect('index')
+        try:
+            staff = Staff.objects.get(usuario=request.user)
+            if not staff.role in ['M','E','G']:
+                raise Exception('Perfil não liberado para este recurso')
+            empresa = request.GET.get('empresa', None)
+            empresas = request.user.profile.empresas.all()
+            if empresa:
+                empresa = Empresa.objects.get(id=empresa)
+            elif empresas.count() > 0:
+                empresa = empresas.first()
+            else:
+                messages.warning(request,'É necessário ter pelo menos uma <b>empresa</b> habilitada para seu usuario')
+                return redirect('gestao_dashboard')
+            metrics = {
+                'empresa':empresa,
+                'empresas':empresas,
+                'indicadores':Indicador.objects.filter(ativo=True).order_by('nome'),
+                'form':ApontamentoForm(),
+            }
+            return render(request, 'gestao/apontamento_add.html', metrics)
+        except Exception as e:
+            messages.error(request,f'Erro: {e}')
+            return render(request, 'gestao/apontamento_add.html')
 
 @login_required
 @permission_required('gestao.staff')

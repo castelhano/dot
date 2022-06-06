@@ -16,7 +16,7 @@
       {% if perms.trafego.add_ocorrencia %}
       <li class="nav-item ms-1"><a class="nav-link border" id="add" href="{% url 'trafego_ocorrencia_add' %}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
       {% endif %}
-      {% if perms.trafego.view_tratativa %}
+      {% if perms.trafego.tratar_ocorrencia %}
       <li class="nav-item"><a class="nav-link border ms-1" id="menu_tratativas" href="{% url 'trafego_tratativas' %}" title="Tratativas [ALT+T]" style="background-color: #FFF;"><i class="fas fa-check"></i></a></li>
       {% endif %}
       {% if perms.trafego.dashboard_ocorrencia %}

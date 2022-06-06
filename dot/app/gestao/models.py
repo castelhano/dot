@@ -7,7 +7,7 @@ from django.db.models import Avg
 
 class Indicador(models.Model):
     nome = models.CharField(max_length=80, unique=True, blank=False)
-    meta = models.DecimalField(default=None, max_digits=10, decimal_places=2)
+    meta = models.DecimalField(default=None, max_digits=10, decimal_places=2, null=True)
     medida = models.CharField(max_length=6, blank=True)
     precisao = models.IntegerField(default=2)
     quanto_maior_melhor = models.BooleanField(default=True)
@@ -42,7 +42,7 @@ class Apontamento(models.Model):
     indicador = models.ForeignKey(Indicador, on_delete=models.CASCADE)
     referencia = models.CharField(max_length=80, blank=False)
     valor = models.DecimalField(default=0, max_digits=10, decimal_places=2)
-    meta = models.DecimalField(default=None, max_digits=10, decimal_places=2)
+    meta = models.DecimalField(default=None, max_digits=10, decimal_places=2, null=True)
     evolucao = models.IntegerField(choices=EVOLUCAO_CHOICES, blank=True, null=True)
     class Meta:
         default_permissions = ['add']

@@ -18,3 +18,11 @@ function dotAlert(tipo, mensagem){let e = document.createElement('div');let b = 
 * @example  tooltipActivate(); <span data-bs-toggle="tooltip" data-bs-placement="top" title="Meu foo">FOO</span>
 */
 function tooltipActivate(){var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {return new bootstrap.Tooltip(tooltipTriggerEl)})}
+
+
+// ******************************************************************************
+// ONLOAD EVENTS                                                                *
+// Todo o codigo abaixo sera executado antes do fechamento do </body>           *
+// ******************************************************************************
+// ALTERA O TAB
+const readonly_els = document.querySelectorAll('select.readonly');for(let i = 0; i < readonly_els.length; i++){readonly_els[i].tabIndex = -1;}

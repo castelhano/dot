@@ -54,7 +54,7 @@ def ocorrencia_dashboard(request):
         }
     dias = 0
     for row in evolucao_ocorrencias:
-        evolucao_ocorrencias_metrics['categorias'].append(row['data'].day)
+        evolucao_ocorrencias_metrics['categorias'].append(f'{str(row["data"].day).zfill(2)}/{str(row["data"].month).zfill(2)}')
         evolucao_ocorrencias_metrics['dados'].append(float(row['qtd']))
         evolucao_ocorrencias_metrics['bgcolors'].append(bg.purple)
         evolucao_ocorrencias_metrics['bordercolors'].append(bc.purple)
