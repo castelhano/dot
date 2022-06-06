@@ -19,8 +19,6 @@ class LinhaForm(forms.ModelForm):
     codigo = forms.CharField(error_messages={'required': 'Campo Código OBRIGATÓRIO'},max_length=8,widget=forms.TextInput(attrs={'class': 'form-control bg-light fw-bold','placeholder':''}))
     nome = forms.CharField(error_messages={'required': 'É necessário informar um noma para linha'},widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
     classificacao = forms.ChoiceField(choices=Linha.CLASSIFICACAO_CHOICES, widget=forms.Select(attrs={'class':'form-select'}))
-    origem = forms.ModelChoiceField(required=False, queryset = Localidade.objects.all().order_by('nome'), widget=forms.Select(attrs={'class':'form-select'}))
-    destino = forms.ModelChoiceField(required=False, queryset = Localidade.objects.all().order_by('nome'), widget=forms.Select(attrs={'class':'form-select'}))
     extensao_ida = forms.DecimalField(required=False,initial=0,min_value=0,max_digits=10,decimal_places=2,widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':'0','max':'1000','step':'.01', 'onfocus':'this.select();'}))
     extensao_volta = forms.DecimalField(required=False,initial=0,min_value=0,max_digits=10,decimal_places=2,widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':'0','max':'1000','step':'.01', 'onfocus':'this.select();'}))
     acesso_origem_km = forms.DecimalField(required=False,initial=0,min_value=0,max_digits=10,decimal_places=2,widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':'0','max':'1000','step':'.01', 'onfocus':'this.select();'}))

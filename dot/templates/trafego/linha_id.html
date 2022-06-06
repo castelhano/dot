@@ -145,6 +145,9 @@
 <script>
   {% block add_script %}
   
+   // Carrega destino atual no datalist se form ja preenchido
+  if(document.getElementById('id_destino_nome').value != ''){localidadeGetList(document.getElementById('id_destino_nome'),document.getElementById('destino_spinner'),document.getElementById('destino_datalist'));}
+  
   var modal_patamar = new bootstrap.Modal(document.getElementById('patamar_modal'), {keyboard: true});
   function patamarUpdate(inicial='', final='', ida=50, volta=45, patamar=''){
     document.getElementById('id_inicial').value = inicial;
@@ -158,6 +161,8 @@
   
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
   function submitForm(){modal_loading.show();return true;}
+  
+  
   
   {% endblock %}
 </script>

@@ -1,50 +1,50 @@
 <div class="form-floating {{breakpoint|default:'col-lg-12 mb-1'}}">
-	<input type="hidden" id="id_local" name="local" value="{{id|safe}}">
-	<input type="text" autocomplete="off" class="form-control" list="localidade_datalist" id="id_local_nome" value="{{nome}}" oninput="cleanLocalID();localidadeGetList();" onblur="validadeLocalidade()" onfocus="this.select()"{% if required %} required{% endif %}>
-  <label for="id_local_nome">Local</label>
+	<input type="hidden" id="id_{{field_name|default:'local'}}" name="{{field_name|default:'local'}}" value="{{id|safe}}">
+	<input type="text" autocomplete="off" class="form-control" list="localidade_datalist" id="id_{{field_name|default:'local'}}_nome" value="{{nome}}" oninput="cleanLocalID();localidadeGetList();" onblur="validadeLocalidade()" onfocus="this.select()"{% if required %} required{% endif %}>
+  <label for="id_{{field_name|default:'local'}}_nome">Local</label>
   <datalist id="localidade_datalist"></datalist>
   <div id="localidade_spinner" class="spinner-grow text-success d-none" style="position: absolute; top:12px; right:15px; z-index:10;"></div>
 </div>
 
 <script>
-  const local_id = document.getElementById('id_local');
-  const local_nome = document.getElementById('id_local_nome');
+  const local_id = document.getElementById('id_{{field_name|default:'local'}}');
+  const local_nome = document.getElementById('id_{{field_name|default:'local'}}_nome');
   const local_spinner = document.getElementById('localidade_spinner');
   
-  function cleanLocalID(){local_id.value = '';}
+  function cleanLocalID(el=local_id){el.value = '';}
 	
-	function localidadeGetList(){
-    if(local_nome.value.length > 2){
-      local_spinner.classList.remove('d-none');
+	function localidadeGetList(el=local_nome, spinner=local_spinner, dl=document.getElementById("localidade_datalist")){
+    if(el.value.length > 2){
+      spinner.classList.remove('d-none');
       
     	var xhttp = new XMLHttpRequest();
     	xhttp.onreadystatechange = function() {
     		if(this.readyState == 4 && this.status == 200){
-    			if(this.responseText == '' || this.responseText == '{}'){local_nome.classList.add('is-invalid');}
+    			if(this.responseText == '' || this.responseText == '{}'){el.classList.add('is-invalid');}
     			else{
-						local_nome.classList.remove('is-invalid');
+						el.classList.remove('is-invalid');
     				let obj = JSON.parse(this.responseText);
-    				let locais = document.getElementById("localidade_datalist");
+    				let locais = dl;
             locais.innerHTML = '';
     				for(key in obj){locais.innerHTML += '<option value="' + key + '" data-id="' + obj[key] + '">';}
     			}
     		}
-        local_spinner.classList.add('d-none');
+        spinner.classList.add('d-none');
     	};
-    	xhttp.open("GET", "{% url 'trafego_get_localidades' %}?filtro={{filtro}}&pesquisa="+local_nome.value, true);
+    	xhttp.open("GET", "{% url 'trafego_get_localidades' %}?filtro={{filtro}}&pesquisa="+el.value, true);
     	xhttp.send();
-    }else{document.getElementById("localidade_datalist").innerHTML = '';local_nome.classList.remove('is-invalid');}
+    }else{dl.innerHTML = '';el.classList.remove('is-invalid');}
   }
 	
-	function validadeLocalidade(){
-		if(local_nome.value != ''){
-			let options = document.getElementById("localidade_datalist").getElementsByTagName('option');
+	function validadeLocalidade(el_id=local_id, el_nome=local_nome, dl=document.getElementById("localidade_datalist")){
+		if(el_nome.value != ''){
+			let options = dl.getElementsByTagName('option');
 			let valid = false, i = 0;
 			while(!valid && i < options.length){
-				if(options[i].value == local_nome.value){valid = true;local_id.value = options[i].dataset.id;};
+				if(options[i].value == el_nome.value){valid = true;el_id.value = options[i].dataset.id;};
 				i++;
 			}
-			if(!valid){local_nome.classList.add('is-invalid');}
+			if(!valid){el_nome.classList.add('is-invalid');}
 		}
 	}
 	if(local_nome.value != ''){localidadeGetList();} // Carrega localidade no datalist se form ja preenchido (update)
