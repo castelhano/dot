@@ -72,7 +72,7 @@
           <span class="">{{indicador.nome}}</span>
         </div>
         <div class="col bg-light">
-          {% call_method indicador 'planos_ativos' empresa.id as planos_ativos %}
+          {% call_method indicador 'planos_ativos' empresa.id True as planos_ativos %}
           {% for plano in planos_ativos %}
           <div class="row rm-container pe-1 pe-lg-3">
             <div class="col-auto" style="padding:0px;position:relative;width: {{plano.inicio|days_since:plano.termino|percentual:dias_plot|parseInt}}%;left:{{inicio_plot|days_since:plano.inicio|percentual:dias_plot|parseInt}}%">

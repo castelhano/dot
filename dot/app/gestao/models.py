@@ -24,9 +24,12 @@ class Indicador(models.Model):
             return None
     def analises_pendentes(self, empresa):
         return Analise.objects.filter(indicador=self,empresa__id=empresa,concluido=False).exclude(tipo='L').order_by('created_on')
-    def planos_ativos(self, empresa_id):
+    def planos_ativos(self, empresa_id, somente_com_prazo=False):
         try:
-            return Plano.objects.filter(diretriz__empresa__id=empresa_id, diretriz__ativo=True, diretriz__indicador=self).order_by('inicio','termino')
+            if somente_com_prazo:
+                return Plano.objects.filter(diretriz__empresa__id=empresa_id, diretriz__ativo=True, diretriz__indicador=self).exclude(inicio=None).exclude(termino=None).order_by('inicio','termino')
+            else:
+                return Plano.objects.filter(diretriz__empresa__id=empresa_id, diretriz__ativo=True, diretriz__indicador=self).order_by('inicio','termino')
         except Exception as e:
             return None
     class Meta:
