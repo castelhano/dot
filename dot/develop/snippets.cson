@@ -138,7 +138,6 @@
   'Template Edit Form':
     'prefix': '_edit'
     'body':'{% extends "layout/dot.html" %}\n
-    {% load static %}\n
     {% block title %}Titulo{% endblock %}\n
     {% block model %}Modulo{% endblock %}\n
     {% block model_menu %}{% include "_component/menu/core.html" %}{% endblock%}\n

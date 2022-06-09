@@ -61,6 +61,17 @@ function urlFilter(url, filter, value){location.href = updateUrl(url, filter, va
 function filters(filters, values){let h = window.location.href;for(i=0;i < filters.length; i++){h = updateUrl(h , filters[i], values[i]);}location.href = h;}
 
 /*
+* filtersClean() Remove parametros da URL
+*
+* @version  1.0
+* @since    09/06/2022
+* @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }
+* @param    {Array} filters Lista [] com parametros a serem removidos da url
+* @example  filtersClean(['nome', 'email'])
+*/
+function filtersClean(filters){let h = window.location.href.split('?')[0];let p = new URLSearchParams(window.location.search);for(i=0;i < filters.length; i++){p.delete(filters[i]);}location.href = p.toString() != '' ? `${h}?${p.toString()}` : h;}
+
+/*
 * urlRedirect Carrega os filtros na url atual para uma nova url
 *
 * @version  1.0

@@ -1,0 +1,52 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Reclamação{% endblock %}
+{% block model %}SAC{% endblock %}
+{% block navbar_classlist %}navbar-dark bg-purple bg-gradient{% endblock %}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'sac_reclamacao_add' %}"></a>
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'sac_reclamacoes' %}"><i class="fas fa-undo"></i></a></li>
+    </ul>
+  </div>
+  <form id="app_form" action="{% url 'sac_reclamacao_add' %}" method="POST" autocomplete="off">
+    {% csrf_token %}
+    {% include 'sac/_form_reclamacao.html' %}
+  </form>
+</div>
+
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/vendor/mask.js' %}"></script>
+{% endblock %}
+
+<script>
+  {% block add_script %}
+  
+   // FONE MASK
+   function inputHandler(masks, max, event) {
+   	var c = event.target;
+   	var v = c.value.replace(/D/g, '');
+   	var m = c.value.length > max ? 1 : 0;
+   	VMasker(c).unMask();
+   	VMasker(c).maskPattern(masks[m]);
+   	c.value = VMasker.toPattern(v, masks[m]);
+   }
+   var telMask = ['(99) 9999-99999', '(99) 99999-9999'];
+   var fone1 = document.getElementById('id_fone1');
+   var fone2 = document.getElementById('id_fone2');
+   VMasker(fone1).maskPattern(telMask[0]);
+   VMasker(fone2).maskPattern(telMask[0]);
+   fone1.addEventListener('input', inputHandler.bind(undefined, telMask, 14), false);
+   fone2.addEventListener('input', inputHandler.bind(undefined, telMask, 14), false);
+  
+   fone1.dispatchEvent(new Event("input"));
+   fone2.dispatchEvent(new Event("input"));
+  
+  {% endblock %}
+</script>

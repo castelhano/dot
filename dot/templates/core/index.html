@@ -10,6 +10,7 @@
   {% if perms.gestao.dashboard %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-dark" title="Ctrl + C"><i class="fas fa-chart-pie lead-image"></i><a id="widget_action_gestao" class="widget-label stretched-link" href="{% url 'gestao_dashboard' %}">Gerencial<kbd class="float-end fs-9 bg-light text-dark fw-bold">ctrl 1</kbd></a></div>{% endif %}
   {% if perms.pessoal.view_funcionario %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-purple"><i class="fas fa-user-tie lead-image"></i><a id="widget_action_pessoal" class="widget-label stretched-link" href="{% url 'pessoal_funcionarios' %}">Pessoal<kbd class="float-end fs-9">ctrl p</kbd></a></div>{% endif %}
   {% if perms.recrutamento.view_selecao %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-purple"><i class="fas fa-users lead-image"></i><a id="widget_action_recrutamento" class="widget-label stretched-link" href="{% url 'recrutamento_selecoes' %}">Recrutamento<kbd class="float-end fs-9">ctrl r</kbd></a></div>{% endif %}
+  {% if perms.sac.view_reclamacao %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-purple"><i class="fas fa-headset lead-image"></i><a id="widget_action_sac" class="widget-label stretched-link" href="{% url 'sac_reclamacoes' %}">SAC<kbd class="float-end fs-9">ctrl 2</kbd></a></div>{% endif %}
   {% if perms.oficina.view_frota %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-success"><i class="fas fa-bus lead-image"></i><a id="widget_action_oficina" class="widget-label stretched-link" href="{% url 'oficina_frotas' %}">Oficina<kbd class="float-end fs-9">ctrl o</kbd></a></div>{% endif %}
   {% if perms.trafego.view_linha %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-primary"><i class="fas fa-route lead-image"></i><a id="widget_action_trafego" class="widget-label stretched-link" href="{% url 'trafego_linhas' %}">Trafego<kbd class="float-end fs-9">ctrl g</kbd></a></div>{% endif %}
   {% if perms.trafego.view_notificacao %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-primary"><i class="fas fa-file-signature lead-image"></i><a id="widget_action_notificacao" class="widget-label stretched-link" href="{% url 'trafego_notificacoes' %}">Notificações</a></div>{% endif %}
@@ -30,6 +31,7 @@
 SHORTCUT_MAP['1FTF'] = '#widget_action_gestao';
 SHORTCUT_MAP['pFTF'] = '#widget_action_pessoal';
 SHORTCUT_MAP['rFTF'] = '#widget_action_recrutamento';
+SHORTCUT_MAP['2FTF'] = '#widget_action_sac';
 SHORTCUT_MAP['oFTF'] = '#widget_action_oficina';
 SHORTCUT_MAP['gFTF'] = '#widget_action_trafego';
 SHORTCUT_MAP['kFTF'] = '#widget_action_acidente';

@@ -1,0 +1,87 @@
+<div class="card-body tab-content">
+  <h5 class="card-title mb-3">Cadastro de Reclamação</h5>
+  <div class="tab-pane fade show active" id="base" role="tabpanel">
+    <div class="row">
+      <div class="col-lg-7">
+        {% include "_component/field/empresa.html" with empresa_atual=reclamacao.empresa.id|safe attrs='autofocus' %}
+        <div class="row g-1">
+        	<div class="form-floating mb-lg-1 col-lg-3">
+        		{{ form.data }}
+        		<label for="id_data">Data</label>
+        	</div>
+        	<div class="form-floating mb-lg-1 col-lg-3">
+        		{{ form.hora }}
+        		<label for="id_hora">Hora</label>
+        	</div>
+          <div class="form-floating mb-1 col-lg-6">
+        		{{ form.origem }}
+        		<label for="id_origem">Origem</label>
+        	</div>
+        </div>
+        {% include "_component/field/linha.html" with id=reclamacao.linha.id codigo=reclamacao.linha.codigo nome=reclamacao.linha.nome required=False incluir_inativos=False %}
+        {% include "_component/field/veiculo.html" with id=reclamacao.veiculo.id prefixo=reclamacao.veiculo.prefixo placa=reclamacao.veiculo.placa required=False incluir_inativos=False %}
+        {% include "_component/field/funcionario.html" with id=reclamacao.funcionario.id matricula=reclamacao.funcionario.matricula nome=reclamacao.funcionario.nome cargo=reclamacao.funcionario.cargo.nome required=False incluir_inativos=False %}
+        <div class="row g-1">
+        	<div class="form-floating mb-lg-1 col-lg-4">
+        		{{ form.classificacao }}
+        		<label for="id_classificacao">Classificação</label>
+        	</div>
+        	<div class="form-floating mb-1 col-lg">
+        		{{ form.reclamante }}
+        		<label for="id_reclamante">Reclamante</label>
+        	</div>
+        </div>
+        <div class="row g-1">
+        	<div class="form-floating mb-lg-1 col-lg-3">
+        		{{ form.fone1 }}
+        		<label for="id_fone1">Fone 1</label>
+        	</div>
+        	<div class="form-floating mb-lg-1 col-lg-3">
+        		{{ form.fone2 }}
+        		<label for="id_fone2">Fone 2</label>
+        	</div>
+        	<div class="form-floating mb-1 col-lg-6">
+        		{{ form.email }}
+        		<label for="id_email">Email</label>
+        	</div>
+        </div>
+        <div class="row g-1">
+        	<div class="mb-1 col-12">
+        		{{ form.detalhe }}
+        	</div>
+        </div>      
+      </div>
+      <div class="col-lg-5">
+        <div class="row g-1">
+        	<div class="form-floating mb-1 col-lg-12">
+        		{{ form.parecer }}
+        		<label for="id_parecer">Parecer</label>
+        	</div>
+        </div>
+        <div class="row g-1">
+        	<div class="mb-1 col-lg-12">
+        		{{ form.retorno }}
+        	</div>
+        </div>
+        <div class="form-check form-switch mt-1">
+        	{{form.tratado}}
+        	<label class="form-check-label" for="id_tratado">Marcar como <b>tratado</b></label>
+        </div>
+        <hr>
+        <p class="m-0">Responsável: <b>{{reclamacao.usuario|title|default:'Nova Reclamação'}}</b></p>
+        <p>Data: <b>{{reclamacao.entrada|date:'d/m/y H:i'|default:'--'}}</b>{% if not reclamacao.tratado %}<span class="badge bg-purple ms-2">{{reclamacao.dias_pendentes}} dias</span>{% else %}<span class="badge bg-success ms-2">Tratado</span>{% endif %}</p>
+      </div>
+    </div>
+  </div>
+  <!-- CONTROLES DO FORM -->
+  <div class="row mt-3">
+    <div class="col">
+      <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"><b>G</b>ravar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  var TAB_ON_ENTER = true;
+  document.getElementById('id_empresa').addEventListener('change', function(){cleanLinha();cleanVeiculo();cleanFuncionario();})
+</script>

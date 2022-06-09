@@ -12,5 +12,6 @@ urlpatterns = [
     path('',include('sinistro.urls')),
     path('',include('globus.urls')),
     path('',include('gestao.urls')),
+    path('',include('sac.urls')),
     path('admin/', admin.site.urls),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
