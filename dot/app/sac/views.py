@@ -6,6 +6,7 @@ from .forms import ClassificacaoForm, ReclamacaoForm, SiteForm, SettingsForm
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from core.models import Log, Empresa
+from django.conf import settings as ROOT
 
 
 # METODOS SHOW
@@ -67,6 +68,10 @@ def settings(request):
     form = SettingsForm(instance=settings)
     return render(request,'sac/settings.html',{'form':form,'settings':settings})
 
+
+def site(request):
+    form = SiteForm()
+    return render(request,'sac/site.html',{'form':form, 'ROOT':ROOT.COMPANY_DATA})
 
 # METODOS ADD
 @login_required

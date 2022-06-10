@@ -1,0 +1,14 @@
+{% if status == 'ADD_M1' %}
+<div class="col-lg-12 text-center">
+  <p class="display-2">Sua reclamação/sugestão foi registrada com <b class="text-success">sucesso</b>, agradeçemos o seu contato.</p>
+</div>
+{% elif status == 'ERROR' %}
+<div class="col-lg-12 text-center">
+  <p class="display-6"><b class="text-danger">Erro:</b> tivemos um problema para registrar sua reclamação, por favor tente novamente dentro de instantes ou entre em contato pelo número <span class="text-nowrap text-purple">{{ROOT.sac_fone}}</span></p>
+</div>
+{% else %}
+<p class="lead text-center">Agradecemos o seu contato e caso queira receber um retorno sobre esse atendimento, informe seu dados e uma forma de contato (fone e/ou email). Dúvidas entre em contato com nossa equipe pelo fone <span class="text-nowrap text-orange">{{ROOT.sac_fone}}</span> {% if ROOT.sac_email %} ou pelo <a class="text-decoration-none text-orange" href="mailto:{{ROOT.sac_email}}?subject=SAC">{{ROOT.sac_email}}</a>{% endif %}</p>
+
+
+
+{% endif %}

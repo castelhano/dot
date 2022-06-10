@@ -7,6 +7,7 @@
   <title>900 Test Page</title>
   <link rel="shortcut icon" href="{% static 'img/favicon.ico'%}">
   <link rel="stylesheet" href="{% static 'css/dot.css' %}" type="text/css">
+  <link rel="stylesheet" href="{% static 'css/inmate.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/all.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/fontawesome.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.min.css' %}" type="text/css">
@@ -17,24 +18,9 @@
   <a id="clear" href="{% url 'handler' '999' %}"></a>
   
   <div class="container-fluid">
+    <!-- <h1 class="inmate inmate-swing">Foo</h1> -->
+    <label class="inmate inmate-swing fs-1">Handler 999</label>
     
-    <form class="" action="index.html" method="post">
-      
-    
-    <input type="text" name="" value="" autofocus>
-    
-    <div class="row m-3 g-1">
-    	<div class="form-floating mb-1 col-lg-4">
-    		<select class="form-select readonly" id="id_foo" name="foo">
-    			<option value="" selected>---------</option>
-    			<option value="1">Teste</option>
-    		</select>
-    		<label for="id_foo">Item</label>
-    	</div>
-    </div>
-    <input type="text" class="readonly" name="" value="">
-    
-  </form>
   </div>
   
   <script src="{% static 'js/listener.js' %}"></script>

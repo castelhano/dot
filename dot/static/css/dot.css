@@ -4,20 +4,6 @@ castelhano.rafael@gmail.com
 VERSION: 1.0 
 */
 
-/*
-* Descreva o contexto do codigo em poucas linhas
-*
-* @version  1.0
-* @since    05/03/2022
-* @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }
-* @desc     Decricao abreviada do codigo
-* @param    {Int} Parametro do codigo
-* @returns  {Array} Retorno da funcao
-* @throws   Excessoes lancadas pela funcao
-* @example  Exemplo de utilizacao da funcao
-* @see      {@link https://foo.com}
-*/
-
 .cursor-default{cursor: default;}
 .pointer{cursor: pointer;}
 select.readonly{background: rgb(233, 236, 239)!important;pointer-events: none;touch-action: none;}

@@ -1,0 +1,89 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="castelhano.rafael@gmail.com">
+  
+  <link rel="shortcut icon" href="{% static 'img/favicon.ico'%}">
+  <link rel="stylesheet" href="{% static 'css/vendor/all.min.css' %}" type="text/css">
+  <link rel="stylesheet" href="{% static 'css/vendor/fontawesome.min.css' %}" type="text/css">
+  <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.min.css' %}" type="text/css">
+  <link rel="stylesheet" href="{% static 'css/dot.css' %}" type="text/css">
+  <title>SAC</title>
+</head>
+
+<body class="bg-light">
+  <a class="d-none" id="clear" href="{% url 'sac' %}"></a>
+  <div class="container">
+    <div class="py-3 text-center">
+      <img class="d-block mx-auto mb-4" src="{% static 'img/logo.png' %}" alt="" width="140">
+      <h2>Atendimento ao Cliente</h2>
+    </div>
+    {% include 'sac/_extract_site.html' with status=status %}    
+    
+    <footer class="my-5 pt-5 text-muted text-center fs-7">
+      <p class="mb-1">&copy; 2020 Dot System</p>
+      <small>SAC</small>
+    </footer>
+  </div>
+  
+  {% for message in messages %}
+  <div class="alert alert-{{message.tags}} alert-dismissible fade show mb-1" role="alert">
+    {{ message|safe }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endfor %}
+  
+  {% if form.errors %}
+  {% for field in form %}
+  {% if field.errors %}
+  {% for error in field.errors %}
+  <div class="alert alert-danger alert-dismissible fade show mb-1" role="alert">
+    {{ error|escape }} <span class="fw-bold">[ field: {{ field.name }} ]</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endfor %}
+  {% endif %}
+  {% endfor %}
+  {% if form.non_field_errors %}
+  {% for error in form.non_field_errors %}
+  <div class="alert alert-danger alert-dismissible fade show mb-1" role="alert">
+    {{ error|safe }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endfor %}
+  {% endif %}
+  {% endif %}
+
+  
+  
+  <script src="{% static 'js/vendor/mask.js' %}"></script>
+  <script src="{% static 'js/listener.js' %}"></script>
+  <script src="{% static 'js/vendor/bootstrap.bundle.min.js' %}"></script>
+  
+  <script type="text/javascript">
+  
+  var TAB_ON_ENTER = true;
+  
+  // FONE MASK
+  function inputHandler(masks, max, event) {
+    var c = event.target;
+    var v = c.value.replace(/D/g, '');
+    var m = c.value.length > max ? 1 : 0;
+    VMasker(c).unMask();
+    VMasker(c).maskPattern(masks[m]);
+    c.value = VMasker.toPattern(v, masks[m]);
+  }
+  var telMask = ['(99) 9999-99999', '(99) 99999-9999'];
+  var fone1 = document.getElementById('id_fone1');
+  var fone2 = document.getElementById('id_fone2');
+  VMasker(fone1).maskPattern(telMask[0]);
+  VMasker(fone2).maskPattern(telMask[0]);
+  fone1.addEventListener('input', inputHandler.bind(undefined, telMask, 14), false);
+  fone2.addEventListener('input', inputHandler.bind(undefined, telMask, 14), false);
+  </script>
+</body>
+</html>

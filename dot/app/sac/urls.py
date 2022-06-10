@@ -13,6 +13,6 @@ urlpatterns = [
     path('sac_reclamacao_update/<int:id>',views.reclamacao_update,name='sac_reclamacao_update'),
     path('sac_reclamacao_delete/<int:id>/delete',views.reclamacao_delete,name='sac_reclamacao_delete'),
     path('sac_settings',views.settings,name='sac_settings'),
-    path('recrutamento_settings_update/<int:id>',views.settings_update,name='recrutamento_settings_update'),
-    # path('sac',views.reclamacao_site,name='sac_reclamacao_site'),
+    path('sac_settings_update/<int:id>',views.settings_update,name='sac_settings_update'),
+    path('sac',views.site,name='sac'),
 ]

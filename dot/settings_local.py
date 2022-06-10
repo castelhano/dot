@@ -6,6 +6,15 @@ DEBUG = True
 # SECRET_KEY = 'django-insecure-@y**phwf-7(aou^!wj3rc$cfpncse#as=96q-ip@b)9(#ha$&&'
 SECRET_KEY = 't$o.B<Vf}+K=2RQ#.X?@p*t1Z]LhT@j|o=KcK0;9*):0<5W_1kU8?.=jI-3oi-M'
 
+COMPANY_DATA = {
+'recrutamento_fone': '(00) 0000-0000',
+'recrutamento_email': None,
+'sac_fone':'(65) 3619-5100',
+'sac_email': 'sac@sit.com.br',
+}
+
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
