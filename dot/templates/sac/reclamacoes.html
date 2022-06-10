@@ -5,15 +5,12 @@
 {% block navbar_classlist %}navbar-dark bg-purple bg-gradient{% endblock %}
 
 {% block content_fluid %}
-<a class="d-none" id="clear" href="{% url 'sac_reclamacoes' %}"></a>
-
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
-      <li class="nav-item"><a class="nav-link pointer" id="search" data-bs-toggle="modal" data-bs-target="#search_modal" onclick="setTimeout(function(){document.getElementById('id_pesquisa').focus();},480);" title="CTRL + /"><i class="fas fa-search"></i></a></li>
       {% if perms.sac.add_reclamacao %}
-      <li class="nav-item"><a class="nav-link border" id="add" href="{% url 'sac_reclamacao_add' %}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
+      <li class="nav-item"><a class="nav-link border ms-1" id="add" href="{% url 'sac_reclamacao_add' %}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
       {% endif %}
       <li class="nav-item dropdown ms-1">
         <a class="nav-link dropdown-toggle text-dark" id="sac_extra" data-bs-toggle="dropdown" href="#" role="button"></a>
@@ -38,100 +35,115 @@
     </ul>
   </div>
   <div class="card-body tab-content">
-    <h5 class="card-title mb-3">SAC <small class="badge bg-primary ms-1">{{reclamacoes.count}}</small></h5>
-    <div class="tab-pane fade show active" id="base" role="tabpanel">
-      <table id="main_table" class="table border table-striped table-hover">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th class="d-none d-lg-table-cell">Empresa</th>
-            <th>Entrada</th>
-            <th class="d-none">Data</th>
-            <th class="d-none">Hora</th>
-            <th class="d-none d-lg-table-cell">Reclamante</th>
-            <th class="d-none">Fone 1</th>
-            <th class="d-none">Fone 2</th>
-            <th class="d-none">Email</th>
-            <th>Origem</th>
-            <th class="d-none d-xl-table-cell">Classificação</th>
-            <th class="d-none d-lg-table-cell">Linha</th>
-            <th class="d-none d-lg-table-cell">Veiculo</th>
-            <th class="d-none">Mat</th>
-            <th class="d-none">Apelido</th>
-            <th class="d-none d-md-table-cell">Parecer</th>
-            <th class="d-none d-sm-table-cell">Status</th>
-            <th>Dias</th>
-            <th class="d-none">Responsavel</th>
-            {% if perms.sac.change_reclamacao %}
-            <th>&nbsp;</th>
-            {% endif %}
-          </tr>
-        </thead>
-        <tbody>
-          {% for reclamacao in reclamacoes %}
-          <tr class="{% if reclamacao.tratado %}table-success{% elif reclamacao.dias_pendentes > prazo %}table-danger{% endif %}">
-            <td>{{reclamacao.id|safe}}</td>
-            <td class="d-none d-lg-table-cell">{{reclamacao.empresa.nome}}</td>
-            <td>{{reclamacao.entrada|date:'d/m/y'}}</td>
-            <td class="d-none">{{reclamacao.data|date:'d/m/y'}}</td>
-            <td class="d-none">{{reclamacao.hora}}</td>
-            <td class="d-none d-lg-table-cell">{{reclamacao.reclamante}}</td>
-            <td class="d-none">{{reclamacao.fone1}}</td>
-            <td class="d-none">{{reclamacao.fone2}}</td>
-            <td class="d-none">{{reclamacao.email}}</td>
-            <td>{{reclamacao.get_origem_display}}</td>
-            <td class="d-none d-xl-table-cell">{{reclamacao.classificacao.nome}}</td>
-            <td class="d-none d-lg-table-cell">{{reclamacao.linha.codigo}}</td>
-            <td class="d-none d-lg-table-cell">{{reclamacao.veiculo.prefixo}}</td>
-            <td class="d-none">{{reclamacao.funcionario.matricula}}</td>
-            <td class="d-none">{{reclamacao.funcionario.apelido}}</td>
-            <td class="d-none d-md-table-cell">{{reclamacao.get_parecer_display}}</td>
-            <td class="d-none d-sm-table-cell">{{reclamacao.tratado|yesno:'Tratado,Aberto'}}</td>
-            <td>{{reclamacao.dias_pendentes}}</td>
-            <td class="d-none">{{reclamacao.usuario.username|title}}</td>
-            {% if perms.sac.change_reclamacao %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'sac_reclamacao_id' reclamacao.id|safe %}"><i class="fas fa-pen"></i></a></td>
-            {% endif %}
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="20">Nenhum registro a exibir</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+    <h5 class="card-title mb-2">SAC <small class="badge bg-primary ms-1">{{reclamacoes.count}}</small></h5>
+    <div class="row g-1 mb-2">
+      <div class="col-auto dropdown">
+        <a class="btn btn-sm btn-purple-light" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-home me-1"></i> {{empresa.nome|default:'Todas'}}</a>
+        <ul class="dropdown-menu fs-7">
+          {% for empresa in empresas %}
+          <li><span class="dropdown-item pointer" onclick="filter('empresa',{{empresa.id|safe}})">{{empresa.nome}}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        <div class="col-auto dropdown">
+          <a class="btn btn-sm btn-purple-light" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-calendar-alt mx-2"></i></a>
+          <ul class="dropdown-menu fs-7">
+            <li class="bg-light">
+              <div class="row g-1">
+                <div class="col-12 px-2"><input type="date" class="form-control" id="id_periodo_de" name="periodo_de" value="{{de}}"></div>
+                <div class="col-12 px-2"><input type="date" class="form-control" id="id_periodo_ate"  name="periodo_ate" value="{{ate}}"></div>
+                <div class="col-12 d-grid px-2"><button type="button" class="btn btn-sm btn-purple-light" name="button" onclick="filtraPeriodo();">Filtrar</button></div>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="col-auto">
+          <a class="btn btn-sm btn-purple" id="clear" href="{% url 'sac_reclamacoes' %}" title="Limpar Filtros"><i class="fas fa-times mx-2"></i></a>
+        </div>
+        <div class="col">
+          <input id="id_search" type="text"class="form-control form-control-sm" onkeyup="filterTable('main_table', [5, 9, 10, 11, 12, 13], this)" placeholder="Filtrar* [Ctrl /]">
+        </div>
+      </div>
+      <div class="tab-pane fade show active" id="base" role="tabpanel">
+        <table id="main_table" class="table border table-striped table-hover table-sortable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th class="d-none d-lg-table-cell">Empresa</th>
+              <th>Entrada</th>
+              <th class="d-none">Data</th>
+              <th class="d-none">Hora</th>
+              <th class="d-none d-lg-table-cell">Reclamante*</th>
+              <th class="d-none">Fone 1</th>
+              <th class="d-none">Fone 2</th>
+              <th class="d-none">Email</th>
+              <th>Origem*</th>
+              <th class="d-none d-xl-table-cell">Classificação*</th>
+              <th class="d-none d-lg-table-cell">Linha*</th>
+              <th class="d-none d-lg-table-cell">Veiculo*</th>
+              <th class="d-none">Mat*</th>
+              <th class="d-none">Apelido</th>
+              <th class="d-none d-md-table-cell">Parecer</th>
+              <th class="d-none d-sm-table-cell">Status</th>
+              <th>Dias</th>
+              <th class="d-none">Responsavel</th>
+              {% if perms.sac.change_reclamacao %}
+              <th>&nbsp;</th>
+              {% endif %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for reclamacao in reclamacoes %}
+            <tr class="{% if reclamacao.tratado %}table-success{% elif reclamacao.dias_pendentes > prazo %}table-danger{% endif %}">
+              <td>{{reclamacao.id|safe}}</td>
+              <td class="d-none d-lg-table-cell">{{reclamacao.empresa.nome}}</td>
+              <td>{{reclamacao.entrada|date:'d/m/y'}}</td>
+              <td class="d-none">{{reclamacao.data|date:'d/m/y'}}</td>
+              <td class="d-none">{{reclamacao.hora}}</td>
+              <td class="d-none d-lg-table-cell">{{reclamacao.reclamante}}</td>
+              <td class="d-none">{{reclamacao.fone1}}</td>
+              <td class="d-none">{{reclamacao.fone2}}</td>
+              <td class="d-none">{{reclamacao.email}}</td>
+              <td>{{reclamacao.get_origem_display}}</td>
+              <td class="d-none d-xl-table-cell">{{reclamacao.classificacao.nome}}</td>
+              <td class="d-none d-lg-table-cell">{{reclamacao.linha.codigo}}</td>
+              <td class="d-none d-lg-table-cell">{{reclamacao.veiculo.prefixo}}</td>
+              <td class="d-none">{{reclamacao.funcionario.matricula}}</td>
+              <td class="d-none">{{reclamacao.funcionario.apelido}}</td>
+              <td class="d-none d-md-table-cell">{{reclamacao.get_parecer_display}}</td>
+              <td class="d-none d-sm-table-cell">{{reclamacao.tratado|yesno:'Tratado,Aberto'}}</td>
+              <td>{{reclamacao.dias_pendentes}}</td>
+              <td class="d-none">{{reclamacao.usuario.username|title}}</td>
+              {% if perms.sac.change_reclamacao %}
+              <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'sac_reclamacao_id' reclamacao.id|safe %}"><i class="fas fa-pen"></i></a></td>
+              {% endif %}
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="20">Nenhum registro a exibir</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
-</div>
-<br>
-
-<div class="modal fade" id="search_modal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="row">
-        <div class="col"><h5 class="ms-3 mt-3">Pesquisa</h5></div>
-        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
-      </div>
-      <div class="modal-body">
-        <form id="sac_form" action="url" method="POST" autocomplete="off">
-          {% csrf_token %}
-          <div class="row g-1">
-            <div class="form-floating mb-1 col-lg-12">
-              <input type="text" class="form-control" name="pesquisa" value="" id="id_pesquisa" placeholder="">
-              <label for="id_pesquisa">Termo pesquisa</label>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-{% endblock%}
-
-{% block add_script_src %}
-<script src="{% static 'js/table.js' %}"></script>
-<script src="{% static 'js/url.js' %}"></script>
-{% endblock %}
-
-{% block add_script %}
-{% endblock %}
+  {% endblock%}
+  
+  {% block add_script_src %}
+  <script src="{% static 'js/table.js' %}"></script>
+  <script src="{% static 'js/url.js' %}"></script>
+  {% endblock %}
+  
+    
+<script>
+  {% block add_script %}
+  SHORTCUT_MAP['/FTF'] = ':reclamacaoSearch';
+  function reclamacaoSearch(){document.getElementById('id_search').select()}
+  
+  function filtraPeriodo(){
+    let periodos = [document.getElementById('id_periodo_de').value,document.getElementById('id_periodo_ate').value]
+    filters(['de','ate'], periodos);
+  }
+  {% endblock %}
+</script>

@@ -5,7 +5,7 @@ from .models import Classificacao, Reclamacao, Settings
 from .forms import ClassificacaoForm, ReclamacaoForm, SiteForm, SettingsForm
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
-from core.models import Log
+from core.models import Log, Empresa
 
 
 # METODOS SHOW
@@ -21,15 +21,28 @@ def classificacoes(request):
 @permission_required('sac.view_reclamacao')
 def reclamacoes(request):
     reclamacoes = Reclamacao.objects.all().order_by('entrada')
-    if request.method == 'POST':
-        pass
+    if request.GET.get('empresa', None):
+        empresa = Empresa.objects.get(id=request.GET['empresa'])
+        reclamacoes = reclamacoes.filter(empresa=empresa)
+        empresas = request.user.profile.empresas.all().exclude(id=empresa.id).order_by('nome')
+    else:
+        empresa = None
+        empresas = request.user.profile.empresas.all().order_by('nome')
+    if request.GET.get('de', None) and request.GET.get('ate', None):
+        reclamacoes = reclamacoes.filter(data__range=(request.GET.get('de', None), request.GET.get('ate', None)))
     else:
         reclamacoes = reclamacoes.filter(tratado=False)
     try: # Carrega configuracoes do app
         settings = Settings.objects.all().get()
     except: # Caso nao gerado configuracoes iniciais carrega definicoes basicas
-        settings = Settings()        
-    return render(request, 'sac/reclamacoes.html', {'reclamacoes':reclamacoes,'prazo':settings.prazo_resposta})
+        settings = Settings()
+    metrics = {
+        'reclamacoes':reclamacoes,
+        'prazo':settings.prazo_resposta,
+        'empresa':empresa,
+        'empresas':empresas
+    }        
+    return render(request, 'sac/reclamacoes.html', metrics)
 
 @login_required
 @permission_required('sac.view_settings')
@@ -218,7 +231,7 @@ def reclamacao_delete(request,id):
         registro.delete()
         l.save()
         messages.warning(request,f'Reclamação apagada. Essa operação não pode ser desfeita')
-        return redirect('sac_classificacoes')
+        return redirect('sac_reclamacoes')
     except:
         messages.error(request,'ERRO ao apagar reclamação')
         return redirect('sac_reclamacao_id', id)

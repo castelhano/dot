@@ -20,7 +20,22 @@
   {% block style %}{% endblock %}
   </style>
   <script src="{% static 'js/listener.js' %}"></script>
-  {% if perms.core.debug %}<script>window.addEventListener('error', (event) => {document.getElementById('page-error-icon').classList.remove('d-none');});</script>{% endif %}  
+  {% if perms.core.debug %}
+  <script>window.addEventListener('error', (event) => {document.getElementById('page-error-icon').classList.remove('d-none');});</script>
+  <style media="screen">
+    .bug_icon{
+      display: inline-block;
+      position: absolute;
+      right: 30px;
+      bottom: 30px;
+      background-color: #dc3545;
+      color: #FFF;
+      font-size: 1.5rem;
+      padding: 8px 15px;
+      border-radius: 50px;
+    }
+  </style>
+  {% endif %}
   <title>{% block title %}SIT{% endblock %}</title>
 </head>
 <body class="{% block body_classlist %}{% endblock %}" style="{% block body_style %}{% endblock %}">
@@ -35,7 +50,7 @@
         </ul>
         <ul class="navbar-nav ms-auto">
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle pt-1 fw-bold" id="system" href="#" data-bs-toggle="dropdown" title="ALT + S">{% if perms.core.debug %}<i id="page-error-icon" class="fas fa-exclamation-triangle text-danger me-2 d-none"></i>{% endif %}{{user.username|title}}</a>
+            <a class="nav-link dropdown-toggle pt-1 fw-bold" id="system" href="#" data-bs-toggle="dropdown" title="ALT + S">{{user.username|title}}</a>
             <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end mt-1" id="user_list_options">
               <li><a class="dropdown-item" id="change_password_link" href="{% url 'change_password' %}"><i class="fas fa-unlock-alt me-2" style="width:15px"></i> Alterar <b>S</b>enha</a></li>
               <li class="d-none d-lg-block"><a class="dropdown-item pointer" id="shortcut_link_list" data-bs-toggle="modal" data-bs-target="#shortcut_modal"><i class="fas fa-keyboard me-2" style="width:15px"></i> <b>A</b>talhos / Sobre</a></li>
@@ -145,6 +160,8 @@
       </div>
     </div>
   </div>
+  
+  {% if perms.core.debug %}<div id="page-error-icon" class="bug_icon d-none"><i class="fas fa-bug"></i></div>{% endif %}
   
   <script src="{% static 'js/vendor/bootstrap.bundle.min.js' %}"></script>
   <script src="{% static 'js/dot.js' %}"></script>
