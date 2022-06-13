@@ -23,9 +23,14 @@ def classificacoes(request):
 def reclamacoes(request):
     reclamacoes = Reclamacao.objects.all().order_by('entrada')
     if request.GET.get('empresa', None):
-        empresa = Empresa.objects.get(id=request.GET['empresa'])
-        reclamacoes = reclamacoes.filter(empresa=empresa)
-        empresas = request.user.profile.empresas.all().exclude(id=empresa.id).order_by('nome')
+        if request.GET['empresa'] != 'unassigned':
+            empresa = Empresa.objects.get(id=request.GET['empresa'])
+            reclamacoes = reclamacoes.filter(empresa=empresa)
+            empresas = request.user.profile.empresas.all().exclude(id=empresa.id).order_by('nome')
+        else:
+            reclamacoes = reclamacoes.filter(empresa=None)
+            empresas = request.user.profile.empresas.all().order_by('nome')
+            empresa = None
     else:
         empresa = None
         empresas = request.user.profile.empresas.all().order_by('nome')
@@ -78,6 +83,10 @@ def site(request):
                 registro = form.save(commit=False)
                 registro.origem = 'S'
                 registro.usuario = request.user
+                if registro.linha: # Para reclamacoes informado a linha, associa com respectiva empresa
+                    registro.empresa = registro.linha.empresa
+                    if registro.veiculo and registro.veiculo.empresa != registro.empresa: # Valida se carro informado eh da mesma empresa da linha informada, se nao descarta carro informado
+                        registro.veiculo = None
                 registro.save()
                 l = Log()
                 l.modelo = "sac.reclamacao"

@@ -1154,7 +1154,7 @@ def get_linha(request):
         linha = Linha.objects.get(**params)
         if incluir_inativos != 'True' and linha.status != 'A':
             raise Exception('')
-        return HttpResponse(str(linha.id) + ';' + str(linha.nome) + ';' + str(linha.status))
+        return HttpResponse(str(linha.id) + ';' + str(linha.nome) + ';' + str(linha.status) + ';' + str(linha.empresa.id))
     except:
         return HttpResponse('')
 

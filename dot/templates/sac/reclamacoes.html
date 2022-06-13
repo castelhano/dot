@@ -42,7 +42,8 @@
         <ul class="dropdown-menu fs-7">
           {% for empresa in empresas %}
           <li><span class="dropdown-item pointer" onclick="filter('empresa',{{empresa.id|safe}})">{{empresa.nome}}</li>
-            {% endfor %}
+          {% endfor %}
+          <li><span class="dropdown-item dropdown-item-purple pointer" onclick="filter('empresa', 'unassigned')">Não Identificadas</li>
           </ul>
         </div>
         <div class="col-auto dropdown">
@@ -68,7 +69,7 @@
         <table id="main_table" class="table border table-striped table-hover table-sortable">
           <thead>
             <tr>
-              <th>#</th>
+              <th class="d-none d-sm-table-cell">#</th>
               <th class="d-none d-lg-table-cell">Empresa</th>
               <th>Entrada</th>
               <th class="d-none">Data</th>
@@ -95,9 +96,9 @@
           <tbody>
             {% for reclamacao in reclamacoes %}
             <tr class="{% if reclamacao.tratado %}table-success{% elif reclamacao.dias_pendentes > prazo %}table-danger{% endif %}">
-              <td>{{reclamacao.id|safe}}</td>
+              <td class="d-none d-sm-table-cell">{{reclamacao.id|safe}}</td>
               <td class="d-none d-lg-table-cell">{{reclamacao.empresa.nome}}</td>
-              <td>{{reclamacao.entrada|date:'d/m/y'}}</td>
+              <td>{{reclamacao.entrada|date:'d/m H:i'}}</td>
               <td class="d-none">{{reclamacao.data|date:'d/m/y'}}</td>
               <td class="d-none">{{reclamacao.hora}}</td>
               <td class="d-none d-lg-table-cell">{{reclamacao.reclamante}}</td>
