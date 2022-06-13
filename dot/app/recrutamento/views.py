@@ -10,6 +10,7 @@ from django.contrib import messages
 from django.db.models import Q
 from core.extras import clean_request
 from datetime import date
+from django.conf import settings as ROOT
 
 # METODOS SHOW
 @login_required
@@ -129,7 +130,7 @@ def cadastro_site(request):
             except:
                 return render(request, 'recrutamento/site.html',{'status':'ERROR'})
         else:
-            return render(request, 'recrutamento/site.html',{'form':form,'status':'ERROR'})
+            return render(request, 'recrutamento/site.html',{'form':form,'status':'ERROR','ROOT':ROOT.COMPANY_DATA})
         vagas = None
     else:
         status = ''
@@ -141,7 +142,7 @@ def cadastro_site(request):
             settings = Settings()        
         if not vagas.exists():
             status = 'SEMVAGAS'
-    return render(request, 'recrutamento/site.html', {'form':form, 'vagas':vagas, 'status':status, 'mostrar_quantidade_vagas':settings.exibir_quantidade_vagas_site})
+    return render(request, 'recrutamento/site.html', {'form':form, 'vagas':vagas, 'status':status, 'mostrar_quantidade_vagas':settings.exibir_quantidade_vagas_site,'ROOT':ROOT.COMPANY_DATA})
 
 
 

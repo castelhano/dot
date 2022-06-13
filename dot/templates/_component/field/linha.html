@@ -19,7 +19,7 @@
   };  
   
   function getLinha() {
-    empresa = document.getElementById('id_empresa');
+    empresa = document.getElementById('id_empresa') != null ? document.getElementById('id_empresa').value : 'None';
     codigo = document.getElementById('id_codigo_linha');
     nome = document.getElementById("id_nome_linha");
     linha = document.getElementById("id_linha");
@@ -39,7 +39,7 @@
           }
     		}
     	};
-    	xhttp.open("GET", "{% url 'trafego_get_linha' %}?empresa=" + empresa.value + "&codigo=" + codigo.value + "&incluir_inativos={{incluir_inativos}}&multiempresa={{multiempresa}}", true);
+    	xhttp.open("GET", "{% url 'trafego_get_linha' %}?empresa=" + empresa + "&codigo=" + codigo.value + "&incluir_inativos={{incluir_inativos}}&multiempresa={{multiempresa}}", true);
     	xhttp.send();  
     }
     else{cleanLinha();}

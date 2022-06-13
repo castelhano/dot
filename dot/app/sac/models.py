@@ -36,7 +36,7 @@ class Reclamacao(models.Model):
     empresa = models.ForeignKey(Empresa, blank=True, null=True, on_delete=models.RESTRICT)
     origem = models.CharField(max_length=15, choices=ORIGEM_CHOICES, default='F')
     data = models.DateField(blank=True, null=True,default=date.today)
-    hora = models.TimeField(blank=True, null=True,default=datetime.now)
+    hora = models.TimeField(blank=True, null=True)
     classificacao = models.ForeignKey(Classificacao, blank=True, null=True, on_delete=models.RESTRICT)
     veiculo = models.ForeignKey(Frota, blank=True, null=True, on_delete=models.RESTRICT)
     linha = models.ForeignKey(Linha, blank=True, null=True, on_delete=models.RESTRICT)

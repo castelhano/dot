@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
-# from django.http import HttpResponse
-# from json import dumps
+from django.http import HttpResponse
+from json import dumps
 from .models import Classificacao, Reclamacao, Settings
 from .forms import ClassificacaoForm, ReclamacaoForm, SiteForm, SettingsForm
 from django.contrib.auth.decorators import login_required, permission_required
@@ -70,8 +70,30 @@ def settings(request):
 
 
 def site(request):
-    form = SiteForm()
-    return render(request,'sac/site.html',{'form':form, 'ROOT':ROOT.COMPANY_DATA})
+    metrics = {'ROOT':ROOT.COMPANY_DATA}
+    if request.method == 'POST':
+        form = SiteForm(request.POST)
+        if form.is_valid():
+            try:
+                registro = form.save(commit=False)
+                registro.origem = 'S'
+                registro.usuario = request.user
+                registro.save()
+                l = Log()
+                l.modelo = "sac.reclamacao"
+                l.objeto_id = registro.id
+                l.objeto_str = registro.data.strftime("%d/%m/%y") + ' ' + registro.reclamante[0:20]
+                l.usuario = request.user
+                l.mensagem = "CREATED"
+                l.save()
+                messages.success(request,'Reclamação registrada')
+                metrics['status'] = 'SUCCESS'
+            except:
+                messages.error(request,'<b>Erro</b> ao registrar reclamação')
+                metrics['status'] = 'ERROR'
+        else:
+            metrics['form'] = form
+    return render(request,'sac/site.html', metrics)
 
 # METODOS ADD
 @login_required
@@ -104,22 +126,22 @@ def reclamacao_add(request):
     if request.method == 'POST':
         form = ReclamacaoForm(request.POST)
         if form.is_valid():
-            # try:
-            registro = form.save(commit=False)
-            registro.usuario = request.user
-            registro.save()
-            l = Log()
-            l.modelo = "sac.reclamacao"
-            l.objeto_id = registro.id
-            l.objeto_str = registro.data.strftime("%d/%m/%y") + ' ' + registro.reclamante[0:20]
-            l.usuario = request.user
-            l.mensagem = "CREATED"
-            l.save()
-            messages.success(request,'Reclamação <b>' + str(registro.id) + '</b> inserida')
-            return redirect('sac_reclamacao_add')
-            # except:
-            #     messages.error(request,'Erro ao inserir reclamação')
-            #     return redirect('sac_reclamacao_add')
+            try:
+                registro = form.save(commit=False)
+                registro.usuario = request.user
+                registro.save()
+                l = Log()
+                l.modelo = "sac.reclamacao"
+                l.objeto_id = registro.id
+                l.objeto_str = registro.data.strftime("%d/%m/%y") + ' ' + registro.reclamante[0:20]
+                l.usuario = request.user
+                l.mensagem = "CREATED"
+                l.save()
+                messages.success(request,'Reclamação <b>' + str(registro.id) + '</b> inserida')
+                return redirect('sac_reclamacao_add')
+            except:
+                messages.error(request,'Erro ao inserir reclamação')
+                return redirect('sac_reclamacao_add')
     else:
         form = ReclamacaoForm()
     return render(request,'sac/reclamacao_add.html',{'form':form})
@@ -243,3 +265,15 @@ def reclamacao_delete(request,id):
 
 
 # METODOS AJAX
+def get_classificacoes(request):
+    try:
+        classificacoes = Classificacao.objects.all().order_by('nome')
+        if request.GET.get('tipo', None):
+            classificacoes = classificacoes.filter(tipo=request.GET['tipo'])
+        itens = {}
+        for item in classificacoes:
+            itens[item.nome] = item.id
+        dataJSON = dumps(itens)
+        return HttpResponse(dataJSON)
+    except:
+        return HttpResponse('')

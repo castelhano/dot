@@ -1,14 +1,128 @@
-{% if status == 'ADD_M1' %}
+{% if status == 'SUCCESS' %}
 <div class="col-lg-12 text-center">
-  <p class="display-2">Sua reclamação/sugestão foi registrada com <b class="text-success">sucesso</b>, agradeçemos o seu contato.</p>
+  <p class="display-4">Sua reclamação/sugestão foi registrada com <b class="text-success">sucesso</b>, agradeçemos o seu contato.</p>
+  <p class="mt-5"><a class="h3 text-decoration-none text-orange" href="{{ROOT.homepage|default:'index'}}">Voltar</a></p>
 </div>
 {% elif status == 'ERROR' %}
 <div class="col-lg-12 text-center">
   <p class="display-6"><b class="text-danger">Erro:</b> tivemos um problema para registrar sua reclamação, por favor tente novamente dentro de instantes ou entre em contato pelo número <span class="text-nowrap text-purple">{{ROOT.sac_fone}}</span></p>
+  <p class="mt-5"><a class="h3 text-decoration-none text-orange" href="{{ROOT.homepage|default:'index'}}">Voltar</a></p>
 </div>
 {% else %}
-<p class="lead text-center">Agradecemos o seu contato e caso queira receber um retorno sobre esse atendimento, informe seu dados e uma forma de contato (fone e/ou email). Dúvidas entre em contato com nossa equipe pelo fone <span class="text-nowrap text-orange">{{ROOT.sac_fone}}</span> {% if ROOT.sac_email %} ou pelo <a class="text-decoration-none text-orange" href="mailto:{{ROOT.sac_email}}?subject=SAC">{{ROOT.sac_email}}</a>{% endif %}</p>
+<p class="lead text-center">Agradecemos o seu contato e caso queira receber um retorno sobre esse atendimento, informe seu dados e uma forma de contato (fone e/ou email).{% if ROOT.sac_fone or ROOT.sac_email %} Dúvidas entre em contato com nossa equipe <span class="text-nowrap text-orange">{{ROOT.sac_fone|default:''}}</span>{% if ROOT.sac_fone and ROOT.sac_email %} ou {% endif %}<a class="text-decoration-none text-orange" href="mailto:{{ROOT.sac_email}}?subject=SAC">{{ROOT.sac_email|default:''}}</a>{% endif %}</p>
+<form class="" action="{% url 'sac' %}" method="post" autocomplete="off" onsubmit="return submitForm();">
+  {% csrf_token %}
+  <div class="row g-2">
+    <h4>Motivo contato</h4>
+    <div class="col-lg">
+      <div class="input-group">
+        <select class="form-select" id="id_tipo" name="tipo" onchange="onchangeTipo();" autofocus required>
+          <option value="">Escolha uma opção</option>
+          <option value="R">Reclamação</option>
+          <option value="S">Sugestão</option>
+          <option value="E">Elogio</option>
+        </select>
+        <a class="btn btn-secondary disabled" id="clear" href="{% url 'sac' %}" title="Alterar"><i class="fas fa-reply-all"></i></a>
+      </div>
+    </div>
+    <div class="col-lg mb-lg-1">
+      <select class="form-select mb-1" id="id_classificacao" name="classificacao" disabled><option value="">---</option></select>    
+    </div>
+  </div>
+  <div id="container_reclamante" class="row g-2 d-none mt-3">
+    <h4>Contato <sup class="fs-7 fw-normal">Opcional</sup></h4>
+    <div class="col-lg-12">
+      <input type="text" class="form-control" id="id_reclamante" name="reclamante" value="" placeholder="Nome completo">
+    </div>
+    <div class="col-lg-3">
+      <input type="text" class="form-control" id="id_fone1" name="fone1" value="" placeholder="Fone 1">
+    </div>
+    <div class="col-lg-3">
+      <input type="text" class="form-control" id="id_fone2" name="fone2" value="" placeholder="Fone 2">
+    </div>
+    <div class="col-lg-6">
+      <input type="email" class="form-control" id="id_email" name="email" value="" placeholder="Email">
+    </div>
+  </div>
+  <div id="container_reclamacao" class="d-none mt-3">
+    <h4>Detalhes Reclamação</h4>
+    <div class="row g-2">
+      <div class="col-3 mb-lg-1">
+        <label for="id_data">Data Ocorrência</label>
+        <input type="date" class="form-control" id="id_data" name="data" value="">
+      </div>
+      <div class="col-3 mb-1">
+        <label for="id_hora">Hora Ocorrência</label>
+        <input type="time" class="form-control" id="id_hora" name="hora" value="">
+      </div>
+      <div class="col-6 mb-1 d-block">
+        <label for="">&nbsp;</label>
+        <input type="text" class="form-control" disabled>
+      </div>
+    </div>
+    {% include "_component/field/linha.html" with required=False incluir_inativos=False multiempresa=True %}
+    {% include "_component/field/veiculo.html" with required=False incluir_inativos=False multiempresa=True ocultar_placa=True %}
+  </div>
+  <div id="container_detalhes" class="row g-2 d-none mt-3">
+    <h4>Detalhes</h4>
+    <div class="col">
+      <textarea name="detalhe" class="form-control" rows="8" placeholder="Detalhes"></textarea>
+    </div>
+  </div>
+  <div id="container_controls" class="row d-none mt-3">
+    <div class="col">
+      <button type="submit" class="btn btn-primary">Enviar</button>
+      <a class="btn btn-secondary" id="back" href="{{ROOT.homepage|default:'index'}}">Cancelar</a>
+    </div>
+  </div>
+</form>
 
+<script>
+  let tipo = document.getElementById('id_tipo');
+  let classificacoes = document.getElementById('id_classificacao');
+  let reclamante = document.getElementById('container_reclamante');
+  let reclamacao = document.getElementById('container_reclamacao');
+  let detalhes = document.getElementById('container_detalhes');
+  let controls = document.getElementById('container_controls');
+  function onchangeTipo(){
+    if(tipo.value != ''){
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if(this.readyState == 4 && this.status == 200){
+          if(this.responseText == ''){}
+          else{
+            let obj = JSON.parse(this.responseText);
+            classificacoes.innerHTML = '';
+            for(key in obj){classificacoes.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
+            classificacoes.disabled = false;
+            classificacoes.focus();
+            tipo.classList.add('readonly');            
+            document.getElementById('clear').classList.remove('disabled');            
+          }
+        }
+      };
+      xhttp.open("GET", "{% url 'sac_get_classificacoes' %}?tipo=" + tipo.value, true);
+      xhttp.send();
+      setView();
+    }
+  }
+  
+  function setView(){
+    if(tipo.value == 'R'){
+      reclamacao.classList.remove('d-none');
+      reclamante.classList.remove('d-none');
+      detalhes.classList.remove('d-none');
+      controls.classList.remove('d-none');
+    }
+    else{
+      reclamacao.classList.add('d-none');
+      reclamante.classList.remove('d-none');
+      detalhes.classList.remove('d-none');
+      controls.classList.remove('d-none');
+    }
+  }
+  
+</script>
 
 
 {% endif %}

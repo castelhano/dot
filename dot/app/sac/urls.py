@@ -14,5 +14,6 @@ urlpatterns = [
     path('sac_reclamacao_delete/<int:id>/delete',views.reclamacao_delete,name='sac_reclamacao_delete'),
     path('sac_settings',views.settings,name='sac_settings'),
     path('sac_settings_update/<int:id>',views.settings_update,name='sac_settings_update'),
+    path('sac_get_classificacoes',views.get_classificacoes,name='sac_get_classificacoes'),
     path('sac',views.site,name='sac'),
 ]

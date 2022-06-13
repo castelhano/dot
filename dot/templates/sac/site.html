@@ -16,11 +16,10 @@
 </head>
 
 <body class="bg-light">
-  <a class="d-none" id="clear" href="{% url 'sac' %}"></a>
   <div class="container">
     <div class="py-3 text-center">
       <img class="d-block mx-auto mb-4" src="{% static 'img/logo.png' %}" alt="" width="140">
-      <h2>Atendimento ao Cliente</h2>
+      <h2>SAC - Atendimento ao Cliente</h2>
     </div>
     {% include 'sac/_extract_site.html' with status=status %}    
     
@@ -57,16 +56,22 @@
   {% endfor %}
   {% endif %}
   {% endif %}
-
   
+  {% include "_component/modal/loading.html" with message='Salvando....' %}
   
   <script src="{% static 'js/vendor/mask.js' %}"></script>
   <script src="{% static 'js/listener.js' %}"></script>
+  <script src="{% static 'js/form.js' %}"></script>
   <script src="{% static 'js/vendor/bootstrap.bundle.min.js' %}"></script>
   
   <script type="text/javascript">
   
   var TAB_ON_ENTER = true;
+  
+  {% if not status %}
+  
+  var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
+  function submitForm(){modal_loading.show();return true;}
   
   // FONE MASK
   function inputHandler(masks, max, event) {
@@ -84,6 +89,11 @@
   VMasker(fone2).maskPattern(telMask[0]);
   fone1.addEventListener('input', inputHandler.bind(undefined, telMask, 14), false);
   fone2.addEventListener('input', inputHandler.bind(undefined, telMask, 14), false);
+  
+  today(0,0,0,true,document.getElementById('id_data'));
+  now(0,0,false,document.getElementById('id_hora'));
+  {% endif %}
+  
   </script>
 </body>
 </html>

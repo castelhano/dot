@@ -1,17 +1,20 @@
 {% if status == 'CREATED' %}
 <div class="col-lg-12 text-center">
   <p class="display-2">Cadastro realizado com <b class="text-success">sucesso</b></p>
+  <p class="mt-5"><a class="h3 text-decoration-none text-orange" href="{{ROOT.homepage|default:'index'}}">Voltar</a></p>
 </div>
 {% elif status == 'ERROR' %}
 <div class="col-lg-12 text-center">
-  <p class="display-6"><b class="text-danger">Erro:</b> o cadastro não foi concluido. Verifique os campos digitados.</p>
+  <p class="display-6"><b class="text-danger">Erro:</b> o cadastro não foi concluido. Verifique os campos digitados{% if ROOT.recrutamento_fone %}, dúvidas entre em contato pelo número  <span class="text-nowrap text-orange">{{ROOT.recrutamento_fone}}</span>{% endif %}</p>
+  <p class="mt-5"><a class="h3 text-decoration-none text-orange" href="{{ROOT.homepage|default:'index'}}">Voltar</a></p>
 </div>
 {% elif status == 'SEMVAGAS' %}
 <div class="col-lg-12 text-center">
-  <p class="h2"><b class="text-warning">Informativo:</b> No momento não temos nenhuma vaga em aberto, você pode tentar novamente no futuro ou enviar seu curriculo para nosso setor de recursos humanos, dúvidas entre em contato pelo número (00) 0000-0000.</p>
+  <p class="h2"><b class="text-warning">Informativo:</b> No momento não temos nenhuma vaga em aberto, você pode tentar novamente no futuro ou enviar seu curriculo para nosso setor de recursos humanos{% if ROOT.recrutamento_fone %}, dúvidas entre em contato pelo número  <span class="text-nowrap text-orange">{{ROOT.recrutamento_fone}}</span>{% endif %}{% if ROOT.recrutamento_email %} ou pelo email <a class="text-nowrap text-decoration-none text-orange" href="mailto:{{ROOT.recrutamento_email}}?subject=Recrutamento">{{ROOT.recrutamento_email|default:''}}</a>{% endif %}</p>
+  <p class="mt-5"><a class="h3 text-decoration-none text-orange" href="{{ROOT.homepage|default:'index'}}">Voltar</a></p>
 </div>
 {% else %}
-<p class="lead text-center">Após concluir o cadastro aguarde o contato da nossa equipe de Recursos Humanos para agendamento de entrevista, dúvidas entre em contato no telefone <span class="text-nowrap">(00) 0000 - 0000</span></p>
+<p class="lead text-center mb-4">Após concluir o cadastro aguarde o contato da nossa equipe de Recursos Humanos para agendamento de entrevista{% if ROOT.recrutamento_fone %}, dúvidas entre em contato pelo número <span class="text-nowrap text-orange">{{ROOT.recrutamento_fone}}</span>{% endif %}{% if ROOT.recrutamento_email %} ou pelo email <a class="text-nowrap text-decoration-none text-orange" href="mailto:{{ROOT.recrutamento_email}}?subject=Recrutamento">{{ROOT.recrutamento_email|default:''}}</a>{% endif %}</p>
 <div class="row">
   <div class="col-lg-4 order-lg-2 mb-4">
     <h4 class="d-flex justify-content-between align-items-center mb-3">
@@ -171,7 +174,10 @@
       
       <hr class="mb-4">
       <div class="row">
-        <div class="col"><button class="btn btn-primary" type="submit">Cadastrar</button></div>
+        <div class="col">
+          <button class="btn btn-primary" type="submit">Cadastrar</button>
+          <a class="btn btn-secondary" href="{{ROOT.homepage|default:'index'}}">Voltar</a>
+        </div>
       </div>
     </form>
   </div>
