@@ -86,7 +86,11 @@ def site(request):
                 if registro.linha: # Para reclamacoes informado a linha, associa com respectiva empresa
                     registro.empresa = registro.linha.empresa
                     if registro.veiculo and registro.veiculo.empresa != registro.empresa: # Valida se carro informado eh da mesma empresa da linha informada, se nao descarta carro informado
+                        registro.detalhe = f'Informado veiculo: {registro.veiculo.prefixo}, desconsiderado (n confere com empresa informada)\n---\n' + registro.detalhe
                         registro.veiculo = None
+                else: # Caso nao informado a linha
+                    if registro.veiculo: # Caso nao informado linha porem informado veiculo, assume a empresa do veiculo para reclamacao
+                        registro.empresa = registro.veiculo.empresa
                 registro.save()
                 l = Log()
                 l.modelo = "sac.reclamacao"

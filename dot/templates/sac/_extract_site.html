@@ -64,9 +64,11 @@
     {% include "_component/field/veiculo.html" with required=False incluir_inativos=False multiempresa=True ocultar_placa=True %}
   </div>
   <div id="container_detalhes" class="row g-2 d-none mt-3">
-    <h4>Detalhes</h4>
+    <h4 class="mb-0">Detalhamento</h4>
+    <small id="detalhamento_label" class="text-muted"></small>
     <div class="col">
-      <textarea name="detalhe" class="form-control" rows="8" placeholder="Detalhes"></textarea>
+      <textarea id="id_detalhe" name="detalhe" class="form-control" rows="8" maxlength="1200" placeholder="Detalhes" onkeyup="detalhamentoCounter()"></textarea>
+      <small id="detalhamento_counter" class="ms-1"></small>
     </div>
   </div>
   <div id="container_controls" class="row d-none mt-3">
@@ -108,20 +110,29 @@
   }
   
   function setView(){
+    let helper = document.getElementById('detalhamento_label');
     if(tipo.value == 'R'){
       reclamacao.classList.remove('d-none');
       reclamante.classList.remove('d-none');
       detalhes.classList.remove('d-none');
       controls.classList.remove('d-none');
+      helper.innerHTML = 'Para que melhor possamos analisar sua reclamação, pedimos que detalhe o ocorrido informando o <b>local</b>, <b>ponto</b>, <b>referência</b> ou qualquer outra informação que possa auxiliar a identificação do responsável.';
     }
     else{
       reclamacao.classList.add('d-none');
       reclamante.classList.remove('d-none');
       detalhes.classList.remove('d-none');
       controls.classList.remove('d-none');
+      helper.innerHTML = '';
     }
   }
   
+  function detalhamentoCounter(){
+    let counter = document.getElementById('detalhamento_counter');
+    let el = document.getElementById('id_detalhe');
+    counter.innerHTML = `${el.value.length} / ${el.maxLength}`;
+  }
+  detalhamentoCounter();
 </script>
 
 
