@@ -41,9 +41,9 @@
         <a class="btn btn-sm btn-purple-light" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-home me-1"></i> {{empresa.nome|default:'Todas'}}</a>
         <ul class="dropdown-menu fs-7">
           {% for empresa in empresas %}
-          <li><span class="dropdown-item pointer" onclick="filter('empresa',{{empresa.id|safe}})">{{empresa.nome}}</li>
+          <li><span class="dropdown-item pointer" onclick="filter('empresa',{{empresa.id|safe}})">{{empresa.nome}}</span></li>
           {% endfor %}
-          <li><span class="dropdown-item dropdown-item-purple pointer" onclick="filter('empresa', 'unassigned')">Não Identificadas</li>
+          <li><span class="dropdown-item dropdown-item-purple pointer" onclick="filter('empresa', 'unassigned')">Não Identificadas</span></li>
           </ul>
         </div>
         <div class="col-auto dropdown">
@@ -62,7 +62,7 @@
           <a class="btn btn-sm btn-purple" id="clear" href="{% url 'sac_reclamacoes' %}" title="Limpar Filtros"><i class="fas fa-times mx-2"></i></a>
         </div>
         <div class="col">
-          <input id="id_search" type="text"class="form-control form-control-sm" onkeyup="filterTable('main_table', [5, 9, 10, 11, 12], this)" placeholder="Filtrar* [Ctrl /]">
+          <input id="id_search" type="text" class="form-control form-control-sm" onkeyup="filterTable('main_table', [5, 9, 10, 11, 12], this)" placeholder="Filtrar* [Ctrl /]">
         </div>
       </div>
       <div class="tab-pane fade show active" id="base" role="tabpanel">
