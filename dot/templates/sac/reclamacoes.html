@@ -16,7 +16,7 @@
         <a class="nav-link dropdown-toggle text-dark" id="sac_extra" data-bs-toggle="dropdown" href="#" role="button"></a>
         <ul class="dropdown-menu fs-7">
           {% if perms.sac.view_classificacao %}<li><a class="dropdown-item" href="{% url 'sac_classificacoes' %}"><i class="fas fa-fw fa-list-ul"></i> Classificação</a></li>{% endif %}
-          {% if perms.sac.dashboard %}<li><a class="dropdown-item" href=""><i class="fas fa-fw fa-chart-line"></i> Dashboard</a></li>{% endif %}
+          {% if perms.sac.dashboard %}<li><a class="dropdown-item" href="{% url 'sac_reclamacao_dashboard' %}"><i class="fas fa-fw fa-chart-line"></i> Dashboard</a></li>{% endif %}
           {% if perms.sac.view_settings %}
           <li><a class="dropdown-item" href="{% url 'sac' %}"><i class="fas fa-fw fa-link"></i> Site Preview</a></li>
           <li><a class="dropdown-item dropdown-item-purple" href="{% url 'sac_settings' %}"><i class="fas fa-fw fa-cogs"></i> Configurações</a></li>

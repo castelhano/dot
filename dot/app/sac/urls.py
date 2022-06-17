@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from . import views, reports
 
 urlpatterns = [
     path('sac_classificacoes',views.classificacoes,name='sac_classificacoes'),
@@ -15,5 +15,6 @@ urlpatterns = [
     path('sac_settings',views.settings,name='sac_settings'),
     path('sac_settings_update/<int:id>',views.settings_update,name='sac_settings_update'),
     path('sac_get_classificacoes',views.get_classificacoes,name='sac_get_classificacoes'),
+    path('sac_reclamacao_dashboard',reports.reclamacao_dashboard,name='sac_reclamacao_dashboard'),
     path('sac',views.site,name='sac'),
 ]

@@ -1,0 +1,283 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% load tag_extra %}
+{% block title %}Dashboard - SAC{% endblock %}
+{% block model %}SAC{% endblock %}
+{% block navbar_classlist %}navbar-dark bg-purple bg-gradient{% endblock %}
+{% block model_menu %}{% include "_component/menu/sac.html" %}{% endblock%}
+
+{% block body_classlist %}bg-light{% endblock%}
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'sac_reclamacao_dashboard' %}"></a>
+<div class="row mt-3">
+  <div class="col"><h5 class="card-title"><span class="d-none d-lg-inline text-muted">Dashboard: </span><b class="text-purple">Reclamações</b></h5></div>
+</div>
+<div class="row g-1">
+  <div class="col-auto">
+    <div class="dropdown">
+      <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown">Empresa: <b>{{empresa.nome|default:'Todas'}}</b></button>
+      <ul class="dropdown-menu fs-7" id="id_empresa">
+        <li><a class="dropdown-item" onclick="filtersClean(['empresa'])">Todas</a></li>
+      </ul>
+    </div>    
+  </div>
+  <div class="col-auto">
+    <div class="dropdown">
+      <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown"><span class="d-none d-sm-inline"><b>{{periodo_de|date:'d/m/y'}}</b> a <b>{{periodo_ate|date:'d/m/y'}}</b></span><span class="d-inline d-sm-none"><i class="fas fa-calendar-alt me-2"></i></span></button>
+      <ul class="dropdown-menu fs-7">
+        <li class="bg-light">
+          <div class="row g-1">
+            <div class="col-12 px-2"><input type="date" class="form-control" id="id_periodo_de" name="periodo_de" value="{{periodo_de|date:'Y-m-d'}}"></div>
+            <div class="col-12 px-2"><input type="date" class="form-control" id="id_periodo_ate"  name="periodo_ate" value="{{periodo_ate|date:'Y-m-d'}}"></div>
+            <div class="col-12 d-grid px-2"><button type="button" class="btn btn-sm btn-purple-light" name="button" onclick="filtraPeriodo();">Filtrar</button></div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="col-auto"><a id="back" class="btn btn-sm btn-purple-light" href="{% url 'sac_reclamacoes' %}"><i class="fas fa-undo"></i></a></div>
+</div>
+<div class="row mt-1 g-3">
+  <div class="col-lg-2">
+    <div class="row g-2">
+      <div class="col-12">
+        <div class="card widget-flat">
+          <div class="card-body">
+            <div class="float-end"><i class="fas fa-headset widget-icon"></i></div>
+            <h6 class="text-muted fw-normal">Total Reclamações</h6>
+            <h3 class="my-3">{{qtd_reclamacoes|default:0}}</h3>
+            <p class="mb-0 text-muted"><span class="text-purple me-2">{{reclamacoes_site|percentual:qtd_reclamacoes|floatformat:0}}%</span><span class="text-nowrap">via site <sup class="badge bg-purple-light px-1 ms-1">{{reclamacoes_site}}</sup></span></p>        
+          </div>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="card widget-flat">
+          <div class="card-body">
+            <div class="float-end"><i class="fas fa-exclamation-triangle widget-icon"></i></div>
+            <h6 class="text-muted fw-normal">Em aberto</h6>
+            <h3 class="my-3">{{reclamacoes_abertas}}</h3>
+            <p class="mb-0 text-muted"><span class="text-success me-2"></span><span class="text-nowrap"></span></p>        
+          </div>
+        </div>
+      </div>      
+    </div>
+  </div>
+  <div class="col-lg-3">
+    <div class="card widget-flat">
+      <div class="card-body">
+        <div class="float-end d-none d-lg-block"><i class="fas fa-chart-line widget-icon"></i></div>
+        <div class="row"><div class="col"><canvas id="empresa_reclamacoes" style="height: 260px;"></canvas></div></div>        
+      </div>      
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <div class="card widget-flat">
+      <div class="card-body">
+        <div class="float-end d-none d-lg-block"><i class="fas fa-chart-line widget-icon"></i></div>
+        <div class="row">
+          <div class="col" style="height: 260px;"><canvas id="evolucao_reclamacoes"></canvas></div>
+        </div>        
+      </div>      
+    </div>
+  </div>
+</div>
+<div class="row mt-1 g-3">
+  <div class="col-lg-4">
+    <div class="card widget-flat">
+      <div class="card-body">
+        <div class="row">
+          <div class="col" style="height: 260px;"><canvas id="reclamacoes_classificacao"></canvas></div>
+        </div>        
+      </div>
+    </div>
+  </div>
+  <div class="col-lg">
+    <div class="card widget-flat">
+      <div class="card-body">
+        <div class="row">
+          <div class="col" style="height: 300px;"><canvas id="reclamacoes_linha"></canvas></div>
+        </div>        
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/vendor/chart.min.js' %}"></script>
+<script src="{% static 'js/url.js' %}"></script>
+{% endblock %}
+
+
+<script>
+  {% block add_script %}
+  
+  
+  function filtraPeriodo(){
+    let periodos = [document.getElementById('id_periodo_de').value,document.getElementById('id_periodo_ate').value]
+    filters(['periodo_de','periodo_ate'], periodos);
+  }
+  
+  var evolucao_ctx = document.getElementById('evolucao_reclamacoes');
+  let evolucao_chart = new Chart(evolucao_ctx, {
+    type: 'line',
+    data: {
+      datasets: [{
+        label: 'Qtde',
+        data: {{ evolucao_reclamacoes.dados }},
+        backgroundColor: {{ evolucao_reclamacoes.bgcolors|safe }},
+        borderColor: {{ evolucao_reclamacoes.bordercolors|safe }},
+        // maxBarThickness: 50,
+      }],
+      labels: {{ evolucao_reclamacoes.categorias|safe }},
+    },
+    options: {
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          suggestedMin: 0,
+          // grace: 1,
+          ticks: {
+            stepSize: 1,
+            // precision: 0
+          }
+        }
+      },
+      plugins: {
+        legend: {display:false, position: 'bottom'},
+        title: {
+          display: true,
+          text:'EVOLUÇÃO RECLAMAÇÕES',
+          align: 'start',
+          font: {size: 13},
+          padding: {top: 6,bottom: 10}
+        },
+      }
+    }
+  });
+  
+  var empresa_ctx = document.getElementById('empresa_reclamacoes');
+  let empresa_chart = new Chart(empresa_ctx, {
+    type: 'doughnut',
+    data: {
+      datasets: [{
+        label: 'Qtde',
+        data: {{ reclamacoes_empresa.dados }},
+        backgroundColor: {{ reclamacoes_empresa.bgcolors|safe }},
+        borderColor: {{ reclamacoes_empresa.bordercolors|safe }},
+      }],
+      labels: {{ reclamacoes_empresa.categorias|safe }},
+    },
+    options: {
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          display: false,
+          // suggestedMin: 0,
+          // ticks: {stepSize: 1}
+        }
+      },
+      plugins: {
+        legend: {display:true, position: 'bottom'},
+        title: {
+          display: true,
+          text:'EMPRESA',
+          align: 'start',
+          color: 'rgb(108, 117, 125)',
+          font: {size: 13},
+          padding: {top: 6,bottom: 10}
+        },
+      }
+    }
+  });
+  
+  var classificacao_ctx = document.getElementById('reclamacoes_classificacao');
+  let classificacao_chart = new Chart(classificacao_ctx, {
+    type: 'bar',
+    data: {
+      datasets: [{
+        label: 'Qtde',
+        data: {{ reclamacoes_classificacao.dados }},
+        backgroundColor: {{ reclamacoes_classificacao.bgcolors|safe }},
+        borderColor: {{ reclamacoes_classificacao.bordercolors|safe }},
+      }],
+      labels: {{ reclamacoes_classificacao.categorias|safe }},
+    },
+    options: {
+      maintainAspectRatio: true,
+      indexAxis: 'y',
+      scales: {
+        x: {
+          suggestedMin: 0,
+          // grace: 1,
+          ticks: {stepSize: 1}
+        }
+      },
+      plugins: {
+        legend: {display:false, position: 'bottom'},
+        title: {
+          display: true,
+          text:'CLASSIFICAÇÃO',
+          align: 'start',
+          font: {size: 13},
+          padding: {top: 6,bottom: 10}
+        },
+      }
+    }
+  });
+  
+  var linha_ctx = document.getElementById('reclamacoes_linha');
+  let linha_chart = new Chart(linha_ctx, {
+    type: 'bar',
+    data: {
+      datasets: [{
+        label: 'Qtde',
+        data: {{ reclamacoes_linha.dados }},
+        backgroundColor: {{ reclamacoes_linha.bgcolors|safe }},
+        borderColor: {{ reclamacoes_linha.bordercolors|safe }},
+        maxBarThickness: 50,
+      }],
+      labels: {{ reclamacoes_linha.categorias|safe }},
+    },
+    options: {
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          suggestedMin: 0,
+          grace: 1,
+          ticks: {stepSize: 1}
+        }
+      },
+      plugins: {
+        legend: {display:false, position: 'bottom'},
+        title: {
+          display: true,
+          text:'RECLAMAÇÕES POR LINHA',
+          align: 'start',
+          font: {size: 13},
+          padding: {top: 6,bottom: 10}
+        },
+      }
+    }
+  });
+  
+  function carregaEmpresas() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if(this.readyState == 4 && this.status == 200){
+        if(this.responseText == ''){}
+        else{
+          let obj = JSON.parse(this.responseText);
+          empresas = document.getElementById("id_empresa");
+          for(key in obj){empresas.innerHTML += `<li><a class="dropdown-item pointer" onclick="filter('empresa','${obj[key]}')">${key}</a></li>`;}
+        }
+      }
+    };
+    xhttp.open("GET", "{% url 'core_get_empresas' %}", true);
+    xhttp.send();
+  }
+  carregaEmpresas();
+  
+  
+  {% endblock %}
+</script>

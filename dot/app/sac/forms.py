@@ -17,7 +17,6 @@ class ReclamacaoForm(forms.ModelForm):
         fields = ['empresa','origem','data','hora','classificacao','veiculo','linha','funcionario','detalhe','parecer','reclamante','fone1','fone2','email','tratado','retorno']
     data = forms.DateField(required=False, initial=date.today(), widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
     hora = forms.TimeField(required=False, initial=datetime.now().strftime('%H:%M'), widget=forms.TextInput(attrs={'class':'form-control','type':'time'}))
-    origem = forms.ChoiceField(required=False,choices=Reclamacao.ORIGEM_CHOICES, widget=forms.Select(attrs={'class':'form-select'}))
     classificacao = forms.ModelChoiceField(required=False, queryset = Classificacao.objects.all().order_by('nome'), widget=forms.Select(attrs={'class':'form-select bg-light'}))
     detalhe = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'Detalhes','style':'min-height:200px;'}))
     parecer = forms.ChoiceField(required=False,choices=Reclamacao.PARECER_CHOICES, widget=forms.Select(attrs={'class':'form-select'}))

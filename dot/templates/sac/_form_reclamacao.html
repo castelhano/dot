@@ -14,7 +14,17 @@
         		<label for="id_hora">Hora</label>
         	</div>
           <div class="form-floating mb-1 col-lg-6">
-        		{{ form.origem }}
+        		{% if 'reclamacao_add' in request.get_full_path %}
+            <select class="form-select" id="id_origem" name="origem">
+              <option value="F">Fone</option>
+              <option value="G">Gestora</option>
+              <option value="O">Outro</option>
+            </select>
+        		{% else %}
+            <select class="form-select readonly" id="id_origem" name="origem">
+              <option value="{{reclamacao.origem}}" selected>{{reclamacao.get_origem_display}}</option>
+            </select>
+            {% endif %}
         		<label for="id_origem">Origem</label>
         	</div>
         </div>

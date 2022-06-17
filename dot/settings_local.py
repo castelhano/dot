@@ -7,11 +7,11 @@ DEBUG = True
 SECRET_KEY = 't$o.B<Vf}+K=2RQ#.X?@p*t1Z]LhT@j|o=KcK0;9*):0<5W_1kU8?.=jI-3oi-M'
 
 COMPANY_DATA = {
-'homepage': None,
-'recrutamento_fone': '(65) 3619-5100',
-'recrutamento_email': 'rh@sit.com.br',
-'sac_fone':None,
-'sac_email': 'sac@sit.com.br',
+'homepage': 'http://www.google.com',
+'recrutamento_fone': '(65) 3619-5122',
+'recrutamento_email': 'curriculo@sit.com.br',
+'sac_fone':'(65) 3618-5522',
+'sac_email': None,
 }
 
 
