@@ -19,7 +19,7 @@
   </div>
   <div class="card-body tab-content">
     <h5 class="card-title mb-0">Dashboard: <b class="text-purple">{{user.username|title}}</b></h5>
-    <p class="mb-3 fw-bold text-muted">{{staff.get_role_display}}</p>
+    <p class="mb-3 fw-bold text-muted">{{staff.get_role_display|default:'<i class="fas fa-exclamation-triangle me-1 text-danger"></i>Não parametrizado'}}</p>
     <div class="tab-pane fade show active" id="base" role="tabpanel">
       <div class="row g-3">
         <div class="col-lg order-2 order-lg-1">

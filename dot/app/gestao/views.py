@@ -158,11 +158,11 @@ def stratified(request):
     for row in apontamentos:
         evolucao_indicador['categorias'].append(row.referencia)
         evolucao_indicador['dados'].append(float(row.valor))
-        evolucao_indicador['metas'].append(float(row.meta) if row.meta > 0 else None)
+        evolucao_indicador['metas'].append(float(row.meta) if row.meta else None)
         evolucao_indicador['bgcolors'].append(bg.purple)
         evolucao_indicador['bordercolors'].append(bc.purple)
-        if not min or row.valor < min or (row.meta < min and row.meta > 0):
-            min = row.valor if row.valor < row.meta else row.meta
+        if not min or row.valor < min or (row.meta and row.meta < min):
+            min = row.valor if not row.meta or row.valor < row.meta else row.meta
     
     metrics = {
     'indicador':indicador,
@@ -173,7 +173,7 @@ def stratified(request):
     'apontamentos':apontamentos,
     'indicadores':Indicador.objects.all().exclude(id=indicador.id),
     'evolucao_indicador':evolucao_indicador,
-    'chart_min': str(round(float(min) * 0.98,1)) if min else '',
+    'chart_min': str(round(float(min) * 0.97,1)) if min else '',
     }
     return render(request, 'gestao/stratified.html', metrics)
     
@@ -563,7 +563,7 @@ def diretriz_add(request):
                     params['usuario'] = item.usuario                    
                     Alerta.objects.create(**params)
                 messages.success(request,'Diretriz <b>' + str(registro.id) + '</b> criada')
-                return redirect('gestao_diretriz_add')
+                return redirect('gestao_dashboard')
             except:
                 messages.error(request,'Erro ao inserir diretriz')
                 return redirect('gestao_diretriz_add')            
