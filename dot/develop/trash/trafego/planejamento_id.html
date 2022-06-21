@@ -1,0 +1,183 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Plan{% endblock %}
+{% block model %}Tráfego{% endblock %}
+{% block navbar_classlist %}navbar-dark bg-primary bg-gradient{% endblock %}
+{% block model_menu %}{% include "_component/menu/trafego.html" %}{% endblock%}
+
+  
+<style media="screen">
+{% block style %}
+.cell-hover{
+  cursor: pointer;
+}
+{% endblock%}
+</style>
+
+{% block content_fluid %}
+<div class="row mt-2">
+  <div class="col-lg-3 order-2 order-lg-1">
+    <div id="patamares_container" class="collapse show">
+      <table class="table table-sm table-bordered text-center fs-7 mb-1" style="table-layout: fixed;">
+        <tr class="table-light">
+          <td id="patamar_add_inicio" contenteditable="true"></td>
+          <td id="patamar_add_fim" contenteditable="true"></td>
+          <td id="patamar_add_ida" contenteditable="true"></td>
+          <td id="patamar_add_volta" contenteditable="true"></td>
+          <td class="cell-hover bg-success text-light opacity-75" onclick="patamarAdd();" title="Adicionar Patamar"><i class="fas fa-plus fs-6"></i></td>
+          <td class="cell-hover bg-primary text-light opacity-75" onclick="" title="Carregar patamares da linha"><i class="fas fa-download fs-6"></i></td>
+          <!-- <td colspan="2"><i class="fas fa-plus text-success fs-6 pointer" onclick="patamarAdd();" title="Adicionar Patamar"></i><i class="fas fa-download text-primary fs-6 ms-2 pointer" title="Carregar patamares da linha"></i></td> -->
+        </tr>
+      </table>
+      <table class="table table-sm table-hover table-striped table-bordered text-center fs-7 mb-2" style="table-layout: fixed;">
+        <thead>
+          <tr>
+            <th>Inicio</th>
+            <th>Fim</th>
+            <th>Ida</th>
+            <th>Volta</th>
+            <th>Frota</th>
+            <th>Freq</th>
+          </tr>  
+        </thead>
+        <tbody id="patamares_tbody">
+          {% if planejamento.patamares == '' %}
+          {% for patamar in planejamento.linha.patamares %}
+          <tr>
+            <td class="table-secondary">{{patamar.inicial}}</td>
+            <td class="table-secondary">{{patamar.final}}</td>
+            <td id="{{forloop.counter0}}_2" contenteditable="true" oninput="setPatamar(this.id, this.innerHTML)">{{patamar.ida}}</td>
+            <td id="{{forloop.counter0}}_3" contenteditable="true" oninput="setPatamar(this.id, this.innerHTML)">{{patamar.volta}}</td>
+            <td id="{{forloop.counter0}}_4" contenteditable="true" oninput="setPatamar(this.id, this.innerHTML)"></td>
+            <td id="{{forloop.counter0}}_5" class="table-warning text-truncate"></td>
+          </tr>
+          {% endfor %}
+          {% endif %}
+        </tbody>
+      </table>
+      <table class="table table-sm table-bordered text-center fs-7" style="table-layout: fixed;">
+        <thead>
+          <tr>
+            <th>1a Viagem Ida</th>
+            <th>1a Viagem Volta</th>
+          </tr>  
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="time" class="form-control text-center" name="primeira_viagem_ida" id="id_primeira_viagem_ida" value="04:50"></td>
+            <td><input type="time" class="form-control text-center" name="primeira_viagem_volta" id="id_primeira_viagem_volta" value=""></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <table class="table table-sm table-hover table-striped table-bordered text-center fs-7" style="table-layout: fixed;">
+      <thead>
+        <tr>
+          <th>Freq</th>
+          <th>Ida</th>
+          <th>Volta</th>
+          <th>Freq</th>
+          <th>#</th>
+        </tr>  
+      </thead>
+      <tbody id="horarios_corridos_tbody">
+        <tr><td colspan="5" class="text-start">Defina os patamares e cliquem em Gerar</td></tr>
+      </tbody>
+    </table>
+    
+  </div>
+  <div class="col-lg order-1 order-lg-2">
+    <div class="">
+      <div class="btn-group">
+        <a id="display_patamares_link" class="btn btn-sm btn-secondary" data-bs-toggle="collapse" href="#patamares_container" title="Alt + H"><i class="fas fa-arrow-left rotate-lg--90"></i></a>
+        <a class="btn btn-sm btn-warning" id="clear" href="{% url 'trafego_planejamento_id' planejamento.id|safe %}" title="Limpar [Alt + L]"><i class="fas fa-sync-alt"></i></a>
+      </div>
+      <div class="btn-group">
+        <a id="planejamento_config" class="btn btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#planejamento_modal" href="#" title="Alt + ENTER"><i class="fas fa-sliders-h"></i></a>
+        <a class="btn btn-sm btn-success pointer" onclick="document.getElementById('submit_form_button').click()"><i class="fas fa-save me-1"></i> Salvar</a>
+      </div>
+      <div class="btn-group">
+        <a class="btn btn-sm btn-warning pointer" onclick="gerarFrequencia()"><i class="fas fa-code me-1"></i> Gerar</a>
+      </div>
+      <div class="btn-group float-end">
+        <a class="btn btn-sm btn-secondary" id="back" href="{% url 'trafego_planejamentos' %}">Fechar</a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col mt-2">
+        <table class="table table-sm table-hover table-striped table-bordered text-center fs-7">
+          <thead>
+            <tr>
+              <th colspan="2">1</th>
+              <th colspan="2">2</th>
+              <th colspan="2">3</th>
+            </tr>  
+            <tr>
+              <th class="bg-light">Ida</th>
+              <th class="bg-light">Volta</th>
+              <th class="bg-light">Ida</th>
+              <th class="bg-light">Volta</th>
+              <th class="bg-light">Ida</th>
+              <th class="bg-light">Volta</th>
+            </tr>  
+          </thead>
+          <tbody>
+            <tr>
+              <td>04:50</td>
+              <td>06:10</td>
+              <td>07:22</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+{% include 'trafego/_modais_planejamento.html' %}
+{% endblock%}
+
+{% block add_script_src %}{% endblock %}
+
+<script>
+  {% block add_script %}
+  
+  {% include 'trafego/_script_planejamento.js' %}
+  
+  SHORTCUT_MAP['enterTFF'] = '#planejamento_config';
+  SHORTCUT_MAP['hTFF'] = '#display_patamares_link';
+  
+  function gerarFrequencia(){
+    let tbody = document.getElementById('horarios_corridos_tbody');
+    let inicioIda = document.getElementById('id_primeira_viagem_ida').value;
+    let faixa = getFaixa(inicioIda);
+    // Adiciona primeira viagem
+    tbody.innerHTML = `<tr><td></td><td>${inicioIda}</td><td>${horaAdd(inicioIda, getPatamar(faixa)[0])}</td><td></td><td></td></tr>`;
+    
+    // Adiciona viagens até fim de operação
+    let freq = getPatamar(faixa)[4];
+    let stop = false;
+    let viagens = 1;
+    if(freq > 0){
+      let proxima_ida = horaAdd(inicioIda,freq);
+      faixa = getFaixa(proxima_ida);
+      tbody.innerHTML += `<tr><td></td><td>${proxima_ida}</td><td>${horaAdd(proxima_ida, getPatamar(getFaixa(proxima_ida))[0])}</td><td></td><td></td></tr>`;
+      viagem ++;
+      
+      while(faixa > 0 && !stop){
+        
+        tbody.innerHTML += `<tr><td></td><td>${proxima_ida}</td><td>${horaAdd(proxima_ida, getPatamar(getFaixa(proxima_ida))[0])}</td><td></td><td></td></tr>`;
+        if(viagens > 5){stop = true;}
+      }
+      
+    }
+    else{dotAlert('warning', 'Faixa com <b>frequência zerada</b>')}
+    
+    
+  }
+  
+  {% endblock %}
+</script>
