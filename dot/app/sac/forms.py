@@ -7,7 +7,7 @@ class ClassificacaoForm(forms.ModelForm):
     class Meta:
         model = Classificacao
         fields = ['nome','tipo']
-    nome = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'','autofocus':'autofocus'}))
+    nome = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' ','autofocus':'autofocus'}))
     tipo = forms.ChoiceField(error_messages={'required': 'Escolha um <b>tipo</b> para reclamacao'}, choices=Classificacao.TIPO_CHOICES, widget=forms.Select(attrs={'class':'form-select bg-light'}))
 
 
@@ -20,10 +20,10 @@ class ReclamacaoForm(forms.ModelForm):
     classificacao = forms.ModelChoiceField(required=False, queryset = Classificacao.objects.all().order_by('nome'), widget=forms.Select(attrs={'class':'form-select bg-light'}))
     detalhe = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'Detalhes','style':'min-height:200px;'}))
     parecer = forms.ChoiceField(required=False,choices=Reclamacao.PARECER_CHOICES, widget=forms.Select(attrs={'class':'form-select'}))
-    reclamante = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
-    fone1 = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
-    fone2 = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
-    email = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'', 'type':'email'}))
+    reclamante = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
+    fone1 = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
+    fone2 = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
+    email = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' ', 'type':'email'}))
     tratado = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch', 'tabindex':'-1'}))
     retorno = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'Retorno','style':'min-height:150px;'}))
 

@@ -14,7 +14,7 @@
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'trafego_planejamentos' %}"><i class="fas fa-undo"></i></a></li>
     </ul>
   </div>
-  <form id="app_form" action="{% url 'trafego_planejamento_add' %}" method="POST" autocomplete="off">
+  <form id="app_form" action="{% url 'trafego_planejamento_add' %}" method="POST" enctype="multipart/form-data" autocomplete="off" onsubmit="return submitForm()">
     {% csrf_token %}
     <div class="card-body tab-content">
       <h5 class="card-title mb-3">Novo Planejamento</h5>
@@ -37,6 +37,12 @@
         		<label for="id_descricao">Descrição</label>
         	</div>
         </div>
+        <div class="row g-1">
+        	<div class="my-2 col-lg-6">
+            <label for="id_viagens" class="fs-8 ps-1"><i class="fas fa-upload text-primary me-2"></i>Carregar viagens</label>
+        		<input type="file" class="form-control" id="id_viagens" name="viagens" value="" accept=".txt,.json">
+        	</div>
+        </div>
         <div class="form-check form-switch mt-2">
         	{{form.ativo}}
         	<label class="form-check-label" for="id_ativo">Planejamento ativo</label>
@@ -56,6 +62,7 @@
   </form>
 </div>
 
+{% include "_component/modal/loading.html" with message='Salvando....' %}
 {% endblock%}
 
 {% block add_script_src %}{% endblock %}
@@ -63,5 +70,8 @@
 <script>
   {% block add_script %}
   var TAB_ON_ENTER = true;
+  
+  var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
+  function submitForm(){modal_loading.show();return true;}
   {% endblock %}
 </script>

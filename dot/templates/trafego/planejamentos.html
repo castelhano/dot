@@ -1,5 +1,6 @@
 {% extends "layout/dot.html" %}
 {% load static %}
+{% load tag_extra %}
 {% block title %}Plan{% endblock %}
 {% block model %}Tráfego{% endblock %}
 {% block navbar_classlist %}navbar-dark bg-primary bg-gradient{% endblock %}
@@ -28,7 +29,11 @@
     </ul>
   </div>
   <div class="card-body tab-content">
-    <h5 class="card-title mb-3">Planejamentos <small class="badge bg-primary ms-1">{{planejamentos.count}}</small></h5>
+    <h5 class="card-title mb-2">Planejamentos <small class="badge bg-primary ms-1">{{planejamentos.count}}</small></h5>
+    <div class="form-check form-switch mb-2">
+    	<input class="form-check-input" type="checkbox" role="switch" name="inativos" id="id_inativos"{% if request|url_get:'inativos' == 'True' %} checked{% endif %} onclick="filterInativos()">
+    	<label class="form-check-label" for="id_inativos">Mostrar inativos</label>
+    </div>
     <div class="tab-pane fade show active" id="base" role="tabpanel">
       <table id="main_table" class="table border table-striped table-hover table-sortable">
         <thead>
@@ -77,12 +82,11 @@
         <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
       </div>
       <div class="modal-body">
-        <form id="trafego_form" action="url" method="POST" autocomplete="off">
-          {% csrf_token %}
+        <form id="trafego_form" action="{% url 'trafego_planejamentos' %}" method="GET" autocomplete="off">
           <div class="row g-1">
             <div class="form-floating mb-1 col-lg-12">
               <input type="text" class="form-control" name="pesquisa" value="" id="id_pesquisa" placeholder="">
-              <label for="id_pesquisa">Termo pesquisa</label>
+              <label for="id_pesquisa">Código / Linha</label>
             </div>
           </div>
         </form>
@@ -94,4 +98,15 @@
 
 {% block add_script_src %}
 <script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/url.js' %}"></script>
 {% endblock %}
+
+  
+<script>
+{% block add_script %}
+function filterInativos(){
+  if(document.getElementById('id_inativos').checked){filter('inativos','True')}
+  else{filtersClean(['inativos'])}
+}
+{% endblock %}
+</script>

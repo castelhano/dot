@@ -1,11 +1,11 @@
 import os
-# import json
+import json
 from json import dumps
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.db.models import Q
 from core.models import Empresa, Log
-from .models import Linha, Localidade, Patamar, Carro, Viagem, Evento, Providencia, Ocorrencia, FotoOcorrencia, Planejamento, Orgao, Agente, Enquadramento, Notificacao, Predefinido
+from .models import Linha, Localidade, Patamar, Planejamento, Carro, Viagem, Evento, Providencia, Ocorrencia, FotoOcorrencia, Orgao, Agente, Enquadramento, Notificacao, Predefinido
 from .forms import LinhaForm, LocalidadeForm, EventoForm, ProvidenciaForm, OcorrenciaForm, PlanejamentoForm, OrgaoForm, AgenteForm, EnquadramentoForm, NotificacaoForm, PredefinidoForm
 from .validators import validate_file_extension
 from django.contrib.auth.decorators import login_required, permission_required
@@ -60,7 +60,15 @@ def linhas(request):
 @login_required
 @permission_required('trafego.view_planejamento')
 def planejamentos(request):
-    planejamentos = Planejamento.objects.all().order_by('linha__codigo', 'data_criacao')    
+    planejamentos = Planejamento.objects.all().order_by('linha__codigo', 'data_criacao')
+    if request.GET.get('pesquisa', None):
+        if Planejamento.objects.filter(codigo=request.GET['pesquisa']).exists():
+            planejamento = Planejamento.objects.get(codigo=request.GET['pesquisa'])
+            return redirect('trafego_planejamento_id', planejamento.id)
+        else:
+            planejamentos = planejamentos.filter(linha__codigo=request.GET['pesquisa'])
+    if not request.GET.get('inativos') or request.GET['inativos'] != 'True':
+        planejamentos = planejamentos.filter(ativo=True)
     return render(request,'trafego/planejamentos.html', {'planejamentos':planejamentos})
 
 @login_required
@@ -325,12 +333,25 @@ def ocorrencia_add(request):
 @permission_required('trafego.add_planejamento')
 def planejamento_add(request):
     if request.method == 'POST':
-        form = PlanejamentoForm(request.POST)
+        form = PlanejamentoForm(request.POST, request.FILES)
         if form.is_valid():
             try:
                 registro = form.save(commit=False)
                 registro.usuario = request.user
                 registro.save()
+                # Caso anexado planejamento (preformatado) insere viagens no planejamento
+                if request.FILES.get('viagens', None):
+                    viagens = json.load(request.FILES['viagens'])
+                    if len(viagens) > 0:
+                        carro = Carro()
+                        carro.planejamento = registro
+                        carro.save()
+                        for v in viagens:
+                            v['carro'] = carro
+                            Viagem.objects.create(**v)
+                # Se planejamento for marcado como ativo, inativa planejamento atual
+                if registro.ativo:
+                    Planejamento.objects.filter(empresa=registro.empresa,linha=registro.linha,dia_tipo=registro.dia_tipo,ativo=True).exclude(id=registro.id).update(ativo=False)
                 l = Log()
                 l.modelo = "trafego.planejamento"
                 l.objeto_id = registro.id
@@ -520,8 +541,15 @@ def tratativa_id(request,id):
 @permission_required('trafego.change_planejamento')
 def planejamento_id(request,id):
     planejamento = Planejamento.objects.get(pk=id)
+    if not planejamento.ativo:
+        try:
+            ativo = Planejamento.objects.filter(empresa=planejamento.empresa,linha=planejamento.linha,dia_tipo=planejamento.dia_tipo, ativo=True).get()             
+        except:
+            ativo = None
+    else:
+        ativo = None 
     form = PlanejamentoForm(instance=planejamento)
-    return render(request,'trafego/planejamento_id.html',{'form':form,'planejamento':planejamento})
+    return render(request,'trafego/planejamento_id.html',{'form':form,'planejamento':planejamento, 'ativo':ativo})
 
 @login_required
 @permission_required('trafego.change_predefinido')
@@ -810,6 +838,9 @@ def planejamento_update(request,id):
     form = PlanejamentoForm(request.POST, instance=planejamento)
     if form.is_valid():
         registro = form.save()
+        # Se planejamento for marcado como ativo, inativa planejamento atual
+        if registro.ativo:
+            Planejamento.objects.filter(empresa=registro.empresa,linha=registro.linha,dia_tipo=registro.dia_tipo,ativo=True).exclude(id=registro.id).update(ativo=False)
         l = Log()
         l.modelo = "trafego.planejamento"
         l.objeto_id = registro.id

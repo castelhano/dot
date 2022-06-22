@@ -8,10 +8,10 @@ class IndicadorForm(forms.ModelForm):
     class Meta:
         model = Indicador
         fields = ['nome','meta','medida','precisao','quanto_maior_melhor','ativo']
-    nome = forms.CharField(error_messages={'required': 'Informe o nome do indicador','unique': 'Já existe indicador com este nome'},widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'','autofocus':'autofocus'}))
+    nome = forms.CharField(error_messages={'required': 'Informe o nome do indicador','unique': 'Já existe indicador com este nome'},widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' ','autofocus':'autofocus'}))
     meta = forms.DecimalField(required=False,initial=0,widget=forms.TextInput(attrs={'class': 'form-control','onfocus':'this.select();'}))
-    medida = forms.CharField(required=False, max_length=6, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
-    precisao = forms.CharField(error_messages={'required': 'Informe a precisão do indicador'}, initial=2, widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':0,'max':4,'step':1,'placeholder':''}))
+    medida = forms.CharField(required=False, max_length=6, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
+    precisao = forms.CharField(error_messages={'required': 'Informe a precisão do indicador'}, initial=2, widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':0,'max':4,'step':1,'placeholder':' '}))
     quanto_maior_melhor = forms.BooleanField(required=False, initial=True, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
     ativo = forms.BooleanField(required=False, initial=True, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
     percentual = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
@@ -34,7 +34,7 @@ class DiretrizForm(forms.ModelForm):
     class Meta:
         model = Diretriz
         fields = ['empresa','indicador','analise','titulo','detalhe']
-    titulo = forms.CharField(error_messages={'required': 'Informe o titulo'},widget=forms.TextInput(attrs={'class': 'form-control','placeholder':''}))
+    titulo = forms.CharField(error_messages={'required': 'Informe o titulo'},widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
     indicador = forms.ModelChoiceField(error_messages={'required': 'Selecione o indicador'}, queryset = Indicador.objects.filter(ativo=True).order_by('nome'), widget=forms.Select(attrs={'class':'form-select'}))
     detalhe = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'Detalhamento', 'style':'min-height:300px'}))
     analise = forms.ModelChoiceField(required=False, queryset = Analise.objects.filter(tipo__in=['N','M']))
@@ -43,7 +43,7 @@ class LabelForm(forms.ModelForm):
     class Meta:
         model = Label
         fields = ['nome','cor','fonte']
-    nome = forms.CharField(error_messages={'required': 'Informe o nome da label'}, max_length=15, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'','autofocus':'autofocus','onkeyup':'labelPreview()'}))
+    nome = forms.CharField(error_messages={'required': 'Informe o nome da label'}, max_length=15, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' ','autofocus':'autofocus','onkeyup':'labelPreview()'}))
     cor = forms.CharField(required=False, initial='#F1F1F1', widget=forms.TextInput(attrs={'class': 'form-control','type':'color','onchange':'labelPreview()'}))
     fonte = forms.CharField(required=False, initial='#000', widget=forms.TextInput(attrs={'class': 'form-control','type':'color','onchange':'labelPreview()'}))
 
@@ -51,7 +51,7 @@ class PlanoForm(forms.ModelForm):
     class Meta:
         model = Plano
         fields = ['diretriz','analise','titulo','detalhe','inicio','termino','responsavel','staff','labels']
-    titulo = forms.CharField(error_messages={'required': 'Informe o titulo'}, max_length=80, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':'','autofocus':'autofocus'}))
+    titulo = forms.CharField(error_messages={'required': 'Informe o titulo'}, max_length=80, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' ','autofocus':'autofocus'}))
     diretriz = forms.ModelChoiceField(error_messages={'required': 'Selecione o diretriz'}, queryset = Diretriz.objects.filter(ativo=True))
     analise = forms.ModelChoiceField(required=False, queryset = Analise.objects.filter(concluido=False))
     detalhe = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'Detalhamento', 'style':'min-height:300px'}))

@@ -125,9 +125,7 @@ ol.code-multiline li.list-ident-2::before {margin-right: 80px;}
 .widget-icon-success {color: #42b78e;background-color: #d6fff0;}
 .widget-icon-primary {color: #0D6EFD;background-color: #bad6ff;}
 
-datalist{
-  font-size: 20px;
-}
+datalist{font-size: 20px;}
 
 .tooltip {
   position: relative;
