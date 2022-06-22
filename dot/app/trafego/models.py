@@ -131,7 +131,7 @@ class Viagem(models.Model):
     ('5','5 Acesso'),
     ('6','6 Recolhe'),
     ('7','7 Intervalo'),
-    ('0','0 Reservado'),
+    ('9','9 Reservado'),
     )
     carro = models.ForeignKey(Carro, blank=False, null=False, on_delete=models.CASCADE)
     inicio = models.TimeField(blank=True, null=True)
