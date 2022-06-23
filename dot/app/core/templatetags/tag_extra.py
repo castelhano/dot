@@ -69,7 +69,7 @@ def sub(minuendo, subtraendo):
 # @example  {{valor|percentual:total}}
 @register.filter
 def percentual(valor, total):
-    return (valor / total) * 100 if total > 0 and valor else '---'
+    return (valor / total) * 100 if total > 0 and valor else 0
 
 # parseInt Retorna o inteiro correspondente ao valor
 # --

@@ -12,7 +12,8 @@
   {% if perms.recrutamento.view_selecao %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-purple"><i class="fas fa-users lead-image"></i><a id="widget_action_recrutamento" class="widget-label stretched-link" href="{% url 'recrutamento_selecoes' %}">Recrutamento<kbd class="float-end fs-9">ctrl r</kbd></a></div>{% endif %}
   {% if perms.sac.view_reclamacao %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-purple"><i class="fas fa-headset lead-image"></i><a id="widget_action_sac" class="widget-label stretched-link" href="{% url 'sac_reclamacoes' %}">SAC<kbd class="float-end fs-9">ctrl 2</kbd></a></div>{% endif %}
   {% if perms.oficina.view_frota %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-success"><i class="fas fa-bus lead-image"></i><a id="widget_action_oficina" class="widget-label stretched-link" href="{% url 'oficina_frotas' %}">Oficina<kbd class="float-end fs-9">ctrl o</kbd></a></div>{% endif %}
-  {% if perms.trafego.view_linha %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-primary"><i class="fas fa-route lead-image"></i><a id="widget_action_trafego" class="widget-label stretched-link" href="{% url 'trafego_linhas' %}">Trafego<kbd class="float-end fs-9">ctrl g</kbd></a></div>{% endif %}
+  {% if perms.trafego.view_linha %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-primary"><i class="fas fa-route lead-image"></i><a id="widget_action_linha" class="widget-label stretched-link" href="{% url 'trafego_linhas' %}">Linhas<kbd class="float-end fs-9">ctrl g</kbd></a></div>{% endif %}
+  {% if perms.trafego.view_planejamento %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-primary"><i class="fas fa-random lead-image"></i><a id="widget_action_planejamento" class="widget-label stretched-link" href="{% url 'trafego_planejamentos' %}">Planejamento<kbd class="float-end fs-9">ctrl 3</kbd></a></div>{% endif %}
   {% if perms.trafego.view_notificacao %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-primary"><i class="fas fa-file-signature lead-image"></i><a id="widget_action_notificacao" class="widget-label stretched-link" href="{% url 'trafego_notificacoes' %}">Notificações</a></div>{% endif %}
   {% if perms.trafego.view_ocorrencia %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-primary"><i class="fas fa-road lead-image"></i><a id="widget_action_ocorrencia" class="widget-label stretched-link" href="{% url 'trafego_ocorrencias' %}">Ocorrências</a></div>{% endif %}
   {% if perms.sinistro.view_acidente %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-primary"><i class="fas fa-car-crash lead-image"></i><a id="widget_action_acidente" class="widget-label stretched-link" href="{% url 'sinistro_acidentes' %}">Sinistro<kbd class="float-end fs-9">ctrl k</kbd></a></div>{% endif %}
@@ -33,7 +34,8 @@ SHORTCUT_MAP['pFTF'] = '#widget_action_pessoal';
 SHORTCUT_MAP['rFTF'] = '#widget_action_recrutamento';
 SHORTCUT_MAP['2FTF'] = '#widget_action_sac';
 SHORTCUT_MAP['oFTF'] = '#widget_action_oficina';
-SHORTCUT_MAP['gFTF'] = '#widget_action_trafego';
+SHORTCUT_MAP['gFTF'] = '#widget_action_linha';
+SHORTCUT_MAP['3FTF'] = '#widget_action_planejamento';
 SHORTCUT_MAP['kFTF'] = '#widget_action_acidente';
 
 {% include '_component/script/update_alertas.js' %}

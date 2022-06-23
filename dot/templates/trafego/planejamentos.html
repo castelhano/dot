@@ -30,10 +30,6 @@
   </div>
   <div class="card-body tab-content">
     <h5 class="card-title mb-2">Planejamentos <small class="badge bg-primary ms-1">{{planejamentos.count}}</small></h5>
-    <div class="form-check form-switch mb-2">
-    	<input class="form-check-input" type="checkbox" role="switch" name="inativos" id="id_inativos"{% if request|url_get:'inativos' == 'True' %} checked{% endif %} onclick="filterInativos()">
-    	<label class="form-check-label" for="id_inativos">Mostrar inativos</label>
-    </div>
     <div class="tab-pane fade show active" id="base" role="tabpanel">
       <table id="main_table" class="table border table-striped table-hover table-sortable">
         <thead>
@@ -41,6 +37,7 @@
             <th>Empresa</th>
             <th>Codigo</th>
             <th>Linha</th>
+            <th>Dia</th>
             <th>Ativo</th>
             <th>Criado em</th>
             <th>Responsável</th>
@@ -55,7 +52,8 @@
             <td>{{planejamento.empresa.nome}}</td>
             <td>{{planejamento.codigo}}</td>
             <td>{{planejamento.linha.codigo}}</td>
-            <td>{{planejamento.ativo|yesno:'Ativo,Inativo'}}</td>
+            <td>{{planejamento.get_dia_tipo_display}}</td>
+            <td class="{% if planejamento.ativo %}table-success{% else %}table-secondary{% endif %}">{{planejamento.ativo|yesno:'Ativo,Inativo'}}</td>
             <td>{{planejamento.data_criacao|date:'d/m/Y'}}</td>
             <td>{{planejamento.usuario.username|title}}</td>
             {% if perms.trafego.change_planejamento %}
@@ -103,10 +101,5 @@
 
   
 <script>
-{% block add_script %}
-function filterInativos(){
-  if(document.getElementById('id_inativos').checked){filter('inativos','True')}
-  else{filtersClean(['inativos'])}
-}
-{% endblock %}
+{% block add_script %}{% endblock %}
 </script>

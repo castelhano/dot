@@ -67,8 +67,8 @@ def planejamentos(request):
             return redirect('trafego_planejamento_id', planejamento.id)
         else:
             planejamentos = planejamentos.filter(linha__codigo=request.GET['pesquisa'])
-    if not request.GET.get('inativos') or request.GET['inativos'] != 'True':
-        planejamentos = planejamentos.filter(ativo=True)
+    else:
+        planejamentos = planejamentos.filter(pin=True)
     return render(request,'trafego/planejamentos.html', {'planejamentos':planejamentos})
 
 @login_required

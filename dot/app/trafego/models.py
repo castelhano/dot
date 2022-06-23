@@ -95,6 +95,30 @@ class Planejamento(models.Model):
     pin = models.BooleanField(default=True)
     def __str__(self):
         return self.codigo
+    def carros(self):
+        return Carro.objects.filter(planejamento=self)
+    def qtd_carros(self):
+        return Carro.objects.filter(planejamento=self).count()
+    def viagens(self):
+        return Viagem.objects.filter(carro__planejamento=self)
+    def qtd_viagens(self):
+        return Viagem.objects.filter(carro__planejamento=self).count()
+    def qtd_viagens_produtivas(self):
+        return Viagem.objects.filter(carro__planejamento=self, tipo__in=['1','2','3']).count()
+    def qtd_viagens_improdutivas(self):
+        return Viagem.objects.filter(carro__planejamento=self).exclude(tipo__in=['1','2','3','7']).count()
+    def km_planejada(self):
+        return self.km_produtivo() + self.km_ociosa() 
+    def km_produtivo(self):
+        viagens_ida = Viagem.objects.filter(carro__planejamento=self, sentido='I').exclude(tipo__in=['5','6','7']).count()
+        viagens_volta = Viagem.objects.filter(carro__planejamento=self, sentido='V').exclude(tipo__in=['5','6','7']).count()
+        return (viagens_ida * self.linha.extensao_ida) + (viagens_volta * self.linha.extensao_volta)
+    def km_ociosa(self):
+        acessos_ida = Viagem.objects.filter(carro__planejamento=self, sentido='I', tipo='5').count()
+        acessos_volta = Viagem.objects.filter(carro__planejamento=self, sentido='V', tipo='5').count()
+        recolhes_ida = Viagem.objects.filter(carro__planejamento=self, sentido='I', tipo='6').count()
+        recolhes_volta = Viagem.objects.filter(carro__planejamento=self, sentido='V', tipo='6').count()
+        return (acessos_ida * self.linha.acesso_origem_km) + (acessos_volta * self.linha.acesso_destino_km) + (recolhes_ida * self.linha.recolhe_origem_km) + (recolhes_volta * self.linha.recolhe_destino_km)
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='trafego.planejamento',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
