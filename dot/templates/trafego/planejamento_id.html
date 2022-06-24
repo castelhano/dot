@@ -34,7 +34,7 @@
               <div class="row">
                 <div class="col"><h6 class="text-success mt-1">Planejamento Ativo: <b>{{ativo.codigo}}</b></h6></div>
                 <div class="col-auto">
-                  <a class="btn btn-sm btn-purple" href=""><i class="fas fa-link"></i></a>
+                  <a class="btn btn-sm btn-purple" href="{% url 'trafego_planejamento_id' ativo.id|safe %}"><i class="fas fa-link"></i></a>
                 </div>
               </div>
               <dl class="row">
@@ -83,7 +83,7 @@
                 </div>
               </div>
               <dl class="row">
-                <dt class="col-lg-4">Frota</dt><dd class="col-lg-8">{{planejamento.qtd_carros|zfill:2}} {% if ativo %}<span class="ms-3 switch-view d-none">[ {{planejamento.qtd_carros|sub:ativo.qtd_carros|zfill:3}} ]</span>{% endif %}</dd>
+                <dt class="col-lg-4">Frota</dt><dd class="col-lg-8">{{planejamento.qtd_carros|zfill:2}} {% if ativo %}<span class="ms-3 switch-view d-none">[ {{planejamento.qtd_carros|sub:ativo.qtd_carros|zfill:2}} ]</span>{% endif %}</dd>
                 <dt class="col-lg-4">Condutores</dt><dd class="col-lg-8">--</dd>
                 <dt class="col-lg-4">Viagens</dt><dd class="col-lg-8">{{planejamento.qtd_viagens|zfill:3}} {% if ativo %}<span class="ms-3 switch-view d-none">[ {{planejamento.qtd_viagens|sub:ativo.qtd_viagens|zfill:3}} ]{% endif %}</span></dd>
                 <dt class="col-lg-4 text-muted">Produtivas</dt><dd class="col-lg-8 text-muted">{{planejamento.qtd_viagens_produtivas|zfill:3}} {% if ativo %}<span class="ms-3 switch-view d-none">[ {{planejamento.qtd_viagens_produtivas|sub:ativo.qtd_viagens_produtivas|zfill:3}} ]{% endif %}</span></dd>
@@ -133,7 +133,7 @@
               <label class="form-check-label" for="id_ativo"><i class="fas fa-check fa-fw text-success"></i>Ativar</label>
             </div>
             <div class="form-check form-switch">
-              <input class="form-check-input" type="checkbox" role="switch" name="carregar_viagens" id="id_carregar_viagens">
+              <input class="form-check-input" type="checkbox" role="switch" name="carregar_viagens" id="id_carregar_viagens" onclick="importarViagens()">
               <label class="form-check-label" for="id_carregar_viagens"><i class="fas fa-random fa-fw text-muted"></i>Importar viagens</label>
             </div>
             <small id="label_alert_sobregravar" class="d-none"><b class="text-danger">Atenção!</b> Importar viagens irá apagar o planejamento atual, este processo não pode ser desfeito.</small>
@@ -196,6 +196,12 @@
     let labels = document.querySelectorAll('.switch-view');
     for(i=0;i < labels.length;i++){labels[i].classList.toggle('d-none');}
     document.getElementById('container_plan_ativo').classList.toggle('d-none');
+  }
+  
+  function importarViagens(){
+    document.getElementById('label_alert_sobregravar').classList.toggle('d-none');
+    if(document.getElementById('id_viagens').disabled){document.getElementById('id_viagens').disabled = false;}
+    else{document.getElementById('id_viagens').disabled = true;}
   }
   
   {% endblock %}

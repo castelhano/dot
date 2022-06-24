@@ -335,35 +335,43 @@ def planejamento_add(request):
     if request.method == 'POST':
         form = PlanejamentoForm(request.POST, request.FILES)
         if form.is_valid():
-            try:
-                registro = form.save(commit=False)
-                registro.usuario = request.user
-                registro.save()
-                # Caso anexado planejamento (preformatado) insere viagens no planejamento
-                if request.FILES.get('viagens', None):
+            registro = form.save(commit=False)
+            registro.usuario = request.user
+            registro.save()
+            # Caso anexado planejamento (preformatado) insere viagens no planejamento
+            if request.FILES.get('viagens', None):
+                try:
                     viagens = json.load(request.FILES['viagens'])
-                    if len(viagens) > 0:
+                    viagens.sort(key=lambda x: x["carro"])
+                except Exception as e:
+                    messages.error(request,'<b>Erro</b> O arquivo anexado não é válido')
+                    return render(request,'trafego/planejamento_id.html',{'form':form,'planejamento':planejamento})
+                last_carro_seq = None
+                carro = None
+                for v in viagens:
+                    if not last_carro_seq or last_carro_seq != v['carro']:
                         carro = Carro()
                         carro.planejamento = registro
                         carro.save()
-                        for v in viagens:
-                            v['carro'] = carro
-                            Viagem.objects.create(**v)
-                # Se planejamento for marcado como ativo, inativa planejamento atual
-                if registro.ativo:
-                    Planejamento.objects.filter(empresa=registro.empresa,linha=registro.linha,dia_tipo=registro.dia_tipo,ativo=True).exclude(id=registro.id).update(ativo=False)
-                l = Log()
-                l.modelo = "trafego.planejamento"
-                l.objeto_id = registro.id
-                l.objeto_str = registro.codigo
-                l.usuario = request.user
-                l.mensagem = "CREATED"
-                l.save()
-                messages.success(request,'Planejamento <b>' + registro.codigo + '</b> criado')
-                return redirect('trafego_planejamento_id', registro.id)
-            except:
-                messages.error(request,'Erro ao inserir planejamento')
-                return redirect('trafego_planejamento_add')
+                        last_carro_seq = v['carro']
+                    v['carro'] = carro
+                    try:
+                        Viagem.objects.create(**v)
+                    except Exception as e:
+                        messages.error(request,f'<b>Erro</b>{e}, algumas viagens NÃO foram importadas')
+                        return redirect('trafego_planejamento_add')
+            # Se planejamento for marcado como ativo, inativa planejamento atual
+            if registro.ativo:
+                Planejamento.objects.filter(empresa=registro.empresa,linha=registro.linha,dia_tipo=registro.dia_tipo,ativo=True).exclude(id=registro.id).update(ativo=False)
+            l = Log()
+            l.modelo = "trafego.planejamento"
+            l.objeto_id = registro.id
+            l.objeto_str = registro.codigo
+            l.usuario = request.user
+            l.mensagem = "CREATED"
+            l.save()
+            messages.success(request,'Planejamento <b>' + registro.codigo + '</b> criado')
+            return redirect('trafego_planejamento_id', registro.id)
     else:
         form = PlanejamentoForm()
     return render(request,'trafego/planejamento_add.html',{'form':form})
@@ -835,21 +843,48 @@ def tratativa_marcar_todas_tratadas(request):
 @permission_required('trafego.change_planejamento')
 def planejamento_update(request,id):
     planejamento = Planejamento.objects.get(pk=id)
-    form = PlanejamentoForm(request.POST, instance=planejamento)
+    form = PlanejamentoForm(request.POST, request.FILES, instance=planejamento)
     if form.is_valid():
         registro = form.save()
+        # Caso anexado planejamento (preformatado) sobrescreve viagens no planejamento
+        if request.FILES.get('viagens', None):
+            try:
+                viagens = json.load(request.FILES['viagens'])
+                viagens.sort(key=lambda x: x["carro"])
+            except Exception as e:
+                messages.error(request,'<b>Erro</b> O arquivo anexado não é válido')
+                return render(request,'trafego/planejamento_id.html',{'form':form,'planejamento':planejamento})
+            Carro.objects.filter(planejamento=registro).delete() # Limpa viagens atuais (caso exista)
+            last_carro_seq = None
+            carro = None
+            for v in viagens:
+                if not last_carro_seq or last_carro_seq != v['carro']:
+                    carro = Carro()
+                    carro.planejamento = registro
+                    carro.save()
+                    last_carro_seq = v['carro']
+                v['carro'] = carro
+                try:
+                    Viagem.objects.create(**v)
+                except Exception as e:
+                    messages.error(request,f'<b>Erro</b>{e}, algumas viagens NÃO foram importadas')
+                    return redirect('trafego_planejamento_id', planejamento.id)
         # Se planejamento for marcado como ativo, inativa planejamento atual
-        if registro.ativo:
-            Planejamento.objects.filter(empresa=registro.empresa,linha=registro.linha,dia_tipo=registro.dia_tipo,ativo=True).exclude(id=registro.id).update(ativo=False)
-        l = Log()
-        l.modelo = "trafego.planejamento"
-        l.objeto_id = registro.id
-        l.objeto_str = registro.codigo
-        l.usuario = request.user
-        l.mensagem = "UPDATE"
-        l.save()
-        messages.success(request,'Planejamento <b>' + registro.codigo + '</b> alterado')
-        return redirect('trafego_planejamento_id', id)
+        try:
+            if registro.ativo:
+                Planejamento.objects.filter(empresa=registro.empresa,linha=registro.linha,dia_tipo=registro.dia_tipo,ativo=True).exclude(id=registro.id).update(ativo=False)
+            l = Log()
+            l.modelo = "trafego.planejamento"
+            l.objeto_id = registro.id
+            l.objeto_str = registro.codigo
+            l.usuario = request.user
+            l.mensagem = "UPDATE"
+            l.save()
+            messages.success(request,'Planejamento <b>' + registro.codigo + '</b> alterado')
+            return redirect('trafego_planejamento_id', id)
+        except Exception as e:
+            messages.error(request,f'<b>Erro</b> ao concluir operação: {e}')
+            return redirect('trafego_planejamento_id', planejamento.id)
     else:
         return render(request,'trafego/planejamento_id.html',{'form':form,'planejamento':planejamento})
 

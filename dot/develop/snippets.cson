@@ -490,3 +490,7 @@
   'Redirect Variables':
     'prefix': 'redirect_extra'
     'body':'#from django.urls import reverse\n#from urllib.parse import urlencode\nbase_url = reverse(\'globus_settings\')\nquery_string =  urlencode({\'empresa\': registro.empresa.id})\nurl = \'{}?{}\'.format(base_url, query_string)\nreturn redirect(url)'
+  
+  'JSON Sort':
+    'prefix': 'json_sort'
+    'body':'${1:json_obj}.sort(key=lambda x: x["${2:key_name}"])'
