@@ -8,7 +8,6 @@
 
 <style media="screen">
   {% block style %}
-  @media(max-width: 992px){dt{margin-top:10px!important;}}
   dt,dd{margin:0px;}
   {% endblock %}
 </style>
@@ -38,25 +37,25 @@
                 </div>
               </div>
               <dl class="row">
-                <dt class="col-lg-4">Frota</dt><dd class="col-lg-8">{{ativo.qtd_carros|zfill:2}}</dd>
-                <dt class="col-lg-4">Condutores</dt><dd class="col-lg-8">--</dd>
-                <dt class="col-lg-4">Viagens</dt><dd class="col-lg-8">{{ativo.qtd_viagens|zfill:3}}</dd>
-                <dt class="col-lg-4 text-muted">Produtivas</dt><dd class="col-lg-8 text-muted">{{ativo.qtd_viagens_produtivas|zfill:3}}</dd>
-                <dt class="col-lg-4 text-muted">Improdutivas</dt><dd class="col-lg-8 text-muted">{{ativo.qtd_viagens_improdutivas|zfill:3}}</dd>
-                <dt class="col-lg-4">Km</dt><dd class="col-lg-8">{{ativo.km_planejada}}</dd>
-                <dt class="col-lg-4 text-muted">Ociosa</dt><dd class="col-lg-8 text-muted">{{ativo.km_ociosa}} <span class="text-orange ms-2">{{ativo.km_ociosa|percentual:ativo.km_planejada|floatformat:1}}%</span></dd>
-                <dt class="col-lg-4">Horas OP</dt><dd class="col-lg-8">--</dd>
-                <dt class="col-lg-4 text-purple">IPK</dt><dd class="col-lg-8 text-purple">--</dd>
-                <dt class="col-lg-4 text-purple">HVD</dt><dd class="col-lg-8 text-purple">--</dd>
+                <dt class="col-4">Frota</dt><dd class="col-8">{{ativo.qtd_carros|zfill:2}}</dd>
+                <dt class="col-4">Condutores</dt><dd class="col-8">--</dd>
+                <dt class="col-4">Viagens</dt><dd class="col-8">{{ativo.qtd_viagens|zfill:3}}</dd>
+                <dt class="col-4 text-muted">Produtivas</dt><dd class="col-8 text-muted">{{ativo.qtd_viagens_produtivas|zfill:3}}</dd>
+                <dt class="col-4 text-muted">Improdutivas</dt><dd class="col-8 text-muted">{{ativo.qtd_viagens_improdutivas|zfill:3}}</dd>
+                <dt class="col-4">Km</dt><dd class="col-8">{{ativo.km_planejada}}</dd>
+                <dt class="col-4 text-muted">Ociosa</dt><dd class="col-8 text-muted">{{ativo.km_ociosa}} <span class="text-orange ms-2">{{ativo.km_ociosa|percentual:ativo.km_planejada|floatformat:1}}%</span></dd>
+                <dt class="col-4">Horas OP</dt><dd class="col-8">--</dd>
+                <dt class="col-4 text-purple">IPK</dt><dd class="col-8 text-purple">--</dd>
+                <dt class="col-4 text-purple">HVD</dt><dd class="col-8 text-purple">--</dd>
               </dl>
               <hr class="mb-2">
               <dl class="row mt-2">
-                <dt class="col-lg-4">Empresa</dt><dd class="col-lg-8">{{ativo.empresa.nome}}</dd>
-                <dt class="col-lg-4">Linha</dt><dd class="col-lg-8">{{ativo.linha.codigo}}</dd>
-                <dt class="col-lg-4">Nome</dt><dd class="col-lg-8">{{ativo.linha.nome}}</dd>
-                <dt class="col-lg-4">Criação</dt><dd class="col-lg-8">{{ativo.data_criacao|date:'d/m/Y'}}</dd>
-                <dt class="col-lg-4">Responsável</dt><dd class="col-lg-8">{{ativo.usuario.username|title}}</dd>
-                <dt class="col-lg-4">Status</dt><dd class="col-lg-8"><b class="text-success">Ativo</b></dd>
+                <dt class="col-4">Empresa</dt><dd class="col-8">{{ativo.empresa.nome}}</dd>
+                <dt class="col-4">Linha</dt><dd class="col-8">{{ativo.linha.codigo}}</dd>
+                <dt class="col-4">Nome</dt><dd class="col-8">{{ativo.linha.nome}}</dd>
+                <dt class="col-4">Criação</dt><dd class="col-8">{{ativo.data_criacao|date:'d/m/Y'}}</dd>
+                <dt class="col-4">Responsável</dt><dd class="col-8">{{ativo.usuario.username|title}}</dd>
+                <dt class="col-4">Status</dt><dd class="col-8"><b class="text-success">Ativo</b></dd>
               </dl>
               <div class="row g-1">
                 <div class="mb-1 col-lg-12">
@@ -83,25 +82,25 @@
                 </div>
               </div>
               <dl class="row">
-                <dt class="col-lg-4">Frota</dt><dd class="col-lg-8">{{planejamento.qtd_carros|zfill:2}} {% if ativo %}<span class="ms-3 switch-view d-none">[ {{planejamento.qtd_carros|sub:ativo.qtd_carros|zfill:2}} ]</span>{% endif %}</dd>
-                <dt class="col-lg-4">Condutores</dt><dd class="col-lg-8">--</dd>
-                <dt class="col-lg-4">Viagens</dt><dd class="col-lg-8">{{planejamento.qtd_viagens|zfill:3}} {% if ativo %}<span class="ms-3 switch-view d-none">[ {{planejamento.qtd_viagens|sub:ativo.qtd_viagens|zfill:3}} ]{% endif %}</span></dd>
-                <dt class="col-lg-4 text-muted">Produtivas</dt><dd class="col-lg-8 text-muted">{{planejamento.qtd_viagens_produtivas|zfill:3}} {% if ativo %}<span class="ms-3 switch-view d-none">[ {{planejamento.qtd_viagens_produtivas|sub:ativo.qtd_viagens_produtivas|zfill:3}} ]{% endif %}</span></dd>
-                <dt class="col-lg-4 text-muted">Improdutivas</dt><dd class="col-lg-8 text-muted">{{planejamento.qtd_viagens_improdutivas|zfill:3}} {% if ativo %}<span class="ms-3 switch-view d-none">[ {{planejamento.qtd_viagens_improdutivas|sub:ativo.qtd_viagens_improdutivas|zfill:3}} ]{% endif %}</span></dd>
-                <dt class="col-lg-4">Km</dt><dd class="col-lg-8">{{planejamento.km_planejada}} {% if ativo %}<span class="ms-3 switch-view d-none">[ {{planejamento.km_planejada|sub:ativo.km_planejada}} ]{% endif %}</span></dd>
-                <dt class="col-lg-4 text-muted">Ociosa</dt><dd class="col-lg-8 text-muted">{{planejamento.km_ociosa}} <span class="text-orange ms-2">{{planejamento.km_ociosa|percentual:planejamento.km_planejada|floatformat:1}}%</span></dd>
-                <dt class="col-lg-4">Horas OP</dt><dd class="col-lg-8">--</dd>
-                <dt class="col-lg-4 text-purple">IPK</dt><dd class="col-lg-8 text-purple">--</dd>
-                <dt class="col-lg-4 text-purple">HVD</dt><dd class="col-lg-8 text-purple">--</dd>
+                <dt class="col-4">Frota</dt><dd class="col-8">{{planejamento.qtd_carros|zfill:2}} {% if ativo %}<span class="ms-3 switch-view d-none">[ {{planejamento.qtd_carros|sub:ativo.qtd_carros|zfill:2}} ]</span>{% endif %}</dd>
+                <dt class="col-4">Condutores</dt><dd class="col-8">--</dd>
+                <dt class="col-4">Viagens</dt><dd class="col-8">{{planejamento.qtd_viagens|zfill:3}} {% if ativo %}<span class="ms-3 switch-view d-none">[ {{planejamento.qtd_viagens|sub:ativo.qtd_viagens|zfill:3}} ]{% endif %}</span></dd>
+                <dt class="col-4 text-muted">Produtivas</dt><dd class="col-8 text-muted">{{planejamento.qtd_viagens_produtivas|zfill:3}} {% if ativo %}<span class="ms-3 switch-view d-none">[ {{planejamento.qtd_viagens_produtivas|sub:ativo.qtd_viagens_produtivas|zfill:3}} ]{% endif %}</span></dd>
+                <dt class="col-4 text-muted">Improdutivas</dt><dd class="col-8 text-muted">{{planejamento.qtd_viagens_improdutivas|zfill:3}} {% if ativo %}<span class="ms-3 switch-view d-none">[ {{planejamento.qtd_viagens_improdutivas|sub:ativo.qtd_viagens_improdutivas|zfill:3}} ]{% endif %}</span></dd>
+                <dt class="col-4">Km</dt><dd class="col-8">{{planejamento.km_planejada}} {% if ativo %}<span class="ms-3 switch-view d-none">[ {{planejamento.km_planejada|sub:ativo.km_planejada}} ]{% endif %}</span></dd>
+                <dt class="col-4 text-muted">Ociosa</dt><dd class="col-8 text-muted">{{planejamento.km_ociosa}} <span class="text-orange ms-2">{{planejamento.km_ociosa|percentual:planejamento.km_planejada|floatformat:1}}%</span></dd>
+                <dt class="col-4">Horas OP</dt><dd class="col-8">--</dd>
+                <dt class="col-4 text-purple">IPK</dt><dd class="col-8 text-purple">--</dd>
+                <dt class="col-4 text-purple">HVD</dt><dd class="col-8 text-purple">--</dd>
               </dl>
               <hr class="mb-2">
               <dl class="row mt-2">
-                <dt class="col-lg-4">Empresa</dt><dd class="col-lg-8">{{planejamento.empresa.nome}}</dd>
-                <dt class="col-lg-4">Linha</dt><dd class="col-lg-8">{{planejamento.linha.codigo}}</dd>
-                <dt class="col-lg-4">Nome</dt><dd class="col-lg-8">{{planejamento.linha.nome}}</dd>
-                <dt class="col-lg-4">Criação</dt><dd class="col-lg-8">{{planejamento.data_criacao|date:'d/m/Y'}}</dd>
-                <dt class="col-lg-4">Responsável</dt><dd class="col-lg-8">{{planejamento.usuario.username|title}}</dd>
-                <dt class="col-lg-4">Status</dt><dd class="col-lg-8">{{planejamento.ativo|yesno:'<b class="text-success">Ativo</b>,<b class="text-secondary">Inativo</b>'|safe}}</dd>
+                <dt class="col-4">Empresa</dt><dd class="col-8">{{planejamento.empresa.nome}}</dd>
+                <dt class="col-4">Linha</dt><dd class="col-8">{{planejamento.linha.codigo}}</dd>
+                <dt class="col-4">Nome</dt><dd class="col-8">{{planejamento.linha.nome}}</dd>
+                <dt class="col-4">Criação</dt><dd class="col-8">{{planejamento.data_criacao|date:'d/m/Y'}}</dd>
+                <dt class="col-4">Responsável</dt><dd class="col-8">{{planejamento.usuario.username|title}}</dd>
+                <dt class="col-4">Status</dt><dd class="col-8">{{planejamento.ativo|yesno:'<b class="text-success">Ativo</b>,<b class="text-secondary">Inativo</b>'|safe}}</dd>
               </dl>
               <div class="row g-1">
                 <div class="mb-1 col-lg-12">

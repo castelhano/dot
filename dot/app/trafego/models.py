@@ -137,7 +137,7 @@ class Carro(models.Model):
     planejamento = models.ForeignKey(Planejamento, blank=False, null=False, on_delete=models.CASCADE)
     classificacao = models.CharField(max_length=3,choices=CLASSIFICACAO_CHOICES, blank=True)
     cobrador = models.BooleanField(default=False)
-    inclusivo = models.BooleanField(default=False)
+    labels = models.CharField(max_length=250, blank=True)
     def viagens(self):
         return Viagem.objects.filter(carro=self)
     class Meta:
@@ -147,14 +147,17 @@ class Viagem(models.Model):
     SENTIDO_CHOICES = (
     ('I','Ida'),
     ('V','Volta'),
+    ('U','Unico'),
     )
     TIPO_CHOICES = (
     ('1','1 Produtiva'),
     ('2','2 Expresso'),
     ('3','3 Semi Expresso'),
+    ('4','4 Extra'),
     ('5','5 Acesso'),
     ('6','6 Recolhe'),
     ('7','7 Intervalo'),
+    ('8','8 T Turno'),
     ('9','9 Reservado'),
     )
     carro = models.ForeignKey(Carro, blank=False, null=False, on_delete=models.CASCADE)
@@ -163,10 +166,14 @@ class Viagem(models.Model):
     sentido = models.CharField(max_length=3,choices=SENTIDO_CHOICES, blank=True, default='I')
     tipo = models.CharField(max_length=3,choices=TIPO_CHOICES, blank=True, default='1')
     dia_inicio = models.PositiveIntegerField(blank=True, null=True, default=1)
-    dia_termino = models.PositiveIntegerField(blank=True, null=True, default=1)
+    dia_fim = models.PositiveIntegerField(blank=True, null=True, default=1)
+    origem = models.ForeignKey(Localidade,related_name='viagem_origem', blank=True, null=True, on_delete=models.RESTRICT)
+    destino = models.ForeignKey(Localidade,related_name='viagem_destino', blank=True, null=True, on_delete=models.RESTRICT)
+    detalhe = models.CharField(max_length=10, blank=True)
     class Meta:
         default_permissions = []
 
+# Evento para ocorrencias
 class Evento(models.Model):
     nome = models.CharField(max_length=80, unique=True, blank=False)
     def __str__(self):

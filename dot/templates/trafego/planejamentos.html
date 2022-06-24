@@ -34,13 +34,13 @@
       <table id="main_table" class="table border table-striped table-hover table-sortable">
         <thead>
           <tr>
-            <th>Empresa</th>
+            <th class="d-none d-lg-table-cell">Empresa</th>
             <th>Codigo</th>
-            <th>Linha</th>
+            <th class="d-none d-md-table-cell">Linha</th>
             <th>Dia</th>
             <th>Ativo</th>
-            <th>Criado em</th>
-            <th>Responsável</th>
+            <th class="d-none d-lg-table-cell">Criado em</th>
+            <th class="d-none d-lg-table-cell">Responsável</th>
             {% if perms.trafego.change_planejamento %}
             <th>&nbsp;</th>
             {% endif %}
@@ -49,15 +49,15 @@
         <tbody>
           {% for planejamento in planejamentos %}
           <tr>
-            <td>{{planejamento.empresa.nome}}</td>
+            <td class="d-none d-lg-table-cell">{{planejamento.empresa.nome}}</td>
             <td>{{planejamento.codigo}}</td>
-            <td>{{planejamento.linha.codigo}}</td>
+            <td class="d-none d-md-table-cell">{{planejamento.linha.codigo}}</td>
             <td>{{planejamento.get_dia_tipo_display}}</td>
             <td class="{% if planejamento.ativo %}table-success{% else %}table-secondary{% endif %}">{{planejamento.ativo|yesno:'Ativo,Inativo'}}</td>
-            <td>{{planejamento.data_criacao|date:'d/m/Y'}}</td>
-            <td>{{planejamento.usuario.username|title}}</td>
+            <td class="d-none d-lg-table-cell">{{planejamento.data_criacao|date:'d/m/Y'}}</td>
+            <td class="d-none d-lg-table-cell">{{planejamento.usuario.username|title}}</td>
             {% if perms.trafego.change_planejamento %}
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'trafego_planejamento_id' planejamento.id %}"><i class="fas fa-pen"></i></a></td>
+            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'trafego_planejamento_id' planejamento.id %}"><i class="fas fa-wd {% if planejamento.pin %}fa-thumbtack{% else %}fa-pen{% endif %}"></i></a></td>
             {% endif %}
           </tr>
           {% empty %}
