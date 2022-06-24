@@ -91,7 +91,7 @@
               <span class="me-1{% if apontamento.meta and apontamento.indicador.quanto_maior_melhor and apontamento.valor >= apontamento.meta or not apontamento.indicador.quanto_maior_melhor and apontamento.valor <= apontamento.meta %} text-success{% elif apontamento.meta > 0 %} text-danger{% endif %}">
                 {{apontamento.valor|floatformat:indicador.precisao|default:'--'}}
               </span> {{apontamento.evolucao|indicatorArrow|safe}}</h6>
-              <small>{% if apontamento.valor and apontamento.meta > 0 %}Meta: <b>{{apontamento.meta|default:'--'}}</b>{% endif %}</small></td>
+              <small>{% if apontamento.valor and apontamento.meta > 0 %}Meta: <b>{{apontamento.meta|floatformat:indicador.precisao|default:'--'}}</b>{% endif %}</small></td>
               {% endfor %}
             </tr>
             {% empty %}

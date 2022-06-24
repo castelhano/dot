@@ -57,7 +57,7 @@
               {% if perms.core.docs %}
               <li><a class="dropdown-item" id="docs_link" href="{% url 'docs' %}"><i class="fas fa-fw fa-terminal"></i> <b>D</b>ocumentação</a></li>
               {% endif %}
-              <li><a class="dropdown-item" href="javascript:location.reload(true)"><i class="fas fa-fw fa-sign-out-alt"></i> Force Reload</a></li>
+              <li><span class="dropdown-item pointer" onclick="forceReload()"><i class="fas fa-fw fa-sign-out-alt"></i> Force Reload</span></li>
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-fw fa-sign-out-alt"></i> Sair</a></li>
             </ul>
@@ -168,7 +168,7 @@
   <script src="{% static 'js/dot.js' %}"></script>
   {% block add_script_src %}{% endblock %}
   <script>
-  function forceReload(){javascript:location.reload(true);}
+  function forceReload(){window.location.href = window.location.href;}
   {% block add_script %}{% endblock %}
 </script>
 <p class="py-5 d-block d-lg-none">&nbsp;</p>
