@@ -19,11 +19,22 @@ from datetime import date, datetime, timedelta
 def dashboard(request):
     try:
         staff = Staff.objects.get(usuario=request.user)
-        diretrizes = Diretriz.objects.filter(ativo=True, empresa__in=staff.usuario.profile.empresas.all()).order_by('created_on')
     except Exception as e:
         staff = None
         diretrizes = None
-    return render(request,'gestao/dashboard.html',{'staff':staff,'diretrizes':diretrizes})
+    if request.GET.get('empresa', None):
+        try:
+            empresa = request.user.profile.empresas.get(pk=request.GET['empresa'])
+            diretrizes = Diretriz.objects.filter(ativo=True, empresa=empresa).order_by('created_on')
+        except Exception as e:
+            empresa = None
+            diretrizes = None
+            messages.error(request, 'Empresa não encontrada ou habilitada') 
+    else:
+        empresa = None
+        diretrizes = Diretriz.objects.filter(ativo=True, empresa__in=staff.usuario.profile.empresas.all()).order_by('created_on')
+    empresas = request.user.profile.empresas.all().order_by('nome')
+    return render(request,'gestao/dashboard.html',{'staff':staff,'diretrizes':diretrizes,'empresa':empresa,'empresas':empresas})
 
 @login_required
 @permission_required('gestao.dashboard')

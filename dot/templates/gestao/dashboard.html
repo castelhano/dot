@@ -18,8 +18,24 @@
     </ul>
   </div>
   <div class="card-body tab-content">
-    <h5 class="card-title mb-0">Dashboard: <b class="text-purple">{{user.username|title}}</b></h5>
-    <p class="mb-3 fw-bold text-muted">{{staff.get_role_display|default:'<i class="fas fa-exclamation-triangle me-1 text-danger"></i>Não parametrizado'}}</p>
+    <div class="row">
+      <div class="col">
+        <h5 class="card-title mb-0">Dashboard: <b class="text-purple">{{user.username|title}}</b></h5>
+        <p class="mb-3 fw-bold text-muted">{{staff.get_role_display|default:'<i class="fas fa-exclamation-triangle me-1 text-danger"></i>Não parametrizado'}}</p>      
+      </div>
+      <div class="col-auto">
+        <div class="dropdown">
+          <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown"><label class="fw-bold text-capitalize pointer">{{empresa.nome|default:'Empresa'}}</label></button>
+          <ul class="dropdown-menu fs-7">
+            {% for empresa in empresas %}
+            <li><span class="dropdown-item pointer" onclick="filter('empresa',{{empresa.id}})">{{empresa.nome}}</span></li>
+            {% endfor %}
+            <li><span class="dropdown-item dropdown-item-secondary pointer" onclick="filtersClean(['empresa'])">Todas</span></li>
+          </ul>
+        </div>      
+      </div>
+    </div>
+    
     <div class="tab-pane fade show active" id="base" role="tabpanel">
       <div class="row g-3">
         <div class="col-lg order-2 order-lg-1">
@@ -30,7 +46,8 @@
               </div>
             </div>
             <div class="card-body p-0 pb-2 fs-7">
-              {% for plano in staff.planos_em_progresso %}
+              {% call_method staff 'planos_em_progresso' empresa as planos_em_progresso %}
+              {% for plano in planos_em_progresso %}
               <div class="border-top border-bottom p-2 mt-2 bg-light">
                 <div class="row">
                   <div class="col text-truncate">{% if plano.bloqueado %}<i class="fas fa-lock text-muted me-1"></i>{% endif %}<a class="fw-bold text-decoration-none mb-0" href="{% url 'gestao_plano_id' plano.id %}">{{plano.titulo}}</a></div>
@@ -192,7 +209,9 @@
 {% include "_component/modal/loading.html" with message='Carregando indicadores....' id='analytics_loading' %}
 {% endblock%}
 
-{% block add_script_src %}{% endblock %}
+{% block add_script_src %}
+<script src="{% static 'js/url.js' %}"></script>
+{% endblock %}
 
 <script>
   {% block add_script %}
