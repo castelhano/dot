@@ -19,7 +19,7 @@ def call_method(obj, method_name, *args):
         method = getattr(obj, method_name)
         return method(*args)
     except Exception as e:
-        return 'err'
+        return None
 
 # add_days Recebe uma data e adiciona x dias
 # --

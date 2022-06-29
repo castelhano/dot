@@ -98,7 +98,8 @@
           <div class="card h-100">
             <div class="card-header text-muted fs-7">Em revisão</div>
             <div class="card-body p-0 pb-2 fs-7">
-              {% for plano in staff.planos_em_avaliacao %}
+              {% call_method staff 'planos_em_avaliacao' empresa as planos_em_avaliacao %}
+              {% for plano in planos_em_avaliacao %}
               <div class="border-top border-bottom p-2 mt-2 bg-light">
                 <div class="row">
                   <div class="col text-truncate">{% if plano.bloqueado %}<i class="fas fa-lock text-muted me-1"></i>{% endif %}<a class="fw-bold text-decoration-none mb-0" href="{% url 'gestao_plano_id' plano.id %}">{{plano.titulo}}</a></div>
