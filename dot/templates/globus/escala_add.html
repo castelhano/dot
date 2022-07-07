@@ -6,11 +6,11 @@
 {% block model_menu %}{% include "_component/menu/visitor.html" %}{% endblock%}
 
 {% block content_fluid %}
-<a class="d-none" id="clear" href="{% url 'globus_escala_add' %}"></a>
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
-      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a class="nav-link active text-purple" id="clear" href="{% url 'globus_escala_add' %}"><i class="fas fa-user-clock"></i></a></li>
+      <li class="nav-item"><a class="nav-link text-purple" id="evento_lote" href="{% url 'globus_evento_lote' %}"><i class="fas fa-users"></i></a></li>
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'globus_escalas' %}"><i class="fas fa-undo"></i></a></li>
     </ul>
   </div>
@@ -27,6 +27,7 @@
 <script>
   {% block add_script %}
   var TAB_ON_ENTER = true;
+  SHORTCUT_MAP['2FTF'] = '#evento_lote';
   
   {% endblock %}
 </script>

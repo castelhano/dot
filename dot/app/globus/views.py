@@ -66,7 +66,7 @@ def consultar_escala(request): # Metodo para buscar a escala do funcionario loga
     except: # Gera excecao caso nao exista confuguracao de pesquisa para empresa
         escalas = None
         data_consulta = None
-        settings = None
+        settings = Settings()
     return render(request,'globus/consulta_escala.html',{'funcionario':funcionario,'escalas':escalas,'data_consulta':data_consulta, 'settings':settings})
 
 @login_required
@@ -327,6 +327,36 @@ def escala_importar(request):
     else:
         return render(request, 'globus/importar.html')
 
+@login_required
+@permission_required('globus.importar_escala')
+def evento_lote(request):
+    metrics = {
+        'errors' : [],
+    }
+    if request.method == 'POST':
+        try:
+            empresa = Empresa.objects.get(id=request.POST['empresa'])
+            matriculas = json.loads(request.POST['matriculas'])
+            has_errors = False
+            for matricula in matriculas:
+                try:
+                    e = Escala()
+                    e.empresa = empresa
+                    e.data = request.POST['data']
+                    e.status = request.POST['status']
+                    e.funcionario = Funcionario.objects.get(matricula=matricula)
+                    e.save()
+                except Exception as e:
+                    has_errors = True
+                    metrics['errors'].append(f'Matricula <b>{matricula}</b> não cadastrada para empresa')
+            if not has_errors:
+                messages.success(request,'Escalas criadas com successo')
+            else:
+                messages.warning(request,'<b>Atenção:</b> Uma ou mais escalas não foram criadas')
+        except Exception as e:
+            messages.error(request,f'<b>Erro:</b> {e}')
+    return render(request, 'globus/evento_lote.html', metrics)
+    
 @login_required
 @permission_required('globus.add_viagem')
 def viagem_add(request, id):

@@ -1,0 +1,39 @@
+<div class="row g-1">
+	<div class="mb-1 {{breakpoint|default:'col-lg-12'}} {{classlist}}">
+    <div class="row g-1">
+      <div class="col-lg">
+        <textarea class="form-control" id="id_json_obj_raw" name="json_obj_raw" style="height: 206px;" placeholder="{{entry_placeholder|default:'Entradas'}}"></textarea>
+      </div>
+      <div class="col-lg">
+        <div class="callout callout-primary container-fluid overflow-auto" style="height: 206px;">
+          <ol id="json_obj_list"></ol>
+        </div>
+      </div>
+      <div class="my-1">
+        <button type="button" class="btn btn-sm btn-outline-secondary" name="button" onclick="text_to_json_clear()">Limpar</button>
+        <button type="button" class="btn btn-sm btn-outline-success" name="button" onclick="text_to_json()"><i class="fas fa-arrow-right"></i></button>
+        <span class="ms-2 fs-7">Total de <b id="json_obj_total_label">0</b> {{entry_placeholder|lower|default:'entradas'}}</span>
+      </div>
+    </div>
+	</div>
+</div>
+
+<script>
+  function text_to_json(){
+    let ol = document.getElementById('json_obj_list');
+    ol.innerHTML = '';
+		let list = document.getElementById('id_json_obj_raw').value.split('\n').filter(n => n);
+    for(i=0;i < list.length;i++){
+      ol.innerHTML += `<li>${list[i]}</li>`;
+    }
+    document.getElementById('json_obj_total_label').innerHTML = list.length;
+		json_obj_target.value = JSON.stringify(list);
+	}
+	
+	function text_to_json_clear(){
+		document.getElementById('json_obj_list').innerHTML = '';
+		document.getElementById('id_json_obj_raw').value = '';
+		json_obj_target.value = '';		
+	}
+  
+</script>
