@@ -295,6 +295,10 @@
     'prefix': 'component_loadding'
     'body':'{% include "_component/modal/loading.html" with message=\'Salvando....\' background=\'\' spinner_classlist=\'\' message_classlist=\'\' %}\nvar modal_loading = new bootstrap.Modal(document.getElementById(\'modal_loading\'), {keyboard: false});\nfunction submitForm(){modal_loading.show();return true;}'
   
+  'Component Text to Json':
+    'prefix': 'component_text2json'
+    'body':'{% include "_component/widget/textToJson.html" with entry_placeholder=\'Matriculas\' breakpoint=\'col-lg-5 mb-1\' %}\nvar json_obj_target = document.getElementById(\'id_matriculas\');'
+  
   'Multiple Option Select':
     'prefix': 'form_select_multiple'
     'body':'<div class="row g-1">\n
