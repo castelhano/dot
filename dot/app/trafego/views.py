@@ -5,8 +5,8 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.db.models import Q
 from core.models import Empresa, Log
-from .models import Linha, Localidade, Patamar, Planejamento, Carro, Viagem, Evento, Providencia, Ocorrencia, FotoOcorrencia, Orgao, Agente, Enquadramento, Notificacao, Predefinido
-from .forms import LinhaForm, LocalidadeForm, EventoForm, ProvidenciaForm, OcorrenciaForm, PlanejamentoForm, OrgaoForm, AgenteForm, EnquadramentoForm, NotificacaoForm, PredefinidoForm
+from .models import Linha, Localidade, Trajeto, Patamar, Planejamento, Carro, Viagem, Evento, Providencia, Ocorrencia, FotoOcorrencia, Orgao, Agente, Enquadramento, Notificacao, Predefinido
+from .forms import LinhaForm, LocalidadeForm, TrajetoForm, EventoForm, ProvidenciaForm, OcorrenciaForm, PlanejamentoForm, OrgaoForm, AgenteForm, EnquadramentoForm, NotificacaoForm, PredefinidoForm
 from .validators import validate_file_extension
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
@@ -56,6 +56,19 @@ def linhas(request):
         linhas = linhas.filter(empresa__in=request.user.profile.empresas.all())
     metrics = dict(status_display='Ativas' if status == 'A' else 'Inativas', empresa_display = empresa_display)
     return render(request,'trafego/linhas.html', {'linhas' : linhas, 'metrics':metrics})
+
+@login_required
+@permission_required('trafego.view_linha')
+def trajetos(request, id_linha):
+    metrics = {}
+    try:
+        metrics['linha'] = Linha.objects.get(id=id_linha)
+        metrics['ida'] = Trajeto.objects.filter(linha=metrics['linha'], sentido='I').order_by('seq')
+        metrics['volta'] = Trajeto.objects.filter(linha=metrics['linha'], sentido='V').order_by('seq')
+        metrics['unico'] = Trajeto.objects.filter(linha=metrics['linha'], sentido='U').order_by('seq')
+    except Exception as e:
+        messages.error(request,f'<b>Erro:</b> {e}')
+    return render(request, 'trafego/trajetos.html', metrics)
 
 @login_required
 @permission_required('trafego.view_planejamento')

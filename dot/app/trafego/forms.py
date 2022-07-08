@@ -1,5 +1,5 @@
 from django import forms
-from .models import Linha, Localidade, Evento, Providencia, Ocorrencia, Planejamento, Orgao, Agente, Enquadramento, Notificacao, Predefinido
+from .models import Linha, Localidade, Trajeto, Evento, Providencia, Ocorrencia, Planejamento, Orgao, Agente, Enquadramento, Notificacao, Predefinido
 from datetime import date, datetime
 
 
@@ -11,6 +11,17 @@ class LocalidadeForm(forms.ModelForm):
     eh_garagem = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
     troca_turno = forms.BooleanField(required=False, initial=True, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
     ponto_de_controle = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
+
+class TrajetoForm(forms.ModelForm):
+    class Meta:
+        model = Trajeto
+        fields = ['sentido','seq','local', 'tipo','labels','fechado','detalhe']
+    sentido = forms.ChoiceField(choices=Trajeto.SENTIDO_CHOICES, widget=forms.Select(attrs={'class':'form-select'}))
+    seq = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':'1','max':'199', 'onfocus':'this.select();'}))
+    tipo = forms.ChoiceField(choices=Trajeto.TIPO_CHOICES, widget=forms.Select(attrs={'class':'form-select'}))
+    fechado = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
+    detalhe = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
+    
 
 class LinhaForm(forms.ModelForm):
     class Meta:

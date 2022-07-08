@@ -13,6 +13,7 @@ urlpatterns = [
     path('trafego_localidade_id/<int:id>',views.localidade_id,name='trafego_localidade_id'),
     path('trafego_localidade_update/<int:id>',views.localidade_update,name='trafego_localidade_update'),
     path('trafego_localidade_delete/<int:id>/delete',views.localidade_delete,name='trafego_localidade_delete'),
+    path('trafego_trajetos/<int:id_linha>',views.trajetos,name='trafego_trajetos'),
     path('trafego_planejamentos',views.planejamentos,name='trafego_planejamentos'),
     path('trafego_planejamento_add',views.planejamento_add,name='trafego_planejamento_add'),
     path('trafego_planejamento_id/<int:id>',views.planejamento_id,name='trafego_planejamento_id'),

@@ -58,11 +58,36 @@ class Linha(models.Model):
         return reversed(logs)
     def patamares(self):
         return Patamar.objects.filter(linha=self).order_by('inicial')
+    def trajeto(self, sentido='I'):
+        return Trajeto.objects.filter(linha=self,sentido=sentido).order_by('seq')
     class Meta:
         permissions = [
             ("dop_linha", "Pode acessar DOP"),
         ]
 
+class Trajeto(models.Model):
+    TIPO_CHOICES = (
+    (1,'Passagem'),
+    (2,'Terminal'),
+    (3,'Referencia'),
+    )
+    SENTIDO_CHOICES = (
+    ('I','Ida'),
+    ('V','Volta'),
+    ('U','Unico'),
+    )
+    linha = models.ForeignKey(Linha, blank=False, null=False, on_delete=models.RESTRICT)
+    sentido = models.CharField(max_length=3,choices=SENTIDO_CHOICES, blank=True, default='I')
+    seq = models.PositiveIntegerField(default=1)
+    local = models.ForeignKey(Localidade, blank=True, null=True, on_delete=models.RESTRICT)
+    tipo = models.CharField(max_length=2,choices=TIPO_CHOICES, blank=True, default=1)
+    labels = models.CharField(max_length=250, blank=True)
+    fechado = models.BooleanField(default=False)
+    detalhe = models.CharField(max_length=250, blank=True)
+    class Meta:
+        default_permissions = []
+    
+    
 class Patamar(models.Model):
     linha = models.ForeignKey(Linha, blank=False, null=False, on_delete=models.CASCADE)
     inicial = models.PositiveIntegerField(blank=False, null=False)
@@ -136,7 +161,6 @@ class Carro(models.Model):
     )
     planejamento = models.ForeignKey(Planejamento, blank=False, null=False, on_delete=models.CASCADE)
     classificacao = models.CharField(max_length=3,choices=CLASSIFICACAO_CHOICES, blank=True)
-    cobrador = models.BooleanField(default=False)
     labels = models.CharField(max_length=250, blank=True)
     def viagens(self):
         return Viagem.objects.filter(carro=self)

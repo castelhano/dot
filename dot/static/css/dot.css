@@ -24,6 +24,7 @@ select.readonly{background: rgb(233, 236, 239)!important;pointer-events: none;to
 .border-oil{border-color: #0065A4!important;}
 .border-orange{border-color: #FD7E14!important;}
 
+.btn-xl{height: calc(3.5rem + 2px);line-height: 1.25;}
 .btn-dark-alt, .bg-dark-alt{background-color: #393939;color: #FFF;}
 .btn-orange, .bg-orange{background-color: #F35B04;color: #FFF;}
 .btn-orange:hover{background-color: #FD7E14;color: #FFF;}
