@@ -18,34 +18,54 @@
     </ul>
   </div>
   <div class="card-body tab-content">
-    <h5 class="card-title mb-0">Trajetos: <b class="text-purple">{{linha.codigo}}</b></h5>
-    <span class="mb-2">{{linha.nome}}</span>
+    <div class="row">
+      <div class="col">
+        <h5 class="card-title mb-0">Trajetos: <b class="text-purple">{{linha.codigo}}</b></h5>
+        <span class="mb-2">{{linha.nome}}</span>
+      </div>
+      {% if perms.trafego.change_linha %}
+      <div class="col-auto"><a id="add" class="btn btn-sm btn-success" data-bs-toggle="collapse" href="#form_fields" onclick="setTimeout(function(){document.getElementById('id_sentido').focus();},200);" role="button"><i class="fas fa-plus mx-3"></i></a></div>
+      {% endif %}
+    </div>
     <div class="tab-pane fade show active" id="base" role="tabpanel">
-      <form id="app_form" action="url" method="POST" autocomplete="off">
+      {% if perms.trafego.change_linha %}
+      <form id="app_form" action="{% url 'trafego_trajetos' linha.id|safe %}" method="POST" autocomplete="off">
         {% csrf_token %}
-        <div class="row">
+        <div id="form_fields" class="row mt-2 collapse show">
           <div class="col">
             <div class="row g-1">
               <div class="form-floating mb-1 col-lg-auto">
-                <select class="form-select pe-5" id="id_sentido" name="sentido" autofocus>
+                <select class="form-select pe-5" id="id_sentido" name="sentido">
                   <option value="I" selected>Ida</option>
                   <option value="V">Volta</option>
                   <option value="U">Unico</option>
                 </select>
                 <label for="id_sentido">Sentido</label>
               </div>
-              {% include "_component/field/localidade.html" with breakpoint='mb-lg-1 col-lg-4' %}
-              <div class="form-floating col-lg-auto">
+              {% include "_component/field/localidade.html" with required=True breakpoint='mb-lg-1 col-lg' %}
+              <div class="form-floating col-auto">
                 <input type="number" class="form-control" name="seq" id="id_seq" min="1" max="999">
                 <label for="id_seq">Seq</label>
               </div>
-              <div class="col-lg-auto">
-                <button type="submit" class="btn btn-xl btn-success" id="submit"><i class="fas fa-plus me-1"></i> Add</button>
+              <div class="form-floating col col-lg-4 mb-2">
+                <input type="text" class="form-control" name="seq" id="id_label">
+                <label for="id_label">Labels</label>
               </div>
+            </div>
+            <div class="row">
+              <div class="col-auto">
+                <div class="form-check form-switch">
+                	<input class="form-check-input" type="checkbox" role="switch" name="fechado" id="id_fechado">
+                  <label for="id_fechado" class="fs-7 user-select-none">Fechado</label>
+                </div>
+              </div>
+              <div class="col"><input type="text" class="form-control form-control-sm" name="" value="" placeholder="Detalhe fechamento"></div>
             </div>
           </div>
         </div>
+        <input type="hidden" name="linha" value="{{linha.id|safe}}">
       </form>
+      {% endif %}
       <div class="row mt-3">
         {% if ida %}
         <div class="col-lg-6">
@@ -53,7 +73,55 @@
             <h5 class="mb-3 text-muted"><i class="fas fa-road fs-6 me-2"></i>Ida</h5>
             <ul class="timeline timeline-sm ms-2">
               {% for p in ida %}
-              <li class="event">{{p.local.nome}}</li>
+              <li class="event d-flex justify-content-between">
+                <span>{{p.local.nome}}</span>
+                <span>
+                  <span class="badge btn-primary" style="width: 35px;">{{p.seq|safe}}</span>
+                  {% if perms.trafego.change_linha %}
+                  <a class="badge btn-dark" href="{% url 'trafego_trajeto_delete' p.id|safe %}"><i class="fas fa-times"></i></a>
+                  {% endif %}
+                </span>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        {% endif %}
+        {% if volta %}
+        <div class="col-lg-6">
+          <div class="callout callout-secondary">
+            <h5 class="mb-3 text-muted"><i class="fas fa-road fs-6 me-2"></i>Volta</h5>
+            <ul class="timeline timeline-sm ms-2">
+              {% for p in volta %}
+              <li class="event d-flex justify-content-between">
+                <span>{{p.local.nome}}</span>
+                <span>
+                  <span class="badge btn-primary" style="width: 35px;">{{p.seq|safe}}</span>
+                  {% if perms.trafego.change_linha %}
+                  <a class="badge btn-dark" href="{% url 'trafego_trajeto_delete' p.id|safe %}"><i class="fas fa-times"></i></a>
+                  {% endif %}
+                </span>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        {% endif %}
+        {% if unico %}
+        <div class="col-lg-6">
+          <div class="callout callout-primary">
+            <h5 class="mb-3 text-muted"><i class="fas fa-road fs-6 me-2"></i>Único</h5>
+            <ul class="timeline timeline-sm ms-2">
+              {% for p in unico %}
+              <li class="event d-flex justify-content-between">
+                <span>{{p.local.nome}}</span>
+                <span>
+                  <span class="badge btn-primary" style="width: 35px;">{{p.seq|safe}}</span>
+                  {% if perms.trafego.change_linha %}
+                  <a class="badge btn-dark" href="{% url 'trafego_trajeto_delete' p.id|safe %}"><i class="fas fa-times"></i></a>
+                  {% endif %}
+                </span>
+              </li>
               {% endfor %}
             </ul>
           </div>
@@ -73,5 +141,11 @@
 <script>
   {% block add_script %}
   var TAB_ON_ENTER = true;
+  
+  console.log('::' + '{{sentido}}');
+  {% if sentido %}
+  document.getElementById('id_sentido').value = '{{sentido}}';
+  {% endif %}
+  
   {% endblock %}
 </script>

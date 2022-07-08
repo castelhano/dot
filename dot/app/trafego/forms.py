@@ -15,10 +15,9 @@ class LocalidadeForm(forms.ModelForm):
 class TrajetoForm(forms.ModelForm):
     class Meta:
         model = Trajeto
-        fields = ['sentido','seq','local', 'tipo','labels','fechado','detalhe']
+        fields = ['linha','sentido','seq','local','labels','fechado','detalhe']
     sentido = forms.ChoiceField(choices=Trajeto.SENTIDO_CHOICES, widget=forms.Select(attrs={'class':'form-select'}))
     seq = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':'1','max':'199', 'onfocus':'this.select();'}))
-    tipo = forms.ChoiceField(choices=Trajeto.TIPO_CHOICES, widget=forms.Select(attrs={'class':'form-select'}))
     fechado = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
     detalhe = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
     

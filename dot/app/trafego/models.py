@@ -66,11 +66,6 @@ class Linha(models.Model):
         ]
 
 class Trajeto(models.Model):
-    TIPO_CHOICES = (
-    (1,'Passagem'),
-    (2,'Terminal'),
-    (3,'Referencia'),
-    )
     SENTIDO_CHOICES = (
     ('I','Ida'),
     ('V','Volta'),
@@ -80,7 +75,6 @@ class Trajeto(models.Model):
     sentido = models.CharField(max_length=3,choices=SENTIDO_CHOICES, blank=True, default='I')
     seq = models.PositiveIntegerField(default=1)
     local = models.ForeignKey(Localidade, blank=True, null=True, on_delete=models.RESTRICT)
-    tipo = models.CharField(max_length=2,choices=TIPO_CHOICES, blank=True, default=1)
     labels = models.CharField(max_length=250, blank=True)
     fechado = models.BooleanField(default=False)
     detalhe = models.CharField(max_length=250, blank=True)

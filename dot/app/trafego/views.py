@@ -61,6 +61,34 @@ def linhas(request):
 @permission_required('trafego.view_linha')
 def trajetos(request, id_linha):
     metrics = {}
+    if request.method == 'POST':
+        form = TrajetoForm(request.POST)
+        if form.is_valid():
+            metrics['sentido'] = request.POST.get('sentido', None)
+            try:
+                registro = form.save(commit=False)
+                if registro.seq == None:
+                    registro.seq = Trajeto.objects.filter(linha=registro.linha, sentido=registro.sentido).count() + 1
+                else:
+                    # Caso informado sequencia que trajeto deva entrar, ajusta sequencias posteriores
+                    qtde = Trajeto.objects.filter(linha=registro.linha, sentido=registro.sentido).count()
+                    if registro.seq > qtde: # Caso informado sequencia maior que ponto existentes, ajusta para ultima sequencia
+                        registro.seq = qtde + 1
+                    for p in Trajeto.objects.filter(linha=registro.linha, sentido=registro.sentido, seq__gte=registro.seq):
+                        p.seq += 1
+                        p.save()
+                registro.save()
+                l = Log()
+                l.modelo = "trafego.linha"
+                l.objeto_id = registro.linha.id
+                l.objeto_str = registro.linha.codigo
+                l.usuario = request.user
+                l.mensagem = "UPDATE"
+                l.save()
+            except Exception as e:
+                messages.error(request,f'<b>Erro:</b> {e}')
+        else:
+            metrics['form'] = form
     try:
         metrics['linha'] = Linha.objects.get(id=id_linha)
         metrics['ida'] = Trajeto.objects.filter(linha=metrics['linha'], sentido='I').order_by('seq')
@@ -1034,6 +1062,28 @@ def linha_delete(request, id):
     except:
         messages.error(request,'<b>Erro</b> ao apagar linha')
         return redirect('trafego_linha_id', id)
+
+@login_required
+@permission_required('trafego.change_linha')
+def trajeto_delete(request, id):
+    try:
+        registro = Trajeto.objects.get(pk=id)
+        l = Log()
+        l.modelo = "trafego.linha"
+        l.objeto_id = registro.linha.id
+        l.objeto_str = registro.linha.codigo
+        l.usuario = request.user
+        l.mensagem = "UPDATE"
+        l.save()
+        registro.delete()
+        for p in Trajeto.objects.filter(linha=registro.linha, sentido=registro.sentido, seq__gte=registro.seq):
+            p.seq -= 1
+            p.save()        
+        messages.warning(request,'Trajeto removido')
+        return redirect('trafego_trajetos', registro.linha.id)
+    except:
+        messages.error(request,'<b>Erro</b> ao atualizar trajeto')
+        return redirect('trafego_trajetos', registro.linha.id)
 
 @login_required
 @permission_required('trafego.delete_evento')

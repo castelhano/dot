@@ -8,7 +8,7 @@
 * <ul clas="timeline timeline-sm timeline-legend">
 *   <li class="event" data-date="29/05/22 14:22">Primeiro evento</li>
 *   <li class="event" data-date="30/05/22 18:22"><h2>Segundo evento</h2><small>Detalhes do evento</small></li>
-*   <li class="event-success" data-date="30/05/22 18:22">Segundo evento</li>
+*   <li class="event-success" data-date="--">Segundo evento</li>
 * </ul>
 */
 
