@@ -1,11 +1,13 @@
 {% extends "layout/dot.html" %}
 {% load static %}
+{% load tag_extra %}
 {% block title %}Trajetos{% endblock %}
 {% block model %}Tráfego{% endblock %}
 {% block navbar_classlist %}navbar-dark bg-primary bg-gradient{% endblock %}
 {% block model_menu %}{% include "_component/menu/trafego.html" %}{% endblock%}
 {% block style_src %}
 <link rel="stylesheet" href="{% static 'css/timeline.css' %}">
+<link rel="stylesheet" href="{% static 'css/vendor/tagin.css' %}">
 {% endblock%}
 
 {% block content_fluid %}
@@ -31,10 +33,10 @@
       {% if perms.trafego.change_linha %}
       <form id="app_form" action="{% url 'trafego_trajetos' linha.id|safe %}" method="POST" autocomplete="off">
         {% csrf_token %}
-        <div id="form_fields" class="row mt-2 collapse show">
+        <div id="form_fields" class="row mt-2 collapse">
           <div class="col">
             <div class="row g-1">
-              <div class="form-floating mb-1 col-lg-auto">
+              <div class="form-floating mb-lg-1 col-lg-auto">
                 <select class="form-select pe-5" id="id_sentido" name="sentido">
                   <option value="I" selected>Ida</option>
                   <option value="V">Volta</option>
@@ -43,44 +45,47 @@
                 <label for="id_sentido">Sentido</label>
               </div>
               {% include "_component/field/localidade.html" with required=True breakpoint='mb-lg-1 col-lg' %}
-              <div class="form-floating col-auto">
-                <input type="number" class="form-control" name="seq" id="id_seq" min="1" max="999">
-                <label for="id_seq">Seq</label>
-              </div>
               <div class="form-floating col col-lg-4 mb-2">
-                <input type="text" class="form-control" name="seq" id="id_label">
-                <label for="id_label">Labels</label>
+                <input type="text" class="form-control tagin" data-tagin-enter data-tagin-placeholder="Enter ou virgula" name="labels" id="id_labels">
+                <label for="id_labels">Tags</label>
               </div>
             </div>
-            <div class="row">
-              <div class="col-auto">
+            <div class="row g-1">
+              <div class="col-auto order-1 pe-5">
                 <div class="form-check form-switch">
-                	<input class="form-check-input" type="checkbox" role="switch" name="fechado" id="id_fechado">
+                  <input class="form-check-input" type="checkbox" role="switch" name="fechado" id="id_fechado" tabindex="-1">
                   <label for="id_fechado" class="fs-7 user-select-none">Fechado</label>
                 </div>
               </div>
-              <div class="col"><input type="text" class="form-control form-control-sm" name="" value="" placeholder="Detalhe fechamento"></div>
+              <div class="col-lg order-3 order-lg-2"><input type="text" class="form-control form-control-sm" name="detalhe" id="id_detalhe" value="" placeholder="Detalhe fechamento" tabindex="-1"></div>
+              <div class="col col-lg-auto order-2 order-lg-3"><input type="number" class="form-control form-control-sm bg-light ms-auto" name="seq" id="id_seq" style="width: 100px;" min="1" max="199" tabindex="-1" placeholder="Seq"></div>
+              <div class="col-lg-auto order-4"><button type="submit" class="btn btn-sm btn-primary"><b>G</b>ravar</button></div>
             </div>
           </div>
         </div>
         <input type="hidden" name="linha" value="{{linha.id|safe}}">
       </form>
       {% endif %}
-      <div class="row mt-3">
+      <div class="row mt-1 g-2">
         {% if ida %}
         <div class="col-lg-6">
           <div class="callout callout-primary">
             <h5 class="mb-3 text-muted"><i class="fas fa-road fs-6 me-2"></i>Ida</h5>
             <ul class="timeline timeline-sm ms-2">
               {% for p in ida %}
-              <li class="event d-flex justify-content-between">
-                <span>{{p.local.nome}}</span>
-                <span>
+              <li class="event{% if p.fechado %} event-danger{% endif %}">
+                {{p.local.nome|truncatechars:20}}{% if p.detalhe != '' %}<i class="fas fa-info-circle text-purple ms-1 help position-absolute" title="{{p.detalhe}}"></i>{% endif %}
+                <div class="event-controls">
+                  {% with p.labels|split:"," as labels %}
+                  {% for label in labels %}
+                  <span class="badge bg-secondary d-none d-lg-inline-block">{{label}}</span>
+                  {% endfor %}
+                  {% endwith %}
                   <span class="badge btn-primary" style="width: 35px;">{{p.seq|safe}}</span>
                   {% if perms.trafego.change_linha %}
                   <a class="badge btn-dark" href="{% url 'trafego_trajeto_delete' p.id|safe %}"><i class="fas fa-times"></i></a>
                   {% endif %}
-                </span>
+                </div>
               </li>
               {% endfor %}
             </ul>
@@ -93,14 +98,14 @@
             <h5 class="mb-3 text-muted"><i class="fas fa-road fs-6 me-2"></i>Volta</h5>
             <ul class="timeline timeline-sm ms-2">
               {% for p in volta %}
-              <li class="event d-flex justify-content-between">
-                <span>{{p.local.nome}}</span>
-                <span>
+              <li class="event{% if p.fechado %} event-danger{% endif %}">
+                {{p.local.nome}}{% if p.detalhe != '' %}<i class="fas fa-info-circle text-purple ms-2 help" title="{{p.detalhe}}"></i>{% endif %}
+                <div class="event-controls">
                   <span class="badge btn-primary" style="width: 35px;">{{p.seq|safe}}</span>
                   {% if perms.trafego.change_linha %}
                   <a class="badge btn-dark" href="{% url 'trafego_trajeto_delete' p.id|safe %}"><i class="fas fa-times"></i></a>
                   {% endif %}
-                </span>
+                </div>
               </li>
               {% endfor %}
             </ul>
@@ -113,14 +118,14 @@
             <h5 class="mb-3 text-muted"><i class="fas fa-road fs-6 me-2"></i>Único</h5>
             <ul class="timeline timeline-sm ms-2">
               {% for p in unico %}
-              <li class="event d-flex justify-content-between">
-                <span>{{p.local.nome}}</span>
-                <span>
+              <li class="event{% if p.fechado %} event-danger{% endif %}">
+                {{p.local.nome}}{% if p.detalhe != '' %}<i class="fas fa-info-circle text-purple ms-2 help" title="{{p.detalhe}}"></i>{% endif %}
+                <div class="event-controls">
                   <span class="badge btn-primary" style="width: 35px;">{{p.seq|safe}}</span>
                   {% if perms.trafego.change_linha %}
                   <a class="badge btn-dark" href="{% url 'trafego_trajeto_delete' p.id|safe %}"><i class="fas fa-times"></i></a>
                   {% endif %}
-                </span>
+                </div>
               </li>
               {% endfor %}
             </ul>
@@ -133,19 +138,18 @@
     
   </div>
 </div>
-
 {% endblock%}
 
-{% block add_script_src %}{% endblock %}
+{% block add_script_src %}
+<script src="{% static 'js/vendor/tagin.js' %}"></script>
+{% endblock %}
 
 <script>
   {% block add_script %}
   var TAB_ON_ENTER = true;
+  var labels = new Tagin(document.querySelector('.tagin'))
   
-  console.log('::' + '{{sentido}}');
-  {% if sentido %}
-  document.getElementById('id_sentido').value = '{{sentido}}';
-  {% endif %}
+  {% if sentido %}document.getElementById('id_sentido').value = '{{sentido}}';{% endif %}
   
   {% endblock %}
 </script>

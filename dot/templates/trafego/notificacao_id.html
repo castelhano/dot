@@ -96,14 +96,5 @@
   let valor = document.getElementById('id_valor');
   function submitForm(){valor.value = valor.value.replace('.','').replace(',','.');return true;}
   
-  function msg_predefinida(){
-    let msg = document.getElementById('id_msg_predefinida');
-    let tratativas = document.getElementById('id_tratativa');
-    if(msg.value != ''){
-      if(tratativas.value == ''){tratativas.innerHTML = msg.options[msg.selectedIndex].dataset.message;}
-      else{tratativas.value += '\n\n' + msg.options[msg.selectedIndex].dataset.message;}
-    }
-    msg.value = '';
-  }
   {% endblock %}
 </script>

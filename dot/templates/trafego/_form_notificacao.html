@@ -57,7 +57,6 @@
           <div class="col-12">
             {{ form.tratativa }}
           </div>
-          {% if 'notificacao_id' in request.get_full_path %}
           <div class="col">
         		<select class="form-select bg-light" id="id_msg_predefinida" onchange="msg_predefinida();">
         			<option value="" selected>---------</option>
@@ -70,7 +69,6 @@
           <div class="col-auto">
             <a class="btn btn-warning" href="{% url 'trafego_predefinidos' %}"><i class="fas fa-list"></i></a>
           </div>
-          {% endif %}
           {% endif %}
         </div>
       </div>
@@ -86,3 +84,15 @@
     </div>
   </div>
 </div>
+
+<script>
+  function msg_predefinida(){
+    let msg = document.getElementById('id_msg_predefinida');
+    let tratativas = document.getElementById('id_tratativa');
+    if(msg.value != ''){
+      if(tratativas.value == ''){tratativas.innerHTML = msg.options[msg.selectedIndex].dataset.message;}
+      else{tratativas.value += '\n\n' + msg.options[msg.selectedIndex].dataset.message;}
+    }
+    msg.value = '';
+  }  
+</script>

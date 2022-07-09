@@ -7,10 +7,10 @@
   <title>900 Test Page</title>
   <link rel="shortcut icon" href="{% static 'img/favicon.ico'%}">
   <link rel="stylesheet" href="{% static 'css/dot.css' %}" type="text/css">
-  <link rel="stylesheet" href="{% static 'css/inmate.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/all.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/fontawesome.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.min.css' %}" type="text/css">
+  <link rel="stylesheet" href="{% static 'css/vendor/tagin.css' %}" type="text/css">
   
 </head>
 <body>
@@ -18,15 +18,26 @@
   <a id="clear" href="{% url 'handler' '999' %}"></a>
   
   <div class="container-fluid">
-    <!-- <h1 class="inmate inmate-swing">Foo</h1> -->
-    <label class="inmate inmate-swing fs-1">Handler 999</label>
+    <label class="fs-1">Handler 999</label>
+    
+    <div class="row g-1">
+    	<div class="form-floating mb-1 col-lg-12">
+        <input type="text" class="form-control tagin" data-tagin-enter data-tagin-placeholder="Enter ou virgula" name="" value="id_tagin">
+    		<label for="id_tagin">Tags</label>
+    	</div>
+    </div>
     
   </div>
   
   <script src="{% static 'js/listener.js' %}"></script>
   <script src="{% static 'js/dot.js' %}"></script>
+  <script src="{% static 'js/dot.js' %}"></script>
+  <script src="/static/js/vendor/bootstrap.bundle.min.js"></script>
+  <script src="{% static 'js/vendor/tagin.js' %}"></script>
   <script>
   var TAB_ON_ENTER = true;
+  
+	new Tagin(document.querySelector('.tagin'))
 </script>
 </body>
 </html>

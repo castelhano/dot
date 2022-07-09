@@ -18,11 +18,12 @@
 .timeline h2, .timeline h3 {font-weight: 600;font-size: 1rem;margin-bottom: 10px;}
 .timeline .event {border-bottom: 1px solid #FFF;padding-bottom: 25px;margin-bottom: 25px;position: relative;}
 .timeline-sm .event {padding-bottom: 15px;margin-bottom: 15px;}
+.timeline .event-controls {float: right;margin-top: 0px;}
 .timeline .event:last-of-type {padding-bottom: 0;margin-bottom: 0;border: none;}
 .timeline .event:before, .timeline .event:after {position: absolute;display: block;top: 0;}
 .timeline-legend .event:before {left: -204px; top: -3px;content: attr(data-date);text-align: right;font-size: 0.85em;min-width: 160px;}
 .timeline .event:after {box-shadow: 0 0 0 3px #727cf5;left: -36px;background: #fff;border-radius: 50%;height: 9px;width: 9px;content: "";top: 5px;}
-.timeline .event-danger:after {box-shadow: 0 0 0 3px #dc3545; background: #ff99a1;}
+.timeline .event-danger:after {box-shadow: 0 0 0 3px #FFF; background: #dc3545;}
 .timeline .event-success:after {box-shadow: 0 0 0 3px #198754;}
 .timeline .event-warning:after {box-shadow: 0 0 0 3px #FFC107;}
 .timeline .event-dark:after {box-shadow: 0 0 0 3px #000;}
@@ -48,5 +49,5 @@
   .timeline {max-width: 98%;padding: 25px;}
   .timeline-legend .event {padding-top: 30px;}
   .timeline .event:before {left: 0px;text-align: left;}
-  .timeline .event:after {left: -31.8px;}
+  .timeline .event:after {left: -30.8px;}
 }

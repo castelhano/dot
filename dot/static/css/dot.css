@@ -6,6 +6,7 @@ VERSION: 1.0
 
 .cursor-default{cursor: default;}
 .pointer{cursor: pointer;}
+.help{cursor: help;}
 select.readonly{background: rgb(233, 236, 239)!important;pointer-events: none;touch-action: none;}
 
 .table td.fit,.table th.fit {white-space: nowrap;width: 1%;}
@@ -130,41 +131,3 @@ ol.code-multiline li.list-ident-2::before {margin-right: 80px;}
 .widget-icon-primary {color: #0D6EFD;background-color: #bad6ff;}
 
 datalist{font-size: 20px;}
-
-.tooltip {
-  position: relative;
-  display: inline-block;
-}
-
-.tooltip .tooltiptext {
-  visibility: hidden;
-  width: 140px;
-  background-color: #555;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 5px;
-  position: absolute;
-  z-index: 1;
-  bottom: 150%;
-  left: 50%;
-  margin-left: -75px;
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.tooltip .tooltiptext::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #555 transparent transparent transparent;
-}
-
-.tooltip:hover .tooltiptext {
-  visibility: visible;
-  opacity: 1;
-}

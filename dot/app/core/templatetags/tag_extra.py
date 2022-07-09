@@ -156,3 +156,12 @@ def url_get(request,parameter):
 def replace(value, criterio):
     c = criterio.split(',')
     return str(value).replace(c[0],c[1])
+
+# split
+# @version  1.0
+# @since    08/07/2022
+# @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }
+# @example  {{ model.labels|split:','}}
+@register.filter
+def split(value, separator = ' '):
+    return str(value).split(separator) if value != '' else None

@@ -516,11 +516,14 @@ def enquadramento_add(request):
 @login_required
 @permission_required('trafego.add_notificacao')
 def notificacao_add(request):
+    metrics = {
+    'predefinidas':Predefinido.objects.all()
+    }
     if request.method == 'POST':
-        form = NotificacaoForm(request.POST)
-        if form.is_valid():
+        metrics['form'] = NotificacaoForm(request.POST)
+        if metrics['form'].is_valid():
             try:
-                registro = form.save(commit=False)
+                registro = metrics['form'].save(commit=False)
                 registro.create_by = request.user
                 registro.save()
                 l = Log()
@@ -536,8 +539,8 @@ def notificacao_add(request):
                 messages.error(request,'Erro ao inserir notificacao')
                 return redirect('trafego_notificacao_add')
     else:
-        form = NotificacaoForm()
-    return render(request,'trafego/notificacao_add.html',{'form':form})
+        metrics['form'] = NotificacaoForm()
+    return render(request,'trafego/notificacao_add.html', metrics)
 
 # METODOS GET
 @login_required
@@ -1079,7 +1082,6 @@ def trajeto_delete(request, id):
         for p in Trajeto.objects.filter(linha=registro.linha, sentido=registro.sentido, seq__gte=registro.seq):
             p.seq -= 1
             p.save()        
-        messages.warning(request,'Trajeto removido')
         return redirect('trafego_trajetos', registro.linha.id)
     except:
         messages.error(request,'<b>Erro</b> ao atualizar trajeto')
