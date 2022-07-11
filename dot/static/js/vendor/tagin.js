@@ -5,18 +5,33 @@
 * @version  2.0.2
 * @author   Erwin Heldy G
 * @licence  MIT (https://github.com/erwinheldy/tagin/blob/master/LICENSE)
+* @fork Adicionado atributo tagColor para cor da tag
+* @method el.addTag('yellow')           # Adiciona a tag 'yellow'
+* @method el.addTag(['cyan', 'black'])  # Adiciona tags 'cyan' e 'black'
+* @method el.getTag()                   # Retorna  tags as string red,green,blue,yellow,cyan,black
+* @method el.getTags()                  # Retorna array com tags ['red', 'green', 'blue', 'yellow', 'cyan', 'black']
 * @example  
 *     <link rel="stylesheet" href="css/vendor/bootstrap.min.css" type="text/css">
 *      
 *     <div class="row g-1">
 *       <div class="form-floating mb-1 col-lg-12">
-*         <input type="text" class="form-control tagin" data-tagin-enter data-tagin-placeholder="Enter ou virgula">
-*         <label for="id_tagin">Tags</label>
+*         <input type="text" class="form-control tagin" id="id_tags">
+*         <label for="id_tags">Tags</label>
 *       </div>
 *     </div>
 *
-*     new Tagin(document.querySelector('.tagin'))
-*     
+*     new Tagin(document.getElementById('id_tags')) ou
+*     new Tagin(document.getElementById('id_tags'), {
+*       separator: ';',                             # Default = ','
+*       tabColor: 'primary',                        # Default = '' Valores possiveis: [primary, success, warning, danger, purple, orange]
+*       enter: true,                                # Default = false
+*       placeholder: 'Enter ou ,',                  # Default = ''
+*       transform: 'input => input.toUpperCase()',  # Deafult = 'input => input'
+*       duplicate: true,                            # Default = false
+*      })
+*
+* Caso prefira configurar via data-options <input type="text" name="tags" class="form-control tagin" data-tagin-separator=";">
+* Options: [data-tagin-placeholder, data-tagin-separator, data-tagin-duplicate, data-tagin-transform, data-tagin-enter]
 * @see      {@link https://tagin.netlify.app/}
 * @see      {@link https://github.com/erwinheldy/tagin}
 */
@@ -30,6 +45,7 @@
         classElement = 'tagin';
         classWrapper = 'tagin-wrapper';
         classTag = 'tagin-tag';
+        tagColor = '';
         classRemove = 'tagin-tag-remove';
         classInput = 'tagin-input';
         classInputHidden = 'tagin-input-hidden';
@@ -48,6 +64,7 @@
             this.duplicate = options?.duplicate || inputElement.dataset.taginDuplicate !== undefined;
             this.transform = options?.transform || inputElement.dataset.taginTransform || 'input => input';
             this.enter = options?.enter || inputElement.dataset.taginEnter !== undefined;
+            this.tagColor = options?.tagColor || inputElement.dataset.tagColor || '';
             this.createWrapper();
             this.autowidth();
             this.addEventListener();
@@ -69,7 +86,7 @@
         }
         createTag(value) {
             const onclick = `this.closest('div').dispatchEvent(new CustomEvent('tagin:remove', { detail: this }))`;
-            return `<span class="${this.classTag}">${value}<span onclick="${onclick}" class="${this.classRemove}"></span></span>`;
+            return `<span class="${this.classTag} ${this.tagColor}">${value}<span onclick="${onclick}" class="${this.classRemove}"></span></span>`;
         }
         getValue() {
             return this.target.value.trim();
@@ -176,7 +193,5 @@
             this.input.dispatchEvent(new Event('input'));
         }
     }
-
     return Tagin;
-
 }));

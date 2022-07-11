@@ -46,7 +46,7 @@
               </div>
               {% include "_component/field/localidade.html" with required=True breakpoint='mb-lg-1 col-lg' %}
               <div class="form-floating col col-lg-4 mb-2">
-                <input type="text" class="form-control tagin" data-tagin-enter data-tagin-placeholder="Enter ou virgula" name="labels" id="id_labels">
+                <input type="text" class="form-control tagin" name="labels" id="id_labels">
                 <label for="id_labels">Tags</label>
               </div>
             </div>
@@ -74,11 +74,11 @@
             <ul class="timeline timeline-sm ms-2">
               {% for p in ida %}
               <li class="event{% if p.fechado %} event-danger{% endif %}">
-                {{p.local.nome|truncatechars:20}}{% if p.detalhe != '' %}<i class="fas fa-info-circle text-purple ms-1 help position-absolute" title="{{p.detalhe}}"></i>{% endif %}
+                {{p.local.nome|truncatechars:20}}{% if p.detalhe != '' %}<i class="fas fa-info-circle text-purple ms-2 help position-absolute fs-5" style="margin-top:-5px;" data-bs-toggle="tooltip" data-bs-placement="top" title="{{p.detalhe}}"></i>{% endif %}
                 <div class="event-controls">
                   {% with p.labels|split:"," as labels %}
                   {% for label in labels %}
-                  <span class="badge bg-secondary d-none d-lg-inline-block">{{label}}</span>
+                  <span class="badge bg-purple d-none d-lg-inline-block">{{label}}</span>
                   {% endfor %}
                   {% endwith %}
                   <span class="badge btn-primary" style="width: 35px;">{{p.seq|safe}}</span>
@@ -119,7 +119,7 @@
             <ul class="timeline timeline-sm ms-2">
               {% for p in unico %}
               <li class="event{% if p.fechado %} event-danger{% endif %}">
-                {{p.local.nome}}{% if p.detalhe != '' %}<i class="fas fa-info-circle text-purple ms-2 help" title="{{p.detalhe}}"></i>{% endif %}
+                {{p.local.nome}}{% if p.detalhe != '' %}<i class="fas fa-info-circle text-purple ms-2" title="{{p.detalhe}}"></i>{% endif %}
                 <div class="event-controls">
                   <span class="badge btn-primary" style="width: 35px;">{{p.seq|safe}}</span>
                   {% if perms.trafego.change_linha %}
@@ -133,9 +133,7 @@
         </div>
         {% endif %}
       </div>
-      
-    </div>
-    
+    </div>    
   </div>
 </div>
 {% endblock%}
@@ -147,7 +145,14 @@
 <script>
   {% block add_script %}
   var TAB_ON_ENTER = true;
-  var labels = new Tagin(document.querySelector('.tagin'))
+  tooltipActivate();
+  
+  var labels = new Tagin(document.getElementById('id_labels'), {
+    enter: true,
+    placeholder: 'Enter ou virgula',
+    transform: 'input => input.toUpperCase()',
+    tagColor: 'purple'
+  })
   
   {% if sentido %}document.getElementById('id_sentido').value = '{{sentido}}';{% endif %}
   

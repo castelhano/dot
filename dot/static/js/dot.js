@@ -1,3 +1,6 @@
+const __sw = screen.width;
+const __ss = __sw >= 1400 ? 'xxl' : __sw >= 1200 ? 'xl' : __sw >= 992 ? 'lg' : __sw >= 768 ? 'md' : 'sm' ;
+
 /*
 * Alerta de sistema
 *
@@ -19,10 +22,31 @@ function dotAlert(tipo, mensagem){let e = document.createElement('div');let b = 
 */
 function tooltipActivate(){var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {return new bootstrap.Tooltip(tooltipTriggerEl)})}
 
-
 // ******************************************************************************
 // ONLOAD EVENTS                                                                *
 // Todo o codigo abaixo sera executado antes do fechamento do </body>           *
 // ******************************************************************************
-// ALTERA O TAB
+// ALTERA TAB INDEX DE SELECTS COM A CLASS readonly
 const readonly_els = document.querySelectorAll('select.readonly');for(let i = 0; i < readonly_els.length; i++){readonly_els[i].tabIndex = -1;}
+
+// INSERE BOTAO COPY PARA CLIPPBOARD NOS ELEMENTOS CODE
+document.querySelectorAll('pre').forEach(pre => {
+  if(navigator.clipboard && __ss != 'sm'){
+    let copyLabel = '<i class="fas fa-copy"></i>';
+    let btn = document.createElement('span');
+    btn.title = 'Copiar';
+    btn.classList.add('code-btn-copy');
+    btn.innerHTML = copyLabel;
+    btn.addEventListener('click', code_copy_clipboard);
+    pre.appendChild(btn);
+  }
+});
+function code_copy_clipboard(e){
+  let copyLabel = '<i class="fas fa-copy"></i>';
+  let doneLabel = '<i class="fas fa-check"></i>';
+  const b = e.srcElement.tagName == 'SPAN' ? e.srcElement : e.srcElement.parentElement;
+  const t = b.parentElement.querySelector("code").innerText;
+  navigator.clipboard.writeText(t);
+  b.innerHTML = doneLabel;
+  setTimeout(()=>{b.innerHTML = copyLabel;}, 2000)
+}

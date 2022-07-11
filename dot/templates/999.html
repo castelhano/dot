@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="{% static 'css/vendor/all.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/fontawesome.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.min.css' %}" type="text/css">
-  <link rel="stylesheet" href="{% static 'css/vendor/tagin.css' %}" type="text/css">
+  <link rel="stylesheet" href="{% static 'css/vendor/prism.css' %}" type="text/css">
   
 </head>
 <body>
@@ -18,26 +18,24 @@
   <a id="clear" href="{% url 'handler' '999' %}"></a>
   
   <div class="container-fluid">
-    <label class="fs-1">Handler 999</label>
-    
-    <div class="row g-1">
-    	<div class="form-floating mb-1 col-lg-12">
-        <input type="text" class="form-control tagin" data-tagin-enter data-tagin-placeholder="Enter ou virgula" name="" value="id_tagin">
-    		<label for="id_tagin">Tags</label>
-    	</div>
-    </div>
+    <label class="fs-1 inmate inmate-rubberBand">Handler 999</label>
+  
+  <pre class="rounded col-lg-5"><code class="language-css">.myclass {background-color: #CCC;}</code></pre>
+  <pre class="rounded col-lg-5"><code class="language-javascript">function foo{
+    fei += 15;
+    fon ++; 
+  }</code><span class="code-btn-copy"></span> </pre>
     
   </div>
   
+  
+  
   <script src="{% static 'js/listener.js' %}"></script>
   <script src="{% static 'js/dot.js' %}"></script>
-  <script src="{% static 'js/dot.js' %}"></script>
   <script src="/static/js/vendor/bootstrap.bundle.min.js"></script>
-  <script src="{% static 'js/vendor/tagin.js' %}"></script>
+  <script src="{% static 'js/vendor/prism.js' %}"></script>
   <script>
   var TAB_ON_ENTER = true;
-  
-	new Tagin(document.querySelector('.tagin'))
 </script>
 </body>
 </html>
