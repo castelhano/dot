@@ -22,31 +22,44 @@ function dotAlert(tipo, mensagem){let e = document.createElement('div');let b = 
 */
 function tooltipActivate(){var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {return new bootstrap.Tooltip(tooltipTriggerEl)})}
 
+/*
+* prismStart
+*
+* @version  1.0
+* @since    12/07/2022
+* @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }
+* @desc     Adiciona botão para copiar para clipboard conteudo dentro das tags pre > code
+* @depend   [prism.js, prism.css] (dependecia apenas de estilo)
+* @example  <pre><code class="language-javascript">foo += 5;</code></pre>
+*           prismStart();
+*/
+function prismStart(){
+  document.querySelectorAll('pre').forEach(pre => {
+    if(navigator.clipboard && __ss != 'sm'){
+      let copyLabel = '<i class="fas fa-copy"></i>';
+      let btn = document.createElement('span');
+      btn.title = 'Copiar';
+      btn.classList.add('code-btn-copy');
+      btn.innerHTML = copyLabel;
+      btn.addEventListener('click', code_copy_clipboard);
+      pre.appendChild(btn);
+    }
+  });
+  function code_copy_clipboard(e){
+    let copyLabel = '<i class="fas fa-copy"></i>';
+    let doneLabel = '<i class="fas fa-check"></i>';
+    const b = e.srcElement.tagName == 'SPAN' ? e.srcElement : e.srcElement.parentElement;
+    const t = b.parentElement.querySelector("code").innerText;
+    navigator.clipboard.writeText(t);
+    b.innerHTML = doneLabel;
+    setTimeout(()=>{b.innerHTML = copyLabel;}, 2000)
+  }
+}
+
+
 // ******************************************************************************
 // ONLOAD EVENTS                                                                *
 // Todo o codigo abaixo sera executado antes do fechamento do </body>           *
 // ******************************************************************************
 // ALTERA TAB INDEX DE SELECTS COM A CLASS readonly
 const readonly_els = document.querySelectorAll('select.readonly');for(let i = 0; i < readonly_els.length; i++){readonly_els[i].tabIndex = -1;}
-
-// INSERE BOTAO COPY PARA CLIPPBOARD NOS ELEMENTOS CODE
-document.querySelectorAll('pre').forEach(pre => {
-  if(navigator.clipboard && __ss != 'sm'){
-    let copyLabel = '<i class="fas fa-copy"></i>';
-    let btn = document.createElement('span');
-    btn.title = 'Copiar';
-    btn.classList.add('code-btn-copy');
-    btn.innerHTML = copyLabel;
-    btn.addEventListener('click', code_copy_clipboard);
-    pre.appendChild(btn);
-  }
-});
-function code_copy_clipboard(e){
-  let copyLabel = '<i class="fas fa-copy"></i>';
-  let doneLabel = '<i class="fas fa-check"></i>';
-  const b = e.srcElement.tagName == 'SPAN' ? e.srcElement : e.srcElement.parentElement;
-  const t = b.parentElement.querySelector("code").innerText;
-  navigator.clipboard.writeText(t);
-  b.innerHTML = doneLabel;
-  setTimeout(()=>{b.innerHTML = copyLabel;}, 2000)
-}

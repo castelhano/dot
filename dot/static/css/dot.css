@@ -108,7 +108,7 @@ select.readonly{background: rgb(233, 236, 239)!important;pointer-events: none;to
 .form-check-label{user-select: none;}
 .code{background-color: #F8F9FA;border: 1px solid #dee2e6;border-radius: .25rem;padding: 5px 10px;margin-bottom: 15px;user-select: all;}
 .code-multiline{background-color: #F8F9FA;border: 1px solid #dee2e6;border-radius: .25rem;padding: 8px 20px;margin-bottom: 15px;user-select: all;}
-pre{position: relative;}
+pre{position: relative;border-radius: 0.25rem;}
 .code-btn-copy{position: absolute;top:8px;right: 10px;font-size: 1.2rem;padding: 2px 8px;cursor: pointer;color: #FFF;opacity: 0.5;border-radius: 5px;}
 .code-btn-copy:hover{background-color: #535350;opacity:1;}
 ol.code-multiline {padding-left: 8px;list-style: none;counter-reset: code_line_counter;}

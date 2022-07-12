@@ -3,194 +3,52 @@
 {% block title %}Docs{% endblock %}
 {% block model %}docs<i class="fas fa-angle-right fs-6 mx-2"></i><span class="">Core</span>{% endblock %}
 {% block model_menu %}{% include "_component/menu/visitor.html" %}{% endblock%}
-
-<style media="screen">
-{% block style %}
-.docs-nav-item{
-  min-width: 100px;
-  position: relative;
-  bottom:-1px;
-  margin-right:5px;
-  padding-bottom:5px;
-}
-.docs-nav-item.active{
-  font-weight: bold;
-  border-bottom:2px solid #FD7E14;
-}
-.docs-nav-item.home{
-  font-weight: bold;
-  border-bottom:2px solid #CCC;
-}
-.link_start_page{
-  position: fixed;
-  bottom: 40px;
-  right: 35px;
-  opacity:0;
-  border: 2px solid #e9ecef;
-  border-radius: 30px;
-  padding-left: 16px;
-  padding-right: 16px;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  transition: opacity 0.5s ease-in-out;
-}
-.topic_anchor{scroll-margin: 55px;}
-
-@media(min-width: 992px){
-  .fixed-lg{position: fixed;}
-}
-{% endblock%}
-</style>
-
-
+{% block style_src %}<link rel="stylesheet" href="{% static 'css/vendor/prism.css' %}">{% endblock%}
 
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'docs' %}"></a>
-
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-book"></i></a></li>
-      <li class="nav-item"><a class="nav-link pointer disabled" id="search"><i class="fas fa-search"></i></a></li>
+      <li class="nav-item ms-1">
+        <a class="nav-link pointer text-dark" data-bs-toggle="dropdown" id="btn_extra"><i class="fas fa-angle-down"></i></a>
+        <ul class="dropdown-menu fs-7">
+          <li><a class="dropdown-item" id="download" href="">Foo</a></li>
+        </ul>
+      </li>
     </ul>
   </div>
   <div class="card-body tab-content">
     <div class="tab-pane fade show active" id="base" role="tabpanel">
-      <div class="row">
-        <div class="col-lg mt-4 mt-lg-0 order-2 order-lg-1">
-          <h3 class="mb-0" id="doc_titulo">Documentação</h3>
+      <div class="row mt-2">
+        <div class="col-lg-8"><!-- Container principal -->
+          <h3>Instalação</h3>
           <hr>
-          <p>Este documento aborda a instalação e configuração do sistema, componentes básicos e de extrutura, gestão do django, além do processo para autenticação e permissão.</p>
-          <h5 id="instalacao" class="topic_anchor mt-4">Instalação</h5>
-          <div class="callout callout-orange my-3"><b>Atenção!</b> Todo o processo de instalação descrito neste artigo foi realizado num ambiente linux (Ubuntu 20.10), pequenas alterações podem ser necessárias para outros ambientes</div>
-          <p>Certifique-se que o sistema operacional está devidamente atualizado</p>
-          <div class="code"><code>sudo apt-get update && sudo apt-get upgrade</code></div>
-          <p>Sistema requer python na versão <b>3.6 ou superior</b>, execute o comando abaixo para verificar qual a versão do python instalada</p>
-          <div class="code"><code>python3 --version</code></div>
-          <p><b class="text-orange">Opcional:</b> Configurando um ambiente virtual <b>na pasta do projeto</b>.</p>
-          <div class="code mb-0"><code>python3 -m venv ./venv</code></div>
-          <small class="ps-1">Para ativar o ambiente virtual digite: <b class="text-orange">source venv/bin/activate</b></small>
-          <p class="mt-3">Instale o framework <b>django</b> e a biblioteca <b>pillow</b> usada para manipulação de imagens pelo gerenciar de pagotes do python <b>pip</b>.</p>
-          <div class="code"><code>pip install django pillow</code></div>
-          <p>Utilizamos o sistema open source de versionamento <b>git</b>, e o repositório <b>github</b> para distribuição da aplicação</p>
-          <div class="code"><code>sudo apt-get install git</code></div>
-          <p>Clone o projeto para a máquina local</p>
-          <div class="code"><code>git clone https://github.com/castelhano/dot.git</code></div>
-          <div class="callout callout-orange my-3">É necessário ter uma conta no github com acesso ao repositório da aplicação, entre em contato com o <a class="text-decoration-none fw-bold" href="mailto:castelhano.rafael@gmail.com?subject=Sistema DOT">administrador</a> do sistema caso tenha problemas nesta etapa</div>
-          <p>A aplicação utiliza por padrão o sistema de banco de dados <a class="text-decoration-none fw-bold" href="https://www.sqlite.org/index.html" target="_blank">sqlite3</a>, que tem exelente desempenho e é de facil manutenção. Porém o django oferece suporte aos principais bancos de dados disponiveis, caso queira utilizar outro banco de dados siga os passos em <a class="fw-bold text-decoration-none pointer" onclick="goTo('config')">configuração</a> antes de seguir.</p>
-          <p>O próximo comando cria o banco de dados, tabelas, indices e demais requisitos do <abbr title="Banco de Dados">BD</abbr>.</p>
-          <div class="code"><code>python manage.py migrate</code></div>
-          <h5 id="django" class="topic_anchor mt-5">Django&trade;</h5>
-          <p id="config" class="fw-bold mt-3 topic_anchor">Configurando o projeto</p>
-          <p id="fixture" class="fw-bold mt-3 topic_anchor">Loaddata <b>(fixture)</b></p>
-          <p>É possivel importar dados em lote diretamente para o sistema. O arquivo de importação deve estar em formato <a href="https://www.json.org/json-en.html" target="_blank">json</a> conforme o exemplo abaixo.</p>
-          <div class="code pb-0">
-            <code><pre>
-[
-  {"model":"core.funcionario","fields":{
-    "nome": "Rafael Alves",
-    "email": "castelhano.rafael@gmail.com"
-  }},
-  {"model":"core.funcionario","fields":{
-    "nome": "Joao da Silva",
-    "cpf": "055.556.556-66"
-  }}
-]</pre></code>
-          </div>
-          <div class="callout callout-orange mb-3"><span class="text-orange fw-bold">Dica!</span> Existem serviços online como o <a href="https://beautifytools.com/excel-to-json-converter.php" target="_blank">beautifytools</a> que convertem registros tabulares salvos em uma planilha excel (por exemplo) para o formato json.<br />
-            No arquivo gerado, é necessário realizar pequenos ajustes, informando antes de cada registro o modelo a ser utilizado <code>{"model":"core.funcionario","fields":{</code> além de realizar o fechamento correto do registro <code>}</code>, com um editor de texto moderno (<a href="https://atom.io/" target="_blank">Atom</a> ou <a href="https://www.sublimetext.com/" target="_blank">Sublime Text</a>) é possivel fazer estes ajustes com facilidade.</div>
-          <p>O arquivo gerado deve ser salvo na pasta da aplicação no diretorio <code>dot/fixture</code>. Abra um terminal e na raiz da aplicação execute o comando a seguir substituindo <code>exemplo</code> pelo nome do arquivo salvo (não é necessário informar a extensão .json)</p>
-          <div class="code"><code>python manage.py loaddata exemplo</code></div>
-          <h5 id="usuarios" class="topic_anchor mt-5">Autenticação</h5>
-          <p>Para acessar os recursos do sistema é ncessário se autenticar fornecendo <b>username</b> e <b>senha</b> previamente cadastrados, além de dispor de uma conta ativa. Os usuários cadastrados podem ser visualizados acessando o menu de <span class="text-muted fw-bold">Cadastro <i class="fas fa-angle-right text-primary"></i> Usuário</span> no módulo principal da aplicação.</p>
-          <p>A tela de cadastro é composta dos seguintes campos:</p>
-          <ul class="list-unstyled">
-            <li><i class="fas fa-angle-right text-primary me-2"></i><b class="me-2">Username: </b><small class="badge bg-dark">obrigatório</small> Nome <abbr title="field unique">único</abbr> utilizado para login no sistema além de identificação em registros de log e outros</li>
-            <li><i class="fas fa-angle-right text-primary me-2"></i><b class="me-2">First Name: </b><small class="badge bg-secondary">opcional</small> Primeiro nome, exibido no menu do usuário além de outros locais do sistema</li>
-            <li><i class="fas fa-angle-right text-primary me-2"></i><b class="me-2">Last Name: </b><small class="badge bg-secondary">opcional</small> Sobrenome, exibido no menu do usuário além de outros locais do sistema</li>
-            <li><i class="fas fa-angle-right text-primary me-2"></i><b class="me-2">Email: </b><small class="badge bg-secondary">opcional</small> Email do usuário, utilizado para envio de email no módulo de controle e serviços integrados</li>
-          </ul>
-          <div class="row callout callout-orange ms-1 mb-1">
-            <div class="col-md-8 ps-0">No menu de empresas deve ser selecionado as empresas que poderão ser movimentadas pelo usuário</div>
-            <div class="border rounded col-md-4 p-0"><button class="accordion-button collapsed bg-light" type="button" disabled><i class="fas fa-laptop-house text-muted me-2"></i> Empresas</button></div>
-          </div>
-          <div class="row callout callout-orange ms-1 mb-1">
-            <div class="col-md-8 ps-0">Na parte de grupos é listado os grupos a que o usuário esta associado</div>
-            <div class="border rounded col-md-4 p-0"><button class="accordion-button collapsed bg-light" type="button" disabled><i class="fas fa-user-tag text-muted me-2"></i> Grupos</button></div>
-          </div>
-          <div class="row callout callout-orange ms-1 mb-1">
-            <div class="col-md-8 ps-0">Na parte de permissões é listado as permissões exclusivas do usuário</div>
-            <div class="border rounded col-md-4 p-0"><button class="accordion-button collapsed bg-light" type="button" disabled><i class="fas fa-user-lock text-muted me-2"></i> Permissões</button></div>
-          </div>
-          <span>A opção </span><div class="form-check form-check-inline form-switch m-2"><input type="checkbox" class="form-check-input" checked disabled><label class="form-check-label">Ativo</label></div><span>habilita ou desabilita o acesso do usuário ao sistema, utilize esta opção ao invés de excluir usuários</span><br />
-          <span>A opção </span><div class="form-check form-check-inline form-switch m-2"><input type="checkbox" class="form-check-input" disabled><label class="form-check-label">Membro de Equipe</label></div><span>permite acesso ao <a href="https://docs.djangoproject.com/en/4.0/ref/contrib/admin/" target="_blank">django admin</a> (por padrão a movimentação é feita por telas customizadas, recurso do django admin deve ser evitado)</span>
-          <span><b>Atenção!</b> Um usuário com a flag </span><div class="form-check form-check-inline form-switch m-2"><input type="checkbox" class="form-check-input" disabled><label class="form-check-label text-danger">Superusuário</label></div><span>ativada terá acesso ao todos os recursos do sistema, é recomendável não utilizar contas com esta opção ativa para realizar movimentação de rotina</span>
-          <h5 id="permissoes" class="topic_anchor mt-5">Permissão</h5>
-          <p>O sistema utiliza o recurso integrado de permissão do django para acesso as aplicações. Por padrão todo recurso recebe as permissões para visualizar <b>view</b>, adicionar <b>add</b>, editar <b>change</b> e deletar <b>delete</b> registros, porém outras permissões customizadas podem ser adicionadas</p>
-          <p>No <b>cadastro de usuário</b> é possivel associar uma permissão diretamente ao usuário ou a um grupo:</p>
-          <div class="row">
-            <div class="border rounded col-md p-0 mb-1 mx-1"><button class="accordion-button collapsed bg-light" type="button" disabled><i class="fas fa-user-tag text-muted me-2"></i> Grupos</button></div>
-            <div class="border rounded col-md p-0 mb-1 mx-1"> <button class="accordion-button collapsed bg-light" type="button" disabled><i class="fas fa-user-lock text-muted me-2"></i> Permissões</button></div>
-          </div>
-          <h5 id="web_server" class="topic_anchor mt-5">Deploy (Gunicorn / Nginx)</h5>
-          <h5 id="console" class="topic_anchor mt-5">Console</h5>
-          <h5 id="componentes" class="topic_anchor mt-5">Componentes</h5>
-          <p id="component_fields" class="fw-bold mt-3 topic_anchor">Fields Components</p>
-          <p id="component_menu" class="fw-bold mt-3 topic_anchor">Menu Components</p>
-          <p id="component_script" class="fw-bold mt-3 topic_anchor">Script Components</p>
-          <p id="component_widget" class="fw-bold mt-3 topic_anchor">Widget Components</p>
+          <pre><code class="language-javascript">foo += 5;</code></pre>
           
+          <h3 class="mt-5 mb-1">Configurando Servidor</h3>
+          <small class="d-inline-flex px-2 py-1 fw-semibold text-success bg-success bg-opacity-10 border border-success border-opacity-10 rounded">python</small>
+          <hr>
+          <h5>Linux</h5>
           
-          <p style="margin-top: 1550px;"></p>
-        </div>
-        
-        <div class="col-lg-4 order-1 order-lg-2">
-          <div class="row">
-            <div class="col mt-2 fixed-lg">
-              <h5 class="fw-bold text-muted">Indice</h5>
-              <ul id="nav_container" class="list-unstyled ps-1">
-                <li><span class="text-primary pointer" onclick="goTo('instalacao')">Instalação</span></li>
-                <li><span class="text-primary pointer" onclick="goTo('django')">Django</span></li>
-                <li><span class="text-primary pointer ps-4" onclick="goTo('config')">Configurando o projeto</li>
-                <li><span class="text-primary pointer ps-4" onclick="goTo('fixture')">Loaddata <b>(fixture)</b></span></li>
-                <li><span class="text-primary pointer" onclick="goTo('usuarios')">Autenticação</span></li>
-                <li><span class="text-primary pointer" onclick="goTo('permissoes')">Permissão</span></li>
-                <li><span class="text-primary pointer" onclick="goTo('web_server')">Deploy (Gunicorn / Nginx)</span></li>
-                <li><hr class="my-1" style="max-width: 580px;"></li>
-                <li><span class="text-primary pointer" onclick="goTo('console')">Console</span></li>
-                <li><span class="text-primary pointer" onclick="goTo('componentes')">Componentes</span></li>
-                <li><span class="text-primary pointer ps-4" onclick="goTo('component_fields')">Fields Components</li>
-                <li><span class="text-primary pointer ps-4" onclick="goTo('component_menu')">Menu Components</li>
-                <li><span class="text-primary pointer ps-4" onclick="goTo('component_script')">Script Components</li>
-                <li><span class="text-primary pointer ps-4" onclick="goTo('component_widget')">Widgets Components</li>
-              </ul>
-              <div class="ps-2">
-                <a class="badge text-light bg-orange text-decoration-none" href="https://www.python.org/" target="_blank">python</a>
-                <a class="badge text-light bg-purple text-decoration-none" href="https://www.djangoproject.com/" target="_blank">django</a>
-                <a class="badge text-light bg-primary text-decoration-none" href="https://getbootstrap.com/docs/5.1/getting-started/introduction/" target="_blank">bootstrap5</a>
-              </div>
-            </div>
-          </div>
-        </div>
+        </div><!-- Fim Container principal -->
       </div>
     </div>
   </div>
 </div>
 
-<span id="link_start_page" class="link_start_page pointer fs-4 text-muted bg-light shadow-sm" onclick="window.scroll(0,0)"><i class="fas fa-chevron-up"></i></span>
+
+
+
 {% endblock%}
 
-{% block add_script_src %}{% endblock %}
+{% block add_script_src %}
+<script src="{% static 'js/vendor/prism.js' %}" charset="utf-8"></script>
+{% endblock %}
 
 <script>
-  {% block add_script %}
-  function goTo(id){document.getElementById(id).scrollIntoView();}
-  // function search(){document.getElementById('main_search').select();}
-  // function find(){let target = document.getElementById('main_search').value;}
-  
-  window.addEventListener('scroll', function() {
-    if(window.scrollY > 399) {document.getElementById('link_start_page').style.opacity = '1';}
-    else{document.getElementById('link_start_page').style.opacity = '0';}
-  });
-  {% endblock %}
+{% block add_script %}
+prismStart();
+{% endblock %}
 </script>
