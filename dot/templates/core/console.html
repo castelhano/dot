@@ -107,8 +107,8 @@
     let raw_params = list.slice(1, list.length);
     let parameters = {};
     for(i=0;i < raw_params.length; i++){
-      let row = raw_params[i].split('=');
-      parameters[row[0]] = row[1];
+      let [action, ...attrs] = raw_params[i].split('=');
+      parameters[action] = attrs.join('=');
     }
     
     let formated_script = {};
