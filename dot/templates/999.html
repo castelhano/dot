@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,45 +10,38 @@
   <link rel="stylesheet" href="{% static 'css/vendor/all.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/fontawesome.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.min.css' %}" type="text/css">
-  <link rel="stylesheet" href="{% static 'css/vendor/prism.css' %}" type="text/css">
   
 </head>
 <body>
-  Prism
   <a id="home" href="{% url 'index' %}"></a>
   <a id="clear" href="{% url 'handler' '999' %}"></a>
-  
   <div class="container-fluid">
-    <label class="fs-1 inmate inmate-rubberBand">Handler 999</label>
-  
-  <pre class="rounded col-lg-5"><code class="language-css">.myclass {background-color: #CCC;}</code></pre>
-  <pre class="rounded col-lg-5"><code class="language-javascript">function foo{
-    fei += 15;
-    fon ++;
-      uii +=15
-  }</code></pre>
-  <hr>
-  <a href="">Foo</a>
-  
-  ==>> {% now "SHORT_DATE_FORMAT" %}
-  <p></p>
-  
-  <label for="" class="" id=""></label>
-  <p></p>
-  <input type="text" class="d-none" id="id_matriculas" name="matriculas">
-  {% include "_component/widget/textToJson.html" with entry_placeholder='Matriculas' breakpoint='col-lg-5 mb-1' %}
-  <hr>
-</div>
+    <h1>Handler 999</h1>
+    <hr>
+    <div class="row">
+      <div id="user_container" class="col"></div>
+    </div>
+
+    
+
+  </div>
   <script src="{% static 'js/listener.js' %}"></script>
+  <script src="{% static 'js/table.json.js' %}"></script>
   <script src="{% static 'js/dot.js' %}"></script>
   <script src="/static/js/vendor/bootstrap.bundle.min.js"></script>
-  <script src="{% static 'js/vendor/prism.js' %}"></script>
   <script>
-
     var TAB_ON_ENTER = true;
-    var json_obj_target = document.getElementById('id_matriculas');
-  prismStart();
 
+
+
+    let users = new JsonTable('users',{
+      container:document.getElementById('user_container'),
+      json: [{'nome':'Rafael Alves', 'idade':'25','sexo':'M'},{'nome':'Jessika Alves', 'idade':'34','sexo':'F','fone':'65 98451-9899'}],
+      editableCols: ['sexo','fone'],
+      deleteRow: true
+    })
+
+    // users.addRow();
 </script>
 </body>
 </html>
