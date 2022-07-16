@@ -14,6 +14,7 @@
   
 </head>
 <body>
+  Prism
   <a id="home" href="{% url 'index' %}"></a>
   <a id="clear" href="{% url 'handler' '999' %}"></a>
   
@@ -23,10 +24,17 @@
   <pre class="rounded col-lg-5"><code class="language-css">.myclass {background-color: #CCC;}</code></pre>
   <pre class="rounded col-lg-5"><code class="language-javascript">function foo{
     fei += 15;
-    fon ++; 
+    fon ++;
+      uii +=15
   }</code></pre>
   <hr>
-  <a href="{% url 'foo' %}">Foo</a> 
+  <a href="">Foo</a>
+  
+  ==>> {% now "SHORT_DATE_FORMAT" %}
+  <p></p>
+  
+  <label for="" class="" id=""></label>
+  <p></p>
   <input type="text" class="d-none" id="id_matriculas" name="matriculas">
   {% include "_component/widget/textToJson.html" with entry_placeholder='Matriculas' breakpoint='col-lg-5 mb-1' %}
   <hr>
@@ -36,6 +44,7 @@
   <script src="/static/js/vendor/bootstrap.bundle.min.js"></script>
   <script src="{% static 'js/vendor/prism.js' %}"></script>
   <script>
+
     var TAB_ON_ENTER = true;
     var json_obj_target = document.getElementById('id_matriculas');
   prismStart();
