@@ -1,5 +1,5 @@
 /*
-* RETORNA REGISTRO 'VISIVEIS' DA TABELA EM FORMATO CSV 
+* download_table_as_csv Retorna registros 'visiveis' da tabela em formato CSV
 *
 * @version  1.0
 * @since    02/03/2022
@@ -39,7 +39,7 @@ function download_table_as_csv(table_id, separator = ';', clean=false) {
 }
 
 /*
-* IMPLEMENTA FUNCAO PARA CLASSIFICAR TABELAS (vertical) AO CLICAR NO CABECALHO
+* sortTable Classifica os registros da tabela (vertical) ao clicar no cabecalho
 *
 * @version  1.0
 * @since    02/03/2022
@@ -85,7 +85,7 @@ document.querySelectorAll(".table-sortable th").forEach(headerCell => {
 });
 
 /*
-* FILTRA LINHAS DA TABELA BASEADO NO CONTEUDO
+* filterTable Filtra linhas da tabela baseado no conteudo
 *
 * @version  1.0
 * @since    02/03/2022
@@ -113,4 +113,119 @@ function filterTable(table_id, cols, input, prefix='', posfix=''){
       else {tr[i].style.display = "none";}
     }
   }catch(e){} 
+}
+
+// * VARIAVEIS ************************
+var __paginateOn = false; __table = null, __rowsRaw = null, __rowsPerPage = null, __activePage = null, __paginateControl = null, __lastPage = null;
+// ************************************
+
+function paginate(table){
+  let tbody = table.tBodies[0];
+  let hbody = table.tBodies[1];
+  let rows = Array.from(__rowsRaw);
+  let feid = (__activePage - 1) * __rowsPerPage;
+  let leid = Math.min((feid + __rowsPerPage) - 1, rows.length - 1);
+  let pages = Math.ceil(rows.length / __rowsPerPage);
+  __lastPage = pages;
+  tbody.innerHTML = '';
+  hbody.innerHTML = '';
+  for(let i = 0;i < rows.length;i++){ // Divide os elementos nos tbody's
+    if(i >= feid && i <= leid){tbody.appendChild(rows[i]);}
+    else{hbody.appendChild(rows[i]);}
+  }
+// Montando os botoes das paginas
+  __paginateControl.innerHTML = '';
+  for(let i = 1; i <= pages;i++){
+    let btn = document.createElement('li');
+    if(__activePage == i){
+      btn.classList = 'paginate-page active';
+    }
+    else{
+      btn.classList = 'paginate-page';
+      btn.onclick = function(){__activePage = i;paginate(table);}
+    }
+    btn.innerHTML = i;
+    __paginateControl.appendChild(btn);
+  }
+}
+function paginateNextPage(){
+  if(__activePage < __lastPage){
+    __activePage++;
+    paginate(__table);
+  }
+}
+
+function paginatePreviousPage(){
+  if(__activePage > 1){
+    __activePage--;
+    paginate(__table);
+  }
+}
+
+function paginateTable(table_id, options){
+  __paginateOn = true;
+  let table = document.getElementById(table_id);
+  __table = table;
+  let mainControlContainer = options?.mainControlContainer || null;
+  let paginateControlContainer = options?.paginateControlContainer || null;
+  __rowsPerPage = options?.rowsPerPage || 2;
+  __activePage = options?.activePage || 1;
+  __rowsRaw = Array.from(table.querySelectorAll('tbody tr'));
+  let mainControlClassList = options?.mainControlClassList || 'btn btn-sm btn-light border dropdown-toggle';
+  let btnFirstClassList = options?.btnFirstClassList || 'btn btn-sm btn-purple';
+  let btnLastClassList = options?.btnLastClassList || 'btn btn-sm btn-purple ms-1';
+  let btnPages = options?.btnPages || 'btn btn-sm btn-purple-light ms-1';
+  let tbody = table.querySelector('tbody'); // tbody da tabela, onde sera exibido 
+  let hbody = document.createElement('tbody'); // tbody que sera adicionado na tabela para armazenar as rows ocultas
+  hbody.classList = 'd-none'; 
+  table.appendChild(hbody);
+  let btnSetRowsPerPage = document.createElement('button');
+  
+  function buildMainControl(){
+    let dp = document.createElement('div');
+    let btn = document.createElement('button');
+    let ul = document.createElement('ul');
+    dp.classList = 'dropdown';
+    btn.classList = mainControlClassList;
+    btn.setAttribute('data-bs-toggle', 'dropdown');
+    btn.innerHTML = 'Linhas ';
+    ul.classList = 'dropdown-menu';
+    let list = '<li class="dropdown-item pointer">10 registros</li>';
+    list += '<li class="dropdown-item pointer">30 registros</li>';
+    list += '<li class="dropdown-item pointer">50 registros</li>';
+    list += '<li class="dropdown-item pointer">Todos</li>';
+    ul.innerHTML = list;
+    dp.appendChild(btn);
+    dp.appendChild(ul);
+    if(mainControlContainer){}
+    else{
+      let parent = table.parentElement;
+      parent.insertBefore(dp, table);
+    }
+  }
+  function buildPaginateControl(){
+    let container = document.createElement('div');
+    container.classList = 'text-end'
+    let control = document.createElement('ul');
+    control.classList = 'paginate-control';
+    let previous = document.createElement('li');
+    previous.onclick = () => paginatePreviousPage();
+    previous.classList = 'paginate-page btn-secondary';
+    previous.innerHTML = '<i class="fas fa-angle-left"></i>';
+    let next = document.createElement('li');
+    next.onclick = () => paginateNextPage();
+    next.classList = 'paginate-page btn-secondary';
+    next.innerHTML = '<i class="fas fa-angle-right"></i>';
+    __paginateControl = document.createElement('ul')
+    __paginateControl.classList = 'paginate-control'
+    control.appendChild(previous);
+    control.appendChild(next);
+    container.appendChild(control);
+    container.appendChild(__paginateControl);
+
+    table.after(container);
+  }
+  buildMainControl();
+  buildPaginateControl();
+  paginate(table);
 }
