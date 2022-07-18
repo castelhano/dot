@@ -116,17 +116,19 @@ function filterTable(table_id, cols, input, prefix='', posfix=''){
 }
 
 // * VARIAVEIS ************************
-var __paginateOn = false; __table = null, __rowsRaw = null, __rowsPerPage = null, __activePage = null, __paginateControl = null, __lastPage = null;
+var __paginateOn = false; __table = null, __rowsRaw = null, __rowsPerPage = null, __activePage = null, __paginateControl = null;
+var __lastPage = null, __pagesClassList = null, __activePageClassList = null, __maxButtons = 6;
 // ************************************
 
 function paginate(table){
   let tbody = table.tBodies[0];
   let hbody = table.tBodies[1];
   let rows = Array.from(__rowsRaw);
-  let feid = (__activePage - 1) * __rowsPerPage;
-  let leid = Math.min((feid + __rowsPerPage) - 1, rows.length - 1);
   let pages = Math.ceil(rows.length / __rowsPerPage);
   __lastPage = pages;
+  if(__activePage > __lastPage){__activePage = __lastPage}
+  let feid = (__activePage - 1) * __rowsPerPage;
+  let leid = Math.min((feid + __rowsPerPage) - 1, rows.length - 1);
   tbody.innerHTML = '';
   hbody.innerHTML = '';
   for(let i = 0;i < rows.length;i++){ // Divide os elementos nos tbody's
@@ -134,18 +136,22 @@ function paginate(table){
     else{hbody.appendChild(rows[i]);}
   }
 // Montando os botoes das paginas
-  __paginateControl.innerHTML = '';
-  for(let i = 1; i <= pages;i++){
+  __paginateControl.innerHTML = ''; // Limpa os botoem atuais
+  // let startAt = Math.min(Math.max(1, __activePage - 1), (__lastPage - __maxButtons) + 1);
+  let startAt = Math.max(Math.min(Math.max(1, __activePage - 1), (__lastPage - __maxButtons) + 1),1);
+  let remmains = Math.min(__maxButtons, pages);
+  for(let i = startAt; i <= __lastPage;i++){
     let btn = document.createElement('li');
-    if(__activePage == i){
-      btn.classList = 'paginate-page active';
-    }
+    if(__activePage == i){btn.classList = __activePageClassList;}
     else{
-      btn.classList = 'paginate-page';
-      btn.onclick = function(){__activePage = i;paginate(table);}
+      btn.classList = __pagesClassList;
+      btn.setAttribute('onclick', `goToPage(${i})`);
     }
     btn.innerHTML = i;
     __paginateControl.appendChild(btn);
+    remmains--;
+    if(remmains == 1 && i < __lastPage){i = __lastPage -1}
+    // else if(remmains == 1 && i < __lastPage)
   }
 }
 function paginateNextPage(){
@@ -161,6 +167,8 @@ function paginatePreviousPage(){
     paginate(__table);
   }
 }
+function setRowsPerPage(qtde){__rowsPerPage = qtde;paginate(__table)}
+function goToPage(page){__activePage = page;paginate(__table)}
 
 function paginateTable(table_id, options){
   __paginateOn = true;
@@ -168,13 +176,13 @@ function paginateTable(table_id, options){
   __table = table;
   let mainControlContainer = options?.mainControlContainer || null;
   let paginateControlContainer = options?.paginateControlContainer || null;
-  __rowsPerPage = options?.rowsPerPage || 2;
+  __rowsPerPage = options?.rowsPerPage || 10;
   __activePage = options?.activePage || 1;
   __rowsRaw = Array.from(table.querySelectorAll('tbody tr'));
   let mainControlClassList = options?.mainControlClassList || 'btn btn-sm btn-light border dropdown-toggle';
-  let btnFirstClassList = options?.btnFirstClassList || 'btn btn-sm btn-purple';
-  let btnLastClassList = options?.btnLastClassList || 'btn btn-sm btn-purple ms-1';
-  let btnPages = options?.btnPages || 'btn btn-sm btn-purple-light ms-1';
+  let controlsClassList = options?.controlsClassList || 'paginate-page btn-secondary';
+  __pagesClassList = options?.pagesClassList || 'paginate-page';
+  __activePageClassList = options?.activePageClassList || 'paginate-page active';
   let tbody = table.querySelector('tbody'); // tbody da tabela, onde sera exibido 
   let hbody = document.createElement('tbody'); // tbody que sera adicionado na tabela para armazenar as rows ocultas
   hbody.classList = 'd-none'; 
@@ -190,14 +198,14 @@ function paginateTable(table_id, options){
     btn.setAttribute('data-bs-toggle', 'dropdown');
     btn.innerHTML = 'Linhas ';
     ul.classList = 'dropdown-menu';
-    let list = '<li class="dropdown-item pointer">10 registros</li>';
-    list += '<li class="dropdown-item pointer">30 registros</li>';
-    list += '<li class="dropdown-item pointer">50 registros</li>';
-    list += '<li class="dropdown-item pointer">Todos</li>';
+    let list = '<li class="dropdown-item pointer" onclick="setRowsPerPage(10)">10 registros</li>';
+    list += '<li class="dropdown-item pointer" onclick="setRowsPerPage(30)">30 registros</li>';
+    list += '<li class="dropdown-item pointer" onclick="setRowsPerPage(50)">50 registros</li>';
+    list += '<li class="dropdown-item pointer" onclick="setRowsPerPage(__rowsRaw.length)">Todos</li>';
     ul.innerHTML = list;
     dp.appendChild(btn);
     dp.appendChild(ul);
-    if(mainControlContainer){}
+    if(mainControlContainer){mainControlContainer.appendChild(dp)}
     else{
       let parent = table.parentElement;
       parent.insertBefore(dp, table);
@@ -205,21 +213,27 @@ function paginateTable(table_id, options){
   }
   function buildPaginateControl(){
     let container = document.createElement('div');
-    container.classList = 'text-end'
+    container.classList = 'text-end pe-2'
     let control = document.createElement('ul');
     control.classList = 'paginate-control';
+    let first = document.createElement('li');
+    first.onclick = () => goToPage(1);
+    first.classList = controlsClassList;
+    first.innerHTML = '<i class="fas fa-angle-double-left"></i>';
     let previous = document.createElement('li');
     previous.onclick = () => paginatePreviousPage();
-    previous.classList = 'paginate-page btn-secondary';
+    previous.classList = controlsClassList;
     previous.innerHTML = '<i class="fas fa-angle-left"></i>';
     let next = document.createElement('li');
     next.onclick = () => paginateNextPage();
-    next.classList = 'paginate-page btn-secondary';
+    next.classList = controlsClassList;
     next.innerHTML = '<i class="fas fa-angle-right"></i>';
     __paginateControl = document.createElement('ul')
     __paginateControl.classList = 'paginate-control'
+    control.appendChild(first);
     control.appendChild(previous);
     control.appendChild(next);
+    
     container.appendChild(control);
     container.appendChild(__paginateControl);
 

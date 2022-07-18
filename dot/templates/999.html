@@ -18,61 +18,22 @@
   <div class="container-fluid">
     <h1>Handler 999</h1>
     <hr>
-    <div class="row">
-      <div id="user_container" class="col"></div>
-    </div>
-    <button onclick="download_table_as_csv('main_table');">Download</button><br /><br />
-    <table id="main_table" class="table border table-striped table-hover caption-top table-sortable mt-1">
-      <thead>
-        <tr>
-          <th>Nome</th>
-          <th>Idade</th>
-          <th>Sexo</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Rafael</td>
-          <td>25</td>
-          <td>M</td>
-        </tr>
-        <tr>
-          <td>Jessika</td>
-          <td>48</td>
-          <td>F</td>
-        </tr>
-        <tr>
-          <td>Carolina</td>
-          <td>11</td>
-          <td>F</td>
-        </tr>
-        <tr>
-          <td>Matheus</td>
-          <td>19</td>
-          <td>M</td>
-        </tr>
-        <tr>
-          <td>Douglas</td>
-          <td>13</td>
-          <td>M</td>
-        </tr>
-      </tbody>
-    </table>
-    
   </div>
   <script src="{% static 'js/listener.js' %}"></script>
   <script src="{% static 'js/table.js' %}"></script>
+  <script src="{% static 'js/table.json.js' %}"></script>
   <script src="{% static 'js/dot.js' %}"></script>
   <script src="/static/js/vendor/bootstrap.bundle.min.js"></script>
   <script>
     var TAB_ON_ENTER = true;
     
-    let options = {
-      foo:15,
-      rowsPerPage: 2,
-      activePage: 1
-    }
-    paginateTable('main_table', options);
+
+    let usuarios = new JsonTable('usuarios', {
+      json: {% include 'core/data_test.json' %},
+      editableCols: ['first_name', 'last_name', 'gender']
+    })
+
+    paginateTable('usuarios', {mainControlContainer:document.getElementById('usuarios_extra')});
 
 
     

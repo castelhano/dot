@@ -47,8 +47,8 @@ class JsonTable{
     }
     buildControls(){
         let caption = document.createElement('caption');
-        caption.classList = 'text-end';
-        caption.innerHTML = '<div class="float-start">Foo</div>';
+        caption.classList = 'text-end px-1';
+        caption.innerHTML = `<div id="${this.id}_extra" class="float-start"></div>`;
         if(this.addRow){
             let add = `<span id="tableJsonAddBtn_${this.id}" class="btn btn-sm btn-outline-success" title="Novo registro"><i class="fas fa-plus"></i></span>`;
             caption.innerHTML += add;
