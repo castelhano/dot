@@ -32,7 +32,10 @@ def dashboard(request):
             messages.error(request, 'Empresa não encontrada ou habilitada') 
     else:
         empresa = None
-        diretrizes = Diretriz.objects.filter(ativo=True, empresa__in=staff.usuario.profile.empresas.all()).order_by('created_on')
+        try:
+            diretrizes = Diretriz.objects.filter(ativo=True, empresa__in=staff.usuario.profile.empresas.all()).order_by('created_on')
+        except:
+            diretrizes = None
     empresas = request.user.profile.empresas.all().order_by('nome')
     return render(request,'gestao/dashboard.html',{'staff':staff,'diretrizes':diretrizes,'empresa':empresa,'empresas':empresas})
 
