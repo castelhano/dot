@@ -115,6 +115,21 @@ function filterTable(table_id, cols, input, prefix='', posfix=''){
   }catch(e){} 
 }
 
+
+/*
+* paginate Implementa paginacao para dados de uma tabela
+*
+* @version  1.0
+* @since    05/03/2022
+* @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }
+* @desc     Decricao abreviada do codigo
+* @param    {Int} Parametro do codigo
+* @returns  {Array} Retorno da funcao
+* @throws   Excessoes lancadas pela funcao
+* @example  Exemplo de utilizacao da funcao
+* @see      {@link https://foo.com}
+*/
+
 // * VARIAVEIS ************************
 var __paginateOn = false; __table = null, __rowsRaw = null, __rowsPerPage = null, __activePage = null, __paginateControl = null;
 var __lastPage = null, __pagesClassList = null, __activePageClassList = null, __maxButtons = 6;

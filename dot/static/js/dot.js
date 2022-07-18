@@ -63,16 +63,3 @@ function prismStart(){
 // ******************************************************************************
 // ALTERA TAB INDEX DE SELECTS COM A CLASS readonly
 const readonly_els = document.querySelectorAll('select.readonly');for(let i = 0; i < readonly_els.length; i++){readonly_els[i].tabIndex = -1;}
-
-
-// Extended Prototypes
-Array.prototype.unique = function() {
-  let a = this.concat();
-  for(var i=0; i<a.length; ++i) {
-      for(var j=i+1; j<a.length; ++j) {
-          if(a[i] === a[j])
-              a.splice(j--, 1);
-      }
-  }
-  return a;
-};

@@ -5,13 +5,15 @@
 * @since    17/07/2022
 * @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }
 * @example  let usuarios = new JsonTable('usuarios', {option:value});
-* @option   json             : json      # Dados em formato json
-* @option   container        : element   # Container html onde sera construido a tabela
+* @option   json             : json      # Dados a serem carregados em formato json
+* @option   container        : element   # Container html onde sera construido a tabela, se omitido cria tabela no body
 * @option   editableCols     : array     # Array com nome dos campos (cabecalhos) que seram habilitados para edicao
 * @option   tableClasslist   : string    # Classes da tabela (default: 'table border table-striped table-hover caption-top')
 * @option   addRow           : bool      # Booleano que define se sera habilitado adicionar novos registros (default: true)
 * @option   deleteRow        : bool      # Booleano que define se sera habilitado exclusao de registros (default: true)
 * @option   exportJson       : bool      # Booleano que define se sera habilitado download dos dados da tabela (default: true)
+* @method   getRows() Retorna Array com dados da tabela [{}]
+* @method   getJson() Retorna Json (string) com dados da tabela
 */
 class JsonTable{
     constructor(id, options){
@@ -23,10 +25,10 @@ class JsonTable{
         this.tableClasslist = options?.tableClasslist || 'table border table-striped table-hover caption-top';
         this.json = options?.json || [];
         this.editableCols = options?.editableCols || [];
-        this.headers = [];
         this.addRow = options?.addRow != undefined ? options.addRow : true;
         this.deleteRow = options?.deleteRow != undefined ? options.deleteRow : true;
         this.exportJson = options?.exportJson != undefined ? options.exportJson : true;
+        this.headers = [];
         this.exportBtn = null;
         this.trash = [];
         this.createTable();

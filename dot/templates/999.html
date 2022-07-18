@@ -30,7 +30,9 @@
 
     let usuarios = new JsonTable('usuarios', {
       json: {% include 'core/data_test.json' %},
-      editableCols: ['first_name', 'last_name', 'gender']
+      editableCols: ['first_name', 'last_name', 'gender'],
+      addRow: false,
+      deleteRow: false
     })
 
     paginateTable('usuarios', {mainControlContainer:document.getElementById('usuarios_extra')});
