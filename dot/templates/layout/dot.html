@@ -57,7 +57,7 @@
               {% if perms.core.docs %}
               <li><a class="dropdown-item" id="docs_link" href="{% url 'docs' %}"><i class="fas fa-fw fa-terminal"></i> <b>D</b>ocumentação</a></li>
               {% endif %}
-              <li><span class="dropdown-item pointer" onclick="forceReload()"><i class="fas fa-fw fa-sign-out-alt"></i> Force Reload</span></li>
+              <li class="d-lg-none"><span class="dropdown-item pointer" onclick="forceReload()"><i class="fas fa-fw fa-sync-alt"></i> Force Reload</span></li>
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-fw fa-sign-out-alt"></i> Sair</a></li>
             </ul>
