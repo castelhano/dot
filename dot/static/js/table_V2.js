@@ -1,13 +1,14 @@
 class jsTable{
     constructor(id, options){
         this.id = typeof id == 'string' ? id : id.id; // Armazena id da tabela
-        this.table = typeof id == 'object' ? id : null; // Aponta para tabela alvo, caso tabela ja exista na construcao da instancia
+        this.table = typeof id == 'object' ? id : null; // Aponta para tabela alvo
         this.headers = [];
-        this.rows = [];
+        this.tbody = this.table.tBodies[0] || null; // Aponta para tbody principal (armazena registros visiveis)
+        this.hbody = this.table.tBodies[1] || null; // Aponta para tbody auxiliar (armazena registros ocultos pela funcao paginate)
         this.trash = []; // Ao deletar row, registro eh movido para o trash (permitndo retornar registro)
         this.raw = options?.raw || []; // JSON COM DADOS PARA POPULAR TABELA
         this.tableClasslist = options?.tableClasslist || 'table border table-striped table-hover caption-top';
-        this.container = options?.container || document.body; // parentNode da tabela, usado na construcao de tabela pelo evento loadData(), caso nao informado append nova tabela no body
+        this.container = options?.container || document.body; // parentNode da tabela, usado na construcao de tabela pelo evento createTable(), caso nao informado append nova tabela no body
         this.editableCols = options?.editableCols || [];
         this.paginateOn = false; // Booleno setado para true se paginacao estiver ativa para tabela
         this.rowsPerPage = options?.rowsPerPage || 20; // Quantidade de registros a serem exibidos por pagina
@@ -23,6 +24,7 @@ class jsTable{
         this.canDeleteRow = options?.deleteRow != undefined ? options.deleteRow : true;
         this.canExportJson = options?.exportJson != undefined ? options.exportJson : true;
         this.exportBtn = null;
+        this.canFilter = options?.canFilter || true;
         this.filterInput = null;
         // this.createTable();
         // this.buildHeaders();
@@ -34,7 +36,8 @@ class jsTable{
     buildRows(){}
     buildControls(){}
     buildListeners(){}
-    loadData(){}
+    setEditableCols(){} // Somente usado em tabelas previamente criadas
+    loadData(){} // Carrega dados json na tabela (para carregar registros apos criacao da tabela)
     filter(){}
     addRow(){}
     deleteRow(row){}
