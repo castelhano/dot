@@ -18,26 +18,37 @@
   <div class="container-fluid">
     <h1>Handler 999</h1>
     <hr>
+    
+    <table id="foo" class="table">
+      <thead>
+        <tr>
+          <td>Nome</td>
+          <td>Email</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Rafael</td>
+          <td>foo@gei.com</td>
+        </tr>
+        <tr>
+          <td>Joao</td>
+          <td>uii@gei.com</td>
+        </tr>
+      </tbody>
+    </table>
+    
   </div>
   <script src="{% static 'js/listener.js' %}"></script>
-  <script src="{% static 'js/table.js' %}"></script>
-  <script src="{% static 'js/table.json.js' %}"></script>
+  <script src="{% static 'js/table_V2.js' %}"></script>
   <script src="{% static 'js/dot.js' %}"></script>
   <script src="/static/js/vendor/bootstrap.bundle.min.js"></script>
   <script>
-    var TAB_ON_ENTER = true;
     
-
-    let usuarios = new JsonTable('usuarios', {
-      json: {% include 'core/data_test.json' %},
-      editableCols: ['first_name', 'last_name', 'gender'],
-      addRow: false,
-      deleteRow: false
-    })
-
-    paginateTable('usuarios', {mainControlContainer:document.getElementById('usuarios_extra')});
-
-
+    let foo = new jsTable(document.getElementById('foo'), {
+      raw: {% include 'core/data_test.json' %},
+      editableCols: ['first_name']
+    });
     
   </script>
 </body>
