@@ -46,7 +46,10 @@
   <script>
     
     let foo = new jsTable(document.getElementById('foo'), {
+      tableClasslist: 'table',
+      editableColsClasslist: 'table-secondary',
       raw: {% include 'core/data_test.json' %},
+      enablePaginate: true,
       editableCols: ['first_name']
     });
     
