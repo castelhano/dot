@@ -18,25 +18,9 @@
   <div class="container-fluid">
     <h1>Handler 999</h1>
     <hr>
+   
+    <div id="foo_folder"></div>
     
-    <table id="foo" class="table">
-      <thead>
-        <tr>
-          <td>Nome</td>
-          <td>Email</td>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Rafael</td>
-          <td>foo@gei.com</td>
-        </tr>
-        <tr>
-          <td>Joao</td>
-          <td>uii@gei.com</td>
-        </tr>
-      </tbody>
-    </table>
     
   </div>
   <script src="{% static 'js/listener.js' %}"></script>
@@ -45,14 +29,17 @@
   <script src="/static/js/vendor/bootstrap.bundle.min.js"></script>
   <script>
     
-    let foo = new jsTable(document.getElementById('foo'), {
-      tableClasslist: 'table',
-      editableColsClasslist: 'table-secondary',
-      raw: {% include 'core/data_test.json' %},
+    let foo = new jsTable('myTable', {
+      container: document.getElementById('foo_folder'),
+      data: {% include 'core/data_test.json' %},
       enablePaginate: true,
-      editableCols: ['first_name']
+      canDeleteRow: true,
+      caption: '<b class="fs-7">Cadastro de Visitantes</b>',
+      canAddRow: true,
+      canFilter: true,
+      editableCols: ['first_name', 'email']
     });
-    
+
   </script>
 </body>
 </html>

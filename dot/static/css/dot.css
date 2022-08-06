@@ -15,9 +15,7 @@ select.readonly{background: rgb(233, 236, 239)!important;pointer-events: none;to
 .table-sortable .th-sort-desc::after {content: "\025BE";}
 .table-sortable .th-sort-asc::after,.table-sortable .th-sort-desc::after {margin-left: 5px;}
 .table-sortable .th-sort-asc,.table-sortable .th-sort-desc {background: rgba(0, 0, 0, 0.1);}
-.paginate-control{list-style: none;display: inline-block;padding: 0px; margin-right: 4px;}
-.paginate-page{display: inline-block;padding: 4px 8px;margin-left: 4px;text-align: center;min-width: 30px; border:1px solid #dee2e6;border-radius: 10%;cursor: pointer;font-size: 0.9rem;background-color: #f8f9fa;color: #000;user-select: none;}
-.paginate-page.active{background-color: #5c636a;color: #FFF;font-weight: 500; cursor: default; border: none;}
+.page-item{cursor: pointer;}
 
 .bg-warning-light{background-color: #FFF0C2!important;}
 .bg-success-light{background-color: #64d69f!important;}
