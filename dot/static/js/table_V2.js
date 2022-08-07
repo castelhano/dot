@@ -39,10 +39,14 @@ class jsTable{
         this.canDeleteRow = options?.canDeleteRow != undefined ? options.canDeleteRow : false;
         this.deleteRowClasslist = options?.deleteRowClasslist || 'btn btn-sm btn-secondary';
         this.deleteRowText = options?.deleteRowText || '<i class="fas fa-trash"></i>';
-        this.canExportCSV = options?.canExportCSV != undefined ? options.canExportCSV : true;
+        this.canExportCsv = options?.canExportCsv != undefined ? options.canExportCsv : true;
+        this.csvSeparator = options?.csvSeparator || ';';
+        this.csvClean = options?.csvClean != undefined ? options.csvClean : false; // Se setado para true remove acentuacao e caracteres especiais (normalize NFD)
         this.canExportJson = options?.canExportJson != undefined ? options.canExportJson : true;
         this.exportBtn = null;
         this.canFilter = options?.canFilter != undefined ? options.canFilter : false;
+        this.filterInput = null;
+        this.filterCols = options?.filterCols || []; // Recebe o nome das colunas a ser analisado ao filtar Ex: filterCols: ['nome', 'email']
         this.canSort = options?.canSort != undefined ? options.canSort : false;
         if(this.table == null){
             this.createTable();
@@ -74,6 +78,7 @@ class jsTable{
                     let th = document.createElement('th');
                     th.setAttribute('data-key',j);
                     th.innerHTML = j[0].toUpperCase() + j.substring(1);
+                    if(this.canFilter && this.filterCols.includes(j)){th.innerHTML += '*'}
                     tr.appendChild(th);
                 }
             }
@@ -118,7 +123,6 @@ class jsTable{
             row.appendChild(controls);
         }
     }
-    appendRows(json){} // Carrega (adiciona) rows na tabela
     buildControls(){
         if(this.canSort){this.table.classList.add('table-sortable')}
         if(this.enablePaginate){ // Cria os controles gerais para paginacao (first, next e previous)
@@ -154,7 +158,12 @@ class jsTable{
         if(this.canFilter){
             let capFilter = document.createElement('div');
             capFilter.classList = 'col';
-            capFilter.innerHTML = '<input type="text" class="form-control form-control-sm" id="jsTableFilterInput" placeholder="Filtrar*">';
+            this.filterInput = document.createElement('input');
+            this.filterInput.type = 'text';
+            this.filterInput.classList = 'form-control form-control-sm';
+            this.filterInput.placeholder = 'Filtrar*';
+            this.filterInput.onkeyup = () => this.filter();
+            capFilter.appendChild(this.filterInput);
             capRow.appendChild(capFilter);
         }
         let capControlsGroup = document.createElement('div');
@@ -181,7 +190,7 @@ class jsTable{
             btn.innerHTML = '<i class="fas fa-history px-1"></i>';
             capControlsGroup.appendChild(btn);
         }
-        if(this.canExportCSV){
+        if(this.canExportCsv){
             let btn = document.createElement('button');
             btn.classList = 'btn btn-sm btn-outline-secondary';
             btn.onclick = () => this.exportCsv();
@@ -201,15 +210,41 @@ class jsTable{
         capRow.appendChild(capControls);
         this.table.caption.appendChild(capRow);
     }
-    buildListeners(){}
+    buildListeners(){
+    }
     setEditableCols(){} // Somente usado em tabelas previamente criadas
-    loadData(json){
+    loadData(json){ // Carrega dados na tabela (!! Limpa dados atuais)
         this.data = json;
         this.cleanTable();
         this.buildHeaders();
         this.buildRows();
     }
-    filter(){}
+    appendRows(json){} // Carrega dados na tabela (mantem dados atuais) (!! Não adiciona novos cabecalhos)
+    filter(criterio=null){
+        if(this.canFilter){
+            let c = criterio || this.filterInput.value.toLowerCase();
+            let rows_size = this.raw.length;
+            let cols_size = this.headers.length;
+            let cols = []; // Array armazena os indices das coluas a serem analizadas
+            for(let i = 0;i < cols_size;i++){ // Monta array com indices das colunas procuradas
+                if(this.filterCols.includes(this.headers[i])){cols.push(i)}
+            }
+            let row_count = 0;
+            for (let i = 0; i < rows_size; i++) { // Percorre todas as linhas, e verifica nas colunas definidas em filterCols, se texto atende criterio
+                let row_value = '';                
+                for(let j=0; j < cols.length;j++) {
+                    let td = this.raw[i].getElementsByTagName("td")[cols[j]];
+                    row_value += td.textContent || td.innerText;
+                }
+                if (row_value.toLowerCase().indexOf(c) > -1) {this.raw[i].style.display = ": table-row";row_count++;}
+                else {this.raw[i].style.display = "none";}
+            }
+            if(row_count == 0){
+                this.tbody.innerHTML = `<tr><td colspan="${this.canDeleteRow ? this.headers.length + 1 : this.headers.length}">Nenhum registro encontrado com o criterio informado</td></tr>`;
+            }
+            
+        }
+    }
     paginate(){
         let rowsSize = this.raw.length;
         this.lastPage = Math.ceil(rowsSize / this.rowsPerPage);
@@ -248,7 +283,7 @@ class jsTable{
     previousPage(){this.activePage--;this.paginate();}
     nextPage(){this.activePage++;this.paginate();}
     addRow(){ // Adiciona nova linha na tabela
-        this.goToPage(this.lastPage); // Muda exibicao para ultima pagina
+        if(this.enablePaginate){this.goToPage(this.lastPage)}; // Muda exibicao para ultima pagina
         let tr = document.createElement('tr');
         tr.dataset.rawRef = this.rawNextId;
         tr.classList = this.newRowClasslist;
@@ -276,13 +311,13 @@ class jsTable{
             i++;
         }
         row.remove(); // Remove o elemento da tabela
-        try {this.tbody.appendChild(this.raw[this.leid]);}catch(error){} // Adiciona proximo elemento ao final do tbody
+        if(this.enablePaginate){try {this.tbody.appendChild(this.raw[this.leid]);}catch(error){}} // Adiciona proximo elemento ao final do tbody
         document.getElementById('jsTableRestoreRow').classList.remove('d-none'); // Exibe botao para restaurar linha
     }
     restoreRow(){
         let tr = this.trash.pop();
-        tr.classList.add('table-warning');
-        this.goToPage(this.lastPage);
+        tr.classList = 'table-warning';
+        if(this.enablePaginate){this.goToPage(this.lastPage)};
         this.tbody.appendChild(tr);
         this.raw.push(tr);
         if(this.trash.length == 0){document.getElementById(`jsTableRestoreRow`).classList.add('d-none');}
@@ -312,9 +347,38 @@ class jsTable{
         btn.setAttribute('download', filename);
         btn.click();
         btn.remove();
-        e.target.classList.
+        let originalClasslist = e.target.classList.value;
+        let originalHtml = e.target.innerHTML;
+        e.target.classList = 'btn btn-sm btn-success';
+        try {dotAlert('success', 'Arquivo baixado com sucesso')}catch(error){}
+        setTimeout(function() {e.target.classList = originalClasslist;}, 800);
     }
-    exportCsv(){console.log('EXPORTANDO CSV');}
+    exportCsv(){
+        let csv = [];
+        let raw_size = this.raw.length;
+        for (let i = 0; i < raw_size; i++) {
+            let row = [], cols = this.raw[i].querySelectorAll('td, th');
+            let cols_size = this.canDeleteRow ? cols.length - 1 : cols.length; // Desconsidera coluna de controles (se existir)
+            for (let j = 0; j < cols_size; j++) {
+                let data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, '').replace(/(\s\s)/gm, ' '); // Remove espacos multiplos e quebra de linha
+                if(this.csvClean){data = data.normalize("NFD").replace(/[\u0300-\u036f]/g, "");} // Remove acentuação e caracteres especiais
+                data = data.replace(/"/g, '""'); // Escape double-quote com double-double-quote 
+                row.push('"' + data + '"'); // Carrega string
+            }
+            csv.push(row.join(this.csvSeparator));
+        }
+        let csv_string = csv.join('\n');
+        let filename = 'jsTable.csv';
+        let link = document.createElement('a');
+        link.style.display = 'none';
+        link.setAttribute('target', '_blank');
+        link.setAttribute('href', 'data:text/csv;charset=utf-8,%EF%BB%BF' + encodeURIComponent(csv_string));
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+    }
     cleanTable(){this.thead.innerHTML = '';this.tbody.innerHTML = '';}
     cleanRows(){this.tbody.innerHTML = '';}
     validateTable(){}

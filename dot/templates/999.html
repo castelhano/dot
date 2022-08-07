@@ -20,25 +20,34 @@
     <hr>
    
     <div id="foo_folder"></div>
-    
-    
+  
   </div>
+    <div id="dot_alert" class="alert alert-dismissible fade mb-1" role="alert">
+      <span id="dot_alert_message"></span>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    
   <script src="{% static 'js/listener.js' %}"></script>
   <script src="{% static 'js/table_V2.js' %}"></script>
   <script src="{% static 'js/dot.js' %}"></script>
   <script src="/static/js/vendor/bootstrap.bundle.min.js"></script>
+  
+  
+  
   <script>
     
     let foo = new jsTable('myTable', {
       container: document.getElementById('foo_folder'),
       data: {% include 'core/data_test.json' %},
-      enablePaginate: true,
       canDeleteRow: true,
-      caption: '<b class="fs-7">Cadastro de Visitantes</b>',
       canAddRow: true,
+      // enablePaginate: true,
+      // rowsPerPage: 10,
       canFilter: true,
-      editableCols: ['first_name', 'email']
+      filterCols: ['first_name', 'last_name', 'ip_address']
     });
+
+    // foo.filter('female');
 
   </script>
 </body>
