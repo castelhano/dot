@@ -1,15 +1,15 @@
 
-// TODO:
-// adicionar campo para delete row (headers e rows) em tabela criada previamente
-
 class jsTable{
     constructor(id, options){
-        this.id = typeof id == 'string' ? id : id.id; // Armazena id da tabela
+        this.id = typeof id == 'string' ? id : id.id ? id.id : 'jsTable' ; // Armazena id da tabela (ou jsTable caso na informado id)
         this.table = typeof id == 'object' ? id : null; // Aponta para tabela alvo
         this.data = options?.data || []; // Json com dados para popular tabela
         this.raw = []; // Guarda todos os TRs da tabela
+        this.filteredRows = []; // Guarda as rows filtradas
         this.rawNextId = 0; // Armazena o proximo id disponivel, usado no medido addRow
         this.caption = options?.caption || null;
+        this.loadingEl = null; // Guarda o componente loading
+        this.rowsCountLabel = null; // Span com a qtde de registros na tabela
         this.headers = []; // Arrays de strings com o nome dos headers da tabela
         this.thead = this.table ? this.table.tHead : null; // Aponta para thead
         this.tbody = this.table ? this.table.tBodies[0] : null; // Aponta para tbody principal (armazena registros visiveis)
@@ -25,7 +25,7 @@ class jsTable{
         this.activePage = options?.activePage || 1; // Informa pagina exibida no momento (ou pode ser setada na criacao do objeto)
         this.lastPage = 0; // Armazena a ultima pagina da tabela
         this.maxPagesButtons = options?.maxPagesButtons || 6; // Quantidade maxima de botoes a serem exibidos 
-        this.leid = 0;
+        this.leid = 0; // Last Element Id: Armazena o id do ultimo elemento a ser exibido no body (na pagina atual)
         this.pgControlClasslist = options?.pgControlsClasslist || 'pagination justify-content-end'; 
         this.pgPageClasslist = options?.pgPageClasslist || 'page-item';
         this.pgLinkClasslist = options?.pgLinkClasslist || 'page-link';
@@ -39,24 +39,30 @@ class jsTable{
         this.canDeleteRow = options?.canDeleteRow != undefined ? options.canDeleteRow : false;
         this.deleteRowClasslist = options?.deleteRowClasslist || 'btn btn-sm btn-secondary';
         this.deleteRowText = options?.deleteRowText || '<i class="fas fa-trash"></i>';
+        this.restoreButton = null; // Armazena o botao para restaurar linha do trash, necessario para exibir e ocultar baseado na existencia de itens no trash
         this.canExportCsv = options?.canExportCsv != undefined ? options.canExportCsv : true;
         this.csvSeparator = options?.csvSeparator || ';';
         this.csvClean = options?.csvClean != undefined ? options.csvClean : false; // Se setado para true remove acentuacao e caracteres especiais (normalize NFD)
-        this.canExportJson = options?.canExportJson != undefined ? options.canExportJson : true;
+        this.canExportJson = options?.canExportJson != undefined ? options.canExportJson : false;
         this.exportBtn = null;
         this.canFilter = options?.canFilter != undefined ? options.canFilter : false;
         this.filterInput = null;
         this.filterCols = options?.filterCols || []; // Recebe o nome das colunas a ser analisado ao filtar Ex: filterCols: ['nome', 'email']
-        this.canSort = options?.canSort != undefined ? options.canSort : false;
+        this.canSort = options?.canSort != undefined ? options.canSort : true;
         if(this.table == null){
             this.createTable();
             this.buildHeaders();
+            this.buildControls();
             this.buildRows();
+            this.buildListeners();
         }
-        else{this.validateTable()}
-        this.buildControls();
-        // this.buildListeners();
+        else{
+            this.validateTable();
+            this.buildControls();
+            this.buildListeners();
+        }
         if(this.enablePaginate){this.paginate()}
+        this.loading(true); // Oculta sppiner de loading quando terminado de carregar tabela
     }
     createTable(){
         this.table = document.createElement('table');
@@ -65,6 +71,7 @@ class jsTable{
         this.thead = document.createElement('thead');
         this.tbody = document.createElement('tbody');
         this.table.caption = document.createElement('caption');
+        this.table.caption.style.position = 'relative';
         this.table.appendChild(this.thead);
         this.table.appendChild(this.tbody);
         this.container.appendChild(this.table);
@@ -110,6 +117,7 @@ class jsTable{
             this.tbody.appendChild(row); // Insere row na tabela
             this.raw.push(row); 
         }
+        this.rowsCountLabel.innerHTML = data_size;
     }
     rowAddControls(row){
         if(this.canDeleteRow){
@@ -124,6 +132,7 @@ class jsTable{
         }
     }
     buildControls(){
+        this.table.classList.add('caption-top'); // Adiciona a classe caption top (caso nao exista)
         if(this.canSort){this.table.classList.add('table-sortable')}
         if(this.enablePaginate){ // Cria os controles gerais para paginacao (first, next e previous)
             let pgNav = this.pgControlContainer || document.createElement('nav'); // Container principal dos controles de navegacao da tabela
@@ -148,26 +157,32 @@ class jsTable{
             if(!this.pgControlContainer){this.table.after(pgNav);} // Insere nav (caso nao definido container na instancia da clsse) com controles de paginacao no fim da tabela
         }
         // Controles do caption (filter input, addRow, export, save etc...)
-        let capRow = document.createElement('div');capRow.classList = 'row g-2';
-        if(this.caption){
+        let capRow = document.createElement('div');capRow.classList = 'row g-2'; // Inicia row
+        if(this.caption){ // Se informado caption ao instanciar objeto, cria div.col com conteudo do caption
             let capText = document.createElement('div');
             capText.classList = 'col-auto pe-2';
             capText.innerHTML = this.caption;
             capRow.appendChild(capText);
         }
-        if(this.canFilter){
+        if(this.canFilter){ // Se habilitado filtro insere div.col com input.text para filtrar tabela
             let capFilter = document.createElement('div');
             capFilter.classList = 'col';
             this.filterInput = document.createElement('input');
             this.filterInput.type = 'text';
+            this.filterInput.disabled = this.filterCols.length > 0 ? false : true;
             this.filterInput.classList = 'form-control form-control-sm';
             this.filterInput.placeholder = 'Filtrar*';
             this.filterInput.onkeyup = () => this.filter();
             capFilter.appendChild(this.filterInput);
             capRow.appendChild(capFilter);
         }
-        let capControlsGroup = document.createElement('div');
+        let capControlsGroup = document.createElement('div'); // Inicia btn-group
         capControlsGroup.classList = 'btn-group';
+        this.rowsCountLabel = document.createElement('button'); // Cria elemento que vai armazenar a quantidade de registros na tabela
+        this.rowsCountLabel.classList = 'btn btn-sm btn-dark';
+        this.rowsCountLabel.disabled = true;
+        this.rowsCountLabel.innerHTML = this.raw.length;
+        capControlsGroup.appendChild(this.rowsCountLabel);
         if(this.canAddRow){
             let btn = document.createElement('button');
             btn.classList = 'btn btn-sm btn-outline-success';
@@ -183,12 +198,11 @@ class jsTable{
             capControlsGroup.appendChild(btn);
         }
         if(this.canDeleteRow){
-            let btn = document.createElement('button');
-            btn.id = 'jsTableRestoreRow';
-            btn.classList = 'btn btn-sm btn-outline-secondary d-none';
-            btn.onclick = () => this.restoreRow();
-            btn.innerHTML = '<i class="fas fa-history px-1"></i>';
-            capControlsGroup.appendChild(btn);
+            this.restoreButton = document.createElement('button');
+            this.restoreButton.classList = 'btn btn-sm btn-outline-secondary d-none';
+            this.restoreButton.onclick = () => this.restoreRow();
+            this.restoreButton.innerHTML = '<i class="fas fa-history px-1"></i>';
+            capControlsGroup.appendChild(this.restoreButton);
         }
         if(this.canExportCsv){
             let btn = document.createElement('button');
@@ -209,20 +223,59 @@ class jsTable{
         capControls.appendChild(capControlsGroup);
         capRow.appendChild(capControls);
         this.table.caption.appendChild(capRow);
+        this.loadingEl = document.createElement('div');
+        this.loadingEl.classList = 'text-center bg-light position-absolute border w-100 top-0 py-2';
+        this.loadingEl.innerHTML = '<div class="spinner-border text-success fs-7" role="status"><span class="visually-hidden">Loading...</span></div>';
+        this.table.caption.appendChild(this.loadingEl); // Adiciona loading componente na tabela        
     }
     buildListeners(){
+        if(this.canSort){
+            this.thead.querySelectorAll("th").forEach(headerCell => {
+                headerCell.addEventListener("click", () => {
+                    const headerIndex = Array.prototype.indexOf.call(headerCell.parentElement.children, headerCell);
+                    const currentIsAscending = headerCell.classList.contains("th-sort-asc");  
+                    this.sort(headerIndex, !currentIsAscending);
+                });
+            });
+        }
     }
-    setEditableCols(){} // Somente usado em tabelas previamente criadas
     loadData(json){ // Carrega dados na tabela (!! Limpa dados atuais)
         this.data = json;
         this.cleanTable();
         this.buildHeaders();
+        this.buildListeners();
         this.buildRows();
+        if(this.enablePaginate){this.paginate()}
     }
-    appendRows(json){} // Carrega dados na tabela (mantem dados atuais) (!! Não adiciona novos cabecalhos)
+    appendData(json){ // Carrega dados na tabela (mantem dados atuais) (!! Não adiciona novos cabecalhos)
+        let data_size = json.length;
+        let first = this.rawNextId; // Inicio dos ids a serem inseridos
+        let last = first + data_size; // Ultimo id a ser inserido
+        for(let i = 0; i < data_size;i++){
+            let row = document.createElement('tr');
+            row.dataset.rawRef = first + i;
+            for(let j = 0;j < this.headers.length;j++){
+                let v = json[i][this.headers[j]]; // Busca no json data se existe valor na row para o header, retorna o valor ou undefinied (caso nao encontre)
+                let col = document.createElement('td');
+                col.innerHTML = v != undefined ? v : ''; // Insere valor ou empty string '' para o campo
+                let editable = this.editableCols.includes(this.headers[j]);
+                col.contentEditable = editable ? true : false; // Verifica se campo pode ser editado, se sim marca contentEditable='True'
+                col.classList = editable ? this.editableColsClasslist : ''; // Se campo for editavel, acidiona classe definida em editableColsClasslist
+                row.appendChild(col);
+            }
+            this.rowAddControls(row); // Adiciona controles para row
+            this.raw.push(row);
+            if(this.enablePaginate){this.paginate()} // Se habilado paginacao, refaz paginacao
+            else{this.tbody.appendChild(row);} // Caso contrario so insere row na tabela
+        }
+        this.rowsCountLabel.innerHTML = this.raw.length;
+        // this.raw = this.raw.concat(json);
+        // if(this.enablePaginate){this.paginate()}
+    }
     filter(criterio=null){
-        if(this.canFilter){
-            let c = criterio || this.filterInput.value.toLowerCase();
+        let c = criterio || this.filterInput.value.toLowerCase();
+        if(this.canFilter && this.filterCols.length > 0 && c != ''){
+            this.filteredRows = []; // Limpa os filtros
             let rows_size = this.raw.length;
             let cols_size = this.headers.length;
             let cols = []; // Array armazena os indices das coluas a serem analizadas
@@ -231,30 +284,35 @@ class jsTable{
             }
             let row_count = 0;
             for (let i = 0; i < rows_size; i++) { // Percorre todas as linhas, e verifica nas colunas definidas em filterCols, se texto atende criterio
-                let row_value = '';                
+                let row_value = '';
                 for(let j=0; j < cols.length;j++) {
                     let td = this.raw[i].getElementsByTagName("td")[cols[j]];
                     row_value += td.textContent || td.innerText;
                 }
-                if (row_value.toLowerCase().indexOf(c) > -1) {this.raw[i].style.display = ": table-row";row_count++;}
-                else {this.raw[i].style.display = "none";}
-            }
+                if(row_value.toLowerCase().indexOf(c) > -1) {this.filteredRows.push(this.raw[i]);row_count++;}
+            }            
             if(row_count == 0){
-                this.tbody.innerHTML = `<tr><td colspan="${this.canDeleteRow ? this.headers.length + 1 : this.headers.length}">Nenhum registro encontrado com o criterio informado</td></tr>`;
+                let tr = document.createElement('tr');
+                tr.innerHTML = `<td colspan="${this.canDeleteRow ? this.headers.length + 1 : this.headers.length}">Nenhum registro encontrado com o criterio informado</td>`;
+                this.filteredRows.push(tr);
             }
-            
+            this.rowsCountLabel.innerHTML = row_count;
         }
+        else if(c == ''){this.filteredRows = [];}; // Ao limpar filtro, limpa array com rows filtradas
+        this.paginate(); // Refaz paginacao
     }
     paginate(){
-        let rowsSize = this.raw.length;
+        let data = this.filteredRows.length > 0 ? this.filteredRows : this.raw; // Faz paginamento pelo array raw ou filteredRows (caso registros filtrados)
+        let rowsSize = data.length;
+        let foo = this.filteredRows.length > 0 ? 'this.filteredRows' : 'this.raw';
         this.lastPage = Math.ceil(rowsSize / this.rowsPerPage);
         if(this.activePage > this.lastPage){this.activePage = this.lastPage} // Impede tentativa de acesso de pagina maior que a qtde de paginas
         if(this.activePage < 1){this.activePage = 1} // Impede tentativa de acesso de pagina menor que 1
         let feid = (this.activePage - 1) * this.rowsPerPage; // FirstElementId: Seta o ID do primeiro elemento a ser mostrado
         this.leid = Math.min((feid + this.rowsPerPage) - 1, rowsSize - 1); // LastElementId: Seta o ID do ultimo elemento a ser mostrado   
-        this.tbody.innerHTML = ''; // Limpa os tbody principal
+        this.cleanRows();
         for(let i = feid;i <= this.leid;i++ ){
-            this.tbody.appendChild(this.raw[i]);
+            this.tbody.appendChild(data[i]);
         }
         this.pgBuildPageControls(this.lastPage);
     }
@@ -279,6 +337,22 @@ class jsTable{
             if(remmains == 1){current = pages} // Ultimo botao sempre aponta para ultima pagina
         }
     }
+    sort(column, asc=true){
+        const modifier = asc ? 1 : -1; // Modificador para classificar em order crecente (asc=true) ou decrescente (asc=false)
+        let rows = this.filteredRows.length > 0 ? this.filteredRows : this.raw; // Busca linhas em this.filteredRows (caso filtrado) ou em this.raw caso nao
+        const sortedRows = rows.sort((a, b) => {
+            const aColText = a.querySelector(`td:nth-child(${ column + 1 })`).textContent.trim();
+            const bColText = b.querySelector(`td:nth-child(${ column + 1 })`).textContent.trim();  
+            return aColText > bColText ? (1 * modifier) : (-1 * modifier);
+        });
+        // this.cleanRows(); // Limpa rows da tabela
+        rows = sortedRows; // Atualiza campos (filtrados ou do raw)
+        this.paginate();
+        
+        this.thead.querySelectorAll("th").forEach(th => th.classList.remove("th-sort-asc", "th-sort-desc"));
+        this.thead.querySelector(`th:nth-child(${ column + 1})`).classList.toggle("th-sort-asc", asc);
+        this.thead.querySelector(`th:nth-child(${ column + 1})`).classList.toggle("th-sort-desc", !asc);
+    }
     goToPage(page){this.activePage = page;this.paginate();}
     previousPage(){this.activePage--;this.paginate();}
     nextPage(){this.activePage++;this.paginate();}
@@ -289,7 +363,7 @@ class jsTable{
         tr.classList = this.newRowClasslist;
         for(let i = 0;i < this.headers.length;i++){
             let td = document.createElement('td');
-            td.innerHTML = '&nbsp;'
+            td.innerHTML = ''
             td.contentEditable = true; // Na nova linha todos os campos sao editaveis
             td.classList = this.editableColsClasslist;
             tr.appendChild(td);
@@ -298,6 +372,7 @@ class jsTable{
         this.raw.push(tr);
         this.tbody.appendChild(tr);
         this.rawNextId++; // Incrementa o rawNextId para eventual proximo elemento a ser inserido
+        this.rowsCountLabel.innerHTML = this.raw.length; // Ajusta contador para tabela
     }
     deleteRow(row){
         let done = false;
@@ -311,8 +386,12 @@ class jsTable{
             i++;
         }
         row.remove(); // Remove o elemento da tabela
-        if(this.enablePaginate){try {this.tbody.appendChild(this.raw[this.leid]);}catch(error){}} // Adiciona proximo elemento ao final do tbody
-        document.getElementById('jsTableRestoreRow').classList.remove('d-none'); // Exibe botao para restaurar linha
+        this.rowsCountLabel.innerHTML = this.raw.length; // Ajusta contador para tabela
+        if(this.enablePaginate){
+            try {this.tbody.appendChild(this.raw[this.leid]);}catch(error){} // Adiciona (se existir) proximo elemento ao final do tbody
+            this.paginate(); // Refaz paginacao
+        }
+        this.restoreButton.classList.remove('d-none'); // Exibe botao para restaurar linha
     }
     restoreRow(){
         let tr = this.trash.pop();
@@ -320,7 +399,8 @@ class jsTable{
         if(this.enablePaginate){this.goToPage(this.lastPage)};
         this.tbody.appendChild(tr);
         this.raw.push(tr);
-        if(this.trash.length == 0){document.getElementById(`jsTableRestoreRow`).classList.add('d-none');}
+        if(this.trash.length == 0){this.restoreButton.classList.add('d-none');}
+        this.rowsCountLabel.innerHTML = this.raw.length; // Ajusta contador para tabela
     }
     getRows(){ // Retorna array com todas as linhas da tabela
         let items = [];
@@ -340,7 +420,7 @@ class jsTable{
     exportJson(e){
         let data = this.getJson();
         let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(data);
-        let filename = 'jsTable.json';
+        let filename = `${this.id}.json`;
         let btn = document.createElement('a');
         btn.classList = 'd-none';
         btn.setAttribute('href', dataUri);
@@ -368,7 +448,7 @@ class jsTable{
             csv.push(row.join(this.csvSeparator));
         }
         let csv_string = csv.join('\n');
-        let filename = 'jsTable.csv';
+        let filename = `${this.id}.csv`;
         let link = document.createElement('a');
         link.style.display = 'none';
         link.setAttribute('target', '_blank');
@@ -381,5 +461,34 @@ class jsTable{
     }
     cleanTable(){this.thead.innerHTML = '';this.tbody.innerHTML = '';}
     cleanRows(){this.tbody.innerHTML = '';}
-    validateTable(){}
+    loading(done=false){
+        if(done){this.loadingEl.classList.add('d-none')}
+        else{this.loadingEl.classList.remove('d-none')}
+    }
+    validateTable(){ // Metodo chamado em tabelas previamente criadas, normaliza e categoriza elementos  
+        if(!this.table.caption){this.table.caption = document.createElement('caption');} // Cria o caption da tabela caso nao exista
+        else{this.caption = this.table.caption.innerHTML;this.table.caption.innerHTML = ''} // Limpa o caption atual, sera refeito no metodo buildControls
+        
+        let ths = this.table.tHead.querySelectorAll('th,td'); // Busca todos os elementos th ou td no header da tabela
+        for(let i = 0; i < ths.length;i++){ // Percorre todos os headers, ajustando conteudo e populando array de headers
+            ths[i].setAttribute('data-key',ths[i].innerText); // Ajusta o data-attr key com o valor informado no th
+            this.headers.push(ths[i].innerText); // Adiciona o header no array de headers
+            if(this.canFilter && this.filterCols.includes(ths[i].innerText)){ths[i].innerHTML += '*'} // Verifica se header esta marcado para ser filtrado, se sim adiciona caracter identificador
+            
+        }
+        
+        let trs = this.table.querySelectorAll('tbody tr'); // Busca todas as linhas dentro de um tbody
+        let trs_count = trs.length;
+        this.rawNextId = trs_count; // Ajusta o id de um eventual proximo elemento a ser inserido
+        for(let i = 0; i < trs_count; i++){
+            trs[i].dataset.rawRef = i; // Ajusta data-attr rawRef do elemento tr
+            for(let j = 0; j < ths.length; j++){ // Percorre todas as colunas da tr para setar contentEditable nas colunas definidas em this.editableCols
+                let editable = this.editableCols.includes(ths[j].dataset.key);
+                trs[i].querySelectorAll('td')[j].contentEditable = editable ? true : false; // Verifica se campo pode ser editado, se sim marca contentEditable='True'
+                trs[i].querySelectorAll('td')[j].classList = editable ? this.editableColsClasslist : ''; // Se campo for editavel, acidiona classe definida em editableColsClasslist
+            }
+            this.rowAddControls(trs[i]); // Adiciona controles para row
+            this.raw.push(trs[i]); // Adiciona linha no array raw
+        }        
+    }
 }
