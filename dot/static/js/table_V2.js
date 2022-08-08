@@ -61,7 +61,7 @@ class jsTable{
         this.saveButtonText = options?.saveButtonText || '<i class="fas fa-save px-1"></i>';
         this.restoreButtonClasslist = options?.restoreButtonClasslist || 'btn btn-sm btn-outline-secondary d-none';
         this.restoreButtonText = options?.restoreButtonText || '<i class="fas fa-history px-1"></i>';
-        this.pgControlClasslist = options?.pgControlsClasslist || 'pagination justify-content-end'; 
+        this.pgControlClasslist = options?.pgControlClasslist || 'pagination justify-content-end'; 
         this.pgPageClasslist = options?.pgPageClasslist || 'page-item';
         this.pgLinkClasslist = options?.pgLinkClasslist || 'page-link';
         this.pgFirstButtonLabel = options?.pgFirstButtonLabel || '<i class="fas fa-angle-double-left"></i>';
@@ -510,7 +510,8 @@ class jsTable{
             for(let j = 0; j < ths.length; j++){ // Percorre todas as colunas da tr para setar contentEditable nas colunas definidas em this.editableCols
                 let editable = this.editableCols.includes(ths[j].dataset.key);
                 trs[i].querySelectorAll('td')[j].contentEditable = editable ? true : false; // Verifica se campo pode ser editado, se sim marca contentEditable='True'
-                trs[i].querySelectorAll('td')[j].classList = editable ? this.editableColsClasslist : ''; // Se campo for editavel, acidiona classe definida em editableColsClasslist
+                let originalClasslist = trs[i].querySelectorAll('td')[j].className;
+                trs[i].querySelectorAll('td')[j].classList = editable ? originalClasslist + this.editableColsClasslist : originalClasslist; // Se campo for editavel, acidiona classe definida em editableColsClasslist
             }
             this.rowAddControls(trs[i]); // Adiciona controles para row
             this.raw.push(trs[i]); // Adiciona linha no array raw
