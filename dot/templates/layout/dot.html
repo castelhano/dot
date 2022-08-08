@@ -55,7 +55,7 @@
               <li><a class="dropdown-item" id="change_password_link" href="{% url 'change_password' %}"><i class="fas fa-fw fa-unlock-alt"></i> Alterar <b>S</b>enha</a></li>
               <li class="d-none d-lg-block"><a class="dropdown-item pointer" id="shortcut_link_list" data-bs-toggle="modal" data-bs-target="#shortcut_modal"><i class="fas fa-fw fa-keyboard"></i> <b>A</b>talhos / Sobre</a></li>
               {% if perms.core.docs %}
-              <li><a class="dropdown-item" id="docs_link" href="{% url 'docs' %}"><i class="fas fa-fw fa-terminal"></i> <b>D</b>ocumentação</a></li>
+              <li><a class="dropdown-item" id="docs_link" href="{% url 'docs' 'core' %}"><i class="fas fa-fw fa-terminal"></i> <b>D</b>ocumentação</a></li>
               {% endif %}
               <li class="d-lg-none"><span class="dropdown-item pointer" onclick="forceReload()"><i class="fas fa-fw fa-sync-alt"></i> Force Reload</span></li>
               <li><hr class="dropdown-divider"></li>

@@ -1,0 +1,332 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Docs{% endblock %}
+{% block model %}docs<i class="fas fa-angle-right fs-6 mx-2"></i><span class="">jsTable</span>{% endblock %}
+{% block model_menu %}{% include "_component/menu/visitor.html" %}{% endblock%}
+{% block style_src %}<link rel="stylesheet" href="{% static 'css/vendor/prism.css' %}">{% endblock%}
+
+
+<style>
+{% block style %}
+*{scroll-margin: 50px;}
+
+{% endblock%}
+</style>
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'docs' 'jsTable' %}"></a>
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-book"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" href="{% url 'docs' 'core' %}"><i class="fas fa-undo"></i></a></li>
+    </ul>
+  </div>
+  <div class="card-body tab-content">
+    <div class="tab-pane fade show active" id="base" role="tabpanel">
+      <div class="row mt-2">
+        <div class="col-lg-8"><!-- Container principal -->
+          <h1>jsTable</h1>
+          <hr>
+          <p>Library em javascript ( vanilla ) para operações com tabelas preexistentes ou criadas dinamicamente.</p>
+          <blockquote class="callout callout-primary fs-7">
+            Version: <b>2.1</b><br>
+            Release: <b>07/08/2022</b><br>
+            Author: &nbsp;<b>Rafael Gustavo Faria Alves</b><br>
+            Depend: <a class="badge bg-orange text-decoration-none text-white" href="https://getbootstrap.com/docs/5.2/getting-started/introduction/" target="_blank">bootstrap 5.x</a> <a class="badge bg-purple text-decoration-none text-white" href="https://fontawesome.com/v5/search?m=free" target="_blank">fontawesome 5.x</a><br>
+
+          </blockquote>
+          
+          <h3 class="mt-5">Utilização</h3>
+          <hr>
+          <p>Importe o arquivo table.js na sua página html.</p>
+          <pre><code class="language-html">&lt;script src="table.js"&gt;&lt;/script&gt;</code></pre>
+          
+          <h5 class="mt-5">Instanciando uma tabela existente</h5>
+          <blockquote class="callout callout-warning mt-3"><i class="fas fa-info text-warning me-2"></i> Tabela precisa ser composta com elementos <b>thead</b> e <b>tbody</b>. Tabelas com mais de um tbody serão ajustadas para operar num único tbody</blockquote>
+          <p>Crie uma instancia apontando para a tabela e (opcional) dicionário com as configurações.</p>
+          <pre><code class="language-javascript">var tabela = new jsTable(document.querySelector('table'), { options });</code></pre>
+          
+          <h5 class="mt-5">Criando uma tabela dinamicamente ( json )</h5>
+          <p>Crie uma instancia informando o <b>id</b> que será atribuido a tabela.</p>
+          <pre><code class="language-javascript">var tabela = new jsTable('tabelaId', {
+  data: jsonObject,
+  container: document.getElementById('tabela_container')
+});
+// atributo data recebe o objeto json com dados da tabela
+// container é opcional, se omitido, tabela será gerada ao final do body 
+</code></pre>
+          
+          <h3 class="mt-5">Configurações</h3>
+          <h5>Recursos</h5>
+          <div class="table-responsive">
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <td>Chave</td>
+                  <td>Tipo</td>
+                  <td>Descrição</td>
+                  <td>Default</td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>data</td><td>json</td><td>Objeto json</td><td>[ ]</td></tr>
+                <tr><td>container</td><td>element</td><td>Parent element para a tabela a ser criada</td><td>document.body</td></tr>
+                <tr><td>caption</td><td>string</td><td>Texto do caption da tabela </td><td>''</td></tr>
+                <tr><td>canAddRow</td><td>bool</td><td>Altere para exibir controle para nova linha</td><td>false</td></tr>
+                <tr><td>canDeleteRow</td><td>bool</td><td>Altere para exibir controle excluir linha</td><td>false</td></tr>
+                <tr><td>canSave</td><td>bool</td><td>Altere para exibir controle salvar</td><td>false</td></tr>
+                <tr><td>save</td><td>function</td><td>Função a ser acionada ao salvar tabela</td><td>null</td></tr>
+                <tr><td>canSort</td><td>bool</td><td>Liberta classificação ao clicar no header</td><td>true</td></tr>
+                <tr><td>canFilter</td><td>bool</td><td>Insere input.text para filtrar registros tabela</td><td>false</td></tr>
+                <tr id="filterCols" class="foo"><td>filterCols</td><td>array</td><td>Lista com nomes dos campos para filtro</td><td>[ ]</td></tr>
+                <tr><td>canExportCsv</td><td>bool</td><td>Mostra botão para exportar dados em CSV</td><td>true</td></tr>
+                <tr><td>csvSeparator</td><td>string</td><td>Separador para exportação CSV</td><td>';'</td></tr>
+                <tr><td>csvClean</td><td>bool</td><td>Altere para retirar açentos e caracteres especiais ao exportar</td><td>false</td></tr>
+                <tr><td>csvHeaders</td><td>bool</td><td>Adiciona headers no arquivo de exportação</td><td>true</td></tr>
+                <tr><td>canExportJson</td><td>bool</td><td>Mostra botão para exportar dados em CSV</td><td>false</td></tr>
+                <tr><td>editableCols</td><td>array</td><td>Campos da tabela permitidos para edição</td><td>[ ]</td></tr>
+                <tr><td>enablePaginate</td><td>bool</td><td>Inicia paginação para tabela</td><td>false</td></tr>
+                <tr><td>pgControlContainer</td><td>element</td><td>Parent element para criação dos controles</td><td>table.caption</td></tr>
+                <tr><td>rowsPerPage</td><td>int</td><td>Quantidade de linhas por página</td><td>15</td></tr>
+                <tr><td>activePage</td><td>int</td><td>Página a ser direcionada</td><td>1</td></tr>
+                <tr><td>maxPagesButtons</td><td>int</td><td>Quantidade máxima de botoes de páginas a serem mostrados</td><td>6</td></tr>
+              </tbody>
+            </table>
+        </div>
+          
+          <h5 class="mt-5">Estilização</h5>
+          <div class="table-responsive">
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <td>Chave</td>
+                  <td>Tipo</td>
+                  <td>Descrição</td>
+                  <td>Default</td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>tableClasslist</td><td>string</td><td>'myclass'</td><td>'table border table-striped table-hover caption-top mb-2'</td></tr>
+                <tr><td>editableColsClasslist</td><td>string</td><td>Classes dos campos editaveis</td><td>'text-primary'</td></tr>
+                <tr><td>rowsCountLabelClasslist</td><td>string</td><td>Classes botão contador de registros</td><td>'btn btn-sm btn-dark'</td></tr>
+                <tr><td>addRowButtonClasslist</td><td>string</td><td>Classes do botão adicionar linha</td><td>'btn btn-sm btn-outline-success'</td></tr>
+                <tr><td>addRowButtonText</td><td>string</td><td>Texto do botão excluir</td><td>'&lt;i class="fas fa-plus px-1"&gt;&lt;/i&gt;'</td></tr>
+                <tr><td>newRowClasslist</td><td>string</td><td>Classes de nova linha</td><td>'table-success'</td></tr>
+                <tr><td>deleteRowButtonClasslist</td><td>string</td><td>Classes do botão para excluir linha</td><td>'btn btn-sm btn-secondary'</td></tr>
+                <tr><td>deleteRowButtonText</td><td>string</td><td>Texto do botão excluir</td><td>'&lt;i class="fas fa-trash"&gt;&lt;/i&gt;'</td></tr>
+                <tr><td>saveButtonClasslist</td><td>string</td><td>Classes do botão para salvar tabela</td><td>'btn btn-sm btn-outline-primary'</td></tr>
+                <tr><td>saveButtonText</td><td>string</td><td>Texto do botão save</td><td>'&lt;i class="fas fa-save px-1"&gt;&lt;/i&gt;'</td></tr>
+                <tr><td>restoreButtonClasslist</td><td>string</td><td>Classe botão restaurar linha</td><td>'btn btn-sm btn-outline-secondary d-none'</td></tr>
+                <tr><td>restoreButtonText</td><td>string</td><td>Texto do botão save</td><td>'&lt;i class="fas fa-history px-1"&gt;&lt;/i&gt;'</td></tr>
+                <tr><td>pgControlClasslist</td><td>string</td><td>Classes menu de controles (ul)</td><td>'pagination justify-content-end'</td></tr>
+                <tr><td>pgPageClasslist</td><td>string</td><td>Classes das botoes (li) </td><td>'page-item'</td></tr>
+                <tr><td>pgLinkClasslist</td><td>string</td><td>Classes do link do botão</td><td>'page-link'</td></tr>
+                <tr><td>pgFirstLabel</td><td>string</td><td>Classe do botão **início**</td><td>'&lt;i class="fas fa-angle-double-left"&gt;&lt;/i&gt;'</td></tr>
+                <tr><td>pgPreviousLabel</td><td>string</td><td>Classes botão **anterior**</td><td>'&lt;i class="fas fa-angle-left"&gt;&lt;/i&gt;'</td></tr>
+                <tr><td>pgNextLabel</td><td>string</td><td>Classes botão **próximo**</td><td>'&lt;i class="fas fa-angle-right"&gt;&lt;/i&gt;'</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+
+          <h3 class="mt-5">Metodos</h3>
+          <div class="table-responsive">
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <td>Metodo</td>
+                  <td>Param</td>
+                  <td>Retorno</td>
+                  <td>Descrição</td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>loadData</td>
+                  <td>(<b>json</b>)</td>
+                  <td>null</td>
+                  <td>Carrega dados na tabela (limpa registros atuais)</td>
+                </tr>
+                <tr>
+                  <td>appendData</td>
+                  <td>(<b>json</b>)</td>
+                  <td>null</td>
+                  <td>Adiciona registros à tabela</td>
+                </tr>
+                <tr>
+                  <td>filter</td>
+                  <td>(<b>'criterio_pesquisa'</b>))</td>
+                  <td>null</td>
+                  <td>Filtra registros (necessário definir previamente campos de consulta em <a href="#filterCols">filterCols</a>)</td>
+                </tr>
+                <tr>
+                  <td>sort</td>
+                  <td>(<b>column_ref</b>))</td>
+                  <td>null</td>
+                  <td>Classifica os dados da tabela pelo número da coluna (iniciando em zero). Metodo tem um segundo parâmetro (opcional) que altera em crescente ou decrescente use tab.sort(2, false) para classificar em ordem decrecente.</td>
+                </tr>
+                <tr>
+                  <td>goToPage</td>
+                  <td>( <b>page_number</b> )</td>
+                  <td>null</td>
+                  <td>Em tabelas com paginação ativa, move para a pagina especificada</td>
+                </tr>
+                <tr>
+                  <td>previousPage</td>
+                  <td>n/a</td>
+                  <td>null</td>
+                  <td>Em tabelas com paginação ativa, move para a pagina anterior</td>
+                </tr>
+                <tr>
+                  <td>nextPage</td>
+                  <td>n/a</td>
+                  <td>null</td>
+                  <td>Em tabelas com paginação ativa, move para a próxima pagina</td>
+                </tr>
+                <tr>
+                  <td>addRow</td>
+                  <td>n/a</td>
+                  <td>null</td>
+                  <td>Adiciona linha ao final da tabela</td>
+                </tr>
+                <tr>
+                  <td>restoreRow</td>
+                  <td>n/a</td>
+                  <td>null</td>
+                  <td>Restaura ultima linha excluida (perde a posição, é inserido ao final da tabela)</td>
+                </tr>
+                <tr>
+                  <td>getRows</td>
+                  <td>n/a</td>
+                  <td>array</td>
+                  <td>Retorna array (objeto json) com todas as linhas da tabela</td>
+                </tr>
+                <tr>
+                  <td>getJson</td>
+                  <td>n/a</td>
+                  <td>string (json)</td>
+                  <td>Retorna string com todas as linhas da tabela em formato json</td>
+                </tr>
+                <tr>
+                  <td>loading</td>
+                  <td>( <b>bool</b>)</td>
+                  <td>null</td>
+                  <td>Exibe (ou oculta) spinner de carregamento, use tab.loading(true) para ocultar spinner</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+
+          <h3 class="mt-5">Exemplos</h3>
+          <blockquote class="callout callout-primary fs-7">HTML</blockquote>
+          
+          <pre><code class="language-html">&lt;table class="table" id="myTable"&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;ID&lt;/th&gt;
+      &lt;th&gt;Nome&lt;/th&gt;
+      &lt;th&gt;Email&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;01&lt;/td&gt;
+      &lt;td&gt;Jon Snow&lt;/td&gt;
+      &lt;td&gt;jom@doo.com&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;02&lt;/td&gt;
+      &lt;td&gt;Mei Sony&lt;/td&gt;
+      &lt;td&gt;sony@gmail.com&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;05&lt;/td&gt;
+      &lt;td&gt;Jonas Doo&lt;/td&gt;
+      &lt;td&gt;doo@yahoo.com&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;</code></pre>
+            
+            <blockquote class="callout callout-primary mt-5 fs-7"><b>Exemplo 01:</b> Utilização básica<br>Script:</blockquote>
+            <pre><code class="language-javascript">var table = new jsTable('myTable', {})</code></pre>
+
+            <div class="card d-none d-md-flex">
+              <div class="card-body">
+                <h6>Resultado: <b>Exemplo 01</b></h6>
+                <img src="{% static 'img/docs/jsTable01.png' %}" title="Resultado: Exemplo 01">
+              </div>
+            </div>
+
+            
+            <blockquote class="callout callout-primary mt-5 fs-7"><b>Exemplo 02:</b> Liberando recursos de <b>adicionar linha</b>, <b>excluir linha</b>, e <b>filtrar tabela</b><br>Script:</blockquote>
+            <pre><code class="language-javascript">let foo = new jsTable(document.querySelector('table'), {
+  canAddRow: true,
+  canDeleteRow: true,
+  canFilter: true,
+  filterCols: ['Nome', 'Email']
+});</code></pre>
+            
+            <div class="card d-none d-md-flex">
+              <div class="card-body">
+                <h6>Resultado: <b>Exemplo 02</b></h6>
+                <img src="{% static 'img/docs/jsTable02.png' %}" title="Resultado: Exemplo 02">
+              </div>
+            </div>
+
+            <blockquote class="callout callout-primary mt-5 fs-7"><b>Exemplo 03:</b> Liberando recursos de <b>adicionar linha</b>, <b>excluir linha</b>, e <b>filtrar tabela</b><br>Script:</blockquote>
+            <pre><code class="language-javascript">let foo = new jsTable(document.querySelector('table'), {
+  canSAve: true,
+  save: minhaFuncao
+});
+function minhaFuncao(){..dosomething}</code></pre>
+
+            <div class="card d-none d-md-flex">
+              <div class="card-body">
+                <h6>Resultado: <b>Exemplo 03</b></h6>
+                <img src="{% static 'img/docs/jsTable03.png' %}" title="Resultado: Exemplo 03">
+              </div>
+            </div>
+
+            <blockquote class="callout callout-primary mt-5 fs-7"><b>Exemplo 04:</b> Carregando tabela dinamicamente com <b>json</b><br>Script:</blockquote>
+            <pre><code class="language-javascript">const dados = [
+  {"id":01, "nome":"Jon Snow", "idade":22},
+  {"id":02, "nome":"Don Sony", "idade":33},
+  {"id":04, "nome":"Will Sully", "idade":40},
+  ...
+  ]
+
+var tab = new jsTable('minhaTabela', {
+  data: dados,
+  container: document.getElementById('tabela_container'),
+  enablePaginate: true,
+  rowsPerPage: 10
+})
+// container é opcional, se omitido, tabela será gerada ao final do body 
+</code></pre>
+
+<blockquote class="callout callout-primary mt-3"><i class="fas fa-info text-primary me-2"></i> Em tabelas já instancidadas é possivel usar os metodos <b>loadData(json)</b> ou <b>appendData(json)</b></blockquote>
+            
+            
+          </div><!-- Fim Container principal -->
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+  
+  
+  {% endblock%}
+  
+  {% block add_script_src %}
+  <script src="{% static 'js/vendor/prism.js' %}" charset="utf-8"></script>
+  {% endblock %}
+  
+  <script>
+    {% block add_script %}
+    prismStart();
+    
+    {% endblock %}
+  </script>

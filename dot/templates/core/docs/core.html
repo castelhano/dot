@@ -6,7 +6,7 @@
 {% block style_src %}<link rel="stylesheet" href="{% static 'css/vendor/prism.css' %}">{% endblock%}
 
 {% block content_fluid %}
-<a class="d-none" id="clear" href="{% url 'docs' %}"></a>
+<a class="d-none" id="clear" href="{% url 'docs' 'core' %}"></a>
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
@@ -14,7 +14,7 @@
       <li class="nav-item ms-1">
         <a class="nav-link pointer text-dark" data-bs-toggle="dropdown" id="btn_extra"><i class="fas fa-angle-down"></i></a>
         <ul class="dropdown-menu fs-7">
-          <li><a class="dropdown-item" id="download" href="">Foo</a></li>
+          <li><a class="dropdown-item" href="{% url 'docs' 'jsTable' %}"><i class="fab fa-js-square fa-fw text-purple"></i> jsTable</a></li>
         </ul>
       </li>
     </ul>

@@ -69,8 +69,8 @@ def logs(request):
     return render(request,'core/logs.html',{'logs':logs})
 
 @login_required
-def docs(request):
-    return render(request,'core/docs/core.html')
+def docs(request, page='core'):
+    return render(request,f'core/docs/{page}.html')
 
 @login_required
 @permission_required('core.view_alerta')

@@ -322,6 +322,7 @@ class jsTable{
         this.paginate(); // Refaz paginacao
     }
     paginate(){
+        if(!this.enablePaginate){this.enablePaginate = true;} // Caso metodo seja acionado apos objeto instanciado, ativa flag enablePaginate = true
         let data = this.filteredRows.length > 0 ? this.filteredRows : this.raw; // Faz paginamento pelo array raw ou filteredRows (caso registros filtrados)
         let rowsSize = data.length;
         let foo = this.filteredRows.length > 0 ? 'this.filteredRows' : 'this.raw';
@@ -366,8 +367,9 @@ class jsTable{
             return aColText > bColText ? (1 * modifier) : (-1 * modifier);
         });
         // this.cleanRows(); // Limpa rows da tabela
-        rows = sortedRows; // Atualiza campos (filtrados ou do raw)
-        this.paginate();
+        rows = sortedRows; // Atualiza campos (filteredRows ou no raw)
+        if(this.enablePaginate){this.paginate()} // Se paginacao habilitada, refaz paginacao
+        else{rows.forEach((e) => this.tbody.append(e))} // Caso nao, atualiza o tbody da tabela
         
         this.thead.querySelectorAll("th").forEach(th => th.classList.remove("th-sort-asc", "th-sort-desc"));
         this.thead.querySelector(`th:nth-child(${ column + 1})`).classList.toggle("th-sort-asc", asc);
