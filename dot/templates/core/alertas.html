@@ -15,9 +15,9 @@
     </ul>
   </div>
   <div class="card-body tab-content">
-    <h5 class="card-title mb-3">Alertas <small class="badge bg-primary ms-1">{{alertas.count}}</small></h5>
+    <h5 class="card-title">Alertas</h5>
     <div class="tab-pane fade{% if alertas %} show active{% endif %}" id="base" role="tabpanel">
-      <table id="main_table" class="table border table-striped table-hover table-sortable">
+      <table id="main_table" class="table border table-striped table-hover">
         <thead>
           <tr>
             <th>#</th>
@@ -95,13 +95,18 @@
 {% endblock%}
 
 {% block add_script_src %}
-<script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/table_V2.js' %}"></script>
 {% endblock %}
 
   
 <script>
 {% block add_script %}
 SHORTCUT_MAP['1FTF'] = '#id_dados_alerta';
+
+const table = new jsTable(document.getElementById('main_table'), {
+  canFilter: true,
+  filterCols: ['Titulo', 'Critico']
+})
 
 function carregaUsuarios() {
 	var xhttp = new XMLHttpRequest();

@@ -79,7 +79,7 @@ class jsTable{
             this.buildControls();
             this.buildListeners();
         }
-        if(this.enablePaginate){this.paginate()}
+        if(this.enablePaginate){this.paginate();}
         this.loading(true); // Oculta sppiner de loading quando terminado de carregar tabela
     }
     createTable(){
@@ -318,8 +318,17 @@ class jsTable{
             }
             this.rowsCountLabel.innerHTML = row_count;
         }
-        else if(c == ""){this.filteredRows = [];this.rowsCountLabel.innerHTML = this.raw.length}; // Ao limpar filtro, limpa array com rows filtradas
-        this.paginate(); // Refaz paginacao
+        else if(c == ""){
+            this.filteredRows = [];
+            this.rowsCountLabel.innerHTML = this.raw.length
+
+        }; // Ao limpar filtro, limpa array com rows filtradas
+        if(this.enablePaginate){this.paginate()} // Refaz paginacao
+        else{ // Caso paginacao nao esteja ativa, limpa as rows da tabela e carrega (filteredRows ou raw)
+            this.cleanRows();
+            if(this.filteredRows.length > 0){this.filteredRows.forEach((r) => this.tbody.append(r))}
+            else{this.raw.forEach((r) => this.tbody.append(r))}
+        }
     }
     paginate(){
         if(!this.enablePaginate){this.enablePaginate = true;} // Caso metodo seja acionado apos objeto instanciado, ativa flag enablePaginate = true
