@@ -20,8 +20,7 @@
     <hr>
     
     <div id="foo_folder">
-      <!-- <table class="table caption-top" id="uiiii">
-        <caption><span class="align-middle">Minha tabela</span></caption>
+      <table class="table" id="myTable">
         <thead>
           <tr>
             <th>ID</th>
@@ -31,22 +30,22 @@
         </thead>
         <tbody>
           <tr>
-            <td>15</td>
-            <td>Rafael Alves</td>
-            <td>jo@doo.com</td>
+            <td>01</td>
+            <td>Jon Snow</td>
+            <td>jom@doo.com</td>
           </tr>
           <tr>
             <td>02</td>
-            <td>Jessika Alves</td>
-            <td>uii@as.com</td>
+            <td>Mei Sony</td>
+            <td>sony@gmail.com</td>
           </tr>
           <tr>
             <td>05</td>
-            <td>Joao Foo</td>
-            <td>uii@as.com</td>
+            <td>Jonas Doo</td>
+            <td>doo@yahoo.com</td>
           </tr>
         </tbody>
-      </table> -->
+      </table>
     </div>
     
   </div>
@@ -63,21 +62,15 @@
   
   
   <script>
+    var naa = null;
     
-    let foo = new jsTable('myTable', {
-      container: document.getElementById('foo_folder'),
-      canDeleteRow: true,
-      canAddRow: true,
-      enablePaginate: true,
-      rowsPerPage: 6,
-      editableCols: ['email'],
-      canSort: true,
-      canExportJson: true
-      // filterCols: ['first_name', 'last_name', 'email']
+    function minhaFuncao(){..dosomething}
+    
+    let foo = new jsTable(document.querySelector('table'), {
+      canSave: true,
+      save: minhaFuncao
     });
-    foo.loadData({% include 'core/data_test.json' %}.splice(0,5));
-    let newData = [{"id":"355","first_name":"Uiiii","last_name":"Nsoad","email":"foo@pen.io","gender":"Female","ip_address":"121.156.39.194"},{"id":"2","first_name":"Cirillo","last_name":"Eykelbosch","email":"ceykelbosch1@ed.gov","gender":"Male","ip_address":"97.187.240.200"},{"id":"3","first_name":"Idette","last_name":"Dolman","email":"idolman2@etsy.com","gender":"Female","ip_address":"80.121.56.168"},{"id":"4","first_name":"Renato","last_name":"Stadden","email":"rstadden3@xinhuanet.com","gender":"Male","ip_address":"174.80.205.221"},{"id":"5","first_name":"Reggy","last_name":"Golland","email":"rgolland4@unblog.fr","gender":"Male","ip_address":"151.69.219.118"},{"id":"5","first_name":"Garrrrrr","last_name":"Golland","email":"rgolland4@unblog.fr","gender":"Male","ip_address":"151.69.219.118"}]
-    foo.appendData(newData);
+
 
   
     

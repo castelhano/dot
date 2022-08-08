@@ -1,54 +1,72 @@
-
+/*
+* jsTable   Implementa operacoes com tabelas previamente criadas ou gera tabela a partir de dados json
+*
+* @version  2.0
+* @since    07/08/2022
+* @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com}
+* @doc      {@link ./md/jsTable.md}
+*/
 class jsTable{
     constructor(id, options){
+        // Variaveis internas ********
         this.id = typeof id == 'string' ? id : id.id ? id.id : 'jsTable' ; // Armazena id da tabela (ou jsTable caso na informado id)
         this.table = typeof id == 'object' ? id : null; // Aponta para tabela alvo
-        this.data = options?.data || []; // Json com dados para popular tabela
         this.raw = []; // Guarda todos os TRs da tabela
         this.filteredRows = []; // Guarda as rows filtradas
         this.rawNextId = 0; // Armazena o proximo id disponivel, usado no medido addRow
-        this.caption = options?.caption || null;
         this.loadingEl = null; // Guarda o componente loading
         this.rowsCountLabel = null; // Span com a qtde de registros na tabela
         this.headers = []; // Arrays de strings com o nome dos headers da tabela
         this.thead = this.table ? this.table.tHead : null; // Aponta para thead
         this.tbody = this.table ? this.table.tBodies[0] : null; // Aponta para tbody principal (armazena registros visiveis)
         this.trash = []; // Ao deletar row, registro eh movido para o trash (permitndo retornar registro)
-        this.tableClasslist = options?.tableClasslist || 'table border table-striped table-hover caption-top mb-2';
-        this.editableColsClasslist = options?.editableColsClasslist || 'text-primary';
-        this.container = options?.container || document.body; // parentNode da tabela, usado na construcao de tabela pelo evento createTable(), caso nao informado append nova tabela no body
-        this.editableCols = options?.editableCols || [];
-        this.enablePaginate = options?.enablePaginate != undefined ? options.enablePaginate : false; // Booleno setado para true se paginacao estiver ativa para tabela
-        this.pgControlContainer = options?.pgControlContainer || false; // Controles de paginacao por default criados logo abaixo da tabela, pode ser alterado setando esta variavel
         this.pgControls = null; // Elemento UL que ira conter os botoes de navegacao da tabela
-        this.rowsPerPage = options?.rowsPerPage || 15; // Quantidade de registros a serem exibidos por pagina
-        this.activePage = options?.activePage || 1; // Informa pagina exibida no momento (ou pode ser setada na criacao do objeto)
         this.lastPage = 0; // Armazena a ultima pagina da tabela
-        this.maxPagesButtons = options?.maxPagesButtons || 6; // Quantidade maxima de botoes a serem exibidos 
         this.leid = 0; // Last Element Id: Armazena o id do ultimo elemento a ser exibido no body (na pagina atual)
-        this.pgControlClasslist = options?.pgControlsClasslist || 'pagination justify-content-end'; 
-        this.pgPageClasslist = options?.pgPageClasslist || 'page-item';
-        this.pgLinkClasslist = options?.pgLinkClasslist || 'page-link';
-        this.pgFirstLabel = options?.pgFirstLabel || '<i class="fas fa-angle-double-left"></i>';
-        this.pgPreviousLabel = options?.pgPreviousLabel || '<i class="fas fa-angle-left"></i>';
-        this.pgNextLabel = options?.pgNextLabel || '<i class="fas fa-angle-right"></i>';
-        this.canAddRow = options?.canAddRow != undefined ? options.canAddRow : false;
-        this.newRowClasslist = options?.newRowClasslist || 'table-success';
-        this.canSave = options?.canSave != undefined ? options.canSave : false; // Boolean para exibicao do botao para salvar dados da tabela (funcao deve ser definida na origem)
-        this.save = options?.save != undefined ? options.save : function(){console.log('jsTable: Nenhuma funcao definida para save, nas opcoes marque {canSave:true, save: suaFuncao()} ')}; // Funcao definida aqui sera acionada no evento click do botao save
-        this.canDeleteRow = options?.canDeleteRow != undefined ? options.canDeleteRow : false;
-        this.deleteRowClasslist = options?.deleteRowClasslist || 'btn btn-sm btn-secondary';
-        this.deleteRowText = options?.deleteRowText || '<i class="fas fa-trash"></i>';
         this.restoreButton = null; // Armazena o botao para restaurar linha do trash, necessario para exibir e ocultar baseado na existencia de itens no trash
+        this.exportBtn = null;
+        this.filterInput = null;
+        // Configuracao ********
+        this.data = options?.data || []; // Json com dados para popular tabela
+        this.container = options?.container || document.body; // parentNode da tabela, usado na construcao de tabela pelo evento createTable(), caso nao informado append nova tabela no body
+        this.caption = options?.caption || null;
+        this.canAddRow = options?.canAddRow != undefined ? options.canAddRow : false;
+        this.canDeleteRow = options?.canDeleteRow != undefined ? options.canDeleteRow : false;
+        this.canSave = options?.canSave != undefined ? options.canSave : false; // Boolean para exibicao do botao para salvar dados da tabela (funcao deve ser definida na origem)
+        this.save = options?.save != undefined ? options.save : function(){console.log('jsTable: Nenhuma funcao definida para save, nas opcoes marque {canSave:true, save: suaFuncao} ')}; // Funcao definida aqui sera acionada no evento click do botao save
+        this.canSort = options?.canSort != undefined ? options.canSort : true;
+        this.canFilter = options?.canFilter != undefined ? options.canFilter : false;
+        this.filterCols = options?.filterCols || []; // Recebe o nome das colunas a ser analisado ao filtar Ex: filterCols: ['nome', 'email']
         this.canExportCsv = options?.canExportCsv != undefined ? options.canExportCsv : true;
         this.csvSeparator = options?.csvSeparator || ';';
         this.csvClean = options?.csvClean != undefined ? options.csvClean : false; // Se setado para true remove acentuacao e caracteres especiais (normalize NFD)
+        this.csvHeaders = options?.csvHeaders != undefined ? options.csvHeaders : true; // Define se sera incluido cabecalhos no arquivo de exportacao CSV
         this.canExportJson = options?.canExportJson != undefined ? options.canExportJson : false;
-        this.exportBtn = null;
-        this.canFilter = options?.canFilter != undefined ? options.canFilter : false;
-        this.filterInput = null;
-        this.filterCols = options?.filterCols || []; // Recebe o nome das colunas a ser analisado ao filtar Ex: filterCols: ['nome', 'email']
-        this.canSort = options?.canSort != undefined ? options.canSort : true;
+        this.editableCols = options?.editableCols || [];
+        this.enablePaginate = options?.enablePaginate != undefined ? options.enablePaginate : false; // Booleno setado para true se paginacao estiver ativa para tabela
+        this.pgControlContainer = options?.pgControlContainer || false; // Controles de paginacao por default criados logo abaixo da tabela, pode ser alterado setando esta variavel
+        this.rowsPerPage = options?.rowsPerPage || 15; // Quantidade de registros a serem exibidos por pagina
+        this.activePage = options?.activePage || 1; // Informa pagina exibida no momento (ou pode ser setada na criacao do objeto)
+        this.maxPagesButtons = options?.maxPagesButtons || 6; // Quantidade maxima de botoes a serem exibidos 
+        // Estilizacao ********
+        this.tableClasslist = options?.tableClasslist || 'table border table-striped table-hover caption-top mb-2';
+        this.editableColsClasslist = options?.editableColsClasslist || 'text-primary';
+        this.rowsCountLabelClasslist = options?.rowsCountLabelClasslist || 'btn btn-sm btn-dark';
+        this.addRowButtonClasslist = options?.addRowButtonClasslist || 'btn btn-sm btn-outline-success';
+        this.addRowButtonText = options?.addRowButtonText || '<i class="fas fa-plus px-1"></i>';
+        this.newRowClasslist = options?.newRowClasslist || 'table-success';
+        this.deleteRowButtonClasslist = options?.deleteRowButtonClasslist || 'btn btn-sm btn-secondary';
+        this.deleteRowButtonText = options?.deleteRowButtonText || '<i class="fas fa-trash"></i>';
+        this.saveButtonClasslist = options?.saveButtonClasslist || 'btn btn-sm btn-outline-primary';
+        this.saveButtonText = options?.saveButtonText || '<i class="fas fa-save px-1"></i>';
+        this.restoreButtonClasslist = options?.restoreButtonClasslist || 'btn btn-sm btn-outline-secondary d-none';
+        this.restoreButtonText = options?.restoreButtonText || '<i class="fas fa-history px-1"></i>';
+        this.pgControlClasslist = options?.pgControlsClasslist || 'pagination justify-content-end'; 
+        this.pgPageClasslist = options?.pgPageClasslist || 'page-item';
+        this.pgLinkClasslist = options?.pgLinkClasslist || 'page-link';
+        this.pgFirstButtonLabel = options?.pgFirstButtonLabel || '<i class="fas fa-angle-double-left"></i>';
+        this.pgPreviousButtonLabel = options?.pgPreviousButtonLabel || '<i class="fas fa-angle-left"></i>';
+        this.pgNextButtonLabel = options?.pgNextButtonLabel || '<i class="fas fa-angle-right"></i>';
         if(this.table == null){
             this.createTable();
             this.buildHeaders();
@@ -124,8 +142,8 @@ class jsTable{
             let controls = document.createElement('td');
             controls.classList = 'text-end py-1';
             let deleteBtn = document.createElement('span');
-            deleteBtn.classList = this.deleteRowClasslist;
-            deleteBtn.innerHTML = this.deleteRowText;
+            deleteBtn.classList = this.deleteRowButtonClasslist;
+            deleteBtn.innerHTML = this.deleteRowButtonText;
             deleteBtn.onclick = () => this.deleteRow(row);
             controls.appendChild(deleteBtn);
             row.appendChild(controls);
@@ -141,15 +159,15 @@ class jsTable{
             let first = document.createElement('li');
             first.onclick = () => this.goToPage(1);
             first.classList = this.pgPageClasslist;
-            first.innerHTML = `<span class="${this.pgLinkClasslist}">${this.pgFirstLabel}</span>`;
+            first.innerHTML = `<span class="${this.pgLinkClasslist}">${this.pgFirstButtonLabel}</span>`;
             let previous = document.createElement('li');
             previous.onclick = () => this.previousPage();
             previous.classList = this.pgPageClasslist;
-            previous.innerHTML = `<span class="${this.pgLinkClasslist}">${this.pgPreviousLabel}</span>`;
+            previous.innerHTML = `<span class="${this.pgLinkClasslist}">${this.pgPreviousButtonLabel}</span>`;
             let next = document.createElement('li');
             next.onclick = () => this.nextPage();
             next.classList = this.pgPageClasslist;
-            next.innerHTML = `<span class="${this.pgLinkClasslist}">${this.pgNextLabel}</span>`;
+            next.innerHTML = `<span class="${this.pgLinkClasslist}">${this.pgNextButtonLabel}</span>`;
             this.pgControls.appendChild(first); // Adiciona o botao para primeira pagina no pgControls
             this.pgControls.appendChild(previous); // Adiciona o botao para pagina anterior no pgControls
             this.pgControls.appendChild(next); // Adiciona o botao para proxima pagina no pgControls
@@ -179,29 +197,29 @@ class jsTable{
         let capControlsGroup = document.createElement('div'); // Inicia btn-group
         capControlsGroup.classList = 'btn-group';
         this.rowsCountLabel = document.createElement('button'); // Cria elemento que vai armazenar a quantidade de registros na tabela
-        this.rowsCountLabel.classList = 'btn btn-sm btn-dark';
+        this.rowsCountLabel.classList = this.rowsCountLabelClasslist;
         this.rowsCountLabel.disabled = true;
         this.rowsCountLabel.innerHTML = this.raw.length;
         capControlsGroup.appendChild(this.rowsCountLabel);
         if(this.canAddRow){
             let btn = document.createElement('button');
-            btn.classList = 'btn btn-sm btn-outline-success';
+            btn.classList = this.addRowButtonClasslist;
             btn.onclick = () => this.addRow();
-            btn.innerHTML = '<i class="fas fa-plus px-1"></i>';
+            btn.innerHTML = this.addRowButtonText;
             capControlsGroup.appendChild(btn);
         }
         if(this.canSave){
             let btn = document.createElement('button');
-            btn.classList = 'btn btn-sm btn-outline-primary';
+            btn.classList = this.saveButtonClasslist;
             btn.onclick = () => this.save();
-            btn.innerHTML = '<i class="fas fa-save px-1"></i>';
+            btn.innerHTML = this.saveButtonText;
             capControlsGroup.appendChild(btn);
         }
         if(this.canDeleteRow){
             this.restoreButton = document.createElement('button');
-            this.restoreButton.classList = 'btn btn-sm btn-outline-secondary d-none';
+            this.restoreButton.classList = this.restoreButtonClasslist;
             this.restoreButton.onclick = () => this.restoreRow();
-            this.restoreButton.innerHTML = '<i class="fas fa-history px-1"></i>';
+            this.restoreButton.innerHTML = this.restoreButtonText;
             capControlsGroup.appendChild(this.restoreButton);
         }
         if(this.canExportCsv){
@@ -240,12 +258,14 @@ class jsTable{
         }
     }
     loadData(json){ // Carrega dados na tabela (!! Limpa dados atuais)
+        this.loading(); // Mostra spinner de carregamento
         this.data = json;
         this.cleanTable();
         this.buildHeaders();
         this.buildListeners();
         this.buildRows();
         if(this.enablePaginate){this.paginate()}
+        this.loading(true); // Oculta spinner de carregamento
     }
     appendData(json){ // Carrega dados na tabela (mantem dados atuais) (!! Não adiciona novos cabecalhos)
         let data_size = json.length;
@@ -274,7 +294,7 @@ class jsTable{
     }
     filter(criterio=null){
         let c = criterio || this.filterInput.value.toLowerCase();
-        if(this.canFilter && this.filterCols.length > 0 && c != ''){
+        if(this.canFilter && this.filterCols.length > 0 && c != ""){
             this.filteredRows = []; // Limpa os filtros
             let rows_size = this.raw.length;
             let cols_size = this.headers.length;
@@ -298,7 +318,7 @@ class jsTable{
             }
             this.rowsCountLabel.innerHTML = row_count;
         }
-        else if(c == ''){this.filteredRows = [];}; // Ao limpar filtro, limpa array com rows filtradas
+        else if(c == ""){this.filteredRows = [];this.rowsCountLabel.innerHTML = this.raw.length}; // Ao limpar filtro, limpa array com rows filtradas
         this.paginate(); // Refaz paginacao
     }
     paginate(){
@@ -436,6 +456,9 @@ class jsTable{
     exportCsv(){
         let csv = [];
         let raw_size = this.raw.length;
+        if(this.csvHeaders){ // Insere cabecalhos
+            csv.push(this.headers.join(this.csvSeparator));
+        }
         for (let i = 0; i < raw_size; i++) {
             let row = [], cols = this.raw[i].querySelectorAll('td, th');
             let cols_size = this.canDeleteRow ? cols.length - 1 : cols.length; // Desconsidera coluna de controles (se existir)
