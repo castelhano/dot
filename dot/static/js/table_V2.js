@@ -507,7 +507,8 @@ class jsTable{
         this.rawNextId = trs_count; // Ajusta o id de um eventual proximo elemento a ser inserido
         for(let i = 0; i < trs_count; i++){
             trs[i].dataset.rawRef = i; // Ajusta data-attr rawRef do elemento tr
-            for(let j = 0; j < ths.length; j++){ // Percorre todas as colunas da tr para setar contentEditable nas colunas definidas em this.editableCols
+            let cols_size = trs[i].querySelectorAll('td').length;
+            for(let j = 0; j < cols_size; j++){ // Percorre todas as colunas da tr para setar contentEditable nas colunas definidas em this.editableCols
                 let editable = this.editableCols.includes(ths[j].dataset.key);
                 trs[i].querySelectorAll('td')[j].contentEditable = editable ? true : false; // Verifica se campo pode ser editado, se sim marca contentEditable='True'
                 let originalClasslist = trs[i].querySelectorAll('td')[j].className;
