@@ -63,15 +63,22 @@
   
   <script>
   
-    function minhaFuncao(){console.log('FOOOOOOOOOO');}
-
-    let foo = new jsTable(document.querySelector('table'), {
-      canSave: true,
-      save: minhaFuncao,
-      enablePaginate: true
+    let table = new jsTable(document.querySelector('table'), {
+      enablePaginate: true,
+      canFilter: true,
+      filterCols: ['Nome']
     });
 
-  
+    SHORTCUT_MAP['/FTF'] = ':filterFocus';
+    SHORTCUT_MAP['+FTF'] = ':addRow';
+    SHORTCUT_MAP['arrowrightFTF'] = ':nextPage';
+    SHORTCUT_MAP['arrowleftFTF'] = ':previousPage';
+    
+    function filterFocus(){table.filterInput.select();}
+    function addRow(){table.addRow();}
+    function nextPage(){table.nextPage();}
+    function previousPage(){table.previousPage();}
+
     
   </script>
 </body>

@@ -77,7 +77,7 @@
                 <tr><td>canDeleteRow</td><td>bool</td><td>Altere para exibir controle excluir linha</td><td>false</td></tr>
                 <tr><td>canSave</td><td>bool</td><td>Altere para exibir controle salvar</td><td>false</td></tr>
                 <tr><td>save</td><td>function</td><td>Função a ser acionada ao salvar tabela</td><td>null</td></tr>
-                <tr><td>canSort</td><td>bool</td><td>Liberta classificação ao clicar no header</td><td>true</td></tr>
+                <tr><td>canSort</td><td>bool</td><td>Libera classificação ao clicar no header</td><td>true</td></tr>
                 <tr><td>canFilter</td><td>bool</td><td>Insere input.text para filtrar registros tabela</td><td>false</td></tr>
                 <tr id="filterCols" class="foo"><td>filterCols</td><td>array</td><td>Lista com nomes dos campos para filtro</td><td>[ ]</td></tr>
                 <tr><td>canExportCsv</td><td>bool</td><td>Mostra botão para exportar dados em CSV</td><td>true</td></tr>
@@ -87,7 +87,7 @@
                 <tr><td>canExportJson</td><td>bool</td><td>Mostra botão para exportar dados em CSV</td><td>false</td></tr>
                 <tr><td>editableCols</td><td>array</td><td>Campos da tabela permitidos para edição</td><td>[ ]</td></tr>
                 <tr><td>enablePaginate</td><td>bool</td><td>Inicia paginação para tabela</td><td>false</td></tr>
-                <tr><td>pgControlContainer</td><td>element</td><td>Parent element para criação dos controles</td><td>table.caption</td></tr>
+                <tr><td>pgControlContainer</td><td>element</td><td>Parent element para criação dos controles de pagina</td><td>null</td></tr>
                 <tr><td>rowsPerPage</td><td>int</td><td>Quantidade de linhas por página</td><td>15</td></tr>
                 <tr><td>activePage</td><td>int</td><td>Página a ser direcionada</td><td>1</td></tr>
                 <tr><td>maxPagesButtons</td><td>int</td><td>Quantidade máxima de botoes de páginas a serem mostrados</td><td>6</td></tr>
@@ -107,7 +107,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr><td>tableClasslist</td><td>string</td><td>'myclass'</td><td>'table border table-striped table-hover caption-top mb-2'</td></tr>
+                <tr><td>tableClasslist</td><td>string</td><td>Classes da tabela</td><td>'table border table-striped table-hover caption-top mb-2'</td></tr>
                 <tr><td>editableColsClasslist</td><td>string</td><td>Classes dos campos editaveis</td><td>'text-primary'</td></tr>
                 <tr><td>rowsCountLabelClasslist</td><td>string</td><td>Classes botão contador de registros</td><td>'btn btn-sm btn-dark'</td></tr>
                 <tr><td>addRowButtonClasslist</td><td>string</td><td>Classes do botão adicionar linha</td><td>'btn btn-sm btn-outline-success'</td></tr>
@@ -125,6 +125,7 @@
                 <tr><td>pgFirstLabel</td><td>string</td><td>Classe do botão **início**</td><td>'&lt;i class="fas fa-angle-double-left"&gt;&lt;/i&gt;'</td></tr>
                 <tr><td>pgPreviousLabel</td><td>string</td><td>Classes botão **anterior**</td><td>'&lt;i class="fas fa-angle-left"&gt;&lt;/i&gt;'</td></tr>
                 <tr><td>pgNextLabel</td><td>string</td><td>Classes botão **próximo**</td><td>'&lt;i class="fas fa-angle-right"&gt;&lt;/i&gt;'</td></tr>
+                <tr><td>emptyTableMessage</td><td>string</td><td>Mensagem para tabelas vazias</td><td>'Nenhum registro a exibir'</td></tr>
               </tbody>
             </table>
           </div>

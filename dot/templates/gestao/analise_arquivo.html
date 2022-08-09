@@ -123,10 +123,16 @@
   const table = new jsTable(document.getElementById('main_table'), {
     canFilter: true,
     filterCols: ['Responsavel', 'Indicador'],
-    enablePaginate: true,
-    canAddRow: true,
-    canDeleteRow: true
+    enablePaginate: true
   });
+
+  SHORTCUT_MAP['/FTF'] = ':filterFocus';
+  SHORTCUT_MAP['arrowrightFTF'] = ':nextPage';
+  SHORTCUT_MAP['arrowleftFTF'] = ':previousPage';
+  
+  function filterFocus(){table.filterInput.select();}
+  function nextPage(){table.nextPage();}
+  function previousPage(){table.previousPage();}
 
 
   function analiseView(id, nome, tipo, critico, descricao){

@@ -121,7 +121,9 @@
     var TAB_ON_ENTER = true;
     SHORTCUT_MAP['1FTF'] = '#dashboard_link';
     SHORTCUT_MAP['2FTF'] = '#roadmap_link';
-    SHORTCUT_MAP['/FTF'] = ':filter';
+    SHORTCUT_MAP['/FTF'] = ':filterFocus';
+    
+    function filterFocus(){table.filterInput.select();}
 
     
     const table = new jsTable(document.getElementById('analytics_table'), {
