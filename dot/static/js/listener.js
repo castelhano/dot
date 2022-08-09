@@ -23,32 +23,32 @@ var SHORTCUT_MAP = {'vTFF':'#back','nTFF':'#add','lTFF':'#clear','gTFF':'#submit
 
 document.addEventListener('keydown', (e) => {
 	// console.log(e);
-  // 1) ETAPA
-  let command = null;
-  try {command = e.key.toLowerCase();command += e.altKey == true ? 'T': 'F';command += e.ctrlKey == true ? 'T': 'F';command += e.shiftKey == true ? 'T': 'F';}catch(err){command = '';}
-  if(SHORTCUT_MAP[command]){
-    if(SHORTCUT_MAP[command].charAt(0) == '#'){
-      e.preventDefault();
-      try {document.getElementById(SHORTCUT_MAP[command].substr(1,SHORTCUT_MAP[command].length)).click();} catch(err){}
-    }else if(SHORTCUT_MAP[command].charAt(0) == ':'){e.preventDefault();window[SHORTCUT_MAP[command].substr(1,SHORTCUT_MAP[command].length)]();}
-  }  
+	// 1) ETAPA
+	let command = null;
+	try {command = e.key.toLowerCase();command += e.altKey == true ? 'T': 'F';command += e.ctrlKey == true ? 'T': 'F';command += e.shiftKey == true ? 'T': 'F';}catch(err){command = '';}
+	if(SHORTCUT_MAP[command]){
+		if(SHORTCUT_MAP[command].charAt(0) == '#'){
+			e.preventDefault();
+			try {document.getElementById(SHORTCUT_MAP[command].substr(1,SHORTCUT_MAP[command].length)).click();} catch(err){}
+		}else if(SHORTCUT_MAP[command].charAt(0) == ':'){e.preventDefault();window[SHORTCUT_MAP[command].substr(1,SHORTCUT_MAP[command].length)]();}
+	}  
 	// 2) ETAPA
-  else if (e.key === 'Enter' && (typeof TAB_ON_ENTER !== 'undefined' && TAB_ON_ENTER == true) && (e.target.nodeName === 'INPUT' || e.target.nodeName === 'SELECT')) {
+	else if (e.key === 'Enter' && (typeof TAB_ON_ENTER !== 'undefined' && TAB_ON_ENTER == true) && (e.target.nodeName === 'INPUT' || e.target.nodeName === 'SELECT')) {
 		e.preventDefault();
 		try{
 			var form = e.target.form;
-    	var index = Array.prototype.indexOf.call(form, e.target);
+			var index = Array.prototype.indexOf.call(form, e.target);
 			if(form.elements[index + 1].disabled == false && form.elements[index + 1].offsetParent != null && form.elements[index + 1].tabIndex >= 0){form.elements[index + 1].focus();}
 			else{
-					let el = e.target.form.elements;
-					let i = index + 1;
-					let escape = false;
-					while(i <= el.length && !escape){
-						if(form.elements[i].disabled == false && form.elements[i].offsetParent != null && form.elements[i].tabIndex >= 0){form.elements[i].focus();escape = true;}
-						else{i++;}
-					}
+				let el = e.target.form.elements;
+				let i = index + 1;
+				let escape = false;
+				while(i <= el.length && !escape){
+					if(form.elements[i].disabled == false && form.elements[i].offsetParent != null && form.elements[i].tabIndex >= 0){form.elements[i].focus();escape = true;}
+					else{i++;}
+				}
 			}
 		}catch(e){}}
-    // 3) ETAPA
-    else{try{eventHandler(e);}catch(e){}}
-});
+		// 3) ETAPA
+		else{try{eventHandler(e);}catch(e){}}
+	});
