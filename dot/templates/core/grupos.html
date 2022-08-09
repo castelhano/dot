@@ -51,10 +51,6 @@
                 <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'core_grupo_id' grupo.id|safe %}"><i class="fas fa-pen"></i></a></td>
                 {% endif %}
               </tr>
-              {% empty %}
-              <tr>
-                <td colspan="3">Nenhum registro a exibir</td>
-              </tr>
               {% endfor %}
             </tbody>
           </table>

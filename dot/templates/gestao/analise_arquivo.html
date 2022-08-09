@@ -17,10 +17,10 @@
   <div class="card-body tab-content">
     <h5 class="card-title mb-0">Arquivo (analises): <b class="text-purple">{{user.username|title}}</b> <small class="badge bg-primary ms-1">{{analises.count}}</small></h5>
     <p class="mb-1 fw-bold text-muted">{{staff.get_role_display}}</p>
-    <div class="row mb-2 g-1">
+    <div class="row g-1">
       <div class="col-auto">
         <div class="dropdown">
-          <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown"><label class="fw-bold text-capitalize pointer">{{empresa.nome|default:'Empresa'}}</label></button>
+          <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown"><span class="fw-bold text-capitalize pointer">{{empresa.nome|default:'Empresa'}}</span></button>
           <ul class="dropdown-menu fs-7">
             {% for empresa in empresas %}
             <li><span class="dropdown-item pointer" onclick="filter('empresa',{{empresa.id}})">{{empresa.nome}}</span></li>
@@ -30,7 +30,7 @@
       </div>
       <div class="col-auto">
         <div class="dropdown">
-          <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown"><label class="fw-bold text-capitalize pointer">{{tipo_display|default:'Tipo'}}</label></button>
+          <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown"><span class="fw-bold text-capitalize pointer">{{tipo_display|default:'Tipo'}}</span></button>
           <ul class="dropdown-menu fs-7">
             <li><span class="dropdown-item pointer" onclick="filter('tipo','L')">Lembrete</span></li>            
             <li><span class="dropdown-item pointer" onclick="filter('tipo','M')">Melhoria</span></li>            
@@ -40,9 +40,6 @@
       </div>
     </div>
     <div class="tab-pane fade show active" id="base" role="tabpanel">
-      <div class="row">
-        <div class="col mb-1"><input id="id_pesquisa" type="text" class="form-control form-control-sm" placeholder="Filtrar" onkeyup="filterTable('main_table', [1, 4, 6], this)" autofocus></div>
-      </div>
       <table id="main_table" class="table border table-striped table-hover fs-7">
         <thead>
           <tr>
@@ -67,10 +64,6 @@
             <td>{{analise.created_on|date:'d/m/Y'}}</td>
             <td class="d-none d-md-table-cell">{{analise.critico|yesno:'Critico,--'}}</td>
             <td class="text-end fit py-1"><a class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#view_modal" onclick="analiseView('{{analise.id|safe}}','{{analise.indicador.nome}}','{{analise.tipo}}',{{analise.critico|yesno:'true,false'}},'{{analise.descricao}}')" href="#"><i class="fas fa-eye"></i></a></td>
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="8">Selecione os filtro para pesquisa</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -119,15 +112,23 @@
 {% endblock%}
 
 {% block add_script_src %}
-<script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/table_V2.js' %}"></script>
 <script src="{% static 'js/url.js' %}"></script>
 {% endblock %}
 
 
 <script>
   {% block add_script %}
-  SHORTCUT_MAP['/FTF'] = ':analiseSearch';
-  
+
+  const table = new jsTable(document.getElementById('main_table'), {
+    canFilter: true,
+    filterCols: ['Responsavel', 'Indicador'],
+    enablePaginate: true,
+    canAddRow: true,
+    canDeleteRow: true
+  });
+
+
   function analiseView(id, nome, tipo, critico, descricao){
     try {
       document.getElementById('modal_analise_indicador_nome').innerHTML = nome;
@@ -138,7 +139,5 @@
     }catch(e){console.log(e);}
   }
   
-  
-  function analiseSearch(){document.getElementById('id_pesquisa').select()}
   {% endblock %}
 </script>

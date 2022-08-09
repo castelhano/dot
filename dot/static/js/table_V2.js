@@ -1,10 +1,11 @@
 /*
 * jsTable   Implementa operacoes com tabelas previamente criadas ou gera tabela a partir de dados json
 *
-* @version  2.0
+* @version  2.6
 * @since    07/08/2022
 * @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com}
 * @doc      {@link ./md/jsTable.md}
+* TODO:     Adicionar funcao GLOBAL jsTable_event()
 */
 class jsTable{
     constructor(id, options){
@@ -67,6 +68,7 @@ class jsTable{
         this.pgFirstButtonLabel = options?.pgFirstButtonLabel || '<i class="fas fa-angle-double-left"></i>';
         this.pgPreviousButtonLabel = options?.pgPreviousButtonLabel || '<i class="fas fa-angle-left"></i>';
         this.pgNextButtonLabel = options?.pgNextButtonLabel || '<i class="fas fa-angle-right"></i>';
+        this.emptyTableMessage = options?.emptyTableMessage || 'Nenhum registro a exibir';
         if(this.table == null){
             this.createTable();
             this.buildHeaders();
@@ -135,6 +137,7 @@ class jsTable{
             this.tbody.appendChild(row); // Insere row na tabela
             this.raw.push(row); 
         }
+        if(data_size == 0){this.addEmptyRow();} // Caso nao exista nenhum registro, adiciona linha vazia
         this.rowsCountLabel.innerHTML = data_size;
     }
     rowAddControls(row){
@@ -293,6 +296,7 @@ class jsTable{
         // if(this.enablePaginate){this.paginate()}
     }
     filter(criterio=null){
+        if(this.raw.length == 0){ return null } // Se tabela for fazia, nao executa processo para filtro
         let c = criterio || this.filterInput.value.toLowerCase();
         if(this.canFilter && this.filterCols.length > 0 && c != ""){
             this.filteredRows = []; // Limpa os filtros
@@ -306,8 +310,10 @@ class jsTable{
             for (let i = 0; i < rows_size; i++) { // Percorre todas as linhas, e verifica nas colunas definidas em filterCols, se texto atende criterio
                 let row_value = '';
                 for(let j=0; j < cols.length;j++) {
-                    let td = this.raw[i].getElementsByTagName("td")[cols[j]];
-                    row_value += td.textContent || td.innerText;
+                    try{ // Caso exista celulas mescladas cols[j] sera null, try omite apresentacao de erro
+                        let td = this.raw[i].getElementsByTagName("td")[cols[j]];
+                        row_value += td.textContent || td.innerText;
+                    }catch(e){}
                 }
                 if(row_value.toLowerCase().indexOf(c) > -1) {this.filteredRows.push(this.raw[i]);row_count++;}
             }            
@@ -327,23 +333,28 @@ class jsTable{
         else{ // Caso paginacao nao esteja ativa, limpa as rows da tabela e carrega (filteredRows ou raw)
             this.cleanRows();
             if(this.filteredRows.length > 0){this.filteredRows.forEach((r) => this.tbody.append(r))}
-            else{this.raw.forEach((r) => this.tbody.append(r))}
+            else{
+                if(this.raw.length > 0){this.raw.forEach((r) => this.tbody.append(r));}
+                else{this.addEmptyRow();} // Caso nao exista nenhum registro, mostra linha com mensagem
+            }
         }
     }
     paginate(){
         if(!this.enablePaginate){this.enablePaginate = true;} // Caso metodo seja acionado apos objeto instanciado, ativa flag enablePaginate = true
         let data = this.filteredRows.length > 0 ? this.filteredRows : this.raw; // Faz paginamento pelo array raw ou filteredRows (caso registros filtrados)
         let rowsSize = data.length;
-        let foo = this.filteredRows.length > 0 ? 'this.filteredRows' : 'this.raw';
-        this.lastPage = Math.ceil(rowsSize / this.rowsPerPage);
-        if(this.activePage > this.lastPage){this.activePage = this.lastPage} // Impede tentativa de acesso de pagina maior que a qtde de paginas
-        if(this.activePage < 1){this.activePage = 1} // Impede tentativa de acesso de pagina menor que 1
-        let feid = (this.activePage - 1) * this.rowsPerPage; // FirstElementId: Seta o ID do primeiro elemento a ser mostrado
-        this.leid = Math.min((feid + this.rowsPerPage) - 1, rowsSize - 1); // LastElementId: Seta o ID do ultimo elemento a ser mostrado   
-        this.cleanRows();
-        for(let i = feid;i <= this.leid;i++ ){
-            this.tbody.appendChild(data[i]);
+        if(rowsSize > 0){
+            this.lastPage = Math.ceil(rowsSize / this.rowsPerPage);
+            if(this.activePage > this.lastPage){this.activePage = this.lastPage} // Impede tentativa de acesso de pagina maior que a qtde de paginas
+            if(this.activePage < 1){this.activePage = 1} // Impede tentativa de acesso de pagina menor que 1
+            let feid = (this.activePage - 1) * this.rowsPerPage; // FirstElementId: Seta o ID do primeiro elemento a ser mostrado
+            this.leid = Math.min((feid + this.rowsPerPage) - 1, rowsSize - 1); // LastElementId: Seta o ID do ultimo elemento a ser mostrado   
+            this.cleanRows();
+            for(let i = feid;i <= this.leid;i++ ){
+                this.tbody.appendChild(data[i]);
+            }
         }
+        else{this.lastPage = 1; this.activePage = 1;} // Se tabela vazia, cria uma unica pagina e aponta p ela
         this.pgBuildPageControls(this.lastPage);
     }
     pgBuildPageControls(pages){ // Cria botoes de navegacao das paginas
@@ -368,6 +379,7 @@ class jsTable{
         }
     }
     sort(column, asc=true){
+        if(this.raw.length == 0){ return null } // Se tabela for fazia, nao executa processo para classificar
         const modifier = asc ? 1 : -1; // Modificador para classificar em order crecente (asc=true) ou decrescente (asc=false)
         let rows = this.filteredRows.length > 0 ? this.filteredRows : this.raw; // Busca linhas em this.filteredRows (caso filtrado) ou em this.raw caso nao
         const sortedRows = rows.sort((a, b) => {
@@ -388,6 +400,7 @@ class jsTable{
     previousPage(){this.activePage--;this.paginate();}
     nextPage(){this.activePage++;this.paginate();}
     addRow(){ // Adiciona nova linha na tabela
+        if(this.raw.length == 0){this.tbody.querySelector('[data-type="emptyRow"]').remove();} // Se tabela vazia, remove linha de emptyRow
         if(this.enablePaginate){this.goToPage(this.lastPage)}; // Muda exibicao para ultima pagina
         let tr = document.createElement('tr');
         tr.dataset.rawRef = this.rawNextId;
@@ -409,7 +422,7 @@ class jsTable{
         let done = false;
         let i = 0;
         let max = this.raw.length;
-        while(!done && i <= max){
+        while(!done && i <= max){ // Percorre o raw buscando a linha a ser removida
             if(this.raw[i].dataset.rawRef == row.dataset.rawRef){
                 this.trash.push(this.raw.splice(i,1)[0]); // Remove elemento do raw e insere no trash
                 done = true;
@@ -418,6 +431,7 @@ class jsTable{
         }
         row.remove(); // Remove o elemento da tabela
         this.rowsCountLabel.innerHTML = this.raw.length; // Ajusta contador para tabela
+        if(this.raw.length == 0){this.addEmptyRow()} // Se linha excluida for a unica da tabela, adiciona emptyRow
         if(this.enablePaginate){
             try {this.tbody.appendChild(this.raw[this.leid]);}catch(error){} // Adiciona (se existir) proximo elemento ao final do tbody
             this.paginate(); // Refaz paginacao
@@ -495,6 +509,8 @@ class jsTable{
     }
     cleanTable(){this.thead.innerHTML = '';this.tbody.innerHTML = '';}
     cleanRows(){this.tbody.innerHTML = '';}
+    addEmptyRow(){this.tbody.innerHTML = `<td data-type="emptyRow" colspan="${this.headers.length}">${this.emptyTableMessage}</td>`;}
+    removeEmptyRow(){}
     loading(done=false){
         if(done){this.loadingEl.classList.add('d-none')}
         else{this.loadingEl.classList.remove('d-none')}
@@ -502,7 +518,6 @@ class jsTable{
     validateTable(){ // Metodo chamado em tabelas previamente criadas, normaliza e categoriza elementos  
         if(!this.table.caption){this.table.caption = document.createElement('caption');} // Cria o caption da tabela caso nao exista
         else{this.caption = this.table.caption.innerHTML;this.table.caption.innerHTML = ''} // Limpa o caption atual, sera refeito no metodo buildControls
-        
         let ths = this.table.tHead.querySelectorAll('th,td'); // Busca todos os elementos th ou td no header da tabela
         for(let i = 0; i < ths.length;i++){ // Percorre todos os headers, ajustando conteudo e populando array de headers
             ths[i].setAttribute('data-key',ths[i].innerText); // Ajusta o data-attr key com o valor informado no th
@@ -525,6 +540,7 @@ class jsTable{
             }
             this.rowAddControls(trs[i]); // Adiciona controles para row
             this.raw.push(trs[i]); // Adiciona linha no array raw
-        }        
+        }
+        if(trs_count == 0){this.addEmptyRow();} // Caso nao exista nenhum registro, adiciona linha vazia
     }
 }
