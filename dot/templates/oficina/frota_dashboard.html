@@ -24,7 +24,7 @@
           <li>
             <div class="row g-1">
               <div class="col px-2">
-                <input type="date" class="form-control" name="data_simulacao" value="{{metrics.data_simulada|date:'Y-m-d'}}" onchange="filter('data_simulada', this.value)">
+                <input type="date" class="form-control" name="data_simulacao" value="{{metrics.data_simulada|date:'Y-m-d'}}" onchange="urlFilter('data_simulada', this.value)">
               </div>
             </div>
           </li>
@@ -45,9 +45,9 @@
           <div class="dropdown ms-1">
             <button class="btn btn-sm btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown">Resumo: <b>{{metrics.resumo_por_display|default:'Aniversario'}}</b></button>
             <ul class="dropdown-menu fs-7" id="id_cargos">
-              <li><a class="dropdown-item pointer" onclick="filter('resumo_por','aniversario')">Aniversario</a></li>
-              <li><a class="dropdown-item pointer" onclick="filter('resumo_por','ano_fabricacao')">Ano Fabricacao</a></li>
-              <li><a class="dropdown-item pointer" onclick="filter('resumo_por','ano_modelo')">Ano Modelo</a></li>
+              <li><a class="dropdown-item pointer" onclick="urlFilter('resumo_por','aniversario')">Aniversario</a></li>
+              <li><a class="dropdown-item pointer" onclick="urlFilter('resumo_por','ano_fabricacao')">Ano Fabricacao</a></li>
+              <li><a class="dropdown-item pointer" onclick="urlFilter('resumo_por','ano_modelo')">Ano Modelo</a></li>
             </ul>
           </div>
         </div>        
@@ -198,7 +198,7 @@
   			else{
   				let obj = JSON.parse(this.responseText);
   				empresas = document.getElementById("id_empresa");
-  				for(key in obj){empresas.innerHTML += `<li><a class="dropdown-item pointer" onclick="filter('empresa','${obj[key]}')">${key}</a></li>`;}
+  				for(key in obj){empresas.innerHTML += `<li><a class="dropdown-item pointer" onclick="urlFilter('empresa','${obj[key]}')">${key}</a></li>`;}
   			}
   		}
   	};

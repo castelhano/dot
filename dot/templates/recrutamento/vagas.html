@@ -72,8 +72,8 @@
         <div class="filter-container">
           <h6 class="text-muted d-flex justify-content-between">Filtros:<a class="text-muted text-decoration-none fs-8" id="clear" href="{% url 'recrutamento_vagas' %}">Limpar</a></h6>
           <ul class="list-unstyled">
-            <li><a id="id_vagas_abertas" onclick="filter('quantidade__gt', 0)">Vagas Abertas</a></li>
-            <li><a id="id_ocultas" onclick="filter('visivel','False')">Ocultas Site</a></li>
+            <li><a id="id_vagas_abertas" onclick="urlFilter('quantidade__gt', 0)">Vagas Abertas</a></li>
+            <li><a id="id_ocultas" onclick="urlFilter('visivel','False')">Ocultas Site</a></li>
           </ul>
         </div>
       </div>

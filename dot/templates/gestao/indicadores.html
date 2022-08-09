@@ -73,8 +73,8 @@
         <div class="filter-container">
           <h6 class="text-muted d-flex justify-content-between">Filtros:<a class="text-muted text-decoration-none fs-8" id="clear" href="{% url 'gestao_indicadores' %}">Limpar</a></h6>
           <ul class="list-unstyled">
-            <li><a id="id_ativos" onclick="filter('ativo','True')">Ativos</a></li>
-            <li><a id="id_inativos" onclick="filter('ativo','False')">Inativos</a></li>
+            <li><a id="id_ativos" onclick="urlFilter('ativo','True')">Ativos</a></li>
+            <li><a id="id_inativos" onclick="urlFilter('ativo','False')">Inativos</a></li>
           </ul>
         </div>
       </div>

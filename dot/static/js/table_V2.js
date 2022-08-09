@@ -228,7 +228,7 @@ class jsTable{
         if(this.canExportCsv){
             let btn = document.createElement('button');
             btn.classList = 'btn btn-sm btn-outline-secondary';
-            btn.onclick = () => this.exportCsv();
+            btn.onclick = (e) => this.exportCsv(e);
             btn.innerHTML = 'CSV';
             capControlsGroup.appendChild(btn);
         }
@@ -472,13 +472,12 @@ class jsTable{
         btn.setAttribute('download', filename);
         btn.click();
         btn.remove();
-        let originalClasslist = e.target.classList.value;
-        let originalHtml = e.target.innerHTML;
+        let originalClasslist = e.target.className;
         e.target.classList = 'btn btn-sm btn-success';
-        try {dotAlert('success', 'Arquivo baixado com sucesso')}catch(error){}
+        try {dotAlert('success', 'Arquivo <b>json</b> gerado com <b>sucesso</b>')}catch(error){}
         setTimeout(function() {e.target.classList = originalClasslist;}, 800);
     }
-    exportCsv(){
+    exportCsv(e){
         let csv = [];
         let raw_size = this.raw.length;
         if(this.csvHeaders){ // Insere cabecalhos
@@ -505,7 +504,10 @@ class jsTable{
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        
+        let originalClasslist = e.target.className;
+        e.target.classList = 'btn btn-sm btn-success';
+        try {dotAlert('success', 'Arquivo <b>csv</b> gerado com <b>sucesso</b>')}catch(error){}
+        setTimeout(function() {e.target.classList = originalClasslist;}, 800);
     }
     cleanTable(){this.thead.innerHTML = '';this.tbody.innerHTML = '';}
     cleanRows(){this.tbody.innerHTML = '';}

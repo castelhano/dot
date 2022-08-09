@@ -33,7 +33,7 @@
           <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown"><label class="fw-bold text-capitalize pointer">{{empresa.nome|default:'Empresa'}}</label></button>
           <ul class="dropdown-menu fs-7">
             {% for empresa in user.profile.empresas.all %}
-            <li><span class="dropdown-item pointer" onclick="filter('empresa',{{empresa.id}})">{{empresa.nome}}</span></li>
+            <li><span class="dropdown-item pointer" onclick="urlFilter('empresa',{{empresa.id}})">{{empresa.nome}}</span></li>
             {% endfor %}            
           </ul>
         </div>

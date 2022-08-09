@@ -23,7 +23,7 @@
           <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown"><span class="fw-bold text-capitalize pointer">{{empresa.nome|default:'Empresa'}}</span></button>
           <ul class="dropdown-menu fs-7">
             {% for empresa in empresas %}
-            <li><span class="dropdown-item pointer" onclick="filter('empresa',{{empresa.id}})">{{empresa.nome}}</span></li>
+            <li><span class="dropdown-item pointer" onclick="urlFilter('empresa',{{empresa.id}})">{{empresa.nome}}</span></li>
             {% endfor %}            
           </ul>
         </div>
@@ -32,9 +32,9 @@
         <div class="dropdown">
           <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown"><span class="fw-bold text-capitalize pointer">{{tipo_display|default:'Tipo'}}</span></button>
           <ul class="dropdown-menu fs-7">
-            <li><span class="dropdown-item pointer" onclick="filter('tipo','L')">Lembrete</span></li>            
-            <li><span class="dropdown-item pointer" onclick="filter('tipo','M')">Melhoria</span></li>            
-            <li><span class="dropdown-item pointer" onclick="filter('tipo','N')">Não conforme</span></li>            
+            <li><span class="dropdown-item pointer" onclick="urlFilter('tipo','L')">Lembrete</span></li>            
+            <li><span class="dropdown-item pointer" onclick="urlFilter('tipo','M')">Melhoria</span></li>            
+            <li><span class="dropdown-item pointer" onclick="urlFilter('tipo','N')">Não conforme</span></li>            
           </ul>
         </div>
       </div>

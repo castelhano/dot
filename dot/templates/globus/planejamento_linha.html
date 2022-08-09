@@ -109,7 +109,7 @@
     let linha = document.getElementById('id_linha').value;
     let data = document.getElementById('id_data').value;
     if(linha != '' && data != ''){
-      filters(['linha', 'data'], [linha, data]);
+      urlFilters(['linha', 'data'], [linha, data]);
     }
     else{dotAlert('warning', 'Selecione <b>linha</b> e <b>data</b> para consulta');}
     

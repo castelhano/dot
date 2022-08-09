@@ -18,10 +18,10 @@
     <div class="dropdown">
       <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown">{{metrics.periodo_analise_dias|zfill:2}} meses </button>
       <ul class="dropdown-menu fs-7">
-        <li><a class="dropdown-item pointer" onclick="filter('periodo_analise_dias', 365)">12 meses</a></li>
-        <li><a class="dropdown-item pointer" onclick="filter('periodo_analise_dias', 180)">06 meses</a></li>
-        <li><a class="dropdown-item pointer" onclick="filter('periodo_analise_dias', 90)">03 meses</a></li>
-        <li><a class="dropdown-item dropdown-item-danger pointer" onclick="filter('periodo_analise_dias', 'all')">Todo periodo</a></li>
+        <li><a class="dropdown-item pointer" onclick="urlFilter('periodo_analise_dias', 365)">12 meses</a></li>
+        <li><a class="dropdown-item pointer" onclick="urlFilter('periodo_analise_dias', 180)">06 meses</a></li>
+        <li><a class="dropdown-item pointer" onclick="urlFilter('periodo_analise_dias', 90)">03 meses</a></li>
+        <li><a class="dropdown-item dropdown-item-danger pointer" onclick="urlFilter('periodo_analise_dias', 'all')">Todo periodo</a></li>
       </ul>
     </div>
     <div class="input-group ms-1">
@@ -278,7 +278,7 @@
         else{
           let obj = JSON.parse(this.responseText);
           cargos = document.getElementById("id_cargos")
-          for(key in obj){cargos.innerHTML += `<li><a class="dropdown-item pointer" onclick="filter('vaga','${obj[key]}')">${key}</a></li>`;}
+          for(key in obj){cargos.innerHTML += `<li><a class="dropdown-item pointer" onclick="urlFilter('vaga','${obj[key]}')">${key}</a></li>`;}
         }
       }
     };

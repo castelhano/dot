@@ -33,14 +33,14 @@
           <div class="dropdown">
             <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"><span class="d-none d-md-inline">Empresa: <b>{{metrics.empresa_display|default:'Todas'}}</b></span><span class="d-inline d-md-none px-1"><i class="fas fa-home"></i></span></button>
             <ul class="dropdown-menu fs-7" id="id_empresa">
-              <li><a class="dropdown-item pointer" onclick="filter('empresa', 'all')">Todas</a></li>
+              <li><a class="dropdown-item pointer" onclick="urlFilter('empresa', 'all')">Todas</a></li>
             </ul>
           </div>
           <div class="dropdown ms-1">
             <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">Status: <b>{{metrics.status_display|default:'Ativas'}}</b></button>
             <ul class="dropdown-menu fs-7" id="id_cargos">
-              <li><a class="dropdown-item pointer" onclick="filter('status','A')">Ativas</a></li>
-              <li><a class="dropdown-item pointer" onclick="filter('status','I')">Inativas</a></li>
+              <li><a class="dropdown-item pointer" onclick="urlFilter('status','A')">Ativas</a></li>
+              <li><a class="dropdown-item pointer" onclick="urlFilter('status','I')">Inativas</a></li>
             </ul>
           </div>
           <a id="clear" class="btn btn-sm btn-secondary ms-auto" href="{% url 'trafego_linhas' %}">Limpar</a>              
@@ -99,7 +99,7 @@
         <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
       </div>
       <div class="modal-body">
-        <form id="trafego_form" action="" method="GET" autocomplete="off" onsubmit="filter('pesquisa', document.getElementById('id_pesquisa').value)">
+        <form id="trafego_form" action="" method="GET" autocomplete="off" onsubmit="urlFilter('pesquisa', document.getElementById('id_pesquisa').value)">
           <div class="row g-1">
             <div class="form-floating mb-1 col-lg-12">
               <input type="text" class="form-control" name="pesquisa" value="" id="id_pesquisa" placeholder="">
@@ -133,7 +133,7 @@ function carregaEmpresas() {
 			else{
 				let obj = JSON.parse(this.responseText);
 				empresas = document.getElementById("id_empresa");
-				for(key in obj){empresas.innerHTML += `<li><a class="dropdown-item pointer" onclick="filter('empresa', ${obj[key]})">${key}</a></li>`;}
+				for(key in obj){empresas.innerHTML += `<li><a class="dropdown-item pointer" onclick="urlFilter('empresa', ${obj[key]})">${key}</a></li>`;}
 			}
 		}
 	};

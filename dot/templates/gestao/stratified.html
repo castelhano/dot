@@ -19,7 +19,7 @@
       <a class="text-dark ms-2" data-bs-toggle="dropdown" href="#"><i class="fas fa-caret-down"></i></a>
       <ul class="dropdown-menu fs-7">
         {% for indicador in indicadores %}
-        <li><a class="dropdown-item pointer" onclick="beforeLoad();filter('indicador',{{indicador.id|safe}})">{{indicador.nome}}</a></li>
+        <li><a class="dropdown-item pointer" onclick="beforeLoad();urlFilter('indicador',{{indicador.id|safe}})">{{indicador.nome}}</a></li>
         {% endfor %}
       </ul>
     </h5>
@@ -29,7 +29,7 @@
           <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown"><b>{{empresa.nome}}</b></button>
           <ul class="dropdown-menu fs-7">
             {% for e in empresas %}
-            <li><a class="dropdown-item pointer" onclick="beforeLoad();filter('empresa', {{e.id|safe}})">{{e.nome}}</a></li>
+            <li><a class="dropdown-item pointer" onclick="beforeLoad();urlFilter('empresa', {{e.id|safe}})">{{e.nome}}</a></li>
             {% endfor %}
           </ul>
         </div>
@@ -101,7 +101,7 @@
   
   function filtraPeriodo(){
     let periodos = [document.getElementById('id_periodo_de').value,document.getElementById('id_periodo_ate').value]
-    filters(['de','ate'], periodos);
+    urlFilters(['de','ate'], periodos);
   }
   
   

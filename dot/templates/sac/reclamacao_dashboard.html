@@ -17,7 +17,7 @@
     <div class="dropdown">
       <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown">Empresa: <b>{{empresa.nome|default:'Todas'}}</b></button>
       <ul class="dropdown-menu fs-7" id="id_empresa">
-        <li><a class="dropdown-item" onclick="filtersClean(['empresa'])">Todas</a></li>
+        <li><a class="dropdown-item" onclick="urlFiltersClean(['empresa'])">Todas</a></li>
       </ul>
     </div>    
   </div>
@@ -115,7 +115,7 @@
   
   function filtraPeriodo(){
     let periodos = [document.getElementById('id_periodo_de').value,document.getElementById('id_periodo_ate').value]
-    filters(['periodo_de','periodo_ate'], periodos);
+    urlFilters(['periodo_de','periodo_ate'], periodos);
   }
   
   var evolucao_ctx = document.getElementById('evolucao_reclamacoes');
@@ -269,7 +269,7 @@
         else{
           let obj = JSON.parse(this.responseText);
           empresas = document.getElementById("id_empresa");
-          for(key in obj){empresas.innerHTML += `<li><a class="dropdown-item pointer" onclick="filter('empresa','${obj[key]}')">${key}</a></li>`;}
+          for(key in obj){empresas.innerHTML += `<li><a class="dropdown-item pointer" onclick="urlFilter('empresa','${obj[key]}')">${key}</a></li>`;}
         }
       }
     };

@@ -77,13 +77,13 @@
         <div class="filter-container">
           <h6 class="text-muted d-flex justify-content-between">Filtros:<a class="text-muted text-decoration-none fs-8" id="clear" href="{% url 'gestao_staffs' %}">Limpar</a></h6>
           <ul class="list-unstyled">
-            <li><a id="id_estrat" onclick="filter('role','E')">Estratégico</a></li>
-            <li><a id="id_gerenc" onclick="filter('role','G')">Gerencial</a></li>
-            <li><a id="id_operacional" onclick="filter('role','O')">Operacional</a></li>
-            <li><a id="id_manager" onclick="filter('role','M')">Manager</a></li>
+            <li><a id="id_estrat" onclick="urlFilter('role','E')">Estratégico</a></li>
+            <li><a id="id_gerenc" onclick="urlFilter('role','G')">Gerencial</a></li>
+            <li><a id="id_operacional" onclick="urlFilter('role','O')">Operacional</a></li>
+            <li><a id="id_manager" onclick="urlFilter('role','M')">Manager</a></li>
             <hr class="my-1" />
-            <li><a id="id_ativos" onclick="filter('usuario__is_active','True')">Ativos</a></li>
-            <li><a id="id_inativos" onclick="filter('usuario__is_active','False')">Inativos</a></li>
+            <li><a id="id_ativos" onclick="urlFilter('usuario__is_active','True')">Ativos</a></li>
+            <li><a id="id_inativos" onclick="urlFilter('usuario__is_active','False')">Inativos</a></li>
           </ul>
         </div>
       </div>

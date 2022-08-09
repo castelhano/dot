@@ -40,7 +40,7 @@
           <div class="dropdown">
             <button class="btn btn-sm btn-orange dropdown-toggle" type="button" data-bs-toggle="dropdown">Empresa: <b>{{metrics.empresa_nome|default:'Todas'}}</b></button>
             <ul class="dropdown-menu fs-7" id="id_empresa">
-              <li><a class="dropdown-item" onclick="filter('empresa', '')">Todas</a></li>
+              <li><a class="dropdown-item" onclick="urlFilter('empresa', '')">Todas</a></li>
             </ul>
           </div>
           <div class="dropdown ms-1">
@@ -49,7 +49,7 @@
               <li>
                 <div class="row g-1">
                   <div class="col px-2">
-                    <input type="date" class="form-control" name="data" value="{{metrics.data|date:'Y-m-d'}}" onchange="filter('data', this.value)">
+                    <input type="date" class="form-control" name="data" value="{{metrics.data|date:'Y-m-d'}}" onchange="urlFilter('data', this.value)">
                   </div>
                 </div>
               </li>
@@ -132,7 +132,7 @@ function carregaEmpresas() {
       else{
         let obj = JSON.parse(this.responseText);
         empresas = document.getElementById("id_empresa");
-        for(key in obj){empresas.innerHTML += `<li><a class="dropdown-item pointer" onclick="filter('empresa','${obj[key]}')">${key}</a></li>`;}
+        for(key in obj){empresas.innerHTML += `<li><a class="dropdown-item pointer" onclick="urlFilter('empresa','${obj[key]}')">${key}</a></li>`;}
       }
     }
   };

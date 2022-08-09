@@ -111,7 +111,7 @@
   SHORTCUT_MAP['fTFF'] = '#acidentes_link';
   var target_id = null;
   function deleteFile(){
-    urlFilter("{% url 'sinistro_file_delete' %}", 'file', target_id);    
+    urlFilterTo("{% url 'sinistro_file_delete' %}", 'file', target_id);    
   } 
   {% endblock %}
 </script>

@@ -41,9 +41,9 @@
         <a class="btn btn-sm btn-purple-light" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-home me-1"></i> {{empresa.nome|default:'Todas'}}</a>
         <ul class="dropdown-menu fs-7">
           {% for empresa in empresas %}
-          <li><span class="dropdown-item pointer" onclick="filter('empresa',{{empresa.id|safe}})">{{empresa.nome}}</span></li>
+          <li><span class="dropdown-item pointer" onclick="urlFilter('empresa',{{empresa.id|safe}})">{{empresa.nome}}</span></li>
           {% endfor %}
-          <li><span class="dropdown-item dropdown-item-purple pointer" onclick="filter('empresa', 'unassigned')">Não Identificadas</span></li>
+          <li><span class="dropdown-item dropdown-item-purple pointer" onclick="urlFilter('empresa', 'unassigned')">Não Identificadas</span></li>
           </ul>
         </div>
         <div class="col-auto dropdown">
@@ -144,7 +144,7 @@
   
   function filtraPeriodo(){
     let periodos = [document.getElementById('id_periodo_de').value,document.getElementById('id_periodo_ate').value]
-    filters(['de','ate'], periodos);
+    urlFilters(['de','ate'], periodos);
   }
   
   {% endblock %}

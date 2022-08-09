@@ -1,7 +1,7 @@
 // Funcoes para manipulacao e captura da url
 
 /*
-* updateUrl Adiciona (ou atualiza) parametro na url (metodo GET) 
+* urlUpdate Adiciona (ou atualiza) parametro na url (metodo GET) 
 *
 * @version  1.0
 * @since    10/02/2022
@@ -10,9 +10,9 @@
 * @param    {String} key Nome do parametro a ser atualizado na url
 * @param    {String} value Valor do parametro
 * @returns  {String} URL formatada com o novo parametro
-* @example  updateUrl('foo.com', 'nome', 'rafael'); Retorna: foo.com?nome=rafael
+* @example  urlUpdate('foo.com', 'nome', 'rafael'); Retorna: foo.com?nome=rafael
 */
-function updateUrl(uri, key, value) {
+function urlUpdate(uri, key, value) {
   var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
   var separator = uri.indexOf('?') !== -1 ? "&" : "?";
   if (uri.match(re)) {
@@ -24,19 +24,19 @@ function updateUrl(uri, key, value) {
 }
 
 /*
-* filter Funcao atualiza URL com parametro e recarrega pagina
+* urlFilter Funcao atualiza URL com parametro e recarrega pagina
 *
 * @version  1.0
 * @since    10/02/2022
 * @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }
 * @param    {String} filter Nome do parametro a ser atualizado na url
 * @param    {String} value Valor do parametro
-* @example  filter('nome', 'rafael')
+* @example  urlFilter('nome', 'rafael')
 */
-function filter(filter, value){location.href = updateUrl(window.location.href, filter, value);}
+function urlFilter(filter, value){location.href = urlUpdate(window.location.href, filter, value);}
 
 /*
-* urlFilter Semelhante a filter() porem nao atualiza pagina corrente, deve ser informado nova url para adicionar parametro
+* urlFilterTo Semelhante a urlFilter() porem nao atualiza pagina corrente, deve ser informado nova url para adicionar parametro
 *
 * @version  1.0
 * @since    12/03/2022
@@ -44,9 +44,9 @@ function filter(filter, value){location.href = updateUrl(window.location.href, f
 * @param    {String} url URL para redirecionamento
 * @param    {String} filter Nome do parametro a ser atualizado na url
 * @param    {String} value Valor do parametro
-* @example  urlFilter('fei.com', 'nome', 'rafael')
+* @example  urlFilterTo('fei.com', 'nome', 'rafael')
 */
-function urlFilter(url, filter, value){location.href = updateUrl(url, filter, value);}
+function urlFilterTo(url, filter, value){location.href = urlUpdate(url, filter, value);}
 
 /*
 * filters() Atualiza url corrente com multiplos parametros 
@@ -58,7 +58,7 @@ function urlFilter(url, filter, value){location.href = updateUrl(url, filter, va
 * @param    {Array} values Lista [] com valores dos parametros
 * @example  filters(['nome', 'email'], ['rafael', 'foo@gmail.com'])
 */
-function filters(filters, values){let h = window.location.href;for(i=0;i < filters.length; i++){h = updateUrl(h , filters[i], values[i]);}location.href = h;}
+function urlFilters(filters, values){let h = window.location.href;for(i=0;i < filters.length; i++){h = urlUpdate(h , filters[i], values[i]);}location.href = h;}
 
 /*
 * filtersClean() Remove parametros da URL
@@ -69,7 +69,7 @@ function filters(filters, values){let h = window.location.href;for(i=0;i < filte
 * @param    {Array} filters Lista [] com parametros a serem removidos da url
 * @example  filtersClean(['nome', 'email'])
 */
-function filtersClean(filters){let h = window.location.href.split('?')[0];let p = new URLSearchParams(window.location.search);for(i=0;i < filters.length; i++){p.delete(filters[i]);}location.href = p.toString() != '' ? `${h}?${p.toString()}` : h;}
+function urlFiltersClean(filters){let h = window.location.href.split('?')[0];let p = new URLSearchParams(window.location.search);for(i=0;i < filters.length; i++){p.delete(filters[i]);}location.href = p.toString() != '' ? `${h}?${p.toString()}` : h;}
 
 /*
 * urlRedirect Carrega os filtros na url atual para uma nova url

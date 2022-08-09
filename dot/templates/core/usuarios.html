@@ -75,13 +75,13 @@
         <div class="filter-container">
           <h6 class="text-muted d-flex justify-content-between">Filtros:<a class="text-muted text-decoration-none fs-8" id="clear" href="{% url 'core_usuarios' %}">Limpar</a></h6>
           <ul class="list-unstyled">
-            <li><a id="id_ativos" onclick="filter('is_active','True')">Ativos</a></li>
-            <li><a id="id_bloqueados" onclick="filter('is_active','False')">Bloqueados</a></li>
-            <li><a id="id_superuser" onclick="filter('is_superuser','True')">Superusuario</a></li>
-            <li><a id="id_staff" onclick="filter('is_staff','True')">Membro de Equipe</a></li>
+            <li><a id="id_ativos" onclick="urlFilter('is_active','True')">Ativos</a></li>
+            <li><a id="id_bloqueados" onclick="urlFilter('is_active','False')">Bloqueados</a></li>
+            <li><a id="id_superuser" onclick="urlFilter('is_superuser','True')">Superusuario</a></li>
+            <li><a id="id_staff" onclick="urlFilter('is_staff','True')">Membro de Equipe</a></li>
             <hr class="my-1" />
             <li><a id="id_inativos" onclick="inativosFilter(-30);">Inativo +30 dias</a></li>
-            <li><a id="id_nunca_logado" onclick="filter('last_login','None');">Sem registro de login</a></li>
+            <li><a id="id_nunca_logado" onclick="urlFilter('last_login','None');">Sem registro de login</a></li>
           </ul>
         </div>
       </div>
@@ -97,7 +97,7 @@
         <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
       </div>
       <div class="modal-body">
-        <form id="search_form" action="" onsubmit="filter('pesquisa', document.getElementById('id_pesquisa').value);return false;" method="GET" autocomplete="off">
+        <form id="search_form" action="" onsubmit="urlFilter('pesquisa', document.getElementById('id_pesquisa').value);return false;" method="GET" autocomplete="off">
           <div class="row g-1">
             <div class="form-floating mb-1 col-lg-12">
               <input type="text" class="form-control" name="pesquisa" value="" id="id_pesquisa" placeholder="">
@@ -136,7 +136,7 @@
   Date.prototype.addDays = function(days) {var date = new Date(this.valueOf());date.setDate(date.getDate() + days);return date;}
   var today = new Date();
   function inativosFilter(days){
-    filter('last_login__lte',today.addDays(days).toISOString().split('T')[0]);
+    urlFilter('last_login__lte',today.addDays(days).toISOString().split('T')[0]);
   }
   {% endblock %}
 </script>
