@@ -120,22 +120,27 @@
   <div class="col-lg-6 order-2 order-lg-1">
     <div class="card widget-flat">
       <div class="card-body">
-        <h6 class="text-muted fw-normal">Críterios de reprovação</h6>
-        <div class="table-responsive">
-          <table id="table_terceiros" class="table table-nowrap table-hover">
-            <tbody style="border-top-width: 0;">
-              {% for avaliacao in metrics.criterios_reprovados %}
-              <tr>
-                <td>{{avaliacao.criterio__nome}}</td>
-                <td>{{avaliacao.qtd}}</td>
-                <td class="text-danger text-end">{{avaliacao.qtd|percentual:metrics.total_avaliacoes|floatformat:0}} %</td>
-              </tr>
-              {% empty %}
-              <tr><td colspan="3">Nenhum registro a exibir</td></tr>
-              {% endfor %}
-            </tbody>            
-          </table>          
-        </div>        
+        <table id="table_terceiros" class="table table-nowrap table-hover">
+          <caption>Criterios de reprovação</caption>
+          <thead>
+            <tr>
+              <th>Criterio</th>
+              <th>Qtde</th>
+              <th class="text-end">%</th>
+            </tr>
+          </thead>
+          <tbody style="border-top-width: 0;">
+            {% for avaliacao in metrics.criterios_reprovados %}
+            <tr>
+              <td>{{avaliacao.criterio__nome}}</td>
+              <td>{{avaliacao.qtd}}</td>
+              <td class="text-danger text-end">{{avaliacao.qtd|percentual:metrics.total_avaliacoes|floatformat:0}} %</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="3">Nenhum registro a exibir</td></tr>
+            {% endfor %}
+          </tbody>            
+        </table>          
       </div>      
     </div>
   </div>
@@ -153,30 +158,25 @@
       <div class="col-lg-6">
         <div class="card widget-flat">
           <div class="card-body">
-            <h6 class="text-muted fw-normal">Resumo Banco Atual</h6>
-            <a class="btn btn-sm btn-link text-decoration-none text-purple" style="position: absolute; right: 10px; top: 8px;" id="download" onclick="download_table_as_csv('main_table',';')" title="ALT + D">Baixar <i class="fas fa-download"></i></a>
-            <div class="table-responsive">
-              <table id="main_table" class="table table-nowrap table-hover table-sortable">
-                <thead>
-                  <th>Vaga</th>
-                  <th>Saldo</th>
-                </thead>
-                <tbody style="border-top-width: 0;">
-                  {% for vaga in metrics.saldo_banco %}
-                  <tr>
-                    <td>{{vaga}}</td>
-                    <td>{{vaga.saldo_banco}}</td>
-                  </tr>
-                  {% empty %}
-                  <tr><td colspan="3">Nenhum registro a exibir</td></tr>
-                  {% endfor %}
-                  <tfoot class="fw-bold table-light">
-                    <td>Total</td>
-                    <td>{{metrics.banco_totalizado}}</td>
-                  </tfoot>
-                </tbody>            
-              </table>          
-            </div>        
+            <table id="main_table" class="table table-nowrap table-hover">
+              <caption>Resumo Banco Atual</caption>
+              <thead>
+                <th>Vaga</th>
+                <th>Saldo</th>
+              </thead>
+              <tbody style="border-top-width: 0;">
+                {% for vaga in metrics.saldo_banco %}
+                <tr>
+                  <td>{{vaga}}</td>
+                  <td>{{vaga.saldo_banco}}</td>
+                </tr>
+                {% endfor %}
+                <tfoot class="fw-bold table-light">
+                  <td>Total</td>
+                  <td>{{metrics.banco_totalizado}}</td>
+                </tfoot>
+              </tbody>            
+            </table>          
           </div>      
         </div>
       </div>
@@ -189,13 +189,16 @@
 {% block add_script_src %}
 <script src="{% static 'js/vendor/chart.min.js' %}"></script>
 <script src="{% static 'js/url.js' %}"></script>
-<script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/table_V2.js' %}"></script>
 {% endblock %}
 
 
 <script>
   {% block add_script %}
   SHORTCUT_MAP['fFFF'] = '#adicional_filters_link';
+  
+  const tblResumoBanco = new jsTable(document.getElementById('main_table'), {});
+  const tblTerceiros = new jsTable(document.getElementById('table_terceiros'), {});
   
   var ctx = document.getElementById('banco_evolucao');
   let chart = new Chart(ctx, {

@@ -18,12 +18,12 @@
   </div>
 </div>
 {% else %}
-<table id="main_table" class="table border table-striped table-hover table-sortable">
-  <caption class="fs-7">
-    <div class="row">
-      <div class="col-lg-auto mb-2 mb-lg-0"><span class="px-2 py-1 border rounded" style="background-color: #f8d7da;">Leg</span> Candidatos Descartados</div>
-      <div class="col-lg-auto mb-2 mb-lg-0"><span class="px-2 py-1 border rounded" style="background-color: rgb(255, 243, 205);">Leg</span> Candidatos Bloqueados</div>
-      <div class="col-lg-auto"><span class="px-2 py-1 border rounded" style="background-color: #D1E7DD;">Leg</span> Candidatos Contratados</div>
+<table id="main_table" class="table border table-striped table-hover">
+  <caption>
+    <div class="row fs-7">
+      <div class="col-lg-auto mb-1 mb-lg-0"><span class="px-1 border rounded" style="background-color: #f8d7da;">Leg</span> Candidatos Descartados</div>
+      <div class="col-lg-auto mb-1 mb-lg-0"><span class="px-1 border rounded" style="background-color: rgb(255, 243, 205);">Leg</span> Candidatos Bloqueados</div>
+      <div class="col-lg-auto mb-0"><span class="px-1 border rounded" style="background-color: #D1E7DD;">Leg</span> Candidatos Contratados</div>
     </div>
   </caption>
   <thead>
@@ -74,10 +74,6 @@
         {% if perms.recrutamento.add_selecao and candidato.status == 'B' %}<a class="btn btn-sm btn-warning" href="{% url 'recrutamento_selecao_add' %}?candidato={{candidato.id|safe}}"><i class="fas fa-user-clock"></i></a>{% endif %}
         {% if perms.recrutamento.change_candidato %}<a class="btn btn-sm btn-dark" href="{% url 'recrutamento_candidato_id' candidato.id|safe %}"><i class="fas fa-pen"></i></a>{% endif %}
       </td>
-    </tr>
-    {% empty %}
-    <tr>
-      <td colspan="19">Nenhum registro a exibir</td>
     </tr>
     {% endfor %}
   </tbody>
