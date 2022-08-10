@@ -19,21 +19,20 @@
       {% if perms.oficina.dashboard_frota %}
       <li class="nav-item ms-1"><a class="nav-link border" href="{% url 'oficina_frota_dashboard' %}" title="Resumo Frota Ativa"><i class="fas fa-chart-bar text-purple"></i></a></li>
       {% endif %}
+      {% if perms.core.view_log %}
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
         <ul class="dropdown-menu">
-          <li><a class="dropdown-item pointer" id="download" onclick="download_table_as_csv('main_table',';')" title="ALT + D">Exportar CSV</a></li>
-          {% if perms.core.view_log %}
           <li><a class="dropdown-item pointer" href="{% url 'logs' %}?target_model=oficina.frota&mensagem=DELETE" target="_blank">Log de Exclusões</a></li>
-          {% endif %}
         </ul>
       </li>
+      {% endif %}
     </ul>
   </div>
   <div class="card-body tab-content">
-    <h5 class="card-title mb-3">Frota <small class="badge bg-primary ms-1">{{frotas.count}}</small></h5>
+    <h5 class="card-title mb-0">Frota</h5>
     <div class="tab-pane fade{% if frotas %} show active{% endif %}" id="base" role="tabpanel">
-      <table id="main_table" class="table border table-striped table-hover table-sortable">
+      <table id="main_table" class="table border table-striped table-hover">
         <thead>
           <tr>
             <th class="d-none">#</th>
@@ -62,7 +61,7 @@
             <td>{{frota.prefixo}}</td>
             <td class="d-none d-lg-table-cell">{{frota.modelo.marca.nome}}</td>
             <td>{{frota.modelo.nome}}</td>
-            <td class="d-none d-lg-table-cell">{{frota.ano_fabricacao|default:''}}</td>
+            <td class="d-none d-lg-table-cell">{{frota.ano_fabricacao|safe|default:''}}</td>
             <td class="d-none">{{frota.ano_modelo|default:''}}</td>
             <td class="d-none d-lg-table-cell">{{frota.placa}}</td>
             <td class="d-none">{{frota.renavan}}</td>
@@ -73,10 +72,6 @@
             {% if perms.oficina.change_frota %}
             <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'oficina_frota_id' frota.id|safe %}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="14">Nenhum registro a exibir</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -155,13 +150,25 @@
 {% endblock%}
 
 {% block add_script_src %}
-<script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/table_V2.js' %}"></script>
 {% endblock %}
 
 
 <script>
   {% block add_script %}
+
+  const table = new jsTable(document.getElementById('main_table'), {
+    enablePaginate: true,
+    canExportJson: true
+  });
+
   SHORTCUT_MAP['1FTF'] = '#frota_tab_link';
+  SHORTCUT_MAP['arrowrightFTF'] = ':nextPage';
+  SHORTCUT_MAP['arrowleftFTF'] = ':previousPage';
+  
+  function nextPage(){table.nextPage();}
+  function previousPage(){table.previousPage();}
+
   
   function changeEmpresa(){
     if(document.getElementById('id_empresa').value != ''){document.getElementById('id_status').value = 'A';}

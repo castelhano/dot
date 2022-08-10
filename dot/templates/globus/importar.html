@@ -41,7 +41,6 @@
           <div class="col-lg">
             {% if erros %}
             <table id="messages_table" class="table table-sm border caption-top table-striped table-hover">
-              <caption class="text-end"><span id="download" class="text-purple pointer" onclick="download_table_as_csv('messages_table',';')" title="ALT + D">Resumo</span> | <span class="text-purple pointer" onclick="download_table_as_csv('rows_table',';')">Detalhe</span></caption>
               <thead>
                 <tr>
                   <th>#</th>
@@ -92,11 +91,18 @@
 {% endblock%}
 
 {% block add_script_src %}
-<script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/table_V2.js' %}"></script>
 {% endblock %}
 
 <script>
   {% block add_script %}
+
+  try {
+    const table = new jsTable(document.getElementById('messages_table'), {
+      canSort: false
+    });
+  }catch (error){}
+
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
   function submitForm(){modal_loading.show();return true;}
   

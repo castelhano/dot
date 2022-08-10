@@ -77,8 +77,6 @@ def frotas(request):
 @permission_required('oficina.view_marca')
 def marcas(request):
     marcas = Marca.objects.all().order_by('nome')
-    if request.method == 'POST':
-        marcas = marcas.filter(nome__contains=request.POST['pesquisa'])
     return render(request,'oficina/marcas.html', {'marcas' : marcas})
 
 @login_required
