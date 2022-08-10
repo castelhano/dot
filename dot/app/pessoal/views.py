@@ -13,21 +13,12 @@ from core.models import Log
 @permission_required('pessoal.view_setor')
 def setores(request):
     setores = Setor.objects.all().order_by('nome')
-    if request.method == 'POST' and request.POST['pesquisa'] != '':
-        setores = setores.filter(nome__contains=request.POST['pesquisa'])
     return render(request,'pessoal/setores.html', {'setores' : setores})
 
 @login_required
 @permission_required('pessoal.view_cargo')
 def cargos(request):
-    if request.method == 'POST':
-        cargos = Cargo.objects.all().order_by('nome')
-        if request.POST['pesquisa'] != '':
-            cargos = cargos.filter(nome__contains=request.POST['pesquisa'])
-        if request.POST['setor'] != '':
-            cargos = cargos.filter(setor__id=request.POST['setor'])
-    else:
-        cargos = None
+    cargos = Cargo.objects.all().order_by('nome')
     return render(request,'pessoal/cargos.html',{'cargos':cargos})
 
 
