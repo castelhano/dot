@@ -53,7 +53,6 @@
       <div class="row">
         <div class="col-auto">
           <table id="evolucao_table" class="table table-sm border table-hover table-striped">
-            <caption class="text-end pt-0"><span class="text-decoration-none text-purple pointer fs-7 pe-1" onclick="download_table_as_csv('evolucao_table',';')"><i class="fas fa-download"></i> CSV</span></caption>
             <thead>
               <tr>
                 <th class="pe-4">Referência</th>
@@ -89,12 +88,14 @@
 
 {% block add_script_src %}
 <script src="{% static 'js/url.js' %}"></script>
-<script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/table_V2.js' %}"></script>
 <script src="{% static 'js/vendor/chart.min.js' %}"></script>
 {% endblock %}
 
 <script>
   {% block add_script %}
+
+  const table = new jsTable(document.getElementById('evolucao_table'), {});
   
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
   function beforeLoad(){modal_loading.show();}

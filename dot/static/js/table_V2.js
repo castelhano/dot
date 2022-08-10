@@ -5,7 +5,7 @@
 * @since    07/08/2022
 * @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com}
 * @doc      {@link ./md/jsTable.md}
-* TODO:     Adicionar funcao GLOBAL jsTable_event()
+* TODO:     Fixa elemento saveBtn para acesso do cliente
 */
 class jsTable{
     constructor(id, options){

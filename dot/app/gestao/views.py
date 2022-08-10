@@ -297,8 +297,6 @@ def labels(request):
         messages.error(request,f'<b>Erro</b> {e}')
         return redirect('gestao_dashboard')
     labels = Label.objects.all().order_by('nome')
-    if request.method == 'POST' and request.POST['pesquisa'] != '':
-        labels = labels.filter(nome__contains=request.POST['pesquisa'])
     return render(request,'gestao/labels.html', {'labels' : labels,'staff':'staff'})
 
 @login_required
