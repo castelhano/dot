@@ -26,11 +26,11 @@
     </ul>
   </div>
   <div class="card-body tab-content">
-    <h5 class="card-title mb-1">Candidatos</h5>
+    <h5 class="card-title mb-0">Candidatos</h5>
     <div class="tab-pane fade show active" id="base" role="tabpanel">
       {% include 'recrutamento/_extract_candidatos.html' %}
     </div>
-    <div class="tab-pane fade" id="filter" role="tabpanel">
+    <div class="tab-pane mt-3 fade" id="filter" role="tabpanel">
       <form id="filter_form" action="{% url 'recrutamento_candidatos' %}" method="POST" autocomplete="off">
         {% csrf_token %}
         <div class="row g-1">
@@ -96,9 +96,21 @@
 
 <script>
   {% block add_script %}
-  const table = new jsTable(document.getElementById('main_table'), {
+  try {
+    const table = new jsTable(document.getElementById('main_table'), {
     canFilter: true,
+    filterCols: ['Nome','CPF','PNE'],
+    enablePaginate: true
   });
+
+  SHORTCUT_MAP['arrowrightFTF'] = ':nextPage';
+  SHORTCUT_MAP['arrowleftFTF'] = ':previousPage';
+  
+  function nextPage(){table.nextPage();}
+  function previousPage(){table.previousPage();}
+  }catch (error) {}
+  
+  
 
   SHORTCUT_MAP['1FTF'] = '#candidato_tab_link';
   

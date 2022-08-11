@@ -73,21 +73,12 @@ def acidentes(request):
 @permission_required('sinistro.view_classificacao')
 def classificacoes(request):
     classificacoes = Classificacao.objects.all().order_by('nome')
-    if request.method == 'POST' and request.POST['pesquisa'] != '':
-        classificacoes = classificacoes.filter(nome__contains=request.POST['pesquisa'])
     return render(request,'sinistro/classificacoes.html', {'classificacoes' : classificacoes})
 
 @login_required
 @permission_required('sinistro.view_oficina')
 def oficinas(request):
     oficinas = Oficina.objects.all().order_by('nome')
-    if request.method == 'POST':
-        if request.POST['pesquisa'] != '':
-            oficinas = oficinas.filter(nome__contains=request.POST['pesquisa'])
-        if 'ativa' in request.POST:
-            oficinas = oficinas.filter(ativa=True)
-    else:
-        oficinas = oficinas.filter(ativa=True)
     return render(request,'sinistro/oficinas.html', {'oficinas' : oficinas})
     
 @login_required
@@ -109,8 +100,6 @@ def files(request, id):
 def terceiros(request, id):
     acidente = Acidente.objects.get(pk=id)
     terceiros = Terceiro.objects.filter(acidente=acidente)
-    if request.method == 'POST':
-        terceiros = terceiros.filter(nome__contains=request.POST['pesquisa'])
     form = TerceiroForm()
     return render(request,'sinistro/terceiros.html', {'form':form,'terceiros':terceiros,'acidente':acidente})
 
@@ -118,16 +107,12 @@ def terceiros(request, id):
 @permission_required('sinistro.view_tipodespesa')
 def tipos_despesa(request):
     tipos_despesa = TipoDespesa.objects.all().order_by('nome')
-    if request.method == 'POST' and request.POST['pesquisa'] != '':
-        tipos_despesa = tipos_despesa.filter(nome__contains=request.POST['pesquisa'])
     return render(request,'sinistro/tipos_despesa.html', {'tipos_despesa':tipos_despesa})
 
 @login_required
 @permission_required('sinistro.view_forma')
 def formas(request):
     formas = Forma.objects.all().order_by('nome')
-    if request.method == 'POST' and request.POST['pesquisa'] != '':
-        formas = formas.filter(nome__contains=request.POST['pesquisa'])
     return render(request,'sinistro/formas.html', {'formas':formas})
 
 @login_required

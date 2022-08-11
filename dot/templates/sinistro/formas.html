@@ -12,25 +12,23 @@
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
-      <li class="nav-item"><a class="nav-link pointer" id="search" data-bs-toggle="modal" data-bs-target="#search_modal" onclick="setTimeout(function(){document.getElementById('id_pesquisa').focus();},480);" title="CTRL + /"><i class="fas fa-search"></i></a></li>
       {% if perms.sinistro.add_forma %}
-      <li class="nav-item"><a class="nav-link border" id="add" href="{% url 'sinistro_forma_add' %}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
+      <li class="nav-item ms-1"><a class="nav-link border" id="add" href="{% url 'sinistro_forma_add' %}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
       {% endif %}
+      {% if perms.core.view_log %}
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
         <ul class="dropdown-menu">
-          <li><a class="dropdown-item pointer" id="download" onclick="download_table_as_csv('main_table',';')" title="ALT + D">Exportar CSV</a></li>
-          {% if perms.core.view_log %}
           <li><a class="dropdown-item pointer" href="{% url 'logs' %}?target_model=sinistro.forma&mensagem=DELETE" target="_blank">Log de Exclusões</a></li>
-          {% endif %}
         </ul>
       </li>
+      {% endif %}
     </ul>
   </div>
   <div class="card-body tab-content">
-    <h5 class="card-title mb-3">Formas <small class="badge bg-primary ms-1">{{formas.count}}</small></h5>
+    <h5 class="card-title mb-1">Formas</h5>
     <div class="tab-pane fade show active" id="base" role="tabpanel">
-      <table id="main_table" class="table border table-striped table-hover table-sortable">
+      <table id="main_table" class="table border table-striped table-hover">
         <thead>
           <tr>
             <th>#</th>
@@ -49,40 +47,29 @@
             <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'sinistro_forma_id' forma.id|safe %}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
           </tr>
-          {% empty %}
-          <tr>
-            <td colspan="3">Nenhum registro a exibir</td>
-          </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
   </div>
 </div>
-
-<div class="modal fade" id="search_modal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="row">
-        <div class="col"><h5 class="ms-3 mt-3">Pesquisa</h5></div>
-        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
-      </div>
-      <div class="modal-body">
-        <form id="sinistro_form" action="{% url 'sinistro_formas' %}" method="POST" autocomplete="off">
-          {% csrf_token %}
-          <div class="row g-1">
-            <div class="form-floating mb-1 col-lg-12">
-              <input type="text" class="form-control" name="pesquisa" value="" id="id_pesquisa" placeholder="">
-              <label for="id_pesquisa">Termo pesquisa</label>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
 {% endblock%}
 
 {% block add_script_src %}
-<script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/table_V2.js' %}"></script>
 {% endblock %}
+
+
+<script>
+{% block add_script %}
+const table = new jsTable(document.getElementById('main_table'), {
+  canFilter: true,
+  filterCols: ['Nome']
+});
+
+SHORTCUT_MAP['/FTF'] = ':filterFocus';
+
+function filterFocus(){table.filterInput.select();}
+
+{% endblock %}
+</script>

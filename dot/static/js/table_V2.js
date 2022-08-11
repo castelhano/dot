@@ -6,6 +6,7 @@
 * @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com}
 * @doc      {@link ./md/jsTable.md}
 * TODO:     Fixa elemento saveBtn para acesso do cliente
+*           getNewRows()
 */
 class jsTable{
     constructor(id, options){
@@ -178,10 +179,10 @@ class jsTable{
             if(!this.pgControlContainer){this.table.after(pgNav);} // Insere nav (caso nao definido container na instancia da clsse) com controles de paginacao no fim da tabela
         }
         // Controles do caption (filter input, addRow, export, save etc...)
-        let capRow = document.createElement('div');capRow.classList = 'row g-2'; // Inicia row
+        let capRow = document.createElement('div');capRow.classList = 'row g-2 align-items-end'; // Inicia row
         if(this.caption){ // Se informado caption ao instanciar objeto, cria div.col com conteudo do caption
             let capText = document.createElement('div');
-            capText.classList = 'col-auto pe-2';
+            capText.classList = 'col-lg-auto';
             capText.innerHTML = this.caption;
             capRow.appendChild(capText);
         }
@@ -245,8 +246,8 @@ class jsTable{
         capRow.appendChild(capControls);
         this.table.caption.appendChild(capRow);
         this.loadingEl = document.createElement('div');
-        this.loadingEl.classList = 'text-center bg-light position-absolute border w-100 top-0 py-2';
-        this.loadingEl.innerHTML = '<div class="spinner-border text-success fs-7" role="status"><span class="visually-hidden">Loading...</span></div>';
+        this.loadingEl.classList = 'd-flex justify-content-center align-items-center bg-light position-absolute border w-100 top-0 h-100';
+        this.loadingEl.innerHTML = '<div class="spinner-border text-success" role="status"><span class="visually-hidden">Loading...</span></div>';
         this.table.caption.appendChild(this.loadingEl); // Adiciona loading componente na tabela        
     }
     buildListeners(){
@@ -520,6 +521,7 @@ class jsTable{
     validateTable(){ // Metodo chamado em tabelas previamente criadas, normaliza e categoriza elementos  
         if(!this.table.caption){this.table.caption = document.createElement('caption');} // Cria o caption da tabela caso nao exista
         else{this.caption = this.table.caption.innerHTML;this.table.caption.innerHTML = ''} // Limpa o caption atual, sera refeito no metodo buildControls
+        this.table.caption.style.position = 'relative'; // Ajusta o posicionamento do caption para relative
         let ths = this.table.tHead.querySelectorAll('th,td'); // Busca todos os elementos th ou td no header da tabela
         for(let i = 0; i < ths.length;i++){ // Percorre todos os headers, ajustando conteudo e populando array de headers
             ths[i].setAttribute('data-key',ths[i].innerText); // Ajusta o data-attr key com o valor informado no th

@@ -105,10 +105,9 @@
   <div class="col-lg-6 order-2 order-lg-1">
     <div class="card widget-flat">
       <div class="card-body">
-        <span class="btn btn-sm btn-link text-decoration-none text-purple" style="position: absolute; right: 10px; top: 8px;" id="download" onclick="urlRedirect('{% url 'sinistro_export_acidentes_csv' %}')" title="ALT + D">Baixar <i class="fas fa-download"></i></span>
-        <h6 class="text-muted fw-normal">Custos com Terceiros</h6>
         <div class="table-responsive">
-          <table id="table_terceiros" class="table table-centered table-nowrap table-hover table-sortable">
+          <table id="table_terceiros" class="table table-centered table-nowrap table-hover">
+            <caption>Custos com Terceiros</caption>
             <thead>
               <tr class="text-muted fs-7">
                 <th>Terceiro</th>
@@ -119,14 +118,14 @@
             </thead>
             <tbody style="border-top-width: 0;">
               {% for acidente in metrics.top_despesas %}
-              {% for terceiro in acidente.terceiros %}
-              <tr>
-                <td><h6>{{terceiro.nome}}</h6><span class="text-muted fs-7">Pasta: <b>{{acidente.pasta}}</b> - {{terceiro.acidente.data|date:"d M y"}} - <b>{{terceiro.veiculo}}</b></span></td>
-                <td class="d-none d-md-table-cell"><h6>{{terceiro.acordo|floatformat:2}}</h6></td>
-                <td class="d-none d-md-table-cell"><h6>{{terceiro.despesas|floatformat:2}}</h6></td>
-                <td><h6>{{terceiro.despesas|add:terceiro.acordo|floatformat:2}}</h6></td>
-              </tr>
-              {% endfor %}
+                {% for terceiro in acidente.terceiros %}
+                <tr>
+                  <td><h6>{{terceiro.nome}}</h6><span class="text-muted fs-7">Pasta: <b>{{acidente.pasta}}</b> - {{terceiro.acidente.data|date:"d M y"}} - <b>{{terceiro.veiculo}}</b></span></td>
+                  <td class="d-none d-md-table-cell"><h6>{{terceiro.acordo|floatformat:2}}</h6></td>
+                  <td class="d-none d-md-table-cell"><h6>{{terceiro.despesas|floatformat:2}}</h6></td>
+                  <td><h6>{{terceiro.despesas|add:terceiro.acordo|floatformat:2}}</h6></td>
+                </tr>
+                {% endfor %}
               {% endfor %}
             </tbody>            
           </table>          
@@ -172,7 +171,7 @@
 {% block add_script_src %}
 <script src="{% static 'js/vendor/chart.min.js' %}"></script>
 <script src="{% static 'js/url.js' %}"></script>
-<script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/table_V2.js' %}"></script>
 {% endblock %}
 
 
@@ -180,8 +179,10 @@
   {% block add_script %}
   
   SHORTCUT_MAP['fFFF'] = '#adicional_filters_link';
-  
-  sortTable(document.getElementById('table_terceiros'), 3, false);
+
+  const table = new jsTable(document.getElementById('table_terceiros'), {});
+  table.sort(3, false); // Classifica os maiores custos
+
   
   function filtraPeriodo(){
     let periodos = [document.getElementById('id_periodo_de').value,document.getElementById('id_periodo_ate').value]

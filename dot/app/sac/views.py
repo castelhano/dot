@@ -14,8 +14,6 @@ from django.conf import settings as ROOT
 @permission_required('sac.view_classificacao')
 def classificacoes(request):
     classificacoes = Classificacao.objects.all().order_by('nome')
-    if request.method == 'POST' and request.POST['pesquisa'] != '':
-        classificacoes = classificacoes.filter(nome__contains=request.POST['pesquisa'])
     return render(request, 'sac/classificacoes.html', {'classificacoes':classificacoes})
 
 @login_required

@@ -29,10 +29,10 @@
     </ul>
   </div>
   <div class="card-body tab-content">
-    <h5 class="card-title">Despesas <small class="badge bg-primary ms-1">{{despesas.count}}</small><small class="badge bg-primary ms-1">R$ {{total|default:0|floatformat:2}}</small></h5>
-    <h6 class="mb-3 fw-bold text-muted ps-1">{{terceiro.nome}}</h6>
+    <h5 class="card-title mb-0">Despesas <small class="badge bg-primary ms-1">{{despesas.count}}</small><small class="badge bg-primary ms-1">R$ {{total|default:0|floatformat:2}}</small></h5>
     <div class="tab-pane fade show active" id="base" role="tabpanel">
-      <table id="main_table" class="table border table-striped table-hover table-sortable">
+      <table id="main_table" class="table border table-striped table-hover">
+        <caption><b>{{terceiro.nome}}</b></caption>
         <thead>
           <tr>
             <th class="d-none">#</th>
@@ -61,10 +61,6 @@
             <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'sinistro_despesa_id' despesa.id|safe %}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
           </tr>
-          {% empty %}
-          <tr>
-            <td colspan="8">Nenhum registro a exibir</td>
-          </tr>
           {% endfor %}
         </tbody>
       </table>
@@ -74,9 +70,14 @@
 {% endblock%}
 
 {% block add_script_src %}
-<script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/table_V2.js' %}"></script>
 {% endblock %}
 
+
+<script>
 {% block add_script %}
 SHORTCUT_MAP['fTFF'] = '#acidentes_link';
+
+const table = new jsTable(document.getElementById('main_table'), {});
 {% endblock %}
+</script>
