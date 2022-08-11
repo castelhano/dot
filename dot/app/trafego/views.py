@@ -218,8 +218,6 @@ def agentes(request):
 @permission_required('trafego.view_enquadramento')
 def enquadramentos(request):
     enquadramentos = Enquadramento.objects.all().order_by('nome')
-    if request.method == 'POST':
-        enquadramentos = enquadramentos.filter(Q(nome__contains=request.POST['pesquisa']) | Q(codigo__contains=request.POST['pesquisa']))
     return render(request, 'trafego/enquadramentos.html', {'enquadramentos':enquadramentos})
 
 @login_required
