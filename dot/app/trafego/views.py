@@ -17,18 +17,18 @@ from datetime import date, datetime
 @login_required
 @permission_required('trafego.view_localidade')
 def localidades(request):
-    if request.method == 'POST':
-        localidades = Localidade.objects.all().order_by('nome')
-        if request.POST['pesquisa'] != '':
-            localidades = localidades.filter(nome__contains=request.POST['pesquisa'])
-        if 'eh_garagem' in request.POST:
-            localidades = localidades.filter(eh_garagem=True)
-        if 'troca_turno' in request.POST:
-            localidades = localidades.filter(troca_turno=True)
-        if 'ponto_de_controle' in request.POST:
-            localidades = localidades.filter(ponto_de_controle=True)
-    else:
+    localidades = Localidade.objects.all().order_by('nome')
+    param = {}
+    if request.GET.get('garagem', None) == 'true':
+        param['eh_garagem'] = True
+    if request.GET.get('tturno', None) == 'true':
+        param['troca_turno'] = True
+    if request.GET.get('controle', None) == 'true':
+        param['ponto_de_controle'] = True
+    if len(param) == 0:
         localidades = None
+    else:
+        localidades = localidades.filter(**param)
     return render(request,'trafego/localidades.html', {'localidades' : localidades})
 
 @login_required
@@ -36,14 +36,7 @@ def localidades(request):
 def linhas(request):
     status = request.GET.get('status', 'A')
     linhas = Linha.objects.filter(status=status).order_by('codigo')
-    if request.GET.get('pesquisa', None):
-        try:
-            linha = Linha.objects.get(codigo=request.GET['pesquisa'])
-            return redirect('trafego_linha_id', linha.id)
-        except:
-            linhas = linhas.filter(nome__contains=request.GET['pesquisa'])
-    
-    if request.GET.get('empresa', None) and request.GET['empresa'] != 'all':
+    if request.GET.get('empresa', None):
         try:
             empresa = request.user.profile.empresas.filter(id=request.GET.get('empresa', None)).get()
         except:
@@ -116,16 +109,12 @@ def planejamentos(request):
 @permission_required('trafego.view_evento')
 def eventos(request):
     eventos = Evento.objects.all().order_by('nome')
-    if request.method == 'POST':
-        eventos = eventos.filter(nome__contains=request.POST['pesquisa'])
     return render(request,'trafego/eventos.html',{'eventos':eventos})
 
 @login_required
 @permission_required('trafego.view_providencia')
 def providencias(request):
     providencias = Providencia.objects.all().order_by('nome')
-    if request.method == 'POST':
-        providencias = providencias.filter(nome__contains=request.POST['pesquisa'])
     return render(request,'trafego/providencias.html',{'providencias':providencias})
 
 @login_required
@@ -191,16 +180,12 @@ def tratativas(request):
 @permission_required('trafego.view_predefinido')
 def predefinidos(request):
     predefinidos = Predefinido.objects.all().order_by('abbr')
-    if request.method == 'POST':
-        predefinidos = predefinidos.filter(detalhe__contains=request.POST['pesquisa'])
     return render(request, 'trafego/predefinidos.html', {'predefinidos':predefinidos})
 
 @login_required
 @permission_required('trafego.view_orgao')
 def orgaos(request):
     orgaos = Orgao.objects.all().order_by('nome')
-    if request.method == 'POST':
-        orgaos = orgaos.filter(nome__contains=request.POST['pesquisa'])
     return render(request, 'trafego/orgaos.html', {'orgaos':orgaos})
 
 @login_required

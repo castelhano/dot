@@ -27,7 +27,7 @@
     <h5 class="card-title mb-2">Linhas</h5>
     
     <div class="tab-pane fade show active" id="base" role="tabpanel">
-      <table id="main_table" class="table border table-striped table-hover table-sortable caption-top">
+      <table id="main_table" class="table border table-striped table-hover">
         <caption>
           <div class="row">
             <div class="col">
@@ -35,7 +35,7 @@
                 <div class="dropdown">
                   <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"><span class="d-none d-md-inline">Empresa: <b>{{metrics.empresa_display|default:'Todas'}}</b></span><span class="d-inline d-md-none px-1"><i class="fas fa-home"></i></span></button>
                   <ul class="dropdown-menu fs-7" id="id_empresa">
-                    <li><a class="dropdown-item pointer" onclick="urlFilter('empresa', 'all')">Todas</a></li>
+                    <li><a class="dropdown-item pointer" onclick="urlFiltersClean(['empresa'])">Todas</a></li>
                   </ul>
                 </div>
                 <div class="dropdown ms-1">
@@ -80,10 +80,6 @@
             <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'trafego_linha_id' linha.id|safe %}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
           </tr>
-          {% empty %}
-          <tr>
-            <td colspan="7">Nenhum registro a exibir</td>
-          </tr>
           {% endfor %}
         </tbody>
       </table>
@@ -93,7 +89,7 @@
 {% endblock%}
 
 {% block add_script_src %}
-<script src="{% static 'js/table_V2.js' %}"></script>
+<script src="{% static 'js/table.js' %}"></script>
 <script src="{% static 'js/url.js' %}"></script>
 {% endblock %}
 
@@ -102,8 +98,17 @@
 
 const table = new jsTable(document.getElementById('main_table'), {
   canFilter: true,
-  filterCols: ['Cod', 'Nome', 'Origem', 'Destino']
+  filterCols: ['Cod', 'Nome', 'Origem', 'Destino'],
+  enablePaginate: true,
+  canExportJson: true
 });
+SHORTCUT_MAP['/FTF'] = ':filterFocus';
+SHORTCUT_MAP['arrowrightFTF'] = ':nextPage';
+SHORTCUT_MAP['arrowleftFTF'] = ':previousPage';
+
+function filterFocus(){table.filterInput.select();}
+function nextPage(){table.nextPage();}
+function previousPage(){table.previousPage();}
 
 function carregaEmpresas() {
 	var xhttp = new XMLHttpRequest();

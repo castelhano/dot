@@ -10,7 +10,7 @@
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
-      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+      <li class="nav-item"><a id="tratativas_list" class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
       <li class="nav-item"><a class="nav-link" id="search" data-bs-toggle="tab" data-bs-target="#filter" href="#" onclick="setTimeout(function(){document.getElementById('id_pesquisa').focus();},220);" title="CTRL + /"><i class="fas fa-filter"></i></a></li>
       {% if perms.trafego.change_tratativa %}
       <li class="nav-item">
@@ -24,10 +24,9 @@
     </ul>
   </div>
   <div class="card-body tab-content">
-    <h5 class="card-title mb-0">Tratativas <small class="badge bg-primary ms-1">{{ocorrencias.count}}</small></h5>
-    <p class="text-primary fw-bold">{{ocorrencia.matricula}} {{ocorrencia.nome}} {% if ocorrencia.status == 'A' %}<span class="badge bg-success">Ativo</span>{% else %}<span class="badge bg-warning">{{ocorrencia.get_status_display}}</span>{% endif %}</p>
+    <h5 class="card-title mb-3">Tratativas</h5>
     <div class="tab-pane fade show active" id="base" role="tabpanel">
-      <table id="main_table" class="table border table-striped table-hover table-sortable">
+      <table id="main_table" class="table border table-striped table-hover">
         <thead>
           <tr>
             <th class="d-none d-lg-table-cell">Data</th>
@@ -61,10 +60,6 @@
             {% if perms.trafego.change_ocorrencia %}
             <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'trafego_tratativa_id' ocorrencia.id|safe%}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="11">Nenhum registro a exibir</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -139,6 +134,20 @@
 
 <script>
 {% block add_script %}
+
+const table = new jsTable(document.getElementById('main_table'), {
+  canFilter: true,
+  filterCols: ['Linha', 'Condutor', 'Apelido', 'Evento'],
+  enablePaginate: true
+});
+
+SHORTCUT_MAP['1FTF'] = '#tratativas_list';
+SHORTCUT_MAP['arrowrightFTF'] = ':nextPage';
+SHORTCUT_MAP['arrowleftFTF'] = ':previousPage';
+
+function nextPage(){table.nextPage();}
+function previousPage(){table.previousPage();}
+
 function carregaEmpresas() {
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {

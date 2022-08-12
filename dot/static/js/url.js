@@ -49,16 +49,28 @@ function urlFilter(filter, value){location.href = urlUpdate(window.location.href
 function urlFilterTo(url, filter, value){location.href = urlUpdate(url, filter, value);}
 
 /*
-* filters() Atualiza url corrente com multiplos parametros 
+* urlFilters() Atualiza url corrente com multiplos parametros 
 *
 * @version  1.0
 * @since    10/02/2022
 * @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }
 * @param    {Array} filters Lista [] com parametros a serem adicionados na url
 * @param    {Array} values Lista [] com valores dos parametros
-* @example  filters(['nome', 'email'], ['rafael', 'foo@gmail.com'])
+* @example  urlFilters(['nome', 'email'], ['rafael', 'foo@gmail.com'])
 */
 function urlFilters(filters, values){let h = window.location.href;for(i=0;i < filters.length; i++){h = urlUpdate(h , filters[i], values[i]);}location.href = h;}
+
+/*
+* urlFilterToogle() Atualiza url corrente com multiplos parametros 
+*
+* @version  1.0
+* @since    12/08/2022
+* @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }
+* @param    {String} filter Nome do parametro
+* @param    {Array } values Valores para serem alterados para o parametro (sempre aciona o proximo valor apos ao valor atual)
+* @example  urlFilterToogle('ativo', ['true', 'false'])
+*/
+function urlFilterToogle(filter, values){let atual = urlGetParam(filter, false);if(atual){let atual_id = values.indexOf(atual);let next = atual_id < values.length - 1 ? values[atual_id + 1] : values[0];urlFilter(filter, next);}else{urlFilter(filter, values[0])}}
 
 /*
 * filtersClean() Remove parametros da URL
@@ -81,7 +93,6 @@ function urlFiltersClean(filters){let h = window.location.href.split('?')[0];let
 * @example  urlRedirect('fei.com')
 */
 function urlRedirect(url){location.href = url + window.location.search;}
-
 
 /*
 * urlHasParam Retorna se o parametro esta informado na url
