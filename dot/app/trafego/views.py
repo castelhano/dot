@@ -192,12 +192,13 @@ def orgaos(request):
 @permission_required('trafego.view_agente')
 def agentes(request):
     agentes = Agente.objects.all().order_by('nome')
-    if request.method == 'POST':
-        if request.POST['pesquisa'] != '':
-            agentes = agentes.filter(Q(nome__contains=request.POST['pesquisa']) | Q(matricula__contains=request.POST['pesquisa']))
-        if request.POST['orgao'] != '':
-            agentes = agentes.filter(orgao__id=request.POST['orgao'])
-    return render(request, 'trafego/agentes.html', {'agentes':agentes})
+    if request.GET.get('orgao', None):
+        orgao = Orgao.objects.get(id=request.GET['orgao'])
+        agentes = agentes.filter(orgao=orgao)
+        orgao_display = orgao.nome
+    else:
+        orgao_display = 'Todos'
+    return render(request, 'trafego/agentes.html', {'agentes':agentes, 'orgao_display':orgao_display})
 
 @login_required
 @permission_required('trafego.view_enquadramento')

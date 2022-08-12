@@ -12,7 +12,6 @@
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
-      <li class="nav-item"><a class="nav-link" id="search" data-bs-toggle="tab" data-bs-target="#param"  onclick="setTimeout(function(){document.getElementById('id_pesquisa').focus();},220);"  href="#"><i class="fas fa-filter"></i></a></li>
       {% if perms.trafego.add_agente %}
       <li class="nav-item ms-1"><a class="nav-link border" id="add" href="{% url 'trafego_agente_add' %}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
       {% endif %}
@@ -30,11 +29,19 @@
     <h5 class="card-title mb-2">Agentes</h5>
     <div class="tab-pane fade show active" id="base" role="tabpanel">
       <table id="main_table" class="table border table-striped table-hover">
+        <caption>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"><span class="d-none d-md-inline">Orgão: <b>{{orgao_display|default:'Todos'}}</b></span><span class="d-inline d-md-none px-1"><i class="fas fa-pencil-ruler"></i></span></button>
+            <ul class="dropdown-menu fs-7" id="id_orgao">
+              <li><a class="dropdown-item pointer" onclick="urlFiltersClean(['orgao'])">Todos</a></li>
+            </ul>
+          </div>
+        </caption>
         <thead>
           <tr>
             <th>Nome</th>
-            <th>Orgão</th>
             <th>Matricula</th>
+            <th>Orgão</th>
             {% if perms.trafego.change_agente %}
             <th>&nbsp;</th>
             {% endif %}
@@ -44,8 +51,8 @@
           {% for agente in agentes %}
           <tr>
             <td>{{agente.nome}}</td>
-            <td>{{agente.orgao.nome}}</td>
             <td>{{agente.matricula}}</td>
+            <td>{{agente.orgao.nome}}</td>
             {% if perms.trafego.change_agente %}
             <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'trafego_agente_id' agente.id|safe %}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
@@ -54,47 +61,30 @@
         </tbody>
       </table>
     </div>
-    <div class="tab-pane fade mt-3" id="param" role="tabpanel">
-      <form action="{% url 'trafego_agentes' %}" method="POST" autocomplete="off">
-        {% csrf_token %}
-        <div class="row g-1">
-          <div class="form-floating mb-1 col-lg-4">
-            <input type="text" class="form-control" name="pesquisa" id="id_pesquisa" placeholder="">
-            <label for="id_pesquisa">Termo Pesquisa</label>
-          </div>
-        </div>
-        <div class="row g-1">
-          <div class="form-floating mb-1 col-lg-4">
-            <select class="form-select" id="id_orgao" name="orgao">
-              <option value="" selected>---------</option>
-            </select>
-            <label for="id_orgao">Orgão</label>
-          </div>
-        </div>
-        <div class="row mt-2">
-          <div class="col">
-            <button type="submit" class="btn btn-sm btn-warning">Pesquisar</button>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
 {% endblock%}
 
 {% block add_script_src %}
 <script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/url.js' %}"></script>
 {% endblock %}
 
 
 <script>
   {% block add_script %}
-
+  
   const table = new jsTable(document.getElementById('main_table'), {
     enablePaginate: true,
     canFilter: true,
-    filterCols: ['Nome', 'Orgão', 'Matricula']
+    filterCols: ['Nome', 'Matricula']
   });
+
+  SHORTCUT_MAP['/FTF'] = ':filterFocus';
+  SHORTCUT_MAP['arrowrightFTF'] = ':nextPage';
+  SHORTCUT_MAP['arrowleftFTF'] = ':previousPage';
+  
+  function filterFocus(){table.filterInput.select();}
+  function nextPage(){table.nextPage();}
+  function previousPage(){table.previousPage();}
   
   function carregaOrgaos() {
     var xhttp = new XMLHttpRequest();
@@ -104,7 +94,7 @@
         else{
           let obj = JSON.parse(this.responseText);
           orgaos = document.getElementById("id_orgao");
-          for(key in obj){orgaos.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
+          for(key in obj){orgaos.innerHTML += `<li><a class="dropdown-item pointer" onclick="urlFilter('orgao', ${obj[key]})">${key}</a></li>`;}
         }
       }
     };
