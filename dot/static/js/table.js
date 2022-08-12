@@ -28,7 +28,8 @@ class jsTable{
         this.lastPage = 0; // Armazena a ultima pagina da tabela
         this.leid = 0; // Last Element Id: Armazena o id do ultimo elemento a ser exibido no body (na pagina atual)
         this.restoreButton = null; // Armazena o botao para restaurar linha do trash, necessario para exibir e ocultar baseado na existencia de itens no trash
-        this.exportBtn = null;
+        this.exportButtonCSV = null;
+        this.saveBtn = null;
         this.filterInput = null;
         // Configuracao ********
         this.data = options?.data || []; // Json com dados para popular tabela
@@ -215,11 +216,11 @@ class jsTable{
             capControlsGroup.appendChild(btn);
         }
         if(this.canSave){
-            let btn = document.createElement('button');
-            btn.classList = this.saveButtonClasslist;
-            btn.onclick = () => this.save();
-            btn.innerHTML = this.saveButtonText;
-            capControlsGroup.appendChild(btn);
+            this.saveBtn = document.createElement('button');
+            this.saveBtn.classList = this.saveButtonClasslist;
+            this.saveBtn.onclick = () => this.save();
+            this.saveBtn.innerHTML = this.saveButtonText;
+            capControlsGroup.appendChild(this.saveBtn);
         }
         if(this.canDeleteRow){
             this.restoreButton = document.createElement('button');
@@ -229,11 +230,11 @@ class jsTable{
             capControlsGroup.appendChild(this.restoreButton);
         }
         if(this.canExportCsv){
-            let btn = document.createElement('button');
-            btn.classList = 'btn btn-sm btn-outline-secondary';
-            btn.onclick = (e) => this.exportCsv(e);
-            btn.innerHTML = 'CSV';
-            capControlsGroup.appendChild(btn);
+            this.exportButtonCSV = document.createElement('button');
+            this.exportButtonCSV.classList = 'btn btn-sm btn-outline-secondary';
+            this.exportButtonCSV.onclick = (e) => this.exportCsv(e);
+            this.exportButtonCSV.innerHTML = 'CSV';
+            capControlsGroup.appendChild(this.exportButtonCSV);
         }
         if(this.canExportJson){
             let btn = document.createElement('button');

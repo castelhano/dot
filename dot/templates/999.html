@@ -65,17 +65,21 @@
   
     let table = new jsTable(document.querySelector('table'), {
       enablePaginate: true,
+      canSave: true,
+      save: save,
       canFilter: true,
       filterCols: ['Nome']
     });
 
     SHORTCUT_MAP['/FTF'] = ':filterFocus';
     SHORTCUT_MAP['+FTF'] = ':addRow';
+    SHORTCUT_MAP['jFTF'] = ':save';
     SHORTCUT_MAP['arrowrightFTF'] = ':nextPage';
     SHORTCUT_MAP['arrowleftFTF'] = ':previousPage';
     
     function filterFocus(){table.filterInput.select();}
     function addRow(){table.addRow();}
+    function save(){console.log('ENTREI POHA')}
     function nextPage(){table.nextPage();}
     function previousPage(){table.previousPage();}
 
