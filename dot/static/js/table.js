@@ -1,14 +1,10 @@
 /*
 * jsTable   Implementa operacoes com tabelas previamente criadas ou gera tabela a partir de dados json
 *
-* @version  2.6
+* @version  2.9
 * @since    07/08/2022
 * @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com}
-* @doc      {@link ./md/jsTable.md}
-* TODO:     Fixa elemento saveBtn para acesso do cliente
-*           getNewRows()
-*           Se filtro gerar 1 unico registro, acionar link ao precionar enter
-*           Atualizar (ou filtrar) registros da tabela via ajax (acertar LOCALIDADES)
+* TODO:     Atualizar (ou filtrar) registros da tabela via ajax (acertar LOCALIDADES)
 */
 class jsTable{
     constructor(id, options){
@@ -41,6 +37,9 @@ class jsTable{
         this.save = options?.save != undefined ? options.save : function(){console.log('jsTable: Nenhuma funcao definida para save, nas opcoes marque {canSave:true, save: suaFuncao} ')}; // Funcao definida aqui sera acionada no evento click do botao save
         this.canSort = options?.canSort != undefined ? options.canSort : true;
         this.canFilter = options?.canFilter != undefined ? options.canFilter : false;
+        this.filterGetData = options?.filterGetData != undefined ? options.filterGetData : null; // Funcao definida aqui sera acionada no onkeyup do input search
+        this.filterEnterActivate = options?.filterEnterActivate != undefined ? options.filterEnterActivate : true; // Aciona evento click de elemento que atenda querySelector(options.filterEnterActivate)
+        this.filterEnterSelector = options?.filterEnterSelector || '.btn'; // Aciona evento click de elemento que atenda querySelector(options.filterEnterActivate)
         this.filterCols = options?.filterCols || []; // Recebe o nome das colunas a ser analisado ao filtar Ex: filterCols: ['nome', 'email']
         this.canExportCsv = options?.canExportCsv != undefined ? options.canExportCsv : true;
         this.csvSeparator = options?.csvSeparator || ';';
@@ -189,15 +188,16 @@ class jsTable{
             capText.innerHTML = this.caption;
             capRow.appendChild(capText);
         }
-        if(this.canFilter){ // Se habilitado filtro insere div.col com input.text para filtrar tabela
+        if(this.canFilter || this.filterGetData){ // Se habilitado filtro insere div.col com input.text para filtrar tabela
             let capFilter = document.createElement('div');
             capFilter.classList = 'col';
             this.filterInput = document.createElement('input');
             this.filterInput.type = 'text';
-            this.filterInput.disabled = this.filterCols.length > 0 ? false : true;
+            this.filterInput.disabled = this.filterCols.length || this.filterGetData != null > 0 ? false : true;
             this.filterInput.classList = 'form-control form-control-sm';
-            this.filterInput.placeholder = 'Filtrar*';
-            this.filterInput.onkeyup = () => this.filter();
+            this.filterInput.placeholder = this.filterGetData != null ? 'Pesquisa' : 'Filtrar*';
+            if(this.filterGetData != null){this.filterInput.onkeyup = (e) => this.filterGetData()}
+            else{this.filterInput.onkeyup = (e) => this.filter(e);}
             capFilter.appendChild(this.filterInput);
             capRow.appendChild(capFilter);
         }
@@ -299,7 +299,7 @@ class jsTable{
         // this.raw = this.raw.concat(json);
         // if(this.enablePaginate){this.paginate()}
     }
-    filter(criterio=null){
+    filter(e, criterio=null){
         if(this.raw.length == 0){ return null } // Se tabela for fazia, nao executa processo para filtro
         let c = criterio || this.filterInput.value.toLowerCase();
         if(this.canFilter && this.filterCols.length > 0 && c != ""){
@@ -326,12 +326,15 @@ class jsTable{
                 tr.innerHTML = `<td colspan="${this.canDeleteRow ? this.headers.length + 1 : this.headers.length}">Nenhum registro encontrado com o criterio informado</td>`;
                 this.filteredRows.push(tr);
             }
+            else if(row_count == 1 && this.filterEnterActivate && e?.key == 'Enter'){ // Caso ativado this.filterEnterActivate reste somente 1 linha na tabela, aciona click do botao no enter
+                try {this.tbody.querySelector(this.filterEnterSelector).click()} catch (error){}
+            }
             this.rowsCountLabel.innerHTML = row_count;
         }
         else if(c == ""){
             this.filteredRows = [];
             this.rowsCountLabel.innerHTML = this.raw.length
-
+            
         }; // Ao limpar filtro, limpa array com rows filtradas
         if(this.enablePaginate){this.paginate()} // Refaz paginacao
         else{ // Caso paginacao nao esteja ativa, limpa as rows da tabela e carrega (filteredRows ou raw)
@@ -409,6 +412,7 @@ class jsTable{
         let tr = document.createElement('tr');
         tr.dataset.rawRef = this.rawNextId;
         tr.classList = this.newRowClasslist;
+        tr.dataset.type = 'newRow';
         for(let i = 0;i < this.headers.length;i++){
             let td = document.createElement('td');
             td.innerHTML = ''
@@ -461,9 +465,30 @@ class jsTable{
             for(let j = 0; j < cols_size; j++){ 
                 item[this.headers[j]] = cols[j].innerText.replace('\n', '');
             }
-            items[i] = item;
+            items.push(item);
         }
         return items;
+    }
+    getNewRows(opt){
+        let items = [];
+        let raw_size = this.raw.length;
+        for(let i = 0;i < raw_size;i++){
+            if(this.raw[i].dataset.type == 'newRow'){
+                let item = {};
+                let cols = this.raw[i].querySelectorAll('td');
+                let cols_size = this.canDeleteRow ? cols.length - 1 : cols.length; // cols.length - 1 desconsidera a ultima coluna dos controles
+                for(let j = 0; j < cols_size; j++){ 
+                    item[this.headers[j]] = cols[j].innerText.replace('\n', '');
+                }
+                items.push(item);
+            }
+        }
+        let format = opt?.format || 'array';
+        switch(format){
+            case 'array': return items;break;
+            case 'json': return JSON.stringify(items);break;
+        }
+        return null;
     }
     getJson(){return JSON.stringify(this.getRows())} // Retorna todas as linhas da tabela em formato Json
     exportJson(e){
@@ -513,7 +538,7 @@ class jsTable{
         try {dotAlert('success', 'Arquivo <b>csv</b> gerado com <b>sucesso</b>')}catch(error){}
         setTimeout(function() {e.target.classList = originalClasslist;}, 800);
     }
-    cleanTable(){this.thead.innerHTML = '';this.tbody.innerHTML = '';}
+    cleanTable(){this.headers = [];this.raw = [];this.thead.innerHTML = '';this.tbody.innerHTML = '';}
     cleanRows(){this.tbody.innerHTML = '';}
     addEmptyRow(){this.tbody.innerHTML = `<td data-type="emptyRow" colspan="${this.headers.length}">${this.emptyTableMessage}</td>`;}
     removeEmptyRow(){}

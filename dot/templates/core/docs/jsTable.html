@@ -8,7 +8,33 @@
 
 <style>
 {% block style %}
-*{scroll-margin: 50px;}
+*{scroll-margin: 55px;}
+a{text-decoration: none;}
+.goTop-anchor{
+  padding: 15px;
+  width: 55px;
+  text-align: center;
+  background-color: #e5e5e5;
+  border-radius: 30px;
+  position: fixed;
+  bottom: 40px;
+  right: 50px;
+  color: #666;
+  cursor: pointer;
+  opacity:0;
+  transition: opacity 0.5s ease-in-out;
+}
+.goTop-anchor:hover{color: #333;}
+
+/* Estilo no sm */
+@media(max-width: 576px){
+  .goTop-anchor{
+    bottom: 5px;
+    right: 10px;
+    padding: 8px;
+    width: 40px;
+  }
+}
 
 {% endblock%}
 </style>
@@ -30,24 +56,24 @@
           <hr>
           <p>Library em javascript ( vanilla ) para operações com tabelas preexistentes ou criadas dinamicamente.</p>
           <blockquote class="callout callout-primary fs-7">
-            Version: <b>2.1</b><br>
-            Release: <b>07/08/2022</b><br>
+            Version: <b>2.9</b><br>
+            Release: <b>12/08/2022</b><br>
             Author: &nbsp;<b>Rafael Gustavo Faria Alves</b><br>
-            Depend: <a class="badge bg-orange text-decoration-none text-white" href="https://getbootstrap.com/docs/5.2/getting-started/introduction/" target="_blank">bootstrap 5.x</a> <a class="badge bg-purple text-decoration-none text-white" href="https://fontawesome.com/v5/search?m=free" target="_blank">fontawesome 5.x</a><br>
+            Depend: <a class="badge bg-orange text-white" href="https://getbootstrap.com/docs/5.2/getting-started/introduction/" target="_blank">bootstrap 5.x</a> <a class="badge bg-purple text-white" href="https://fontawesome.com/v5/search?m=free" target="_blank">fontawesome 5.x</a><br>
 
           </blockquote>
           
-          <h3 class="mt-5">Utilização</h3>
+          <h3 id="utilizacao" class="mt-5">Utilização</h3>
           <hr>
           <p>Importe o arquivo table.js na sua página html.</p>
           <pre><code class="language-html">&lt;script src="table.js"&gt;&lt;/script&gt;</code></pre>
           
-          <h5 class="mt-5">Instanciando uma tabela existente</h5>
+          <h5 id="instanciando_tabela_existente" class="mt-5">Instanciando uma tabela existente</h5>
           <blockquote class="callout callout-warning mt-3"><i class="fas fa-info text-warning me-2"></i> Tabela precisa ser composta com elementos <b>thead</b> e <b>tbody</b>. Tabelas com mais de um tbody serão ajustadas para operar num único tbody</blockquote>
           <p>Crie uma instancia apontando para a tabela e (opcional) dicionário com as configurações.</p>
           <pre><code class="language-javascript">var tabela = new jsTable(document.querySelector('table'), { options });</code></pre>
           
-          <h5 class="mt-5">Criando uma tabela dinamicamente ( json )</h5>
+          <h5 id="#criando_tabela_dinamicamente" class="mt-5">Criando uma tabela dinamicamente ( json )</h5>
           <p>Crie uma instancia informando o <b>id</b> que será atribuido a tabela.</p>
           <pre><code class="language-javascript">var tabela = new jsTable('tabelaId', {
   data: jsonObject,
@@ -56,8 +82,9 @@
 // atributo data recebe o objeto json com dados da tabela
 // container é opcional, se omitido, tabela será gerada ao final do body 
 </code></pre>
-          
-          <h3 class="mt-5">Configurações</h3>
+          <blockquote class="callout callout-primary mt-5"><i class="fas fa-info text-primary me-2"></i> Em tabelas já instancidadas é possivel usar os metodos <b>loadData(json)</b> ou <b>appendData(json)</b></blockquote>
+          <h3 id="configuracoes" class="mt-5">Configurações</h3>
+          <hr>
           <h5>Recursos</h5>
           <div class="table-responsive">
             <table class="table table-sm">
@@ -79,7 +106,9 @@
                 <tr><td>save</td><td>function</td><td>Função a ser acionada ao salvar tabela</td><td>null</td></tr>
                 <tr><td>canSort</td><td>bool</td><td>Libera classificação ao clicar no header</td><td>true</td></tr>
                 <tr><td>canFilter</td><td>bool</td><td>Insere input.text para filtrar registros tabela</td><td>false</td></tr>
-                <tr id="filterCols" class="foo"><td>filterCols</td><td>array</td><td>Lista com nomes dos campos para filtro</td><td>[ ]</td></tr>
+                <tr id="filterCols"><td>filterCols</td><td>array</td><td>Lista com nomes dos campos para filtro</td><td>[ ]</td></tr>
+                <tr><td>filterEnterActivate</td><td>bool</td><td>Ativa ou desativa evento enter quando resta 1 linha na tabela</td><td>true</td></tr>
+                <tr><td>filterEnterSelector</td><td>string</td><td>Filtro para querySelector, ativa evento click do elemento alvo quando resta somente 1 registro na tabela<br />Ex: <b>filterEnterSelector: 'a'</b></td><td>'btn'</td></tr>
                 <tr><td>canExportCsv</td><td>bool</td><td>Mostra botão para exportar dados em CSV</td><td>true</td></tr>
                 <tr><td>csvSeparator</td><td>string</td><td>Separador para exportação CSV</td><td>';'</td></tr>
                 <tr><td>csvClean</td><td>bool</td><td>Altere para retirar açentos e caracteres especiais ao exportar</td><td>false</td></tr>
@@ -95,7 +124,7 @@
             </table>
         </div>
           
-          <h5 class="mt-5">Estilização</h5>
+          <h5 id="estilizacao" class="mt-5">Estilização</h5>
           <div class="table-responsive">
             <table class="table table-sm">
               <thead>
@@ -131,7 +160,8 @@
           </div>
 
 
-          <h3 class="mt-5">Metodos</h3>
+          <h3 id="metodos" class="mt-5">Métodos</h3>
+          <hr>
           <div class="table-responsive">
             <table class="table table-sm">
               <thead>
@@ -157,15 +187,15 @@
                 </tr>
                 <tr>
                   <td>filter</td>
-                  <td>('criterio_pesquisa')</td>
+                  <td>(event, 'criterio_pesquisa')</td>
                   <td>null</td>
-                  <td>Filtra registros (necessário definir previamente campos de consulta em <a href="#filterCols">filterCols</a>)</td>
+                  <td>Filtra registros (necessário definir previamente campos de consulta em <a href="#filterCols">filterCols</a>)<br>Ex: <b>table.filter(null, 'teste')</b></td>
                 </tr>
                 <tr>
                   <td>sort</td>
                   <td>(column_ref)</td>
                   <td>null</td>
-                  <td>Classifica os dados da tabela pelo número da coluna (iniciando em zero). Metodo tem um segundo parâmetro (opcional) que altera em crescente ou decrescente use tab.sort(2, false) para classificar em ordem decrecente.</td>
+                  <td>Classifica tabela pelo número da coluna (inicio em zero).<br />Ex: <b>table.sort('teste')</b> ou <b>table.sort('teste', false)</b> para descrescente</td>
                 </tr>
                 <tr>
                   <td>goToPage</td>
@@ -204,6 +234,12 @@
                   <td>Retorna array (objeto json) com todas as linhas da tabela</td>
                 </tr>
                 <tr>
+                  <td>geNewtRows</td>
+                  <td>{format: 'json'}</td>
+                  <td>'array' || 'json'</td>
+                  <td>Retorna array ou json com as novas linhas da tabela</td>
+                </tr>
+                <tr>
                   <td>getJson</td>
                   <td>n/a</td>
                   <td>string (json)</td>
@@ -219,15 +255,20 @@
             </table>
           </div>
 
-          <h3 class="mt-5">Integração com <b class="text-orange">listener.js</b></h3>
-          <blockquote class="callout callout-primary">Os elementos abaixo são acessiveis como atributos do objeto instanciado, podendo ser acessados com <b>instancia.<span class="text-orange">elemento</span></b></blockquote>
+          <h3 id="acessando_elementos" class="mt-5">Acessando elementos da tabela</h3>
+          <hr>
+          <blockquote class="callout callout-primary my-3">Os elementos abaixo são acessiveis como atributos do objeto instanciado, podendo ser acessados com <b>instancia.<span class="text-orange">elemento</span></b></blockquote>
           <dl class="row">
             <dt class="col-2">filterInput</dt><dd class="col-10">input.text para tabelas com canFilter setado para true</dd>
-            <dt class="col-2">restoreButton</dt><dd class="col-10">input.text para tabelas com canFilter setado para true</dd>
-            <dt class="col-2">exportButtonCSV</dt><dd class="col-10">input.text para tabelas com canFilter setado para true</dd>
-            <dt class="col-2">exportButtonJson</dt><dd class="col-10">input.text para tabelas com canFilter setado para true</dd>
+            <dt class="col-2">restoreButton</dt><dd class="col-10">button para restaurar ultima linha excluida</dd>
+            <dt class="col-2">exportButtonCSV</dt><dd class="col-10">button para exportar registros em CSV</dd>
+            <dt class="col-2">exportButtonJson</dt><dd class="col-10">button para exportar registros em json</dd>
           </dl>
-          <pre><code class="language-javascript"></code></pre>
+          <pre><code class="language-javascript">const table = new jsTable(el, {});
+table.restoreButton.onclick = () => {..dosomething}</code></pre>
+
+          <h5 id="integracao_listener_js" class="mt-5">Integração com <b class="text-orange">listener.js</b></h5>
+          <pre><code class="language-javascript">SHORTCUT_MAP['1FTF'] = () => table.filterInput.select();</code></pre>
 
 
           <h3 class="mt-5">Exemplos</h3>
@@ -315,19 +356,27 @@ var tab = new jsTable('minhaTabela', {
   rowsPerPage: 10
 })
 // container é opcional, se omitido, tabela será gerada ao final do body 
-</code></pre>
-
-<blockquote class="callout callout-primary mt-3"><i class="fas fa-info text-primary me-2"></i> Em tabelas já instancidadas é possivel usar os metodos <b>loadData(json)</b> ou <b>appendData(json)</b></blockquote>
-            
+</code></pre>            
             
           </div><!-- Fim Container principal -->
+          <div class="col-lg">
+            <ul class="list-unstyled">
+              <li><i class="fas fa-book fa-fw"></i><b><a href="#utilizacao">Utilização</a></b></li>
+              <li><i class="fas none fa-fw"></i><a href="#instanciando_tabela_existente">Instanciando tabela existente</a></li>
+              <li><i class="fas none fa-fw"></i><a href="#criando_tabela_dinamicamente">Criando uma tabela dinamicamente</a></li>
+              <li><i class="fas fa-sliders-h fa-fw mt-2"></i><b><a href="#configuracoes">Configurações</a></b></li>
+              <li><i class="fas none fa-fw"></i><a href="#estilizacao">Estilização</a></li>
+              <li><i class="fas fa-code fa-fw mt-2"></i><b><a href="#metodos">Métodos</a></b></li>
+              <li><i class="fas fa-link fa-fw mt-2"></i><b><a href="#acessando_elementos">Acessando elementos da tabela</a></b></li>
+              <li><i class="fas none fa-fw"></i><a href="#integracao_listener_js">Integração com <b class="text-muted">listener.js</b></a></li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
   </div>
-  
-  
-  
+
+  <a id="link_start_page" class="goTop-anchor border" onclick="window.scrollTo(0,0)"><i class="fas fa-chevron-up"></i></a> 
   
   {% endblock%}
   
@@ -338,6 +387,11 @@ var tab = new jsTable('minhaTabela', {
   <script>
     {% block add_script %}
     prismStart();
+
+    window.addEventListener('scroll', function() {
+    if(window.scrollY > 500) {document.getElementById('link_start_page').style.opacity = '1';}
+    else{document.getElementById('link_start_page').style.opacity = '0';}
+  });
     
     {% endblock %}
   </script>

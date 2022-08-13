@@ -1288,7 +1288,7 @@ def get_linhas_empresa(request):
 def get_localidades(request):
     try:
         localidades = Localidade.objects.filter(nome__contains=request.GET['pesquisa']).order_by('nome')
-        filtro = request.GET.get('filtro', None);
+        filtro = request.GET.get('filtro', None)
         filtros = ['CTR','GAR','TRC']
         if filtro and filtro in filtros:
             if filtro == 'CTR':
@@ -1297,13 +1297,12 @@ def get_localidades(request):
                 localidades = localidades.filter(eh_garagem=True)
             elif filtro == 'TRC':
                 localidades = localidades.filter(troca_turno=True)
-        itens = {}
+        itens = []
         for item in localidades:
-            itens[item.nome] = item.id
+            itens.append({'#':item.id, 'Nome':item.nome, 'GAR': item.eh_garagem, 'T Turno':item.troca_turno, 'Controle':item.ponto_de_controle})
         dataJSON = dumps(itens)
         return HttpResponse(dataJSON)
     except:
-
         return HttpResponse('')
 
 def get_enquadramentos(request):
