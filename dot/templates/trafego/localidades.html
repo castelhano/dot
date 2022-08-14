@@ -31,9 +31,9 @@
     <div class="tab-pane fade show active" id="base" role="tabpanel">
       <table id="main_table" class="table border table-striped table-hover">
         <caption>
-          <button type="button" {% if request|url_get:'garagem' == 'true' %}class="btn btn-sm btn-success" onclick="urlFiltersClean(['garagem'])"{% else %}class="btn btn-sm btn-secondary" onclick="urlFilter('garagem', 'true')"{% endif %}>Garagem</button>
-          <button type="button" {% if request|url_get:'tturno' == 'true' %}class="btn btn-sm btn-success" onclick="urlFiltersClean(['tturno'])"{% else %}class="btn btn-sm btn-secondary" onclick="urlFilter('tturno', 'true')"{% endif %}>T Turno</button>
-          <button type="button" {% if request|url_get:'controle' == 'true' %}class="btn btn-sm btn-success" onclick="urlFiltersClean(['controle'])"{% else %}class="btn btn-sm btn-secondary" onclick="urlFilter('controle', 'true')"{% endif %}>Controle</button>
+          <button id="id_garagem" data-value="false" type="button" class="btn btn-sm btn-secondary" onclick="setAdicionalFilters(this)">Garagem</button>
+          <button id="id_tturno" data-value="false" type="button" class="btn btn-sm btn-secondary" onclick="setAdicionalFilters(this)">T Turno</button>
+          <button id="id_controle" data-value="false" type="button" class="btn btn-sm btn-secondary" onclick="setAdicionalFilters(this)">Controle</button>
         </caption>
         <thead>
           <tr>
@@ -43,7 +43,7 @@
             <th class="d-none d-lg-table-cell">T Turno</th>
             <th class="d-none d-lg-table-cell">Controle</th>
             {% if perms.trafego.change_localidade %}
-            <th>&nbsp;</th>
+            <th class="text-white">cnt</th>
             {% endif %}
           </tr>
         </thead>
@@ -69,42 +69,50 @@
 
 {% block add_script_src %}
 <script src="{% static 'js/table.js' %}"></script>
-<script src="{% static 'js/url.js' %}"></script>
 {% endblock %}
 
 
 <script>
   {% block add_script %}
   const table = new jsTable(document.getElementById('main_table'), {
-    filterGetData: getLocalidade,
+    dataUrl: '{% url 'trafego_get_localidades' %}',
     enablePaginate: true,
     emptyTableMessage: 'Selecione um filtro ou mude o criterio da pesquisa'
   });
+
+  table.filterInput.focus()
+
+  SHORTCUT_MAP['/FTF'] = ':filterFocus';
+  SHORTCUT_MAP['arrowrightFTF'] = ':nextPage';
+  SHORTCUT_MAP['arrowleftFTF'] = ':previousPage';
   
-  function linhaAttrToogle(e){
-    console.log(e);
-  }
+  function filterFocus(){table.filterInput.select();}
+  function nextPage(){table.nextPage();}
+  function previousPage(){table.previousPage();}
+
+  let adicional_filters = '';
+  let garagem = document.getElementById('id_garagem');
+  let controle = document.getElementById('id_controle');
+  let tturno = document.getElementById('id_tturno');
   
-  table.filterInput.focus();
-  
-  function getLocalidade() {
-    let pesquisa = table.filterInput.value;
-    if(pesquisa.length > 2){
-      var xhttp = new XMLHttpRequest();
-      xhttp.onreadystatechange = function() {
-        if(this.readyState == 4 && this.status == 200){
-          if(this.responseText == ''){}
-          else{
-            let obj = JSON.parse(this.responseText);
-            table.cleanRows();
-            table.appendData(obj);
-          }
-        }
-      };
-      xhttp.open("GET", `{% url 'trafego_get_localidades' %}?pesquisa=${pesquisa}`, true);
-      xhttp.send();
+  function setAdicionalFilters(el){
+    if(el.dataset.value == 'false'){
+      el.dataset.value = 'true';
+      el.classList.remove('btn-secondary');
+      el.classList.add('btn-success');
     }
+    else{
+      el.dataset.value = 'false';
+      el.classList.remove('btn-success');
+      el.classList.add('btn-secondary');
+    }
+    adicional_filters = garagem.dataset.value == 'true' ? '&garagem=True' : '';
+    adicional_filters += controle.dataset.value == 'true' ? '&controle=True' : '';
+    adicional_filters += tturno.dataset.value == 'true' ? '&tturno=True' : '';
+    table.dataUrlAdicionalFilters = adicional_filters;
+    table.dataUrlGet();
   }
-  
+
+
   {% endblock %}
 </script>

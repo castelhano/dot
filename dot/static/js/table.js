@@ -1,10 +1,9 @@
 /*
 * jsTable   Implementa operacoes com tabelas previamente criadas ou gera tabela a partir de dados json
 *
-* @version  2.9
+* @version  2.12
 * @since    07/08/2022
 * @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com}
-* TODO:     Atualizar (ou filtrar) registros da tabela via ajax (acertar LOCALIDADES)
 */
 class jsTable{
     constructor(id, options){
@@ -29,6 +28,10 @@ class jsTable{
         this.filterInput = null;
         // Configuracao ********
         this.data = options?.data || []; // Json com dados para popular tabela
+        this.dataUrl = options?.dataUrl || null; // URL para buscar registros (via ajax)
+        this.dataUrlKeyName = options?.dataUrlKeyName || 'pesquisa'; // Nome da variavel usada na consulta ajax
+        this.dataUrlAdicionalFilters = options?.dataUrlAdicionalFilters || ''; // Filtros adicionais a serem adicionados na consulta ajax
+        this.dataUrlMinDigits = options?.dataUrlMinDigits != undefined ? options.dataUrlMinDigits : 3; // Busca ajax eh acionada com no minimo de digitos setado em dataUrlMinDigits
         this.container = options?.container || document.body; // parentNode da tabela, usado na construcao de tabela pelo evento createTable(), caso nao informado append nova tabela no body
         this.caption = options?.caption || null;
         this.canAddRow = options?.canAddRow != undefined ? options.canAddRow : false;
@@ -37,7 +40,6 @@ class jsTable{
         this.save = options?.save != undefined ? options.save : function(){console.log('jsTable: Nenhuma funcao definida para save, nas opcoes marque {canSave:true, save: suaFuncao} ')}; // Funcao definida aqui sera acionada no evento click do botao save
         this.canSort = options?.canSort != undefined ? options.canSort : true;
         this.canFilter = options?.canFilter != undefined ? options.canFilter : false;
-        this.filterGetData = options?.filterGetData != undefined ? options.filterGetData : null; // Funcao definida aqui sera acionada no onkeyup do input search
         this.filterEnterActivate = options?.filterEnterActivate != undefined ? options.filterEnterActivate : true; // Aciona evento click de elemento que atenda querySelector(options.filterEnterActivate)
         this.filterEnterSelector = options?.filterEnterSelector || '.btn'; // Aciona evento click de elemento que atenda querySelector(options.filterEnterActivate)
         this.filterCols = options?.filterCols || []; // Recebe o nome das colunas a ser analisado ao filtar Ex: filterCols: ['nome', 'email']
@@ -120,8 +122,8 @@ class jsTable{
         }
         this.thead.appendChild(tr);
     }
-    buildRows(){
-        this.cleanRows();
+    buildRows(){ // Constroi os objetos trs baseado no conteudo de this.data, popula this.raw
+        this.cleanRows(); // Reinicia this.raw e limpa elementos do this.tbody
         let data_size = this.data.length;
         this.rawNextId = data_size + 1; // Ajusta o id de um eventual proximo elemento a ser inserido
         for(let i = 0;i < data_size;i++){
@@ -137,13 +139,13 @@ class jsTable{
                 row.appendChild(col);
             }
             this.rowAddControls(row); // Adiciona controles para row
-            this.tbody.appendChild(row); // Insere row na tabela
             this.raw.push(row); 
+            if(!this.enablePaginate){this.tbody.appendChild(row)}; // Se nao tenha paginacao insere elemento no tbody
         }
         if(data_size == 0){this.addEmptyRow();} // Caso nao exista nenhum registro, adiciona linha vazia
         this.rowsCountLabel.innerHTML = data_size;
     }
-    rowAddControls(row){
+    rowAddControls(row){ // Adiciona os controles na linha (tr) alvo
         if(this.canDeleteRow){
             let controls = document.createElement('td');
             controls.classList = 'text-end py-1';
@@ -154,6 +156,13 @@ class jsTable{
             controls.appendChild(deleteBtn);
             row.appendChild(controls);
         }
+    }
+    rowsReset(){ // Popula tbody conforme conteudo de this.raw
+        let size = this.raw.length;
+        this.cleanTbody();
+        if(this.enablePaginate){this.paginate()}
+        else{for(let i = 0; i < size; i++){this.tbody.appendChild(this.raw[i]);}}
+        this.rowsCountLabel.innerHTML = size;
     }
     buildControls(){
         this.table.classList.add('caption-top'); // Adiciona a classe caption top (caso nao exista)
@@ -188,16 +197,16 @@ class jsTable{
             capText.innerHTML = this.caption;
             capRow.appendChild(capText);
         }
-        if(this.canFilter || this.filterGetData){ // Se habilitado filtro insere div.col com input.text para filtrar tabela
+        if(this.canFilter || this.dataUrl){ // Se habilitado filtro insere div.col com input.text para filtrar tabela (ou buscar dados por ajax)
             let capFilter = document.createElement('div');
             capFilter.classList = 'col';
             this.filterInput = document.createElement('input');
             this.filterInput.type = 'text';
-            this.filterInput.disabled = this.filterCols.length || this.filterGetData != null > 0 ? false : true;
+            this.filterInput.disabled = this.filterCols.length || this.dataUrl != null ? false : true; // Disabled elemento se nao informado colunas para filtrar (filterCols) ou definido url para busca ajax
             this.filterInput.classList = 'form-control form-control-sm';
-            this.filterInput.placeholder = this.filterGetData != null ? 'Pesquisa' : 'Filtrar*';
-            if(this.filterGetData != null){this.filterInput.onkeyup = (e) => this.filterGetData()}
-            else{this.filterInput.onkeyup = (e) => this.filter(e);}
+            this.filterInput.placeholder = this.dataUrl != null ? 'Pesquisa' : 'Filtrar*';
+            if(this.dataUrl != null){this.filterInput.onkeyup = (e) => this.dataUrlGet(e)} // Se dataUrl busca dados ajax ao digitar
+            else{this.filterInput.onkeyup = (e) => this.filter(e);} // Caso nao, aciona metodo para filtrar eventos da tabela
             capFilter.appendChild(this.filterInput);
             capRow.appendChild(capFilter);
         }
@@ -271,13 +280,12 @@ class jsTable{
         this.buildHeaders();
         this.buildListeners();
         this.buildRows();
-        if(this.enablePaginate){this.paginate()}
+        this.rowsReset(); // Atualiza conteudo da tabela
         this.loading(true); // Oculta spinner de carregamento
     }
     appendData(json){ // Carrega dados na tabela (mantem dados atuais) (!! Não adiciona novos cabecalhos)
         let data_size = json.length;
         let first = this.rawNextId; // Inicio dos ids a serem inseridos
-        let last = first + data_size; // Ultimo id a ser inserido
         for(let i = 0; i < data_size;i++){
             let row = document.createElement('tr');
             row.dataset.rawRef = first + i;
@@ -292,12 +300,40 @@ class jsTable{
             }
             this.rowAddControls(row); // Adiciona controles para row
             this.raw.push(row);
-            if(this.enablePaginate){this.paginate()} // Se habilado paginacao, refaz paginacao
-            else{this.tbody.appendChild(row);} // Caso contrario so insere row na tabela
         }
-        this.rowsCountLabel.innerHTML = this.raw.length;
-        // this.raw = this.raw.concat(json);
-        // if(this.enablePaginate){this.paginate()}
+        this.rowsReset();
+    }
+    dataUrlGet(e){ // Funcao chamada no keyup do filterInput se definido dataUrl
+        if(this.raw.length == 1 && this.filterEnterActivate && e?.key == 'Enter'){ // Caso ativado this.filterEnterActivate reste somente 1 linha na tabela, aciona click do botao no enter
+            try {this.tbody.querySelector(this.filterEnterSelector).click()} catch (error){}
+            return null; // Retorna null e nao realiza o restante do codigo
+        }
+        try { // Verifica se a tecla digitada eh uma letra, numero, backspace ou delete (retorna falso para arrows, e outros). Dentro do try pois dataUrlGet pode ser acionado pelo cliente
+            let validEntry = e.key == 'Backspace' || e.key == 'Delete' || String.fromCharCode(event.keyCode).match(/(\w|\s)/g);
+            if(!validEntry){return null} // Nao realiza consulta ajax se tecla nao for letra ou numero
+        }catch(e){}
+        let criterio = this.filterInput.value;
+        let self = this; // Workaround para resolver conflito dentro da funcao ajax (this passa a se referir ao XMLHttpRequest)
+        if(criterio.length >= this.dataUrlMinDigits){ // Aciona o ajax somente se tiver um minimo de caracteres digitados
+            self.cleanRows();
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if(this.readyState == 4 && this.status == 200){
+                    if(this.responseText == '[]'){
+                        self.cleanRows();
+                        self.rowsCountLabel.innerHTML = 0;
+                        self.addEmptyRow();
+                    }
+                    else{
+                        let obj = JSON.parse(this.responseText);
+                        self.appendData(obj);
+                    }
+                }
+            };
+            xhttp.open("GET", `${self.dataUrl}?${self.dataUrlKeyName}=${criterio}${self.dataUrlAdicionalFilters}`, true);
+            xhttp.send();
+        }
+        else{this.cleanRows();this.rowsCountLabel.innerHTML = 0;this.addEmptyRow()}
     }
     filter(e, criterio=null){
         if(this.raw.length == 0){ return null } // Se tabela for fazia, nao executa processo para filtro
@@ -338,7 +374,7 @@ class jsTable{
         }; // Ao limpar filtro, limpa array com rows filtradas
         if(this.enablePaginate){this.paginate()} // Refaz paginacao
         else{ // Caso paginacao nao esteja ativa, limpa as rows da tabela e carrega (filteredRows ou raw)
-            this.cleanRows();
+            this.cleanTbody();
             if(this.filteredRows.length > 0){this.filteredRows.forEach((r) => this.tbody.append(r))}
             else{
                 if(this.raw.length > 0){this.raw.forEach((r) => this.tbody.append(r));}
@@ -356,7 +392,7 @@ class jsTable{
             if(this.activePage < 1){this.activePage = 1} // Impede tentativa de acesso de pagina menor que 1
             let feid = (this.activePage - 1) * this.rowsPerPage; // FirstElementId: Seta o ID do primeiro elemento a ser mostrado
             this.leid = Math.min((feid + this.rowsPerPage) - 1, rowsSize - 1); // LastElementId: Seta o ID do ultimo elemento a ser mostrado   
-            this.cleanRows();
+            this.cleanTbody();
             for(let i = feid;i <= this.leid;i++ ){
                 this.tbody.appendChild(data[i]);
             }
@@ -385,6 +421,9 @@ class jsTable{
             if(remmains == 1){current = pages} // Ultimo botao sempre aponta para ultima pagina
         }
     }
+    goToPage(page){this.activePage = page;this.paginate();}
+    previousPage(){this.activePage--;this.paginate();}
+    nextPage(){this.activePage++;this.paginate();}
     sort(column, asc=true){
         if(this.raw.length == 0){ return null } // Se tabela for fazia, nao executa processo para classificar
         const modifier = asc ? 1 : -1; // Modificador para classificar em order crecente (asc=true) ou decrescente (asc=false)
@@ -394,7 +433,6 @@ class jsTable{
             const bColText = b.querySelector(`td:nth-child(${ column + 1 })`).textContent.trim();  
             return aColText > bColText ? (1 * modifier) : (-1 * modifier);
         });
-        // this.cleanRows(); // Limpa rows da tabela
         rows = sortedRows; // Atualiza campos (filteredRows ou no raw)
         if(this.enablePaginate){this.paginate()} // Se paginacao habilitada, refaz paginacao
         else{rows.forEach((e) => this.tbody.append(e))} // Caso nao, atualiza o tbody da tabela
@@ -403,9 +441,6 @@ class jsTable{
         this.thead.querySelector(`th:nth-child(${ column + 1})`).classList.toggle("th-sort-asc", asc);
         this.thead.querySelector(`th:nth-child(${ column + 1})`).classList.toggle("th-sort-desc", !asc);
     }
-    goToPage(page){this.activePage = page;this.paginate();}
-    previousPage(){this.activePage--;this.paginate();}
-    nextPage(){this.activePage++;this.paginate();}
     addRow(){ // Adiciona nova linha na tabela
         if(this.raw.length == 0){this.tbody.querySelector('[data-type="emptyRow"]').remove();} // Se tabela vazia, remove linha de emptyRow
         if(this.enablePaginate){this.goToPage(this.lastPage)}; // Muda exibicao para ultima pagina
@@ -539,7 +574,8 @@ class jsTable{
         setTimeout(function() {e.target.classList = originalClasslist;}, 800);
     }
     cleanTable(){this.headers = [];this.raw = [];this.thead.innerHTML = '';this.tbody.innerHTML = '';}
-    cleanRows(){this.tbody.innerHTML = '';}
+    cleanRows(){this.raw = [];this.tbody.innerHTML = '';this.rawNextId = 0;this.leid = 0;} // Reinicia this.raw e limpa this.tbody
+    cleanTbody(){this.tbody.innerHTML = '';}
     addEmptyRow(){this.tbody.innerHTML = `<td data-type="emptyRow" colspan="${this.headers.length}">${this.emptyTableMessage}</td>`;}
     removeEmptyRow(){}
     loading(done=false){

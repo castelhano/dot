@@ -17,18 +17,19 @@ from datetime import date, datetime
 @login_required
 @permission_required('trafego.view_localidade')
 def localidades(request):
-    localidades = Localidade.objects.all().order_by('nome')
-    param = {}
-    if request.GET.get('garagem', None) == 'true':
-        param['eh_garagem'] = True
-    if request.GET.get('tturno', None) == 'true':
-        param['troca_turno'] = True
-    if request.GET.get('controle', None) == 'true':
-        param['ponto_de_controle'] = True
-    if len(param) == 0:
-        localidades = None
-    else:
-        localidades = localidades.filter(**param)
+    localidades = None
+    # localidades = Localidade.objects.all().order_by('nome')
+    # param = {}
+    # if request.GET.get('garagem', None) == 'true':
+    #     param['eh_garagem'] = True
+    # if request.GET.get('tturno', None) == 'true':
+    #     param['troca_turno'] = True
+    # if request.GET.get('controle', None) == 'true':
+    #     param['ponto_de_controle'] = True
+    # if len(param) == 0:
+    #     localidades = None
+    # else:
+    #     localidades = localidades.filter(**param)
     return render(request,'trafego/localidades.html', {'localidades' : localidades})
 
 @login_required
@@ -1288,18 +1289,18 @@ def get_linhas_empresa(request):
 def get_localidades(request):
     try:
         localidades = Localidade.objects.filter(nome__contains=request.GET['pesquisa']).order_by('nome')
-        filtro = request.GET.get('filtro', None)
-        filtros = ['CTR','GAR','TRC']
-        if filtro and filtro in filtros:
-            if filtro == 'CTR':
-                localidades = localidades.filter(ponto_de_controle=True)
-            elif filtro == 'GAR':
-                localidades = localidades.filter(eh_garagem=True)
-            elif filtro == 'TRC':
-                localidades = localidades.filter(troca_turno=True)
+        if request.GET.get('garagem', None) and request.GET['garagem'] == 'True':
+            localidades = localidades.filter(eh_garagem=True)
+        if request.GET.get('controle', None) and request.GET['controle'] == 'True':
+            localidades = localidades.filter(ponto_de_controle=True)
+        if request.GET.get('tturno', None) and request.GET['tturno'] == 'True':
+            localidades = localidades.filter(troca_turno=True)
         itens = []
         for item in localidades:
-            itens.append({'#':item.id, 'Nome':item.nome, 'GAR': item.eh_garagem, 'T Turno':item.troca_turno, 'Controle':item.ponto_de_controle})
+            item_dict = {'#':item.id, 'Nome':item.nome, 'GAR': 'GAR' if item.eh_garagem else '', 'T Turno': 'T Turno' if item.troca_turno else '', 'Controle': 'Controle' if item.ponto_de_controle else ''}
+            if request.user.has_perm('trafego.change_localidade'):
+                item_dict['cnt'] = f'<a class="btn btn-sm btn-dark float-end" href="/trafego_localidade_id/{item.id}"><i class="fas fa-pen"></i></a>'
+            itens.append(item_dict)
         dataJSON = dumps(itens)
         return HttpResponse(dataJSON)
     except:

@@ -25,6 +25,10 @@ a{text-decoration: none;}
   transition: opacity 0.5s ease-in-out;
 }
 .goTop-anchor:hover{color: #333;}
+.menu{
+  position: sticky;
+  top: 60px;
+}
 
 /* Estilo no sm */
 @media(max-width: 576px){
@@ -51,13 +55,13 @@ a{text-decoration: none;}
   <div class="card-body tab-content">
     <div class="tab-pane fade show active" id="base" role="tabpanel">
       <div class="row mt-2">
-        <div class="col-lg-8"><!-- Container principal -->
+        <div class="col-lg-8 order-2 order-lg-1"><!-- Container principal -->
           <h1>jsTable</h1>
           <hr>
           <p>Library em javascript ( vanilla ) para operações com tabelas preexistentes ou criadas dinamicamente.</p>
           <blockquote class="callout callout-primary fs-7">
-            Version: <b>2.9</b><br>
-            Release: <b>12/08/2022</b><br>
+            Version: <b>2.12</b><br>
+            Release: <b>13/08/2022</b><br>
             Author: &nbsp;<b>Rafael Gustavo Faria Alves</b><br>
             Depend: <a class="badge bg-orange text-white" href="https://getbootstrap.com/docs/5.2/getting-started/introduction/" target="_blank">bootstrap 5.x</a> <a class="badge bg-purple text-white" href="https://fontawesome.com/v5/search?m=free" target="_blank">fontawesome 5.x</a><br>
 
@@ -73,7 +77,7 @@ a{text-decoration: none;}
           <p>Crie uma instancia apontando para a tabela e (opcional) dicionário com as configurações.</p>
           <pre><code class="language-javascript">var tabela = new jsTable(document.querySelector('table'), { options });</code></pre>
           
-          <h5 id="#criando_tabela_dinamicamente" class="mt-5">Criando uma tabela dinamicamente ( json )</h5>
+          <h5 id="criando_tabela_dinamicamente" class="mt-5">Criando uma tabela dinamicamente ( json )</h5>
           <p>Crie uma instancia informando o <b>id</b> que será atribuido a tabela.</p>
           <pre><code class="language-javascript">var tabela = new jsTable('tabelaId', {
   data: jsonObject,
@@ -82,7 +86,34 @@ a{text-decoration: none;}
 // atributo data recebe o objeto json com dados da tabela
 // container é opcional, se omitido, tabela será gerada ao final do body 
 </code></pre>
-          <blockquote class="callout callout-primary mt-5"><i class="fas fa-info text-primary me-2"></i> Em tabelas já instancidadas é possivel usar os metodos <b>loadData(json)</b> ou <b>appendData(json)</b></blockquote>
+          <blockquote class="callout callout-primary mt-3"><i class="fas fa-info text-primary me-2"></i> Em tabelas já instancidadas é possivel usar os metodos <b>loadData(json)</b> ou <b>appendData(json)</b></blockquote>
+
+          <h5 id="buscando_via_ajax" class="mt-5">Buscando dados via ajax</h5>
+          <p>Crie uma tabela definindo os cabeçalhos, ao digitar no field de pesquisa realiza consulta via ajax. Nome dos headers devem ser iguais ao retorno da consulta.</p>
+          <pre><code class="language-javascript">const table = new jsTable(document.getElementById('table'), {
+dataUrl: '/minha_url',
+dataUrlAdicionalFilters: '&status=True',
+enablePaginate: true,
+emptyTableMessage: 'Selecione um filtro ou mude o criterio da pesquisa'
+});</code></pre>
+
+          <blockquote class="callout callout-primary">No python</blockquote>
+          <pre><code class="language-python">def get_data(request):
+  try:
+      data = Model.objects.filter(nome__contains=request.GET['pesquisa']).order_by('nome')
+      itens = []
+      for item in data:
+          item_dict = {'#':item.id, 'Nome':item.nome,...}
+          if request.user.has_perm('app.change_model'):
+              item_dict['cnt'] = f'&lt;a class="btn btn-sm btn-dark float-end" href="/url/{item.id}"&gt;&lt;i class="fas fa-pen"&gt;&lt;/i&gt;&lt;/a&gt;'
+          itens.append(item_dict)
+      dataJSON = dumps(itens)
+      return HttpResponse(dataJSON)
+  except:
+      return HttpResponse('')
+# Opcional: Informe dataUrlMinDigits: 0 para alterar a quantidade de digitos minimos antes de realizar o ajax (default 3)</code></pre>
+
+
           <h3 id="configuracoes" class="mt-5">Configurações</h3>
           <hr>
           <h5>Recursos</h5>
@@ -98,6 +129,10 @@ a{text-decoration: none;}
               </thead>
               <tbody>
                 <tr><td>data</td><td>json</td><td>Objeto json</td><td>[ ]</td></tr>
+                <tr><td>dataUrl</td><td>string</td><td>String URL para consulta Ajax</td><td>null</td></tr>
+                <tr><td>dataUrlKeyName</td><td>string</td><td>Nome variavel do criterio consulta ajax</td><td>'pesquisa'</td></tr>
+                <tr><td>dataUrlAdicionalFilters</td><td>string</td><td>String com criterios adicionais para pesquisa</td><td>''</td></tr>
+                <tr><td>dataUrlMinDigits</td><td>int</td><td>Quantidade de digitos minimos para consulta ajax</td><td>3</td></tr>
                 <tr><td>container</td><td>element</td><td>Parent element para a tabela a ser criada</td><td>document.body</td></tr>
                 <tr><td>caption</td><td>string</td><td>Texto do caption da tabela </td><td>''</td></tr>
                 <tr><td>canAddRow</td><td>bool</td><td>Altere para exibir controle para nova linha</td><td>false</td></tr>
@@ -184,6 +219,12 @@ a{text-decoration: none;}
                   <td>(json)</td>
                   <td>null</td>
                   <td>Adiciona registros à tabela</td>
+                </tr>
+                <tr>
+                  <td>dataUrlGet</td>
+                  <td>()</td>
+                  <td>null</td>
+                  <td>Busca Ajax dados baseado nos criterios da pesquisa</td>
                 </tr>
                 <tr>
                   <td>filter</td>
@@ -359,11 +400,12 @@ var tab = new jsTable('minhaTabela', {
 </code></pre>            
             
           </div><!-- Fim Container principal -->
-          <div class="col-lg">
-            <ul class="list-unstyled">
+          <div class="col-lg order-1 order-lg-2 mb-3">
+            <ul class="list-unstyled menu">
               <li><i class="fas fa-book fa-fw"></i><b><a href="#utilizacao">Utilização</a></b></li>
               <li><i class="fas none fa-fw"></i><a href="#instanciando_tabela_existente">Instanciando tabela existente</a></li>
               <li><i class="fas none fa-fw"></i><a href="#criando_tabela_dinamicamente">Criando uma tabela dinamicamente</a></li>
+              <li><i class="fas none fa-fw"></i><a href="#buscando_via_ajax">Buscando dados via Ajax</a></li>
               <li><i class="fas fa-sliders-h fa-fw mt-2"></i><b><a href="#configuracoes">Configurações</a></b></li>
               <li><i class="fas none fa-fw"></i><a href="#estilizacao">Estilização</a></li>
               <li><i class="fas fa-code fa-fw mt-2"></i><b><a href="#metodos">Métodos</a></b></li>
