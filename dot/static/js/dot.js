@@ -10,7 +10,7 @@ const __ss = __sw >= 1400 ? 'xxl' : __sw >= 1200 ? 'xl' : __sw >= 992 ? 'lg' : _
 * @example  dotAlert('warning', 'Este eh um <b>alerta de exemplo</b>')
 * TODO:     adicionar data-attr para antes de gerar novo alerta excluir se ja existir algum
 */
-function dotAlert(tipo, mensagem){let e = document.createElement('div');let b = document.createElement('button');b.classList.add('btn-close');b.setAttribute('data-bs-dismiss','alert');e.classList.add('alert', `alert-${tipo}`,'alert-dismissible','fade','show','mb-1');e.innerHTML = mensagem;e.appendChild(b);document.body.appendChild(e);}
+function dotAlert(tipo, mensagem){let e = document.createElement('div');e.style.zIndex = 100;let b = document.createElement('button');b.classList.add('btn-close');b.setAttribute('data-bs-dismiss','alert');e.classList.add('alert', `alert-${tipo}`,'alert-dismissible','fade','show','mb-1');e.innerHTML = mensagem;e.appendChild(b);document.body.appendChild(e);}
 
 /*
 * Tooltip initializer

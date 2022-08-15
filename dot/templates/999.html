@@ -19,17 +19,20 @@
     <h1>Handler 999</h1>
     <hr>
     
-    <div class="row">
+    <!-- <div class="row">
       <div id="form_container" class="col"></div>
-    </div>
-    
+    </div> -->
+    <div id="table_container"></div>
+  </div>
+  
   <div id="dot_alert" class="alert alert-dismissible fade mb-1" role="alert">
     <span id="dot_alert_message"></span>
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
   
   <script src="{% static 'js/listener.js' %}"></script>
-  <script src="{% static 'js/form.js' %}"></script>
+  <!-- <script src="{% static 'js/form.js' %}"></script> -->
+  <script src="{% static 'js/table.js' %}"></script>
   <script src="{% static 'js/dot.js' %}"></script>
   <script src="/static/js/vendor/bootstrap.bundle.min.js"></script>
   
@@ -37,12 +40,31 @@
   
   <script>
 
-    const form = new jsForm({
-      data: obj,
-      container: document.getElementById('form_container')
+    function salvarTabela(){
+      let foo = table.getJson();
+      
+    }
+    
+    const table = new jsTable('myTable', {
+      data: {% include 'core/data_test.json' %},
+      container: document.getElementById('table_container'),
+      enablePaginate: true,
+      canFilter: true,
+      filterCols: ['first_name', 'last_name'],
+      canAddRow: true,
+      canExportJson: true,
+      canDeleteRow: true,
+      editableCols: ['gender'],
+      canSave: true,
+      save: salvarTabela
     });
     
-    
-  </script>
-</body>
-</html>
+    // const form = new jsForm({
+      //   data: obj,
+      //   container: document.getElementById('form_container')
+      // });
+      
+      
+    </script>
+  </body>
+  </html>
