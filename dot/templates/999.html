@@ -22,7 +22,32 @@
     <!-- <div class="row">
       <div id="form_container" class="col"></div>
     </div> -->
-    <div id="table_container"></div>
+  
+  <table class="table border caption-top">
+    <caption><h5>Dados Pessoais</h5></caption>
+    <tbody>
+      <tr>
+        <th>Nome</th>
+        <td class="border bg-light" contenteditable="true" autofocus>Rafael Alves</td>
+      </tr>
+      <tr>
+        <th>Idade</th>
+        <td class="border bg-light" contenteditable="true">25</td>
+      </tr>
+      <tr>
+        <th>Sexo</th>
+        <td class="border bg-light" contenteditable="true">Masculino</td>
+        <td class="border bg-light">Foo</td>
+      </tr>
+      <tr>
+        <th>Email</th>
+        <td class="border bg-light" contenteditable="true">castelhano.rafael@gmail.com</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  
   </div>
   
   <div id="dot_alert" class="alert alert-dismissible fade mb-1" role="alert">
@@ -32,7 +57,7 @@
   
   <script src="{% static 'js/listener.js' %}"></script>
   <!-- <script src="{% static 'js/form.js' %}"></script> -->
-  <script src="{% static 'js/table.js' %}"></script>
+  <!-- <script src="{% static 'js/table.js' %}"></script> -->
   <script src="{% static 'js/dot.js' %}"></script>
   <script src="/static/js/vendor/bootstrap.bundle.min.js"></script>
   
@@ -40,24 +65,8 @@
   
   <script>
 
-    function salvarTabela(){
-      let foo = table.getJson();
-      
-    }
-    
-    const table = new jsTable('myTable', {
-      data: {% include 'core/data_test.json' %},
-      container: document.getElementById('table_container'),
-      enablePaginate: true,
-      canFilter: true,
-      filterCols: ['first_name', 'last_name'],
-      canAddRow: true,
-      canExportJson: true,
-      canDeleteRow: true,
-      editableCols: ['gender'],
-      canSave: true,
-      save: salvarTabela
-    });
+    var TAB_ON_ENTER = true;
+
     
     // const form = new jsForm({
       //   data: obj,
