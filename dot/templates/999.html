@@ -1,5 +1,4 @@
 {% load static %}
-{% load app_data %}
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -79,7 +78,7 @@
     
     var TAB_ON_ENTER = true;
 
-    let foo = {% app_data 'data_test.json' %};
+    let foo = {{data}};
     
     
     // const form = new jsForm({

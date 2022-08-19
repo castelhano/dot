@@ -12,6 +12,7 @@ from datetime import datetime
 from django.http import HttpResponse
 from django.core import serializers
 from json import dumps, loads
+from django.conf import settings
 # from django.core.serializers.json import DjangoJSONEncoder
 
 
@@ -71,6 +72,14 @@ def logs(request):
 @login_required
 def docs(request, page='core'):
     return render(request,f'core/docs/{page}.html')
+
+@login_required
+def app_data(request, file_path):
+    # try:
+        with open(f'{settings.APP_DATA}/{file_path}', 'r') as file: 
+            return file.read()
+    # except Exception as e:
+    #     return []
 
 @login_required
 @permission_required('core.view_alerta')
@@ -438,7 +447,8 @@ def logout(request):
     return redirect('index')
 
 def handler(request, code):
-    return render(request,f'{code}.html')
+    data = app_data(request, 'data_test.json')
+    return render(request,f'{code}.html', {'data':data})
 
 def password_valid(password):
     if len(password) < 8:

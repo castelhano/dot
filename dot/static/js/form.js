@@ -1,23 +1,3 @@
-let obj = [
-    {
-        "name":"nome",
-        "type":"text",
-        "group":"Cadastro",
-        "value":"Rafael Gustavo Faria Alves"
-    },
-    {
-        "name":"email",
-        "type":"email",
-        "group":"Cadastro",
-        "value":"castelhano.rafael@gmail.com"
-    },
-    {
-        "name":"fone",
-        "type":"text",
-        "group":"Contato",
-        "value":"(65) 9 8145 0188"
-    }
-]
 class jsForm{
     constructor(options){
         this.data = options?.data || []; // Json com dados do form
@@ -35,7 +15,12 @@ class jsForm{
         this.form = document.createElement('table');
         this.form.classList = this.formClassList;
         this.tbody = document.createElement('tbody');
-        for(let item in this.data){
+        for(let item in this.data){ // Percorre todas as linhas alocando cada registro no respectivo grupo
+            // for(let attr in this.data[item]){
+            //     console.log(attr);
+            //     // f.setAttribute(attr, this.data[0].fields[field][attr]);
+            // }
+
             let row = `<tr><th class="${this.keyClassList}">${this.data[item].name}</th><td class="${this.valueClassList}" contenteditable="true">${this.data[item].value}</td></tr>`
             this.tbody.innerHTML += row;            
         }
@@ -44,4 +29,3 @@ class jsForm{
     }    
     
 }
-
