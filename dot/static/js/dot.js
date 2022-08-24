@@ -12,6 +12,19 @@ const __ss = __sw >= 1400 ? 'xxl' : __sw >= 1200 ? 'xl' : __sw >= 992 ? 'lg' : _
 */
 function dotAlert(tipo, mensagem){let e = document.createElement('div');e.style.zIndex = 100;let b = document.createElement('button');b.classList.add('btn-close');b.setAttribute('data-bs-dismiss','alert');e.classList.add('alert', `alert-${tipo}`,'alert-dismissible','fade','show','mb-1');e.innerHTML = mensagem;e.appendChild(b);document.body.appendChild(e);}
 
+function dotAppData(path) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if(this.readyState == 4 && this.status == 200){
+      return this.responseText
+    }
+    return [];
+  };
+  xhttp.open("GET", path, true);
+  xhttp.send();
+}
+
+
 /*
 * Tooltip initializer
 *
@@ -107,6 +120,8 @@ function prismStart(){
       pre.appendChild(btn);
     }
   });
+
+
   function code_copy_clipboard(e){
     let copyLabel = '<i class="fas fa-copy"></i>';
     let doneLabel = '<i class="fas fa-check"></i>';

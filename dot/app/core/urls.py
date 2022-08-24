@@ -10,6 +10,7 @@ urlpatterns = [
     path('change_password',views.change_password,name='change_password'),
     path('logs',views.logs,name='logs'),
     path('docs/<str:page>',views.docs,name='docs'),
+    path('app_data/<str:fpath>',views.app_data,name='app_data'),
     path('core_alertas',views.alertas,name='core_alertas'),
     path('core_alerta_id/<int:id>',views.alerta_id,name='core_alerta_id'),
     path('console',views.console,name='console'),

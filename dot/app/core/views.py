@@ -1,4 +1,5 @@
 import re
+import json
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import auth, messages
@@ -9,9 +10,8 @@ from .forms import EmpresaForm, UserForm, GroupForm
 from .extras import clean_request
 from .console import Run
 from datetime import datetime
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.core import serializers
-from json import dumps, loads
 from django.conf import settings
 # from django.core.serializers.json import DjangoJSONEncoder
 
@@ -74,14 +74,6 @@ def docs(request, page='core'):
     return render(request,f'core/docs/{page}.html')
 
 @login_required
-def app_data(request, file_path):
-    # try:
-        with open(f'{settings.APP_DATA}/{file_path}', 'r') as file: 
-            return file.read()
-    # except Exception as e:
-    #     return []
-
-@login_required
 @permission_required('core.view_alerta')
 def alertas(request):
     alertas = None
@@ -108,7 +100,7 @@ def alertas(request):
 @permission_required('core.console')
 def console(request):
     if request.method == 'POST':
-        response = Run(request, loads(request.POST['script']))
+        response = Run(request, json.loads(request.POST['script']))
         if type(response) is list:
             if response[0]:
                 messages.success(request,response[1])
@@ -447,8 +439,7 @@ def logout(request):
     return redirect('index')
 
 def handler(request, code):
-    data = app_data(request, 'data_test.json')
-    return render(request,f'{code}.html', {'data':data})
+    return render(request,f'{code}.html')
 
 def password_valid(password):
     if len(password) < 8:
@@ -461,6 +452,13 @@ def password_valid(password):
         return True
 
 # AJAX METODOS
+@login_required
+def app_data(request, fpath):
+    f = open(f'{settings.APP_DATA}/{fpath}', 'r')
+    data = json.load(f)
+    f.close()
+    return data
+
 @login_required
 def get_empresas(request):
     try:
@@ -483,7 +481,7 @@ def get_empresas(request):
         itens = {}
         for item in empresas:
             itens[item.nome] = item.id
-        dataJSON = dumps(itens)
+        dataJSON = json.dumps(itens)
         return HttpResponse(dataJSON)
     except:
         return HttpResponse('')
@@ -498,7 +496,7 @@ def get_usuarios(request):
         itens = {}
         for item in usuarios:
             itens[item.username] = item.id
-        dataJSON = dumps(itens)
+        dataJSON = json.dumps(itens)
         return HttpResponse(dataJSON)
     except:
         return HttpResponse('')
@@ -520,7 +518,7 @@ def get_grupos(request):
         itens = {}
         for item in grupos:
             itens[item.name] = item.id
-        dataJSON = dumps(itens)
+        dataJSON = json.dumps(itens)
         return HttpResponse(dataJSON)
     except:
         return HttpResponse('')
@@ -543,7 +541,7 @@ def get_user_perms(request):
         itens = {}
         for item in perms:
             itens[f'{item.content_type.app_label} | {item.content_type.model} | {item.name}'] = item.id
-        dataJSON = dumps(itens)
+        dataJSON = json.dumps(itens)
         return HttpResponse(dataJSON)
     except:
         return HttpResponse('')
@@ -566,7 +564,7 @@ def get_group_perms(request):
         itens = {}
         for item in perms:
             itens[f'{item.content_type.app_label} | {item.content_type.model} | {item.name}'] = item.id
-        dataJSON = dumps(itens)
+        dataJSON = json.dumps(itens)
         return HttpResponse(dataJSON)
     except:
         return HttpResponse('')
@@ -585,7 +583,7 @@ def get_contenttypes(request):
         itens = {}
         for item in contenttypes:
             itens[item.app_label + '.' + item.model] = item.id
-        dataJSON = dumps(itens)
+        dataJSON = json.dumps(itens)
         return HttpResponse(dataJSON)
     except:
         return HttpResponse('')
