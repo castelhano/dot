@@ -1,4 +1,4 @@
-[{"id":1,"first_name":"Sukey","last_name":"Garmey","email":"sgarmey0@pen.io","gender":"Female","ip_address":"121.156.39.194"},
-{"id":2,"first_name":"Cirillo","last_name":"Eykelbosch","email":"ceykelbosch1@ed.gov","gender":"Male","ip_address":"97.187.240.200"},
-{"id":3,"first_name":"Idette","last_name":"Dolman","email":"idolman2@etsy.com","gender":"Female","ip_address":"80.121.56.168"},
-{"id":4,"first_name":"Renato","last_name":"Stadden","email":"rstadden3@xinhuanet.com","gender":"Male","ip_address":"174.80.205.221"}]
+[{'id':1,'first_name':'Sukey','last_name':'Garmey','email':'sgarmey0@pen.io','gender':'Female','ip_address':'121.156.39.194'},
+{'id':2,'first_name':'Cirillo','last_name':'Eykelbosch','email':'ceykelbosch1@ed.gov','gender':'Male','ip_address':'97.187.240.200'},
+{'id':3,'first_name':'Idette','last_name':'Dolman','email':'idolman2@etsy.com','gender':'Female','ip_address':'80.121.56.168'},
+{'id':4,'first_name':'Renato','last_name':'Stadden','email':'rstadden3@xinhuanet.com','gender':'Male','ip_address':'174.80.205.221'}]

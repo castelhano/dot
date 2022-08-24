@@ -457,7 +457,7 @@ def app_data(request, fpath):
     f = open(f'{settings.APP_DATA}/{fpath}', 'r')
     data = json.load(f)
     f.close()
-    return data
+    return JsonResponse(json.dumps(data), safe=False)
 
 @login_required
 def get_empresas(request):
