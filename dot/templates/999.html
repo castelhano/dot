@@ -77,12 +77,15 @@
   <script>
     
     var TAB_ON_ENTER = true;
-    var data = [];
+    var data = [
+      {"name":"nome","type":"text","group":"Pessoal","value":150},
+      {"name":"Campo com texto bem grande","value":"UIIIIIIIIIIII"},
+      {"name":"idade","group":"Pessoal","value":"22"},
+    ];
     const form = new jsForm({
+      data: data,
       container: document.getElementById('form_container')
     });
-    dotAppData('{% url 'app_data' 'data_test.json' %}').then((result) => {data = result});
-    
     
   </script>
 </body>
