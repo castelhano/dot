@@ -12,20 +12,19 @@ const __ss = __sw >= 1400 ? 'xxl' : __sw >= 1200 ? 'xl' : __sw >= 992 ? 'lg' : _
 */
 function dotAlert(tipo, mensagem){let e = document.createElement('div');e.style.zIndex = 100;let b = document.createElement('button');b.classList.add('btn-close');b.setAttribute('data-bs-dismiss','alert');e.classList.add('alert', `alert-${tipo}`,'alert-dismissible','fade','show','mb-1');e.innerHTML = mensagem;e.appendChild(b);document.body.appendChild(e);}
 
-function dotAppData(path) {
-  var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if(this.readyState == 4 && this.status == 200){
-      let foo = JSON.parse(this.responseText);
-      console.log(typeof foo);
-      console.log(foo);
-      return foo;
-    }
-  };
-  xhttp.open("GET", path, true);
-  xhttp.send();
-}
-
+/*
+* dotAppData Busca (ajax) no diretorio app_data, objeto json informando o path relativo
+*
+* @version  1.0
+* @since    26/08/2022
+* @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }
+* @param    {String} path Caminho relativo Ex.: 'core/usuarios.json'
+* @returns  {Object} Retorna objeto json com dados solicitados
+* @example  var data = [];
+*           dotAppData('{% url 'app_data' 'data_test.json' %}').then((r) => data = r);
+*           dotAppData('{% url 'app_data' 'data_test.json' %}').then((r) => data = r).catch(() = > {...});
+*/
+function dotAppData(url) {return new Promise(function(resolve, reject) {var xhr = new XMLHttpRequest();xhr.onload = function() {let d = JSON.parse(this.responseText);if(typeof d != 'object'){d = JSON.parse(d)}resolve(d);};xhr.onerror = reject;xhr.open('GET', url);xhr.send();});}
 
 /*
 * Tooltip initializer

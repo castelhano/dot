@@ -454,9 +454,12 @@ def password_valid(password):
 # AJAX METODOS
 @login_required
 def app_data(request, fpath):
-    f = open(f'{settings.APP_DATA}/{fpath}', 'r')
-    data = json.load(f)
-    f.close()
+    try:
+        f = open(f'{settings.APP_DATA}/{fpath}', 'r')
+        data = json.load(f)
+        f.close()
+    except Exception as e:
+        data = []
     return JsonResponse(json.dumps(data), safe=False)
 
 @login_required
