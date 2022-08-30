@@ -1,7 +1,6 @@
 /* TODO
-ajustar addRow para setar name= th.innerText
-definir forma para alterar atributos dos campos (schema)
 definir metodos save, beforeSave e afterSave
+definir forma para alterar atributos dos campos (schema)
 definir metodo deleteRow ??
 */
 class jsForm{
@@ -25,8 +24,9 @@ class jsForm{
         this.addBtn = null;
         this.saveBtn = null;
         this.jsonBtn = null;
-        this.save = options?.save != undefined ? options.save : function(){console.log('jsForm: Nenhuma funcao definida para save, nas opcoes marque {canSave:true, save: suaFuncao} ')}; // Funcao definida aqui sera acionada no evento click do botao save
+        this.save = options?.save != undefined ? options.save : () => this.saveJson(); // Funcao definida aqui sera acionada no evento click do botao save
         this.formContainerClasslist = 'col';
+        this.url = options?.url || null;
         this.keyClassList = options?.keyClassList || 'fit pe-5';
         this.valueClassList = options?.valueClassList || 'bg-light border';
         this.textFormEmpty = options?.textFormEmpty || 'Nada a exibir';
@@ -68,25 +68,25 @@ class jsForm{
         this.controls = document.createElement('div'); // Div para grupo de botoes (btn-group)
         this.controls.classList = 'btn-group';
         if(this.canAddRow){
-          this.addBtn = document.createElement('button');
-          this.addBtn.classList = 'btn btn-sm btn-success px-3';
-          this.addBtn.innerHTML = '<i class="fas fa-plus"></i>';
-          this.addBtn.onclick = () => this.addRow();
-          this.controls.appendChild(this.addBtn);
+            this.addBtn = document.createElement('button');
+            this.addBtn.classList = 'btn btn-sm btn-success px-3';
+            this.addBtn.innerHTML = '<i class="fas fa-plus"></i>';
+            this.addBtn.onclick = () => this.addRow();
+            this.controls.appendChild(this.addBtn);
         }
         if(this.canSave){
-          this.saveBtn = document.createElement('button');
-          this.saveBtn.classList = 'btn btn-sm btn-primary px-3';
-          this.saveBtn.innerHTML = '<i class="fas fa-save"></i>';
-          this.saveBtn.onclick = () => this.save();
-          this.controls.appendChild(this.saveBtn);
+            this.saveBtn = document.createElement('button');
+            this.saveBtn.classList = 'btn btn-sm btn-primary px-3';
+            this.saveBtn.innerHTML = '<i class="fas fa-save"></i>';
+            this.saveBtn.onclick = () => this.save();
+            this.controls.appendChild(this.saveBtn);
         }
         if(this.canDownloadJson){
-          this.jsonBtn = document.createElement('button');
-          this.jsonBtn.classList = 'btn btn-sm btn-secondary';
-          this.jsonBtn.innerHTML = '<i class="fas fa-download me-2"></i> JSON';
-          this.jsonBtn.onclick = (e) => this.exportJson(e);
-          this.controls.appendChild(this.jsonBtn);
+            this.jsonBtn = document.createElement('button');
+            this.jsonBtn.classList = 'btn btn-sm btn-secondary';
+            this.jsonBtn.innerHTML = '<i class="fas fa-download me-2"></i> JSON';
+            this.jsonBtn.onclick = (e) => this.exportJson(e);
+            this.controls.appendChild(this.jsonBtn);
         }
         controlsContainer.appendChild(this.controls);
         row.appendChild(this.legendContainer);
@@ -171,19 +171,42 @@ class jsForm{
         this.groups[this.groupOnFocus].push(tr);
         this.tbody.appendChild(tr);
     }
+    saveJson(){
+        if(this.url){
+            let btnSave = this.saveBtn; // Workaround para acessar botao save dentro da funcao ajax
+            let url = this.url; // Workaround para acessar botao save dentro da funcao ajax
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if(this.readyState == 4 && this.status == 200){
+                    console.log('DEU CERTO');
+                }
+                else{console.log('DEU MERDA');}
+            };
+            xhttp.open("POST", `${url}?data=${JSON.stringify(this.getJson())}`, true);
+            xhttp.send();
+        }
+        else{console.log("jsForm: Informe nas opcoes a url (POST) que ira receber o json {url: 'minha/url'} ou defina uma funcao personalizada {save: suaFuncao}");}
+    }
+    beforeSave(){}
+    afterSave(){}
     getJson(){
         let result_json = [];
         for(let grupo in this.groups){
             for(let row in this.groups[grupo]){
                 let tr = this.groups[grupo][row];
-                let td = tr.querySelector('td');
-                let attrs = td.getAttributeNames().filter((e) => {return e != 'contenteditable' && e != 'value' && e != 'class' && e != 'data-type'});
+                let td = tr.querySelector('td'); // Busca o campo de valor (que contem todos atributos do json)
+                let attrs = td.getAttributeNames().filter((e) => {return e != 'contenteditable' && e != 'value' && e != 'class' && e != 'data-type'}); // Busca os atributos, desconsidera os internos e possiveis alterados pelo usuario
                 let size = attrs.length;
                 let json_item = {value:td.innerText};
-                for(let i = 0; i < size; i++){
+                if(td.dataset.type == 'newRow'){ // Em caso de nova linha, ajusta o campo name conforme definido pelo usuario
+                    let th = tr.querySelector('th')
+                    json_item['name'] = th.innerText;
+                    if(grupo != 'Geral'){json_item['group'] = grupo;}
+                }
+                for(let i = 0; i < size; i++){ // Carrega demais atributos no registro
                     json_item[attrs[i]] = td.getAttribute(attrs[i]);
                 }
-                result_json.push(json_item);
+                result_json.push(json_item); // Insere campo formatado no array json
             }
         }
         return result_json;

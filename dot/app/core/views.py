@@ -454,13 +454,23 @@ def password_valid(password):
 # AJAX METODOS
 @login_required
 def app_data(request, fpath):
-    try:
-        f = open(f'{settings.APP_DATA}/{fpath}', 'r', encoding='utf-8')
-        data = json.load(f)
-        f.close()
-    except Exception as e:
-        data = []
-    return JsonResponse(json.dumps(data), safe=False)
+    if request.method == 'GET': # Requisicao, abre arquivo (se existir) e retorna conteudo (em json)
+        try:
+            f = open(f'{settings.APP_DATA}/{fpath}', 'r', encoding='utf-8')
+            data = json.load(f)
+            f.close()
+        except Exception as e:
+            data = []
+        return JsonResponse(json.dumps(data), safe=False)
+    elif request.method == 'POST': # Modo de gravacao, atualiza (ou cria arquivo) com conteudo enviado
+        try:
+            f = open(f'{settings.APP_DATA}/{fpath}', 'r', encoding='utf-8')
+            data = json.load(f)
+            f.close()
+        except Exception as e:
+            data = []
+        return JsonResponse(json.dumps(data), safe=False)
+
 
 @login_required
 def get_empresas(request):
