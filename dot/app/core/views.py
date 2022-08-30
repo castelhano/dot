@@ -455,7 +455,7 @@ def password_valid(password):
 @login_required
 def app_data(request, fpath):
     try:
-        f = open(f'{settings.APP_DATA}/{fpath}', 'r')
+        f = open(f'{settings.APP_DATA}/{fpath}', 'r', encoding='utf-8')
         data = json.load(f)
         f.close()
     except Exception as e:

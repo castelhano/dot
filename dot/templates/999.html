@@ -38,15 +38,14 @@
   <script>
     
     var TAB_ON_ENTER = true;
-    var data = [
-      {"name":"nome","type":"text","group":"Pessoal","value":150},
-      {"name":"Campo com texto bem grande","value":"UIIIIIIIIIIII"},
-      {"name":"idade","group":"Pessoal","value":"22"},
-    ];
+    var dados = [];
+    dotAppData('{% url 'app_data' 'test_form.json' %}').then( (d) => {dados = d;form.loadData(dados)} );
+
     const form = new jsForm({
-      data: data,
       container: document.getElementById('form_container')
     });
+
+
 
   </script>
 </body>

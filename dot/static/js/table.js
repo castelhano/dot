@@ -87,7 +87,7 @@ class jsTable{
             this.buildListeners();
         }
         if(this.enablePaginate){this.paginate();}
-        this.loading(true); // Oculta sppiner de loading quando terminado de carregar tabela
+        this.loading(true); // Oculta spiner de loading quando terminado de carregar tabela
     }
     createTable(){
         this.table = document.createElement('table');

@@ -1,3 +1,9 @@
+/* TODO
+ajustar addRow para setar name= th.innerText
+definir forma para alterar atributos dos campos (schema)
+definir metodos save, beforeSave e afterSave
+definir metodo deleteRow ??
+*/
 class jsForm{
     constructor(options){
         this.data = options?.data || []; // Json com dados do form
@@ -13,9 +19,10 @@ class jsForm{
         this.groupOnFocus = null;
         this.formClassList = options?.formClassList || 'table border';
         this.groupsMenuClasslist = 'col-auto';
-        this.groupsMenuStyle = 'min-width: 180px;';
         this.canSave = options?.canSave != undefined ? options.canSave : true;
+        this.canAddRow = options?.canAddRow != undefined ? options.canAddRow : true;
         this.canDownloadJson = options?.canDownloadJson != undefined ? options.canDownloadJson : true;
+        this.addBtn = null;
         this.saveBtn = null;
         this.jsonBtn = null;
         this.save = options?.save != undefined ? options.save : function(){console.log('jsForm: Nenhuma funcao definida para save, nas opcoes marque {canSave:true, save: suaFuncao} ')}; // Funcao definida aqui sera acionada no evento click do botao save
@@ -32,7 +39,7 @@ class jsForm{
         
         // Exibe um grupo
         let [group] = 'Geral' in this.groups ? ['Geral'] : Object.keys(this.groups); // Seleciona o grupo Geral (caso exista) ou o primeiro grupo cadastrado
-        this.groupFocus(group); // Exibe grupo
+        if(group && group.length > 0){this.groupFocus(group);} // Exibe grupo
     }
     createForm(){
         this.form = document.createElement('table');
@@ -60,9 +67,16 @@ class jsForm{
         controlsContainer.classList = 'col-auto';
         this.controls = document.createElement('div'); // Div para grupo de botoes (btn-group)
         this.controls.classList = 'btn-group';
+        if(this.canAddRow){
+          this.addBtn = document.createElement('button');
+          this.addBtn.classList = 'btn btn-sm btn-success px-3';
+          this.addBtn.innerHTML = '<i class="fas fa-plus"></i>';
+          this.addBtn.onclick = () => this.addRow();
+          this.controls.appendChild(this.addBtn);
+        }
         if(this.canSave){
           this.saveBtn = document.createElement('button');
-          this.saveBtn.classList = 'btn btn-sm btn-secondary px-3';
+          this.saveBtn.classList = 'btn btn-sm btn-primary px-3';
           this.saveBtn.innerHTML = '<i class="fas fa-save"></i>';
           this.saveBtn.onclick = () => this.save();
           this.controls.appendChild(this.saveBtn);
@@ -71,6 +85,7 @@ class jsForm{
           this.jsonBtn = document.createElement('button');
           this.jsonBtn.classList = 'btn btn-sm btn-secondary';
           this.jsonBtn.innerHTML = '<i class="fas fa-download me-2"></i> JSON';
+          this.jsonBtn.onclick = (e) => this.exportJson(e);
           this.controls.appendChild(this.jsonBtn);
         }
         controlsContainer.appendChild(this.controls);
@@ -126,7 +141,11 @@ class jsForm{
     }
     loadData(data){
         this.data = data;
-        this.buildRows();        
+        this.buildRows();
+        this.buildGroupMenu();
+        this.buildListeners();
+        let [group] = 'Geral' in this.groups ? ['Geral'] : Object.keys(this.groups); // Seleciona o grupo Geral (caso exista) ou o primeiro grupo cadastrado
+        if(group && group.length > 0){this.groupFocus(group);} // Exibe grupo
     }
     groupFocus(group){ // Carrega campos do respectivo grupo no form
         this.tbody.innerHTML = '';
@@ -135,20 +154,54 @@ class jsForm{
         this.groupsMenu.querySelector(`[data-groupname="${group}"]`).classList.add('active');
         this.groups[group].forEach(e => { this.tbody.appendChild(e)});
     }
-    downloadJson(){
+    addRow(){
+        let tr = document.createElement('tr');
+        let th = document.createElement('th');
+        th.classList = this.keyClassList;
+        th.contentEditable = true;
+        th.innerHTML = '';
+        let td = document.createElement('td');
+        td.classList = this.valueClassList;
+        td.contentEditable = true;
+        td.setAttribute('type', 'text');
+        td.dataset.type = 'newRow';
+        td.innerHTML = '';
+        tr.appendChild(th);
+        tr.appendChild(td);
+        this.groups[this.groupOnFocus].push(tr);
+        this.tbody.appendChild(tr);
+    }
+    getJson(){
+        let result_json = [];
         for(let grupo in this.groups){
             for(let row in this.groups[grupo]){
                 let tr = this.groups[grupo][row];
                 let td = tr.querySelector('td');
-                let attrs = td.getAttributeNames().filter((e) => {return e != 'contenteditable' && e != 'value'});
+                let attrs = td.getAttributeNames().filter((e) => {return e != 'contenteditable' && e != 'value' && e != 'class' && e != 'data-type'});
                 let size = attrs.length;
                 let json_item = {value:td.innerText};
                 for(let i = 0; i < size; i++){
                     json_item[attrs[i]] = td.getAttribute(attrs[i]);
                 }
-                console.log(json_item);
+                result_json.push(json_item);
             }
         }
+        return result_json;
+    }
+    exportJson(e){
+        let data = JSON.stringify(this.getJson());
+        let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(data);
+        let filename = 'form.json';
+        let btn = document.createElement('a');
+        btn.style.display = 'none';
+        btn.setAttribute('href', dataUri);
+        btn.setAttribute('download', filename);
+        btn.click();
+        btn.remove();
+        let originalClasslist = e.target.className;
+        e.target.classList = 'btn btn-sm btn-success';
+        try {dotAlert('success', 'Arquivo <b>json</b> gerado com <b>sucesso</b>')}catch(error){}
+        setTimeout(function() {e.target.classList = originalClasslist;}, 800);
     }
     cleanForm(){
         this.tbody.innerHTML = '';
