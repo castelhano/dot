@@ -89,21 +89,17 @@
   </div>
   
   {% for message in messages %}
-  <div class="alert alert-{{message.tags}} alert-dismissible fade show mb-1" role="alert">
+  <div data-type="dotAlert" class="alert alert-{{message.tags}} alert-dismissible fade show mb-1" role="alert">
     {{ message|safe }}
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
   {% endfor %}
-  <div id="dot_alert" class="alert alert-dismissible fade mb-1" role="alert">
-    <span id="dot_alert_message"></span>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
   
   {% if form.errors %}
   {% for field in form %}
   {% if field.errors %}
   {% for error in field.errors %}
-  <div class="alert alert-danger alert-dismissible fade show mb-1" role="alert">
+  <div data-type="dotAlert" class="alert alert-danger alert-dismissible fade show mb-1" role="alert">
     {{ error|escape }} <span class="fw-bold">[ field: {{ field.name }} ]</span>
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>

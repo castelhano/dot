@@ -1,11 +1,1 @@
-[
-    {"name":"Nome","type":"text", "value":"Rafael Gustavo Alves"},
-    {"name":"Idade","type":"number", "value":39},
-    {"name":"Sexo","type":"text", "value":"M"},
-    {"name":"Endereço","type":"text", "group":"Contato", "value":"Cel Neto, 1894, AP 108A"},
-    {"name":"IP","type":"text", "value":"15.652.158.66"},
-    {"name":"E Civil","type":"text", "value":"Casado"},
-    {"name":"Fone","type":"text", "group":"Contato", "value":"65 98145-0188"},
-    {"name":"Email","type":"text", "group":"Contato", "value":"castelhano.rafael@gmail.com"},
-    {"name":"Salario","type":"number", "value":"R$ 2.562,22"}
-]
+[{"value": "Casado", "name": "E Civil", "type": "text"}, {"value": "42", "name": "Idade", "type": "number"}, {"value": "15.652.158.66", "name": "IP", "type": "text"}, {"value": "Rafael Gustavo Alves", "name": "Nome", "type": "text"}, {"value": "956325", "name": "Novo", "type": "text"}, {"value": "R$ 2.562,22", "name": "Salario", "type": "number"}, {"value": "M", "name": "Sexo", "type": "text"}, {"value": "castelhano.rafael@gmail.com", "name": "Email", "type": "text", "group": "Contato"}, {"value": "Cel Neto, 1894, AP 108A", "name": "Endereço", "type": "text", "group": "Contato"}, {"value": "65 98145-0188", "name": "Fone", "type": "text", "group": "Contato"}]

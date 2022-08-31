@@ -1,32 +1,43 @@
-/* TODO
-definir metodos save, beforeSave e afterSave
-definir forma para alterar atributos dos campos (schema)
-definir metodo deleteRow ??
+/* 
+__TODO: definir forma para alterar atributos dos campos (schema)
+__TODO: definir metodo deleteRow no schema
+__TODO: definir metodos previousGroup e nextGroup
 */
 class jsForm{
     constructor(options){
+        // Variaveis internas
+        this.legendContainer = null; // Div (col) com conteudo da legenda do form 
+        this.controls = null; // Div (col) para grupo dos botoes do form
+        this.groupsMenu = null; // Menu dos grupos do form
+        this.formContainer = null; // Div (col) onde eh exibido os campos em exibicao
+        this.form = null; // Elemento table
+        this.tbody = null; // Elemento tbody
+        this.groups = {}; // Dicionario com os grupos (e seus respectivos campos) {nomeGrupo:[tr,tr,tr...]}
+        this.groupOnFocus = null; // String que armazena o nome do grupo em exibicao no momento
+        this.saveBtn = null; // Aponta para o botao salvar
+        this.addBtn = null; // Aponta para o botao para adicionar linha
+        this.sortBtn = null; // Aponta para o botao de classificar
+        this.jsonBtn = null; // Aponta para o botao para exportar json
+        // Configuracao
         this.data = options?.data || []; // Json com dados do form
         this.container = options?.container || document.body; // parentNode do form, caso nao informado append no document.body
-        this.legend = '';
-        this.legendContainer = null;
-        this.controls = null;
-        this.groupsMenu = null;
-        this.formContainer = null;
-        this.form = null;
-        this.tbody = null;
-        this.groups = {};
-        this.groupOnFocus = null;
+        this.legend = options?.legend || ''; // String com a legenda do form
+        this.readOnly = options?.readOnly != undefined ? options.readOnly : false; // Se definido pata true, desabilita opcao de editar campos, save, sort, etc..
+        this.canSave = options?.canSave != undefined ? options.canSave : true; // Se definido para true exibe botao para salvar form
+        this.url = options?.url || null; // Url que recebera o json com ajustado no metodo save()
+        this.token = options?.token || ''; // Token (caso exista), sera adicionado no header da requisicao, Dica: use getCookie('csrftoken') para buscar o token da pagina 
+        this.save = options?.save != undefined ? options.save : () => this.saveJson(); // Funcao definida aqui sera acionada no evento click do botao save
+        this.beforeSave = options?.beforeSave != undefined ? options.beforeSave : () => this.beforeSaveJson(); // Funcao definida aqui sera acionada no evento click do botao save
+        this.onSuccess = options?.onSuccess != undefined ? options.onSuccess : () => this.onSaveSuccess(); // Funcao a ser acionada em caso de sucesso
+        this.onError = options?.onError != undefined ? options.onError : () => this.onSaveError(); // Funcao a ser acionada em caso de erro
+        this.canAddRow = options?.canAddRow != undefined ? options.canAddRow : true;
+        this.canChangeKey = options?.canChangeKey != undefined ? options.canChangeKey : false;
+        this.canSort = options?.canSort != undefined ? options.canSort : true;
+        this.canExportJson = options?.canExportJson != undefined ? options.canExportJson : true;
+        // Estilizacao
         this.formClassList = options?.formClassList || 'table border';
         this.groupsMenuClasslist = 'col-auto';
-        this.canSave = options?.canSave != undefined ? options.canSave : true;
-        this.canAddRow = options?.canAddRow != undefined ? options.canAddRow : true;
-        this.canDownloadJson = options?.canDownloadJson != undefined ? options.canDownloadJson : true;
-        this.addBtn = null;
-        this.saveBtn = null;
-        this.jsonBtn = null;
-        this.save = options?.save != undefined ? options.save : () => this.saveJson(); // Funcao definida aqui sera acionada no evento click do botao save
         this.formContainerClasslist = 'col';
-        this.url = options?.url || null;
         this.keyClassList = options?.keyClassList || 'fit pe-5';
         this.valueClassList = options?.valueClassList || 'bg-light border';
         this.textFormEmpty = options?.textFormEmpty || 'Nada a exibir';
@@ -67,21 +78,28 @@ class jsForm{
         controlsContainer.classList = 'col-auto';
         this.controls = document.createElement('div'); // Div para grupo de botoes (btn-group)
         this.controls.classList = 'btn-group';
-        if(this.canAddRow){
+        if(this.canAddRow && !this.readOnly){
             this.addBtn = document.createElement('button');
             this.addBtn.classList = 'btn btn-sm btn-success px-3';
             this.addBtn.innerHTML = '<i class="fas fa-plus"></i>';
             this.addBtn.onclick = () => this.addRow();
             this.controls.appendChild(this.addBtn);
         }
-        if(this.canSave){
+        if(this.canSave && !this.readOnly){
             this.saveBtn = document.createElement('button');
             this.saveBtn.classList = 'btn btn-sm btn-primary px-3';
             this.saveBtn.innerHTML = '<i class="fas fa-save"></i>';
             this.saveBtn.onclick = () => this.save();
             this.controls.appendChild(this.saveBtn);
         }
-        if(this.canDownloadJson){
+        if(this.canSort && !this.readOnly){
+            this.sortBtn = document.createElement('button');
+            this.sortBtn.classList = 'btn btn-sm btn-warning px-3';
+            this.sortBtn.innerHTML = '<i class="fas fa-sort-amount-down"></i>';
+            this.sortBtn.onclick = () => this.sort();
+            this.controls.appendChild(this.sortBtn);
+        }
+        if(this.canExportJson){
             this.jsonBtn = document.createElement('button');
             this.jsonBtn.classList = 'btn btn-sm btn-secondary';
             this.jsonBtn.innerHTML = '<i class="fas fa-download me-2"></i> JSON';
@@ -116,10 +134,11 @@ class jsForm{
             let th = document.createElement('th');
             th.classList = this.keyClassList;
             th.innerHTML = this.data[item].name;
+            if(this.canChangeKey){th.contentEditable = true}
             let td = document.createElement('td');
             for(let attr in this.data[item]){td.setAttribute(attr, this.data[item][attr]);}
             td.classList = this.valueClassList;
-            td.contentEditable = true;
+            if(!this.readOnly)(td.contentEditable = true);
             td.innerHTML = this.data[item].value;
             tr.appendChild(th);
             tr.appendChild(td);
@@ -171,24 +190,38 @@ class jsForm{
         this.groups[this.groupOnFocus].push(tr);
         this.tbody.appendChild(tr);
     }
+    sort(asc=true){
+        let rows = this.groups[this.groupOnFocus] || null; // Carrega todas as linhas do grupo em foco
+        if(!rows || rows.length == 0){ return null } // Se tabela for fazia, nao executa processo para classificar
+        const modifier = asc ? 1 : -1; // Modificador para classificar em order crecente (asc=true) ou decrescente (asc=false)
+        const sortedRows = rows.sort((a, b) => {
+            const aColText = a.querySelector(`th:nth-child(1)`).textContent.trim().toLowerCase();
+            const bColText = b.querySelector(`th:nth-child(1)`).textContent.trim().toLowerCase();
+            return aColText > bColText ? (1 * modifier) : (-1 * modifier);
+        });
+        rows = sortedRows; // Atualiza campos
+        rows.forEach((e) => this.tbody.append(e)); // Atualiza o tbody   
+    }
     saveJson(){
         if(this.url){
+            if(!this.beforeSave()){return false;} // Chama metodo beforeSave antes de executar codigo, espera retorno true para dar sequencia
             let btnSave = this.saveBtn; // Workaround para acessar botao save dentro da funcao ajax
-            let url = this.url; // Workaround para acessar botao save dentro da funcao ajax
-            var xhttp = new XMLHttpRequest();
+            let onSuccess = this.onSuccess; // Workaround para acessar funcao dentro da funcao ajax
+            let onError = this.onError; // Workaround para acessar funcao dentro da funcao ajax
+            let xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function() {
-                if(this.readyState == 4 && this.status == 200){
-                    console.log('DEU CERTO');
-                }
-                else{console.log('DEU MERDA');}
+                if(this.readyState == 4 && this.status == 200){onSuccess();}
+                else if(this.readyState == 4){onError(this.status);}
             };
-            xhttp.open("POST", `${url}?data=${JSON.stringify(this.getJson())}`, true);
-            xhttp.send();
+            xhttp.open("POST", `${this.url}`, true);
+            xhttp.setRequestHeader('X-CSRFToken', this.token);
+            xhttp.send(JSON.stringify(this.getJson()));
         }
         else{console.log("jsForm: Informe nas opcoes a url (POST) que ira receber o json {url: 'minha/url'} ou defina uma funcao personalizada {save: suaFuncao}");}
     }
-    beforeSave(){}
-    afterSave(){}
+    beforeSaveJson(){return true}
+    onSaveSuccess(){try {dotAlert('success', 'Arquivo salvo com <b>sucesso</b>');}catch(e){}} // Caso finalizado com sucesso, tenta chamar metodo de alerta
+    onSaveError(status){try {dotAlert('danger', `<b>Erro</b> ao salvar o arquivo. [ <b>${status}</b> ]`);}catch(e){}} // Caso finalizado com erro, tenta chamar metodo de alerta
     getJson(){
         let result_json = [];
         for(let grupo in this.groups){
@@ -199,12 +232,16 @@ class jsForm{
                 let size = attrs.length;
                 let json_item = {value:td.innerText};
                 if(td.dataset.type == 'newRow'){ // Em caso de nova linha, ajusta o campo name conforme definido pelo usuario
-                    let th = tr.querySelector('th')
+                    let th = tr.querySelector('th');
                     json_item['name'] = th.innerText;
                     if(grupo != 'Geral'){json_item['group'] = grupo;}
                 }
                 for(let i = 0; i < size; i++){ // Carrega demais atributos no registro
                     json_item[attrs[i]] = td.getAttribute(attrs[i]);
+                    if(this.canChangeKey){ // Se habilitado editar nome da chave, atualiza
+                        let th = tr.querySelector('th');
+                        json_item['name'] = th.innerText;
+                    }
                 }
                 result_json.push(json_item); // Insere campo formatado no array json
             }
@@ -221,11 +258,14 @@ class jsForm{
         btn.setAttribute('download', filename);
         btn.click();
         btn.remove();
-        let originalClasslist = e.target.className;
-        e.target.classList = 'btn btn-sm btn-success';
+        if(this.canExportJson){
+            let originalClasslist = e.target.className;
+            e.target.classList = 'btn btn-sm btn-success';
+            setTimeout(function() {e.target.classList = originalClasslist;}, 800);
+        }
         try {dotAlert('success', 'Arquivo <b>json</b> gerado com <b>sucesso</b>')}catch(error){}
-        setTimeout(function() {e.target.classList = originalClasslist;}, 800);
     }
+
     cleanForm(){
         this.tbody.innerHTML = '';
         this.groups = {};

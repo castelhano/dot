@@ -452,24 +452,33 @@ def password_valid(password):
         return True
 
 # AJAX METODOS
+
+# app_data Manipula arquivos json salvos no diretorio app_data
+# --
+# @version  1.0
+# @since    31/08/2022
+# @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }
+# @param    {String} fpath Path relativo do arquivo alvo
 @login_required
-def app_data(request, fpath):
+def app_data(request, fpath): 
     if request.method == 'GET': # Requisicao, abre arquivo (se existir) e retorna conteudo (em json)
         try:
             f = open(f'{settings.APP_DATA}/{fpath}', 'r', encoding='utf-8')
             data = json.load(f)
-            f.close()
         except Exception as e:
             data = []
+        finally:
+            f.close()
         return JsonResponse(json.dumps(data), safe=False)
     elif request.method == 'POST': # Modo de gravacao, atualiza (ou cria arquivo) com conteudo enviado
         try:
-            f = open(f'{settings.APP_DATA}/{fpath}', 'r', encoding='utf-8')
-            data = json.load(f)
-            f.close()
+            f = open(f'{settings.APP_DATA}/{fpath}', 'w', encoding='utf-8')
+            f.write(json.dumps(json.load(request), ensure_ascii=False))
         except Exception as e:
             data = []
-        return JsonResponse(json.dumps(data), safe=False)
+        finally:
+            f.close()
+    return HttpResponse('')
 
 
 @login_required

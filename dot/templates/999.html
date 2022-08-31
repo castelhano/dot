@@ -18,7 +18,7 @@
   <div class="container-fluid">
     <h1>Handler 999</h1>
     <hr>
-       
+    
     <div id="form_container"></div>
   </div>
   
@@ -33,20 +33,24 @@
   <script src="{% static 'js/dot.js' %}"></script>
   <script src="/static/js/vendor/bootstrap.bundle.min.js"></script>
   
-  
-  
   <script>
     
+    
+
     var TAB_ON_ENTER = true;
     var dados = [];
-    dotAppData('{% url 'app_data' 'test_form.json' %}').then( (d) => {dados = d;form.loadData(dados)} );
-
+    dotAppData('{% url 'app_data' 'test_form.json' %}').then((d) => {dados = d;form.loadData(dados)});
+    
     const form = new jsForm({
+      url: '{% url 'app_data' 'test_form.json' %}',
+      token: getCookie('csrftoken') || '',
+      readOnly: true,
+      canExportJson: false,
+      legend: '<h6 class="h-100 pt-1">Cadastro Funcional</h6>',
       container: document.getElementById('form_container')
     });
-
-
-
+    
+    
   </script>
 </body>
 </html>
