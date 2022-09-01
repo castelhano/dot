@@ -10,6 +10,24 @@
   <link rel="stylesheet" href="{% static 'css/vendor/all.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/fontawesome.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.min.css' %}" type="text/css">
+
+  <style>
+    .label{display: inline-block; font-size: 0.85rem; margin-right: 10px;}
+    .label-name{
+      padding-top: 2px;
+      padding-bottom: 4px;
+      padding-left: 14px;
+      padding-right: 10px;
+      border-radius: 20px 0 0 20px;
+    }
+    .label-status{
+      padding-top: 2px;
+      padding-bottom: 4px;
+      padding-left: 10px;
+      padding-right: 14px;
+      border-radius: 0 20px 20px 0;
+    }
+  </style>
   
 </head>
 <body>
@@ -17,8 +35,8 @@
   <a id="clear" href="{% url 'handler' '999' %}"></a>
   <div class="container-fluid">
     <h1>Handler 999</h1>
-    <hr>
-    
+    <hr >
+
     <div id="form_container"></div>
   </div>
   
@@ -42,7 +60,9 @@
     const form = new jsForm({
       url: '{% url 'app_data' 'test_form.json' %}',
       token: getCookie('csrftoken') || '',
+      canChangeKey: true,
       canChangeSchema: true,
+      canDeleteRow: true,
       legend: '<h6 class="h-100 pt-1">Cadastro Funcional</h6>',
       container: document.getElementById('form_container')
     });

@@ -1,18 +1,21 @@
 /* 
+__TODO: @@@ Ajustar __deleteRow() groups=FAIL schema=OK tbody=OK 
 __TODO: definir forma para alterar atributos dos campos (schema)
 __TODO: definir metodo deleteRow no schema
+__TODO: impedir groupFocus se this.editingSchema = true
 */
 class jsForm{
     constructor(options){
         // Variaveis internas
         this.legendContainer = null; // Div (col) com conteudo da legenda do form 
+        this.controlsContainer = null; // Div container (col) para os botoes
         this.controls = null; // Div (col) para grupo dos botoes do form
         this.groupsMenu = null; // Menu dos grupos do form
         this.formContainer = null; // Div (col) onde eh exibido os campos em exibicao
         this.form = null; // Elemento table
         this.tbody = null; // Elemento tbody
         this.groups = {}; // Dicionario com os grupos (e seus respectivos campos) {nomeGrupo:[tr,tr,tr...]}
-        this.schema = {}; // Dicionario com os schemas, separado por grupos
+        this.schema = {}; // Dicionario com os schemas {fieldName: "type=text;name=foo;value=55"}
         this.groupOnFocus = null; // String que armazena o nome do grupo em exibicao no momento
         this.saveBtn = null; // Aponta para o botao salvar
         this.addBtn = null; // Aponta para o botao para adicionar linha
@@ -32,12 +35,13 @@ class jsForm{
         this.onSuccess = options?.onSuccess != undefined ? options.onSuccess : () => this.onSaveSuccess(); // Funcao a ser acionada em caso de sucesso
         this.onError = options?.onError != undefined ? options.onError : () => this.onSaveError(); // Funcao a ser acionada em caso de erro
         this.canAddRow = options?.canAddRow != undefined ? options.canAddRow : true;
+        this.canDeleteRow = options?.canDeleteRow != undefined ? options.canDeleteRow : false; // Se definido para true exibe botao para deletar row
         this.canChangeKey = options?.canChangeKey != undefined ? options.canChangeKey : false;
         this.canChangeSchema = options?.canChangeSchema != undefined ? options.canChangeSchema : false;
         this.canSort = options?.canSort != undefined ? options.canSort : true;
         this.canExportJson = options?.canExportJson != undefined ? options.canExportJson : true;
         // Estilizacao
-        this.formClassList = options?.formClassList || 'table border';
+        this.formClassList = options?.formClassList || 'table table-hover border';
         this.groupsMenuClasslist = 'col-auto';
         this.formContainerClasslist = 'col';
         this.keyClassList = options?.keyClassList || 'fit pe-5';
@@ -76,8 +80,8 @@ class jsForm{
         this.legendContainer = document.createElement('div'); // Col para legenda (flex item)
         this.legendContainer.classList = 'col';
         this.legendContainer.innerHTML = this.legend;
-        let controlsContainer = document.createElement('div'); // Col para controles (flex item)
-        controlsContainer.classList = 'col-auto';
+        this.controlsContainer = document.createElement('div'); // Col para controles (flex item)
+        this.controlsContainer.classList = 'col-auto';
         this.controls = document.createElement('div'); // Div para grupo de botoes (btn-group)
         this.controls.classList = 'btn-group';
         if(this.canAddRow && !this.readOnly){
@@ -103,8 +107,8 @@ class jsForm{
         }
         if(this.canChangeSchema && !this.readOnly){
             this.schemaBtn = document.createElement('button');
-            this.schemaBtn.classList = 'btn btn-sm btn-purple px-3';
-            this.schemaBtn.innerHTML = '<i class="fas fa-tags"></i>';
+            this.schemaBtn.classList = 'btn btn-sm btn-purple';
+            this.schemaBtn.innerHTML = '<i class="fas fa-tags me-2"></i> Schema';
             this.schemaBtn.onclick = () => this.loadSchema();
             this.controls.appendChild(this.schemaBtn);
         }
@@ -115,9 +119,9 @@ class jsForm{
             this.jsonBtn.onclick = (e) => this.exportJson(e);
             this.controls.appendChild(this.jsonBtn);
         }
-        controlsContainer.appendChild(this.controls);
+        this.controlsContainer.appendChild(this.controls);
         row.appendChild(this.legendContainer);
-        row.appendChild(controlsContainer);
+        row.appendChild(this.controlsContainer);
         this.container.appendChild(row);
     }
     buildGroupMenu(){
@@ -137,20 +141,35 @@ class jsForm{
         this.cleanForm();
         if(this.data.length == 0){
             this.tbody.innerHTML = `<tr><td colspan="2" class="${this.valueClassList}">${this.textFormEmpty}</td></tr>`
+            return false;
         }
         for(let item in this.data){ // Percorre todas as linhas alocando cada registro no respectivo grupo
             let tr = document.createElement('tr');
             let th = document.createElement('th');
+            th.setAttribute('data-originalName', this.data[item].name);
             th.classList = this.keyClassList;
             th.innerHTML = this.data[item].name;
             if(this.canChangeKey){th.contentEditable = true}
             let td = document.createElement('td');
-            for(let attr in this.data[item]){td.setAttribute(attr, this.data[item][attr]);}
+            let schema = '';
+            let avoid = ['name', 'value']; // Para name e value sera considerado conteudo alterado (se alterado) pelo usuario
+            for(let attr in this.data[item]){if(!avoid.includes(attr)){schema += `${attr}=${this.data[item][attr]};`}}
+            this.schema[this.data[item].name.replace(' ', '_')] = schema.slice(0, -1); // Adiciona string com schema (slice remove ; no final do texto)
             td.classList = this.valueClassList;
             if(!this.readOnly)(td.contentEditable = true);
             td.innerHTML = this.data[item].value;
             tr.appendChild(th);
             tr.appendChild(td);
+            if(this.canDeleteRow){ // Adiciona botar para deletar caso habilitado funcao
+                let td_controls = document.createElement('td');
+                td_controls.classList = 'text-end fit';
+                let btnDeleteRow = document.createElement('button');
+                btnDeleteRow.classList = 'btn btn-sm btn-danger';
+                btnDeleteRow.innerHTML = '<i class="fas fa-trash"></i>';
+                btnDeleteRow.onclick = () => this.__deteleRow(tr);
+                td_controls.appendChild(btnDeleteRow);
+                tr.appendChild(td_controls);
+            }
             if(this.data[item].group == undefined){ // Se nao existe grupo associado adicona linha no grupo Geral
                 if('Geral' in this.groups){this.groups.Geral.push(tr)}
                 else{this.groups['Geral'] = [tr];} // Caso ainda nao exista registro para o grupo, insere no dicionario
@@ -242,33 +261,114 @@ class jsForm{
     onSaveSuccess(){try {dotAlert('success', 'Arquivo salvo com <b>sucesso</b>');}catch(e){}} // Caso finalizado com sucesso, tenta chamar metodo de alerta
     onSaveError(status){try {dotAlert('danger', `<b>Erro</b> ao salvar o arquivo. [ <b>${status}</b> ]`);}catch(e){}} // Caso finalizado com erro, tenta chamar metodo de alerta
     loadSchema(){
-        console.log('ESTOU AQUI...');
+        this.tbody.innerHTML = '';
+        this.groupsMenu.classList.add('d-none'); // Oculta os botoes do form
+        this.controls.classList.add('d-none'); // Oculta o menu dos grupos
+        let btnSaveSchema = document.createElement('button');
+        btnSaveSchema.classList = 'btn btn-sm btn-success me-1';
+        btnSaveSchema.innerHTML = '<i class="fas fa-save me-2"></i> Salvar';
+        btnSaveSchema.setAttribute('data-type', 'btnSaveSchema');
+        btnSaveSchema.onclick = () => this.__saveSchema();
+        let cancel = document.createElement('button');
+        cancel.classList = 'btn btn-sm btn-secondary';
+        cancel.innerHTML = 'Cancelar';
+        cancel.setAttribute('data-type', 'cancelSchemaBtn');
+        cancel.onclick = () => this.__cancelChangeSchema();
+        this.controlsContainer.appendChild(btnSaveSchema);
+        this.controlsContainer.appendChild(cancel);
+        for(let field in this.schema){
+            let tr = document.createElement('tr');
+            let th = document.createElement('th');
+            th.classList = this.keyClassList;
+            th.innerHTML = field;
+            let td = document.createElement('td');
+            td.classList = this.valueClassList;
+            let attrs = this.schema[field.replace(' ', '_')].split(';');
+            attrs = attrs.filter((e)=>{return e != ''})
+            let size = attrs.length;
+            for(let i = 0; i < size; i++){
+                let label_text = `<span class="label-name bg-dark text-white user-select-none">${attrs[i].split('=')[0]}</span><span style="display: none;">=</span><span class="label-status bg-warning cursor-text" contenteditable="true">${attrs[i].split('=')[1]}</span>`;
+                let label = document.createElement('label');
+                label.classList = 'label';
+                label.innerHTML = label_text;
+                label.ondblclick = (e) => {if(e.ctrlKey){e.preventDefault();label.remove();}};
+                td.appendChild(label);
+            }
+            let addBtn = document.createElement('span');
+            addBtn.classList = 'bg-light border rounded-circle px-2 py-1 pointer';
+            addBtn.innerHTML = '<i class="fas fa-plus text-muted"></i>';
+            addBtn.onclick = (e) => this.__addKeyOnSchema(e.target);
+            td.appendChild(addBtn);
+            let helper_text = document.createElement('span');
+            helper_text.classList = 'ms-1 text-muted fs-8';
+            helper_text.innerHTML = 'Crtl + Double click para remover';
+            td.appendChild(helper_text);
+            tr.appendChild(th);
+            tr.appendChild(td);
+            this.tbody.appendChild(tr);
+        }
+    }
+    __addKeyOnSchema(target){
+        if(target.tagName != 'SPAN'){target = target.parentElement} // Trata caso evento pegue o elemento I ao inves do SPAN
+        let label = document.createElement('div');
+        label.classList = 'label' ;
+        label.innerHTML = '<span class="label-name bg-success text-white" contenteditable="true">key</span><span style="display: none;">=</span><span class="label-status bg-warning" contenteditable="true">value</span>';
+        label.ondblclick = (e) => {if(e.ctrlKey){e.preventDefault();label.remove();}};
+        target.before(label);
+    }
+    __saveSchema(){
+        let trs = this.tbody.querySelectorAll('tr');
+        let size = trs.length;
+        for(let i = 0; i < size; i++){ // Salva no dicionario schema dados ajustados
+            let labels = [];
+            trs[i].querySelectorAll('.label').forEach((e)=>{
+                if(e.textContent != '='){labels.push(e.textContent)}
+            });
+            let key = trs[i].querySelector('th').innerText;
+            this.schema[key] = labels.join(';')
+        }
+        document.querySelectorAll('[data-type=btnSaveSchema],[data-type=cancelSchemaBtn]').forEach((e) => e.remove()); // Remove os botoes para gravar e cancelar schema
+        this.groupsMenu.classList.remove('d-none'); // Reexibe os botoes do form
+        this.controls.classList.remove('d-none'); // Reexibe o menu dos grupos
+        this.groupFocus(this.groupOnFocus); // Reexibe
+    }
+    __cancelChangeSchema(){
+        this.tbody.innerHTML = '';
+        this.groups[this.groupOnFocus].forEach(e => {this.tbody.appendChild(e)}); // Monta no tbody as tr do grupo em foco 
+        document.querySelectorAll('[data-type=btnSaveSchema],[data-type=cancelSchemaBtn]').forEach((e) => e.remove()); // Remove os botoes para gravar e cancelar schema
+        this.groupsMenu.classList.remove('d-none'); // Reexibe os botoes do form
+        this.controls.classList.remove('d-none'); // Reexibe o menu dos grupos
+    }
+    __deteleRow(tr){
+        let schema_index = tr.querySelector('th').innerText.replace(' ', '_');
+        try{delete this.schema[schema_index]}catch(e){} // Tenta apagar schema (caso exista)
+        tr.remove();
     }
     getJson(){
         let result_json = [];
         for(let grupo in this.groups){
             for(let row in this.groups[grupo]){
                 let tr = this.groups[grupo][row];
+                let th = tr.querySelector('th');
                 let td = tr.querySelector('td'); // Busca o campo de valor (que contem todos atributos do json)
-                let attrs = td.getAttributeNames().filter((e) => {return e != 'contenteditable' && e != 'value' && e != 'class' && e != 'data-type'}); // Busca os atributos, desconsidera os internos e possiveis alterados pelo usuario
-                let size = attrs.length;
-                let json_item = {value:td.innerText};
-                if(td.dataset.type == 'newRow'){ // Em caso de nova linha, ajusta o campo name conforme definido pelo usuario
-                    let th = tr.querySelector('th');
-                    json_item['name'] = th.innerText;
-                    if(grupo != 'Geral'){json_item['group'] = grupo;}
-                }
-                for(let i = 0; i < size; i++){ // Carrega demais atributos no registro
-                    json_item[attrs[i]] = td.getAttribute(attrs[i]);
-                    if(this.canChangeKey){ // Se habilitado editar nome da chave, atualiza
-                        let th = tr.querySelector('th');
-                        json_item['name'] = th.innerText;
-                    }
+                let json_item = {name:th.innerText, value:td.innerText};
+                if(td.dataset.type != 'newRow'){ // Carrega schema se nao for newRow
+                    let schema = this.schema[th.dataset.originalname.replace(' ', '_')];
+                    json_item = this.__addSchema(json_item, schema);
                 }
                 result_json.push(json_item); // Insere campo formatado no array json
             }
         }
         return result_json;
+    }
+    __addSchema(field, schema){ // Funcao (private) que adiciona os demais atributos ao field
+        let fields = schema.split(';');
+        let size = fields.length;
+        for(let i = 0; i < size; i++){
+            let [key, value] = fields[i].split('=');
+            field[key] = value;
+        }
+        return field;
     }
     exportJson(e){
         let data = JSON.stringify(this.getJson());
@@ -291,6 +391,7 @@ class jsForm{
     cleanForm(){
         this.tbody.innerHTML = '';
         this.groups = {};
+        this.schema = {};
     }
     
 }
