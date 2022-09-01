@@ -1,7 +1,6 @@
 /* 
 __TODO: definir forma para alterar atributos dos campos (schema)
 __TODO: definir metodo deleteRow no schema
-__TODO: definir metodos previousGroup e nextGroup
 */
 class jsForm{
     constructor(options){
@@ -13,9 +12,11 @@ class jsForm{
         this.form = null; // Elemento table
         this.tbody = null; // Elemento tbody
         this.groups = {}; // Dicionario com os grupos (e seus respectivos campos) {nomeGrupo:[tr,tr,tr...]}
+        this.schema = {}; // Dicionario com os schemas, separado por grupos
         this.groupOnFocus = null; // String que armazena o nome do grupo em exibicao no momento
         this.saveBtn = null; // Aponta para o botao salvar
         this.addBtn = null; // Aponta para o botao para adicionar linha
+        this.schemaBtn = null; // Aponta para o botao de exibir o schema
         this.sortBtn = null; // Aponta para o botao de classificar
         this.jsonBtn = null; // Aponta para o botao para exportar json
         // Configuracao
@@ -32,6 +33,7 @@ class jsForm{
         this.onError = options?.onError != undefined ? options.onError : () => this.onSaveError(); // Funcao a ser acionada em caso de erro
         this.canAddRow = options?.canAddRow != undefined ? options.canAddRow : true;
         this.canChangeKey = options?.canChangeKey != undefined ? options.canChangeKey : false;
+        this.canChangeSchema = options?.canChangeSchema != undefined ? options.canChangeSchema : false;
         this.canSort = options?.canSort != undefined ? options.canSort : true;
         this.canExportJson = options?.canExportJson != undefined ? options.canExportJson : true;
         // Estilizacao
@@ -98,6 +100,13 @@ class jsForm{
             this.sortBtn.innerHTML = '<i class="fas fa-sort-amount-down"></i>';
             this.sortBtn.onclick = () => this.sort();
             this.controls.appendChild(this.sortBtn);
+        }
+        if(this.canChangeSchema && !this.readOnly){
+            this.schemaBtn = document.createElement('button');
+            this.schemaBtn.classList = 'btn btn-sm btn-purple px-3';
+            this.schemaBtn.innerHTML = '<i class="fas fa-tags"></i>';
+            this.schemaBtn.onclick = () => this.loadSchema();
+            this.controls.appendChild(this.schemaBtn);
         }
         if(this.canExportJson){
             this.jsonBtn = document.createElement('button');
@@ -173,6 +182,16 @@ class jsForm{
         this.groupsMenu.querySelector(`[data-groupname="${group}"]`).classList.add('active');
         this.groups[group].forEach(e => { this.tbody.appendChild(e)});
     }
+    previousGroup(){
+        let grupos = Object.keys(this.groups);
+        let index = grupos.indexOf(this.groupOnFocus);
+        if(index > 0){this.groupFocus(grupos[index-1])}
+    }
+    nextGroup(){
+        let grupos = Object.keys(this.groups);
+        let index = grupos.indexOf(this.groupOnFocus);
+        if(index + 1 < grupos.length){this.groupFocus(grupos[index+1])}
+    }
     addRow(){
         let tr = document.createElement('tr');
         let th = document.createElement('th');
@@ -222,6 +241,9 @@ class jsForm{
     beforeSaveJson(){return true}
     onSaveSuccess(){try {dotAlert('success', 'Arquivo salvo com <b>sucesso</b>');}catch(e){}} // Caso finalizado com sucesso, tenta chamar metodo de alerta
     onSaveError(status){try {dotAlert('danger', `<b>Erro</b> ao salvar o arquivo. [ <b>${status}</b> ]`);}catch(e){}} // Caso finalizado com erro, tenta chamar metodo de alerta
+    loadSchema(){
+        console.log('ESTOU AQUI...');
+    }
     getJson(){
         let result_json = [];
         for(let grupo in this.groups){

@@ -38,17 +38,21 @@
     
 
     var TAB_ON_ENTER = true;
-    var dados = [];
-    dotAppData('{% url 'app_data' 'test_form.json' %}').then((d) => {dados = d;form.loadData(dados)});
-    
+
     const form = new jsForm({
       url: '{% url 'app_data' 'test_form.json' %}',
       token: getCookie('csrftoken') || '',
-      readOnly: true,
-      canExportJson: false,
+      canChangeSchema: true,
       legend: '<h6 class="h-100 pt-1">Cadastro Funcional</h6>',
       container: document.getElementById('form_container')
     });
+
+    SHORTCUT_MAP['arrowdownFTF'] = ':nextGroup';
+    SHORTCUT_MAP['arrowupFTF'] = ':previousGroup';
+    function nextGroup(){form.nextGroup();}
+    function previousGroup(){form.previousGroup();}
+
+    dotAppData('{% url 'app_data' 'test_form.json' %}').then((d) => {form.loadData(d)});
     
     
   </script>
