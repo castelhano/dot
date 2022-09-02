@@ -1,0 +1,130 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Docs{% endblock %}
+{% block model %}docs<i class="fas fa-angle-right fs-6 mx-2"></i><span class="">jsForm</span>{% endblock %}
+{% block model_menu %}{% include "_component/menu/visitor.html" %}{% endblock%}
+{% block style_src %}
+<link rel="stylesheet" href="{% static 'css/docs.css' %}">
+<link rel="stylesheet" href="{% static 'css/vendor/prism.css' %}">
+{% endblock%}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'docs' 'jsForm' %}"></a>
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-book"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" href="{% url 'docs' 'core' %}"><i class="fas fa-undo"></i></a></li>
+    </ul>
+  </div>
+  <div class="card-body tab-content">
+    <div class="tab-pane fade show active" id="base" role="tabpanel">
+      <div class="row mt-2">
+        <div class="col-lg-8 order-2 order-lg-1"><!-- Container principal -->
+          <h1>jsForm</h1>
+          <hr>
+          <p>Library em javascript ( vanilla ) para manipulação de objetos json.</p>
+          <blockquote class="callout callout-primary fs-7">
+            Version: <b>1.0</b><br>
+            Release: <b>02/09/2022</b><br>
+            Author: &nbsp;<b>Rafael Gustavo Faria Alves</b><br>
+            Depend: <a class="badge bg-orange text-white" href="https://getbootstrap.com/docs/5.2/getting-started/introduction/" target="_blank">bootstrap 5.x</a> <a class="badge bg-purple text-white" href="https://fontawesome.com/v5/search?m=free" target="_blank">fontawesome 5.x</a><br>
+            
+          </blockquote>
+          
+          <h3 id="utilizacao" class="mt-5">Utilização</h3>
+          <hr>
+          <p>Importe o arquivo form.js na sua página html.</p>
+          <pre><code class="language-html">&lt;script src="form.js"&gt;&lt;/script&gt;</code></pre>
+          
+          <h5 id="formato_json" class="mt-5">Formato arquivo json</h5>
+          <p>O objeto <b>json</b> precisa obrigatoriamente conter os campos <b>name</b> e <b>value</b>, demais campos são opcionais.</p>
+          <pre><code class="language-javascript">[{"name":"nome", "value":"Rafael Alves"}, {"name":"email", "value":"c@gmail.com", "group":"Contato"}]</code></pre>
+          
+          <h5 id="instanciando_form" class="mt-5">Instanciando o Form</h5>
+          <p>Crie uma instancia repasando o objeto json nas opções.</p>
+          <pre><code class="language-javascript">const form = new jsForm({ data: meu_json });</code></pre>
+          
+          <p id="loaddata_example" class="mt-4 mb-0">Para carregar dados após instanciar objeto, utilize o método <b>loadData()</b></p>
+          <pre><code class="language-javascript">const form = new jsForm({});
+form.loadData(meu_json);</code></pre>
+          
+            <h5 id="integracao_appdata" class="mt-5">Integração com <b>app_data()</b>:</h5>
+          <pre><code class="language-javascript">const form = new jsForm({});
+dotAppData('{&#37; url 'app_data' 'app/meu_json.json' &#37;}').then((d) => {form.loadData(d)});</code></pre>
+
+          <h3 id="configuracoes" class="mt-5">Configurações</h3>
+          <hr>
+          <h5>Recursos</h5>
+          <div class="table-responsive">
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <td>Chave</td>
+                  <td>Tipo</td>
+                  <td>Descrição</td>
+                  <td>Default</td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>data</td><td>json</td><td>Objeto json</td><td>[ ]</td></tr>
+                <tr><td>container</td><td>element</td><td>Parent element para o form a ser criado</td><td>document.body</td></tr>
+                <tr><td>legend</td><td>string</td><td>Texto de legenda para o form </td><td>''</td></tr>
+                <tr><td>readOnly</td><td>bool</td><td>Desativa edição dos campos do form</td><td>false</td></tr>
+                <tr><td>canSave</td><td>bool</td><td>Altere para exibir controle salvar</td><td>true</td></tr>
+                <tr><td>url</td><td>string</td><td>Url que ira tratar o json</td><td>null</td></tr>
+                <tr><td>token</td><td>string</td><td>Token X-CSRFToken (caso usado), <b class="user-select-all">token: getCookie('csrftoken')</b></td><td>null</td></tr>
+                <tr><td>save</td><td>function</td><td>Função a ser acionada ao salvar form</td><td>[ajax request]</td></tr>
+                <tr><td>beforeSave</td><td>function</td><td>Função a ser acionada antes do save</td><td>null</td></tr>
+                <tr><td>onSuccess</td><td>function</td><td>Função a ser acionada em caso sucesso ao salvar</td><td>dotAlert('success')</td></tr>
+                <tr><td>onError</td><td>function</td><td>Função a ser acionada em caso erro ao salvar</td><td>dotAlert('error')</td></tr>
+                <tr><td>canAddRow</td><td>bool</td><td>Altere para exibir controle para nova linha</td><td>true</td></tr>
+                <tr><td>canDeleteRow</td><td>bool</td><td>Altere para exibir controle excluir linha</td><td>false</td></tr>
+                <tr><td>canChangeKey</td><td>bool</td><td>Altere para <b>true</b> para permitir alterar name do campo</td><td>false</td></tr>
+                <tr><td>enableDuplicates</td><td>bool</td><td>Altere para <b>true</b> para permitir duplicata de chaves</td><td>false</td></tr>
+                <tr><td>canChangeSchema</td><td>bool</td><td>Exibe opçãopara alterar atributos adicionais dos campos</td><td>true</td></tr>
+                <tr><td>canSort</td><td>bool</td><td>Libera classificação pelo nome da chave</td><td>true</td></tr>
+                <tr><td>canExportJson</td><td>bool</td><td>Mostra botão para exportar dados em JSON</td><td>false</td></tr>
+              </tbody>
+            </table>
+          </div>  
+
+
+        <div style="margin-bottom: 80px;">&nbsp;</div>
+        </div><!-- Fim Container principal -->
+        <div class="col-lg order-1 order-lg-2 mb-3">
+          <ul class="list-unstyled menu">
+            <li><i class="fas fa-book fa-fw"></i><b><a href="#utilizacao">Utilização</a></b></li>
+            <li><i class="fas none fa-fw"></i><a href="#formato_json">Formato arquivo json</a></li>
+            <li><i class="fas none fa-fw"></i><a href="#instanciando_form">Instanciando o form</a></li>
+            <li><i class="fas none fa-fw"></i><a href="#loaddata_example">Carregando dados após instanciado</a></li>
+            <li><i class="fas fa-sliders-h fa-fw mt-2"></i><b><a href="#configuracoes">Configurações</a></b></li>
+            <li><i class="fas none fa-fw"></i><a href="#estilizacao">Estilização</a></li>
+            <li><i class="fas fa-code fa-fw mt-2"></i><b><a href="#metodos">Métodos</a></b></li>
+            <li><i class="fas none fa-fw"></i><a href="#integracao_listener_js">Integração com <b class="text-muted">listener.js</b></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<a id="link_start_page" class="goTop-anchor border" onclick="window.scrollTo(0,0)"><i class="fas fa-chevron-up"></i></a> 
+
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/vendor/prism.js' %}" charset="utf-8"></script>
+{% endblock %}
+
+<script>
+  {% block add_script %}
+  prismStart();
+  
+  window.addEventListener('scroll', function() {
+    if(window.scrollY > 500) {document.getElementById('link_start_page').style.opacity = '1';}
+    else{document.getElementById('link_start_page').style.opacity = '0';}
+  });
+  
+  {% endblock %}
+</script>

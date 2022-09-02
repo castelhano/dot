@@ -1,8 +1,11 @@
-/* 
-__TODO: @@@ Ajustar __deleteRow() groups=FAIL schema=OK tbody=OK 
-__TODO: definir forma para alterar atributos dos campos (schema)
-__TODO: definir metodo deleteRow no schema
-__TODO: impedir groupFocus se this.editingSchema = true
+/*
+* jsForm   Implementa formulario para manipular objeto json (extrutura predefinida)
+*
+* @version      1.0
+* @since        02/09/2022
+* @author       Rafael Gustavo ALves {@email castelhano.rafael@gmail.com}
+* @description  Exige json com campos "name" e "value" (demais campos opcionais)
+* @example      [{"name":"nome","value":"Rafael Alves"},{"name":"email","value":"c@gmail.com", "group":"Contato"}, .....]
 */
 class jsForm{
     constructor(options){
@@ -22,6 +25,7 @@ class jsForm{
         this.schemaBtn = null; // Aponta para o botao de exibir o schema
         this.sortBtn = null; // Aponta para o botao de classificar
         this.jsonBtn = null; // Aponta para o botao para exportar json
+        this.editingSchema = false; // Indica se esta sendo editado schema neste momento (usado para travar algumas operacoes)
         // Configuracao
         this.data = options?.data || []; // Json com dados do form
         this.container = options?.container || document.body; // parentNode do form, caso nao informado append no document.body
@@ -37,7 +41,8 @@ class jsForm{
         this.canAddRow = options?.canAddRow != undefined ? options.canAddRow : true;
         this.canDeleteRow = options?.canDeleteRow != undefined ? options.canDeleteRow : false; // Se definido para true exibe botao para deletar row
         this.canChangeKey = options?.canChangeKey != undefined ? options.canChangeKey : false;
-        this.canChangeSchema = options?.canChangeSchema != undefined ? options.canChangeSchema : false;
+        this.enableDuplicates = options?.enableDuplicates != undefined ? options.enableDuplicates : false;
+        this.canChangeSchema = options?.canChangeSchema != undefined ? options.canChangeSchema : true;
         this.canSort = options?.canSort != undefined ? options.canSort : true;
         this.canExportJson = options?.canExportJson != undefined ? options.canExportJson : true;
         // Estilizacao
@@ -162,16 +167,16 @@ class jsForm{
             tr.appendChild(td);
             if(this.canDeleteRow){ // Adiciona botar para deletar caso habilitado funcao
                 let td_controls = document.createElement('td');
-                td_controls.classList = 'text-end fit';
+                td_controls.classList = 'text-end fit pb-0 py-1';
                 let btnDeleteRow = document.createElement('button');
                 btnDeleteRow.classList = 'btn btn-sm btn-danger';
                 btnDeleteRow.innerHTML = '<i class="fas fa-trash"></i>';
-                btnDeleteRow.onclick = () => this.__deteleRow(tr);
+                btnDeleteRow.onclick = () => this.__deleteRow(tr);
                 td_controls.appendChild(btnDeleteRow);
                 tr.appendChild(td_controls);
             }
             if(this.data[item].group == undefined){ // Se nao existe grupo associado adicona linha no grupo Geral
-                if('Geral' in this.groups){this.groups.Geral.push(tr)}
+                if('Geral' in this.groups){this.groups.Geral.push(tr);}
                 else{this.groups['Geral'] = [tr];} // Caso ainda nao exista registro para o grupo, insere no dicionario
             }
             else{ // Caso exista grupo, insere a linha no respectivo grupo -> this.groups
@@ -195,6 +200,7 @@ class jsForm{
         if(group && group.length > 0){this.groupFocus(group);} // Exibe grupo
     }
     groupFocus(group){ // Carrega campos do respectivo grupo no form
+        if(this.editingSchema){return false} // Trava operacao se estiver na edicao do schema
         this.tbody.innerHTML = '';
         this.groupOnFocus = group;
         try{this.groupsMenu.querySelector('[data-type="group-link"].active').classList.remove('active');}catch(e){} // Caso acionado na criacao da tabela vai gerar excecao pois nao existe nenhum ativo
@@ -202,11 +208,13 @@ class jsForm{
         this.groups[group].forEach(e => { this.tbody.appendChild(e)});
     }
     previousGroup(){
+        if(this.editingSchema){return false} // Trava operacao se estiver na edicao do schema
         let grupos = Object.keys(this.groups);
         let index = grupos.indexOf(this.groupOnFocus);
         if(index > 0){this.groupFocus(grupos[index-1])}
     }
     nextGroup(){
+        if(this.editingSchema){return false} // Trava operacao se estiver na edicao do schema
         let grupos = Object.keys(this.groups);
         let index = grupos.indexOf(this.groupOnFocus);
         if(index + 1 < grupos.length){this.groupFocus(grupos[index+1])}
@@ -242,6 +250,7 @@ class jsForm{
     }
     saveJson(){
         if(this.url){
+            if(!this.__validateForm()){dotAlert('danger', '<b>Erro:</b> Chave duplicada ou vazia, corrija antes de prosseguir'); return false;}
             if(!this.beforeSave()){return false;} // Chama metodo beforeSave antes de executar codigo, espera retorno true para dar sequencia
             let btnSave = this.saveBtn; // Workaround para acessar botao save dentro da funcao ajax
             let onSuccess = this.onSuccess; // Workaround para acessar funcao dentro da funcao ajax
@@ -261,6 +270,7 @@ class jsForm{
     onSaveSuccess(){try {dotAlert('success', 'Arquivo salvo com <b>sucesso</b>');}catch(e){}} // Caso finalizado com sucesso, tenta chamar metodo de alerta
     onSaveError(status){try {dotAlert('danger', `<b>Erro</b> ao salvar o arquivo. [ <b>${status}</b> ]`);}catch(e){}} // Caso finalizado com erro, tenta chamar metodo de alerta
     loadSchema(){
+        this.editingSchema = true;
         this.tbody.innerHTML = '';
         this.groupsMenu.classList.add('d-none'); // Oculta os botoes do form
         this.controls.classList.add('d-none'); // Oculta o menu dos grupos
@@ -289,7 +299,7 @@ class jsForm{
             for(let i = 0; i < size; i++){
                 let label_text = `<span class="label-name bg-dark text-white user-select-none">${attrs[i].split('=')[0]}</span><span style="display: none;">=</span><span class="label-status bg-warning cursor-text" contenteditable="true">${attrs[i].split('=')[1]}</span>`;
                 let label = document.createElement('label');
-                label.classList = 'label';
+                label.classList = 'label opacity-75';
                 label.innerHTML = label_text;
                 label.ondblclick = (e) => {if(e.ctrlKey){e.preventDefault();label.remove();}};
                 td.appendChild(label);
@@ -331,6 +341,7 @@ class jsForm{
         this.groupsMenu.classList.remove('d-none'); // Reexibe os botoes do form
         this.controls.classList.remove('d-none'); // Reexibe o menu dos grupos
         this.groupFocus(this.groupOnFocus); // Reexibe
+        this.editingSchema = false;
     }
     __cancelChangeSchema(){
         this.tbody.innerHTML = '';
@@ -338,11 +349,22 @@ class jsForm{
         document.querySelectorAll('[data-type=btnSaveSchema],[data-type=cancelSchemaBtn]').forEach((e) => e.remove()); // Remove os botoes para gravar e cancelar schema
         this.groupsMenu.classList.remove('d-none'); // Reexibe os botoes do form
         this.controls.classList.remove('d-none'); // Reexibe o menu dos grupos
+        this.editingSchema = false;
     }
-    __deteleRow(tr){
-        let schema_index = tr.querySelector('th').innerText.replace(' ', '_');
+    __deleteRow(tr){
+        let key = tr.querySelector('th').innerText;
+        let schema_index = key.replace(' ', '_');
         try{delete this.schema[schema_index]}catch(e){} // Tenta apagar schema (caso exista)
+        tr.setAttribute('to_delete', 'true');
         tr.remove();
+        let size = this.groups[this.groupOnFocus].length;
+        for(let i = 0; i < size; i++){
+            let to_delete = false;
+            try{
+                if(this.groups[this.groupOnFocus][i].getAttribute('to_delete') == 'true'){to_delete = true;}
+            }catch(e){}
+            if(to_delete){this.groups[this.groupOnFocus].splice(i, 1)}            
+        }
     }
     getJson(){
         let result_json = [];
@@ -387,7 +409,30 @@ class jsForm{
         }
         try {dotAlert('success', 'Arquivo <b>json</b> gerado com <b>sucesso</b>')}catch(error){}
     }
-
+    __validateForm(){
+        let has_errors = false;
+        let key_names = []; // Armazena chaves (name) do objeto json
+        for(let grupo in this.groups){
+            let size = this.groups[grupo].length;
+            for(let i = 0; i < size; i++){
+                let tr = this.groups[grupo][i];
+                let key = tr.querySelector('th').innerText;
+                if(!this.enableDuplicates && key_names.includes(key)){ // Valida se viagem nao eh duplicada
+                    tr.classList.add('table-danger');
+                    has_errors = true;
+                }
+                else if(key.trim() == ''){ // Valida se key eh vazia
+                    tr.classList.add('table-danger');
+                    has_errors = true;
+                }
+                else{
+                    key_names.push(key);
+                    tr.classList.remove('table-danger');
+                }
+            }
+        }
+        return has_errors ? false : true;
+    }
     cleanForm(){
         this.tbody.innerHTML = '';
         this.groups = {};

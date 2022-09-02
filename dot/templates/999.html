@@ -59,11 +59,7 @@
 
     const form = new jsForm({
       url: '{% url 'app_data' 'test_form.json' %}',
-      token: getCookie('csrftoken') || '',
-      canChangeKey: true,
-      canChangeSchema: true,
-      canDeleteRow: true,
-      legend: '<h6 class="h-100 pt-1">Cadastro Funcional</h6>',
+      token: getCookie('csrftoken'),
       container: document.getElementById('form_container')
     });
 
