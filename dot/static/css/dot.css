@@ -1,7 +1,7 @@
 /* 
 RAFAEL GUSTAVO ALVES
 castelhano.rafael@gmail.com
-VERSION: 1.0 
+Classes Gerais do sistema, carregado em TODAS as paginas
 */
 
 .cursor-default{cursor: default;}
@@ -92,8 +92,6 @@ select.readonly{background: rgb(233, 236, 239)!important;pointer-events: none;to
 
 .placeholder-end::placeholder {text-align: right;font-weight: bold;color: #999;}
 
-.is-invalid{color: #832129!important;background-color: #FBEFF0;padding-left: 10px;border-left: 2px solid #832129;}
-
 .callout{padding: 10px;border: 1px solid #e9ecef;border-left-width: .25rem;border-radius: .25rem;}
 .callout-secondary{border-left-color: #6C757D;}
 .callout-primary{border-left-color: #0D6EFD;}
@@ -104,7 +102,6 @@ select.readonly{background: rgb(233, 236, 239)!important;pointer-events: none;to
 .callout-orange{border-left-color: #F35B04;}
 
 .fa-fw{margin-right: 4px;}
-.fa-wd{width: 1.25em;text-align: center;}
 .breadcrumb-item+.breadcrumb-item::before {content: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='8'><path d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='gray'/></svg>");}
 .breadcrumb-item > a{text-decoration: none;}
 .alert{position: fixed;width: 100%;bottom: -4px;}
@@ -135,5 +132,11 @@ ol.code-multiline li.list-ident-2::before {margin-right: 80px;}
 .widget-icon {color: #727cf5;background-color: rgba(114,124,245,.25);font-size: 20px;height: 40px;width: 40px;text-align: center;line-height: 40px;border-radius: 3px;display: inline-block;}
 .widget-icon-success {color: #42b78e;background-color: #d6fff0;}
 .widget-icon-primary {color: #0D6EFD;background-color: #bad6ff;}
+
+/* jsForm class */
+.label{display: inline-block; font-size: 0.85rem; margin-right: 10px;}
+.label-name{padding-top: 2px;padding-bottom: 4px;padding-left: 14px;padding-right: 10px;border-radius: 20px 0 0 20px;}
+.label-status{padding-top: 2px;padding-bottom: 4px;padding-left: 10px;padding-right: 14px;border-radius: 0 20px 20px 0;}
+/* *** */
 
 datalist{font-size: 20px;}

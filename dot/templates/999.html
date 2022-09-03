@@ -10,23 +10,18 @@
   <link rel="stylesheet" href="{% static 'css/vendor/all.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/fontawesome.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.min.css' %}" type="text/css">
-
+  
   <style>
-    .label{display: inline-block; font-size: 0.85rem; margin-right: 10px;}
-    .label-name{
-      padding-top: 2px;
-      padding-bottom: 4px;
-      padding-left: 14px;
-      padding-right: 10px;
-      border-radius: 20px 0 0 20px;
+    .grid-item{
+      width: 100px;
+      height: 100px;
+      display: inline-block;
+      background-color: #fff;
+      border: solid 1px rgb(0,0,0,0.2);
+      padding: 10px;
+      margin: 12px;
     }
-    .label-status{
-      padding-top: 2px;
-      padding-bottom: 4px;
-      padding-left: 10px;
-      padding-right: 14px;
-      border-radius: 0 20px 20px 0;
-    }
+    
   </style>
   
 </head>
@@ -36,8 +31,28 @@
   <div class="container-fluid">
     <h1>Handler 999</h1>
     <hr >
-
-    <div id="form_container"></div>
+    
+    <div id="foo" class="row">
+      <div class="grid-item">Elm 1</div>
+      <div class="grid-item">Elm 2</div>
+      <div class="grid-item">Elm 3</div>
+      <div class="grid-item">Elm 4</div>
+      <div class="grid-item">Elm 5</div>
+      <div class="grid-item">Elm 6</div>
+    </div> 
+    <hr>
+    
+    <div id="fei" class="list-group col">
+      <div class="list-group-item">Elm 10</div>
+      <div class="list-group-item">Elm 12</div>
+      <div class="list-group-item">Elm 14</div>
+      <div class="list-group-item">Elm 16</div>
+      <div class="list-group-item">Elm 18</div>
+    </div> 
+    
+    
+    
+    
   </div>
   
   <div id="dot_alert" class="alert alert-dismissible fade mb-1" role="alert">
@@ -46,28 +61,29 @@
   </div>
   
   <script src="{% static 'js/listener.js' %}"></script>
-  <script src="{% static 'js/form.js' %}"></script>
+  <script src="{% static 'js/vendor/sortable.min.js' %}"></script>
   <!-- <script src="{% static 'js/table.js' %}"></script> -->
   <script src="{% static 'js/dot.js' %}"></script>
   <script src="/static/js/vendor/bootstrap.bundle.min.js"></script>
   
   <script>
     
+    const foo = new Sortable(document.getElementById('foo'), {
+      ghostClass: 'bg-danger',
+      animation: 100,
+      group: 'shared'
+    })
     
-
+    const fei = new Sortable(document.getElementById('fei'), {
+      multiDrag: true, // Enable multi-drag
+      selectedClass: 'bg-info', // The class applied to the selected items
+      ghostClass: 'bg-success',
+      group: 'shared'
+    })
+    
+    
+    
     var TAB_ON_ENTER = true;
-
-    let data = [{"name":"nome", "value":"Rafael Alves"}, {"name":"email", "value":"c@gmail.com", "group":"Contato"}]
-    const form = new jsForm({
-      data: data
-    });
-
-    SHORTCUT_MAP['arrowdownFTF'] = ':nextGroup';
-    SHORTCUT_MAP['arrowupFTF'] = ':previousGroup';
-    function nextGroup(){form.nextGroup();}
-    function previousGroup(){form.previousGroup();}
-
-    
   </script>
 </body>
 </html>
