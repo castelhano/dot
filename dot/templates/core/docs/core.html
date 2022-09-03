@@ -1,9 +1,13 @@
 {% extends "layout/dot.html" %}
 {% load static %}
 {% block title %}Docs{% endblock %}
-{% block model %}docs<i class="fas fa-angle-right fs-6 mx-2"></i><span class="">Core</span>{% endblock %}
+{% block model %}<span>docs</span><i class="fas fa-angle-right fs-6 mx-2"></i><span class="">Core</span>{% endblock %}
 {% block model_menu %}{% include "_component/menu/visitor.html" %}{% endblock%}
-{% block style_src %}<link rel="stylesheet" href="{% static 'css/vendor/prism.css' %}">{% endblock%}
+{% block style_src %}
+<link rel="stylesheet" href="{% static 'css/docs.css' %}">
+<link rel="stylesheet" href="{% static 'css/vendor/prism.css' %}">
+{% endblock%}
+
 
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'docs' 'core' %}"></a>
@@ -23,7 +27,7 @@
   <div class="card-body tab-content">
     <div class="tab-pane fade show active" id="base" role="tabpanel">
       <div class="row mt-2">
-        <div class="col-lg-8"><!-- Container principal -->
+        <div class="col-lg-8 order-2 order-lg-1"><!-- Container principal -->
           <h3>Instalação</h3>
           <hr>
           <pre><code class="language-javascript">foo += 5;</code></pre>
@@ -35,6 +39,18 @@
           <div id="jsTableMD"></div>
           
         </div><!-- Fim Container principal -->
+        <div class="col-lg order-1 order-lg-2 mb-3">
+          <ul class="list-unstyled menu">
+            <li><i class="fas fa-book fa-fw"></i><b><a href="#utilizacao">Utilização</a></b></li>
+            <li><i class="fas none fa-fw"></i><a href="#foo">Submenu</a></li>
+            <li><i class="fas none fa-fw"></i><a href="#bar">Submenu</a></li>
+            <li><i class="fas fa-sliders-h fa-fw mt-2"></i><b><a href="#configuracoes">Configurações</a></b></li>
+            <li><i class="fas none fa-fw"></i><a href="#recursos">Recursos</a></li>
+            <li><i class="fas none fa-fw"></i><a href="#estilizacao">Estilização</a></li>
+            <li><i class="fas fa-code fa-fw mt-2"></i><b><a href="#metodos">Métodos</a></b></li>
+            <li><i class="fas none fa-fw"></i><a href="#integracao_listener_js">Integração com <b class="text-muted">listener.js</b></a></li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>

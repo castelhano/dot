@@ -30,7 +30,7 @@
   </style>
   
 </head>
-<body>
+<body style="margin: 10px;">
   <a id="home" href="{% url 'index' %}"></a>
   <a id="clear" href="{% url 'handler' '999' %}"></a>
   <div class="container-fluid">
@@ -57,10 +57,9 @@
 
     var TAB_ON_ENTER = true;
 
+    let data = [{"name":"nome", "value":"Rafael Alves"}, {"name":"email", "value":"c@gmail.com", "group":"Contato"}]
     const form = new jsForm({
-      url: '{% url 'app_data' 'test_form.json' %}',
-      token: getCookie('csrftoken'),
-      container: document.getElementById('form_container')
+      data: data
     });
 
     SHORTCUT_MAP['arrowdownFTF'] = ':nextGroup';
@@ -68,8 +67,6 @@
     function nextGroup(){form.nextGroup();}
     function previousGroup(){form.previousGroup();}
 
-    dotAppData('{% url 'app_data' 'test_form.json' %}').then((d) => {form.loadData(d)});
-    
     
   </script>
 </body>
