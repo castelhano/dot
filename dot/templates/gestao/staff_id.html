@@ -15,10 +15,8 @@
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
         <ul class="dropdown-menu">
           <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#history_modal">Historico</a></li>
-          {% if staff.role == 'M' %}
           <li><hr class="dropdown-divider"></li>
           <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal">Excluir Staff</a></li>
-          {% endif %}
         </ul>
       </li>
     </ul>
@@ -52,7 +50,6 @@
   </form>
 </div>
 
-{% if staff.role == 'M' %}
 <div class="modal fade" id="delete_modal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -72,7 +69,6 @@
     </div>
   </div>
 </div>
-{% endif %}
 <div class="modal fade" id="history_modal" tabindex="-1">
   <div class="modal-dialog modal-dialog-scrollable">
     <div class="modal-content">

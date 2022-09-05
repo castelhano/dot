@@ -25,11 +25,12 @@
           <hr>
           <p>Library em javascript ( vanilla ) para operações com tabelas preexistentes ou criadas dinamicamente.</p>
           <blockquote class="callout callout-primary fs-7">
-            Version: <b>2.12</b><br>
-            Release: <b>13/08/2022</b><br>
-            Author: &nbsp;<b>Rafael Gustavo Faria Alves</b><br>
-            Depend: <a class="badge bg-orange text-white" href="https://getbootstrap.com/docs/5.2/getting-started/introduction/" target="_blank">bootstrap 5.x</a> <a class="badge bg-purple text-white" href="https://fontawesome.com/v5/search?m=free" target="_blank">fontawesome 5.x</a><br>
-
+            <div class="body">
+              Version: <b>2.12</b><br>
+              Release: <b>13/08/2022</b><br>
+              Author: &nbsp;<b>Rafael Gustavo Faria Alves</b><br>
+              Depend: <a class="badge bg-orange text-white" href="https://getbootstrap.com/docs/5.2/getting-started/introduction/" target="_blank">bootstrap 5.x</a> <a class="badge bg-purple text-white" href="https://fontawesome.com/v5/search?m=free" target="_blank">fontawesome 5.x</a><br>
+            </div>
           </blockquote>
           
           <h3 id="utilizacao" class="mt-5">Utilização</h3>
@@ -38,7 +39,9 @@
           <pre><code class="language-html">&lt;script src="table.js"&gt;&lt;/script&gt;</code></pre>
           
           <h5 id="instanciando_tabela_existente" class="mt-5">Instanciando uma tabela existente</h5>
-          <blockquote class="callout callout-warning mt-3"><i class="fas fa-info text-warning me-2"></i> Tabela precisa ser composta com elementos <b>thead</b> e <b>tbody</b>. Tabelas com mais de um tbody serão ajustadas para operar num único tbody</blockquote>
+          <blockquote class="callout callout-warning mt-3">
+            <div class="body"><i class="fas fa-info text-warning me-2"></i> Tabela precisa ser composta com elementos <b>thead</b> e <b>tbody</b>. Tabelas com mais de um tbody serão ajustadas para operar num único tbody</div>
+          </blockquote>
           <p>Crie uma instancia apontando para a tabela e (opcional) dicionário com as configurações.</p>
           <pre><code class="language-javascript">const tabela = new jsTable(document.querySelector('table'), { options });</code></pre>
           
@@ -51,7 +54,7 @@
 // atributo data recebe o objeto json com dados da tabela
 // container é opcional, se omitido, tabela será gerada ao final do body 
 </code></pre>
-          <blockquote class="callout callout-primary mt-3"><i class="fas fa-info text-primary me-2"></i> Em tabelas já instancidadas é possivel usar os metodos <b>loadData(json)</b> ou <b>appendData(json)</b></blockquote>
+          <blockquote class="callout callout-primary mt-3"><div class="body"><i class="fas fa-info text-primary me-2"></i> Em tabelas já instancidadas é possivel usar os metodos <b>loadData(json)</b> ou <b>appendData(json)</b></div></blockquote>
 
           <h5 id="buscando_via_ajax" class="mt-5">Buscando dados via ajax</h5>
           <p>Crie uma tabela definindo os cabeçalhos, ao digitar no field de pesquisa realiza consulta via ajax. Nome dos headers devem ser iguais ao retorno da consulta.</p>
@@ -62,7 +65,7 @@ enablePaginate: true,
 emptyTableMessage: 'Selecione um filtro ou mude o criterio da pesquisa'
 });</code></pre>
 
-          <blockquote class="callout callout-primary">No python</blockquote>
+          <blockquote class="callout callout-primary"><div class="body">No python</div></blockquote>
           <pre><code class="language-python">def get_data(request):
   try:
       data = Model.objects.filter(nome__contains=request.GET['pesquisa']).order_by('nome')
@@ -263,7 +266,7 @@ emptyTableMessage: 'Selecione um filtro ou mude o criterio da pesquisa'
 
           <h3 id="acessando_elementos" class="mt-5">Acessando elementos da tabela</h3>
           <hr>
-          <blockquote class="callout callout-primary my-3">Os elementos abaixo são acessiveis como atributos do objeto instanciado, podendo ser acessados com <b>instancia.<span class="text-orange">elemento</span></b></blockquote>
+          <blockquote class="callout callout-primary my-3"><div class="body">Os elementos abaixo são acessiveis como atributos do objeto instanciado, podendo ser acessados com <b>instancia.<span class="text-orange">elemento</span></b></div></blockquote>
           <dl class="row">
             <dt class="col-2">filterInput</dt><dd class="col-10">input.text para tabelas com canFilter setado para true</dd>
             <dt class="col-2">restoreButton</dt><dd class="col-10">button para restaurar ultima linha excluida</dd>
@@ -278,7 +281,7 @@ table.restoreButton.onclick = () => {..dosomething}</code></pre>
 
 
           <h3 class="mt-5">Exemplos</h3>
-          <blockquote class="callout callout-primary fs-7">HTML</blockquote>
+          <blockquote class="callout callout-primary fs-7"><div class="body">HTML</div></blockquote>
           
           <pre><code class="language-html">&lt;table class="table" id="myTable"&gt;
   &lt;thead&gt;
@@ -307,7 +310,7 @@ table.restoreButton.onclick = () => {..dosomething}</code></pre>
   &lt;/tbody&gt;
 &lt;/table&gt;</code></pre>
             
-            <blockquote class="callout callout-primary mt-5 fs-7"><b>Exemplo 01:</b> Utilização básica<br>Script:</blockquote>
+            <blockquote class="callout callout-primary mt-5 fs-7"><div class="body"><b>Exemplo 01:</b> Utilização básica<br>Script:</div></blockquote>
             <pre><code class="language-javascript">var table = new jsTable('myTable', {})</code></pre>
 
             <div class="card d-none d-md-flex">
@@ -318,7 +321,7 @@ table.restoreButton.onclick = () => {..dosomething}</code></pre>
             </div>
 
             
-            <blockquote class="callout callout-primary mt-5 fs-7"><b>Exemplo 02:</b> Liberando recursos de <b>adicionar linha</b>, <b>excluir linha</b>, e <b>filtrar tabela</b><br>Script:</blockquote>
+            <blockquote class="callout callout-primary mt-5 fs-7"><div class="body"><b>Exemplo 02:</b> Liberando recursos de <b>adicionar linha</b>, <b>excluir linha</b>, e <b>filtrar tabela</b><br>Script:</div></blockquote>
             <pre><code class="language-javascript">let foo = new jsTable(document.querySelector('table'), {
   canAddRow: true,
   canDeleteRow: true,
@@ -333,7 +336,7 @@ table.restoreButton.onclick = () => {..dosomething}</code></pre>
               </div>
             </div>
 
-            <blockquote class="callout callout-primary mt-5 fs-7"><b>Exemplo 03:</b> Liberando recursos de <b>adicionar linha</b>, <b>excluir linha</b>, e <b>filtrar tabela</b><br>Script:</blockquote>
+            <blockquote class="callout callout-primary mt-5 fs-7"><div class="body"><b>Exemplo 03:</b> Liberando recursos de <b>adicionar linha</b>, <b>excluir linha</b>, e <b>filtrar tabela</b><br>Script:</div></blockquote>
             <pre><code class="language-javascript">let foo = new jsTable(document.querySelector('table'), {
   canSAve: true,
   save: minhaFuncao
@@ -347,7 +350,7 @@ function minhaFuncao(){..dosomething}</code></pre>
               </div>
             </div>
 
-            <blockquote class="callout callout-primary mt-5 fs-7"><b>Exemplo 04:</b> Carregando tabela dinamicamente com <b>json</b><br>Script:</blockquote>
+            <blockquote class="callout callout-primary mt-5 fs-7"><div class="body"><b>Exemplo 04:</b> Carregando tabela dinamicamente com <b>json</b><br>Script:</div></blockquote>
             <pre><code class="language-javascript">const dados = [
   {"id":01, "nome":"Jon Snow", "idade":22},
   {"id":02, "nome":"Don Sony", "idade":33},

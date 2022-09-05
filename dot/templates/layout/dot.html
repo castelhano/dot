@@ -16,8 +16,8 @@
   <script>{% block script_preload %}{% endblock %}</script>
   
   <style media="screen">
-  @media(min-width: 992px){.navbar-dot{height: 45px;}}
-  {% block style %}{% endblock %}
+    @media(min-width: 992px){.navbar-dot{height: 45px;}}
+    {% block style %}{% endblock %}
   </style>
   <script src="{% static 'js/listener.js' %}"></script>
   {% if perms.core.debug %}
@@ -139,17 +139,19 @@
             </div>
             <div class="col-lg-5">
               <div class="callout callout-orange" style="background-color:#FFF;">
-                <h5>Sobre o sistema</h5>
-                <table class="fs-7">
-                  <tr><td class="pe-3">Versão da Aplicação</td><td class="fw-bold"><span class="badge bg-dark py-1" style="font-size:0.9rem">1.0</span> 30/11/2021</td></tr>
-                  <tr><td class="pe-3">Versão Python</td><td class="fw-bold">3.9</td></tr>
-                  <tr><td class="pe-3">Versão Django</td><td class="fw-bold">3.2.3</td></tr>
-                  <tr><td class="pe-3">Dependências</td><td class=""><span class="badge bg-success" style="font-size:0.8rem">pillow 8.2</span> <span class="badge bg-primary" style="font-size:0.8rem">reportlab 3.5</span></td></tr>
-                  <tr><td class="pe-3">Versão Bootstrap</td><td class="fw-bold">5.1</td></tr>
-                  <tr><td class="pe-3">Framework JS</td><td class="fw-bold">N/A</td></tr>
-                  <tr><td class="pe-3">Desenvolvedor</td><td class="fw-bold">Rafael Gustavo Alves</td></tr>
-                  <tr><td class="pe-3">Contato</td><td class="fw-bold">castelhano.rafael@gmail.com</td></tr>
-                </table>
+                <div class="body">
+                  <h5>Sobre o sistema</h5>
+                  <table class="fs-7">
+                    <tr><td class="pe-3">Versão da Aplicação</td><td class="fw-bold"><span class="badge bg-dark py-1" style="font-size:0.9rem">1.0</span> 30/11/2021</td></tr>
+                    <tr><td class="pe-3">Versão Python</td><td class="fw-bold">3.9</td></tr>
+                    <tr><td class="pe-3">Versão Django</td><td class="fw-bold">3.2.3</td></tr>
+                    <tr><td class="pe-3">Dependências</td><td class=""><span class="badge bg-success" style="font-size:0.8rem">pillow 8.2</span> <span class="badge bg-primary" style="font-size:0.8rem">reportlab 3.5</span></td></tr>
+                    <tr><td class="pe-3">Versão Bootstrap</td><td class="fw-bold">5.1</td></tr>
+                    <tr><td class="pe-3">Framework JS</td><td class="fw-bold">N/A</td></tr>
+                    <tr><td class="pe-3">Desenvolvedor</td><td class="fw-bold">Rafael Gustavo Alves</td></tr>
+                    <tr><td class="pe-3">Contato</td><td class="fw-bold">castelhano.rafael@gmail.com</td></tr>
+                  </table>
+                </div>
               </div>              
             </div>
           </div>
@@ -164,9 +166,9 @@
   <script src="{% static 'js/dot.js' %}"></script>
   {% block add_script_src %}{% endblock %}
   <script>
-  function forceReload(){window.location.href = window.location.href;}
-  {% block add_script %}{% endblock %}
-</script>
-<p class="py-5 d-block d-lg-none">&nbsp;</p>
+    function forceReload(){window.location.href = window.location.href;}
+    {% block add_script %}{% endblock %}
+  </script>
+  <p class="py-5 d-block d-lg-none">&nbsp;</p>
 </body>
 </html>

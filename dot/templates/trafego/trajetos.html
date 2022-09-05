@@ -70,65 +70,71 @@
         {% if ida %}
         <div class="col-lg-6">
           <div class="callout callout-primary">
-            <h5 class="mb-3 text-muted"><i class="fas fa-road fs-6 me-2"></i>Ida</h5>
-            <ul class="timeline timeline-sm ms-2">
-              {% for p in ida %}
-              <li class="event{% if p.fechado %} event-danger{% endif %}">
-                {{p.local.nome|truncatechars:20}}{% if p.detalhe != '' %}<i class="fas fa-info-circle text-purple ms-2 help position-absolute fs-5" style="margin-top:-5px;" data-bs-toggle="tooltip" data-bs-placement="top" title="{{p.detalhe}}"></i>{% endif %}
-                <div class="event-controls">
-                  {% with p.labels|split:"," as labels %}
-                  {% for label in labels %}
-                  <span class="badge bg-purple d-none d-lg-inline-block">{{label}}</span>
-                  {% endfor %}
-                  {% endwith %}
-                  <span class="badge btn-primary" style="width: 35px;">{{p.seq|safe}}</span>
-                  {% if perms.trafego.change_linha %}
-                  <a class="badge btn-dark" href="{% url 'trafego_trajeto_delete' p.id|safe %}"><i class="fas fa-times"></i></a>
-                  {% endif %}
-                </div>
-              </li>
-              {% endfor %}
-            </ul>
+            <div class="body">
+              <h5 class="mb-3 text-muted"><i class="fas fa-road fs-6 me-2"></i>Ida</h5>
+              <ul class="timeline timeline-sm ms-2">
+                {% for p in ida %}
+                <li class="event{% if p.fechado %} event-danger{% endif %}">
+                  {{p.local.nome|truncatechars:20}}{% if p.detalhe != '' %}<i class="fas fa-info-circle text-purple ms-2 help position-absolute fs-5" style="margin-top:-5px;" data-bs-toggle="tooltip" data-bs-placement="top" title="{{p.detalhe}}"></i>{% endif %}
+                  <div class="event-controls">
+                    {% with p.labels|split:"," as labels %}
+                    {% for label in labels %}
+                    <span class="badge bg-purple d-none d-lg-inline-block">{{label}}</span>
+                    {% endfor %}
+                    {% endwith %}
+                    <span class="badge btn-primary" style="width: 35px;">{{p.seq|safe}}</span>
+                    {% if perms.trafego.change_linha %}
+                    <a class="badge btn-dark" href="{% url 'trafego_trajeto_delete' p.id|safe %}"><i class="fas fa-times"></i></a>
+                    {% endif %}
+                  </div>
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
           </div>
         </div>
         {% endif %}
         {% if volta %}
         <div class="col-lg-6">
           <div class="callout callout-secondary">
-            <h5 class="mb-3 text-muted"><i class="fas fa-road fs-6 me-2"></i>Volta</h5>
-            <ul class="timeline timeline-sm ms-2">
-              {% for p in volta %}
-              <li class="event{% if p.fechado %} event-danger{% endif %}">
-                {{p.local.nome}}{% if p.detalhe != '' %}<i class="fas fa-info-circle text-purple ms-2 help" title="{{p.detalhe}}"></i>{% endif %}
-                <div class="event-controls">
-                  <span class="badge btn-primary" style="width: 35px;">{{p.seq|safe}}</span>
-                  {% if perms.trafego.change_linha %}
-                  <a class="badge btn-dark" href="{% url 'trafego_trajeto_delete' p.id|safe %}"><i class="fas fa-times"></i></a>
-                  {% endif %}
-                </div>
-              </li>
-              {% endfor %}
-            </ul>
+            <div class="body">
+              <h5 class="mb-3 text-muted"><i class="fas fa-road fs-6 me-2"></i>Volta</h5>
+              <ul class="timeline timeline-sm ms-2">
+                {% for p in volta %}
+                <li class="event{% if p.fechado %} event-danger{% endif %}">
+                  {{p.local.nome}}{% if p.detalhe != '' %}<i class="fas fa-info-circle text-purple ms-2 help" title="{{p.detalhe}}"></i>{% endif %}
+                  <div class="event-controls">
+                    <span class="badge btn-primary" style="width: 35px;">{{p.seq|safe}}</span>
+                    {% if perms.trafego.change_linha %}
+                    <a class="badge btn-dark" href="{% url 'trafego_trajeto_delete' p.id|safe %}"><i class="fas fa-times"></i></a>
+                    {% endif %}
+                  </div>
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
           </div>
         </div>
         {% endif %}
         {% if unico %}
         <div class="col-lg-6">
           <div class="callout callout-primary">
-            <h5 class="mb-3 text-muted"><i class="fas fa-road fs-6 me-2"></i>Único</h5>
-            <ul class="timeline timeline-sm ms-2">
-              {% for p in unico %}
-              <li class="event{% if p.fechado %} event-danger{% endif %}">
-                {{p.local.nome}}{% if p.detalhe != '' %}<i class="fas fa-info-circle text-purple ms-2" title="{{p.detalhe}}"></i>{% endif %}
-                <div class="event-controls">
-                  <span class="badge btn-primary" style="width: 35px;">{{p.seq|safe}}</span>
-                  {% if perms.trafego.change_linha %}
-                  <a class="badge btn-dark" href="{% url 'trafego_trajeto_delete' p.id|safe %}"><i class="fas fa-times"></i></a>
-                  {% endif %}
-                </div>
-              </li>
-              {% endfor %}
-            </ul>
+            <div class="body">
+              <h5 class="mb-3 text-muted"><i class="fas fa-road fs-6 me-2"></i>Único</h5>
+              <ul class="timeline timeline-sm ms-2">
+                {% for p in unico %}
+                <li class="event{% if p.fechado %} event-danger{% endif %}">
+                  {{p.local.nome}}{% if p.detalhe != '' %}<i class="fas fa-info-circle text-purple ms-2" title="{{p.detalhe}}"></i>{% endif %}
+                  <div class="event-controls">
+                    <span class="badge btn-primary" style="width: 35px;">{{p.seq|safe}}</span>
+                    {% if perms.trafego.change_linha %}
+                    <a class="badge btn-dark" href="{% url 'trafego_trajeto_delete' p.id|safe %}"><i class="fas fa-times"></i></a>
+                    {% endif %}
+                  </div>
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
           </div>
         </div>
         {% endif %}
