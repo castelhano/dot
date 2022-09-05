@@ -51,7 +51,7 @@
               <div class="border-top border-bottom p-2 mt-2 bg-light">
                 <div class="row">
                   <div class="col text-truncate">{% if plano.bloqueado %}<i class="fas fa-lock text-muted me-1"></i>{% endif %}<a class="fw-bold text-decoration-none mb-0" href="{% url 'gestao_plano_id' plano.id %}">{{plano.titulo}}</a></div>
-                  {% if plano.responsavel == staff or staff.role == 'M' or staff.role == 'E' %}
+                  {% if plano.responsavel == staff and not plano.bloqueado or staff.role == 'M' or staff.role == 'E' %}
                   <div class="col-auto">
                     <a class="text-muted px-2" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu dropdown-menu-end fs-7">

@@ -32,23 +32,7 @@
     <h1>Handler 999</h1>
     <hr >
     
-    <div id="foo" class="row">
-      <div class="grid-item">Elm 1</div>
-      <div class="grid-item">Elm 2</div>
-      <div class="grid-item">Elm 3</div>
-      <div class="grid-item">Elm 4</div>
-      <div class="grid-item">Elm 5</div>
-      <div class="grid-item">Elm 6</div>
-    </div> 
-    <hr>
-    
-    <div id="fei" class="list-group col">
-      <div class="list-group-item">Elm 10</div>
-      <div class="list-group-item">Elm 12</div>
-      <div class="list-group-item">Elm 14</div>
-      <div class="list-group-item">Elm 16</div>
-      <div class="list-group-item">Elm 18</div>
-    </div> 
+    <div id="container"></div>
     
     
     
@@ -62,28 +46,17 @@
   
   <script src="{% static 'js/listener.js' %}"></script>
   <script src="{% static 'js/vendor/sortable.min.js' %}"></script>
-  <!-- <script src="{% static 'js/table.js' %}"></script> -->
+  <script src="{% static 'js/kanban.js' %}"></script>
   <script src="{% static 'js/dot.js' %}"></script>
   <script src="/static/js/vendor/bootstrap.bundle.min.js"></script>
   
   <script>
     
-    const foo = new Sortable(document.getElementById('foo'), {
-      ghostClass: 'bg-danger',
-      animation: 100,
-      group: 'shared'
-    })
-    
-    const fei = new Sortable(document.getElementById('fei'), {
-      multiDrag: true, // Enable multi-drag
-      selectedClass: 'bg-info', // The class applied to the selected items
-      ghostClass: 'bg-success',
-      group: 'shared'
-    })
-    
-    
-    
     var TAB_ON_ENTER = true;
+
+    const kanban = new Kanban({
+      container: document.getElementById('container')
+    });
   </script>
 </body>
 </html>

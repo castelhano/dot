@@ -117,7 +117,8 @@
   }
   loadResponsavelBox();
   
-  {% if staff.role != 'M' and staff.role != 'E' %}
+
+  {% if staff.role != 'M' and staff.role != 'E' and not 'plano_add' in request.get_full_path %}
   document.getElementById('id_inicio').readOnly = true;
   document.getElementById('id_termino').readOnly = true;
   document.getElementById('id_titulo').readOnly = true;
@@ -128,11 +129,14 @@
   document.getElementById('staff_disponivel').classList.add('readonly');
   document.getElementById('id_staff').classList.add('readonly');
   document.getElementById('id_responsavel').classList.add('readonly');
-  {% endif %}
   
-  {% if staff.role != 'M' and staff.role != 'E' and plano.responsavel.id != user.id %}
+  {% if plano.bloqueado %}
   document.getElementById('id_detalhe').readOnly = true;
   {% endif %}
+  
+  {% endif %}
+  
+  // {# if staff.role != 'M' and staff.role != 'E' and not 'plano_add' in request.get_full_path and not plano.bloqueado and plano.responsavel.id != user.id #}
   
   
   {% if staff.role == 'M' and plano.diretriz.ativo %}
