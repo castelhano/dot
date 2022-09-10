@@ -12,6 +12,7 @@ class Kanban{
             1:{text:'Teste', color: '#DC3545', bg: '#F8F9FA'},
             2:{text:'Uii', color: '#CCC', bg: '#F57900'},
         }; // armazena as tags cadastradas
+        this.modalDeleteTask = null; // aponta para instancia (bootstrap modal) do modal para deletar task
         // Configuracao
         // this.boards = options?.data || []; // Json com dados dos boards kanban
         this.container = options?.container || document.body; // parentNode do kanban, create(), caso nao informado append no body
@@ -36,8 +37,9 @@ class Kanban{
         this.create();
         this.buildControls();
         this.buildNav();
-        this.addBoard();
-        this.addBoard({title:'Mais uma'});
+        this.__buildModals();
+        // this.addBoard();
+        // this.addBoard({title:'Mais uma'});
     }
     create(){
         this.kanban = document.createElement('div'); // Row que engloba todo o kanban
@@ -192,31 +194,15 @@ class Kanban{
             };
             inputColor.click();
         };
-        let footRightCol = document.createElement('div');footRightCol.classList = 'col-auto p-1';
-        // Dropdown para configuracoes da task
-        let dropdown = document.createElement('div');dropdown.classList = 'dropdown dropup';
-        let dropdownLink = document.createElement('a');dropdownLink.classList = 'btn btn-sm btn-light text-muted fs-8';dropdownLink.setAttribute('data-bs-toggle','dropdown');dropdownLink.innerHTML = '<i class="fas fa-sliders-h"></i>';
-        let dropdownMenu = document.createElement('ul');dropdownMenu.classList = 'dropdown-menu dropdown-menu-end fs-7';
-        for(let tagId in this.tags){
-            let tag = document.createElement('div');tag.classList = 'm-1 border rounded text-center pointer';tag.style.color = this.tags[tagId].color;tag.style.backgroundColor = this.tags[tagId].bg;tag.innerHTML = this.tags[tagId].text;
-            dropdownMenu.appendChild(tag);
-        }
-        if(this.canDeleteTask){
-            let deleteBtn = document.createElement('li');deleteBtn.classList = 'dropdown-item dropdown-item-danger pointer';deleteBtn.innerHTML = '<i class="fas fa-trash fa-fw"></i> Excluir Task';
-            deleteBtn.onclick = () => {task.remove()};
-            if(Object.keys(this.tags).length > 0){
-                let divider = document.createElement('li');divider.innerHTML = '<hr class="dropdown-divider">';
-                dropdownMenu.appendChild(divider);
-            }
-            dropdownMenu.appendChild(deleteBtn);
-        }
-        dropdown.appendChild(dropdownLink);
-        dropdown.appendChild(dropdownMenu);
+        let footRightCol = document.createElement('div');footRightCol.classList = 'col-auto p-1 btn-group';
+        let tags = this.__tagsConfig(body); // Controle para adicionar tags
+        let config = this.__taskConfig(body, {'responsavel':'rafitas'}); // Controle de campos adicionais da task
         // ---------------------
         body.appendChild(title);
         body.appendChild(description);
         footLeftCol.appendChild(changeColorBtn);
-        footRightCol.appendChild(dropdown);
+        footRightCol.appendChild(tags);
+        footRightCol.appendChild(config);
         footer.appendChild(footLeftCol);
         footer.appendChild(footRightCol);
         task.appendChild(body);
@@ -246,5 +232,121 @@ class Kanban{
         el.after(input);
         el.remove();
         input.select();
+    }
+    __tagsConfig(){
+        let dropdown = document.createElement('div');dropdown.classList = 'dropdown dropup';
+        let dropdownLink = document.createElement('a');dropdownLink.classList = 'btn btn-sm btn-light text-muted fs-8';dropdownLink.setAttribute('data-bs-toggle','dropdown');dropdownLink.innerHTML = '<i class="fas fa-tags"></i>';
+        let dropdownMenu = document.createElement('ul');dropdownMenu.classList = 'dropdown-menu dropdown-menu-end px-3 fs-7 text-center';
+        for(let tagId in this.tags){
+            let tag = document.createElement('li');tag.classList = 'dropdown-item pointer border rounded mb-1';tag.style.color = this.tags[tagId].color;tag.style.backgroundColor = this.tags[tagId].bg;tag.innerHTML = this.tags[tagId].text;
+            dropdownMenu.appendChild(tag);
+        }
+        dropdown.appendChild(dropdownLink);
+        dropdown.appendChild(dropdownMenu);
+        return dropdown;
+    }
+    __taskConfig(taskBody, options){
+        let dropdown = document.createElement('div');dropdown.classList = 'dropdown dropup';
+        let dropdownLink = document.createElement('a');dropdownLink.classList = 'btn btn-sm btn-light text-muted fs-8';dropdownLink.setAttribute('data-bs-toggle','dropdown');dropdownLink.innerHTML = '<i class="fas fa-sliders-h"></i>';
+        let dropdownMenu = document.createElement('ul');dropdownMenu.classList = 'dropdown-menu dropdown-menu-end fs-7 text-center';
+        let btnGroup = document.createElement('div');btnGroup.classList = 'btn-group';
+        let userBtn = document.createElement('button');
+        userBtn.innerHTML = '<i class="fas fa-user"></i>';
+        userBtn.classList = 'btn btn-sm btn-outline-success';
+        userBtn.onclick = () => this.__customTagToogle(taskBody,'responsavel', 'Nome');
+        let prazoBtn = document.createElement('button');
+        prazoBtn.innerHTML = '<i class="fas fa-calendar"></i>';
+        prazoBtn.classList = 'btn btn-sm btn-outline-primary';
+        prazoBtn.onclick = () => this.__customTagToogle(taskBody,'prazo', today(5));
+        btnGroup.appendChild(userBtn);
+        btnGroup.appendChild(prazoBtn);
+        if(this.canDeleteTask){
+            let deleteBtn = document.createElement('button');
+            deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+            deleteBtn.classList = 'btn btn-sm btn-outline-danger';
+            deleteBtn.onclick = () => this.__taskDelete(taskBody);
+            btnGroup.appendChild(deleteBtn);
+        }
+        dropdownMenu.appendChild(btnGroup);
+        dropdown.appendChild(dropdownLink);
+        dropdown.appendChild(dropdownMenu);
+        return dropdown;
+    }
+    __taskAddLabel(tagBody, label, value){
+        let lbl = document.createElement('span');
+        lbl.classList = 'px-2 py-1 me-1 border rounded fs-8';
+        if(label == 'responsavel'){
+            lbl.classList.add('bg-success', 'bg-opacity-25', 'text-success');
+            lbl.setAttribute('data-task', 'responsavel');
+            lbl.innerHTML = `<i class="fas fa-user me-2"></i>${value}`;
+            lbl.ondblclick = () => {this.__tagChangeValue(lbl,'<i class="fas fa-user me-2"></i>',{'data-task':'responsavel'});};
+        }
+        else if(label == 'prazo'){
+            lbl.classList.add('bg-primary', 'bg-opacity-25', 'text-primary');
+            lbl.setAttribute('data-task', 'prazo');
+            lbl.innerHTML = `<i class="fas fa-calendar me-2"></i>${value}`;
+            lbl.ondblclick = () => {this.__tagChangeValue(lbl,'<i class="fas fa-calendar me-2"></i>',{'data-task':'prazo'});};
+        }
+        else{
+            lbl.classList.add('bg-danger', 'bg-opacity-25', 'text-danger');
+            lbl.innerHTML = `${value}`;
+        }
+        tagBody.appendChild(lbl);
+    }
+    __customTagToogle(taskBody, data_task, defaultValue){ // Adiciona / remove custom tag (deve informa data-task)
+        let resp = taskBody.querySelector(`[data-task="${data_task}"]`);
+        if(resp){resp.remove();return false;} // Se ja existe tag, remove e retorna falso
+        else{this.__taskAddLabel(taskBody, data_task, defaultValue);return true;}
+    };
+    __tagChangeValue(tag, prepend='', attr=null){
+        let classList = tag.classList;
+        let input = document.createElement('input');input.classList = 'form-control form-control-sm';input.value = tag.innerText;
+        input.onkeydown = (e) => {
+            if(e.key == 'Enter'){
+                if(input.value.trim() == ''){input.remove()} // Se tag for vazia, remove a tag
+                else{
+                    let newTag = document.createElement('span');newTag.classList = classList;newTag.innerHTML = `${prepend}${input.value}`;
+                    if(attr){for(let key in attr){newTag.setAttribute(key, attr[key]);}} // Seta atributos adicionais da label (se definido attr={key:value})
+                    newTag.ondblclick = () => {this.__tagChangeValue(newTag,prepend,attr);};
+                    input.after(newTag);
+                    input.remove();
+                }
+            }
+        };
+        tag.after(input);
+        tag.remove();
+        input.select();
+    }
+    __taskDelete(taskBody){
+        let deleteBtn = document.getElementById('kanbanModalDeleteTaskBtnDelete');
+        deleteBtn.onclick = () => {
+            this.__taskConfirmDelete(taskBody);
+            this.modalDeleteTask.hide();
+            deleteBtn.onclick = () => console.log('Kanban: Nothing to do..');
+        };
+        this.modalDeleteTask.show();
+    }
+    __taskConfirmDelete(taskBody){
+        taskBody.parentNode.remove();
+    }
+    __buildModals(){
+        let modalDeleteTask = document.createElement('div');modalDeleteTask.id = 'kanbanModalDeleteTask';modalDeleteTask.classList = 'modal fade';modalDeleteTask.tabIndex = '-1';
+        let modalDialog = document.createElement('div');modalDialog.classList = 'modal-dialog';
+        let modalContent = document.createElement('div');modalContent.classList = 'modal-content';
+        let modalHeader = document.createElement('div');modalHeader.classList = 'modal-content';
+        let modalBody = document.createElement('div');modalBody.classList = 'modal-body';
+        modalBody.innerHTML = '<p>Confirma a exlusão da Task? Este processo <b>não pode ser desfeito</b>.</p>';
+        let modalFooter = document.createElement('div');modalFooter.classList = 'text-end';
+        let btnCancel = document.createElement('button');btnCancel.classList = 'btn btn-sm btn-secondary';btnCancel.setAttribute('data-bs-dismiss','modal');btnCancel.innerHTML = 'Cancelar';
+        let btnDelete = document.createElement('button');btnDelete.id = 'kanbanModalDeleteTaskBtnDelete';btnDelete.classList = 'btn btn-sm btn-danger ms-1';btnDelete.innerHTML = 'Deletar';btnDelete.onclick = () => console.log('Kanban: Nothing to do..');
+        // ------------------
+        modalFooter.appendChild(btnCancel);
+        modalFooter.appendChild(btnDelete);
+        modalBody.appendChild(modalFooter);
+        modalContent.appendChild(modalBody);
+        modalDialog.appendChild(modalContent);
+        modalDeleteTask.appendChild(modalDialog);
+        document.body.appendChild(modalDeleteTask);
+        this.modalDeleteTask = new bootstrap.Modal('#kanbanModalDeleteTask', {keyboard: true})
     }
 }
