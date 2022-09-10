@@ -8,10 +8,7 @@ class Kanban{
         this.nav = null; // nav para filtro e navegacao das tasks
         this.restoreButton = null; // aponta para botao de restorBoard
         this.trash = []; // armazena bords deletados
-        this.tags = {
-            1:{text:'Teste', color: '#DC3545', bg: '#F8F9FA'},
-            2:{text:'Uii', color: '#CCC', bg: '#F57900'},
-        }; // armazena as tags cadastradas
+        this.tags = {}; // armazena as tags cadastradas
         this.modalDeleteTask = null; // aponta para instancia (bootstrap modal) do modal para deletar task
         // Configuracao
         // this.boards = options?.data || []; // Json com dados dos boards kanban
@@ -27,7 +24,7 @@ class Kanban{
         // Estilizacao
         this.kanbanClasslist = options?.kanbanClasslist || 'row'; // classlist para o container principal
         this.headerClasslist = options?.headerClasslist || 'col-12 bg-white p-2'; // classlist para o header container
-        this.navContainerClasslist = options?.navContainerClasslist || 'col-auto pt-3 bg-light rounded ps-2 pe-5'; // classlist para o nav container
+        this.navContainerClasslist = options?.navContainerClasslist || 'col-auto bg-light text-muted rounded pt-3 ps-2 fs-8'; // classlist para o nav container
         this.navClasslist = options?.navClasslist || 'text-muted'; // classlist para o nav (ul)
         this.bodyContainerClasslist = options?.bodyContainerClasslist || 'col p-3'; // classlist para o board container
         this.bodyClasslist = options?.bodyClasslist || 'row'; // classlist para o board
@@ -46,9 +43,8 @@ class Kanban{
         this.kanban.classList = this.kanbanClasslist;
         this.header = document.createElement('div'); // Col, container para os headers
         this.header.classList = this.headerClasslist;
-        let nav_container = document.createElement('div'); // Col, container para o menu de navegacao das tasks
-        nav_container.classList = this.navContainerClasslist;
-        nav_container.innerHTML = 'NAV'; // REMOVER AQUI
+        this.nav = document.createElement('div'); // Col, container para o menu de navegacao das tasks
+        this.nav.classList = this.navContainerClasslist;
         let bodyCol = document.createElement('div'); // Col, container para o this.body
         bodyCol.classList = this.bodyContainerClasslist;
         this.body = document.createElement('div'); // Row que agrupa os boards 
@@ -57,7 +53,7 @@ class Kanban{
         // --------------------------------
         bodyCol.appendChild(this.body);
         this.kanban.appendChild(this.header);
-        this.kanban.appendChild(nav_container);
+        this.kanban.appendChild(this.nav);
         this.kanban.appendChild(bodyCol);
         this.container.appendChild(this.kanban);
     }
@@ -92,7 +88,50 @@ class Kanban{
         this.header.appendChild(row);
 
     }
-    buildNav(){}
+    buildNav(){
+        let menu = document.createElement('ul');menu.classList = 'list-unstyled';
+        this.__navReorderTags(); // Insere as tags no nav de e reordena pelo nome
+        let addTag = document.createElement('li');
+        addTag.setAttribute('data-type', 'navNewTag');
+        addTag.classList = 'pointer mt-2';
+        addTag.innerHTML = `<i class="fas fa-plus fa-fw"></i>Nova tag`;
+        addTag.onclick = () => {
+            let inputGroup = document.createElement('div');inputGroup.classList = 'input-group mt-1';
+            let bgColorBtn = document.createElement('input');bgColorBtn.type = 'color';bgColorBtn.classList = 'form-control form-control-sm';bgColorBtn.style.maxWidth = '50px';bgColorBtn.title = 'Cor do fundo';
+            let colorBtn = document.createElement('input');colorBtn.type = 'color';colorBtn.classList = 'form-control form-control-sm';colorBtn.style.maxWidth = '50px';colorBtn.title = 'Cor do texto';
+            let input = document.createElement('input');input.type = 'text';input.classList = 'form-control form-control-sm fs-8';
+            inputGroup.appendChild(bgColorBtn);
+            inputGroup.appendChild(colorBtn);
+            inputGroup.appendChild(input);
+            input.onkeydown = (e) => {
+                if(e.key == 'Enter'){
+                    if(input.value.trim() != ''){
+                        let newTag = {text: input.value,bg: bgColorBtn.value,color: colorBtn.value};
+                        let position = Object.keys(this.tags).length;
+                        this.tags[position] = newTag;
+                        this.__navReorderTags();
+                    }
+                    inputGroup.remove();
+                }
+            };
+            addTag.after(inputGroup);
+            input.focus();
+        };
+        menu.appendChild(addTag);
+        // 1:{text:'Teste', color: '#DC3545', bg: 'blue'},
+        this.nav.appendChild(menu);
+    }
+    __navReorderTags(){
+        this.nav.querySelectorAll('[data-type="navTag"]').forEach((el)=> el.remove()); // Remove todas as tags atuais
+        let newTagBtn = this.nav.querySelector('[data-type="navNewTag"]');
+        for(let tag in this.tags){
+            let elTag = document.createElement('li');
+            elTag.classList = 'pointer';
+            elTag.setAttribute('data-type',"navTag");
+            elTag.innerHTML = `<i class="fas fa-tag fa-fw" style="color: ${this.tags[tag].bg}"></i>${this.tags[tag].text}`;
+            newTagBtn.before(elTag);
+        }
+    }
     addBoard(options){
         let board = document.createElement('div');
         board.classList = this.boardClasslist;
@@ -253,11 +292,11 @@ class Kanban{
         let userBtn = document.createElement('button');
         userBtn.innerHTML = '<i class="fas fa-user"></i>';
         userBtn.classList = 'btn btn-sm btn-outline-success';
-        userBtn.onclick = () => this.__customTagToogle(taskBody,'responsavel', 'Nome');
+        userBtn.onclick = () => this.__defaultTagToogle(taskBody,'responsavel', 'Nome');
         let prazoBtn = document.createElement('button');
         prazoBtn.innerHTML = '<i class="fas fa-calendar"></i>';
         prazoBtn.classList = 'btn btn-sm btn-outline-primary';
-        prazoBtn.onclick = () => this.__customTagToogle(taskBody,'prazo', today(5));
+        prazoBtn.onclick = () => this.__defaultTagToogle(taskBody,'prazo', today(5));
         btnGroup.appendChild(userBtn);
         btnGroup.appendChild(prazoBtn);
         if(this.canDeleteTask){
@@ -293,7 +332,7 @@ class Kanban{
         }
         tagBody.appendChild(lbl);
     }
-    __customTagToogle(taskBody, data_task, defaultValue){ // Adiciona / remove custom tag (deve informa data-task)
+    __defaultTagToogle(taskBody, data_task, defaultValue){ // Adiciona / remove custom tag (deve informa data-task)
         let resp = taskBody.querySelector(`[data-task="${data_task}"]`);
         if(resp){resp.remove();return false;} // Se ja existe tag, remove e retorna falso
         else{this.__taskAddLabel(taskBody, data_task, defaultValue);return true;}
