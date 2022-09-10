@@ -10,20 +10,12 @@
   <link rel="stylesheet" href="{% static 'css/vendor/all.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/fontawesome.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.min.css' %}" type="text/css">
-  
+
   <style>
-    .grid-item{
-      width: 100px;
-      height: 100px;
-      display: inline-block;
-      background-color: #fff;
-      border: solid 1px rgb(0,0,0,0.2);
-      padding: 10px;
-      margin: 12px;
+    .dragging{
+      border: 5px solid #666;
     }
-    
   </style>
-  
 </head>
 <body style="margin: 10px;">
   <a id="home" href="{% url 'index' %}"></a>
@@ -33,38 +25,6 @@
     <hr >
 
     <div id="container"></div>
-
-    <div class="row mt-5">
-      <div class="col-2">
-        <div class="callout callout-success mb-2">
-          <div class="body">
-            <h6 class="text-muted">Nova task</h6>
-            <p>Descrição da nova task</p>
-          </div>
-          <div class="footer p-1 fs-8">
-            <div class="row">
-              <div class="col"><button class="btn btn-sm btn-light text-success fs-8"><i class="fas fa-circle me-1"></i> #F1152F5</button></div>
-              <div class="col-auto pt-1"><span class="text-muted pe-2"><span class="text-purple">Rafael</span></span></div>
-            </div>
-          </div>
-        </div>
-        <div class="callout callout-purple">
-          <div class="body">
-            <h6 class="text-muted">Nova task</h6>
-            <p>Descrição da nova task</p>
-            <small class="px-2 py-1 text-success bg-success bg-opacity-10 border border-success border-opacity-10 rounded">Rafael</small>
-            <small class="px-2 py-1 text-primary bg-primary bg-opacity-10 border border-primary border-opacity-10 rounded">Crítico</small>
-          </div>
-          <div class="footer p-1 fs-8">
-            <div class="row">
-              <div class="col"><button class="btn btn-sm btn-light text-purple fs-8"><i class="fas fa-circle me-1"></i> #F1152F5</button></div>
-              <div class="col-auto pt-1"><span class="text-muted pe-2">#22</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
     
     
     
@@ -86,7 +46,7 @@
     var TAB_ON_ENTER = true;
 
     let jsonobj = [
-      {"kanban": "teste", "empresa":"Pantanal", "empresa_id":"1", "boards":[
+      {"kanban": "teste", "empresa":"Pantanal", "empresa_id":"1", "tags":[{text:'foo',color:'#CCC',bg:'#F1F1F1'}], "boards":[
         {"titulo":"Em aberto", "tasks":[
           {"titulo":"Nova task","detalhe":"Detalhes da task..", "cor":"#F5F5F5", "responsavel": "Rafael"}
         ]},
