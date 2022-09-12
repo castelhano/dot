@@ -19,12 +19,14 @@ class Kanban{
         this.readOnly = options?.readOnly != undefined ? options.readOnly : false; // Boolean, se setado para true desativa todas as opcoes de edicao do kanban
         this.canAddBoard = options?.canAddBoard != undefined ? options.canAddBoard : true; // Boolean, exibe/oculta controle para novo board
         this.canAddTask = options?.canAddTask != undefined ? options.canAddTask : true; // Boolean, exibe/oculta controle para nova task no grupo
+        this.canAddTag = options?.canAddTag != undefined ? options.canAddTag : true; // Boolean, exibe/oculta controle para nova tag
         this.canDeleteBoard = options?.canDeleteBoard != undefined ? options.canDeleteBoard : true; // Boolean, exibe/oculta controle para deletar board
         this.canDeleteTask = options?.canDeleteTask != undefined ? options.canDeleteTask : false; // Boolean, exibe/oculta controle para deletar task
+        this.canDeleteTag = options?.canDeleteTag != undefined ? options.canDeleteTag : true; // Boolean, exibe/oculta controle para deletar tag
         // Estilizacao
         this.kanbanClasslist = options?.kanbanClasslist || 'row'; // classlist para o container principal
         this.headerClasslist = options?.headerClasslist || 'col-12 bg-white p-2'; // classlist para o header container
-        this.navContainerClasslist = options?.navContainerClasslist || 'col-auto bg-light text-muted rounded pt-3 ps-2 fs-8'; // classlist para o nav container
+        this.navContainerClasslist = options?.navContainerClasslist || 'col-auto bg-light text-muted rounded pt-3 ps-2 fs-7'; // classlist para o nav container
         this.navClasslist = options?.navClasslist || 'text-muted'; // classlist para o nav (ul)
         this.bodyContainerClasslist = options?.bodyContainerClasslist || 'col p-3'; // classlist para o board container
         this.bodyClasslist = options?.bodyClasslist || 'row'; // classlist para o board
@@ -89,46 +91,135 @@ class Kanban{
 
     }
     buildNav(){
-        let menu = document.createElement('ul');menu.classList = 'list-unstyled';
+        let menu = document.createElement('ul');menu.classList = 'list-unstyled';menu.style.minWidth = '204px';
         this.__navReorderTags(); // Insere as tags no nav de e reordena pelo nome
-        let addTag = document.createElement('li');
-        addTag.setAttribute('data-type', 'navNewTag');
-        addTag.classList = 'pointer mt-2';
-        addTag.innerHTML = `<i class="fas fa-plus fa-fw"></i>Nova tag`;
-        addTag.onclick = () => {
-            let inputGroup = document.createElement('div');inputGroup.classList = 'input-group mt-1';
-            let bgColorBtn = document.createElement('input');bgColorBtn.type = 'color';bgColorBtn.classList = 'form-control form-control-sm';bgColorBtn.style.maxWidth = '50px';bgColorBtn.title = 'Cor do fundo';
-            let colorBtn = document.createElement('input');colorBtn.type = 'color';colorBtn.classList = 'form-control form-control-sm';colorBtn.style.maxWidth = '50px';colorBtn.title = 'Cor do texto';
-            let input = document.createElement('input');input.type = 'text';input.classList = 'form-control form-control-sm fs-8';
-            inputGroup.appendChild(bgColorBtn);
-            inputGroup.appendChild(colorBtn);
-            inputGroup.appendChild(input);
-            input.onkeydown = (e) => {
-                if(e.key == 'Enter'){
-                    if(input.value.trim() != ''){
-                        let newTag = {text: input.value,bg: bgColorBtn.value,color: colorBtn.value};
+        if(this.canAddTag){
+            let addTag = document.createElement('li');
+            addTag.setAttribute('data-type', 'navNewTag');
+            addTag.classList = 'pointer mt-2';
+            addTag.innerHTML = `<i class="fas fa-plus fa-fw"></i>Nova tag`;
+            addTag.onclick = () => {this.__navTagForm()};
+            menu.appendChild(addTag);
+        }
+        if(this.canDeleteTag){
+            let deleteTag = document.createElement('li');
+            deleteTag.setAttribute('data-type', 'navDelTag');
+            deleteTag.classList = 'pointer mt-1 text-danger';
+            deleteTag.innerHTML = `<i class="fas fa-trash fa-fw"></i>Excluir Tag`;
+            deleteTag.onclick = () => {
+                this.nav.querySelectorAll('[data-type="kanbanNavTagFormControl"], [data-type="kanbanNavTagFormHelp"]').forEach((el) => el.remove()); // Apaga form 'antigo' caso tentativa de gerar form duplicado
+                if(Object.keys(this.tags).length == 0){ // Se nao existir tags cadastradas, exibe alerta e nao da sequencia no codigo
+                    let msgAlert = document.createElement('div');msgAlert.classList = 'mt-2';msgAlert.setAttribute('data-type', 'kanbanNavTagFormHelp');
+                    msgAlert.innerHTML = '<i class="fas fa-info text-primary me-2"></i>Nenhuma tag cadastrada';
+                    deleteTag.after(msgAlert);
+                    return false;
+                }
+                let inputGroup = document.createElement('div');inputGroup.classList = 'input-group mt-1';inputGroup.setAttribute('data-type', 'kanbanNavTagFormControl');
+                let select = document.createElement('select');select.classList = 'form-select form-select-sm';
+                for(let tag in this.tags){
+                    select.innerHTML += `<option value="${tag}">${this.tags[tag].text}</option>`;
+                }
+                let deleteBtn = document.createElement('button');deleteBtn.classList = 'btn btn-sm btn-danger';deleteBtn.style.width = '35px';deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                let cancelBtn = document.createElement('button');cancelBtn.classList = 'btn btn-sm btn-secondary';cancelBtn.style.width = '32px';cancelBtn.innerHTML = '<i class="fas fa-undo"></i>';
+                let msgAlert = document.createElement('span');msgAlert.setAttribute('data-type', 'kanbanNavTagFormHelp');
+                msgAlert.innerHTML = '<b class="text-danger">Atenção</b> não pode ser desfeito';
+                cancelBtn.onclick = () => {inputGroup.remove();msgAlert.remove()};
+                inputGroup.appendChild(select);
+                inputGroup.appendChild(deleteBtn);
+                inputGroup.appendChild(cancelBtn);
+                deleteTag.after(inputGroup);
+                inputGroup.after(msgAlert);
+            };
+            menu.appendChild(deleteTag);
+        }
+        this.nav.appendChild(menu);
+    }
+    __navTagForm(tag=null){ // Monta form para adicionar ou editar tag
+        this.nav.querySelectorAll('[data-type="kanbanNavTagFormControl"], [data-type="kanbanNavTagFormHelp"]').forEach((el) => el.remove()); // Apaga form 'antigo' caso tentativa de gerar form duplicado
+        let inputGroup = document.createElement('div');inputGroup.classList = 'input-group mt-1';inputGroup.setAttribute('data-type', 'kanbanNavTagFormControl');
+        let bgColorBtn = document.createElement('input');bgColorBtn.type = 'color';bgColorBtn.classList = 'form-control form-control-sm';bgColorBtn.style.maxWidth = '50px';bgColorBtn.title = 'Cor do fundo';
+        let colorBtn = document.createElement('input');colorBtn.type = 'color';colorBtn.classList = 'form-control form-control-sm';colorBtn.style.maxWidth = '50px';colorBtn.title = 'Cor do texto';
+        let input = document.createElement('input');input.type = 'text';input.classList = 'form-control form-control-sm fs-8';
+        let checkContainer = document.createElement('div');checkContainer.classList = 'form-check mt-2';checkContainer.setAttribute('data-type', 'kanbanNavTagFormControl');
+        let checkbox = document.createElement('input');checkbox.type = 'checkbox'; checkbox.classList = 'form-check-input';checkbox.id = 'kanbanTagGlobalCheck';
+        let checklabel = document.createElement('label');checklabel.classList = 'form-check-label';checklabel.setAttribute('for', 'kanbanTagGlobalCheck');checklabel.innerHTML = 'Tag Global';
+        if(tag){
+            input.value = tag.text;
+            bgColorBtn.value = tag.bg;
+            colorBtn.value = tag.color;
+            checkbox.checked = tag.global == 'true' ? true : false;
+        }
+        inputGroup.appendChild(bgColorBtn);
+        inputGroup.appendChild(colorBtn);
+        inputGroup.appendChild(input);
+        input.onkeydown = (e) => { // Implementa salvamento da tag (edicao de tag existente ou criacao de nova)
+            if(e.key == 'Enter'){
+                if(tag){ // Tag informada, tenta editar dados da tag
+                    if(input.value.trim() != ''){ // Caso text nao seja vazio
+                        if(tag.text != input.value){ // Foi alterado nome da tag, precisa validar se nao sera duplicado
+                            if(Object.values(this.tags).some(el => el.text.trim().toLowerCase() == input.value.trim().toLowerCase())){ // Valida se entrada nao eh duplicada
+                                this.nav.querySelectorAll('[data-type="kanbanNavTagFormHelp"]').forEach((el) => el.remove()); // Se ja existir span com mensagem, apaga o elemento
+                                let msgAlert = document.createElement('div');msgAlert.classList = 'text-danger mt-2';msgAlert.setAttribute('data-type', 'kanbanNavTagFormHelp');msgAlert.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i> TAG Duplicada';
+                                inputGroup.after(msgAlert);
+                                input.value = tag.text; // Volta nome da tag para o original
+                                return false;
+                            }
+                            tag.text = input.value.trim();
+                        }
+                        tag.bg = bgColorBtn.value;
+                        tag.color = colorBtn.value;
+                        if(checkbox.checked){tag.global = 'true'}
+                        else if(tag.hasOwnProperty('global')){delete tag['global']}
+                        document.querySelectorAll() // FOOOOOOOOOOOOOO
+                    }
+                    else{
+                        
+                    }
+                }
+                else{
+                    if(input.value.trim() != ''){ // So insere nova tag se definido text
+                        if(Object.values(this.tags).some(el => el.text.trim().toLowerCase() == input.value.trim().toLowerCase())){ // Valida se entrada nao eh duplicada
+                            this.nav.querySelectorAll('[data-type="kanbanNavTagFormHelp"]').forEach((el) => el.remove()); // Se ja existir span com mensagem, apaga o elemento
+                            let msgAlert = document.createElement('div');msgAlert.classList = 'text-danger mt-2';msgAlert.setAttribute('data-type', 'kanbanNavTagFormHelp');msgAlert.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i> TAG Duplicada';
+                            inputGroup.after(msgAlert);
+                            return false;
+                        }
+                        let newTag = {text: input.value.trim(),bg: bgColorBtn.value,color: colorBtn.value};
+                        if(checkbox.checked){newTag.global = 'true'};
                         let position = Object.keys(this.tags).length;
                         this.tags[position] = newTag;
-                        this.__navReorderTags();
                     }
-                    inputGroup.remove();
                 }
-            };
-            addTag.after(inputGroup);
-            input.focus();
+                this.__navReorderTags(); // Cria a tag (elemento HTML) e reordena pelo nome
+                this.nav.querySelectorAll('[data-type="kanbanNavTagFormControl"],[data-type="kanbanNavTagFormHelp"]').forEach((el) => el.remove());
+            }
         };
-        menu.appendChild(addTag);
-        // 1:{text:'Teste', color: '#DC3545', bg: 'blue'},
-        this.nav.appendChild(menu);
+        checkContainer.appendChild(checkbox);
+        checkContainer.appendChild(checklabel);
+        let newTagBtn = this.nav.querySelector('[data-type="navNewTag"]'); // Aponta para link de nova tag(ancora para inserir tags antes dele)
+        newTagBtn.after(inputGroup);
+        inputGroup.after(checkContainer);
+        input.focus();
     }
     __navReorderTags(){
         this.nav.querySelectorAll('[data-type="navTag"]').forEach((el)=> el.remove()); // Remove todas as tags atuais
-        let newTagBtn = this.nav.querySelector('[data-type="navNewTag"]');
-        for(let tag in this.tags){
+        let newTagBtn = this.nav.querySelector('[data-type="navNewTag"]'); // Aponta para link de nova tag(ancora para inserir tags antes dele)
+        let tagValues = Object.values(this.tags); // Monta array com as tags
+        let orderedTags = tagValues.sort(function(a,b){return a.text > b.text ? 1 : -1}); // Reordena baseado no text da tag
+        let size = orderedTags.length;
+        this.tags = {}; // Limpa as tags
+        for(let i = 0; i < size; i++){ // Monta dicionario reordenado e insere no nav link para as tags
+            this.tags[i] = orderedTags[i]; // Insere no dicionario de tags, reordenando
             let elTag = document.createElement('li');
-            elTag.classList = 'pointer';
             elTag.setAttribute('data-type',"navTag");
-            elTag.innerHTML = `<i class="fas fa-tag fa-fw" style="color: ${this.tags[tag].bg}"></i>${this.tags[tag].text}`;
+            let tagLabel = document.createElement('i');tagLabel.classList = `fas fa-${this.tags[i].global == 'true' ? 'tags' : 'tag'} fa-fw pointer`; tagLabel.style.color = orderedTags[i].bg;
+            let tagName = document.createElement('span');tagName.classList = 'user-select-none ms-1 pointer';tagName.innerHTML = orderedTags[i].text;
+            tagLabel.ondblclick = () => {
+                this.__navTagForm(this.tags[i]);
+            }
+            tagName.onclick = () => {console.log('FILTRANDO');}
+            elTag.appendChild(tagLabel);
+            elTag.appendChild(tagName);
             newTagBtn.before(elTag);
         }
     }
@@ -272,14 +363,26 @@ class Kanban{
         el.remove();
         input.select();
     }
-    __tagsConfig(){
+    __tagsConfig(taskBody){
         let dropdown = document.createElement('div');dropdown.classList = 'dropdown dropup';
         let dropdownLink = document.createElement('a');dropdownLink.classList = 'btn btn-sm btn-light text-muted fs-8';dropdownLink.setAttribute('data-bs-toggle','dropdown');dropdownLink.innerHTML = '<i class="fas fa-tags"></i>';
+        dropdownLink.onclick = (e) => { // Carrega tags no menu do dropdown
+            if(Object.keys(this.tags).length == 0){dropdownMenu.classList.remove('show'); return false;} // Se nao existe tag cadastrada, nao exibe menu do dropdown
+            dropdownMenu.innerHTML = ''; // Limpa tags (caso carregado anteriormente)
+            for(let tagId in this.tags){
+                let tag = document.createElement('li');
+                tag.classList = 'dropdown-item pointer border rounded mb-1';
+                tag.style.color = this.tags[tagId].color;
+                tag.style.backgroundColor = this.tags[tagId].bg;
+                tag.innerHTML = this.tags[tagId].text;
+                tag.onclick = () => {
+                    // AJUSTAR AQUI, ALTERAR PARA __taskTagToogle()...
+                    this.__taskAddLabel(taskBody, 'custom', this.tags[tagId].text,this.tags[tagId].bg, this.tags[tagId].color)
+                };
+                dropdownMenu.appendChild(tag);
+            }
+        };
         let dropdownMenu = document.createElement('ul');dropdownMenu.classList = 'dropdown-menu dropdown-menu-end px-3 fs-7 text-center';
-        for(let tagId in this.tags){
-            let tag = document.createElement('li');tag.classList = 'dropdown-item pointer border rounded mb-1';tag.style.color = this.tags[tagId].color;tag.style.backgroundColor = this.tags[tagId].bg;tag.innerHTML = this.tags[tagId].text;
-            dropdownMenu.appendChild(tag);
-        }
         dropdown.appendChild(dropdownLink);
         dropdown.appendChild(dropdownMenu);
         return dropdown;
@@ -292,11 +395,11 @@ class Kanban{
         let userBtn = document.createElement('button');
         userBtn.innerHTML = '<i class="fas fa-user"></i>';
         userBtn.classList = 'btn btn-sm btn-outline-success';
-        userBtn.onclick = () => this.__defaultTagToogle(taskBody,'responsavel', 'Nome');
+        userBtn.onclick = () => this.__taskTagToogle(taskBody,'responsavel', 'Nome');
         let prazoBtn = document.createElement('button');
         prazoBtn.innerHTML = '<i class="fas fa-calendar"></i>';
         prazoBtn.classList = 'btn btn-sm btn-outline-primary';
-        prazoBtn.onclick = () => this.__defaultTagToogle(taskBody,'prazo', today(5));
+        prazoBtn.onclick = () => this.__taskTagToogle(taskBody,'prazo', today(5));
         btnGroup.appendChild(userBtn);
         btnGroup.appendChild(prazoBtn);
         if(this.canDeleteTask){
@@ -311,31 +414,33 @@ class Kanban{
         dropdown.appendChild(dropdownMenu);
         return dropdown;
     }
-    __taskAddLabel(tagBody, label, value){
+    __taskAddLabel(tagBody, label, value, bg, color){
         let lbl = document.createElement('span');
         lbl.classList = 'px-2 py-1 me-1 border rounded fs-8';
         if(label == 'responsavel'){
             lbl.classList.add('bg-success', 'bg-opacity-25', 'text-success');
-            lbl.setAttribute('data-task', 'responsavel');
+            lbl.setAttribute('data-tag', 'responsavel');
             lbl.innerHTML = `<i class="fas fa-user me-2"></i>${value}`;
-            lbl.ondblclick = () => {this.__tagChangeValue(lbl,'<i class="fas fa-user me-2"></i>',{'data-task':'responsavel'});};
+            lbl.ondblclick = () => {this.__tagChangeValue(lbl,'<i class="fas fa-user me-2"></i>',{'data-tag':'responsavel'});};
         }
         else if(label == 'prazo'){
             lbl.classList.add('bg-primary', 'bg-opacity-25', 'text-primary');
-            lbl.setAttribute('data-task', 'prazo');
+            lbl.setAttribute('data-tag', 'prazo');
             lbl.innerHTML = `<i class="fas fa-calendar me-2"></i>${value}`;
-            lbl.ondblclick = () => {this.__tagChangeValue(lbl,'<i class="fas fa-calendar me-2"></i>',{'data-task':'prazo'});};
+            lbl.ondblclick = () => {this.__tagChangeValue(lbl,'<i class="fas fa-calendar me-2"></i>',{'data-tag':'prazo'});};
         }
         else{
-            lbl.classList.add('bg-danger', 'bg-opacity-25', 'text-danger');
-            lbl.innerHTML = `${value}`;
+            lbl.innerHTML = value;
+            lbl.setAttribute('data-tag', value);
+            lbl.style.backgroundColor = bg;
+            lbl.style.color = color;
         }
         tagBody.appendChild(lbl);
     }
-    __defaultTagToogle(taskBody, data_task, defaultValue){ // Adiciona / remove custom tag (deve informa data-task)
-        let resp = taskBody.querySelector(`[data-task="${data_task}"]`);
+    __taskTagToogle(taskBody, data_tag, value){ // Adiciona / remove tag (deve informa data-tag)
+        let resp = taskBody.querySelector(`[data-tag="${data_tag}"]`);
         if(resp){resp.remove();return false;} // Se ja existe tag, remove e retorna falso
-        else{this.__taskAddLabel(taskBody, data_task, defaultValue);return true;}
+        else{this.__taskAddLabel(taskBody, data_tag, value);return true;}
     };
     __tagChangeValue(tag, prepend='', attr=null){
         let classList = tag.classList;
@@ -356,6 +461,7 @@ class Kanban{
         tag.remove();
         input.select();
     }
+    __tagDelete(){}
     __taskDelete(taskBody){
         let deleteBtn = document.getElementById('kanbanModalDeleteTaskBtnDelete');
         deleteBtn.onclick = () => {

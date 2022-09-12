@@ -25,9 +25,7 @@
     <hr >
 
     <div id="container"></div>
-    
-    
-    
+
   </div>
   
   <div id="dot_alert" class="alert alert-dismissible fade mb-1" role="alert">
@@ -45,6 +43,11 @@
     
     var TAB_ON_ENTER = true;
 
+    function foo(el){
+      el.parentNode.querySelector('.dropdown-menu').classList.remove('show');
+
+    }
+
     let jsonobj = [
       {"kanban": "teste", "empresa":"Pantanal", "empresa_id":"1", "tags":[{text:'foo',color:'#CCC',bg:'#F1F1F1'}], "boards":[
         {"titulo":"Em aberto", "tasks":[
@@ -59,7 +62,7 @@
     const kanban = new Kanban({
       data: jsonobj,
       container: document.getElementById('container'),
-      canDeleteTask: true
+      canDeleteTask: true,
     });
   </script>
 </body>
