@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="{% static 'css/vendor/all.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/fontawesome.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.min.css' %}" type="text/css">
-
+  
   <style>
     .dragging{
       border: 5px solid #666;
@@ -23,9 +23,24 @@
   <div class="container-fluid">
     <h1>Handler 999</h1>
     <hr >
-
+    
+    <div class="row">
+      <div class="col-2 mb-3">
+        <div class="callout callout-primary">
+          <div class="body">
+            <h6>Titulo</h6>
+            <p>Descricao da bagaça</p>
+          </div>
+          <div class="footer p-1">Footer</div>
+          <div class="progress" style="height: 3px;">
+            <div class="progress-bar bg-success bg-opacity-50" style="width: 80%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
     <div id="container"></div>
-
+    
   </div>
   
   <div id="dot_alert" class="alert alert-dismissible fade mb-1" role="alert">
@@ -42,23 +57,23 @@
   <script>
     
     var TAB_ON_ENTER = true;
-
+    
     function foo(el){
       el.parentNode.querySelector('.dropdown-menu').classList.remove('show');
-
+      
     }
-
+    
     let jsonobj = [
-      {"kanban": "teste", "empresa":"Pantanal", "empresa_id":"1", "tags":[{text:'foo',color:'#CCC',bg:'#F1F1F1'}], "boards":[
-        {"titulo":"Em aberto", "tasks":[
-          {"titulo":"Nova task","detalhe":"Detalhes da task..", "cor":"#F5F5F5", "responsavel": "Rafael"}
-        ]},
-        {"titulo":"Avaliação", "tasks":[
-          {"titulo":"Task Concluida","detalhe":"Detalhes da outra task", "cor":"#F32122", "responsavel": "Jonas"}
-        ]},
-      ]}
+    {"kanban": "teste", "empresa":"Pantanal", "empresa_id":"1", "tags":[{text:'foo',color:'#CCC',bg:'#F1F1F1'}], "boards":[
+    {"titulo":"Em aberto", "tasks":[
+    {"titulo":"Nova task","detalhe":"Detalhes da task..", "cor":"#F5F5F5", "responsavel": "Rafael"}
+    ]},
+    {"titulo":"Avaliação", "tasks":[
+    {"titulo":"Task Concluida","detalhe":"Detalhes da outra task", "cor":"#F32122", "responsavel": "Jonas"}
+    ]},
+    ]}
     ];
-
+    
     const kanban = new Kanban({
       data: jsonobj,
       container: document.getElementById('container'),

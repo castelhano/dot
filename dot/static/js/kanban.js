@@ -1,3 +1,13 @@
+/* TODO
+* Implementar modal para alterar task
+* Filtrar tags ao clicar na tag
+* Adicionar progress a task (e ao grupo?)
+* Ajusta prazo para inicio e termino
+* Implementar metodo filter
+* Exportar json com dados
+* Implementar metodo save
+* Implementar metodo no app gestao (empresa, kanban, ..., file !!verificar como fazer)
+*/
 class Kanban{
     constructor(options){
         // Variaveis internas
@@ -9,9 +19,10 @@ class Kanban{
         this.restoreButton = null; // aponta para botao de restorBoard
         this.trash = []; // armazena bords deletados
         this.tags = {}; // armazena as tags cadastradas
+        this.modalTask = null; // aponta para modal com dados detalhados da task
         this.modalDeleteTask = null; // aponta para instancia (bootstrap modal) do modal para deletar task
         // Configuracao
-        // this.boards = options?.data || []; // Json com dados dos boards kanban
+        // this.data = options?.data || []; // Json com dados dos boards kanban
         this.container = options?.container || document.body; // parentNode do kanban, create(), caso nao informado append no body
         this.sortableClasslist = options?.sortableClasslist || 'pb-5'; // classlist para o div drag and drop
         this.dndBoardsOptions = options?.dndBoardsOptions || {group:'boards',animation:100, dragClass: 'dragging'}; // options da instancia Sortable JS dos boards
@@ -26,11 +37,11 @@ class Kanban{
         // Estilizacao
         this.kanbanClasslist = options?.kanbanClasslist || 'row'; // classlist para o container principal
         this.headerClasslist = options?.headerClasslist || 'col-12 bg-white p-2'; // classlist para o header container
-        this.navContainerClasslist = options?.navContainerClasslist || 'col-auto bg-light text-muted rounded pt-3 ps-2 fs-7'; // classlist para o nav container
+        this.navContainerClasslist = options?.navContainerClasslist || 'col-auto bg-light text-muted rounded pt-3 ps-2 fs-7 position-relative'; // classlist para o nav container
         this.navClasslist = options?.navClasslist || 'text-muted'; // classlist para o nav (ul)
         this.bodyContainerClasslist = options?.bodyContainerClasslist || 'col p-3'; // classlist para o board container
         this.bodyClasslist = options?.bodyClasslist || 'row'; // classlist para o board
-        this.boardClasslist = options?.boardClasslist || 'col-2'; // classlist para o board
+        this.boardClasslist = options?.boardClasslist || 'col-3'; // classlist para o board
         this.taskClasslist = options?.taskClasslist || ''; // classlist base para as tasks
 
         this.create();
@@ -91,6 +102,13 @@ class Kanban{
 
     }
     buildNav(){
+        let cleanFilter = document.createElement('span');
+        cleanFilter.setAttribute('data-type', 'navCleanFilter');
+        cleanFilter.classList = 'pointer text-primary position-absolute fs-8';
+        cleanFilter.style.top = '3px';
+        cleanFilter.style.right = '10px';
+        cleanFilter.innerHTML = `Limpar`;
+        this.nav.appendChild(cleanFilter);
         let menu = document.createElement('ul');menu.classList = 'list-unstyled';menu.style.minWidth = '204px';
         this.__navReorderTags(); // Insere as tags no nav de e reordena pelo nome
         if(this.canAddTag){
@@ -155,6 +173,7 @@ class Kanban{
         input.onkeydown = (e) => { // Implementa salvamento da tag (edicao de tag existente ou criacao de nova)
             if(e.key == 'Enter'){
                 if(tag){ // Tag informada, tenta editar dados da tag
+                    let currentTagText = tag.text; // Armazena a descricao da tag antes de alterada
                     if(input.value.trim() != ''){ // Caso text nao seja vazio
                         if(tag.text != input.value){ // Foi alterado nome da tag, precisa validar se nao sera duplicado
                             if(Object.values(this.tags).some(el => el.text.trim().toLowerCase() == input.value.trim().toLowerCase())){ // Valida se entrada nao eh duplicada
@@ -170,10 +189,14 @@ class Kanban{
                         tag.color = colorBtn.value;
                         if(checkbox.checked){tag.global = 'true'}
                         else if(tag.hasOwnProperty('global')){delete tag['global']}
-                        document.querySelectorAll() // FOOOOOOOOOOOOOO
-                    }
-                    else{
-                        
+                        // FOOOOOOOOO
+                        let tags = document.querySelectorAll(`[data-tag="${currentTagText}"]`);// Busca todas as tasks com a tag editada para atualizar aparencia
+                        tags.forEach((el) => { // Altera os atributos dos elementos tags
+                            el.style.backgroundColor = tag.bg;
+                            el.style.color = tag.color;
+                            el.innerHTML = tag.text;
+                            el.dataset.tag = tag.text;
+                        });
                     }
                 }
                 else{
@@ -369,18 +392,23 @@ class Kanban{
         dropdownLink.onclick = (e) => { // Carrega tags no menu do dropdown
             if(Object.keys(this.tags).length == 0){dropdownMenu.classList.remove('show'); return false;} // Se nao existe tag cadastrada, nao exibe menu do dropdown
             dropdownMenu.innerHTML = ''; // Limpa tags (caso carregado anteriormente)
+            let currentTagsQr = taskBody.querySelectorAll('[data-tag]'); // Busca as tags atuais da task
+            let currentTags = [];
+            for(let i = 0; i < currentTagsQr.length; i++){currentTags.push(currentTagsQr[i].dataset.tag)} // Popula array com o nome das taks
             for(let tagId in this.tags){
-                let tag = document.createElement('li');
-                tag.classList = 'dropdown-item pointer border rounded mb-1';
-                tag.style.color = this.tags[tagId].color;
-                tag.style.backgroundColor = this.tags[tagId].bg;
-                tag.innerHTML = this.tags[tagId].text;
-                tag.onclick = () => {
-                    // AJUSTAR AQUI, ALTERAR PARA __taskTagToogle()...
-                    this.__taskAddLabel(taskBody, 'custom', this.tags[tagId].text,this.tags[tagId].bg, this.tags[tagId].color)
-                };
-                dropdownMenu.appendChild(tag);
+                if(!currentTags.includes(this.tags[tagId].text)){ // Se tag nao estiver incluida na task, mostra no dropdown menu
+                    let tag = document.createElement('li');
+                    tag.classList = 'dropdown-item pointer border rounded mb-1';
+                    tag.style.color = this.tags[tagId].color;
+                    tag.style.backgroundColor = this.tags[tagId].bg;
+                    tag.innerHTML = this.tags[tagId].text;
+                    tag.onclick = () => {this.__taskAddLabel(taskBody, 'custom', this.tags[tagId].text,this.tags[tagId].bg, this.tags[tagId].color)};
+                    dropdownMenu.appendChild(tag);
+                }
             }
+            // Avalia se nenhuma task foi adicionada, e tambem oculta dropdown menu
+            // Necessario caso exista tag cadastrada, porem ja inserida na task, ou seja nenhuma nova a exibir
+            if(!dropdownMenu.hasChildNodes()){dropdownMenu.classList.remove('show');return false;}
         };
         let dropdownMenu = document.createElement('ul');dropdownMenu.classList = 'dropdown-menu dropdown-menu-end px-3 fs-7 text-center';
         dropdown.appendChild(dropdownLink);
@@ -406,7 +434,7 @@ class Kanban{
             let deleteBtn = document.createElement('button');
             deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
             deleteBtn.classList = 'btn btn-sm btn-outline-danger';
-            deleteBtn.onclick = () => this.__taskDelete(taskBody);
+            deleteBtn.onclick = () => this.__taskConfirmDelete(taskBody);
             btnGroup.appendChild(deleteBtn);
         }
         dropdownMenu.appendChild(btnGroup);
@@ -434,6 +462,7 @@ class Kanban{
             lbl.setAttribute('data-tag', value);
             lbl.style.backgroundColor = bg;
             lbl.style.color = color;
+            lbl.ondblclick = () => lbl.remove();
         }
         tagBody.appendChild(lbl);
     }
@@ -462,36 +491,85 @@ class Kanban{
         input.select();
     }
     __tagDelete(){}
-    __taskDelete(taskBody){
-        let deleteBtn = document.getElementById('kanbanModalDeleteTaskBtnDelete');
+    __taskDelete(taskBody){taskBody.parentNode.remove();}
+    __taskConfirmDelete(taskBody){
+        let deleteBtn = this.modalDeleteTask._element.querySelector('[data-type="modalAction"]');
         deleteBtn.onclick = () => {
-            this.__taskConfirmDelete(taskBody);
+            this.__taskDelete(taskBody);
             this.modalDeleteTask.hide();
             deleteBtn.onclick = () => console.log('Kanban: Nothing to do..');
         };
         this.modalDeleteTask.show();
     }
-    __taskConfirmDelete(taskBody){
-        taskBody.parentNode.remove();
-    }
     __buildModals(){
-        let modalDeleteTask = document.createElement('div');modalDeleteTask.id = 'kanbanModalDeleteTask';modalDeleteTask.classList = 'modal fade';modalDeleteTask.tabIndex = '-1';
-        let modalDialog = document.createElement('div');modalDialog.classList = 'modal-dialog';
+        // Modal de confirmacao para delete task
+        let modalDeleteBody = document.createElement('p');
+        modalDeleteBody.innerHTML = '<h5>Excluir task</h5><p>Confirma a exclusão da task? Este processo <b>não pode ser desfeito</b>.</p>';
+        this.modalDeleteTask = this.__newBootstrapModal({body: modalDeleteBody,actionClass: 'danger', actionText:'Deletar'});
+        // Modal para edicao das tasks
+        let taskModalBody = document.createElement('div');taskModalBody.classList = 'mb-2';
+        let L1Row = document.createElement('div');L1Row.classList = 'row g-1';
+        let L1ColA = document.createElement('div');L1ColA.classList = 'form-floating col-8 mb-1';
+        let titulo = document.createElement('input');titulo.type = 'text';titulo.classList = 'form-control';titulo.id = 'kanbanTaskModalTitulo';titulo.placeholder = ' ';
+        let tituloLabel = document.createElement('label');tituloLabel.setAttribute('for', 'kanbanTaskModalTitulo');tituloLabel.innerHTML = 'Titulo';
+        L1ColA.appendChild(titulo);L1ColA.appendChild(tituloLabel);
+        let L1ColB = document.createElement('div');L1ColB.classList = 'form-floating col-4 mb-1';
+        let responsavel = document.createElement('input');responsavel.type = 'text';responsavel.classList = 'form-control';responsavel.id = 'kanbanTaskModalResponsavel';responsavel.placeholder = ' ';
+        let responsavelLabel = document.createElement('label');responsavelLabel.setAttribute('for', 'kanbanTaskModalResponsavel');responsavelLabel.innerHTML = 'Responsável';
+        L1ColB.appendChild(responsavel);L1ColB.appendChild(responsavelLabel);
+        L1Row.appendChild(L1ColA);L1Row.appendChild(L1ColB);
+        let L2Row = document.createElement('div');L2Row.classList = 'row g-1';
+        let L2ColA = document.createElement('div');L2ColA.classList = 'col-8 mb-1';
+        let detalhe = document.createElement('textarea');detalhe.classList = 'form-control';detalhe.id = 'kanbanTaskModalDetalhe';detalhe.style.minHeight = '120px';detalhe.placeholder = 'Detalhes da task';
+        L2ColA.appendChild(detalhe);
+        L2Row.appendChild(L2ColA);
+        let L2ColB = document.createElement('div');L2ColB.classList = 'col-4';
+        let L2ColB_A = document.createElement('div');L2ColB_A.classList = 'form-floating mb-1';
+        let inicio = document.createElement('input');inicio.type = 'date';inicio.classList = 'form-control';inicio.id = 'kanbanTaskModalInicio';
+        let inicioLabel = document.createElement('label');inicioLabel.setAttribute('for', 'kanbanTaskModalInicio');inicioLabel.innerHTML = 'Inicio';
+        L2ColB_A.appendChild(inicio);L2ColB_A.appendChild(inicioLabel);
+        let L2ColB_B = document.createElement('div');L2ColB_B.classList = 'form-floating mb-1';
+        let termino = document.createElement('input');termino.type = 'date';termino.classList = 'form-control';termino.id = 'kanbanTaskModalTermino';
+        let terminoLabel = document.createElement('label');terminoLabel.setAttribute('for', 'kanbanTaskModalTermino');terminoLabel.innerHTML = 'Termino';
+        L2ColB_B.appendChild(termino);L2ColB_B.appendChild(terminoLabel);
+        L2ColB.appendChild(L2ColB_A);L2ColB.appendChild(L2ColB_B);
+        L2Row.appendChild(L2ColB);
+        let L3Row = document.createElement('div');L3Row.style.maxWidth = '250px';
+        let conclusaoLabel = document.createElement('label');conclusaoLabel.classList = 'fs-7 mt-1';conclusaoLabel.setAttribute('for', 'kanbanTaskModalConclusao');conclusaoLabel.innerHTML = 'Conclusão ( 0% )';
+        let conclusao = document.createElement('input');conclusao.type = 'range';conclusao.classList = 'form-range';conclusao.id = 'kanbanTaskModalConclusao';
+        conclusao.min = '0';conclusao.max = '100';conclusao.value = '0';conclusao.step = '10';
+        conclusao.onchange = () => {conclusaoLabel.innerHTML = `Conclusão ( ${conclusao.value}% )`};
+        L3Row.appendChild(conclusaoLabel);L3Row.appendChild(conclusao);
+        taskModalBody.appendChild(L1Row);
+        taskModalBody.appendChild(L2Row);
+        taskModalBody.appendChild(L3Row);
+        this.modalTask = this.__newBootstrapModal({body: taskModalBody, dialog_class:'modal-lg'});
+        // --------------------
+        
+    }
+    __newBootstrapModal(options){
+        let modal = document.createElement('div');modal.classList = 'modal fade';modal.tabIndex = '-1';
+        if(options?.id){modal.id = options.id}
+        let modalDialog = document.createElement('div');modalDialog.classList = `modal-dialog${' ' + options?.dialog_class || ''}`;
         let modalContent = document.createElement('div');modalContent.classList = 'modal-content';
         let modalHeader = document.createElement('div');modalHeader.classList = 'modal-content';
         let modalBody = document.createElement('div');modalBody.classList = 'modal-body';
-        modalBody.innerHTML = '<p>Confirma a exlusão da Task? Este processo <b>não pode ser desfeito</b>.</p>';
+        if(options?.body){modalBody.appendChild(options.body)};
         let modalFooter = document.createElement('div');modalFooter.classList = 'text-end';
-        let btnCancel = document.createElement('button');btnCancel.classList = 'btn btn-sm btn-secondary';btnCancel.setAttribute('data-bs-dismiss','modal');btnCancel.innerHTML = 'Cancelar';
-        let btnDelete = document.createElement('button');btnDelete.id = 'kanbanModalDeleteTaskBtnDelete';btnDelete.classList = 'btn btn-sm btn-danger ms-1';btnDelete.innerHTML = 'Deletar';btnDelete.onclick = () => console.log('Kanban: Nothing to do..');
+        let modalBtnCancel = document.createElement('button');modalBtnCancel.classList = 'btn btn-sm btn-secondary';modalBtnCancel.setAttribute('data-bs-dismiss','modal');modalBtnCancel.innerHTML = 'Cancelar';
+        let modalBtnAction = document.createElement('button');modalBtnAction.setAttribute('data-type', 'modalAction');
+        modalBtnAction.classList = `btn btn-sm btn-${options?.actionClass || 'primary'} ms-1`;
+        modalBtnAction.innerHTML = options?.actionText || 'Gravar';
+        modalBtnAction.onclick = () => console.log('Kanban: Nothing to do..');
         // ------------------
-        modalFooter.appendChild(btnCancel);
-        modalFooter.appendChild(btnDelete);
+        modalFooter.appendChild(modalBtnCancel);
+        modalFooter.appendChild(modalBtnAction);
         modalBody.appendChild(modalFooter);
         modalContent.appendChild(modalBody);
         modalDialog.appendChild(modalContent);
-        modalDeleteTask.appendChild(modalDialog);
-        document.body.appendChild(modalDeleteTask);
-        this.modalDeleteTask = new bootstrap.Modal('#kanbanModalDeleteTask', {keyboard: true})
+        modal.appendChild(modalDialog);
+        document.body.appendChild(modal);
+        let elModal = new bootstrap.Modal(modal, {keyboard: true});
+        return elModal;
     }
 }

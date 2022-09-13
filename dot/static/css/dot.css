@@ -89,6 +89,10 @@ div.btn-light:hover{background-color: #d3d4d5;}
   .placeholder-end-lg::placeholder {text-align: right;font-weight: bold;color: #999;}
 }
 
+.rotate-90{transform: rotateZ(90deg);}
+.rotate--90{transform: rotateZ(-90deg);}
+.rotate-180{transform: rotateZ(180deg);}
+.rotate--180{transform: rotateZ(-180deg);}
 /* Estilos breakpoint LG- */
 @media(max-width: 992px){
   .rotate-lg--90{transform: rotateZ(-90deg);}
