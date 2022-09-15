@@ -1,8 +1,8 @@
 /* TODO
-* Implementar modal para alterar task
-* Filtrar tags ao clicar na tag
 * Adicionar progress a task (e ao grupo?)
-* Ajusta prazo para inicio e termino
+* Ajustar responsavel para apresentar texto ao lado do taskColor
+* Ajustar prazo para inicio e termino
+* Filtrar tags ao clicar na tag
 * Implementar metodo filter
 * Exportar json com dados
 * Implementar metodo save
@@ -344,6 +344,14 @@ class Kanban{
             this.modalTaskTarget = task; // Armazena a tag a ser editada
             document.getElementById('kanbanTaskModalTitulo').value = body.querySelector('h6').innerHTML;
             document.getElementById('kanbanTaskModalDetalhe').value = body.querySelector('p').innerHTML;
+            document.querySelector('[data-type="modalExtra"]').onclick = () => {
+                this.modalTask.hide();
+                this.modalDeleteTask._element.querySelector('[data-type="modalAction"]').onclick = () => {
+                    this.modalTaskTarget.remove();
+                    this.modalDeleteTask.hide();
+                }
+                this.modalDeleteTask.show();
+            };
             this.modalTask.show();
         };
         // ---------------------
@@ -493,7 +501,13 @@ class Kanban{
         taskModalBody.appendChild(L1Row);
         taskModalBody.appendChild(L2Row);
         taskModalBody.appendChild(L3Row);
-        this.modalTask = this.__newBootstrapModal({body: taskModalBody, dialog_class:'modal-lg'});
+        this.modalTask = this.__newBootstrapModal({
+            body: taskModalBody,
+            dialog_class:'modal-lg',
+            btnExtra: true,
+            extraClass: 'danger',
+            extraText: 'Excluir'
+        });
         this.modalTaskAction = this.modalTask._element.querySelector('[data-type="modalAction"]');
         this.modalTaskAction.onclick = () => {
             this.modalTaskTarget.querySelector('h6').innerHTML = titulo.value;
@@ -518,6 +532,13 @@ class Kanban{
         modalBtnAction.classList = `btn btn-sm btn-${options?.actionClass || 'primary'} ms-1`;
         modalBtnAction.innerHTML = options?.actionText || 'Gravar';
         modalBtnAction.onclick = () => console.log('Kanban: Nothing to do..');
+        if(options?.btnExtra || false){
+            let modalBtnExtra = document.createElement('button');modalBtnExtra.setAttribute('data-type', 'modalExtra');
+            modalBtnExtra.classList = `btn btn-sm btn-${options?.extraClass || 'primary'} float-start`;
+            modalBtnExtra.innerHTML = options?.extraText || 'Extra';
+            modalBtnExtra.onclick = () => console.log('Kanban: Nothing to do..');
+            modalFooter.appendChild(modalBtnExtra); // ESTOU AQUIIIIIIIIIIIIIII
+        }
         // ------------------
         modalFooter.appendChild(modalBtnCancel);
         modalFooter.appendChild(modalBtnAction);
