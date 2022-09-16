@@ -23,22 +23,20 @@
   <div class="container-fluid">
     <h1>Handler 999</h1>
     <hr >
+
     
     <div class="row d-none">
-      <div class="col-2 mb-3">
-        <div class="callout callout-primary">
-          <div class="body">
-            <h6>Titulo</h6>
-            <p class="mb-1">Descricao da bagaça</p>
-          </div>
-          <div class="footer p-1">Footer</div>
-          <div class="progress" style="height: 3px;">
-            <div class="progress-bar bg-success bg-opacity-50" style="width: 80%"></div>
-          </div>
+      <div class="col-auto">
+        <div class="input-group">
+          <select name="" id="" class="form-select form-select-sm">
+            <option value="">Foo</option>
+          </select>
+          <button class="btn btn-sm btn-success"><i class="fas fa-plus me-2"></i>Gravar</button>
+          <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-user"></i></button>
         </div>
       </div>
     </div>
-    
+  
     <div id="container"></div>
     
   </div>
@@ -63,17 +61,23 @@
       
     }
     
-    let jsonobj = [
-    {"kanban": "teste", "empresa":"Pantanal", "empresa_id":"1", "tags":[{text:'foo',color:'#CCC',bg:'#F1F1F1'}], "boards":[
-    {"titulo":"Em aberto", "tasks":[
-    {"titulo":"Nova task","detalhe":"Detalhes da task..", "cor":"#F5F5F5", "responsavel": "Rafael"}
-    ]},
-    {"titulo":"Avaliação", "tasks":[
-    {"titulo":"Task Concluida","detalhe":"Detalhes da outra task", "cor":"#F32122", "responsavel": "Jonas"}
-    ]},
-    ]}
-    ];
-    
+    let jsonobj = {
+      "global_tags":[{text:'Zulu', color:'#ffffff', bg:'#1ca044', global:'true'}],
+      "kanbans":[{
+        "id": "Pandemonio",
+        "tags":[{text:'Local 1',color:'#ffffff',bg:'#384bd6'},{text:'Local 2',color:'#ffffff',bg:'#c0482a'}],
+        "boards":[
+          {
+            "titulo":"Em aberto",
+            "tasks":[
+              {"titulo":"Nova task","descricao":"Detalhes da task..", "cor":"#3c1e62", "responsavel": "Rafael", "inicio":"2022-09-10", "termino":"2022-12-20", "progresso":"80%", "tags":['Zulu']}
+            ]
+          },
+          {"titulo":"Avaliação",
+            "tasks":[{"titulo":"Task Concluida","descricao":"Detalhes da outra task", "cor":"#F32122", "progresso":"0%"}]
+          }]
+      }]
+    };
     const kanban = new Kanban({
       data: jsonobj,
       container: document.getElementById('container'),

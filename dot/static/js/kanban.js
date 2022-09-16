@@ -1,11 +1,7 @@
 /* TODO
-* Adicionar progress a task (e ao grupo?)
-* Ajustar responsavel para apresentar texto ao lado do taskColor
-* Ajustar prazo para inicio e termino
-* Filtrar tags ao clicar na tag
-* Implementar metodo filter
 * Exportar json com dados
 * Implementar metodo save
+* Implementar metodo filter
 * Implementar metodo no app gestao (empresa, kanban, ..., file !!verificar como fazer)
 */
 class Kanban{
@@ -14,6 +10,7 @@ class Kanban{
         this.kanban = null; // container pai, contem todos os boards
         this.header = null; // container dos headers (id, pesquisa, etc)
         this.controls = null; // ul com controles do kanban
+        this.kanbanSelect = null; // select para alterar entre kanbans
         this.body = null; // container do corpo do kanban (boards)
         this.nav = null; // nav para filtro e navegacao das tasks
         this.restoreButton = null; // aponta para botao de restorBoard
@@ -24,7 +21,7 @@ class Kanban{
         this.modalTaskTarget = null; // aponta para a task que esta sendo editada
         this.modalDeleteTask = null; // aponta para instancia (bootstrap modal) do modal para deletar task
         // Configuracao
-        // this.data = options?.data || []; // Json com dados dos boards kanban
+        this.data = options?.data || []; // Json com dados dos boards kanban
         this.container = options?.container || document.body; // parentNode do kanban, create(), caso nao informado append no body
         this.sortableClasslist = options?.sortableClasslist || 'pb-5'; // classlist para o div drag and drop
         this.dndBoardsOptions = options?.dndBoardsOptions || {group:'boards',animation:100, dragClass: 'dragging'}; // options da instancia Sortable JS dos boards
@@ -39,9 +36,9 @@ class Kanban{
         // Estilizacao
         this.kanbanClasslist = options?.kanbanClasslist || 'row'; // classlist para o container principal
         this.headerClasslist = options?.headerClasslist || 'col-12 bg-white p-2'; // classlist para o header container
-        this.navContainerClasslist = options?.navContainerClasslist || 'col-auto bg-light text-muted rounded pt-3 ps-2 fs-7 position-relative'; // classlist para o nav container
+        this.navContainerClasslist = options?.navContainerClasslist || 'col-auto bg-light text-muted border rounded pt-3 ps-2 fs-7 position-relative'; // classlist para o nav container
         this.navClasslist = options?.navClasslist || 'text-muted'; // classlist para o nav (ul)
-        this.bodyContainerClasslist = options?.bodyContainerClasslist || 'col p-3'; // classlist para o board container
+        this.bodyContainerClasslist = options?.bodyContainerClasslist || 'col'; // classlist para o board container
         this.bodyClasslist = options?.bodyClasslist || 'row'; // classlist para o board
         this.boardClasslist = options?.boardClasslist || 'col-3'; // classlist para o board
         this.taskClasslist = options?.taskClasslist || ''; // classlist base para as tasks
@@ -50,8 +47,7 @@ class Kanban{
         this.buildControls();
         this.buildNav();
         this.__buildModals();
-        // this.addBoard();
-        // this.addBoard({title:'Mais uma'});
+        this.__loadData();
     }
     create(){
         this.kanban = document.createElement('div'); // Row que engloba todo o kanban
@@ -77,13 +73,20 @@ class Kanban{
         let colStart = document.createElement('div');colStart.classList = 'col-auto';
         let colCenter = document.createElement('div');colCenter.classList = 'col';
         let colEnd = document.createElement('div');colEnd.classList = 'col-auto';
-        let groupBtn = document.createElement('div');groupBtn.classList = 'btn-group';
+        let inputGroup = document.createElement('div');inputGroup.classList = 'input-group';
+        this.kanbanSelect = document.createElement('select');
+        this.kanbanSelect.classList = 'form-select form-select-sm bg-light';
+        let defaultOption = document.createElement('option');
+        defaultOption.value = 'Teste';
+        defaultOption.innerHTML = 'Teste';
+        this.kanbanSelect.appendChild(defaultOption);
+        inputGroup.appendChild(this.kanbanSelect);
         if(this.canAddBoard){
             let addBoard = document.createElement('button');
             addBoard.classList = 'btn btn-sm btn-success'
             addBoard.innerHTML = '<i class="fas fa-plus me-2"></i> Board'
             addBoard.onclick = () => this.addBoard();
-            groupBtn.appendChild(addBoard);
+            inputGroup.appendChild(addBoard);
         }
         if(this.canDeleteBoard){
             this.restoreButton = document.createElement('button');
@@ -91,9 +94,9 @@ class Kanban{
             this.restoreButton.innerHTML = '<i class="fas fa-history"></i>';
             this.restoreButton.disabled = true;
             this.restoreButton.onclick = () => this.restoreLastBoard();
-            groupBtn.appendChild(this.restoreButton);
+            inputGroup.appendChild(this.restoreButton);
         }
-        colStart.appendChild(groupBtn);
+        colStart.appendChild(inputGroup);
         let searchInput = document.createElement('input');searchInput.classList = 'form-control form-control-sm';
         searchInput.placeholder = 'Pesquisa..';
         colCenter.appendChild(searchInput);
@@ -106,12 +109,12 @@ class Kanban{
     buildNav(){
         let cleanFilter = document.createElement('span');
         cleanFilter.setAttribute('data-type', 'navCleanFilter');
-        cleanFilter.classList = 'pointer text-primary position-absolute fs-8';
+        cleanFilter.classList = 'pointer text-primary position-absolute fs-8 d-none';
         cleanFilter.style.top = '3px';
         cleanFilter.style.right = '10px';
         cleanFilter.innerHTML = `Limpar`;
         this.nav.appendChild(cleanFilter);
-        let menu = document.createElement('ul');menu.classList = 'list-unstyled';menu.style.minWidth = '204px';
+        let menu = document.createElement('ul');menu.classList = 'list-unstyled';menu.style.minWidth = '204px';menu.style.minHeight = '400px';
         this.__navReorderTags(); // Insere as tags no nav de e reordena pelo nome
         if(this.canAddTag){
             let addTag = document.createElement('li');
@@ -269,6 +272,7 @@ class Kanban{
         board.appendChild(header);
         board.appendChild(dnd_container);
         this.body.appendChild(board);
+        return dnd_container;
     }
     __titleConfig(text){
         let title = document.createElement('h6');
@@ -327,23 +331,37 @@ class Kanban{
             if(this.trash.length == 0){this.restoreButton.disabled = true;}
         }
     }
-    addTask(dnd_container){
-        let task = document.createElement('div');task.classList = 'callout mb-2 container-fluid';
-        let body = document.createElement('div');body.classList = 'body ps-0';
-        let title = this.__titleConfig('Nova Task');
+    addTask(dnd_container, options){
+        let task = document.createElement('div');task.classList = 'callout mb-2 container-fluid';task.style.borderLeftColor = options?.cor || '#e9ecef';
+        if(options?.inicio || false){task.setAttribute('data-inicio', options.inicio)}
+        if(options?.termino || false){task.setAttribute('data-termino', options.termino)}
+        let body = document.createElement('div');body.classList = 'body ps-0 pb-2';
+        let title = this.__titleConfig(options?.titulo || 'Nova FOO');
         title.setAttribute('data-type', 'taskTitulo');
-        let description = this.__descriptionConfig('Descrição da nova task');
+        let description = this.__descriptionConfig(options?.descricao || 'Descrição da nova task');
         let footer = document.createElement('div');footer.classList = 'row bg-light fs-8';
         let footLeftCol = document.createElement('div');footLeftCol.classList = 'col-auto p-1';
-        let taskColorInput = document.createElement('input');taskColorInput.type = 'color';taskColorInput.classList = 'form-control p-1 h-100';taskColorInput.style.width = '50px';taskColorInput.value = '#e9ecef';
+        let taskColorInput = document.createElement('input');taskColorInput.type = 'color';taskColorInput.classList = 'form-control p-1 h-100 d-inline-block';taskColorInput.style.width = '50px';taskColorInput.value = options?.cor || '#e9ecef';
         taskColorInput.onchange = () => {task.style.borderLeftColor = taskColorInput.value;};
+        let responsavelLabel = document.createElement('div');responsavelLabel.classList = 'fw-bold text-purple d-inline-block h-100 align-middle ps-2';responsavelLabel.setAttribute('data-type','taskResponsavel');responsavelLabel.innerHTML = options?.responsavel || '';
         let footRightCol = document.createElement('div');footRightCol.classList = 'col p-1 d-flex justify-content-end';
+        body.appendChild(title);
+        body.appendChild(description);
+        for(let tag in options.tags){ // Adiciona as tags precadastradas na task
+            let objTag = this.__getTag(options.tags[tag]);
+            if(objTag){this.__taskAddTag(body, objTag)}
+        }
         let tags = this.__tagsConfig(body); // Controle para adicionar tags
         let config = document.createElement('button');config.classList = 'btn btn-sm btn-light text-muted fs-8';config.innerHTML = '<i class="fas fa-sliders-h"></i>';
         config.onclick = () => {
             this.modalTaskTarget = task; // Armazena a tag a ser editada
             document.getElementById('kanbanTaskModalTitulo').value = body.querySelector('h6').innerHTML;
             document.getElementById('kanbanTaskModalDetalhe').value = body.querySelector('p').innerHTML;
+            document.getElementById('kanbanTaskModalResponsavel').value = task.querySelector('[data-type="taskResponsavel"]').innerHTML;
+            document.getElementById('kanbanTaskModalProgress').value = task.querySelector('[data-type="taskProgress"]').style.width.replace('%', '');
+            document.getElementById('kanbanTaskModalInicio').value = task.dataset?.inicio || '';
+            document.getElementById('kanbanTaskModalTermino').value = task.dataset?.termino || '';
+            document.getElementById('kanbanTaskModalProgress').onchange(); // Aciona o evento change para ajustar a label do progress
             document.querySelector('[data-type="modalExtra"]').onclick = () => {
                 this.modalTask.hide();
                 this.modalDeleteTask._element.querySelector('[data-type="modalAction"]').onclick = () => {
@@ -354,21 +372,24 @@ class Kanban{
             };
             this.modalTask.show();
         };
+        let progressContainer = document.createElement('div');progressContainer.classList = 'progress'; progressContainer.style.height = '3px';progressContainer.style.marginLeft = 'calc(var(--bs-gutter-x) * .5 * -1)';progressContainer.style.marginRight = 'calc(var(--bs-gutter-x) * .5 * -1)';
+        let progress = document.createElement('div');progress.setAttribute('data-type','taskProgress');progress.classList = 'progress-bar bg-success bg-opacity-75'; progress.style.width = options?.progresso || '0%';
+        progressContainer.appendChild(progress);
         // ---------------------
-        body.appendChild(title);
-        body.appendChild(description);
         footLeftCol.appendChild(taskColorInput);
+        footLeftCol.appendChild(responsavelLabel);
         footRightCol.appendChild(tags);
         footRightCol.appendChild(config);
         footer.appendChild(footLeftCol);
         footer.appendChild(footRightCol);
         task.appendChild(body);
         task.appendChild(footer);
+        task.appendChild(progressContainer);
         dnd_container.appendChild(task);
     }
     __descriptionConfig(text){
         let desc = document.createElement('p');
-        desc.classList = 'mb-1 text-muted fs-7';
+        desc.classList = 'mb-2 text-muted fs-7';
         desc.innerHTML = text;
         desc.ondblclick = () => this.__changeDescription(desc);
         return desc;        
@@ -406,7 +427,7 @@ class Kanban{
                     tag.style.color = this.tags[tagId].color;
                     tag.style.backgroundColor = this.tags[tagId].bg;
                     tag.innerHTML = this.tags[tagId].text;
-                    tag.onclick = () => {this.__taskAddLabel(taskBody, this.tags[tagId].text,this.tags[tagId].bg, this.tags[tagId].color)};
+                    tag.onclick = () => {this.__taskAddTag(taskBody, this.tags[tagId])};
                     dropdownMenu.appendChild(tag);
                 }
             }
@@ -419,13 +440,13 @@ class Kanban{
         dropdown.appendChild(dropdownMenu);
         return dropdown;
     }
-    __taskAddLabel(tagBody, value, bg, color){
+    __taskAddTag(tagBody, tag){
         let lbl = document.createElement('span');
         lbl.classList = 'px-2 py-1 me-1 border rounded fs-8';
-        lbl.innerHTML = value;
-        lbl.setAttribute('data-tag', value);
-        lbl.style.backgroundColor = bg;
-        lbl.style.color = color;
+        lbl.innerHTML = tag.text;
+        lbl.setAttribute('data-tag', tag.text);
+        lbl.style.backgroundColor = tag.bg;
+        lbl.style.color = tag.color;
         lbl.ondblclick = () => lbl.remove();
         tagBody.appendChild(lbl);
     }
@@ -448,6 +469,12 @@ class Kanban{
         tag.remove();
         input.select();
     }
+    __getTag(text){ // Retorna a tag pelo text (ou null caso nao encontrado)
+        for(let tag in this.tags){
+            if(this.tags[tag].text == text){return this.tags[tag]}
+        }
+        return null;
+    }
     __tagDelete(){}
     __taskDelete(taskBody){taskBody.parentNode.remove();}
     __taskConfirmDelete(taskBody){
@@ -458,6 +485,37 @@ class Kanban{
             deleteBtn.onclick = () => console.log('Kanban: Nothing to do..');
         };
         this.modalDeleteTask.show();
+    }
+    __loadData(kanban_id=null){ // Monta kanban a partir do this.data
+        this.tags = this.data.global_tags; // Reinicia o dicionario de tags com as tags globais do objeto
+        let kanban_index = 0;
+        this.kanbanSelect.innerHTML = ''; // Limpa o select dos kanbans
+        for(let kanban in this.data.kanbans){ // Percorre os kanbans, montando o select
+            this.kanbanSelect.innerHTML += `<option value="${this.data.kanbans[kanban].id}">${this.data.kanbans[kanban].id}</option>`; // Limpa o select de kanbans
+        }
+        let tagsCount = Object.keys(this.tags).length;
+        for(let tag in this.data.kanbans[kanban_index].tags){ // Adiciona as tags locais no dicionario de tags
+            this.tags[tagsCount] = this.data.kanbans[0].tags[tag];
+            tagsCount++;
+        }
+        for(let board in this.data.kanbans[kanban_index].boards){ // Adiciona os boards do kanban
+            let dnd_container = this.addBoard({title: this.data.kanbans[kanban_index].boards[board].titulo}); // Adiciona o board
+            for(let task in this.data.kanbans[kanban_index].boards[board].tasks){ // Adiciona as taks no board
+                let task_options = {
+                    titulo: this.data.kanbans[kanban_index].boards[board].tasks[task].titulo,
+                    descricao: this.data.kanbans[kanban_index].boards[board].tasks[task].descricao,
+                    cor: this.data.kanbans[kanban_index].boards[board].tasks[task].cor,
+                    responsavel: this.data.kanbans[kanban_index].boards[board].tasks[task].responsavel,
+                    inicio: this.data.kanbans[kanban_index].boards[board].tasks[task].inicio,
+                    termino: this.data.kanbans[kanban_index].boards[board].tasks[task].termino,
+                    progresso: this.data.kanbans[kanban_index].boards[board].tasks[task].progresso,
+                    tags: this.data.kanbans[kanban_index].boards[board].tasks[task]?.tags || []
+                };
+                this.addTask(dnd_container, task_options);
+            }
+            
+        }
+        this.__navReorderTags(); // Monta tags
     }
     __buildModals(){
         // Modal de confirmacao para delete task
@@ -493,11 +551,11 @@ class Kanban{
         L2ColB.appendChild(L2ColB_A);L2ColB.appendChild(L2ColB_B);
         L2Row.appendChild(L2ColB);
         let L3Row = document.createElement('div');L3Row.style.maxWidth = '250px';
-        let conclusaoLabel = document.createElement('label');conclusaoLabel.classList = 'fs-7 mt-1';conclusaoLabel.setAttribute('for', 'kanbanTaskModalConclusao');conclusaoLabel.innerHTML = 'Conclusão ( 0% )';
-        let conclusao = document.createElement('input');conclusao.type = 'range';conclusao.classList = 'form-range';conclusao.id = 'kanbanTaskModalConclusao';
-        conclusao.min = '0';conclusao.max = '100';conclusao.value = '0';conclusao.step = '10';
-        conclusao.onchange = () => {conclusaoLabel.innerHTML = `Conclusão ( ${conclusao.value}% )`};
-        L3Row.appendChild(conclusaoLabel);L3Row.appendChild(conclusao);
+        let progressLabel = document.createElement('label');progressLabel.classList = 'fs-7 mt-1';progressLabel.setAttribute('for', 'kanbanTaskModalProgress');progressLabel.innerHTML = 'Conclusão ( 0% )';
+        let progress = document.createElement('input');progress.type = 'range';progress.classList = 'form-range';progress.id = 'kanbanTaskModalProgress';
+        progress.min = '0';progress.max = '100';progress.value = '0';progress.step = '10';
+        progress.onchange = () => {progressLabel.innerHTML = `Progresso ( ${progress.value}% )`};
+        L3Row.appendChild(progressLabel);L3Row.appendChild(progress);
         taskModalBody.appendChild(L1Row);
         taskModalBody.appendChild(L2Row);
         taskModalBody.appendChild(L3Row);
@@ -512,7 +570,10 @@ class Kanban{
         this.modalTaskAction.onclick = () => {
             this.modalTaskTarget.querySelector('h6').innerHTML = titulo.value;
             this.modalTaskTarget.querySelector('p').innerHTML = detalhe.value;
-            // if(responsavel.value != ''){FOOOOOOOO}
+            this.modalTaskTarget.querySelector('[data-type="taskResponsavel"]').innerHTML = responsavel.value;
+            this.modalTaskTarget.querySelector('[data-type="taskProgress"]').style.width = `${progress.value}%`;
+            this.modalTaskTarget.setAttribute('data-inicio', inicio.value);
+            this.modalTaskTarget.setAttribute('data-termino', termino.value);
             this.modalTask.hide();
         };
         // --------------------
@@ -527,7 +588,7 @@ class Kanban{
         let modalBody = document.createElement('div');modalBody.classList = 'modal-body';
         if(options?.body){modalBody.appendChild(options.body)};
         let modalFooter = document.createElement('div');modalFooter.classList = 'text-end';
-        let modalBtnCancel = document.createElement('button');modalBtnCancel.classList = 'btn btn-sm btn-secondary';modalBtnCancel.setAttribute('data-bs-dismiss','modal');modalBtnCancel.innerHTML = 'Cancelar';
+        let modalBtnCancel = document.createElement('button');modalBtnCancel.classList = 'btn btn-sm btn-secondary';modalBtnCancel.setAttribute('data-bs-dismiss','modal');modalBtnCancel.innerHTML = 'Cancelar';modalBtnCancel.setAttribute('data-type', 'modalCancel');
         let modalBtnAction = document.createElement('button');modalBtnAction.setAttribute('data-type', 'modalAction');
         modalBtnAction.classList = `btn btn-sm btn-${options?.actionClass || 'primary'} ms-1`;
         modalBtnAction.innerHTML = options?.actionText || 'Gravar';
@@ -537,7 +598,7 @@ class Kanban{
             modalBtnExtra.classList = `btn btn-sm btn-${options?.extraClass || 'primary'} float-start`;
             modalBtnExtra.innerHTML = options?.extraText || 'Extra';
             modalBtnExtra.onclick = () => console.log('Kanban: Nothing to do..');
-            modalFooter.appendChild(modalBtnExtra); // ESTOU AQUIIIIIIIIIIIIIII
+            modalFooter.appendChild(modalBtnExtra);
         }
         // ------------------
         modalFooter.appendChild(modalBtnCancel);
