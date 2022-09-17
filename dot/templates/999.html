@@ -24,19 +24,7 @@
     <h1>Handler 999</h1>
     <hr >
 
-    
-    <div class="row d-none">
-      <div class="col-auto">
-        <div class="input-group">
-          <select name="" id="" class="form-select form-select-sm">
-            <option value="">Foo</option>
-          </select>
-          <button class="btn btn-sm btn-success"><i class="fas fa-plus me-2"></i>Gravar</button>
-          <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-user"></i></button>
-        </div>
-      </div>
-    </div>
-  
+
     <div id="container"></div>
     
   </div>
@@ -63,9 +51,10 @@
     
     let jsonobj = {
       "global_tags":[{text:'Zulu', color:'#ffffff', bg:'#1ca044', global:'true'}],
-      "kanbans":[{
+      "kanbans":[
+        {
         "id": "Pandemonio",
-        "tags":[{text:'Local 1',color:'#ffffff',bg:'#384bd6'},{text:'Local 2',color:'#ffffff',bg:'#c0482a'}],
+        "tags":[{text:'Local 1',color:'#ffffff',bg:'#384bd6'},{text:'Local 2',color:'#ffffff',bg:'#c0482a'},{text:'Ilidan',color:'#f1f1f1',bg:'#C061CB'}],
         "boards":[
           {
             "titulo":"Em aberto",
@@ -76,12 +65,26 @@
           {"titulo":"Avaliação",
             "tasks":[{"titulo":"Task Concluida","descricao":"Detalhes da outra task", "cor":"#F32122", "progresso":"0%"}]
           }]
-      }]
+      },
+        {
+        "id": "Fuzion",
+        "tags":[{text:'Fuzi',color:'#ffffff',bg:'#384bd6'}],
+        "boards":[
+          {
+            "titulo":"Nann",
+            "tasks":[
+              {"titulo":"Task fuzi","descricao":"Detalhes da task..", "cor":"#3c1e62", "responsavel": "Rafael", "inicio":"2022-09-10", "termino":"2022-12-20", "progresso":"10%", "tags":['Zulu', 'Local 2']}
+            ]
+          }
+        ]
+      }
+    ]
     };
     const kanban = new Kanban({
-      data: jsonobj,
+      // data: jsonobj,
       container: document.getElementById('container'),
       canDeleteTask: true,
+      canSave: true
     });
   </script>
 </body>

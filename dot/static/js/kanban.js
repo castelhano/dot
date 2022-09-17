@@ -10,23 +10,31 @@ class Kanban{
         this.kanban = null; // container pai, contem todos os boards
         this.header = null; // container dos headers (id, pesquisa, etc)
         this.controls = null; // ul com controles do kanban
-        this.kanbanSelect = null; // select para alterar entre kanbans
+        this.kanbanSelect = null; // ul com lista dos kanbans
         this.body = null; // container do corpo do kanban (boards)
         this.nav = null; // nav para filtro e navegacao das tasks
         this.restoreButton = null; // aponta para botao de restorBoard
         this.trash = []; // armazena bords deletados
         this.tags = {}; // armazena as tags cadastradas
+        this.currentKanban = null; // armazena o indice do kanban em exibicao
+        this.saveBtn = null; // Aponta para o botao save
+        this.exportBtn = null; // Aponta para o botao export
+        this.loadBtn = null; // Aponta para o botao load
         this.modalTask = null; // aponta para modal com dados detalhados da task
         this.modalTaskAction = null; // aponta para o botao gravar do modal de edicao da task
         this.modalTaskTarget = null; // aponta para a task que esta sendo editada
         this.modalDeleteTask = null; // aponta para instancia (bootstrap modal) do modal para deletar task
         // Configuracao
-        this.data = options?.data || []; // Json com dados dos boards kanban
+        this.data = options?.data || {}; // Json com dados dos boards kanban
         this.container = options?.container || document.body; // parentNode do kanban, create(), caso nao informado append no body
         this.sortableClasslist = options?.sortableClasslist || 'pb-5'; // classlist para o div drag and drop
         this.dndBoardsOptions = options?.dndBoardsOptions || {group:'boards',animation:100, dragClass: 'dragging'}; // options da instancia Sortable JS dos boards
         this.dndTasksOptions = options?.dndTasksOptions || {group:'tasks', dragClass: 'dragging'}; // options da instancia Sortable JS das tasks
         this.readOnly = options?.readOnly != undefined ? options.readOnly : false; // Boolean, se setado para true desativa todas as opcoes de edicao do kanban
+        this.canSave = options?.canSave != undefined ? options.canSave : false; // Boolean, exibe/oculta controle para salvar
+        this.save = options?.save != undefined ? options.save : function(){console.log('kanban: Nenhuma funcao definida para save, nas opcoes marque {canSave:true, save: suaFuncao} ')}; // Funcao definida aqui sera acionada no evento click do botao save
+        this.canLoadFile = options?.canLoadFile != undefined ? options.canLoadFile : true; // Boolean, exibe/oculta controle para abrir arquivo com kanban
+        this.canExportJson = options?.canExportJson != undefined ? options.canExportJson : true; // Boolean, exibe/oculta controle para exportar json
         this.canAddBoard = options?.canAddBoard != undefined ? options.canAddBoard : true; // Boolean, exibe/oculta controle para novo board
         this.canAddTask = options?.canAddTask != undefined ? options.canAddTask : true; // Boolean, exibe/oculta controle para nova task no grupo
         this.canAddTag = options?.canAddTag != undefined ? options.canAddTag : true; // Boolean, exibe/oculta controle para nova tag
@@ -47,7 +55,8 @@ class Kanban{
         this.buildControls();
         this.buildNav();
         this.__buildModals();
-        this.__loadData();
+        if(Object.keys(this.data).length > 0){this.__loadData();} // Se kanban existente, carrega estrutura
+        else{this.startFromScratch()}
     }
     create(){
         this.kanban = document.createElement('div'); // Row que engloba todo o kanban
@@ -73,20 +82,27 @@ class Kanban{
         let colStart = document.createElement('div');colStart.classList = 'col-auto';
         let colCenter = document.createElement('div');colCenter.classList = 'col';
         let colEnd = document.createElement('div');colEnd.classList = 'col-auto';
-        let inputGroup = document.createElement('div');inputGroup.classList = 'input-group';
-        this.kanbanSelect = document.createElement('select');
-        this.kanbanSelect.classList = 'form-select form-select-sm bg-light';
-        let defaultOption = document.createElement('option');
-        defaultOption.value = 'Teste';
-        defaultOption.innerHTML = 'Teste';
-        this.kanbanSelect.appendChild(defaultOption);
-        inputGroup.appendChild(this.kanbanSelect);
+        let btnGroup = document.createElement('div');btnGroup.classList = 'btn-group';
+        let selectKanbanContainer = document.createElement('div');selectKanbanContainer.classList = 'btn-group d-inline-block me-1';
+        this.kanbanModalBtn = document.createElement('button');this.kanbanModalBtn.classList = 'btn btn-sm btn-primary';this.kanbanModalBtn.innerHTML = 'Sem nome';
+        this.kanbanModalBtn.onclick = () => {console.log('AQUI DEVE ABRIR O MODAL DE EDICAO DO KANBAN');}
+        let kanbanDropdownLink = document.createElement('button');kanbanDropdownLink.classList = 'btn btn-sm btn-primary dropdown-toggle dropdown-toggle-split';kanbanDropdownLink.setAttribute('data-bs-toggle','dropdown');
+        this.kanbanSelect = document.createElement('ul');this.kanbanSelect.classList = 'dropdown-menu fs-8';
+        let divider = document.createElement('hr');divider.classList = 'dropdown-divider';divider.setAttribute('data-type', 'selectKanbanDivider');
+        let newKanbanLink = document.createElement('li');newKanbanLink.classList = 'dropdown-item dropdown-item-success pointer';newKanbanLink.innerHTML = '<i class="fas fa-plus me-1"></i> Novo';
+        newKanbanLink.onclick = () => {console.log('AINDA A FAZER');};
+        this.kanbanSelect.appendChild(divider);
+        this.kanbanSelect.appendChild(newKanbanLink);
+        selectKanbanContainer.appendChild(this.kanbanModalBtn);
+        selectKanbanContainer.appendChild(kanbanDropdownLink);
+        selectKanbanContainer.appendChild(this.kanbanSelect);
+        colStart.appendChild(selectKanbanContainer);
         if(this.canAddBoard){
             let addBoard = document.createElement('button');
             addBoard.classList = 'btn btn-sm btn-success'
             addBoard.innerHTML = '<i class="fas fa-plus me-2"></i> Board'
             addBoard.onclick = () => this.addBoard();
-            inputGroup.appendChild(addBoard);
+            btnGroup.appendChild(addBoard);
         }
         if(this.canDeleteBoard){
             this.restoreButton = document.createElement('button');
@@ -94,12 +110,44 @@ class Kanban{
             this.restoreButton.innerHTML = '<i class="fas fa-history"></i>';
             this.restoreButton.disabled = true;
             this.restoreButton.onclick = () => this.restoreLastBoard();
-            inputGroup.appendChild(this.restoreButton);
+            btnGroup.appendChild(this.restoreButton);
         }
-        colStart.appendChild(inputGroup);
+        colStart.appendChild(btnGroup);
+        // ---
         let searchInput = document.createElement('input');searchInput.classList = 'form-control form-control-sm';
         searchInput.placeholder = 'Pesquisa..';
         colCenter.appendChild(searchInput);
+        // ---
+        let btnGroup2 = document.createElement('div');btnGroup2.classList = 'btn-group';
+        if(this.canSave){
+            this.saveBtn = document.createElement('button');this.saveBtn.classList = 'btn btn-sm btn-success';this.saveBtn.innerHTML = '<i class="fas fa-save fa-fw"></i>';
+            this.saveBtn.onclick = () => this.save();
+            btnGroup2.appendChild(this.saveBtn);
+        }
+        if(this.canLoadFile){
+            this.loadBtn = document.createElement('button');this.loadBtn.classList = 'btn btn-sm btn-primary';this.loadBtn.innerHTML = '<i class="fas fa-upload fa-fw"></i>';
+            this.loadBtn.onclick = () => {
+                let loadInput = document.createElement('input');loadInput.type = 'file';loadInput.setAttribute('accept', '.json');loadInput.style.display = 'none';
+                let obj = this;
+                loadInput.onchange = () => {
+                    let fr = new FileReader();
+                    fr.onload = (function(){
+                        obj.data = JSON.parse(fr.result);
+                        obj.__loadData(0);
+                    });
+                    fr.readAsText(loadInput.files[0]);
+                }
+                loadInput.click();
+            };
+            btnGroup2.appendChild(this.loadBtn);
+        }
+        if(this.canExportJson){
+            this.exportBtn = document.createElement('button');this.exportBtn.classList = 'btn btn-sm btn-secondary';this.exportBtn.innerHTML = '<i class="fas fa-download me-2"></i>JSON';
+            this.exportBtn.onclick = (e) => this.exportJson(e);
+            btnGroup2.appendChild(this.exportBtn);
+        }
+        colEnd.appendChild(btnGroup2);        
+        // ---
         row.appendChild(colStart);
         row.appendChild(colCenter);
         row.appendChild(colEnd);
@@ -143,6 +191,12 @@ class Kanban{
                     select.innerHTML += `<option value="${tag}">${this.tags[tag].text}</option>`;
                 }
                 let deleteBtn = document.createElement('button');deleteBtn.classList = 'btn btn-sm btn-danger';deleteBtn.style.width = '35px';deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                deleteBtn.onclick = () => {
+                    this.body.querySelectorAll(`[data-tag="${select.options[select.selectedIndex].innerHTML}"]`).forEach((el) => el.remove()); // Remove a tag das taks ja inseridas
+                    delete this.tags[select.value]; // Apaga a tag do dicionario de tags
+                    this.__navReorderTags(); // Ajusta exibicao das tags no nav
+                    inputGroup.remove();msgAlert.remove(); // Remove o inputgroup e msgalert
+                }
                 let cancelBtn = document.createElement('button');cancelBtn.classList = 'btn btn-sm btn-secondary';cancelBtn.style.width = '32px';cancelBtn.innerHTML = '<i class="fas fa-undo"></i>';
                 let msgAlert = document.createElement('span');msgAlert.setAttribute('data-type', 'kanbanNavTagFormHelp');
                 msgAlert.innerHTML = '<b class="text-danger">Atenção</b> não pode ser desfeito';
@@ -251,14 +305,14 @@ class Kanban{
         }
     }
     addBoard(options){
-        let board = document.createElement('div');
+        let board = document.createElement('div');board.setAttribute('data-type', 'kanbanBoard');
         board.classList = this.boardClasslist;
         let header = document.createElement('div');
         header.classList = 'row align-items-end mb-2';
         header.style.cursor = 'move';
         let header_name = document.createElement('div');
         header_name.classList = 'col';
-        let title = this.__titleConfig(options?.title || 'Novo Grupo')
+        let title = this.__titleConfig(options?.title || 'Novo Grupo', 'boardHeader')
         header_name.appendChild(title);
         let header_controls = document.createElement('div');
         header_controls.classList = 'col-auto';
@@ -274,14 +328,15 @@ class Kanban{
         this.body.appendChild(board);
         return dnd_container;
     }
-    __titleConfig(text){
+    __titleConfig(text, type){
         let title = document.createElement('h6');
+        title.setAttribute('data-type', type);
         title.classList = 'mb-1 text-muted';
         title.innerHTML = text;
-        title.ondblclick = () => this.__changeTitle(title);
+        title.ondblclick = () => this.__changeTitle(title, type);
         return title;
     }
-    __changeTitle(title){ // Adiciona edicao do titulo do board no duplo click, 'Enter' para salvar resultado
+    __changeTitle(title, type){ // Adiciona edicao do titulo do board no duplo click, 'Enter' para salvar resultado
         let input = document.createElement('input');
         input.classList = 'form-control form-control-sm';
         input.type = 'text';
@@ -289,7 +344,7 @@ class Kanban{
         input.onkeydown = (e) => {
             if(e.key == 'Enter'){
                 if(input.value.trim() == ''){input.value = 'Titulo Obrigatorio';input.select();return false;}
-                let h6 = this.__titleConfig(input.value);
+                let h6 = this.__titleConfig(input.value, type);
                 input.after(h6);
                 input.remove();
             }
@@ -309,7 +364,7 @@ class Kanban{
         }
         if(this.canDeleteBoard){
             let divider = document.createElement('li');divider.innerHTML = '<hr class="dropdown-divider">';
-            let deleteBtn = document.createElement('li');deleteBtn.classList = 'dropdown-item dropdown-item-danger pointer';deleteBtn.innerHTML = '<i class="fas fa-trash fa-fw"></i> Excluir Board';
+            let deleteBtn = document.createElement('li');deleteBtn.classList = 'dropdown-item dropdown-item-danger pointer';deleteBtn.innerHTML = '<i class="fas fa-trash fa-fw"></i> Lixeira';
             deleteBtn.onclick = () => {
                 let board = header_controls.parentNode.parentNode;
                 document.body.click(); // Aciona click do body para evitar que dropdown do bootstrap seja exibido altomaticamente no restore
@@ -331,18 +386,24 @@ class Kanban{
             if(this.trash.length == 0){this.restoreButton.disabled = true;}
         }
     }
-    addTask(dnd_container, options){
+    addTask(dnd_container, options={}){
         let task = document.createElement('div');task.classList = 'callout mb-2 container-fluid';task.style.borderLeftColor = options?.cor || '#e9ecef';
+        task.setAttribute('data-type','task');
+        task.setAttribute('data-cor', options?.cor || '#e9ecef');
         if(options?.inicio || false){task.setAttribute('data-inicio', options.inicio)}
         if(options?.termino || false){task.setAttribute('data-termino', options.termino)}
+        if(options?.responsavel || false){task.setAttribute('data-responsavel', options.responsavel)}
+        if(options?.progresso || false){task.setAttribute('data-progresso', options.progresso)}
         let body = document.createElement('div');body.classList = 'body ps-0 pb-2';
-        let title = this.__titleConfig(options?.titulo || 'Nova FOO');
-        title.setAttribute('data-type', 'taskTitulo');
+        let title = this.__titleConfig(options?.titulo || 'Nova FOO', 'taskTitulo');
         let description = this.__descriptionConfig(options?.descricao || 'Descrição da nova task');
         let footer = document.createElement('div');footer.classList = 'row bg-light fs-8';
         let footLeftCol = document.createElement('div');footLeftCol.classList = 'col-auto p-1';
         let taskColorInput = document.createElement('input');taskColorInput.type = 'color';taskColorInput.classList = 'form-control p-1 h-100 d-inline-block';taskColorInput.style.width = '50px';taskColorInput.value = options?.cor || '#e9ecef';
-        taskColorInput.onchange = () => {task.style.borderLeftColor = taskColorInput.value;};
+        taskColorInput.onchange = () => {
+            task.setAttribute('data-cor', taskColorInput.value);
+            task.style.borderLeftColor = taskColorInput.value;
+        };
         let responsavelLabel = document.createElement('div');responsavelLabel.classList = 'fw-bold text-purple d-inline-block h-100 align-middle ps-2';responsavelLabel.setAttribute('data-type','taskResponsavel');responsavelLabel.innerHTML = options?.responsavel || '';
         let footRightCol = document.createElement('div');footRightCol.classList = 'col p-1 d-flex justify-content-end';
         body.appendChild(title);
@@ -486,36 +547,55 @@ class Kanban{
         };
         this.modalDeleteTask.show();
     }
-    __loadData(kanban_id=null){ // Monta kanban a partir do this.data
-        this.tags = this.data.global_tags; // Reinicia o dicionario de tags com as tags globais do objeto
-        let kanban_index = 0;
-        this.kanbanSelect.innerHTML = ''; // Limpa o select dos kanbans
+    __loadData(kanban_index=null){ // Monta kanban a partir do this.data
+        this.currentKanban = kanban_index || 0;
+        this.kanbanSelect.querySelectorAll('[data-type="kanbanLink"]').forEach((el) => el.remove());
+        let divider = this.kanbanSelect.querySelector('[data-type="selectKanbanDivider"]');
         for(let kanban in this.data.kanbans){ // Percorre os kanbans, montando o select
-            this.kanbanSelect.innerHTML += `<option value="${this.data.kanbans[kanban].id}">${this.data.kanbans[kanban].id}</option>`; // Limpa o select de kanbans
+            let kanbanLink = document.createElement('li');kanbanLink.classList = 'dropdown-item pointer';kanbanLink.setAttribute('data-type', 'kanbanLink');kanbanLink.setAttribute('data-kanban', kanban);kanbanLink.innerHTML = this.data.kanbans[kanban].id;
+            if(this.currentKanban == kanban){kanbanLink.classList.add('disabled')}
+            kanbanLink.onclick = () => {
+                this.dataSaveCurrent(); // Salva no objeto data os kabnbans e demais elementos
+                this.currentKanban = kanban; // Aponta para o novo kanban
+                this.__showKanban(); // Exibe o kanban
+            }
+            divider.before(kanbanLink);
         }
+        this.__navReorderTags(); // Monta tags
+        this.__showKanban(); // Exibe boards e tasks do kanban atual
+    }
+    __loadTags(){
+        this.tags = {...this.data.global_tags}; // Reinicia o dicionario de tags com as tags globais do objeto
         let tagsCount = Object.keys(this.tags).length;
-        for(let tag in this.data.kanbans[kanban_index].tags){ // Adiciona as tags locais no dicionario de tags
-            this.tags[tagsCount] = this.data.kanbans[0].tags[tag];
+        for(let tag in this.data.kanbans[this.currentKanban].tags){ // Adiciona as tags locais no dicionario de tags
+            this.tags[tagsCount] = this.data.kanbans[this.currentKanban].tags[tag];
             tagsCount++;
         }
-        for(let board in this.data.kanbans[kanban_index].boards){ // Adiciona os boards do kanban
-            let dnd_container = this.addBoard({title: this.data.kanbans[kanban_index].boards[board].titulo}); // Adiciona o board
-            for(let task in this.data.kanbans[kanban_index].boards[board].tasks){ // Adiciona as taks no board
+        this.__navReorderTags(); // Monta o navtags
+    }
+    __showKanban(){
+        this.body.innerHTML = ''; // Limpa a exibicao atual
+        this.kanbanSelect.querySelectorAll('[data-type="kanbanLink"].disabled').forEach((el) => el.classList.remove('disabled')); // Remove a classe disabled referente ao kanban atual
+        this.kanbanSelect.querySelector(`[data-kanban="${this.currentKanban}"]`).classList.add('disabled');
+        this.kanbanModalBtn.innerHTML = this.data.kanbans[this.currentKanban].id; // Altera o id do kanban no botao de edicao
+        this.__loadTags(); // Refaz a lista de tags para o kanban
+        for(let board in this.data.kanbans[this.currentKanban].boards){ // Adiciona os boards do kanban
+            let dnd_container = this.addBoard({title: this.data.kanbans[this.currentKanban].boards[board].titulo}); // Adiciona o board
+            for(let task in this.data.kanbans[this.currentKanban].boards[board].tasks){ // Adiciona as taks no board
                 let task_options = {
-                    titulo: this.data.kanbans[kanban_index].boards[board].tasks[task].titulo,
-                    descricao: this.data.kanbans[kanban_index].boards[board].tasks[task].descricao,
-                    cor: this.data.kanbans[kanban_index].boards[board].tasks[task].cor,
-                    responsavel: this.data.kanbans[kanban_index].boards[board].tasks[task].responsavel,
-                    inicio: this.data.kanbans[kanban_index].boards[board].tasks[task].inicio,
-                    termino: this.data.kanbans[kanban_index].boards[board].tasks[task].termino,
-                    progresso: this.data.kanbans[kanban_index].boards[board].tasks[task].progresso,
-                    tags: this.data.kanbans[kanban_index].boards[board].tasks[task]?.tags || []
+                    titulo: this.data.kanbans[this.currentKanban].boards[board].tasks[task].titulo,
+                    descricao: this.data.kanbans[this.currentKanban].boards[board].tasks[task].descricao,
+                    cor: this.data.kanbans[this.currentKanban].boards[board].tasks[task].cor,
+                    responsavel: this.data.kanbans[this.currentKanban].boards[board].tasks[task].responsavel,
+                    inicio: this.data.kanbans[this.currentKanban].boards[board].tasks[task].inicio,
+                    termino: this.data.kanbans[this.currentKanban].boards[board].tasks[task].termino,
+                    progresso: this.data.kanbans[this.currentKanban].boards[board].tasks[task].progresso,
+                    tags: this.data.kanbans[this.currentKanban].boards[board].tasks[task]?.tags || []
                 };
                 this.addTask(dnd_container, task_options);
             }
             
         }
-        this.__navReorderTags(); // Monta tags
     }
     __buildModals(){
         // Modal de confirmacao para delete task
@@ -574,6 +654,8 @@ class Kanban{
             this.modalTaskTarget.querySelector('[data-type="taskProgress"]').style.width = `${progress.value}%`;
             this.modalTaskTarget.setAttribute('data-inicio', inicio.value);
             this.modalTaskTarget.setAttribute('data-termino', termino.value);
+            this.modalTaskTarget.setAttribute('data-responsavel', responsavel.value);
+            this.modalTaskTarget.setAttribute('data-progresso', `${progress.value}%`);
             this.modalTask.hide();
         };
         // --------------------
@@ -610,5 +692,70 @@ class Kanban{
         document.body.appendChild(modal);
         let elModal = new bootstrap.Modal(modal, {keyboard: true});
         return elModal;
+    }
+    // ----------------------------------------------------------------------------------------------
+    dataSaveCurrent(){ // Salva o kanban atual no objeto this.data.kanbans[xx]...
+        let kanban = this.data.kanbans[this.currentKanban];
+        this.data.global_tags = []; // Limpa a lista de tags globais
+        kanban.tags = []; // Limpa a lista de tags
+        for(let tag in this.tags){ // Carrega as tags
+            if(this.tags[tag].global){this.data.global_tags.push(this.tags[tag])}
+            else{kanban.tags.push(this.tags[tag])}
+        }
+        let boards = this.body.querySelectorAll('[data-type="kanbanBoard"]');
+        kanban.boards = []; // Limpa os boards antigos
+        for(let i = 0; i < boards.length; i++){ // Percorre os boards
+            let tasks = boards[i].querySelectorAll('[data-type="task"]'); // Busca todos as tasks no body da pagina
+            let novasTasks = [];
+            for(let j = 0; j < tasks.length;j++){
+                let dataset = tasks[j].dataset;
+                if(dataset.hasOwnProperty('type')){delete dataset['type']} // Prorpiedade type nao eh salva no objeto json
+                let novasTags = [];
+                let taskTags = tasks[j].querySelectorAll('[data-tag]').forEach((el) => novasTags.push(el.dataset.tag)); // Carrega as tags ajustadas para a task
+                novasTasks.push({
+                    titulo: tasks[j].querySelector('[data-type="taskTitulo"]').innerHTML,
+                    descricao: tasks[j].querySelector('p').innerHTML,
+                    tags: novasTags,
+                    ...dataset
+                });
+            }
+            kanban.boards.push({
+                titulo: boards[i].querySelector('[data-type="boardHeader"]').innerHTML,
+                tasks: novasTasks
+            });
+        }
+
+    }
+    getJson(){ // Retorna objeto json
+        this.dataSaveCurrent(); // Salva kanban em exibicao
+        return this.data;
+    }
+    exportJson(e){
+        let data = JSON.stringify(this.getJson());
+        let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(data);
+        let filename = 'kanban.json';
+        let btn = document.createElement('a');
+        btn.classList = 'd-none';
+        btn.setAttribute('href', dataUri);
+        btn.setAttribute('download', filename);
+        btn.click();
+        btn.remove();
+        let originalClasslist = e.target.className;
+        e.target.classList = 'btn btn-sm btn-success';
+        try {dotAlert('success', 'Arquivo <b>json</b> gerado com <b>sucesso</b>')}catch(error){}
+        setTimeout(function() {e.target.classList = originalClasslist;}, 800);
+    }
+    startFromScratch(){
+        this.currentKanban = 0; // Aponta para o kanban 0 ()
+        this.data = { // Inicializa a estrutura do objeto kanban
+            global_tags : {},
+            kanbans: [{
+                id: "Sem nome",
+                tags: [],
+                boards: []
+            }]
+        };
+        let defaultOpt = document.createElement('li');defaultOpt.classList = 'dropdown-item disabled';defaultOpt.innerHTML = 'Sem nome';defaultOpt.setAttribute('data-type', 'kanbanLink');
+        this.kanbanSelect.querySelector('[data-type="selectKanbanDivider"]').before(defaultOpt);
     }
 }
