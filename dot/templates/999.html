@@ -38,6 +38,7 @@
   <script src="{% static 'js/vendor/sortable.min.js' %}"></script>
   <script src="{% static 'js/kanban.js' %}"></script>
   <script src="{% static 'js/dot.js' %}"></script>
+  <script src="{% static 'js/vendor/mobile.press.js' %}"></script>
   <script src="/static/js/vendor/bootstrap.bundle.min.js"></script>
   
   <script>
@@ -59,7 +60,7 @@
           {
             "titulo":"Em aberto",
             "tasks":[
-              {"titulo":"Nova task","descricao":"Detalhes da task..", "cor":"#3c1e62", "responsavel": "Rafael", "inicio":"2022-09-10", "termino":"2022-12-20", "progresso":"80%", "tags":['Zulu']}
+              {"titulo":"Nova task","descricao":"Detalhes da task..", "cor":"#3c1e62", "responsavel": "Rafael", "inicio":"2022-09-10", "termino":"2021-12-20", "progresso":"80%", "tags":['Zulu']}
             ]
           },
           {"titulo":"Avaliação",
@@ -73,19 +74,22 @@
           {
             "titulo":"Nann",
             "tasks":[
-              {"titulo":"Task fuzi","descricao":"Detalhes da task..", "cor":"#3c1e62", "responsavel": "Rafael", "inicio":"2022-09-10", "termino":"2022-12-20", "progresso":"10%", "tags":['Zulu', 'Local 2']}
+              {"titulo":"Task fuzi","descricao":"Detalhes da task..", "cor":"#3c1e62", "responsavel": "Rafael", "inicio":"2022-09-10", "termino":"2021-12-20", "progresso":"10%", "tags":['Zulu', 'Local 2']}
             ]
           }
         ]
       }
     ]
     };
-    const kanban = new Kanban({
-      // data: jsonobj,
-      container: document.getElementById('container'),
-      canDeleteTask: true,
-      canSave: true
+    const kanban = new jsKanban({
+      data: jsonobj,
+      container: document.getElementById('container')
+      // readOnly: true
+      // canDeleteBoard: false,
+      // canDeleteTask: true,
+      // canSave: true
     });
+
   </script>
 </body>
 </html>

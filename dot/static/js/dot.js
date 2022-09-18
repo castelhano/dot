@@ -146,7 +146,6 @@ function prismStart(){
   }
 }
 
-
 // ******************************************************************************
 // ONLOAD EVENTS                                                                *
 // Todo o codigo abaixo sera executado antes do fechamento do </body>           *

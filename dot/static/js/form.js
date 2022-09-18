@@ -6,6 +6,7 @@
 * @author       Rafael Gustavo ALves {@email castelhano.rafael@gmail.com}
 * @description  Exige json com campos "name" e "value" (demais campos opcionais)
 * @example      [{"name":"nome","value":"Rafael Alves"},{"name":"email","value":"c@gmail.com", "group":"Contato"}, .....]
+* @depend       boostrap 5.2.0, fontawesome 5.15.4, dot.css, dot.js
 */
 class jsForm{
     constructor(options){
