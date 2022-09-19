@@ -1,0 +1,88 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Kanban{% endblock %}
+{% block model %}Gestão{% endblock %}
+{% block model_menu %}{% include "_component/menu/gestao.html" %}{% endblock%}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'gestao_kanban' %}"></a>
+<div class="card mt-2">
+    <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+            <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'gestao_dashboard' %}"><i class="fas fa-undo"></i></a></li>
+        </ul>
+    </div>
+    <div class="card-body tab-content">
+        <div class="tab-pane fade show active" id="base" role="tabpanel">
+            <div class="row">
+                <div class="col"><h5 class="card-title mb-3">Gestão: <span class="text-purple">Kanbans</span></h5></div>
+                <div class="col-auto text-end">
+                    <div class="dropdown">
+                        <a class="btn btn-sm btn-primary dropdown-toggle" id="empresa_link" href="#" role="button" data-bs-toggle="dropdown"><span class="fw-bold">Empresa</span></a>
+                        <ul class="dropdown-menu fs-7">
+                            {% for empresa in empresas %}
+                            <li class="dropdown-item pointer" onclick="carregaKanban(this, '{{empresa.id|safe}}')">{{empresa.nome}}</li>
+                            {% empty %}
+                            <li class="dropdown-item disabled">Nenhuma empresa Habilitada</li>
+                            {% endfor %}
+                        </ul>
+                    </div>                    
+                </div>
+            </div>
+            <div id="kanban_container"></div>
+        </div>
+    </div>
+</div>
+
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/vendor/sortable.min.js' %}"></script>
+<script src="{% static 'js/kanban.js' %}"></script>
+{% endblock %}
+
+<script>
+    {% block add_script %}
+
+    var empresa = null;
+    var startingKanban = false;
+
+    const kanban = new jsKanban({
+        container: document.getElementById('kanban_container'),
+        canSave: true,
+        save: saveKanban,
+    });
+
+    function saveKanban(){
+        if(empresa == null){dotAlert('warning', '<b>Info:</b> Selecione uma empresa antes de salvar');return false;}
+        let url = `/app_data/gestao__${empresa}.json`;
+        let token = getCookie('csrftoken');
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if(this.readyState == 4 && this.status == 200){
+                if(startingKanban){dotAlert('success', '<b>Info:</b> Iniciado kanban para a empresa selecionada');startingKanban = false;}
+                else{dotAlert('success', '<b>Info:</b> Salvo com sucesso');}
+            }
+            else if(this.readyState == 4){
+                dorAlert('danger', '<b>Erro</b> ao salvar kanban');
+            }
+        };
+        xhttp.open("POST", `${url}`, true);
+        xhttp.setRequestHeader('X-CSRFToken', token);
+        xhttp.send(JSON.stringify(kanban.getJson()));
+    }
+
+    function carregaKanban(el, empresa_id){
+        empresa = empresa_id;
+        document.getElementById('empresa_link').innerHTML = el.innerText;
+        dotAppData(`/app_data/gestao__${empresa_id}.json`).then((d) => {
+            if(d == ''){
+                startingKanban = true;
+                saveKanban();
+            }
+            else{kanban.loadData(d);}
+        });
+    }
+    {% endblock %}
+</script>

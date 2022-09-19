@@ -221,6 +221,12 @@ def settings(request):
     return render(request,'gestao/settings.html',{'form':form,'settings':settings})
 
 @login_required
+@permission_required('gestao.view_kanban')
+def kanban(request):
+    empresas = request.user.profile.empresas.all()
+    return render(request, 'gestao/kanban.html',{'empresas':empresas})
+
+@login_required
 @permission_required('gestao.dashboard')
 def indicadores(request):
     indicadores = Indicador.objects.all().order_by('nome')

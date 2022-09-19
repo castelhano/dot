@@ -465,19 +465,17 @@ def app_data(request, fpath):
         try:
             f = open(f'{settings.APP_DATA}/{fpath}', 'r', encoding='utf-8')
             data = json.load(f)
-        except Exception as e:
-            data = []
-        finally:
             f.close()
+        except Exception as e:
+            data = ''
         return JsonResponse(json.dumps(data), safe=False)
     elif request.method == 'POST': # Modo de gravacao, atualiza (ou cria arquivo) com conteudo enviado
         try:
             f = open(f'{settings.APP_DATA}/{fpath}', 'w', encoding='utf-8')
             f.write(json.dumps(json.load(request), ensure_ascii=False))
-        except Exception as e:
-            data = []
-        finally:
             f.close()
+        except Exception as e:
+            pass
     return HttpResponse('')
 
 

@@ -65,12 +65,12 @@ class Staff(models.Model):
     def planos_em_progresso(self, empresa=None):
         if not empresa:
             if self.role in ['O','G']:
-                return Plano.objects.filter(staff=self, status__in=['E','P'])
+                return Plano.objects.filter(staff=self, status__in=['E','P'], diretriz__empresa__in=self.usuario.profile.empresas.all())
             else:
                 return Plano.objects.filter(status__in=['E','P'], diretriz__empresa__in=self.usuario.profile.empresas.all())
         else:
             if self.role in ['O','G']:
-                return Plano.objects.filter(staff=self, status__in=['E','P'], empresa=empresa)
+                return Plano.objects.filter(staff=self, status__in=['E','P'], diretriz__empresa=empresa)
             else:
                 return Plano.objects.filter(status__in=['E','P'], diretriz__empresa=empresa)
     def planos_em_avaliacao(self, empresa=None):
@@ -81,7 +81,7 @@ class Staff(models.Model):
                 return Plano.objects.filter(diretriz__empresa__in=self.usuario.profile.empresas.all(), status='A')
         else:
             if self.role in ['O','G']:
-                return Plano.objects.filter(staff=self, status='A', empresa=empresa)
+                return Plano.objects.filter(staff=self, status='A', diretriz__empresa=empresa)
             else:
                 return Plano.objects.filter(diretriz__empresa=empresa, status='A')
             

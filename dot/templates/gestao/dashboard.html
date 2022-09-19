@@ -24,15 +24,18 @@
         <p class="mb-3 fw-bold text-muted">{{staff.get_role_display|default:'<i class="fas fa-exclamation-triangle me-1 text-danger"></i>Não parametrizado'}}</p>      
       </div>
       <div class="col-auto">
-        <div class="dropdown">
-          <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown"><label class="fw-bold text-capitalize pointer">{{empresa.nome|default:'Empresa'}}</label></button>
-          <ul class="dropdown-menu fs-7">
-            {% for empresa in empresas %}
-            <li><span class="dropdown-item pointer" onclick="urlFilter('empresa',{{empresa.id}})">{{empresa.nome}}</span></li>
-            {% endfor %}
-            <li><span class="dropdown-item dropdown-item-secondary pointer" onclick="urlFiltersClean(['empresa'])">Todas</span></li>
-          </ul>
-        </div>      
+        <div class="d-inline-flex">
+          <a class="btn btn-sm btn-purple me-1" href="{% url 'gestao_kanban' %}" title="Kanbans"><i class="fas fa-layer-group"></i></a>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown"><label class="fw-bold text-capitalize pointer">{{empresa.nome|default:'Empresa'}}</label></button>
+            <ul class="dropdown-menu fs-7">
+              {% for empresa in empresas %}
+              <li><span class="dropdown-item pointer" onclick="urlFilter('empresa',{{empresa.id}})">{{empresa.nome}}</span></li>
+              {% endfor %}
+              <li><span class="dropdown-item dropdown-item-secondary pointer" onclick="urlFiltersClean(['empresa'])">Todas</span></li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
     

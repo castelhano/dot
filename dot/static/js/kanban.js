@@ -7,6 +7,7 @@
 * @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com}
 * @depend   boostrap 5.2.0, fontawesome 5.15.4, SortableJS, dot.css, dot.js
 * @see      {https://github.com/SortableJS/Sortable}
+* @todo     Excluir kanban / Limpar kanban atual
 */
 class jsKanban{
     constructor(options){
@@ -316,7 +317,7 @@ class jsKanban{
         this.nav.querySelectorAll('[data-type="kanbanNavTagFormControl"], [data-type="kanbanNavTagFormHelp"]').forEach((el) => el.remove()); // Apaga form 'antigo' caso tentativa de gerar form duplicado
         let inputGroup = document.createElement('div');inputGroup.classList = 'input-group mt-1';inputGroup.setAttribute('data-type', 'kanbanNavTagFormControl');
         let bgColorBtn = document.createElement('input');bgColorBtn.type = 'color';bgColorBtn.classList = 'form-control form-control-sm';bgColorBtn.style.maxWidth = '50px';bgColorBtn.title = 'Cor do fundo';
-        let colorBtn = document.createElement('input');colorBtn.type = 'color';colorBtn.classList = 'form-control form-control-sm';colorBtn.style.maxWidth = '50px';colorBtn.title = 'Cor do texto';
+        let colorBtn = document.createElement('input');colorBtn.type = 'color';colorBtn.classList = 'form-control form-control-sm';colorBtn.style.maxWidth = '50px';colorBtn.value = '#ffffff';colorBtn.title = 'Cor do texto';
         let input = document.createElement('input');input.type = 'text';input.classList = 'form-control form-control-sm fs-8';
         let checkContainer = document.createElement('div');checkContainer.classList = 'form-check mt-2';checkContainer.setAttribute('data-type', 'kanbanNavTagFormControl');
         let checkbox = document.createElement('input');checkbox.type = 'checkbox'; checkbox.classList = 'form-check-input';checkbox.id = 'kanbanTagGlobalCheck';
