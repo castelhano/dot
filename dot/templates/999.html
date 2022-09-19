@@ -38,7 +38,6 @@
   <script src="{% static 'js/vendor/sortable.min.js' %}"></script>
   <script src="{% static 'js/kanban.js' %}"></script>
   <script src="{% static 'js/dot.js' %}"></script>
-  <script src="{% static 'js/vendor/mobile.press.js' %}"></script>
   <script src="/static/js/vendor/bootstrap.bundle.min.js"></script>
   
   <script>
@@ -83,12 +82,17 @@
     };
     const kanban = new jsKanban({
       data: jsonobj,
-      container: document.getElementById('container')
+      container: document.getElementById('container'),
       // readOnly: true
       // canDeleteBoard: false,
       // canDeleteTask: true,
       // canSave: true
     });
+
+SHORTCUT_MAP['arrowdownTFF'] = ':kanbanDownload';
+SHORTCUT_MAP['/FTF'] = ':searchFocus';
+function kanbanDownload(){kanban.jsonBtn.click()}
+function searchFocus(){kanban.searchInput.select();}
 
   </script>
 </body>

@@ -1,12 +1,12 @@
 /*
 * jsKanban   Implementa componente Kanban
 *
-* @version  1.0
+* @version  1.2
 * @since    18/09/2022
+* @release  19/09/2022
 * @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com}
 * @depend   boostrap 5.2.0, fontawesome 5.15.4, SortableJS, dot.css, dot.js
 * @see      {https://github.com/SortableJS/Sortable}
-* @todo     Ajustar exibicao do nav para o mobile
 */
 class jsKanban{
     constructor(options){
@@ -22,7 +22,7 @@ class jsKanban{
         this.tags = {}; // armazena as tags cadastradas
         this.currentKanban = null; // armazena o indice do kanban em exibicao
         this.saveBtn = null; // Aponta para o botao save
-        this.exportBtn = null; // Aponta para o botao export
+        this.jsonBtn = null; // Aponta para o botao export
         this.loadBtn = null; // Aponta para o botao load
         this.searchInput = null; // Aponta para o search field
         this.modalKanban = null; // aponta para modal para editar ID do kanban (ou adicionar novo kanban)
@@ -33,8 +33,8 @@ class jsKanban{
         // Configuracao
         this.data = options?.data || {}; // Json com dados dos boards kanban
         this.container = options?.container || document.body; // parentNode do kanban, create(), caso nao informado append no body
-        this.dndBoardsOptions = options?.dndBoardsOptions || {group:'boards',animation:100, dragClass: 'dragging'}; // options da instancia Sortable JS dos boards
-        this.dndTasksOptions = options?.dndTasksOptions || {group:'tasks', dragClass: 'dragging'}; // options da instancia Sortable JS das tasks
+        this.dndBoardsOptions = options?.dndBoardsOptions || {group:'boards',animation:100, delay: 80, delayOnTouchOnly: true}; // options da instancia Sortable JS dos boards
+        this.dndTasksOptions = options?.dndTasksOptions || {group:'tasks', delay: 80, delayOnTouchOnly: true}; // options da instancia Sortable JS das tasks
         this.readOnly = options?.readOnly != undefined ? options.readOnly : false; // Boolean, se setado para true desativa todas as opcoes de edicao do kanban
         this.canSave = options?.canSave != undefined ? options.canSave : false; // Boolean, exibe/oculta controle para salvar
         this.save = options?.save != undefined ? options.save : function(){console.log('kanban: Nenhuma funcao definida para save, nas opcoes marque {canSave:true, save: suaFuncao} ')}; // Funcao definida aqui sera acionada no evento click do botao save
@@ -49,18 +49,20 @@ class jsKanban{
         // Estilizacao
         this.kanbanClasslist = options?.kanbanClasslist || 'row'; // classlist para o container principal
         this.headerClasslist = options?.headerClasslist || 'col-12 bg-white p-2'; // classlist para o header container
-        this.navContainerClasslist = options?.navContainerClasslist || 'd-none d-md-block col-auto bg-light text-muted border rounded pt-3 ps-2 fs-7 position-relative'; // classlist para o nav container
-        this.navClasslist = options?.navClasslist || 'text-muted'; // classlist para o nav (ul)
+        // this.navContainerClasslist = options?.navContainerClasslist || 'd-none d-md-block col-auto bg-light text-muted border rounded pt-3 ps-2 fs-7 position-relative'; // classlist para o nav container
+        this.navContainerClasslist = options?.navContainerClasslist || 'col-lg-auto collapse navCollapse bg-light text-muted border rounded pt-1 pt-lg-3 fs-7 position-relative'; // classlist para o nav container
+        this.navClasslist = options?.navClasslist || 'list-unstyled navCollapse'; // classlist para o nav (ul)
         this.sortableClasslist = options?.sortableClasslist || 'pb-5'; // classlist para o div drag and drop
-        this.bodyContainerClasslist = options?.bodyContainerClasslist || 'col'; // classlist para o body container
+        this.bodyContainerClasslist = options?.bodyContainerClasslist || 'col-lg'; // classlist para o body container
         this.bodyClasslist = options?.bodyClasslist || 'row'; // classlist para o container flex dos boards
         this.boardClasslist = options?.boardClasslist || 'col-md-6 col-lg-4 col-xl-3'; // classlist para o board
         this.taskClasslist = options?.taskClasslist || 'callout mb-2 container-fluid'; // classlist base para as tasks
 
         this.create();
+        this.__configureCssClass();
         this.buildControls();
         this.buildNav();
-        this.__buildModals();
+        if(!this.readOnly){this.__buildModals();}
         if(Object.keys(this.data).length > 0){this.__loadData();} // Se kanban existente, carrega estrutura
         else{this.startFromScratch()}
     }
@@ -69,7 +71,7 @@ class jsKanban{
         this.kanban.classList = this.kanbanClasslist;
         this.header = document.createElement('div'); // Col, container para os headers
         this.header.classList = this.headerClasslist;
-        this.nav = document.createElement('div'); // Col, container para o menu de navegacao das tasks
+        this.nav = document.createElement('div');this.nav.id = 'kanbanNavContainer'; // Col, container para o menu de navegacao das tasks
         this.nav.classList = this.navContainerClasslist;
         let bodyCol = document.createElement('div'); // Col, container para o this.body
         bodyCol.classList = this.bodyContainerClasslist;
@@ -85,11 +87,18 @@ class jsKanban{
         this.kanban.appendChild(bodyCol);
         this.container.appendChild(this.kanban);
     }
+    __configureCssClass(){
+        let style = document.createElement('style');
+        style.innerHTML = '@media(min-width: 992px){.navCollapse{min-width: 204px;min-height: 400px; display: block!important;}}';
+        document.getElementsByTagName('head')[0].appendChild(style);
+    }
     buildControls(){
         let row = document.createElement('div');row.classList = 'row g-1';
         let colStart = document.createElement('div');colStart.classList = 'col-auto order-1';
         let colCenter = document.createElement('div');colCenter.classList = 'col-md order-3 order-md-2';
         let colEnd = document.createElement('div');colEnd.classList = 'col-auto ms-auto order-2 order-md-3';
+        let collapseBtn = document.createElement('a');collapseBtn.classList = 'btn btn-sm btn-outline-secondary d-inline-block d-lg-none me-1';collapseBtn.innerHTML = '<i class="fas fa-filter"></i>';collapseBtn.setAttribute('data-bs-toggle', 'collapse');collapseBtn.href = '#kanbanNavContainer';
+        colStart.appendChild(collapseBtn);
         let btnGroup = document.createElement('div');btnGroup.classList = 'btn-group';
         let selectKanbanContainer = document.createElement('div');selectKanbanContainer.classList = 'btn-group d-inline-block me-1';
         this.kanbanModalBtn = document.createElement('button');this.kanbanModalBtn.classList = 'btn btn-sm btn-primary';this.kanbanModalBtn.innerHTML = 'Sem nome';
@@ -206,9 +215,9 @@ class jsKanban{
             btnGroup2.appendChild(this.loadBtn);
         }
         if(this.canExportJson && !this.readOnly){
-            this.exportBtn = document.createElement('button');this.exportBtn.classList = 'btn btn-sm btn-secondary';this.exportBtn.innerHTML = '<i class="fas fa-download me-md-2"></i><span class="d-none d-md-inline">JSON</span>';
-            this.exportBtn.onclick = (e) => this.exportJson(e);
-            btnGroup2.appendChild(this.exportBtn);
+            this.jsonBtn = document.createElement('button');this.jsonBtn.classList = 'btn btn-sm btn-secondary';this.jsonBtn.innerHTML = '<i class="fas fa-download me-md-2"></i><span class="d-none d-md-inline">JSON</span>';
+            this.jsonBtn.onclick = (e) => this.exportJson(e);
+            btnGroup2.appendChild(this.jsonBtn);
         }
         colEnd.appendChild(btnGroup2);        
         // ---
@@ -227,7 +236,7 @@ class jsKanban{
         cleanFilter.innerHTML = `Limpar`;
         cleanFilter.onclick = () => this.cleanFilters();
         this.nav.appendChild(cleanFilter);
-        let menu = document.createElement('ul');menu.classList = 'list-unstyled';menu.style.minWidth = '204px';menu.style.minHeight = '400px';
+        let menu = document.createElement('ul');menu.classList = this.navClasslist;
         this.__navReorderTags(); // Insere as tags no nav de e reordena pelo nome
         let addTag = document.createElement('li');
         addTag.setAttribute('data-type', 'navNewTag');
@@ -664,7 +673,6 @@ class jsKanban{
         }
         return null;
     }
-    __tagDelete(){}
     __taskDelete(taskBody){taskBody.parentNode.remove();}
     __taskConfirmDelete(taskBody){
         let deleteBtn = this.modalDeleteTask._element.querySelector('[data-type="modalAction"]');
@@ -691,6 +699,10 @@ class jsKanban{
         }
         this.__navReorderTags(); // Monta tags
         this.__showKanban(); // Exibe boards e tasks do kanban atual
+    }
+    loadData(json){
+        this.data = json;
+        this.__loadData();
     }
     __loadTags(){
         this.tags = {...this.data.global_tags}; // Reinicia o dicionario de tags com as tags globais do objeto
@@ -735,21 +747,21 @@ class jsKanban{
         // Modal para edicao das tasks
         let taskModalBody = document.createElement('div');taskModalBody.classList = 'mb-2';
         let L1Row = document.createElement('div');L1Row.classList = 'row g-1';
-        let L1ColA = document.createElement('div');L1ColA.classList = 'form-floating col-8 mb-1';
+        let L1ColA = document.createElement('div');L1ColA.classList = 'form-floating col-md-8 mb-md-1';
         let titulo = document.createElement('input');titulo.type = 'text';titulo.classList = 'form-control';titulo.id = 'kanbanTaskModalTitulo';titulo.placeholder = ' ';
         let tituloLabel = document.createElement('label');tituloLabel.setAttribute('for', 'kanbanTaskModalTitulo');tituloLabel.innerHTML = 'Titulo';
         L1ColA.appendChild(titulo);L1ColA.appendChild(tituloLabel);
-        let L1ColB = document.createElement('div');L1ColB.classList = 'form-floating col-4 mb-1';
+        let L1ColB = document.createElement('div');L1ColB.classList = 'form-floating col-md-4 mb-1';
         let responsavel = document.createElement('input');responsavel.type = 'text';responsavel.classList = 'form-control';responsavel.id = 'kanbanTaskModalResponsavel';responsavel.placeholder = ' ';
         let responsavelLabel = document.createElement('label');responsavelLabel.setAttribute('for', 'kanbanTaskModalResponsavel');responsavelLabel.innerHTML = 'Responsável';
         L1ColB.appendChild(responsavel);L1ColB.appendChild(responsavelLabel);
         L1Row.appendChild(L1ColA);L1Row.appendChild(L1ColB);
         let L2Row = document.createElement('div');L2Row.classList = 'row g-1';
-        let L2ColA = document.createElement('div');L2ColA.classList = 'col-8 mb-1';
+        let L2ColA = document.createElement('div');L2ColA.classList = 'col-md-8 mb-md-1';
         let detalhe = document.createElement('textarea');detalhe.classList = 'form-control';detalhe.id = 'kanbanTaskModalDetalhe';detalhe.style.minHeight = '120px';detalhe.placeholder = 'Detalhes da task';
         L2ColA.appendChild(detalhe);
         L2Row.appendChild(L2ColA);
-        let L2ColB = document.createElement('div');L2ColB.classList = 'col-4';
+        let L2ColB = document.createElement('div');L2ColB.classList = 'col-md-4';
         let L2ColB_A = document.createElement('div');L2ColB_A.classList = 'form-floating mb-1';
         let inicio = document.createElement('input');inicio.type = 'date';inicio.classList = 'form-control';inicio.id = 'kanbanTaskModalInicio';
         let inicioLabel = document.createElement('label');inicioLabel.setAttribute('for', 'kanbanTaskModalInicio');inicioLabel.innerHTML = 'Inicio';
@@ -778,8 +790,8 @@ class jsKanban{
         this.modalTask = this.__newBootstrapModal(modalTaskOptions);
         this.modalTaskAction = this.modalTask._element.querySelector('[data-type="modalAction"]');
         this.modalTaskAction.onclick = () => {
-            this.modalTaskTarget.querySelector('h6').innerHTML = titulo.value;
-            this.modalTaskTarget.querySelector('p').innerHTML = detalhe.value;
+            this.modalTaskTarget.querySelector('h6').innerHTML = titulo.value != '' ? titulo.value : 'Titulo Obrigatorio';
+            this.modalTaskTarget.querySelector('p').innerHTML = detalhe.value != '' ? detalhe.value : '...';
             this.modalTaskTarget.querySelector('[data-type="taskResponsavel"]').innerHTML = responsavel.value;
             this.modalTaskTarget.querySelector('[data-type="taskProgress"]').style.width = `${progress.value}%`;
             this.modalTaskTarget.setAttribute('data-inicio', inicio.value);
