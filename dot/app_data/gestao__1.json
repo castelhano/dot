@@ -1,1 +1,1 @@
-{"global_tags": [], "kanbans": [{"id": "Sem nome", "tags": [], "boards": []}]}
+{"global_tags": [{"text": "Global", "bg": "#c44545", "color": "#ffffff", "global": "true"}], "kanbans": [{"id": "Sem nome", "boards": [], "tags": []}]}

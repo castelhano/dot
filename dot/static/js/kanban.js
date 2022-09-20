@@ -7,7 +7,6 @@
 * @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com}
 * @depend   boostrap 5.2.0, fontawesome 5.15.4, SortableJS, dot.css, dot.js
 * @see      {https://github.com/SortableJS/Sortable}
-* @todo     Excluir kanban / Limpar kanban atual
 */
 class jsKanban{
     constructor(options){
@@ -29,8 +28,9 @@ class jsKanban{
         this.modalKanban = null; // aponta para modal para editar ID do kanban (ou adicionar novo kanban)
         this.modalTask = null; // aponta para modal com dados detalhados da task
         this.modalTaskAction = null; // aponta para o botao gravar do modal de edicao da task
+        this.modalKanbanCleanTasks = null; // aponta para modal para limpar tasks do kanban em exibicao
         this.modalTaskTarget = null; // aponta para a task que esta sendo editada
-        this.modalDeleteTask = null; // aponta para instancia (bootstrap modal) do modal para deletar task
+        this.modalDeleteComponent = null; // aponta para instancia (bootstrap modal) do modal para deletar task
         // Configuracao
         this.data = options?.data || {}; // Json com dados dos boards kanban
         this.container = options?.container || document.body; // parentNode do kanban, create(), caso nao informado append no body
@@ -44,6 +44,7 @@ class jsKanban{
         this.canAddTask = options?.canAddTask != undefined ? options.canAddTask : true; // Boolean, exibe/oculta controle para nova task no grupo
         this.canDeleteTask = options?.canDeleteTask != undefined ? options.canDeleteTask : true; // Boolean, exibe/oculta controle para deletar task
         this.canAddTag = options?.canAddTag != undefined ? options.canAddTag : true; // Boolean, exibe/oculta controle para nova tag
+        this.showCleanKanbanBtn = options?.showCleanKanbanBtn != undefined ? options.showCleanKanbanBtn : true; // Boolean, exibe/oculta controle para limpar tasks kanban em ebibicao
         this.canDeleteTag = options?.canDeleteTag != undefined ? options.canDeleteTag : true; // Boolean, exibe/oculta controle para deletar tag
         this.canLoadFile = options?.canLoadFile != undefined ? options.canLoadFile : true; // Boolean, exibe/oculta controle para abrir arquivo com kanban
         this.canExportJson = options?.canExportJson != undefined ? options.canExportJson : true; // Boolean, exibe/oculta controle para exportar json
@@ -111,6 +112,7 @@ class jsKanban{
             this.kanbanModalBtn.onclick = () => {
                 let input = document.getElementById('kanbanModalId');
                 input.value = this.kanbanModalBtn.innerText;
+                this.modalKanban._element.querySelector('[data-type="modalExtra"]').classList.remove('d-none'); // Exibe o botao de excluir ao inserir novo kanban
                 this.modalKanban._element.querySelector('[data-type="modalAction"]').onclick = () => {
                     if(input.value == ''){
                         input.value = 'Obrigatorio..';
@@ -123,6 +125,25 @@ class jsKanban{
                         this.modalKanban.hide();
                     }
                 }
+                this.modalKanban._element.querySelector('[data-type="modalExtra"]').onclick = () => {
+                    this.modalKanban.hide();
+                    this.modalDeleteComponent._element.querySelector('[data-type="modalAction"]').onclick = () => {
+                        if(this.data.kanbans.length > 1){ // Se existe mais de um kanban, apaga o current e exibe o novo posicao 0
+                            this.data.kanbans.splice(this.currentKanban, 1);
+                            this.currentKanban = 0;
+                        }
+                        else{ // So existe um kanban, apenas limpa registros 
+                            this.data.kanbans[this.currentKanban] = {
+                                id: 'Sem nome',
+                                boards: [],
+                                tags: []
+                            };
+                        }
+                        this.__loadData(); // Refaz select kanban, tags e exibe kanban ajustado
+                        this.modalDeleteComponent.hide();
+                    }
+                    this.modalDeleteComponent.show();
+                }
                 this.modalKanban.show(); // Exibe modal para alterar nome kanban
                 setTimeout(function() {input.select();}, 470); // Move o foco para o input
             }
@@ -130,6 +151,7 @@ class jsKanban{
             newKanbanLink.onclick = () => {
                 let input = document.getElementById('kanbanModalId');
                 input.value = '';
+                this.modalKanban._element.querySelector('[data-type="modalExtra"]').classList.add('d-none'); // Oculta o botao de excluir ao inserir novo kanban
                 this.modalKanban._element.querySelector('[data-type="modalAction"]').onclick = () => {
                     if(input.value == ''){
                         input.value = 'Obrigatorio..';
@@ -161,6 +183,11 @@ class jsKanban{
                 setTimeout(function() {input.select();}, 470); // Move o foco para o input
             };
             this.kanbanSelect.appendChild(newKanbanLink);
+            if(this.showCleanKanbanBtn){
+                let cleanTasksBtn = document.createElement('li');cleanTasksBtn.classList = 'dropdown-item pointer';cleanTasksBtn.innerHTML = '<i class="fas fa-stop text-danger me-1"></i> Limpar Tasks';
+                cleanTasksBtn.onclick = () => {this.modalKanbanCleanTasks.show();};
+                this.kanbanSelect.appendChild(cleanTasksBtn);
+            }
         }
         else{
             this.kanbanModalBtn.disabled = true;
@@ -227,6 +254,9 @@ class jsKanban{
         row.appendChild(colEnd);
         this.header.appendChild(row);
 
+    }
+    __controlsBuildSelectKanban(){
+        this.kanbanSelect.querySelector()
     }
     buildNav(){
         let cleanFilter = document.createElement('span');
@@ -558,11 +588,11 @@ class jsKanban{
                 if(this.canDeleteTask){
                     document.querySelector('[data-type="modalExtra"]').onclick = () => {
                         this.modalTask.hide();
-                        this.modalDeleteTask._element.querySelector('[data-type="modalAction"]').onclick = () => {
+                        this.modalDeleteComponent._element.querySelector('[data-type="modalAction"]').onclick = () => {
                             this.modalTaskTarget.remove();
-                            this.modalDeleteTask.hide();
+                            this.modalDeleteComponent.hide();
                         }
-                        this.modalDeleteTask.show();
+                        this.modalDeleteComponent.show();
                     };
                 }
                 this.modalTask.show();
@@ -676,13 +706,13 @@ class jsKanban{
     }
     __taskDelete(taskBody){taskBody.parentNode.remove();}
     __taskConfirmDelete(taskBody){
-        let deleteBtn = this.modalDeleteTask._element.querySelector('[data-type="modalAction"]');
+        let deleteBtn = this.modalDeleteComponent._element.querySelector('[data-type="modalAction"]');
         deleteBtn.onclick = () => {
             this.__taskDelete(taskBody);
-            this.modalDeleteTask.hide();
+            this.modalDeleteComponent.hide();
             deleteBtn.onclick = () => console.log('Kanban: Nothing to do..');
         };
-        this.modalDeleteTask.show();
+        this.modalDeleteComponent.show();
     }
     __loadData(kanban_index=null){ // Monta kanban a partir do this.data
         this.currentKanban = kanban_index || 0;
@@ -743,8 +773,8 @@ class jsKanban{
     __buildModals(){
         // Modal de confirmacao para delete task
         let modalDeleteBody = document.createElement('p');
-        modalDeleteBody.innerHTML = '<h5>Excluir task</h5><p>Confirma a exclusão da task? Este processo <b>não pode ser desfeito</b>.</p>';
-        this.modalDeleteTask = this.__newBootstrapModal({body: modalDeleteBody,actionClass: 'danger', actionText:'Deletar'});
+        modalDeleteBody.innerHTML = '<h5>Excluir registro</h5><p>Confirma a exclusão do registro? Este processo <b>não pode ser desfeito</b>.</p>';
+        this.modalDeleteComponent = this.__newBootstrapModal({body: modalDeleteBody,actionClass: 'danger', actionText:'Deletar'});
         // Modal para edicao das tasks
         let taskModalBody = document.createElement('div');taskModalBody.classList = 'mb-2';
         let L1Row = document.createElement('div');L1Row.classList = 'row g-1';
@@ -806,8 +836,21 @@ class jsKanban{
         let kanbanModalBody = document.createElement('div');kanbanModalBody.classList = 'mb-3';
         let kanbanId = document.createElement('input');kanbanId.type = 'text';kanbanId.classList = 'form-control';kanbanId.id = 'kanbanModalId';kanbanId.placeholder = 'ID para o kanban';
         kanbanModalBody.appendChild(kanbanId);
-        let modalKanbanOptions = {body: kanbanModalBody,dialog_class:'modal-sm'};
+        let modalKanbanOptions = {body: kanbanModalBody,dialog_class:'modal-sm', btnExtra:true, extraClass: 'danger', extraText:'Excluir'};
         this.modalKanban = this.__newBootstrapModal(modalKanbanOptions);
+        // --------------------
+        if(this.showCleanKanbanBtn){
+            let cleanKanbanTasksModal = document.createElement('p');
+            cleanKanbanTasksModal.innerHTML = '<h5>Limpar tasks</h5><p>Este processo vai apagar todas as tasks para o kanban em exibição, confirma operação?</p>';
+            this.modalKanbanCleanTasks = this.__newBootstrapModal({body: cleanKanbanTasksModal,actionClass: 'danger', actionText:'Limpar'});
+            this.modalKanbanCleanTasks._element.querySelector('[data-type="modalAction"]').onclick = () => { // Configura o botao action do modal
+                this.data.kanbans[this.currentKanban].boards.forEach((el) => {
+                    el.tasks = [];
+                });
+                this.modalKanbanCleanTasks.hide();
+                this.__showKanban();
+            };
+        }
         
     }
     __newBootstrapModal(options){

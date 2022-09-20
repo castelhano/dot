@@ -7,6 +7,7 @@
   <title>999 Test Page</title>
   <link rel="shortcut icon" href="{% static 'img/favicon.ico'%}">
   <link rel="stylesheet" href="{% static 'css/dot.css' %}" type="text/css">
+  <link rel="stylesheet" href="{% static 'css/charts.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/all.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/fontawesome.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.min.css' %}" type="text/css">
@@ -23,6 +24,51 @@
   <div class="container-fluid">
     <h1>Handler 999</h1>
     <hr >
+
+    <div class="row">
+      <div class="col text-center">
+        <span>CPU</span>
+        <div class="pie animate" style="--v:80;--c:orange; "> 80%</div>
+      </div>
+      <div class="col text-center"><span class="d-block">CPU</span><div class="pie flat animate" style="--v:40;--c:blue; "> 40%</div></div>
+      <div class="col text-center"><div class="pie animate" style="--v:60;--c:red;--w:60px;--b:5px;"> 60%</div></div>
+      <div class="col text-center"><div class="pie animate" style="--v:35;--c:purple; "> 35%</div></div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-6">
+        <table style="--labels-size: 200px;" class="charts-css bar show-labels show-data-axes show-9-secondary-axes show-heading show-data-on-hover data-spacing-5 labels-align-end animate">
+          <caption class="fs-5 mb-3 text-end">Titulo grafico</caption>
+          <tbody class="bar-h-md">
+            <tr>
+              <th scope="row">2020</th>
+              <td style="--size:0.46"><span class="data">46</span></td>
+            </tr>
+              <tr>
+              <th scope="row">2021</th>
+              <td style="--size:0.27"><span class="tooltip">Texto do<br>tooltip</span><span class="data">27</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-6" style="height: 280px;">
+        <table style="" class="charts-css column show-labels show-data-axes show-heading show-data-on-hover data-spacing-5 animate">
+          <caption class="fs-5 mb-3 text-end">Titulo grafico</caption>
+          <tbody class="bar-h-md">
+            <tr>
+              <th scope="row">2020</th>
+              <td style="--size:0.46"><span class="data">46</span></td>
+            </tr>
+              <tr>
+              <th scope="row">2021</th>
+              <td style="--size:0.27"><span class="tooltip">Texto do<br>tooltip</span><span class="data">27</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
 
 
     <div id="container"></div>
@@ -44,52 +90,6 @@
     
     var TAB_ON_ENTER = true;
     
-    // let jsonobj = {
-    //   "global_tags":[{text:'Zulu', color:'#ffffff', bg:'#1ca044', global:'true'}],
-    //   "kanbans":[
-    //     {
-    //     "id": "Pandemonio",
-    //     "tags":[{text:'Local 1',color:'#ffffff',bg:'#384bd6'},{text:'Local 2',color:'#ffffff',bg:'#c0482a'},{text:'Ilidan',color:'#f1f1f1',bg:'#C061CB'}],
-    //     "boards":[
-    //       {
-    //         "titulo":"Em aberto",
-    //         "tasks":[
-    //           {"titulo":"Nova task","descricao":"Detalhes da task..", "cor":"#3c1e62", "responsavel": "Rafael", "inicio":"2022-09-10", "termino":"2021-12-20", "progresso":"80%", "tags":['Zulu']}
-    //         ]
-    //       },
-    //       {"titulo":"Avaliação",
-    //         "tasks":[{"titulo":"Task Concluida","descricao":"Detalhes da outra task", "cor":"#F32122", "progresso":"0%"}]
-    //       }]
-    //   },
-    //     {
-    //     "id": "Fuzion",
-    //     "tags":[{text:'Fuzi',color:'#ffffff',bg:'#384bd6'}],
-    //     "boards":[
-    //       {
-    //         "titulo":"Nann",
-    //         "tasks":[
-    //           {"titulo":"Task fuzi","descricao":"Detalhes da task..", "cor":"#3c1e62", "responsavel": "Rafael", "inicio":"2022-09-10", "termino":"2021-12-20", "progresso":"10%", "tags":['Zulu', 'Local 2']}
-    //         ]
-    //       }
-    //     ]
-    //   }
-    // ]
-    // };
-    const form = new jsForm({
-      // data: jsonobj,
-      container: document.getElementById('container'),
-      // readOnly: true
-      // canDeleteBoard: false,
-      // canDeleteTask: true,
-      // canSave: true
-    });
-
-    
-
-// SHORTCUT_MAP['arrowdownTFF'] = ':kanbanDownload';
-// SHORTCUT_MAP['/FTF'] = ':searchFocus';
-// function kanbanDownload(){kanban.jsonBtn.click()}
-// function searchFocus(){kanban.searchInput.select();}
 
   </script>
 </body>
