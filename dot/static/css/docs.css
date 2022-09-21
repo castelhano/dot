@@ -1,5 +1,10 @@
 *{scroll-margin: 55px;}
 a{text-decoration: none;}
+
+pre{position: relative;border-radius: 0.25rem;}
+.code-btn-copy{position: absolute;top:8px;right: 10px;font-size: 1.2rem;padding: 2px 8px;cursor: pointer;color: #FFF;opacity: 0.5;border-radius: 5px;}
+.code-btn-copy:hover{background-color: #535350;opacity:1;}
+
 .goTop-anchor{
   padding: 15px;
   width: 55px;

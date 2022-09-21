@@ -131,16 +131,8 @@ div.btn-light:hover{background-color: #d3d4d5;}
 .form-floating-display{padding: 1rem 0.75rem;border: 1px solid #ced4da;border-radius: 0.25rem;background-color: #e9ecef;}
 .form-floating-display, .form-floating-control{height: calc(3.5rem + 2px);line-height: 1.25;}
 .form-check-label{user-select: none;}
+
 .code{background-color: #F8F9FA;border: 1px solid #dee2e6;border-radius: .25rem;padding: 5px 10px;margin-bottom: 15px;user-select: all;}
-.code-multiline{background-color: #F8F9FA;border: 1px solid #dee2e6;border-radius: .25rem;padding: 8px 20px;margin-bottom: 15px;user-select: all;}
-pre{position: relative;border-radius: 0.25rem;}
-.code-btn-copy{position: absolute;top:8px;right: 10px;font-size: 1.2rem;padding: 2px 8px;cursor: pointer;color: #FFF;opacity: 0.5;border-radius: 5px;}
-.code-btn-copy:hover{background-color: #535350;opacity:1;}
-ol.code-multiline {padding-left: 8px;list-style: none;counter-reset: code_line_counter;}
-ol.code-multiline li {counter-increment: code_line_counter;}
-ol.code-multiline li::before {content: counter(code_line_counter) "";color: #6c757d;margin-right: 15px;}
-ol.code-multiline li.list-ident-1::before {margin-right: 40px;}
-ol.code-multiline li.list-ident-2::before {margin-right: 80px;}
 
 .card-widget{min-height: 100px;border: 2px solid #FFF;position: relative;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;padding-right: 10px;}
 .card-widget > .lead-image{width: 100%;line-height: 250%;text-align: center;font-size: 3.2rem;}

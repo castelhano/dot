@@ -1,6 +1,6 @@
 
 /*
-* tagin.js
+* tagin.js ** FORK ** (modificacoes locais)
 *
 * @version  2.0.2
 * @author   Erwin Heldy G
@@ -11,7 +11,7 @@
 * @method el.getTag()                   # Retorna  tags as string red,green,blue,yellow,cyan,black
 * @method el.getTags()                  # Retorna array com tags ['red', 'green', 'blue', 'yellow', 'cyan', 'black']
 * @example  
-*     <link rel="stylesheet" href="css/vendor/bootstrap.min.css" type="text/css">
+*     <link rel="stylesheet" href="css/vendor/tagin.css" type="text/css">
 *      
 *     <div class="row g-1">
 *       <div class="form-floating mb-1 col-lg-12">
@@ -23,7 +23,7 @@
 *     new Tagin(document.getElementById('id_tags')) ou
 *     new Tagin(document.getElementById('id_tags'), {
 *       separator: ';',                             # Default = ','
-*       tabColor: 'primary',                        # Default = '' Valores possiveis: [primary, success, warning, danger, purple, orange]
+*       tagColor: 'primary',                        # Default = '' Valores possiveis: [primary, success, warning, danger, purple, orange]
 *       enter: true,                                # Default = false
 *       placeholder: 'Enter ou ,',                  # Default = ''
 *       transform: 'input => input.toUpperCase()',  # Deafult = 'input => input'

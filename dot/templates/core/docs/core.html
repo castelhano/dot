@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="{% static 'css/docs.css' %}">
 <link rel="stylesheet" href="{% static 'css/charts.css' %}">
 <link rel="stylesheet" href="{% static 'css/vendor/prism.css' %}">
+<link rel="stylesheet" href="{% static 'css/vendor/tagin.css' %}">
 {% endblock%}
 
 
@@ -22,8 +23,7 @@
           <li><a class="dropdown-item" href="{% url 'docs' 'jsTable' %}"><i class="fab fa-js-square fa-fw text-success"></i> jsTable</a></li>
           <li><a class="dropdown-item" href="{% url 'docs' 'jsForm' %}"><i class="fab fa-js-square fa-fw text-success"></i> jsForm</a></li>
           <li><a class="dropdown-item" href="{% url 'docs' 'jsKanban' %}"><i class="fab fa-js-square fa-fw text-success"></i> jsKanban</a></li>
-          <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item" href="{% url 'docs' 'sortablejs' %}"><i class="fab fa-js-square fa-fw text-purple"></i> Sortable JS</a></li>
+          <!-- <li><hr class="dropdown-divider"></li> -->
         </ul>
       </li>
     </ul>
@@ -47,7 +47,7 @@
           <a href="https://github.com/ChartsCSS/charts.css"><i class="fab fa-github"></i> Github Repo</a>
           
           <p class="mt-4">Importe as classes de estilo</p>
-          <pre><code class="language-html">&lt;link rel="stylesheet" href="{% static 'css/charts.css' %}" type="text/css"&gt;</code></pre>
+          <pre><code class="language-html">&lt;link rel="stylesheet" href="{&#37; static 'css/charts.css' &#37;}" type="text/css"&gt;</code></pre>
 
           <h5 id="pie_label"><i class="fas fa-chart-pie me-2"></i> Pie charts</h5>
 
@@ -156,7 +156,79 @@
 &lt;/div&gt;</code></pre>
 
 
+        <h3 id="bibliotecas_javascript">Bibliotecas Javascript</h3>
+        <hr />
+
+        <h5 id="js_dot">Dot JS</h5>
+        <p>Biblioteca básica do sistema, disponivel em <b>todas</b> as páginas</p>
+        <table class="table table-bordered table-hover table-strip">
+          <thead>
+            <tr>
+              <th class="table-secondary">Função</th>
+              <th class="table-secondary">Descrição / Exemplo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>dotAlert('success', 'Registro salvo')</td>
+              <td>Exibe mensagem de alerta padrão do sistema</td>
+            </tr>
+            <tr>
+              <td>today()</td>
+              <td>Retorna a data atual<small class="d-block">Ex: today(5, 0, 0, true, element) Adiciona 5 dias e retorna AAAA-mm-dd</small></td>
+            </tr>
+            <tr>
+              <td>getCookie('csrftoken')</td>
+              <td>Retorna cookie buscado</td>
+            </tr>
+            <tr>
+              <td>dotAppData('{&#37; url 'app_data' 'data_test.json' &#37;}')</td>
+              <td>Retorna Json salvo no diretorio <b>app_data</b></td>
+            </tr>
+            <tr>
+              <td>tooltipActivate()</td>
+              <td>Inicia tooltip integrada Bootstrap</td>
+            </tr>
+            <tr>
+              <td>prismStart()</td>
+              <td>Adiciona botao para copiar nos elementos <code>code</code></td>
+            </tr>
+          </tbody>
+        </table>
+        <h5 id="js_listener">Listener JS</h5>
+        <h5 id="js_interpolate">Interpolate JS</h5>
+        <h5 id="js_time">Time JS</h5>
+        <h5 id="js_url">URL JS</h5>
+        <h5 id="js_chart">Chart JS</h5>
+        <h5 id="js_mask">Mask JS</h5>
+        <h5 id="js_prism">Prism JS</h5>
+        <p>Adiciona hightli</p>
+        <!-- <pre><code class="language-html">&lt;pre&gt;&lt;code class="language-javascript"&gt;new Tagin(document.getElementById('taginExample'), {separator:';'});&lt;/code&gt;&lt;/pre&gt;</code></pre> -->
         
+        <h5 id="js_sortable">Sortable JS</h5>
+        <h5 id="js_tagin">Tagin JS</h5>
+        <p>Implementa controle ( input:text ) para inclusão de tags</p>
+        <pre><code class="language-html">&lt;link rel="stylesheet" href="{&#37; static 'css/vendor/tagin.css' &#37;}" type="text/css"/&gt
+&lt;script src="{&#37; static 'js/vendor/tagin.js' &#37;}" charset="utf-8"&gt;</script></code></pre>
+
+        <div class="row g-1">
+          <div class="form-floating my-4 col-lg-6">
+            <input type="text" class="form-control tagin" id="taginExample" value="Python;Javascript">
+            <label for="taginExample">Linguagens</label>
+          </div>
+        </div>
+
+        <pre><code class="language-javascript">new Tagin(document.getElementById('taginExample'), {separator:';'});</code></pre>
+        <h6 class="mt-4">Configuração</h6>
+
+        <pre><code class="language-javascript">new Tagin(document.getElementById('id_tags'), {
+  separator: ';',                             // Default = ','
+  tagColor: 'primary',                        // Default = '' Valores possiveis: [primary, success, warning, danger, purple, orange]
+  enter: true,                                // Default = false
+  placeholder: 'Enter ou ,',                  // Default = ''
+  transform: 'input => input.toUpperCase()',  // Deafult = 'input => input'
+  duplicate: true,                            // Default = false
+})</code></pre>
 
         <div style="margin-bottom: 220px;">&nbsp;</div>
 
@@ -164,16 +236,32 @@
         </div><!-- Fim Container principal -->
         <div class="col-lg order-1 order-lg-2 mb-3">
           <ul class="list-unstyled menu">
-            <li><i class="fas fa-book fa-fw"></i><b><a href="#utilizacao">Utilização</a></b></li>
-            <li><i class="fas none fa-fw"></i><a href="#foo">Submenu</a></li>
-            <li><i class="fas none fa-fw"></i><a href="#bar">Submenu</a></li>
+            <li><i class="fas fa-book fa-fw"></i><b><a href="#utilizacao">Preparando ambiente</a></b></li>
+            <li><i class="fas none fa-fw"></i><a href="#foo">Linux</a></li>
             <li><i class="fas fa-sliders-h fa-fw mt-2"></i><b><a href="#configuracoes">Configurações</a></b></li>
-            <li><i class="fas none fa-fw"></i><a href="#recursos">Recursos</a></li>
+            <li><i class="fas none fa-fw"></i><a href="#fixture">Carregando registros (fixture)</a></li>
+            <li><i class="fas fa-sitemap fa-fw mt-2"></i><b><a href="#modulos">Aplicações (módulos)</a></b></li>
+            <li><i class="fas none fa-fw"></i><a href="#uii">Submenu</a></li>
             <li><i class="fas fa-swatchbook fa-fw mt-2"></i><b><a href="#componentes_interface">Componentes de Interface</a></b></li>
             <li><i class="fas none fa-fw"></i><a href="#chartcss"><i class="fab fa-css3 text-purple"></i> Chart CSS</a></li>
             <li><i class="fas none fa-fw"></i><a href="#pie_label"><i class="fas fa-chart-pie"></i> Pie Label</a></li>
-            <li><i class="fas fa-code fa-fw mt-2"></i><b><a href="#metodos">Métodos</a></b></li>
-            <li><i class="fas none fa-fw"></i><a href="#integracao_listener_js">Integração com <b class="text-muted">listener.js</b></a></li>
+            <li><i class="fas none fa-fw"></i><span class="bg-danger bg-opacity-75 border rounded px-2 text-white fs-8 me-1">Vendor</span><span class="bg-purple-light border rounded px-2 text-white fs-8 me-2">Fork</span><a href="#inmate">Inmate</a> | <a href="https://animate.style/">Project Page</a></li>
+            <li><i class="fab fa-js-square fa-fw mt-2"></i><b><a href="#bibliotecas_javascript">Bibliotecas Javascript</a></b></li>
+            <li><i class="fas none fa-fw"></i><a href="#js_dot">Dot.js</a></li>
+            <li><i class="fas none fa-fw"></i><a href="#js_listener">Listener</a></li>
+            <li><i class="fas none fa-fw"></i><a href="#js_interpolate">Interpolate</a></li>
+            <li><i class="fas none fa-fw"></i><a href="#js_time">Time</a></li>
+            <li><i class="fas none fa-fw"></i><a href="#js_url">URL</a></li>
+            <!-- <li><span class="fw-bold text-muted">Vendor</span></li> -->
+            <li><i class="fas none fa-fw"></i><span class="bg-danger bg-opacity-75 border rounded px-2 text-white fs-8 me-2">Vendor</span><a href="#js_chart">chart.js</a></li>
+            <li><i class="fas none fa-fw"></i><span class="bg-danger bg-opacity-75 border rounded px-2 text-white fs-8 me-2">Vendor</span><a href="#js_mask">mask.js</a> | <a href="https://github.com/vanilla-masker/vanilla-masker" target="_blank">Github</a></li>
+            <li><i class="fas none fa-fw"></i><span class="bg-danger bg-opacity-75 border rounded px-2 text-white fs-8 me-2">Vendor</span><a href="#js_prism">prism.js</a> | <a href="https://prismjs.com/" target="_blank">Project Page</a></li>
+            <li><i class="fas none fa-fw"></i><span class="bg-danger bg-opacity-75 border rounded px-2 text-white fs-8 me-2">Vendor</span><a href="#js_sortable">sortable.js</a> | <a href="https://github.com/SortableJS/Sortable" target="_blank">Github</a> | <a href="https://sortablejs.github.io/Sortable/" target="_blank">Project Page</a></li>
+            <li><i class="fas none fa-fw"></i><span class="bg-danger bg-opacity-75 border rounded px-2 text-white fs-8 me-1">Vendor</span><span class="bg-purple-light border rounded px-2 text-white fs-8 me-2">Fork</span><a href="#js_tagin">tagin.js</a></li>
+            <li><hr /></li>
+            <li><i class="fab fa-js-square text-purple fa-fw mt-2"></i><a href="{% url 'docs' 'jsTable' %}">jsTable</a></li>
+            <li><i class="fab fa-js-square text-purple fa-fw mt-2"></i><a href="{% url 'docs' 'jsForm' %}">jsForm</a></li>
+            <li><i class="fab fa-js-square text-purple fa-fw mt-2"></i><a href="{% url 'docs' 'jsKanban' %}">jsKanban</a></li>
           </ul>
         </div>
       </div>
@@ -188,11 +276,14 @@
 
 {% block add_script_src %}
 <script src="{% static 'js/vendor/prism.js' %}" charset="utf-8"></script>
+<script src="{% static 'js/vendor/tagin.js' %}" charset="utf-8"></script>
 {% endblock %}
 
 <script>
   {% block add_script %}
   prismStart();
+
+  new Tagin(document.getElementById('taginExample'), {separator:';', tagColor: 'primary',placeholder: 'Seu placeholder', enter:true});
 
   {% endblock %}
 </script>

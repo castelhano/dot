@@ -125,11 +125,10 @@ function now(horas=0, minutos=0, segundos=false, el=null){
 function prismStart(){
   document.querySelectorAll('pre').forEach(pre => {
     if(navigator.clipboard && __ss != 'sm'){
-      let copyLabel = '<i class="fas fa-copy"></i>';
       let btn = document.createElement('span');
       btn.title = 'Copiar';
       btn.classList.add('code-btn-copy');
-      btn.innerHTML = copyLabel;
+      btn.innerHTML = '<i class="fas fa-copy"></i>';
       btn.addEventListener('click', code_copy_clipboard);
       pre.appendChild(btn);
     }
