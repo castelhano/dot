@@ -33,12 +33,12 @@
             </div>
           </blockquote>
           
-          <h3 id="utilizacao" class="mt-5">Utilização</h3>
+          <h3 id="utilizacao">Utilização</h3>
           <hr>
           <p>Importe o arquivo kanban.js na sua página html.</p>
           <pre><code class="language-html">&lt;script src="kanban.js"&gt;&lt;/script&gt;</code></pre>
           
-          <h5 id="instanciando_kanban" class="mt-5">Instanciando o Kanban</h5>
+          <h5 id="instanciando_kanban">Instanciando o Kanban</h5>
           <pre><code class="language-javascript">const kanban = new jsKanban({});</code></pre>
           <div class="card d-none d-md-flex">
             <div class="card-body">
@@ -51,11 +51,11 @@
           <pre><code class="language-javascript">const kanban = new jsKanban({});
 kanban.loadData(meu_json);</code></pre>
 
-          <h5 id="integracao_appdata" class="mt-5">Integração com <b>app_data()</b>:</h5>
+          <h5 id="integracao_appdata">Integração com <b>app_data()</b>:</h5>
           <pre><code class="language-javascript">const kanban = new jsKanban({});
 dotAppData('{&#37; url 'app_data' 'app/meu_json.json' &#37;}').then((d) => {kanban.loadData(d)});</code></pre>
 
-          <h3 id="save_method" class="mt-5">Método <b>save()</b></h3>
+          <h3 id="save_method">Método <b>save()</b></h3>
           <p>Caso habilitado a opção <b>canSave</b> (desabilitada por padrão), será exibido botão para salvar nos controles do kanban, altere {<b class="user-select-all">canSave: true</b>} para exibir controle.</p>
           <p>Neste caso será necessário informar a função que irá tratar o salvamento.</p>
           <pre><code class="language-javascript">const kanban = new jsKanban({
@@ -67,7 +67,7 @@ function meuSave(){
   ...
 }</code></pre>
           
-          <h3 id="configuracoes" class="mt-5">Configurações</h3>
+          <h3 id="configuracoes">Configurações</h3>
           <hr>
           <h5 id="recursos">Recursos</h5>
           <div class="table-responsive">
@@ -100,7 +100,7 @@ function meuSave(){
             </table>
           </div>
           
-          <h5 id="estilizacao" class="mt-5">Estilização</h5>
+          <h5 id="estilizacao">Estilização</h5>
           <div class="table-responsive">
             <table class="table table-sm">
               <thead>
@@ -125,7 +125,7 @@ function meuSave(){
             </table>
           </div>
 
-          <h3 id="metodos" class="mt-5">Métodos</h3>
+          <h3 id="metodos">Métodos</h3>
           <hr>
           <div class="table-responsive">
             <table class="table table-sm">
@@ -184,7 +184,7 @@ function meuSave(){
             </table>
           </div>
 
-          <h5 id="integracao_listener_js" class="mt-5">Integração com <b class="text-orange">listener.js</b></h5>
+          <h5 id="integracao_listener_js">Integração com <b class="text-orange">listener.js</b></h5>
           <pre><code class="language-javascript">SHORTCUT_MAP['arrowdownTFF'] = ':kanbanDownload';
 SHORTCUT_MAP['/FTF'] = ':searchFocus';
 function kanbanDownload(){kanban.exportJsonBtn.click()}

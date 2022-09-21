@@ -33,16 +33,16 @@
             </div>
           </blockquote>
           
-          <h3 id="utilizacao" class="mt-5">Utilização</h3>
+          <h3 id="utilizacao">Utilização</h3>
           <hr>
           <p>Importe o arquivo form.js na sua página html.</p>
           <pre><code class="language-html">&lt;script src="form.js"&gt;&lt;/script&gt;</code></pre>
           
-          <h5 id="formato_json" class="mt-5">Formato arquivo json</h5>
+          <h5 id="formato_json">Formato arquivo json</h5>
           <p>O objeto <b>json</b> precisa obrigatoriamente conter os campos <b>name</b> e <b>value</b>, demais campos são opcionais.</p>
           <pre><code class="language-javascript">[{"name":"nome", "value":"Rafael Alves"}, {"name":"email", "value":"c@gmail.com", "group":"Contato"}]</code></pre>
           
-          <h5 id="instanciando_form" class="mt-5">Instanciando o Form</h5>
+          <h5 id="instanciando_form">Instanciando o Form</h5>
           <p>Crie uma instancia repasando o objeto json nas opções.</p>
           <pre><code class="language-javascript">const form = new jsForm({ data: meu_json });</code></pre>
           <div class="card d-none d-md-flex">
@@ -63,11 +63,11 @@
           <pre><code class="language-javascript">const form = new jsForm({});
 form.loadData(meu_json);</code></pre>
           
-            <h5 id="integracao_appdata" class="mt-5">Integração com <b>app_data()</b>:</h5>
+            <h5 id="integracao_appdata">Integração com <b>app_data()</b>:</h5>
           <pre><code class="language-javascript">const form = new jsForm({});
 dotAppData('{&#37; url 'app_data' 'app/meu_json.json' &#37;}').then((d) => {form.loadData(d)});</code></pre>
 
-          <h3 id="save_method" class="mt-5">Método <b>save()</b></h3>
+          <h3 id="save_method">Método <b>save()</b></h3>
           <p>Caso habilitado a opção <b>canSave</b> (habilitado por padrão), será exibido botão para salvar nos controles do form, altere {<b class="user-select-all">canSave: false</b>} para não exibir controle.</p>
           <p>Por padrão, o objeto instanciado disponibiliza método <b>save()</b> que realiza requisição ajax (post) caso informado uma URL nas configurações.</p>
           <p>É possivel configurar o método save de 2 formas distintas:</p>
@@ -75,7 +75,7 @@ dotAppData('{&#37; url 'app_data' 'app/meu_json.json' &#37;}').then((d) => {form
             <li><a href="#via_url">Informando uma URL (ajax) e utilizando o método integrado</a></li>
             <li><a href="#via_custom_method">Informando método customizado que irá tratar do salvamento do form</a></li>
           </ul>
-          <h5 id="via_url" class="mt-5">Via URL, ajax (método integrado)</h5>
+          <h5 id="via_url">Via URL, ajax (método integrado)</h5>
           <pre><code class="language-javascript">const form = new jsForm({
   url: 'minha_url'
 })</code></pre>
@@ -93,7 +93,7 @@ dotAppData('{&#37; url 'app_data' 'app/meu_json.json' &#37;}').then((d) => {form
 })</code></pre>
 
 
-          <h5 id="via_custom_method" class="mt-5">Via método personalizado</h5>
+          <h5 id="via_custom_method">Via método personalizado</h5>
           <pre><code class="language-javascript">const form = new jsForm({
   save: meuSave
 })
@@ -108,7 +108,7 @@ function meuSave(){
   onError: () => {do_something...}, // Sera acionado em caso de erro ao salvar
 })</code></pre>
 
-          <h3 id="schema" class="mt-5">Modificando o Schema</b></h3>
+          <h3 id="schema">Modificando o Schema</b></h3>
           <p>Os registros no json devem conter obrigatoriamente os campos <b>name</b> e <b>value</b>, porém podem ter campos adicionais, e é disponibilizado interface para edição no botão <button class="btn btn-sm btn-purple"><i class="fas fa-tag me-2"></i> Schema</button> quando habilitado a opção { <b>canChangeSchema: true</b> } (habilitada por padrão)</p>
           <div class="card d-none d-md-flex">
             <div class="card-body">
@@ -119,7 +119,7 @@ function meuSave(){
           <p>É possivel <b>alterar</b> o valor da atributo, inserir <b>novos atributos</b> clicando no botao <span class="bg-light border rounded-circle px-2 py-1 mx-2 pointer"><i class="fas fa-plus text-muted"></i></span> ou <b>remover</b> um atributo pressionando <b>Ctrl</b> e duplo click do mouse no atributo a ser removido.</p>
           <p>Não é possivel alterar o nome do atributo, neste caso remova o atual e insira um novo.</p>
 
-          <h3 id="configuracoes" class="mt-5">Configurações</h3>
+          <h3 id="configuracoes">Configurações</h3>
           <hr>
           <h5 id="recursos">Recursos</h5>
           <div class="table-responsive">
@@ -155,7 +155,7 @@ function meuSave(){
             </table>
           </div>
           
-          <h5 id="estilizacao" class="mt-5">Estilização</h5>
+          <h5 id="estilizacao">Estilização</h5>
           <div class="table-responsive">
             <table class="table table-sm">
               <thead>
@@ -177,7 +177,7 @@ function meuSave(){
             </table>
           </div>
 
-          <h3 id="metodos" class="mt-5">Métodos</h3>
+          <h3 id="metodos">Métodos</h3>
           <hr>
           <div class="table-responsive">
             <table class="table table-sm">
@@ -236,7 +236,7 @@ function meuSave(){
             </table>
           </div>
 
-          <h5 id="integracao_listener_js" class="mt-5">Integração com <b class="text-orange">listener.js</b></h5>
+          <h5 id="integracao_listener_js">Integração com <b class="text-orange">listener.js</b></h5>
           <pre><code class="language-javascript">SHORTCUT_MAP['arrowdownFTF'] = ':nextGroup';
 SHORTCUT_MAP['arrowupFTF'] = ':previousGroup';
 function nextGroup(){form.nextGroup();}

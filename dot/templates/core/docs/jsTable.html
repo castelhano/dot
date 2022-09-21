@@ -33,19 +33,19 @@
             </div>
           </blockquote>
           
-          <h3 id="utilizacao" class="mt-5">Utilização</h3>
+          <h3 id="utilizacao">Utilização</h3>
           <hr>
           <p>Importe o arquivo table.js na sua página html.</p>
           <pre><code class="language-html">&lt;script src="table.js"&gt;&lt;/script&gt;</code></pre>
           
-          <h5 id="instanciando_tabela_existente" class="mt-5">Instanciando uma tabela existente</h5>
+          <h5 id="instanciando_tabela_existente">Instanciando uma tabela existente</h5>
           <blockquote class="callout callout-warning mt-3">
             <div class="body"><i class="fas fa-info text-warning me-2"></i> Tabela precisa ser composta com elementos <b>thead</b> e <b>tbody</b>. Tabelas com mais de um tbody serão ajustadas para operar num único tbody</div>
           </blockquote>
           <p>Crie uma instancia apontando para a tabela e (opcional) dicionário com as configurações.</p>
           <pre><code class="language-javascript">const tabela = new jsTable(document.querySelector('table'), { options });</code></pre>
           
-          <h5 id="criando_tabela_dinamicamente" class="mt-5">Criando uma tabela dinamicamente ( json )</h5>
+          <h5 id="criando_tabela_dinamicamente">Criando uma tabela dinamicamente ( json )</h5>
           <p>Crie uma instancia informando o <b>id</b> que será atribuido a tabela.</p>
           <pre><code class="language-javascript">const tabela = new jsTable('tabelaId', {
   data: jsonObject,
@@ -56,7 +56,7 @@
 </code></pre>
           <blockquote class="callout callout-primary mt-3"><div class="body"><i class="fas fa-info text-primary me-2"></i> Em tabelas já instancidadas é possivel usar os metodos <b>loadData(json)</b> ou <b>appendData(json)</b></div></blockquote>
 
-          <h5 id="buscando_via_ajax" class="mt-5">Buscando dados via ajax</h5>
+          <h5 id="buscando_via_ajax">Buscando dados via ajax</h5>
           <p>Crie uma tabela definindo os cabeçalhos, ao digitar no field de pesquisa realiza consulta via ajax. Nome dos headers devem ser iguais ao retorno da consulta.</p>
           <pre><code class="language-javascript">const table = new jsTable(document.getElementById('table'), {
 dataUrl: '/minha_url',
@@ -65,7 +65,7 @@ enablePaginate: true,
 emptyTableMessage: 'Selecione um filtro ou mude o criterio da pesquisa'
 });</code></pre>
 
-          <blockquote class="callout callout-primary"><div class="body">No python</div></blockquote>
+          <blockquote class="callout mt-5 callout-primary"><div class="body">No python</div></blockquote>
           <pre><code class="language-python">def get_data(request):
   try:
       data = Model.objects.filter(nome__contains=request.GET['pesquisa']).order_by('nome')
@@ -82,7 +82,7 @@ emptyTableMessage: 'Selecione um filtro ou mude o criterio da pesquisa'
 # Opcional: Informe dataUrlMinDigits: 0 para alterar a quantidade de digitos minimos antes de realizar o ajax (default 3)</code></pre>
 
 
-          <h3 id="configuracoes" class="mt-5">Configurações</h3>
+          <h3 id="configuracoes">Configurações</h3>
           <hr>
           <h5>Recursos</h5>
           <div class="table-responsive">
@@ -127,7 +127,7 @@ emptyTableMessage: 'Selecione um filtro ou mude o criterio da pesquisa'
             </table>
         </div>
           
-          <h5 id="estilizacao" class="mt-5">Estilização</h5>
+          <h5 id="estilizacao">Estilização</h5>
           <div class="table-responsive">
             <table class="table table-sm">
               <thead>
@@ -163,7 +163,7 @@ emptyTableMessage: 'Selecione um filtro ou mude o criterio da pesquisa'
           </div>
 
 
-          <h3 id="metodos" class="mt-5">Métodos</h3>
+          <h3 id="metodos">Métodos</h3>
           <hr>
           <div class="table-responsive">
             <table class="table table-sm">
@@ -264,7 +264,7 @@ emptyTableMessage: 'Selecione um filtro ou mude o criterio da pesquisa'
             </table>
           </div>
 
-          <h3 id="acessando_elementos" class="mt-5">Acessando elementos da tabela</h3>
+          <h3 id="acessando_elementos">Acessando elementos da tabela</h3>
           <hr>
           <blockquote class="callout callout-primary my-3"><div class="body">Os elementos abaixo são acessiveis como atributos do objeto instanciado, podendo ser acessados com <b>instancia.<span class="text-orange">elemento</span></b></div></blockquote>
           <dl class="row">
@@ -276,11 +276,11 @@ emptyTableMessage: 'Selecione um filtro ou mude o criterio da pesquisa'
           <pre><code class="language-javascript">const table = new jsTable(el, {});
 table.restoreButton.onclick = () => {..dosomething}</code></pre>
 
-          <h5 id="integracao_listener_js" class="mt-5">Integração com <b class="text-orange">listener.js</b></h5>
+          <h5 id="integracao_listener_js">Integração com <b class="text-orange">listener.js</b></h5>
           <pre><code class="language-javascript">SHORTCUT_MAP['1FTF'] = () => table.filterInput.select();</code></pre>
 
 
-          <h3 class="mt-5">Exemplos</h3>
+          <h3>Exemplos</h3>
           <blockquote class="callout callout-primary fs-7"><div class="body">HTML</div></blockquote>
           
           <pre><code class="language-html">&lt;table class="table" id="myTable"&gt;

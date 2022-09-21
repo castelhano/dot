@@ -5,6 +5,7 @@
 {% block model_menu %}{% include "_component/menu/visitor.html" %}{% endblock%}
 {% block style_src %}
 <link rel="stylesheet" href="{% static 'css/docs.css' %}">
+<link rel="stylesheet" href="{% static 'css/charts.css' %}">
 <link rel="stylesheet" href="{% static 'css/vendor/prism.css' %}">
 {% endblock%}
 
@@ -31,15 +32,134 @@
     <div class="tab-pane fade show active" id="base" role="tabpanel">
       <div class="row mt-2">
         <div class="col-lg-8 order-2 order-lg-1"><!-- Container principal -->
-          <h3>Instalação</h3>
+          <h3 class="mt-1">Instalação</h3>
           <hr>
-          <pre><code class="language-javascript">foo += 5;</code></pre>
           
-          <h3 class="mt-5 mb-1">Configurando Servidor</h3>
+          
+          <h3>Configurando Servidor</h3>
           <hr>
           <h5>Linux</h5>
           
-          <div id="jsTableMD"></div>
+          <h3 id="componentes_interface">Componentes de Interface</h3>
+          <hr>
+          <h5 id="chartcss"><i class="fab fa-css3 text-purple"></i> Chart CSS</h5>
+          <a href="https://chartscss.org/"><i class="fas fa-link"></i> Página do projeto</a> | 
+          <a href="https://github.com/ChartsCSS/charts.css"><i class="fab fa-github"></i> Github Repo</a>
+          
+          <p class="mt-4">Importe as classes de estilo</p>
+          <pre><code class="language-html">&lt;link rel="stylesheet" href="{% static 'css/charts.css' %}" type="text/css"&gt;</code></pre>
+
+          <h5 id="pie_label"><i class="fas fa-chart-pie me-2"></i> Pie charts</h5>
+
+          <div class="row my-4">
+            <div class="col-auto text-center"><span class="d-block">CPU</span><div class="pie animate" style="--v:80;"> 80%</div></div>
+            <div class="col-auto text-center"><span class="d-block">Fan</span><div class="pie animate" style="--v:40;--c:orange;"> 40%</div></div>
+            <div class="col-auto text-center"><span class="d-block">Users</span><div class="pie animate" style="--v:66;--c:red;--w:80px;--b:8px;"> 66%</div></div>
+          </div>
+
+          <pre><code class="language-html">&lt;div class="row"&gt;
+  &lt;div class="col-auto text-center"&gt;&lt;span class="d-block"&gt;CPU&lt;/span&gt;&lt;div class="pie animate" style="--v:80;"&gt; 80%&lt;/div&gt;&lt;/div&gt;
+  &lt;div class="col-auto text-center"&gt;&lt;span class="d-block"&gt;Fan&lt;/span&gt;&lt;div class="pie animate" style="--v:40;--c:orange;"&gt; 40%&lt;/div&gt;&lt;/div&gt;
+  &lt;div class="col-auto text-center"&gt;&lt;span class="d-block"&gt;Users&lt;/span&gt;&lt;div class="pie animate" style="--v:66;--c:red;--w:80px;--b:8px;"&gt; 66%&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+        <div class="callout callout-primary mt-4"><div class="body"><i class="fas fa-info me-2"></i>Animação do elemento é feito pela nova <i>feature</i> <code>@property</code> animando a variavel passada no estilo do elemento <code>style:'--v:'</code>, na data da criação apenas navegadores <i class="text-muted">chromium based</i> davam suporte a esta feature.</div></div>
+
+        <h5>Chart CSS Bar</h5>
+        <div class="row mb-4">
+          <div class="col">
+            <table class="charts-css bar show-labels show-data-axes show-9-secondary-axes show-heading show-data-on-hover data-spacing-5 labels-align-end animate">
+              <caption class="fs-5 mb-3 text-end">Titulo grafico</caption>
+              <tbody class="bar-h-md">
+                <tr>
+                  <th scope="row">2020</th>
+                  <td style="--size:0.46"><span class="data">46</span></td>
+                </tr>
+                  <tr>
+                  <th scope="row">2021</th>
+                  <td style="--size:0.27"><span class="tooltip">Texto do<br>tooltip</span><span class="data">27</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <pre><code class="language-html">&lt;div class="row"&gt;
+&lt;div class="col"&gt;
+  &lt;table class="charts-css bar show-labels show-data-axes show-9-secondary-axes show-heading show-data-on-hover data-spacing-5 labels-align-end animate"&gt;
+    &lt;caption class="fs-5 mb-3 text-end"&gt;Titulo grafico&lt;/caption&gt;
+    &lt;tbody class="bar-h-md"&gt;
+      &lt;tr&gt;
+        &lt;th scope="row"&gt;2020&lt;/th&gt;
+        &lt;td style="--size:0.46"&gt;&lt;span class="data"&gt;46&lt;/span&gt;&lt;/td&gt;
+      &lt;/tr&gt;
+        &lt;tr&gt;
+        &lt;th scope="row"&gt;2021&lt;/th&gt;
+        &lt;td style="--size:0.27"&gt;&lt;span class="tooltip"&gt;Texto do&lt;br&gt;tooltip&lt;/span&gt;&lt;span class="data"&gt;27&lt;/span&gt;&lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/tbody&gt;
+  &lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        
+        <h5>Chart CSS Column</h5>
+        <div class="row mb-4">
+          <div class="col-md-3">
+            <table style="--color:#65a5a6;height: 250px;" class="charts-css column show-labels show-data-axes show-heading show-data-on-hover data-spacing-5 animate">
+              <caption class="fs-5 mb-3 text-center">Titulo grafico</caption>
+              <tbody class="">
+                <tr>
+                  <th scope="row">2020</th>
+                  <td style="--size:0.46"><span class="data">46</span></td>
+                </tr>
+                <tr>
+                  <th scope="row">2021</th>
+                  <td style="--size:0.27"><span class="tooltip">Texto do<br>tooltip</span><span class="data">27</span></td>
+                </tr>
+                <tr>
+                  <th scope="row">2022</th>
+                  <td style="--size:0.55"><span class="tooltip">Texto do<br>tooltip</span><span class="data">55</span></td>
+                </tr>
+                <tr>
+                  <th scope="row">2023</th>
+                  <td style="--size:0.12"><span class="tooltip">Texto do<br>tooltip</span><span class="data">12</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <pre><code class="language-html">&lt;div class="row"&gt;
+  &lt;div class="col-4"&gt;
+  &lt;table style="--color:#65a5a6;height: 250px;" class="charts-css column show-labels show-data-axes show-heading show-data-on-hover data-spacing-5 animate"&gt;
+    &lt;caption class="fs-5 mb-3 text-center"&gt;Titulo grafico&lt;/caption&gt;
+    &lt;tbody class=""&gt;
+      &lt;tr&gt;
+        &lt;th scope="row"&gt;2020&lt;/th&gt;
+        &lt;td style="--size:0.46"&gt;&lt;span class="data"&gt;46&lt;/span&gt;&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+        &lt;th scope="row"&gt;2021&lt;/th&gt;
+        &lt;td style="--size:0.27"&gt;&lt;span class="tooltip"&gt;Texto do&lt;br&gt;tooltip&lt;/span&gt;&lt;span class="data"&gt;27&lt;/span&gt;&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+        &lt;th scope="row"&gt;2022&lt;/th&gt;
+        &lt;td style="--size:0.55"&gt;&lt;span class="tooltip"&gt;Texto do&lt;br&gt;tooltip&lt;/span&gt;&lt;span class="data"&gt;55&lt;/span&gt;&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+        &lt;th scope="row"&gt;2023&lt;/th&gt;
+        &lt;td style="--size:0.12"&gt;&lt;span class="tooltip"&gt;Texto do&lt;br&gt;tooltip&lt;/span&gt;&lt;span class="data"&gt;12&lt;/span&gt;&lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/tbody&gt;
+  &lt;/table&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+
+        
+
+        <div style="margin-bottom: 220px;">&nbsp;</div>
+
           
         </div><!-- Fim Container principal -->
         <div class="col-lg order-1 order-lg-2 mb-3">
@@ -49,7 +169,9 @@
             <li><i class="fas none fa-fw"></i><a href="#bar">Submenu</a></li>
             <li><i class="fas fa-sliders-h fa-fw mt-2"></i><b><a href="#configuracoes">Configurações</a></b></li>
             <li><i class="fas none fa-fw"></i><a href="#recursos">Recursos</a></li>
-            <li><i class="fas none fa-fw"></i><a href="#estilizacao">Estilização</a></li>
+            <li><i class="fas fa-swatchbook fa-fw mt-2"></i><b><a href="#componentes_interface">Componentes de Interface</a></b></li>
+            <li><i class="fas none fa-fw"></i><a href="#chartcss"><i class="fab fa-css3 text-purple"></i> Chart CSS</a></li>
+            <li><i class="fas none fa-fw"></i><a href="#pie_label"><i class="fas fa-chart-pie"></i> Pie Label</a></li>
             <li><i class="fas fa-code fa-fw mt-2"></i><b><a href="#metodos">Métodos</a></b></li>
             <li><i class="fas none fa-fw"></i><a href="#integracao_listener_js">Integração com <b class="text-muted">listener.js</b></a></li>
           </ul>
