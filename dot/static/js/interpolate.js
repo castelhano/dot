@@ -4,30 +4,30 @@
 * @version  1.0
 * @since    07/04/2022
 * @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }
-* @desc     Implementa interpolacao (simplificada) direto no document, buscando attr dot-data
+* @desc     Implementa interpolacao (simplificada) direto no document, buscando attr data-itKey
 * @param    {Dict} map Dicionario com nome da variavel e valor para interpolar bo doc
-* @example  var map={'foo':55,'fei':22}; dotPlot(map); ou dotPlot(map, '--'); no html: <label dot-data="foo" mask="cur" translate='{"180":"06 meses"}' default="feii" prefix="R$" posfix="real-BR"></dotPlot>
+* @example  var map={'foo':55,'fei':22}; dotPlot(map); ou dotPlot(map, '--'); no html: <label data-itKey="foo" mask="cur" data-itTranslate='{"180":"06 meses"}' data-itDefault="feii" prefix="R$" posfix="real-BR"></label>
 * @info     !! Pode gerar conflito com urlPlot() use uma OU outra
 * @see      {@link https://stackoverflow.com/questions/62382939/vanilla-htmljs-dynamic-interpolation}
 */
 function dotPlot(map, if_null=''){
   let data_raw = if_null;
   let data = if_null;
-  [...document.querySelectorAll("*[dot-data]")].forEach(el => {
-    if(map[el.getAttribute('dot-data')] != undefined){
-      data_raw = map[el.getAttribute('dot-data')];
+  [...document.querySelectorAll("*[data-itKey]")].forEach(el => {
+    if(map[el.getAttribute('data-itKey')] != undefined){
+      data_raw = map[el.getAttribute('data-itKey')];
       data = data_raw;
     }
-    else if(el.getAttribute('default') != undefined){data = el.getAttribute('default');} // Caso nao localize correspondente verifica se elemenento tem valor default
-    if(el.getAttribute('translate') != undefined){ // Verifica se valor precisa ser 'traduzido', se sim tenta fazer a trducao
+    else if(el.getAttribute('data-itDefault') != undefined){data = el.getAttribute('data-itDefault');} // Caso nao localize correspondente verifica se elemenento tem valor data-itDefault
+    if(el.getAttribute('data-itTranslate') != undefined){ // Verifica se valor precisa ser 'traduzido', se sim tenta fazer a traducao
       try{
-        let translate_map = JSON.parse(el.getAttribute('translate'));
+        let translate_map = JSON.parse(el.getAttribute('data-itTranslate'));
         if(translate_map[data] != undefined){data = translate_map[data];}
       }catch(e){} 
     }
-    if(el.getAttribute('mask') != undefined){data = dataMask(data, el.getAttribute('mask'))} // Verufuca se valor rpecisa ser mascarado, caso sim chama funcao auxiliar
-    if(el.getAttribute('prefix') != undefined){data = `${el.getAttribute('prefix')} ${data}`}
-    if(el.getAttribute('posfix') != undefined){data = `${data} ${el.getAttribute('posfix')}`}
+    if(el.getAttribute('data-itMask') != undefined){data = dataMask(data, el.getAttribute('data-itMask'))} // Verufuca se valor rpecisa ser mascarado, caso sim chama funcao auxiliar
+    if(el.getAttribute('data-itPrefix') != undefined){data = `${el.getAttribute('data-itPrefix')} ${data}`}
+    if(el.getAttribute('data-itPosfix') != undefined){data = `${data} ${el.getAttribute('data-itPosfix')}`}
     el.innerText = data;
    })
 }
@@ -38,7 +38,7 @@ function dotPlot(map, if_null=''){
 * @version  1.0
 * @since    07/04/2022
 * @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }
-* @example  urlPlot(); ou urlPlot('--') no html: <label dot-data="foo" mask="cur" translate='{"180":"06 meses"}'></dotPlot>
+* @example  urlPlot(); ou urlPlot('--') no html: <label data-itKey="foo" mask="cur" data-itTranslate='{"180":"06 meses"}'></label>
 * @info     !! Pode gerar conflito com dotPlot() use uma OU outra
 * @see      {@link https://stackoverflow.com/questions/62382939/vanilla-htmljs-dynamic-interpolation}
 */

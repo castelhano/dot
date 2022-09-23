@@ -178,6 +178,10 @@
               <td>Retorna a data atual<small class="d-block">Ex: today(5, 0, 0, true, element) Adiciona 5 dias e retorna AAAA-mm-dd</small></td>
             </tr>
             <tr>
+              <td>now()</td>
+              <td>Retorna a hora atual<small class="d-block">Ex: now(0, 15, 0, element) Adiciona 5 minutos na hora atual</small></td>
+            </tr>
+            <tr>
               <td>getCookie('csrftoken')</td>
               <td>Retorna cookie buscado</td>
             </tr>
@@ -196,14 +200,161 @@
           </tbody>
         </table>
         <h5 id="js_listener">Listener JS</h5>
-        <h5 id="js_interpolate">Interpolate JS</h5>
+        
+        <p>Biblioteca padrão (já inclusa no layout base) que trata eventos de teclado (keydown) possibilitando adicionar atalhos de teclado além de oferecer suporte a tabulação na tecla Enter para formulários.</p>
+        <pre><code class="language-html">&lt;script src="{&#37; static 'js/listener.js' &#37;}"&gt;&lt;/script&gt;</code></pre>
+        <p class="mt-4">Lógica utiliza de dicionário (object) pré carregado [ <b>SHORTCUT_MAP</b> ] onde a <code>key</code> representa a combinação de atalho a ser capturada e o <code>value</code> o comando a ser executado.</p>
+        <p>A Key deve ser formada pela tecla alvo seguido das letras <b>T</b> ou <b>F</b> (true ou false) que representam a combinação com as teclas Alt, Ctrl e Shift (respectivamente), ou seja a key <b>'mFTF'</b> responde pelo comando Ctrl + M (case insensitive).</p>
+        <p>Já o Value deve apontar para o ID de um elemento (será acionado o evento click) ou apontar para uma função. Para pontar para um elemento informe o caractere sustenido (sharp) seguido do id do elemento, Ex '#meuBotao'.</p>
+        <p>Para retornar uma função, informe o caractere dois pontos (colon) seguido do nome da função sem parenteses. Ex ':minhaFuncao', não é possivel passar variaveis para a função (implementação futura).</p>
+        <p>Por padrão já são carregados os atalhos abaixo no dicionario SHORTCUT_MAP:</p>
+
+        <pre><code class="language-javascript">SHORTCUT_MAP = {
+  'vTFF':'#back',     // Alt + V: Evento click do elemento ID back
+  'nTFF':'#add',      // Alt + N: Evento click do elemento ID add
+  'lTFF':'#clear',    // Alt + L: Evento click do elemento ID clear
+  'gTFF':'#submit',   // Alt + G: Evento click do elemento ID submit
+  '/FTF':'#search',   // Ctrl + /: Evento click do elemento ID search
+  'dTFF':'#download', // Ctrl + D: Aciona evento click do elemento ID download
+  'iTFF':'#home',     // Alt + I: Aciona evento click do elemento ID home
+  '.TFF':'#app_root', // Alt + .: Aciona evento click do elemento ID app_root
+  'mTFF':'#messages', // Alt + M: Aciona evento click do elemento ID messages
+  'sTFF':'#system',   // Alt + S: Aciona evento click do elemento ID system
+  'dFTF':'#docs_link' // Ctrl + D: Aciona evento click do elemento ID docs
+}</code></pre>
+        <h6 class="mt-4">Inserir novo atalho (ou alterar):</h6>
+        <pre><code class="language-javascript">SHORTCUT_MAP['xFTF'] = '#meuBotao';</code></pre>
+        <p>ou</p>
+        <pre><code class="language-javascript">SHORTCUT_MAP['yTTF'] = '#minhaFuncao';
+function minhaFuncao(){
+  ...
+}</code></pre>
+
+        <h5 id="tabonenter">Tabulando forms fields ao pressionar Enter</h5>
+        <p>Listener.js implementa a tabulação de campos de formulário ao pressionar a tecla Enter, para ativar crie uma variavel <code>TAB_ON_ENTER</code> e defina o valor dela para <code>true</code></p>
+        <pre><code class="language-javascript">var TAB_ON_ENTER = true;</code></pre>
+        
+        <form action="#tabonenter">
+          <h6 class="mt-4">Pressione Enter para tabular</h6>
+          <div class="row g-1">
+            <div class="form-floating mb-1 col-lg-12">
+              <input type="text" id="id_tabonenter01" class="form-control" placeholder=" ">
+              <label for="id_tabonenter01">Primeiro</label>
+            </div>
+          </div>
+          <div class="row g-1">
+            <div class="form-floating mb-lg-1 col-lg-6">
+              <input type="text" id="id_tabonenter02" class="form-control" placeholder=" ">
+              <label for="id_tabonenter02">Segundo</label>
+            </div>
+            <div class="form-floating mb-1 col-lg-6">
+              <input type="text" id="id_tabonenter03" class="form-control" placeholder=" " value="Algum texto">
+              <label for="id_tabonenter03">Terceiro</label>
+            </div>
+          </div>
+          <div class="row g-1">
+            <div class="form-floating mb-lg-1 col-lg-6">
+              <input type="text" id="id_tabonenter04" class="form-control" placeholder=" " disabled>
+              <label for="id_tabonenter04">Disabled</label>
+            </div>
+            <div class="form-floating mb-1 col-lg-6">
+              <input type="text" id="id_tabonenter05" class="form-control" placeholder=" ">
+              <label for="id_tabonenter05">Quarto</label>
+            </div>
+          </div>
+        </form>
+        
+        <div class="callout callout-warning mt-4">
+          <div class="body">
+            <p class="m-0"><i class="fas fa-info me-2"></i> Lógica somente faz a tabulação de campos dentro de um elemento <code>form</code> .</p>
+            <p class="m-0">Implementação trata campos desabilitados (disabled) e campos não visiveis, e busca próximo elemento disponível.</p>
+          </div>
+        </div>
+
+        <h5>Event handler()</h5>
+        <p>É possivel ainda criar um função auxiliar para tratar os eventos de teclado. Caso combinação de teclas não seja resolvido em nenhuma entrada no dicionario SHORTCUT_MAP, será acionado (caso exista) a função <code>eventHandler(e)</code> repassando o evento.</p>
+        <h6 class="mt-3">Função eventHandler deve ser implementada na página de origem</h6>
+        <pre><code class="language-javascript">function eventHandler(e){
+  if(e.key == 'j'){...}
+</code></pre>
+
+
+        <h5 id="js_interpolate">Interpolate JS <sup class="bg-warning bg-opacity-50 border border-warning rounded px-2 text-dark fs-8 me-2">Beta</sup></h5>
+        <p>Biblioteca implementa interpolação de valores com javascript.</p>
+        <h6 class="mt-4">no html:</h6>
+        <pre><code class="language-html">&lt;label data-itKey="nome" data-itDefault="--"&gt;&lt;/label&gt;</code></pre>
+        <p class="mt-3">alterando a exibição (mask) do valor</p>
+        <pre><code class="language-html">&lt;label data-itKey="idade" data-itMask="000"&gt;&lt;/label&gt;</code></pre>
+        <p class="mt-3">adicionando <i>prefixo</i> ou <i>posfixo</i></p>
+        <pre><code class="language-html">&lt;label data-itKey="salario" data-itMask="cur" data-itPrefix="R$" data-itPosfix="real-BR"&gt;&lt;/label&gt;</code></pre>
+        <p class="mt-3">fazendo o <i>translate</i> dos dados antes de exibir</p>
+        <pre><code class="language-html">&lt;label data-itKey="view" data-itTranslate='{"180":"06 meses"}'&gt;&lt;/label&gt;</code></pre>
+        <h6 class="mt-4">no javascript:</h6>
+        <pre><code class="language-javascript">var map={'nome':'Rafael Alves','salario':'2522.35'};
+dotPlot(map);</code></pre>
+          
+          <p class="mt-4">É possivel ainda interpolar os valores passados via GET na url:</p>
+          <pre><code class="language-javascript">urlPlot(); // ou urlPlot('--'), onde valores null serão convertidos para '--'</code></pre>
         <h5 id="js_time">Time JS</h5>
+        <p>Realiza operações com hora.</p>
+        <pre><code class="language-html">&lt;script src="{&#37; static 'js/time.js' &#37;}"&gt;&lt;/script&gt;</code></pre>
+        <div class="row">
+          <div class="col mt-4">
+            <table class="table table-sm table-border table-strip table-hover">
+              <thead>
+                <tr>
+                  <td>Função</td>
+                  <td>Descrição / Exemplo</td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>timeNow(el=null,seconds=false)</td>
+                  <td>Retorna a hora atual (ou altera valor do elemento)</td>
+                </tr>
+                <tr>
+                  <td>timeSum(initial, h=0,m=0,s=0,seconds=false,el=null)</td>
+                  <td>Operações de soma/subtração com hora</td>
+                </tr>
+                <tr>
+                  <td>timeDelta(init, end)</td>
+                  <td>Retorna o intervalo (diferença) em minutos entre duas horas</td>
+                </tr>
+                <tr>
+                  <td>timeCompare(h1, h2)</td>
+                  <td>Retorna <b>1 se h1 > h2</b> ou <b>0 se h1 == h2</b> ou <b>-1 se h1 < h2</b></td>
+                </tr>
+                <tr>
+                  <td>timeStamp(prefix='', posfix='')</td>
+                  <td>Retorna data atual em milisegundos podendo receber um prefixo e/ou posfixo</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
         <h5 id="js_url">URL JS</h5>
+        <p>Funções para manipulação da URL (URI) no método GET.</p>
+        <h6><span class="text-purple">urlFilters(filter, value)</span>: Faz upate na página atual adicionando parametro na url</h6>
+        <pre><code class="language-javascript">urlFilter('empresa', 'dot')</code></pre>
+        <h6 class="mt-4"><span class="text-purple">urlFilters(filters, values)</span>: Mesmo conceito de urlFilter, porém pode receber multiplos parametros</h6>
+        <pre><code class="language-javascript">urlFilters(['empresa', 'filial'], ['dot','bh'])</code></pre>
+        <h6 class="mt-4"><span class="text-purple">urlFilterTo(url, filter, value)</span>: Muda para nova url e adiciona filtro</h6>
+        <pre><code class="language-javascript">urlFilterTo('dot.com.br/usuarios', 'nome', 'rafael')</code></pre>
+        <h6 class="mt-4"><span class="text-purple">urlFilterToogle(filter, values)</span>: Altera o valor do filtro baseado em sequencia predefinida</h6>
+        <pre><code class="language-javascript">urlFilterToogle('ativo', ['true', 'false'])</code></pre>
+        <h6 class="mt-4"><span class="text-purple">urlFiltersClean(filters)</span>: Limpa filtros da URI</h6>
+        <pre><code class="language-javascript">filtersClean(['nome', 'email'])</code></pre>
+        <h6 class="mt-4"><span class="text-purple">urlRedirect(url)</span>: Chama nova URL passando todos os pamatros atuais na requisição</h6>
+        <pre><code class="language-javascript">urlRedirect('dot.com/usuarios_bloqueados')</code></pre>
+        <h6 class="mt-4"><span class="text-purple">urlHasParam(param)</span>: Verifica se o parâmetro informado consta na URI</h6>
+        <pre><code class="language-javascript">if(urlHasParam('nome')){...}</code></pre>
+
         <h5 id="js_chart">Chart JS</h5>
         <h5 id="js_mask">Mask JS</h5>
         <h5 id="js_prism">Prism JS</h5>
-        <p>Adiciona hightli</p>
-        <!-- <pre><code class="language-html">&lt;pre&gt;&lt;code class="language-javascript"&gt;new Tagin(document.getElementById('taginExample'), {separator:';'});&lt;/code&gt;&lt;/pre&gt;</code></pre> -->
+        <p>Adiciona <code>highlight text</code> para uma variedade de linguagens de programação.</p>
+        <pre><code class="language-html">&lt;pre&gt;&lt;code class="language-javascript"&gt;...&lt;/code&gt;&lt;/pre&gt;</code></pre>
+        <p class="mt-3">Prism.js: Mais detalhes na <a href="https://prismjs.com/">página do projeto</a></p>
         
         <h5 id="js_sortable">Sortable JS</h5>
         <h5 id="js_tagin">Tagin JS</h5>
@@ -245,13 +396,14 @@
             <li><i class="fas fa-swatchbook fa-fw mt-2"></i><b><a href="#componentes_interface">Componentes de Interface</a></b></li>
             <li><i class="fas none fa-fw"></i><a href="#chartcss"><i class="fab fa-css3 text-purple"></i> Chart CSS</a></li>
             <li><i class="fas none fa-fw"></i><a href="#pie_label"><i class="fas fa-chart-pie"></i> Pie Label</a></li>
-            <li><i class="fas none fa-fw"></i><span class="bg-danger bg-opacity-75 border rounded px-2 text-white fs-8 me-1">Vendor</span><span class="bg-purple-light border rounded px-2 text-white fs-8 me-2">Fork</span><a href="#inmate">Inmate</a> | <a href="https://animate.style/">Project Page</a></li>
+            <li><i class="fas none fa-fw"></i><span class="bg-danger bg-opacity-75 border rounded px-2 text-white fs-8 me-1">Vendor</span><span class="bg-purple-light border rounded px-2 text-white fs-8 me-2">Fork</span><a href="#inmate">Inmate</a> | <a href="https://animate.style/" target="_blank">Project Page</a></li>
             <li><i class="fab fa-js-square fa-fw mt-2"></i><b><a href="#bibliotecas_javascript">Bibliotecas Javascript</a></b></li>
             <li><i class="fas none fa-fw"></i><a href="#js_dot">Dot.js</a></li>
-            <li><i class="fas none fa-fw"></i><a href="#js_listener">Listener</a></li>
-            <li><i class="fas none fa-fw"></i><a href="#js_interpolate">Interpolate</a></li>
-            <li><i class="fas none fa-fw"></i><a href="#js_time">Time</a></li>
-            <li><i class="fas none fa-fw"></i><a href="#js_url">URL</a></li>
+            <li><i class="fas none fa-fw"></i><a href="#js_listener"><span class="bg-warning bg-opacity-50 border border-warning rounded px-2 text-dark fs-8 me-2">Beta</span>Listener.js</a></li>
+            <li><i class="fas none fa-fw"></i><i class="fas none fa-fw"></i><a href="#tabonenter">Forms: Tabular na tecla Enter</a></li>
+            <li><i class="fas none fa-fw"></i><a href="#js_interpolate">Interpolate.js</a></li>
+            <li><i class="fas none fa-fw"></i><a href="#js_time">Time.js</a></li>
+            <li><i class="fas none fa-fw"></i><a href="#js_url">URL.js</a></li>
             <!-- <li><span class="fw-bold text-muted">Vendor</span></li> -->
             <li><i class="fas none fa-fw"></i><span class="bg-danger bg-opacity-75 border rounded px-2 text-white fs-8 me-2">Vendor</span><a href="#js_chart">chart.js</a></li>
             <li><i class="fas none fa-fw"></i><span class="bg-danger bg-opacity-75 border rounded px-2 text-white fs-8 me-2">Vendor</span><a href="#js_mask">mask.js</a> | <a href="https://github.com/vanilla-masker/vanilla-masker" target="_blank">Github</a></li>
@@ -282,6 +434,7 @@
 <script>
   {% block add_script %}
   prismStart();
+  TAB_ON_ENTER = true;
 
   new Tagin(document.getElementById('taginExample'), {separator:';', tagColor: 'primary',placeholder: 'Seu placeholder', enter:true});
 
