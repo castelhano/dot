@@ -340,9 +340,9 @@ dotPlot(map);</code></pre>
         <h5 id="js_url">URL JS</h5>
         <p>Funções para manipulação da URL (URI) no método GET.</p>
         <h6><span class="text-purple">urlFilters(filter, value)</span>: Faz upate na página atual adicionando parametro na url</h6>
-        <pre><code class="language-javascript">urlFilter('empresa', 'dot')</code></pre>
+        <pre><code class="language-javascript">urlFilter('empresa', '5')</code></pre>
         <h6 class="mt-4"><span class="text-purple">urlFilters(filters, values)</span>: Mesmo conceito de urlFilter, porém pode receber multiplos parametros</h6>
-        <pre><code class="language-javascript">urlFilters(['empresa', 'filial'], ['dot','bh'])</code></pre>
+        <pre><code class="language-javascript">urlFilters(['empresa', 'filial'], ['5','2'])</code></pre>
         <h6 class="mt-4"><span class="text-purple">urlFilterTo(url, filter, value)</span>: Muda para nova url e adiciona filtro</h6>
         <pre><code class="language-javascript">urlFilterTo('dot.com.br/usuarios', 'nome', 'rafael')</code></pre>
         <h6 class="mt-4"><span class="text-purple">urlFilterToogle(filter, values)</span>: Altera o valor do filtro baseado em sequencia predefinida</h6>
@@ -373,7 +373,6 @@ dotPlot(map);</code></pre>
             <label for="taginExample">Linguagens</label>
           </div>
         </div>
-
         <pre><code class="language-javascript">new Tagin(document.getElementById('taginExample'), {separator:';'});</code></pre>
         <h6 class="mt-4">Configuração</h6>
 

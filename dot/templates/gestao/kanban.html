@@ -35,6 +35,7 @@
     </div>
 </div>
 
+{% include "_component/modal/loading.html" with message='Processando requisição....' %}
 {% endblock%}
 
 {% block add_script_src %}
@@ -47,6 +48,17 @@
 
     var empresa = null;
     var startingKanban = false;
+    var loadingKanbanVisible = false;
+
+    var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
+    
+    function loadingModalToogle(show=true){
+        modal_loading._element.addEventListener('shown.bs.modal', function(){ // Trata do ajax concluir antes do modal ser completamento mostrado, e fecha o modal
+            if(!loadingKanbanVisible){modal_loading.hide();}
+        });
+        if(show){modal_loading.show();}
+        else{modal_loading.hide();}
+    }
 
     const kanban = new jsKanban({
         container: document.getElementById('kanban_container'),
@@ -56,6 +68,8 @@
 
     function saveKanban(){
         if(empresa == null){dotAlert('warning', '<b>Info:</b> Selecione uma empresa antes de salvar');return false;}
+        loadingModalToogle();
+        loadingKanbanVisible = true;
         let url = `/app_data/gestao__${empresa}.json`;
         let token = getCookie('csrftoken');
         let xhttp = new XMLHttpRequest();
@@ -63,9 +77,13 @@
             if(this.readyState == 4 && this.status == 200){
                 if(startingKanban){dotAlert('success', '<b>Info:</b> Iniciado kanban para a empresa selecionada');startingKanban = false;}
                 else{dotAlert('success', '<b>Info:</b> Salvo com sucesso');}
+                loadingKanbanVisible = false;
+                loadingModalToogle(false);
             }
             else if(this.readyState == 4){
                 dorAlert('danger', '<b>Erro</b> ao salvar kanban');
+                loadingKanbanVisible = false;
+                loadingModalToogle(false);
             }
         };
         xhttp.open("POST", `${url}`, true);
@@ -74,14 +92,22 @@
     }
 
     function carregaKanban(el, empresa_id){
+        loadingModalToogle();
+        loadingKanbanVisible = true;
         empresa = empresa_id;
         document.getElementById('empresa_link').innerHTML = el.innerText;
         dotAppData(`/app_data/gestao__${empresa_id}.json`).then((d) => {
             if(d == ''){
                 startingKanban = true;
                 saveKanban();
+                loadingKanbanVisible = false;
+                loadingModalToogle(false);
             }
-            else{kanban.loadData(d);}
+            else{
+                kanban.loadData(d);
+                loadingKanbanVisible = false;
+                loadingModalToogle(false);
+            }
         });
     }
     {% endblock %}

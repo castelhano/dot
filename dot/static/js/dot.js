@@ -125,7 +125,7 @@ function now(horas=0, minutos=0, segundos=false, el=null){
 function prismStart(){
   document.querySelectorAll('pre').forEach((pre) => {
     if(navigator.clipboard && __ss != 'sm'){
-      let container = document.createElement('div');container.style.position = 'relative';container.style.zIndex = '1000';
+      let container = document.createElement('div');container.style.position = 'relative';container.style.height = '1px';container.style.zIndex = '1000';
       let btn = document.createElement('span');
       btn.title = 'Copiar';
       btn.classList.add('code-btn-copy');
