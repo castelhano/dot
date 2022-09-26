@@ -7,7 +7,9 @@
   <title>999 Test Page</title>
   <link rel="shortcut icon" href="{% static 'img/favicon.ico'%}">
   <link rel="stylesheet" href="{% static 'css/dot.css' %}" type="text/css">
-  <link rel="stylesheet" href="{% static 'css/charts.css' %}" type="text/css">
+  <link rel="stylesheet" href="{% static 'css/docs.css' %}" type="text/css">
+  <link rel="stylesheet" href="{% static 'css/vendor/prism.css' %}" type="text/css">
+  <!-- <link rel="stylesheet" href="{% static 'css/charts.css' %}" type="text/css"> -->
   <link rel="stylesheet" href="{% static 'css/vendor/all.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/fontawesome.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.min.css' %}" type="text/css">
@@ -15,6 +17,17 @@
   <style>
     .dragging{
       border: 5px solid #666;
+    }
+    .container_daddy{
+      position: relative;
+      border: 3px solid red;
+      z-index: 1000;
+    }
+    .btn_son{
+      position: absolute;
+      top: 15px;
+      right: 0;
+      color: #FFF;;
     }
   </style>
 </head>
@@ -24,6 +37,13 @@
   <div class="container-fluid">
     <h1>Handler 999</h1>
     <hr >
+    <div class="row">
+      <div class="col-6">
+        <div class="container_daddy"><div class="btn_son">Foo</div></div>
+        <pre><code class="language-javascript">var umTextoDemasiadamenteGrandeParaUmaVariavel = document.querySelectorAll('.foo[data-fei]').forEach((el) => {console.log('Puta trabalho de merda')});</code></pre>
+      </div>
+    </div>
+
 
     
 
@@ -39,12 +59,12 @@
   
   <script src="{% static 'js/listener.js' %}"></script>
   <!-- <script src="{% static 'js/form.js' %}"></script> -->
+  <script src="{% static 'js/vendor/prism.js' %}"></script>
   <script src="{% static 'js/dot.js' %}"></script>
   <script src="/static/js/vendor/bootstrap.bundle.min.js"></script>
   <script>
     
     var TAB_ON_ENTER = true;
-
 
   </script>
 </body>

@@ -123,14 +123,16 @@ function now(horas=0, minutos=0, segundos=false, el=null){
 *           prismStart();
 */
 function prismStart(){
-  document.querySelectorAll('pre').forEach(pre => {
+  document.querySelectorAll('pre').forEach((pre) => {
     if(navigator.clipboard && __ss != 'sm'){
+      let container = document.createElement('div');container.style.position = 'relative';container.style.zIndex = '1000';
       let btn = document.createElement('span');
       btn.title = 'Copiar';
       btn.classList.add('code-btn-copy');
       btn.innerHTML = '<i class="fas fa-copy"></i>';
       btn.addEventListener('click', code_copy_clipboard);
-      pre.appendChild(btn);
+      container.appendChild(btn);
+      pre.before(container);
     }
   });
 
@@ -138,8 +140,8 @@ function prismStart(){
   function code_copy_clipboard(e){
     let copyLabel = '<i class="fas fa-copy"></i>';
     let doneLabel = '<i class="fas fa-check"></i>';
-    const b = e.srcElement.tagName == 'SPAN' ? e.srcElement : e.srcElement.parentElement;
-    const t = b.parentElement.querySelector("code").innerText;
+    let b = e.target.tagName == 'SPAN' ? e.target : e.target.parentElement;
+    let t = b.parentNode.nextSibling.innerText;
     navigator.clipboard.writeText(t);
     b.innerHTML = doneLabel;
     setTimeout(()=>{b.innerHTML = copyLabel;}, 2000)

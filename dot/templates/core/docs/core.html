@@ -161,44 +161,49 @@
 
         <h5 id="js_dot">Dot JS</h5>
         <p>Biblioteca básica do sistema, disponivel em <b>todas</b> as páginas</p>
-        <table class="table table-bordered table-hover table-strip">
-          <thead>
-            <tr>
-              <th class="table-secondary">Função</th>
-              <th class="table-secondary">Descrição / Exemplo</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>dotAlert('success', 'Registro salvo')</td>
-              <td>Exibe mensagem de alerta padrão do sistema</td>
-            </tr>
-            <tr>
-              <td>today()</td>
-              <td>Retorna a data atual<small class="d-block">Ex: today(5, 0, 0, true, element) Adiciona 5 dias e retorna AAAA-mm-dd</small></td>
-            </tr>
-            <tr>
-              <td>now()</td>
-              <td>Retorna a hora atual<small class="d-block">Ex: now(0, 15, 0, element) Adiciona 5 minutos na hora atual</small></td>
-            </tr>
-            <tr>
-              <td>getCookie('csrftoken')</td>
-              <td>Retorna cookie buscado</td>
-            </tr>
-            <tr>
-              <td>dotAppData('{&#37; url 'app_data' 'data_test.json' &#37;}')</td>
-              <td>Retorna Json salvo no diretorio <b>app_data</b></td>
-            </tr>
-            <tr>
-              <td>tooltipActivate()</td>
-              <td>Inicia tooltip integrada Bootstrap</td>
-            </tr>
-            <tr>
-              <td>prismStart()</td>
-              <td>Adiciona botao para copiar nos elementos <code>code</code></td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="row">
+          <div class="col table-responsive">
+            <table class="table table-bordered table-hover table-strip">
+              <thead>
+                <tr>
+                  <th class="table-secondary">Função</th>
+                  <th class="table-secondary">Descrição / Exemplo</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>dotAlert('success', 'Registro salvo')</td>
+                  <td>Exibe mensagem de alerta padrão do sistema</td>
+                </tr>
+                <tr>
+                  <td>today()</td>
+                  <td>Retorna a data atual<small class="d-block">Ex: today(5, 0, 0, true, element) Adiciona 5 dias e retorna AAAA-mm-dd</small></td>
+                </tr>
+                <tr>
+                  <td>now()</td>
+                  <td>Retorna a hora atual<small class="d-block">Ex: now(0, 15, 0, element) Adiciona 5 minutos na hora atual</small></td>
+                </tr>
+                <tr>
+                  <td>getCookie('csrftoken')</td>
+                  <td>Retorna cookie buscado</td>
+                </tr>
+                <tr>
+                  <td>dotAppData('{&#37; url 'app_data' 'data_test.json' &#37;}')</td>
+                  <td>Retorna Json salvo no diretorio <b>app_data</b></td>
+                </tr>
+                <tr>
+                  <td>tooltipActivate()</td>
+                  <td>Inicia tooltip integrada Bootstrap</td>
+                </tr>
+                <tr>
+                  <td>prismStart()</td>
+                  <td>Adiciona botao para copiar nos elementos <code>code</code></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
         <h5 id="js_listener">Listener JS</h5>
         
         <p>Biblioteca padrão (já inclusa no layout base) que trata eventos de teclado (keydown) possibilitando adicionar atalhos de teclado além de oferecer suporte a tabulação na tecla Enter para formulários.</p>
@@ -299,7 +304,7 @@ dotPlot(map);</code></pre>
         <p>Realiza operações com hora.</p>
         <pre><code class="language-html">&lt;script src="{&#37; static 'js/time.js' &#37;}"&gt;&lt;/script&gt;</code></pre>
         <div class="row">
-          <div class="col mt-4">
+          <div class="col mt-4 table-responsive">
             <table class="table table-sm table-border table-strip table-hover">
               <thead>
                 <tr>
