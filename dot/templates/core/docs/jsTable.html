@@ -79,9 +79,14 @@ emptyTableMessage: 'Selecione um filtro ou mude o criterio da pesquisa'
       return HttpResponse(dataJSON)
   except:
       return HttpResponse('')
-# Opcional: Informe dataUrlMinDigits: 0 para alterar a quantidade de digitos minimos antes de realizar o ajax (default 3)</code></pre>
+# Opcional: Informe dataUrlMinDigits: x para alterar a quantidade de digitos minimos antes de realizar o ajax (default 3)</code></pre>
 
-
+          <h5 id="filtrando_registros">Filtrando Registros</h5>
+          <p>Caso não esteja buscando dados via AJAX, é possivel filtrar os registros da tabela baseado informando a(s) coluna(s) a serem analisadas</p>
+          <pre><code class="language-javascript">const table = new jsTable(document.getElementById('table'), {
+            canFiter # PAREII AQUIIIII
+            });</code></pre>
+          
           <h3 id="configuracoes">Configurações</h3>
           <hr>
           <h5>Recursos</h5>
@@ -374,6 +379,7 @@ var tab = new jsTable('minhaTabela', {
               <li><i class="fas none fa-fw"></i><a href="#instanciando_tabela_existente">Instanciando tabela existente</a></li>
               <li><i class="fas none fa-fw"></i><a href="#criando_tabela_dinamicamente">Criando uma tabela dinamicamente</a></li>
               <li><i class="fas none fa-fw"></i><a href="#buscando_via_ajax">Buscando dados via Ajax</a></li>
+              <li><i class="fas none fa-fw"></i><a href="#filtrando_registros">Filtrando Registros</a></li>
               <li><i class="fas fa-sliders-h fa-fw mt-2"></i><b><a href="#configuracoes">Configurações</a></b></li>
               <li><i class="fas none fa-fw"></i><a href="#estilizacao">Estilização</a></li>
               <li><i class="fas fa-code fa-fw mt-2"></i><b><a href="#metodos">Métodos</a></b></li>

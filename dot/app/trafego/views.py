@@ -1287,6 +1287,7 @@ def get_linhas_empresa(request):
         return HttpResponse('')
 
 def get_localidades(request):
+    # Metodo retorna JSON ajustado para integracao com jsTable
     try:
         localidades = Localidade.objects.filter(nome__contains=request.GET['pesquisa']).order_by('nome')
         if request.GET.get('garagem', None) and request.GET['garagem'] == 'True':

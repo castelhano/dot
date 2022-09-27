@@ -41,7 +41,7 @@ class jsTable{
         this.save = options?.save != undefined ? options.save : function(){console.log('jsTable: Nenhuma funcao definida para save, nas opcoes marque {canSave:true, save: suaFuncao} ')}; // Funcao definida aqui sera acionada no evento click do botao save
         this.canSort = options?.canSort != undefined ? options.canSort : true;
         this.canFilter = options?.canFilter != undefined ? options.canFilter : false;
-        this.filterEnterActivate = options?.filterEnterActivate != undefined ? options.filterEnterActivate : true; // Aciona evento click de elemento que atenda querySelector(options.filterEnterActivate)
+        this.filterEnterActivate = options?.filterEnterActivate != undefined ? options.filterEnterActivate : true; // Se definido para true, se foco na barra de pesquisa e somente um registro visivel, tenta acionar botao para editar registro ao precionar enter
         this.filterEnterSelector = options?.filterEnterSelector || '.btn'; // Aciona evento click de elemento que atenda querySelector(options.filterEnterActivate)
         this.filterCols = options?.filterCols || []; // Recebe o nome das colunas a ser analisado ao filtar Ex: filterCols: ['nome', 'email']
         this.canExportCsv = options?.canExportCsv != undefined ? options.canExportCsv : true;
@@ -313,7 +313,7 @@ class jsTable{
             let validEntry = e.key == 'Backspace' || e.key == 'Delete' || String.fromCharCode(event.keyCode).match(/(\w|\s)/g);
             if(!validEntry){return null} // Nao realiza consulta ajax se tecla nao for letra ou numero
         }catch(e){}
-        let criterio = this.filterInput.value;
+        let criterio = this.filterInput.value.trim();
         let self = this; // Workaround para resolver conflito dentro da funcao ajax (this passa a se referir ao XMLHttpRequest)
         if(criterio.length >= this.dataUrlMinDigits){ // Aciona o ajax somente se tiver um minimo de caracteres digitados
             self.cleanRows();
