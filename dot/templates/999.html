@@ -22,8 +22,7 @@
     <h1>Handler 999</h1>
     <hr >
 
-    <div id="container">
-    </div>
+    <div id="container"></div>
     
   </div>
   
@@ -40,9 +39,23 @@
     
     var TAB_ON_ENTER = true;
 
-    const table = new jsTable('functionarios', {
-      dataUrl: '{% url 'pessoal_get_setores' %}'
-    });
+    let dados = [{'Nome':'Rafael', 'Email':'teste@foo.com'}];
+
+    const table = new jsTable('minhaTabela', {
+      data: dados,
+      canAddRow: true,
+      canDeleteRow: true,
+      editableCols: ['Email'],
+      canExportJson: true,
+      canSave: true,
+      save: minhaFuncao,
+      enablePaginate: true
+    })
+
+    function minhaFuncao(){
+      console.log('SALVANDO.....');
+    }
+
 
 
 
