@@ -1,4 +1,3 @@
-
 <script>
 	document.addEventListener("DOMContentLoaded", function(){
   
@@ -22,9 +21,11 @@
 			document.querySelectorAll('.dropdown-menu a').forEach(function(element){
 				element.addEventListener('click', function (e) {
 				  	let submenu_target = this.nextElementSibling;
+					if(submenu_target != undefined){
 						let display = submenu_target.style.display == 'block' ? 'none' : 'block';
 						document.querySelectorAll('.submenu').forEach(function(everysubmenu){everysubmenu.style.display = 'none';});
 						submenu_target.style.display = display;
+					}
 				});
 			})
 		}

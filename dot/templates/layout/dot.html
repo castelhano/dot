@@ -21,7 +21,7 @@
   </style>
   <script src="{% static 'js/listener.js' %}"></script>
   {% if perms.core.debug %}
-  <script>window.addEventListener('error', (event) => {document.getElementById('page-error-icon').classList.remove('d-none');});</script>
+  <script>window.addEventListener('error', (ev) => {document.getElementById('page-error-icon').classList.remove('d-none');});</script>
   <style media="screen">
     .bug_icon{
       display: inline-block;

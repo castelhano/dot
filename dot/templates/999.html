@@ -7,12 +7,16 @@
   <title>999 Test Page</title>
   <link rel="shortcut icon" href="{% static 'img/favicon.ico'%}">
   <link rel="stylesheet" href="{% static 'css/dot.css' %}" type="text/css">
-  <!-- <link rel="stylesheet" href="{% static 'css/charts.css' %}" type="text/css"> -->
+  <link rel="stylesheet" href="{% static 'css/vendor/cropper.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/all.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/fontawesome.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.min.css' %}" type="text/css">
   
   <style>
+    .cropper-view-box,
+    .cropper-face {
+      border-radius: 50%;
+    }
   </style>
 </head>
 <body style="margin: 10px;">
@@ -21,8 +25,10 @@
   <div class="container-fluid">
     <h1>Handler 999</h1>
     <hr >
-
-    <div id="container"></div>
+    <button class="btn btn-success" data-method="getCroppedCanvas" data-option="{ "maxWidth": 4096, "maxHeight": 4096 }">Foo</button>
+    <div id="container">
+      <img id="img_crop" src="{% static 'img/hellblade.jpg' %}" alt="">
+    </div>
     
   </div>
   
@@ -32,33 +38,23 @@
   </div>
   
   <script src="{% static 'js/listener.js' %}"></script>
-  <script src="{% static 'js/table.js' %}"></script>
+  <!-- <script src="{% static 'js/vendor/mask.js' %}"></script> -->
+  <script src="{% static 'js/vendor/cropper.js' %}"></script>
   <script src="{% static 'js/dot.js' %}"></script>
   <script src="/static/js/vendor/bootstrap.bundle.min.js"></script>
   <script>
     
     var TAB_ON_ENTER = true;
-
-    let dados = [{'Nome':'Rafael', 'Email':'teste@foo.com'}];
-
-    const table = new jsTable('minhaTabela', {
-      data: dados,
-      canAddRow: true,
-      canDeleteRow: true,
-      editableCols: ['Email'],
-      canExportJson: true,
-      canSave: true,
-      save: minhaFuncao,
-      enablePaginate: true
-    })
-
-    function minhaFuncao(){
-      console.log('SALVANDO.....');
-    }
-
-
-
-
+    
+    const crop = new Cropper(document.getElementById('img_crop'), {
+      aspectRatio: 1,
+      viewMode: 1,
+      dragMode: 'none',
+      ready: function () {
+        croppable = true;
+      },
+    });
+    
   </script>
 </body>
 </html>

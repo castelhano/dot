@@ -11,21 +11,20 @@
 * @see      {@link https://stackoverflow.com/questions/62382939/vanilla-htmljs-dynamic-interpolation}
 */
 function dotPlot(map, if_null=''){
-  let data_raw = if_null;
   let data = if_null;
-  [...document.querySelectorAll("*[data-itKey]")].forEach(el => {
-    if(map[el.getAttribute('data-itKey')] != undefined){
-      data_raw = map[el.getAttribute('data-itKey')];
-      data = data_raw;
+  document.querySelectorAll("[data-itKey]").forEach(el => {
+    data = map[el.getAttribute('data-itKey')];
+    if(data == undefined){ // Caso nao informado valor
+      if(el.getAttribute('data-itDefault') != undefined){data = el.getAttribute('data-itDefault');} // Verifica se elemenento tem valor data-itDefault
+      else{data = if_null;}
     }
-    else if(el.getAttribute('data-itDefault') != undefined){data = el.getAttribute('data-itDefault');} // Caso nao localize correspondente verifica se elemenento tem valor data-itDefault
     if(el.getAttribute('data-itTranslate') != undefined){ // Verifica se valor precisa ser 'traduzido', se sim tenta fazer a traducao
       try{
         let translate_map = JSON.parse(el.getAttribute('data-itTranslate'));
         if(translate_map[data] != undefined){data = translate_map[data];}
       }catch(e){} 
     }
-    if(el.getAttribute('data-itMask') != undefined){data = dataMask(data, el.getAttribute('data-itMask'))} // Verufuca se valor rpecisa ser mascarado, caso sim chama funcao auxiliar
+    if(el.getAttribute('data-itMask') != undefined){data = dataMask(data, el.getAttribute('data-itMask'))} // Verifica se valor precisa ser mascarado, caso sim chama funcao auxiliar
     if(el.getAttribute('data-itPrefix') != undefined){data = `${el.getAttribute('data-itPrefix')} ${data}`}
     if(el.getAttribute('data-itPosfix') != undefined){data = `${data} ${el.getAttribute('data-itPosfix')}`}
     el.innerText = data;
@@ -62,8 +61,9 @@ function urlPlot(if_null=''){
 */
 function dataMask(data, mask=''){
   try {
-    if(mask == 'cur'){return VMasker.toMoney(parseFloat(data).toFixed(2))}
-    else if(mask.match(/^0/) && mask.replace(/0/g,'') == ''){return data.padStart(mask.length,'0');} // ZFILL n times 00 ou 000 ou 00000
+    let isNumber = /^\d+(?:\.\d+)?$/.test(data);
+    if(mask == 'cur' && isNumber){return VMasker.toMoney(parseFloat(data).toFixed(2))}
+    else if(mask.match(/^0/) && mask.replace(/0/g,'') == '' && isNumber){return String(data).padStart(mask.length,'0');} // ZFILL n times 00 ou 000 ou 00000
     return data; //Caso nao achar formato compativel retorna a data_raw
   }catch(e){return data;} 
 }

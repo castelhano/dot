@@ -1,5 +1,5 @@
-const __sw = screen.width;
-const __ss = __sw >= 1400 ? 'xxl' : __sw >= 1200 ? 'xl' : __sw >= 992 ? 'lg' : __sw >= 768 ? 'md' : 'sm' ;
+const __sw = screen?.width || null;
+const __ss = __sw == null ? null : __sw >= 1400 ? 'xxl' : __sw >= 1200 ? 'xl' : __sw >= 992 ? 'lg' : __sw >= 768 ? 'md' : 'sm' ;
 
 /*
 * dotAlert Gera um alerta (bootstrap alert)
