@@ -13,10 +13,10 @@
   <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.min.css' %}" type="text/css">
   
   <style>
-    .cropper-view-box,
+    /* .cropper-view-box,
     .cropper-face {
       border-radius: 50%;
-    }
+    } */
   </style>
 </head>
 <body style="margin: 10px;">
@@ -25,20 +25,15 @@
   <div class="container-fluid">
     <h1>Handler 999</h1>
     <hr >
-    <button class="btn btn-success" data-method="getCroppedCanvas" data-option="{ "maxWidth": 4096, "maxHeight": 4096 }">Foo</button>
-    <div id="container">
-      <img id="img_crop" src="{% static 'img/hellblade.jpg' %}" alt="">
+
+    <div id="dot_alert" class="alert alert-dismissible fade mb-1" role="alert">
+      <span id="dot_alert_message"></span>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-    
   </div>
-  
-  <div id="dot_alert" class="alert alert-dismissible fade mb-1" role="alert">
-    <span id="dot_alert_message"></span>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-  
+
   <script src="{% static 'js/listener.js' %}"></script>
-  <!-- <script src="{% static 'js/vendor/mask.js' %}"></script> -->
+  <script src="{% static 'js/photo.js' %}"></script>
   <script src="{% static 'js/vendor/cropper.js' %}"></script>
   <script src="{% static 'js/dot.js' %}"></script>
   <script src="/static/js/vendor/bootstrap.bundle.min.js"></script>
@@ -46,14 +41,18 @@
     
     var TAB_ON_ENTER = true;
     
-    const crop = new Cropper(document.getElementById('img_crop'), {
-      aspectRatio: 1,
-      viewMode: 1,
-      dragMode: 'none',
-      ready: function () {
-        croppable = true;
-      },
-    });
+    // const crop = new Cropper(document.getElementById('img_crop'), {
+    //   aspectRatio: 1,
+    //   viewMode: 1,
+    //   dragMode: 'none',
+    //   ready: function () {
+    //     croppable = true;
+    //   },
+    // });
+
+    const crop = new jsPhoto({});
+
+
     
   </script>
 </body>
