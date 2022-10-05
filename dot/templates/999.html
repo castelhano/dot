@@ -12,12 +12,13 @@
   <link rel="stylesheet" href="{% static 'css/vendor/fontawesome.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.min.css' %}" type="text/css">
   
-  <style>
-    /* .cropper-view-box,
+  <!-- <style>
+    .cropper-view-box,
     .cropper-face {
       border-radius: 50%;
-    } */
-  </style>
+    }
+
+  </style> -->
 </head>
 <body style="margin: 10px;">
   <a id="home" href="{% url 'index' %}"></a>
@@ -25,6 +26,40 @@
   <div class="container-fluid">
     <h1>Handler 999</h1>
     <hr >
+
+    <div class="row">
+      <div class="col-auto">
+        <div class="form-floating-display" onclick="crop.modal.show();"><i class="fas fa-camera fs-4 px-2 text-muted"></i></div>
+      </div>
+    </div>
+
+    <img src="{% static 'img/hellblade.jpg' %}" alt="">
+
+    <!-- Button trigger modal -->
+<!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+  Launch demo modal
+</button> -->
+
+<!-- Modal -->
+<!-- <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <img id="img_crop" src="{% static 'img/hellblade.jpg' %}" style="width: 100%;" alt="">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+
 
     <div id="dot_alert" class="alert alert-dismissible fade mb-1" role="alert">
       <span id="dot_alert_message"></span>
@@ -46,11 +81,15 @@
     //   viewMode: 1,
     //   dragMode: 'none',
     //   ready: function () {
-    //     croppable = true;
+    //     // croppable = true;
     //   },
     // });
 
-    const crop = new jsPhoto({});
+    // const crop = new jsPhoto({
+    //   imageSrc: '{% static 'img/hellblade.jpg' %}',
+    //   cropperEnable: false,
+    //   cropperShape: 'circ'
+    // });
 
 
     
