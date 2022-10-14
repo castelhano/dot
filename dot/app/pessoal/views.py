@@ -6,6 +6,9 @@ from .forms import SetorForm, CargoForm, FuncionarioForm, FuncaoFixaForm, Afasta
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from core.models import Log
+from core.extras import create_image
+from django.conf import settings
+from datetime import datetime
 
 
 # METODOS SHOW
@@ -148,7 +151,20 @@ def funcionario_add(request):
         form = FuncionarioForm(request.POST, request.FILES)
         if form.is_valid():
             try:
-                registro = form.save()
+                has_warnings = False
+                registro = form.save(commit=False)
+                if request.POST['foto_data_url'] != '':
+                    prefix = f'{registro.empresa.id}_{registro.matricula}'
+                    today = datetime.now()
+                    timestamp = datetime.timestamp(today)
+                    file_name = f'{prefix}_{timestamp}.png'
+                    result = create_image(request.POST['foto_data_url'], f'{settings.MEDIA_ROOT}/pessoal/fotos', file_name, f'{prefix}_')
+                    if result[0]:
+                        registro.foto = f'pessoal/fotos/{file_name}'
+                    else:
+                        has_warnings = True
+                        messages.warning(request,'<b>Erro ao salvar foto:</b> ' + result[1])
+                registro.save()
                 l = Log()
                 l.modelo = "pessoal.funcionario"
                 l.objeto_id = registro.id
@@ -156,7 +172,8 @@ def funcionario_add(request):
                 l.usuario = request.user
                 l.mensagem = "CREATED"
                 l.save()
-                messages.success(request,'Funcionário <b>' + registro.matricula + '</b> cadastrado')
+                if not has_warnings:
+                    messages.success(request,'Funcionário <b>' + registro.matricula + '</b> cadastrado')
                 return redirect('pessoal_funcionario_id', registro.id)
             except:
                 messages.error(request,'Erro ao inserir funcionario [INVALID FORM]')
@@ -334,7 +351,20 @@ def funcionario_update(request,id):
     funcionario = Funcionario.objects.get(pk=id)
     form = FuncionarioForm(request.POST, request.FILES, instance=funcionario)
     if form.is_valid():
-        registro = form.save()
+        has_warnings = False
+        registro = form.save(commit=False)
+        if request.POST['foto_data_url'] != '':
+            prefix = f'{registro.empresa.id}_{registro.matricula}'
+            today = datetime.now()
+            timestamp = datetime.timestamp(today)
+            file_name = f'{prefix}_{timestamp}.png'
+            result = create_image(request.POST['foto_data_url'], f'{settings.MEDIA_ROOT}/pessoal/fotos', file_name, f'{prefix}_')
+            if result[0]:
+                registro.foto = f'pessoal/fotos/{file_name}'
+            else:
+                has_warnings = True
+                messages.warning(request,'<b>Erro ao salvar foto:</b> ' + result[1])
+        registro.save()
         l = Log()
         l.modelo = "pessoal.funcionario"
         l.objeto_id = registro.id
@@ -342,7 +372,8 @@ def funcionario_update(request,id):
         l.usuario = request.user
         l.mensagem = "UPDATE"
         l.save()
-        messages.success(request,'Funcionario <b>' + registro.matricula + '</b> alterado')
+        if not has_warnings:
+            messages.success(request,'Funcionario <b>' + registro.matricula + '</b> alterado')
         return redirect('pessoal_funcionario_id', id)
     else:
         return render(request,'pessoal/funcionario_id.html',{'form':form,'funcionario':funcionario})

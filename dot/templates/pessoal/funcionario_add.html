@@ -3,9 +3,11 @@
 {% block title %}Funcionario{% endblock %}
 {% block model %}Pessoal{% endblock %}
 {% block navbar_classlist %}navbar-dark bg-purple bg-gradient{% endblock %}
-{% block model_menu %}
-{% include "_component/menu/pessoal.html" %}
+{% block model_menu %}{% include "_component/menu/pessoal.html" %}{% endblock%}
+{% block style_src %}
+<link rel="stylesheet" href="{% static 'css/vendor/cropper.css' %}" type="text/css">
 {% endblock%}
+
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'pessoal_funcionario_add' %}"></a>
 <div class="card mt-2">
@@ -28,11 +30,20 @@
 
 {% block add_script_src %}
 <script src="{% static 'js/vendor/mask.js' %}"></script>
+<script src="{% static 'js/vendor/cropper.js' %}"></script>
+<script src="{% static 'js/photo.js' %}"></script>
 {% endblock %}
 
 <script>
   {% block add_script %}
   var TAB_ON_ENTER = true;
+
+  const photo = new jsPhoto({
+    inputTarget: document.getElementById('id_foto_data_url'),
+    previewTarget: document.getElementById('funcionarioFoto'),
+    cropperFixed: true
+  });
+
   SHORTCUT_MAP['1FTF'] = '#menu_funcionario_basico';
   SHORTCUT_MAP['2FTF'] = '#menu_funcionario_docs';
   SHORTCUT_MAP['3FTF'] = '#menu_funcionario_contato';

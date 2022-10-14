@@ -5,18 +5,19 @@ class jsPhoto{
         // Variaveis internas ********
         this.cropper = null; // Aponta para o objeto cropper.js
         this.modal = null; // Aponta para o modal
-        this.originalImage = null; // Armazena a imagem original
         this.image = null; // Aponta para o img
+        this.streaming = false; // Controla se webcam esta em uso
         // Configuracao ********
         this.imageSrc = options?.imageSrc || ''; // Caminho da imagem a ser pre carregada (caso exista)
         this.canUploadImage = options?.canUploadImage != undefined ? options.canUploadImage : true; // Habilita / desabilita o input file
         this.webcamEnable = options?.webcamEnable != undefined ? options.webcamEnable : true; // Habilita / desabilita o controle da webcam
         this.cropperEnable = options?.cropperEnable != undefined ? options.cropperEnable : true; // Habilita / desabilita o cropper
         this.cropperShape = options?.cropperShape || 'default'; // Formato de saida para o cropper
+        this.cropperFixed = options?.cropperFixed || false; // Altere para true para aspectRatio: 1
         this.cropperRotateAngle = options?.cropperRotateAngle || 3; // Angulo de rotacao base para o cropper
         this.save = options?.save || this.__save; // Metodo que responde pela acao do save
         this.previewTarget = options?.previewTarget || null; // Se informado, ajusta exibicao ao fechar form
-        this.inputTarget = options?.inputTarget || null; // Se informado input, ao gravar no modal, salva imagem editada no input
+        this.inputTarget = options?.inputTarget || null; // Se informado input, ao gravar no modal, salva dataUrl imagem editada no input
         this.cropperOptions = options?.cropperOptions || this.__setDefaultCropperOptions();
         // Estilizacao ********
 
@@ -31,7 +32,7 @@ class jsPhoto{
     }
     __setDefaultCropperOptions(){
         let opt = {viewMode: 1, autoCropArea:1, dragMode: 'move'};
-        if(this.cropperShape == 'circ'){
+        if(this.cropperShape == 'circ' || this.cropperFixed == true){
             opt['aspectRatio'] = 1;
         }
         return opt;
@@ -46,7 +47,7 @@ class jsPhoto{
         let dismiss = document.createElement('button');dismiss.classList = 'btn btn-sm btn-secondary';dismiss.setAttribute('data-bs-dismiss', 'modal');dismiss.innerHTML = 'Cancelar';
         this.saveModalBtn = document.createElement('button');this.saveModalBtn.classList = 'btn btn-sm btn-primary';this.saveModalBtn.innerHTML = 'Gravar';
         this.saveModalBtn.onclick = () => {
-            if(this.inputTarget){this.__saveFileOnInputTarget()}
+            if(this.inputTarget){this.__saveDataURLOnInputTarget()}
             if(this.previewTarget){this.__refreshPreview()}
             this.modal.hide();
         };
@@ -73,7 +74,7 @@ class jsPhoto{
     __createControls(container){
         let btnGroupFont = document.createElement('div');btnGroupFont.classList = 'btn-group';
         let btnGroupEdit = document.createElement('div');btnGroupEdit.classList = 'btn-group ms-1';
-        let btnGroupSave = document.createElement('div');btnGroupSave.classList = 'btn-group ms-1';
+        let btnGroupSave     = document.createElement('div');btnGroupSave.classList = 'btn-group ms-1';
         if(this.canUploadImage){
             this.btnUpload = document.createElement('button');this.btnUpload.classList = 'btn btn-sm btn-outline-primary';this.btnUpload.innerHTML = '<i class="fas fa-upload"></i>';this.btnUpload.title = 'Carregar imagem';
             let input = document.createElement('input');input.type = 'file';input.accept = 'image/*';input.style.display = 'none';
@@ -90,6 +91,7 @@ class jsPhoto{
         }
         if(this.webcamEnable){
             this.btnWebcam = document.createElement('button');this.btnWebcam.classList = 'btn btn-sm btn-outline-primary';this.btnWebcam.innerHTML = '<i class="fas fa-camera"></i>';this.btnWebcam.title = 'Webcam';
+            this.btnWebcam.onclick = () => {this.__startWebCam()};
             btnGroupFont.appendChild(this.btnWebcam);
         }
         // Botoes do grupo edicao....
@@ -115,27 +117,6 @@ class jsPhoto{
         this.btnReset = document.createElement('button');this.btnReset.classList = 'btn btn-sm btn-outline-secondary';this.btnReset.innerHTML = '<i class="fas fa-sync"></i>';this.btnReset.title = 'Desfazer alterações';
         this.btnReset.onclick = () => this.cropper.reset();
         btnGroupSave.appendChild(this.btnReset);
-        // this.btnRestoreOriginal = document.createElement('button');this.btnRestoreOriginal.classList = 'btn btn-sm btn-outline-secondary d-none';this.btnRestoreOriginal.innerHTML = '<i class="fas fa-history"></i>';
-        // this.btnRestoreOriginal.onclick = () => {
-        //     this.image.src = this.originalImage;
-        //     this.btnRestoreOriginal.classList.add('d-none');
-        //     this.originalImage = null;
-        //     this.__cropDestroy();
-        //     this.__cropImage();
-        // };
-        // this.btnSavePreview = document.createElement('button');this.btnSavePreview.classList = 'btn btn-sm btn-outline-success';this.btnSavePreview.innerHTML = '<i class="fas fa-save fa-fw"></i>Save';
-        // this.btnSavePreview.onclick = () => {
-        //     let croppedCanvas = this.cropper.getCroppedCanvas();
-        //     this.originalImage = croppedCanvas.toDataURL();
-        //     if(this.cropperShape == 'circ'){croppedCanvas = this.__getRoundedCanvas(croppedCanvas);}
-        //     this.image.src = croppedCanvas.toDataURL();
-        //     this.__cropDestroy();
-        //     this.__cropImage();
-        //     this.btnRestoreOriginal.classList.remove('d-none');
-        // };
-        // btnGroupSave.appendChild(this.btnRestoreOriginal);
-        // btnGroupSave.appendChild(this.btnSavePreview);
-        // --------------------
         
         container.appendChild(btnGroupFont);
         container.appendChild(btnGroupEdit);
@@ -143,7 +124,6 @@ class jsPhoto{
     }
     __cropImage(){this.cropper = new Cropper(this.image, this.cropperOptions);}
     __cropDestroy(){this.cropper.destroy();}
-    __save(){}
     __getRoundedCanvas(source){
         let canvas = document.createElement('canvas');
         let context = canvas.getContext('2d');
@@ -163,20 +143,40 @@ class jsPhoto{
     __refreshPreview(){
         this.previewTarget.src = this.cropper.getCroppedCanvas().toDataURL();
     }
-    __saveFileOnInputTarget(options){
+    __saveDataURLOnInputTarget(options){
         let croppedCanvas = this.cropper.getCroppedCanvas();
+        if(this.cropperShape == 'circ'){croppedCanvas = this.__getRoundedCanvas(croppedCanvas);}
         let data = croppedCanvas.toDataURL();
-        let file = new File([data], `${options?.fileName || 'jsPhoto'}.png`,{type:"image/png", lastModified: new Date().getTime()});
-        let container = new DataTransfer();
-        container.items.add(file);
-        this.inputTarget.files = container.files;
-        // -----
-        // let image = new Image();
-        // image.src = data;
+        this.inputTarget.value = data;
+    }
+    __startWebCam(){
+        this.__cropDestroy(); // Destroy o cropper
+        this.image.classList.add('d-none'); // Oculta a imagem
+        // Definicoes para o canvas de captura de video
+        let videoW = '550';
+        let videoH = '550';
+        this.video = document.createElement('video');
+        this.video.width = videoW;
+        this.video.height = videoH;
+        // this.video.style.backgroundColor = '#CCC';
+        this.image.after(this.video);
+        // -------------------
+        navigator.mediaDevices.getUserMedia({video: true, audio: false})
+        .then(function(stream){this.video.srcObject = stream;this.video.play();})
+        .catch(function(e){console.log(e);});
 
-        // let w = window.open("");
-        // w.document.write(image.outerHTML);
-        // -----
+        this.video.addEventListener('canplay', function(ev){
+            if (!this.streaming) {
+                // height = video.videoHeight / (video.videoWidth/width);  
+                // if (isNaN(height)) {height = width / (4/3);}
+                // video.setAttribute('width', width);
+                // video.setAttribute('height', height);
+                // canvas.setAttribute('width', width);
+                // canvas.setAttribute('height', height);
+                this.streaming = true;
+            }
+        }, false);
+        // clearphoto();
     }
     modalToogle(show=true){}
 }

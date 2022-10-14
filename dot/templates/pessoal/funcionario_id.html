@@ -144,8 +144,10 @@
 
   const photo = new jsPhoto({
     {% if funcionario.foto %}imageSrc: '{{ funcionario.foto_url }}',{% endif %}
-    inputTarget: document.getElementById('id_foto'),
+    inputTarget: document.getElementById('id_foto_data_url'),
+    cropperShape: 'circ',
     previewTarget: document.getElementById('funcionarioFoto'),
+    cropperFixed: true
   });
 
   SHORTCUT_MAP['1FTF'] = '#menu_funcionario_basico';
