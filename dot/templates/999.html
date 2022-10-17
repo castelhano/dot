@@ -22,13 +22,11 @@
     <h1>Handler 999</h1>
     <hr >
 
-    <div class="row">
-      <div class="col-auto">
-        <div class="form-floating-display" onclick="crop.modal.show();"><i class="fas fa-camera fs-4 px-2 text-muted"></i></div>
-      </div>
-    </div>
-    <input type="file" id="minha_imagem">
+    <button onclick="photo.modal.show()">Modal</button>
+    <input type="text" class="form-control form-control-sm my-2" id="saidaInput">
+    <img src="" id="imagemPreview" alt="">
 
+   
 
     <div id="dot_alert" class="alert alert-dismissible fade mb-1" role="alert">
       <span id="dot_alert_message"></span>
@@ -45,12 +43,14 @@
     
     var TAB_ON_ENTER = true;
   
-    const crop = new jsPhoto({
-      // imageSrc: '{% static 'img/hellblade.jpg' %}',
+    const photo = new jsPhoto({
+      imageSrc: '{% static 'img/hellblade.jpg' %}',
       // cropperRotateAngle: 1,
-      inputTarget: document.getElementById('minha_imagem'),
-      // cropperEnable: false,
+      inputTarget: document.getElementById('saidaInput'),
+      previewTarget: document.getElementById('imagemPreview'),
+      cropperEnable: false,
       // canUploadImage: false,
+      // webcamEnable: false,
       // cropperShape: 'circ'
     });
 
