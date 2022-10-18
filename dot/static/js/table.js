@@ -3,7 +3,7 @@
 *
 * @version  2.12
 * @since    07/08/2022
-* @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com}
+* @author   Rafael Gustavo Alves {@email castelhano.rafael@gmail.com}
 * @depend   boostrap 5.2.0, fontawesome 5.15.4, dot.css, dot.js
 */
 class jsTable{

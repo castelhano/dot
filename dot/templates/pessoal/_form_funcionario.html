@@ -19,7 +19,7 @@
             <a class="btn btn-sm btn-warning px-4 px-lg-0 disabled">{{funcionario.get_status_display}}</a>
             {% endif %}
           </div></div>
-          {% if 'funcionario_id' in request.get_full_path %}
+          {% if 'funcionario_id' in request.get_full_path or 'funcionario_update' in request.get_full_path %}
           <div class="col-auto">
             <button type="button" id="menu_funcionario_extras" class="btn btn-sm" data-bs-toggle="dropdown"><i class="fas fa-angle-down text-light"></i></button>
             <ul id="funcionario_extra_options" class="dropdown-menu fs-7">

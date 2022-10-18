@@ -5,7 +5,7 @@
 {% block model_menu %}{% include "_component/menu/visitor.html" %}{% endblock%}
 {% block style_src %}
 <link rel="stylesheet" href="{% static 'css/docs.css' %}">
-<link rel="stylesheet" href="{% static 'css/charts.css' %}">
+<link rel="stylesheet" href="{% static 'css/chart.css' %}">
 <link rel="stylesheet" href="{% static 'css/vendor/inmate.css' %}">
 <link rel="stylesheet" href="{% static 'css/vendor/prism.css' %}">
 <link rel="stylesheet" href="{% static 'css/vendor/tagin.css' %}">
@@ -24,6 +24,7 @@
           <li><a class="dropdown-item" href="{% url 'docs' 'jsTable' %}"><i class="fab fa-js-square fa-fw text-success"></i> jsTable</a></li>
           <li><a class="dropdown-item" href="{% url 'docs' 'jsForm' %}"><i class="fab fa-js-square fa-fw text-success"></i> jsForm</a></li>
           <li><a class="dropdown-item" href="{% url 'docs' 'jsKanban' %}"><i class="fab fa-js-square fa-fw text-success"></i> jsKanban</a></li>
+          <li><a class="dropdown-item" href="{% url 'docs' 'jsPhoto' %}"><i class="fab fa-js-square fa-fw text-success"></i> jsPhoto</a></li>
           <!-- <li><hr class="dropdown-divider"></li> -->
         </ul>
       </li>
@@ -45,10 +46,10 @@
           <hr>
           <h5 id="chartcss"><i class="fab fa-css3 text-purple"></i> Chart CSS <sup class="bg-purple-light border rounded px-2 text-white fs-8 me-2">Fork</sup></h5>
           <a href="https://chartscss.org/" target="_blank"><i class="fas fa-link"></i> Página do projeto</a> | 
-          <a href="https://github.com/ChartsCSS/charts.css" target="_blank"><i class="fab fa-github"></i> Github Repo</a>
+          <a href="https://github.com/ChartsCSS/chart.css" target="_blank"><i class="fab fa-github"></i> Github Repo</a>
           
           <p class="mt-4">Importe as classes de estilo</p>
-          <pre><code class="language-html">&lt;link rel="stylesheet" href="{&#37; static 'css/charts.css' &#37;}" type="text/css"&gt;</code></pre>
+          <pre><code class="language-html">&lt;link rel="stylesheet" href="{&#37; static 'css/chart.css' &#37;}" type="text/css"&gt;</code></pre>
 
           <h5 id="pie_label"><i class="fas fa-chart-pie me-2"></i> Pie charts</h5>
 
@@ -453,10 +454,11 @@ dotPlot(map);</code></pre>
             <li><i class="fas none fa-fw"></i><span class="bg-danger bg-opacity-75 border rounded px-2 text-white fs-8 me-2">Vendor</span><a href="#js_sortable">sortable.js</a> | <a href="https://github.com/SortableJS/Sortable" target="_blank">Github</a> | <a href="https://sortablejs.github.io/Sortable/" target="_blank">Project Page</a></li>
             <li><i class="fas none fa-fw"></i><span class="bg-danger bg-opacity-75 border rounded px-2 text-white fs-8 me-1">Vendor</span><span class="bg-purple-light border rounded px-2 text-white fs-8 me-2">Fork</span><a href="#js_tagin">tagin.js</a></li>
             <li><hr /></li>
-            <li><i class="fab fa-js-square text-purple fa-fw mt-2"></i><a href="{% url 'docs' 'jsTable' %}">jsTable</a></li>
-            <li><i class="fab fa-js-square text-purple fa-fw mt-2"></i><a href="{% url 'docs' 'jsForm' %}">jsForm</a></li>
-            <li><i class="fab fa-js-square text-purple fa-fw mt-2"></i><a href="{% url 'docs' 'jsKanban' %}">jsKanban</a></li>
-            <li><span class="bg-danger bg-opacity-75 border rounded px-2 text-white fs-8 me-2">Vendor</span><a href="{% url 'docs' 'chartjs' %}">Chart JS</a> | <a href="https://www.chartjs.org/" target="_blank">Project Page</a></li>
+            <li><i class="fab fa-js-square text-purple fa-fw mt-2"></i><a href="{% url 'docs' 'jsTable' %}">jsTable</a> <i>Manipulação de tabelas</i></li>
+            <li><i class="fab fa-js-square text-purple fa-fw mt-2"></i><a href="{% url 'docs' 'jsForm' %}">jsForm</a> <i>Geração automatica de table#forms</i></li>
+            <li><i class="fab fa-js-square text-purple fa-fw mt-2"></i><a href="{% url 'docs' 'jsKanban' %}">jsKanban</a> <i>Implementa componente Kanban</i></li>
+            <li><i class="fab fa-js-square text-purple fa-fw mt-2"></i><a href="{% url 'docs' 'jsPhoto' %}">jsPhoto</a> <i>Implementa componente para manipulação de imagem</i></li>
+            <li><span class="bg-danger bg-opacity-75 border rounded px-2 text-white fs-8 me-2">Vendor</span><a href="{% url 'docs' 'chartjs' %}">Chart JS</a> | <a href="https://www.chartjs.org/" target="_blank">Project Page</a> <i>Geração de gráficos</i></li>
           </ul>
         </div>
       </div>

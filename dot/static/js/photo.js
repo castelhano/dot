@@ -1,5 +1,13 @@
-// Classe para manipulação de foto, webcam
-
+/*
+* jsPhoto   Implementa componente para importacao imagens do disco, ou webcam
+*           implementa (caso habilitado) componente cropper.js para manipulacao basica da imagem
+*
+* @version  1.01
+* @since    18/10/2022
+* @author   Rafael Gustavo Alves {@email castelhano.rafael@gmail.com}
+* @depend   cropper.js [https://fengyuanchen.github.io/cropperjs/][https://github.com/fengyuanchen/cropperjs]
+* @depend   boostrap 5.2.0, fontawesome 5.15.4, dot.js
+*/
 class jsPhoto{
     constructor(options){
         // Variaveis internas ********
@@ -10,16 +18,15 @@ class jsPhoto{
         this.streaming = false; // Controla se webcam esta em uso
         // Configuracao ********
         this.imageSrc = options?.imageSrc || ''; // Caminho da imagem a ser pre carregada (caso exista)
+        this.inputTarget = options?.inputTarget || null; // Se informado input, ao gravar no modal, salva dataUrl imagem editada no input
+        this.previewTarget = options?.previewTarget || null; // Se informado, ajusta exibicao ao fechar form
         this.canUploadImage = options?.canUploadImage != undefined ? options.canUploadImage : true; // Habilita / desabilita o input file
         this.webcamEnable = options?.webcamEnable != undefined ? options.webcamEnable : true; // Habilita / desabilita o controle da webcam
         this.cropperEnable = options?.cropperEnable != undefined ? options.cropperEnable : true; // Habilita / desabilita o cropper
         this.cropperShape = options?.cropperShape || 'default'; // Formato de saida para o cropper
         this.cropperFixed = options?.cropperFixed || false; // Altere para true para aspectRatio: 1
         this.cropperRotateAngle = options?.cropperRotateAngle || 3; // Angulo de rotacao base para o cropper
-        this.previewTarget = options?.previewTarget || null; // Se informado, ajusta exibicao ao fechar form
-        this.inputTarget = options?.inputTarget || null; // Se informado input, ao gravar no modal, salva dataUrl imagem editada no input
         this.cropperOptions = options?.cropperOptions || this.__setDefaultCropperOptions();
-        // Estilizacao ********
 
         this.__configureCssClass()
         this.__createModal();
@@ -42,23 +49,16 @@ class jsPhoto{
         let header = document.createElement('div');header.classList = 'py-2 px-3 border-bottom';
         let body = document.createElement('div');body.classList = 'modal-body text-center';
         let footer = document.createElement('div');footer.classList = 'modal-footer py-2 bg-light';
-        let dismiss = document.createElement('button');dismiss.classList = 'btn btn-sm btn-secondary';dismiss.setAttribute('data-bs-dismiss', 'modal');dismiss.innerHTML = 'Cancelar';
-        dismiss.onclick = () => {
+        this.modalDismiss = document.createElement('button');this.modalDismiss.classList = 'btn btn-sm btn-secondary';this.modalDismiss.setAttribute('data-bs-dismiss', 'modal');this.modalDismiss.innerHTML = 'Cancelar';
+        let self = this;
+        modal.addEventListener('hide.bs.modal', function(e){
+            if(self.viewMode == 'webcam'){e.preventDefault();return false;} // Se estiver gravando pela webcam, desativa o fechamento do modal
             if(this.bkpImage != undefined){this.image.src = this.bkpImage;this.bkpImage = undefined;} // Restaura backup da imagem (caso exista)
             if(this.viewMode == 'webcam'){this.__endWebCam();}
-        }
+        });
         this.saveModalBtn = document.createElement('button');this.saveModalBtn.classList = 'btn btn-sm btn-primary';this.saveModalBtn.innerHTML = 'Gravar';
         this.saveModalBtn.onclick = () => {
-            if(this.viewMode == 'webcam'){
-                this.__endWebCam();
-                let self = this;
-                this.image.addEventListener('ready', function jsPhotoModalHandler() {
-                    self.image.removeEventListener('ready', jsPhotoModalHandler);
-                    if(self.inputTarget){self.__saveDataURLOnInputTarget()}
-                    if(self.previewTarget){self.__refreshPreview()}
-                    self.modal.hide();
-                });
-            }
+            if(this.viewMode == 'webcam'){this.__endWebCam();}
             else{
                 if(this.inputTarget){this.__saveDataURLOnInputTarget()}
                 if(this.previewTarget){this.__refreshPreview()}
@@ -86,7 +86,7 @@ class jsPhoto{
             body.appendChild(this.videoCaptured);
         }
         // -------------------
-        footer.appendChild(dismiss);
+        footer.appendChild(this.modalDismiss);
         footer.appendChild(this.saveModalBtn);
         this.__createControls(header); // Adiciona os controles do componente
         content.appendChild(header);
@@ -157,9 +157,9 @@ class jsPhoto{
             if(this.streaming){this.__stopWebCam();}
             else{this.__startWebCam();}
         };
-        this.btnStreamingCapture = document.createElement('button');this.btnStreamingCapture.classList = 'btn btn-sm btn-outline-secondary';this.btnStreamingCapture.innerHTML = '<i class="fas fa-clone fa-fw"></i>Capturar';this.btnStreamingCapture.title = 'Capturar imagem';
+        this.btnStreamingCapture = document.createElement('button');this.btnStreamingCapture.classList = 'btn btn-sm btn-outline-secondary';this.btnStreamingCapture.innerHTML = '<i class="fas fa-camera fa-fw"></i>Capturar';this.btnStreamingCapture.title = 'Capturar imagem';
         this.btnStreamingCapture.onclick = () => {this.__webcamCapture()};
-        this.btnStreamingEnd = document.createElement('button');this.btnStreamingEnd.classList = 'btn btn-sm btn-secondary';this.btnStreamingEnd.innerHTML = '<i class="fas fa-crop px-1"></i>';this.btnStreamingEnd.title = 'Editar imagem';
+        this.btnStreamingEnd = document.createElement('button');this.btnStreamingEnd.classList = 'btn btn-sm btn-secondary';this.btnStreamingEnd.innerHTML = '<i class="fas fa-crop fa-fw"></i> Concluir';this.btnStreamingEnd.title = 'Editar imagem';
         this.btnStreamingEnd.onclick = () => {this.__endWebCam()};
         this.btnGroupStreaming.appendChild(this.btnStreamingToogle)
         this.btnGroupStreaming.appendChild(this.btnStreamingCapture)
@@ -197,7 +197,7 @@ class jsPhoto{
         else{this.previewTarget.src = this.image.src}
     }
     __saveDataURLOnInputTarget(options){
-        // 1) Verifica se cropper esta ativo, se sim gera o dataUtl baseado na area do cropper
+        // 1) Verifica se cropper esta ativo, se sim gera o dataUrl baseado na area do cropper
         // 2) Caso nao, avalia se foi carregado algum arquivo do disco, se sim le arquivo e gera dataUrl
         // 3) Caso nao, gera dataUtl do objeto this.image
         if(this.cropperEnable){
@@ -211,7 +211,6 @@ class jsPhoto{
                 let reader = new FileReader();
                 reader.onloadend = () => {this.inputTarget.value = reader.result;};
                 reader.readAsDataURL(this.jsPhotoInput.files[0]);
-                this.inputTarget.value = data;
             }
             else{this.inputTarget.value = this.image.src;}
         }
@@ -234,6 +233,7 @@ class jsPhoto{
         this.btnGroupFont.classList.add('d-none');
         this.btnGroupEdit.classList.add('d-none');
         this.btnGroupSave.classList.add('d-none');
+        this.modalDismiss.classList.add('d-none');
         this.btnGroupStreaming.classList.remove('d-none');
         this.streaming = true;
         this.btnStreamingToogle.innerHTML = '<i class="fas fa-stop fa-fw me-0"></i>';
@@ -267,7 +267,9 @@ class jsPhoto{
         this.btnGroupFont.classList.remove('d-none');
         this.btnGroupEdit.classList.remove('d-none');
         this.btnGroupSave.classList.remove('d-none');
+        this.modalDismiss.classList.remove('d-none');
         if(this.cropperEnable){this.__cropImage()}
         this.viewMode = 'default';
+        this.jsPhotoInput.value = null;
     }
 }
