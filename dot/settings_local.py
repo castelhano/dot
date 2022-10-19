@@ -2,7 +2,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['localhost','https://*.127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['https://*.127.0.0.1', 'https://localhost']
 
 DEBUG = True
 # SECRET_KEY = 'django-insecure-@y**phwf-7(aou^!wj3rc$cfpncse#as=96q-ip@b)9(#ha$&&'

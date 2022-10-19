@@ -32,9 +32,10 @@ class jsPhoto{
         this.__createModal();
     }
     __configureCssClass(){
-        if(this.cropperShape == 'default'){return false;}
+        // if(this.cropperShape == 'default'){return false;}
         let style = document.createElement('style');
         if(this.cropperShape == 'circ'){style.innerHTML = '.cropper-view-box,.cropper-face{border-radius: 50%;}';}
+        if(__ss == 'sm'){style.innerHTML += '.jsPhotoBtnCapture{position:fixed;bottom:90px;left:50%;margin-left:-30px;border:1px solid #CCC;border-radius: 50px;padding: 15px 20px;font-size: 1.6rem;color: #6c757d;}';}
         document.getElementsByTagName('head')[0].appendChild(style);
     }
     __setDefaultCropperOptions(){
@@ -72,18 +73,16 @@ class jsPhoto{
         body.appendChild(this.img_container);
         // Definicoes para o canvas de captura de video
         if(this.webcamEnable){
-            let videoW = Math.min(__sw, 650);
+            let gap = 32
+            let videoW = Math.min(__sw, 650) - gap;
             let videoH = videoW / (4/3);
-            this.video = document.createElement('video');this.video.classList = 'border rounded d-none';
+            this.video = document.createElement('video');this.video.classList = 'rounded d-none';
             this.video.width = videoW;
             this.video.height = videoH;
             this.video.innerHTML = 'Seu navegador nao da suporte a este recurso';
-            this.videoCaptured = document.createElement('canvas');this.videoCaptured.classList = 'border rounded d-none'; // Inicia oculto
-            let gap = 10;
-            this.videoCaptured.width = videoW - gap;
-            this.videoCaptured.height = videoH - gap;
+            this.canvas = document.createElement('canvas');this.canvas.classList = 'rounded d-none m-0'; // Inicia oculto
             body.appendChild(this.video);
-            body.appendChild(this.videoCaptured);
+            body.appendChild(this.canvas);
         }
         // -------------------
         footer.appendChild(this.modalDismiss);
@@ -133,41 +132,44 @@ class jsPhoto{
             this.btnGroupFont.appendChild(this.btnWebcam);
         }
         // Botoes do grupo edicao....
-        this.btnZoomIn = document.createElement('button');this.btnZoomIn.classList = 'btn btn-sm btn-outline-primary';this.btnZoomIn.innerHTML = '<i class="fas fa-search-plus"></i>';this.btnZoomIn.title = 'Aumentar Zoom';
-        this.btnZoomIn.onclick = () => this.cropper.zoom(0.1);
-        this.btnZoomOut = document.createElement('button');this.btnZoomOut.classList = 'btn btn-sm btn-outline-primary';this.btnZoomOut.innerHTML = '<i class="fas fa-search-minus"></i>';this.btnZoomOut.title = 'Diminuir Zoom';
-        this.btnZoomOut.onclick = () => this.cropper.zoom(-0.1);
-        this.btnRotateLeft = document.createElement('button');this.btnRotateLeft.classList = 'btn btn-sm btn-outline-primary';this.btnRotateLeft.innerHTML = '<i class="fas fa-undo"></i>';this.btnRotateLeft.title = 'Girar para Esquerda';
-        this.btnRotateLeft.onclick = () => this.cropper.rotate(this.cropperRotateAngle * -1);
-        this.btnRotateRight = document.createElement('button');this.btnRotateRight.classList = 'btn btn-sm btn-outline-primary';this.btnRotateRight.innerHTML = '<i class="fas fa-redo"></i>';this.btnRotateRight.title = 'Girar para Direita';
-        this.btnRotateRight.onclick = () => this.cropper.rotate(this.cropperRotateAngle);
-        this.btnScaleX = document.createElement('button');this.btnScaleX.classList = 'btn btn-sm btn-outline-primary';this.btnScaleX.innerHTML = '<i class="fas fa-arrows-alt-h"></i>';this.btnScaleX.title = 'Inverter Horizontal';
-        this.btnScaleX.onclick = () => this.cropper.scaleX(this.cropper.getImageData().scaleX * -1 || -1);
-        this.btnScaleY = document.createElement('button');this.btnScaleY.classList = 'btn btn-sm btn-outline-primary';this.btnScaleY.innerHTML = '<i class="fas fa-arrows-alt-v px-1"></i>';this.btnScaleY.title = 'Inverter Vertical';
-        this.btnScaleY.onclick = () => this.cropper.scaleY(this.cropper.getImageData().scaleY * -1 || -1);
-        this.btnGroupEdit.appendChild(this.btnZoomIn);
-        this.btnGroupEdit.appendChild(this.btnZoomOut);
-        this.btnGroupEdit.appendChild(this.btnRotateLeft);
-        this.btnGroupEdit.appendChild(this.btnRotateRight);
-        this.btnGroupEdit.appendChild(this.btnScaleX);
-        this.btnGroupEdit.appendChild(this.btnScaleY);
-        // Botoes do grupo streaming
-        this.btnStreamingToogle = document.createElement('button');this.btnStreamingToogle.classList = 'btn btn-sm btn-outline-secondary';this.btnStreamingToogle.innerHTML = '<i class="fas fa-stop"></i>';this.btnStreamingToogle.title = 'Inicia / para webcam';
-        this.btnStreamingToogle.onclick = () => {
-            if(this.streaming){this.__stopWebCam();}
-            else{this.__startWebCam();}
-        };
-        this.btnStreamingCapture = document.createElement('button');this.btnStreamingCapture.classList = 'btn btn-sm btn-outline-secondary';this.btnStreamingCapture.innerHTML = '<i class="fas fa-camera fa-fw"></i>Capturar';this.btnStreamingCapture.title = 'Capturar imagem';
-        this.btnStreamingCapture.onclick = () => {this.__webcamCapture()};
-        this.btnStreamingEnd = document.createElement('button');this.btnStreamingEnd.classList = 'btn btn-sm btn-secondary';this.btnStreamingEnd.innerHTML = '<i class="fas fa-crop fa-fw"></i> Concluir';this.btnStreamingEnd.title = 'Editar imagem';
-        this.btnStreamingEnd.onclick = () => {this.__endWebCam()};
-        this.btnGroupStreaming.appendChild(this.btnStreamingToogle)
-        this.btnGroupStreaming.appendChild(this.btnStreamingCapture)
-        this.btnGroupStreaming.appendChild(this.btnStreamingEnd)
-        // Botoes do grupo extra
-        this.btnReset = document.createElement('button');this.btnReset.classList = 'btn btn-sm btn-outline-secondary';this.btnReset.innerHTML = '<i class="fas fa-sync"></i>';this.btnReset.title = 'Desfazer alterações';
-        this.btnReset.onclick = () => this.cropper.reset();
-        this.btnGroupSave.appendChild(this.btnReset);
+        if(this.cropperEnable){
+            this.btnZoomIn = document.createElement('button');this.btnZoomIn.classList = 'btn btn-sm btn-outline-primary';this.btnZoomIn.innerHTML = '<i class="fas fa-search-plus"></i>';this.btnZoomIn.title = 'Aumentar Zoom';
+            this.btnZoomIn.onclick = () => this.cropper.zoom(0.1);
+            this.btnZoomOut = document.createElement('button');this.btnZoomOut.classList = 'btn btn-sm btn-outline-primary';this.btnZoomOut.innerHTML = '<i class="fas fa-search-minus"></i>';this.btnZoomOut.title = 'Diminuir Zoom';
+            this.btnZoomOut.onclick = () => this.cropper.zoom(-0.1);
+            this.btnRotateLeft = document.createElement('button');this.btnRotateLeft.classList = 'btn btn-sm btn-outline-primary';this.btnRotateLeft.innerHTML = '<i class="fas fa-undo"></i>';this.btnRotateLeft.title = 'Girar para Esquerda';
+            this.btnRotateLeft.onclick = () => this.cropper.rotate(this.cropperRotateAngle * -1);
+            this.btnRotateRight = document.createElement('button');this.btnRotateRight.classList = 'btn btn-sm btn-outline-primary';this.btnRotateRight.innerHTML = '<i class="fas fa-redo"></i>';this.btnRotateRight.title = 'Girar para Direita';
+            this.btnRotateRight.onclick = () => this.cropper.rotate(this.cropperRotateAngle);
+            this.btnScaleX = document.createElement('button');this.btnScaleX.classList = 'btn btn-sm btn-outline-primary';this.btnScaleX.innerHTML = '<i class="fas fa-arrows-alt-h"></i>';this.btnScaleX.title = 'Inverter Horizontal';
+            this.btnScaleX.onclick = () => this.cropper.scaleX(this.cropper.getImageData().scaleX * -1 || -1);
+            this.btnScaleY = document.createElement('button');this.btnScaleY.classList = 'btn btn-sm btn-outline-primary';this.btnScaleY.innerHTML = '<i class="fas fa-arrows-alt-v px-1"></i>';this.btnScaleY.title = 'Inverter Vertical';
+            this.btnScaleY.onclick = () => this.cropper.scaleY(this.cropper.getImageData().scaleY * -1 || -1);
+            this.btnGroupEdit.appendChild(this.btnZoomIn);
+            this.btnGroupEdit.appendChild(this.btnZoomOut);
+            this.btnGroupEdit.appendChild(this.btnRotateLeft);
+            this.btnGroupEdit.appendChild(this.btnRotateRight);
+            this.btnGroupEdit.appendChild(this.btnScaleX);
+            this.btnGroupEdit.appendChild(this.btnScaleY);
+            // Botoes do grupo streaming
+            this.btnStreamingToogle = document.createElement('button');this.btnStreamingToogle.classList = 'btn btn-sm btn-outline-secondary';this.btnStreamingToogle.innerHTML = '<i class="fas fa-stop"></i>';this.btnStreamingToogle.title = 'Inicia / para webcam';
+            this.btnStreamingToogle.onclick = () => {
+                if(this.streaming){this.__stopWebCam();}
+                else{this.__startWebCam();}
+            };
+            this.btnGroupStreaming.appendChild(this.btnStreamingToogle)
+            this.btnStreamingCapture = document.createElement('button');this.btnStreamingCapture.classList = 'btn btn-sm btn-outline-secondary';this.btnStreamingCapture.innerHTML = '<i class="fas fa-camera fa-fw"></i>Capturar';this.btnStreamingCapture.title = 'Capturar imagem';
+            this.btnGroupStreaming.appendChild(this.btnStreamingCapture)
+            if(__ss == 'sm'){
+                this.btnStreamingMobileCapture = document.createElement('button');this.btnStreamingMobileCapture.classList = 'jsPhotoBtnCapture d-none';this.btnStreamingMobileCapture.innerHTML = '<i class="fas fa-camera"></i>';
+                this.video.parentNode.appendChild(this.btnStreamingMobileCapture);
+            }
+            this.btnStreamingCapture.onclick = () => {this.__webcamCapture()};
+            // Botoes do grupo extra
+            this.btnReset = document.createElement('button');this.btnReset.classList = 'btn btn-sm btn-outline-secondary';this.btnReset.innerHTML = '<i class="fas fa-sync"></i>';this.btnReset.title = 'Desfazer alterações';
+            this.btnReset.onclick = () => this.cropper.reset();
+            this.btnGroupSave.appendChild(this.btnReset);
+        }
         
         container.appendChild(this.btnGroupFont);
         container.appendChild(this.btnGroupEdit);
@@ -223,9 +225,10 @@ class jsPhoto{
             dotAlert('warning', '<b>Atenção:</b> <code>navigator.mediaDevices</code> requer conexão segura (https), entre em contato com o administrador.', false);
             return false;
         }
-        this.videoCaptured.classList.add('d-none'); // Oculta a captura (caso exibido)
+        if(__ss == 'sm'){this.btnStreamingMobileCapture.classList.remove('d-none');}
+        this.bkpImage = this.image.src;
         this.video.classList.remove('d-none'); // Exibe o video
-        let self = this;
+        let self = this;        
         navigator.mediaDevices.getUserMedia({video: true, audio: false})
         .then(function(stream){self.video.srcObject = stream;self.video.play();})
         .catch(function(e){console.log(e)});
@@ -236,7 +239,7 @@ class jsPhoto{
         this.modalDismiss.classList.add('d-none');
         this.btnGroupStreaming.classList.remove('d-none');
         this.streaming = true;
-        this.btnStreamingToogle.innerHTML = '<i class="fas fa-stop fa-fw me-0"></i>';
+        this.btnStreamingToogle.innerHTML = '<i class="fas fa-stop fa-fw"></i>Off';
     }
     __stopWebCam(){ // Finaliza gravacao
         if(!this.streaming){return false;}
@@ -244,24 +247,24 @@ class jsPhoto{
         let tracks = mediaStream.getTracks();
         tracks[0].stop();
         this.streaming = false;
-        this.video.classList.add('d-none');
-        this.videoCaptured.classList.remove('d-none');
-        this.btnStreamingToogle.innerHTML = '<i class="fas fa-play fa-fw me-0"></i>';
+        this.btnStreamingToogle.innerHTML = '<i class="fas fa-play fa-fw"></i>On';
     }
     __webcamCapture(){ // Captura imagem do canvas e salva em this.image
         if(!this.streaming){return false;}
-        this.bkpImage = this.image.src;
-        let context = this.videoCaptured.getContext('2d');
+        let context = this.canvas.getContext('2d');
+        this.canvas.width = this.video.videoWidth;
+        this.canvas.height = this.video.videoHeight;
         context.drawImage(this.video, 0, 0, this.video.videoWidth, this.video.videoHeight);
-        let data = this.videoCaptured.toDataURL('image/png');
-        this.videoCaptured.src = data; // Atualiza o preview do video
+        let data = this.canvas.toDataURL('image/png');
+        this.canvas.src = data; // Atualiza o preview do video
         this.image.src = data; // Atualiza a imagem principal
+        this.video.pause();
         this.__stopWebCam();
     }
     __endWebCam(){ // Finaliza as operacoes com captura da webcam
         if(this.streaming){this.__stopWebCam();}
         this.video.classList.add('d-none');
-        this.videoCaptured.classList.add('d-none');
+        if(__ss == 'sm'){this.btnStreamingMobileCapture.classList.add('d-none');}
         this.btnGroupStreaming.classList.add('d-none');
         this.img_container.classList.remove('d-none');
         this.btnGroupFont.classList.remove('d-none');

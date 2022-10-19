@@ -13,21 +13,28 @@
   <link rel="stylesheet" href="{% static 'css/vendor/fontawesome.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.min.css' %}" type="text/css">
   
-  <!-- <style>
-  </style> -->
+  <style>
+    .circ_btn{
+      border:1px solid #CCC;
+      border-radius: 50px;
+      padding: 15px 20px;
+      font-size: 1.6rem;
+      color: #6c757d;
+    }
+  </style>
 </head>
 <body style="margin: 10px;">
   <a id="home" href="{% url 'index' %}"></a>
   <a id="clear" href="{% url 'handler' '999' %}"></a>
   <div class="container-fluid">
-    <h1>Handler 999</h1>
+    <h1 class="text-muted">Handler 999</h1>
     <hr >
 
     <button onclick="photo.modal.show()">Modal</button>
     <input type="text" class="form-control form-control-sm my-2" id="saidaInput">
     <img src="" id="imagemPreview" alt="">
     <br>
-    <div class="pie animate" style="--v:96;">92%</div>
+    <button class="circ_btn"><i class="fas fa-camera"></i></button>
 
    
 
@@ -45,7 +52,7 @@
   <script>
     
     var TAB_ON_ENTER = true;
-  
+
     const photo = new jsPhoto({
       imageSrc: '{% static 'img/hellblade.jpg' %}',
       // cropperRotateAngle: 1,
