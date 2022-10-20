@@ -22,7 +22,7 @@ class jsPhoto{
         this.previewTarget = options?.previewTarget || null; // Se informado, ajusta exibicao ao fechar form
         this.canUploadImage = options?.canUploadImage != undefined ? options.canUploadImage : true; // Habilita / desabilita o input file
         this.webcamEnable = options?.webcamEnable != undefined ? options.webcamEnable : true; // Habilita / desabilita o controle da webcam
-        this.webcamActiveCamera = options?.webcamActiveCamera || 0; // Armazena camera default/ativa
+        this.facingMode = options?.facingMode || 'environment'; // Armazena camera default/ativa
         this.cropperEnable = options?.cropperEnable != undefined ? options.cropperEnable : true; // Habilita / desabilita o cropper
         this.cropperShape = options?.cropperShape || 'default'; // Formato de saida para o cropper
         this.cropperFixed = options?.cropperFixed || false; // Altere para true para aspectRatio: 1
@@ -152,6 +152,12 @@ class jsPhoto{
             this.btnGroupEdit.appendChild(this.btnRotateRight);
             this.btnGroupEdit.appendChild(this.btnScaleX);
             this.btnGroupEdit.appendChild(this.btnScaleY);
+            // Botoes do grupo extra
+            this.btnReset = document.createElement('button');this.btnReset.classList = 'btn btn-sm btn-outline-secondary';this.btnReset.innerHTML = '<i class="fas fa-sync"></i>';this.btnReset.title = 'Desfazer alterações';
+            this.btnReset.onclick = () => this.cropper.reset();
+            this.btnGroupSave.appendChild(this.btnReset);
+        }
+        if(this.webcamEnable){
             // Botoes do grupo streaming
             this.btnStreamingToogle = document.createElement('button');this.btnStreamingToogle.classList = 'btn btn-sm btn-outline-secondary';this.btnStreamingToogle.innerHTML = '<i class="fas fa-stop"></i>';this.btnStreamingToogle.title = 'Inicia / para webcam';
             this.btnStreamingToogle.onclick = () => {
@@ -159,6 +165,9 @@ class jsPhoto{
                 else{this.__startWebCam();}
             };
             this.btnGroupStreaming.appendChild(this.btnStreamingToogle)
+            this.btnStreamingSwitchCamera = document.createElement('button');this.btnStreamingSwitchCamera.classList = 'btn btn-sm btn-outline-secondary';this.btnStreamingSwitchCamera.innerHTML = '<i class="fas fa-sync px-2"></i>';this.btnStreamingSwitchCamera.title = 'Alterar Camera';
+            this.btnStreamingSwitchCamera.onclick = () => this.__switchCamera();
+            this.btnGroupStreaming.appendChild(this.btnStreamingSwitchCamera)
             this.btnStreamingCapture = document.createElement('button');this.btnStreamingCapture.classList = 'btn btn-sm btn-outline-secondary';this.btnStreamingCapture.innerHTML = '<i class="fas fa-camera fa-fw"></i>Capturar';this.btnStreamingCapture.title = 'Capturar imagem';
             this.btnGroupStreaming.appendChild(this.btnStreamingCapture)
             if(__ss == 'sm'){
@@ -167,10 +176,6 @@ class jsPhoto{
                 this.btnStreamingMobileCapture.onclick = () => {this.__webcamCapture()};
             }
             this.btnStreamingCapture.onclick = () => {this.__webcamCapture()};
-            // Botoes do grupo extra
-            this.btnReset = document.createElement('button');this.btnReset.classList = 'btn btn-sm btn-outline-secondary';this.btnReset.innerHTML = '<i class="fas fa-sync"></i>';this.btnReset.title = 'Desfazer alterações';
-            this.btnReset.onclick = () => this.cropper.reset();
-            this.btnGroupSave.appendChild(this.btnReset);
         }
         
         container.appendChild(this.btnGroupFont);
@@ -227,14 +232,11 @@ class jsPhoto{
             dotAlert('warning', '<b>Atenção:</b> <code>navigator.mediaDevices</code> requer conexão segura (https), entre em contato com o administrador.', false);
             return false;
         }
-        //this.webcamActiveCamera
-        // facingMode: 'environment';
-        //https://stackoverflow.com/questions/52812091/getusermedia-selecting-rear-camera-on-mobile
         if(__ss == 'sm'){this.btnStreamingMobileCapture.classList.remove('d-none');}
         this.bkpImage = this.image.src;
         this.video.classList.remove('d-none'); // Exibe o video
         let self = this;
-        navigator.mediaDevices.getUserMedia({video: true, audio: false})
+        navigator.mediaDevices.getUserMedia({video: {facingMode: this.facingMode}, audio: false})
         .then(function(stream){self.video.srcObject = stream;self.video.play();})
         .catch(function(e){console.log(e)});
 
@@ -245,6 +247,11 @@ class jsPhoto{
         this.btnGroupStreaming.classList.remove('d-none');
         this.streaming = true;
         this.btnStreamingToogle.innerHTML = '<i class="fas fa-stop fa-fw"></i>Off';
+    }
+    __switchCamera(){
+        this.__stopWebCam();
+        this.facingMode = this.facingMode == 'user' ? 'environment' : 'user';
+        this.__startWebCam();
     }
     __stopWebCam(){ // Finaliza gravacao
         if(!this.streaming){return false;}
