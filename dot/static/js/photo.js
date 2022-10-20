@@ -22,6 +22,7 @@ class jsPhoto{
         this.previewTarget = options?.previewTarget || null; // Se informado, ajusta exibicao ao fechar form
         this.canUploadImage = options?.canUploadImage != undefined ? options.canUploadImage : true; // Habilita / desabilita o input file
         this.webcamEnable = options?.webcamEnable != undefined ? options.webcamEnable : true; // Habilita / desabilita o controle da webcam
+        this.webcamActiveCamera = options?.webcamActiveCamera || 0; // Armazena camera default/ativa
         this.cropperEnable = options?.cropperEnable != undefined ? options.cropperEnable : true; // Habilita / desabilita o cropper
         this.cropperShape = options?.cropperShape || 'default'; // Formato de saida para o cropper
         this.cropperFixed = options?.cropperFixed || false; // Altere para true para aspectRatio: 1
@@ -163,6 +164,7 @@ class jsPhoto{
             if(__ss == 'sm'){
                 this.btnStreamingMobileCapture = document.createElement('button');this.btnStreamingMobileCapture.classList = 'jsPhotoBtnCapture d-none';this.btnStreamingMobileCapture.innerHTML = '<i class="fas fa-camera"></i>';
                 this.video.parentNode.appendChild(this.btnStreamingMobileCapture);
+                this.btnStreamingMobileCapture.onclick = () => {this.__webcamCapture()};
             }
             this.btnStreamingCapture.onclick = () => {this.__webcamCapture()};
             // Botoes do grupo extra
@@ -225,10 +227,13 @@ class jsPhoto{
             dotAlert('warning', '<b>Atenção:</b> <code>navigator.mediaDevices</code> requer conexão segura (https), entre em contato com o administrador.', false);
             return false;
         }
+        //this.webcamActiveCamera
+        // facingMode: 'environment';
+        //https://stackoverflow.com/questions/52812091/getusermedia-selecting-rear-camera-on-mobile
         if(__ss == 'sm'){this.btnStreamingMobileCapture.classList.remove('d-none');}
         this.bkpImage = this.image.src;
         this.video.classList.remove('d-none'); // Exibe o video
-        let self = this;        
+        let self = this;
         navigator.mediaDevices.getUserMedia({video: true, audio: false})
         .then(function(stream){self.video.srcObject = stream;self.video.play();})
         .catch(function(e){console.log(e)});

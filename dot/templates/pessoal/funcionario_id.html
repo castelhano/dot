@@ -146,9 +146,7 @@
     {% if funcionario.foto %}imageSrc: '{{ funcionario.foto_url }}',{% endif %}
     inputTarget: document.getElementById('id_foto_data_url'),
     previewTarget: document.getElementById('funcionarioFoto'),
-    // cropperShape: 'circ',
-    // cropperFixed: true,
-    cropperEnable: false
+    cropperFixed: true,
   });
 
   SHORTCUT_MAP['1FTF'] = '#menu_funcionario_basico';

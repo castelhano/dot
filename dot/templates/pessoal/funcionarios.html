@@ -168,7 +168,13 @@
 	
 	const table = new jsTable(document.getElementById('main_table'), {
 		enablePaginate: true,
+		canFilter: true,
+		filterCols: ['Empresa','Matric', 'Nome', 'Cargo'],
 	});
+	if(__ss != 'sm'){
+		table.filterInput.placeholder = 'Filtrar* [ Ctrl + F ]';
+		SHORTCUT_MAP['fFTF'] = ':filterImputSelect';
+	}
 	
 	SHORTCUT_MAP['1FTF'] = '#tab_funcionarios_table';
 	SHORTCUT_MAP['arrowrightFTF'] = ':nextPage';
@@ -176,6 +182,7 @@
 	
 	function nextPage(){table.nextPage();}
 	function previousPage(){table.previousPage();}
+	function filterImputSelect(){table.filterInput.select();}
 	
 	function carregaEmpresas() {
 		var xhttp = new XMLHttpRequest();
