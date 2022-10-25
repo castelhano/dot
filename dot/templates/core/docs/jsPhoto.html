@@ -40,7 +40,7 @@
 &lt;script src="photo.js"&gt;&lt;/script&gt;
 &lt;script src="cropper.js"&gt;&lt;/script&gt;</code></pre>
 
-          <div class="callout callout-warning mt-3"><div class="body"><i class="fas fa-info fa-fw"></i>Caso não pretenta usar o <b>cropper.js</b> importe apenas <code>photo.js</code> e ao instanciar o objeto inphotoe a opção <code>{cropperEnable: false}</code>.</div></div>
+          <div class="callout callout-warning mt-3"><div class="body"><i class="fas fa-info fa-fw"></i>Caso não pretenta usar o <b>cropper.js</b> importe apenas <code>photo.js</code> e ao instanciar o objeto defina a opção <code>{cropperEnable: false}</code>.</div></div>
           
           <h5 id="instanciando_componente">Instanciando o componente</h5>
           <p>Crie uma instancia da classe jsPhoto.</p>
@@ -83,7 +83,7 @@ photo.modal // Aponta para o modal
 photo.image // Aponta para o imagem do modal
 photo.streaming // Booleando informa se webcam esta gravando (nao alterar)
 photo.video // Aponta para o elemento video
-photo.videoCaptured // Aponta para canvas que recebe a imagem capturada
+photo.canvas // Aponta para canvas que recebe a imagem capturada
 photo.saveModalBtn // Aponta para botao salvar
 photo.btnUpload // Aponta para botao de upload de arquivo
 photo.jsPhotoInput // Aponta para input:file (display=none)
