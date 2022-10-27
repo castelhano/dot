@@ -1,0 +1,8 @@
+title = ""
+
+[server]
+name = ""
+ip = ''
+variables = {cpu = 22, range = 23.5}
+
+[issues]
