@@ -143,6 +143,13 @@
   const table = new jsTable(document.getElementById('main_table'), {
     enablePaginate: true
   });
+  SHORTCUT_MAP['arrowdownFFF'] = ':nextRow';
+  SHORTCUT_MAP['arrowupFFF'] = ':previousRow';
+  SHORTCUT_MAP['enterFFF'] = ':enterRow';
+  
+  function nextRow(){table.nextRow();}
+  function previousRow(){table.previousRow();}
+  function enterRow(){table.enterRow();}
   
   function carregaOrgaos() {
     var xhttp = new XMLHttpRequest();

@@ -1,7 +1,7 @@
 /*
 * jsTable   Implementa operacoes com tabelas previamente criadas ou gera tabela a partir de dados json
 *
-* @version  2.12
+* @version  2.15
 * @since    07/08/2022
 * @author   Rafael Gustavo Alves {@email castelhano.rafael@gmail.com}
 * @depend   boostrap 5.2.0, fontawesome 5.15.4, dot.css, dot.js
@@ -23,6 +23,8 @@ class jsTable{
         this.pgControls = null; // Elemento UL que ira conter os botoes de navegacao da tabela
         this.lastPage = 0; // Armazena a ultima pagina da tabela
         this.leid = 0; // Last Element Id: Armazena o id do ultimo elemento a ser exibido no body (na pagina atual)
+        this.activeRow = null; // Armazena a row ativa caso habilitado navegacao na tabela
+        this.activeRowEl = null; // Armazena o elemento tr ativo
         this.restoreButton = null; // Armazena o botao para restaurar linha do trash, necessario para exibir e ocultar baseado na existencia de itens no trash
         this.exportButtonCSV = null;
         this.saveBtn = null;
@@ -68,6 +70,7 @@ class jsTable{
         this.saveButtonText = options?.saveButtonText || '<i class="fas fa-save px-1"></i>';
         this.restoreButtonClasslist = options?.restoreButtonClasslist || 'btn btn-sm btn-outline-secondary d-none';
         this.restoreButtonText = options?.restoreButtonText || '<i class="fas fa-history px-1"></i>';
+        this.activeRowClasslist = options?.activeRowClasslist || 'table-dark';
         this.pgControlClasslist = options?.pgControlClasslist || 'pagination justify-content-end'; 
         this.pgPageClasslist = options?.pgPageClasslist || 'page-item';
         this.pgLinkClasslist = options?.pgLinkClasslist || 'page-link';
@@ -425,6 +428,50 @@ class jsTable{
     goToPage(page){this.activePage = page;this.paginate();}
     previousPage(){this.activePage--;this.paginate();}
     nextPage(){this.activePage++;this.paginate();}
+    clearRowFocus(){}
+    nextRow(){
+        let tableRowsCount = this.tbody.querySelectorAll('tr:not(.emptyRow)').length;
+        if(tableRowsCount == 0){return false;} // Se tabela vazia nao executa codigo
+        if(tableRowsCount == this.activeRow + 1){this.firstRow();return false;} // Se estiver apontando para a ultima linha, retorna para a primeira
+        if(this.activeRow == null){this.activeRow = 0;}
+        else{
+            this.tbody.querySelectorAll('tr')[this.activeRow].classList.remove(this.activeRowClasslist); // Remove classe da linha em foco atual
+            this.activeRow ++;
+        }
+        this.tbody.querySelectorAll('tr')[this.activeRow].classList.add(this.activeRowClasslist); // Adiciona classe na linha destino
+        this.activeRowEl = this.tbody.querySelectorAll('tr')[this.activeRow]; // Aponta para tr em foco
+    }
+    previousRow(){
+        let tableRowsCount = this.tbody.querySelectorAll('tr:not(.emptyRow)').length;
+        if(tableRowsCount == 0){return false;} // Se tabela vazia nao executa codigo
+        if(this.activeRow == 0){this.lastRow();return false;} // Se estiver apontando para a primeira linha, nao executa codigo
+        if(this.activeRow == null){this.activeRow = 0;}
+        else{
+            this.tbody.querySelectorAll('tr')[this.activeRow].classList.remove(this.activeRowClasslist); // Remove classe da linha em foco atual
+            this.activeRow --;
+        }
+        this.tbody.querySelectorAll('tr')[this.activeRow].classList.add(this.activeRowClasslist); // Adiciona classe na linha destino
+    }
+    firstRow(){
+        let tableRowsCount = this.tbody.querySelectorAll('tr:not(.emptyRow)').length;
+        if(tableRowsCount == 0){return false;} // Se tabela vazia nao executa codigo
+        if(this.activeRow != null){this.tbody.querySelectorAll('tr')[this.activeRow].classList.remove(this.activeRowClasslist);} // Remove classe da linha em foco atual}
+        this.activeRow = 0;
+        this.tbody.querySelectorAll('tr')[0].classList.add(this.activeRowClasslist); // Adiciona classe na linha destino
+        this.tbody.querySelectorAll('tr')[0].focus(); // Move o foco
+    }
+    lastRow(){
+        let tableRowsCount = this.tbody.querySelectorAll('tr:not(.emptyRow)').length;
+        if(tableRowsCount == 0){return false;} // Se tabela vazia nao executa codigo
+        if(this.activeRow != null){this.tbody.querySelectorAll('tr')[this.activeRow].classList.remove(this.activeRowClasslist);} // Remove classe da linha em foco atual}
+        this.activeRow = tableRowsCount - 1;
+        this.tbody.querySelectorAll('tr')[this.activeRow].classList.add(this.activeRowClasslist); // Adiciona classe na linha destino
+    }
+    enterRow(){
+        if(this.activeRow != null){
+            try {this.tbody.querySelectorAll('tr')[this.activeRow].querySelector(this.filterEnterSelector).click();}catch (e){}
+        }
+    }
     sort(column, asc=true){
         if(this.raw.length == 0){ return null } // Se tabela for fazia, nao executa processo para classificar
         const modifier = asc ? 1 : -1; // Modificador para classificar em order crecente (asc=true) ou decrescente (asc=false)
@@ -577,7 +624,7 @@ class jsTable{
     cleanTable(){this.headers = [];this.raw = [];this.thead.innerHTML = '';this.tbody.innerHTML = '';}
     cleanRows(){this.raw = [];this.tbody.innerHTML = '';this.rawNextId = 0;this.leid = 0;} // Reinicia this.raw e limpa this.tbody
     cleanTbody(){this.tbody.innerHTML = '';}
-    addEmptyRow(){this.tbody.innerHTML = `<td data-type="emptyRow" colspan="${this.headers.length}">${this.emptyTableMessage}</td>`;}
+    addEmptyRow(){this.tbody.innerHTML = `<tr class="emptyRow"><td data-type="emptyRow" colspan="${this.headers.length}">${this.emptyTableMessage}</td></tr>`;}
     removeEmptyRow(){}
     loading(done=false){
         if(done){this.loadingEl.classList.add('d-none')}

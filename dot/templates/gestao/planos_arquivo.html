@@ -70,8 +70,15 @@
     filterCols: ['Titulo', 'Responsavel']
   });
 
-  SHORTCUT_MAP['/FTF'] = ':planoSearch';
-  function planoSearch(){table.filterInput.select()}
+SHORTCUT_MAP['/FTF'] = ':planoSearch';
+SHORTCUT_MAP['arrowdownFFF'] = ':nextRow';
+SHORTCUT_MAP['arrowupFFF'] = ':previousRow';
+SHORTCUT_MAP['enterFFF'] = ':enterRow';
+
+function nextRow(){table.nextRow();}
+function previousRow(){table.previousRow();}
+function enterRow(){table.enterRow();}
+function planoSearch(){table.filterInput.select()}
   {% endblock %}
 </script>
 

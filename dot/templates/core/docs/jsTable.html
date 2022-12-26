@@ -26,8 +26,8 @@
           <p>Library em javascript ( vanilla ) para operações com tabelas preexistentes ou criadas dinamicamente.</p>
           <blockquote class="callout callout-primary fs-7">
             <div class="body">
-              Version: <b>2.12</b><br>
-              Release: <b>13/08/2022</b><br>
+              Version: <b>2.15</b><br>
+              Release: <b>26/12/2022</b><br>
               Author: &nbsp;<b>Rafael Gustavo Faria Alves</b><br>
               Depend: <a class="badge bg-orange text-white" href="https://getbootstrap.com/docs/5.2/getting-started/introduction/" target="_blank">bootstrap 5.x</a> <a class="badge bg-purple text-white" href="https://fontawesome.com/v5/search?m=free" target="_blank">fontawesome 5.x</a><br>
             </div>
@@ -247,6 +247,30 @@ emptyTableMessage: 'Selecione um filtro ou mude o criterio da pesquisa'
                   <td>Adiciona linha ao final da tabela</td>
                 </tr>
                 <tr>
+                  <td>nextRow</td>
+                  <td>n/a</td>
+                  <td>null</td>
+                  <td>Move seleção para próxima linha</td>
+                </tr>
+                <tr>
+                  <td>previousRow</td>
+                  <td>n/a</td>
+                  <td>null</td>
+                  <td>Move seleção para linha anterior</td>
+                </tr>
+                <tr>
+                  <td>firstRow</td>
+                  <td>n/a</td>
+                  <td>null</td>
+                  <td>Move seleção para a primeira linha</td>
+                </tr>
+                <tr>
+                  <td>lastRow</td>
+                  <td>n/a</td>
+                  <td>null</td>
+                  <td>Move seleção para a última linha</td>
+                </tr>
+                <tr>
                   <td>restoreRow</td>
                   <td>n/a</td>
                   <td>null</td>
@@ -293,7 +317,21 @@ emptyTableMessage: 'Selecione um filtro ou mude o criterio da pesquisa'
 table.restoreButton.onclick = () => {..dosomething}</code></pre>
 
           <h5 id="integracao_listener_js">Integração com <b class="text-orange">listener.js</b></h5>
-          <pre><code class="language-javascript">SHORTCUT_MAP['1FTF'] = () => table.filterInput.select();</code></pre>
+          <pre><code class="language-javascript">SHORTCUT_MAP['/FTF'] = ':filterFocus';
+SHORTCUT_MAP['+FTF'] = ':addRow';
+SHORTCUT_MAP['arrowrightFTF'] = ':nextPage';
+SHORTCUT_MAP['arrowleftFTF'] = ':previousPage';
+SHORTCUT_MAP['arrowdownFFF'] = ':nextRow';
+SHORTCUT_MAP['arrowupFFF'] = ':previousRow';
+SHORTCUT_MAP['enterFFF'] = ':enterRow';
+
+function filterFocus(){table.filterInput.select();}
+function addRow(){table.addRow();}
+function nextPage(){table.nextPage();}
+function previousPage(){table.previousPage();}
+function nextRow(){table.nextRow();}
+function previousRow(){table.previousRow();}
+function enterRow(){table.enterRow();}</code></pre>
 
 
           <h3>Exemplos</h3>

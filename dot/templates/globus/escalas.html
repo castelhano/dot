@@ -122,7 +122,13 @@ SHORTCUT_MAP['eTFF'] = '#import'
 SHORTCUT_MAP['gTFF'] = '#settings'
 SHORTCUT_MAP['arrowrightFTF'] = ':nextPage';
 SHORTCUT_MAP['arrowleftFTF'] = ':previousPage';
+SHORTCUT_MAP['arrowdownFFF'] = ':nextRow';
+SHORTCUT_MAP['arrowupFFF'] = ':previousRow';
+SHORTCUT_MAP['enterFFF'] = ':enterRow';
 
+function nextRow(){table.nextRow();}
+function previousRow(){table.previousRow();}
+function enterRow(){table.enterRow();}
 function searchEscala(){table.filterInput.select();}
 function nextPage(){table.nextPage();}
 function previousPage(){table.previousPage();}
