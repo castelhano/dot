@@ -43,8 +43,7 @@ class jsTable{
         this.save = options?.save != undefined ? options.save : function(){console.log('jsTable: Nenhuma funcao definida para save, nas opcoes marque {canSave:true, save: suaFuncao} ')}; // Funcao definida aqui sera acionada no evento click do botao save
         this.canSort = options?.canSort != undefined ? options.canSort : true;
         this.canFilter = options?.canFilter != undefined ? options.canFilter : false;
-        this.filterEnterActivate = options?.filterEnterActivate != undefined ? options.filterEnterActivate : true; // Se definido para true, se foco na barra de pesquisa e somente um registro visivel, tenta acionar botao para editar registro ao precionar enter
-        this.filterEnterSelector = options?.filterEnterSelector || '.btn'; // Aciona evento click de elemento que atenda querySelector(options.filterEnterActivate)
+        this.actionRowSelector = options?.actionRowSelector || '.btn'; // Aciona evento click de elemento que atenda querySelector
         this.filterCols = options?.filterCols || []; // Recebe o nome das colunas a ser analisado ao filtar Ex: filterCols: ['nome', 'email']
         this.canExportCsv = options?.canExportCsv != undefined ? options.canExportCsv : true;
         this.csvSeparator = options?.csvSeparator || ';';
@@ -308,10 +307,6 @@ class jsTable{
         this.rowsReset();
     }
     dataUrlGet(e){ // Funcao chamada no keyup do filterInput se definido dataUrl
-        if(this.raw.length == 1 && this.filterEnterActivate && e?.key == 'Enter'){ // Caso ativado this.filterEnterActivate reste somente 1 linha na tabela, aciona click do botao no enter
-            try {this.tbody.querySelector(this.filterEnterSelector).click()} catch (error){}
-            return null; // Retorna null e nao realiza o restante do codigo
-        }
         try { // Verifica se a tecla digitada eh uma letra, numero, backspace ou delete (retorna falso para arrows, e outros). Dentro do try pois dataUrlGet pode ser acionado pelo cliente
             let validEntry = e.key == 'Backspace' || e.key == 'Delete' || String.fromCharCode(event.keyCode).match(/(\w|\s)/g);
             if(!validEntry){return null} // Nao realiza consulta ajax se tecla nao for letra ou numero
@@ -365,9 +360,6 @@ class jsTable{
                 let tr = document.createElement('tr');
                 tr.innerHTML = `<td colspan="${this.canDeleteRow ? this.headers.length + 1 : this.headers.length}">Nenhum registro encontrado com o criterio informado</td>`;
                 this.filteredRows.push(tr);
-            }
-            else if(row_count == 1 && this.filterEnterActivate && e?.key == 'Enter'){ // Caso ativado this.filterEnterActivate reste somente 1 linha na tabela, aciona click do botao no enter
-                try {this.tbody.querySelector(this.filterEnterSelector).click()} catch (error){}
             }
             this.rowsCountLabel.innerHTML = row_count;
         }
@@ -474,7 +466,7 @@ class jsTable{
     }
     enterRow(){
         if(this.activeRow != null){
-            try {this.tbody.querySelectorAll('tr')[this.activeRow].querySelector(this.filterEnterSelector).click();}catch (e){}
+            try {this.tbody.querySelectorAll('tr')[this.activeRow].querySelector(this.actionRowSelector).click();}catch (e){}
         }
     }
     sort(column, asc=true){

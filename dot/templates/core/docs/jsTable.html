@@ -86,17 +86,6 @@ emptyTableMessage: 'Selecione um filtro ou mude o criterio da pesquisa'
   canFilter: true,
   filterCols: ['Nome', 'Email']
 });</code></pre>
-
-          <div class="callout callout-orange mt-5 mb-2">
-            <div class="body">
-              <p><b class="text-orange">Dica:</b> Ao filtrar registros (foco na barra de pesquisa), caso exista apenas um único registro visivel, ao precionar a tecla <b>Enter</b>, será acionado elemento <i>clicavel</i> para acessar registro (caso exista).</p>
-              <p>Por padrão, será buscado primeiro elemento na linha com a classe <b>btn</b>, isso pode ser configurado alterando a opção <code>filterEnterSelector</code></p>
-              <p>Para desabilitar essa opção altere <code>filterEnterActivate: false</code></p>
-            </div>
-          </div>
-          <pre><code class="language-javascript">const table = new jsTable(document.getElementById('table'), {
-  filterEnterSelector: 'a', // ou 'a.btn' ou '[data-type]' ...
-});</code></pre>
           
           <h3 id="configuracoes">Configurações</h3>
           <hr>
@@ -126,8 +115,7 @@ emptyTableMessage: 'Selecione um filtro ou mude o criterio da pesquisa'
                 <tr><td>canSort</td><td>bool</td><td>Libera classificação ao clicar no header</td><td>true</td></tr>
                 <tr><td>canFilter</td><td>bool</td><td>Insere input.text para filtrar registros tabela</td><td>false</td></tr>
                 <tr id="filterCols"><td>filterCols</td><td>array</td><td>Lista com nomes dos campos para filtro</td><td>[ ]</td></tr>
-                <tr><td>filterEnterActivate</td><td>bool</td><td>Ativa ou desativa evento enter quando resta 1 linha na tabela</td><td>true</td></tr>
-                <tr><td>filterEnterSelector</td><td>string</td><td>Filtro para querySelector, ativa evento click do elemento alvo quando resta somente 1 registro na tabela<br />Ex: <b>filterEnterSelector: 'a'</b></td><td>'btn'</td></tr>
+                <tr><td>actionRowSelector</td><td>string</td><td>Seletor de elemento clicável para acesso ao registro da tabela, ver <a href="#navegandoTabela">actionRowSelector</a>.</td><td>'btn'</td></tr>
                 <tr><td>canExportCsv</td><td>bool</td><td>Mostra botão para exportar dados em CSV</td><td>true</td></tr>
                 <tr><td>csvSeparator</td><td>string</td><td>Separador para exportação CSV</td><td>';'</td></tr>
                 <tr><td>csvClean</td><td>bool</td><td>Altere para retirar açentos e caracteres especiais ao exportar</td><td>false</td></tr>
@@ -142,6 +130,22 @@ emptyTableMessage: 'Selecione um filtro ou mude o criterio da pesquisa'
               </tbody>
             </table>
         </div>
+
+        <h5 id="navegandoTabela" class="mb-4">Navegando pela tabela</h5>
+        <p>São disponibilizados os métodos <code>nextRow()</code> <code>previousRow()</code> <code>firstRow()</code> <code>lastRow()</code> para navegação nos registros da tabela, além do método <code>enterRow()</code> que tenta acessar o registro em foco.</p>
+        <p>Por padrão será acionado evento click() de elemento com a classe <code>btn</code>. Isso pode ser alterado setando a opção <code>actionRowSelector: 'seuSeletor'</code>.</p>
+        <pre><code class="language-javascript">const table = new jsTable(el, {
+  actionRowSelector: '.btn-success'
+});
+
+// Integrando com listener.js
+SHORTCUT_MAP['arrowdownFFF'] = ':nextRow';
+SHORTCUT_MAP['arrowupFFF'] = ':previousRow';
+SHORTCUT_MAP['enterFFF'] = ':enterRow';
+
+function nextRow(){table.nextRow();}
+function previousRow(){table.previousRow();}
+function enterRow(){table.enterRow();}</code></pre>
           
           <h5 id="estilizacao">Estilização</h5>
           <div class="table-responsive">
@@ -392,7 +396,7 @@ function enterRow(){table.enterRow();}</code></pre>
 
             <blockquote class="callout callout-primary mt-5 fs-7"><div class="body"><b>Exemplo 03:</b> Liberando recursos de <b>adicionar linha</b>, <b>excluir linha</b>, e <b>filtrar tabela</b><br>Script:</div></blockquote>
             <pre><code class="language-javascript">let foo = new jsTable(document.querySelector('table'), {
-  canSAve: true,
+  canSave: true,
   save: minhaFuncao
 });
 function minhaFuncao(){..dosomething}</code></pre>
