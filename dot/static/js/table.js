@@ -403,6 +403,10 @@ class jsTable{
         }
         else{this.lastPage = 1; this.activePage = 1;} // Se tabela vazia, cria uma unica pagina e aponta p ela
         this.pgBuildPageControls(this.lastPage);
+        this.activeRow = null; // Limpa foco na linha (caso linha focada)
+        try {this.activeRowEl.classList.remove(this.activeRowClasslist);}catch(e){} // Limpa foco na linha (caso linha focada)
+        this.activeRowEl = null; // Limpa foco na linha (caso linha focada)
+
     }
     pgBuildPageControls(pages){ // Cria botoes de navegacao das paginas
         let btns = this.pgControls.querySelectorAll('[data-type="pgPage"]'); // Seleciona todos os botoes de paginas
@@ -451,6 +455,7 @@ class jsTable{
             this.activeRow --;
         }
         this.tbody.querySelectorAll('tr')[this.activeRow].classList.add(this.activeRowClasslist); // Adiciona classe na linha destino
+        this.activeRowEl = this.tbody.querySelectorAll('tr')[this.activeRow]; // Aponta para tr em foco
     }
     firstRow(){
         let tableRowsCount = this.tbody.querySelectorAll('tr:not(.emptyRow)').length;
