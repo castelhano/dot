@@ -307,10 +307,7 @@ class jsTable{
         this.rowsReset();
     }
     dataUrlGet(e){ // Funcao chamada no keyup do filterInput se definido dataUrl
-        try { // Verifica se a tecla digitada eh uma letra, numero, backspace ou delete (retorna falso para arrows, e outros). Dentro do try pois dataUrlGet pode ser acionado pelo cliente
-            let validEntry = e.key == 'Backspace' || e.key == 'Delete' || String.fromCharCode(event.keyCode).match(/(\w|\s)/g);
-            if(!validEntry){return null} // Nao realiza consulta ajax se tecla nao for letra ou numero
-        }catch(e){}
+        if([37, 38, 39, 40, 13].includes(e.keyCode)){return false;} // Nao busca registros caso tecla seja enter ou arrows
         let criterio = this.filterInput.value.trim();
         let self = this; // Workaround para resolver conflito dentro da funcao ajax (this passa a se referir ao XMLHttpRequest)
         if(criterio.length >= this.dataUrlMinDigits){ // Aciona o ajax somente se tiver um minimo de caracteres digitados
@@ -335,7 +332,8 @@ class jsTable{
         else{this.cleanRows();this.rowsCountLabel.innerHTML = 0;this.addEmptyRow()}
     }
     filter(e, criterio=null){
-        if(this.raw.length == 0){ return null } // Se tabela for fazia, nao executa processo para filtro
+        if(this.raw.length == 0){ return null; } // Se tabela for vazia nao executa processo para filtro
+        if([37, 38, 39, 40, 13].includes(e.keyCode)){return false;} // Nao busca registros caso tecla seja enter ou arrows
         let c = criterio || this.filterInput.value.toLowerCase();
         if(this.canFilter && this.filterCols.length > 0 && c != ""){
             this.filteredRows = []; // Limpa os filtros
@@ -466,7 +464,7 @@ class jsTable{
     }
     enterRow(){
         if(this.activeRow != null){
-            try {this.tbody.querySelectorAll('tr')[this.activeRow].querySelector(this.actionRowSelector).click();}catch (e){}
+            try {this.tbody.querySelectorAll('tr')[this.activeRow].querySelector(this.actionRowSelector).click();}catch (e){console.log(e);}
         }
     }
     sort(column, asc=true){
