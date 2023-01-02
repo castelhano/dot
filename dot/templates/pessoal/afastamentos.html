@@ -60,10 +60,6 @@
             <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'pessoal_afastamento_id' afastamento.id|safe %}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
           </tr>
-          {% empty %}
-          <tr>
-            <td colspan="6">Nenhum registro a exibir</td>
-          </tr>
           {% endfor %}
         </tbody>
       </table>
@@ -83,7 +79,7 @@
 const table = new jsTable(document.getElementById('main_table'), {});
 SHORTCUT_MAP['arrowdownFFF'] = ':nextRow';
 SHORTCUT_MAP['arrowupFFF'] = ':previousRow';
-SHORTCUT_MAP['enterFFF'] = ':enterRow';
+SHORTCUT_MAP['enterFTF'] = ':enterRow';
 
 function nextRow(){table.nextRow();}
 function previousRow(){table.previousRow();}

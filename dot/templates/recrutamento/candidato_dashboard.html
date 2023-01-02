@@ -136,8 +136,6 @@
               <td>{{avaliacao.qtd}}</td>
               <td class="text-danger text-end">{{avaliacao.qtd|percentual:metrics.total_avaliacoes|floatformat:0}} %</td>
             </tr>
-            {% empty %}
-            <tr><td colspan="3">Nenhum registro a exibir</td></tr>
             {% endfor %}
           </tbody>            
         </table>          

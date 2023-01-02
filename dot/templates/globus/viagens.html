@@ -67,10 +67,6 @@ h7{display: block;}
             <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'globus_viagem_id' viagem.id|safe %}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
           </tr>
-          {% empty %}
-          <tr>
-            <td colspan="7">Nenhum registro a exibir</td>
-          </tr>
           {% endfor %}
         </tbody>
       </table>

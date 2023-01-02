@@ -133,8 +133,6 @@
                 <td><div class="progress" style="height: 20px;"><div class="progress-bar bg-purple" role="progressbar" style="width: {{inspetor.qtd|percentual:metrics.qtd_ocorrencias|floatformat:0}}%;">{{inspetor.qtd|percentual:metrics.qtd_ocorrencias|floatformat:0}}%</div></div></td>
                 <!-- <td>{{inspetor.qtd|percentual:metrics.qtd_ocorrencias|floatformat:0}}</td> -->
               </tr>
-              {% empty %}
-              <tr><td colspan="3">Nenhum registro a exibir</td></tr>
               {% endfor %}
             </tbody>            
           </table>          
