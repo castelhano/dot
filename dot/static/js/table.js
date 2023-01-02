@@ -438,7 +438,7 @@ class jsTable{
     previousRow(){
         let tableRowsCount = this.tbody.querySelectorAll('tr:not(.emptyRow)').length;
         if(tableRowsCount == 0){return false;} // Se tabela vazia nao executa codigo
-        if(this.activeRow == 0){this.lastRow();return false;} // Se estiver apontando para a primeira linha, nao executa codigo
+        if(this.activeRow == 0){this.lastRow();return false;} // Se estiver apontando para a primeira linha, foca ultima linha da tabela
         if(this.activeRow == null){this.activeRow = 0;}
         else{
             this.tbody.querySelectorAll('tr')[this.activeRow].classList.remove(this.activeRowClasslist); // Remove classe da linha em foco atual
