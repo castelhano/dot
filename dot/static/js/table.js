@@ -1,8 +1,9 @@
 /*
 * jsTable   Implementa operacoes com tabelas previamente criadas ou gera tabela a partir de dados json
 *
-* @version  2.15
+* @version  2.16
 * @since    07/08/2022
+* @release  23/01/2023 [correcao de bug no dataUrlGet]
 * @author   Rafael Gustavo Alves {@email castelhano.rafael@gmail.com}
 * @depend   boostrap 5.2.0, fontawesome 5.15.4, dot.css, dot.js
 */
@@ -307,7 +308,7 @@ class jsTable{
         this.rowsReset();
     }
     dataUrlGet(e){ // Funcao chamada no keyup do filterInput se definido dataUrl
-        if([37, 38, 39, 40, 13].includes(e.keyCode)){return false;} // Nao busca registros caso tecla seja enter ou arrows
+        if(e != undefined && [37, 38, 39, 40, 13].includes(e.keyCode)){return false;} // Nao busca registros caso tecla seja enter ou arrows
         let criterio = this.filterInput.value.trim();
         let self = this; // Workaround para resolver conflito dentro da funcao ajax (this passa a se referir ao XMLHttpRequest)
         if(criterio.length >= this.dataUrlMinDigits){ // Aciona o ajax somente se tiver um minimo de caracteres digitados

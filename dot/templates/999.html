@@ -7,70 +7,52 @@
   <title>999 Test Page</title>
   <link rel="shortcut icon" href="{% static 'img/favicon.ico'%}">
   <link rel="stylesheet" href="{% static 'css/dot.css' %}" type="text/css">
-  <!-- <link rel="stylesheet" href="{% static 'css/chart.css' %}" type="text/css"> -->
+  <link rel="stylesheet" href="{% static 'css/chart.css' %}" type="text/css">
   <!-- <link rel="stylesheet" href="{% static 'css/vendor/cropper.css' %}" type="text/css"> -->
   <link rel="stylesheet" href="{% static 'css/vendor/all.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/fontawesome.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.min.css' %}" type="text/css">
+
+  <style>
+    /* body{ background-color: #1F2428; } */
+    
+
+
+  </style>
 </head>
 <body style="margin: 10px;">
-  <a id="home" href="{% url 'index' %}"></a>
-  <a id="clear" href="{% url 'handler' '999' %}"></a>
-  <div class="container-fluid">
-    <h1 class="text-muted">Handler 999</h1>
-    <hr >
+  <h1>999 PAGE</h1>
+  <a class="d-none" id="home" href="{% url 'index' %}"></a>
+  <a class="d-none" id="clear" href="{% url 'handler' '999' %}"></a>
+  <hr>
 
-    <table id="main_table" class="table border table-striped table-hover">
-      <thead>
-        <tr>
-          <th>Foo</th>
-          <th>Bar</th>
-          <th>Non</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>01</td><td>Rafael</td><td><a href="{% url 'docs' 'core' %}" class="btn btn-sm" target="_blank">A</a></td>
-        <tr><td>02</td><td>Maria</td><td><a href="{% url 'docs' 'jsTable' %}" class="btn btn-sm" target="_blank">A</a></td>
-        <tr><td>03</td><td>Joaquim</td><td>44</td>
-        <tr><td>04</td><td>Maneoel</td><td>36</td>
-        </tr>
-      </tbody>
-    </table>
-   
-
-    <div id="dot_alert" class="alert alert-dismissible fade mb-1" role="alert">
-      <span id="dot_alert_message"></span>
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  <div class="row g-1 text-center">
+    <div class="col-md-auto mb-3 mb-md-0">
+      <span class="d-block fw-bold">CPU</span>
+      <div class="semipie animate" style="--v:30;--c:green;">30%</div>
+    </div>
+    <div class="col-md-auto mb-3 mb-md-0">
+      <span class="d-block fw-bold">RAM</span>
+      <div class="semipie animate hover" style="--v:65;--w:200px;--b:30px;">65%</div>
+    </div>
+    <div class="col-md-auto mb-3 mb-md-0">
+      <span class="d-block fw-bold">HDD</span>
+      <div class="semipie animate" style="--v:90;--w:200px;--b:30px;--c:darkred;">90%</div>
     </div>
   </div>
+  
+<div id="dot_alert" class="alert alert-dismissible fade mb-1" role="alert">
+  <span id="dot_alert_message"></span>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
 
   <script src="{% static 'js/listener.js' %}"></script>
-  <script src="{% static 'js/table.js' %}"></script>
-  <script src="{% static 'js/vendor/cropper.js' %}"></script>
+  <!-- <script src="{% static 'js/table.js' %}"></script> -->
+  <!-- <script src="{% static 'js/vendor/cropper.js' %}"></script> -->
   <script src="{% static 'js/dot.js' %}"></script>
   <script src="/static/js/vendor/bootstrap.bundle.min.js"></script>
   <script>
     
-    var TAB_ON_ENTER = true;
-
-    const table = new jsTable(
-      document.getElementById('main_table'),
-      {
-        canFilter: true,
-        filterCols: ['Bar']
-      });
-
-      SHORTCUT_MAP['/FTF'] = ':filterFocus';
-      SHORTCUT_MAP['+FTF'] = ':addRow';
-      SHORTCUT_MAP['arrowdownFFF'] = ':nextRow';
-      SHORTCUT_MAP['arrowupFFF'] = ':previousRow';
-      SHORTCUT_MAP['enterFTF'] = ':enterRow';
-      
-      function filterFocus(){table.filterInput.select();}
-      function addRow(){table.addRow();}
-      function nextRow(){table.nextRow();}
-      function previousRow(){table.previousRow();}
-      function enterRow(){table.enterRow();}
   </script>
 </body>
 </html>

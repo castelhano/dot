@@ -19,7 +19,7 @@
 * -- 
 * @desc    3a ETAPA: CHAMA FUNCAO eventHandler(e) QUE DEVE SER CRIADA E TRATADA NA ORIGEM CASO NAO LOCALIZE CORRESPONDENTE NAS ETAPAS ANTERIORES
 */
-var SHORTCUT_MAP = {'vTFF':'#back','nTFF':'#add','lTFF':'#clear','gTFF':'#submit','/FTF':'#search','dTFF':'#download','iTFF':'#home','.TFF':'#app_root','mTFF':'#messages','sTFF':'#system','dFTF':'#docs_link'};
+var SHORTCUT_MAP = {'vTFF':'#back','nTFF':'#add','lTFF':'#clear','gTFF':'#submit','/FTF':'#search','dTFF':'#download','iTFF':'#home','.TFF':'#app_root','mTFF':'#messages','sTFF':'#system','dFTF':'#docs'};
 
 document.addEventListener('keydown', (e) => {
 	// console.log(e);
