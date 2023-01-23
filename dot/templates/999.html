@@ -26,20 +26,8 @@
   <a class="d-none" id="clear" href="{% url 'handler' '999' %}"></a>
   <hr>
 
-  <div class="row g-1 text-center">
-    <div class="col-md-auto mb-3 mb-md-0">
-      <span class="d-block fw-bold">CPU</span>
-      <div class="semipie animate" style="--v:30;--c:green;">30%</div>
-    </div>
-    <div class="col-md-auto mb-3 mb-md-0">
-      <span class="d-block fw-bold">RAM</span>
-      <div class="semipie animate hover" style="--v:65;--w:200px;--b:30px;">65%</div>
-    </div>
-    <div class="col-md-auto mb-3 mb-md-0">
-      <span class="d-block fw-bold">HDD</span>
-      <div class="semipie animate" style="--v:90;--w:200px;--b:30px;--c:darkred;">90%</div>
-    </div>
-  </div>
+
+
   
 <div id="dot_alert" class="alert alert-dismissible fade mb-1" role="alert">
   <span id="dot_alert_message"></span>
@@ -47,12 +35,15 @@
 </div>
 
   <script src="{% static 'js/listener.js' %}"></script>
-  <!-- <script src="{% static 'js/table.js' %}"></script> -->
+  <script src="{% static 'js/calendar.js' %}"></script>
   <!-- <script src="{% static 'js/vendor/cropper.js' %}"></script> -->
   <script src="{% static 'js/dot.js' %}"></script>
   <script src="/static/js/vendor/bootstrap.bundle.min.js"></script>
   <script>
-    
+    const calendar = new jsCalendar({
+      // year: 2022,
+      // month: 2
+    });
   </script>
 </body>
 </html>
