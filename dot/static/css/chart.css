@@ -28,11 +28,12 @@
 @keyframes semipieMultiAnimate{0%{transform: rotate(0deg);}}
 
 
-tr.bar-h-sm, .bar-h-sm tr{min-height: 40px;}
-tr.bar-h-md, .bar-h-md tr{min-height: 50px;}
-tr.bar-h-lg, .bar-h-lg tr{min-height: 60px;}
-tr.bar-h-xl, .bar-h-xl tr{min-height: 80px;}
+.charts-css tr.bar-h-sm, .bar-h-sm tr{min-height: 40px;}
+.charts-css tr.bar-h-md, .bar-h-md tr{min-height: 50px;}
+.charts-css tr.bar-h-lg, .bar-h-lg tr{min-height: 60px;}
+.charts-css tr.bar-h-xl, .bar-h-xl tr{min-height: 80px;}
 .labels-align-end th{padding-right: 5px!important;}
+.charts-css td span.data{padding-right: 8px;}
 
 .column.animate tbody td {transform-origin: bottom;animation: revealing-columns 3.5s 0.1s linear;}
 .bar.animate tbody td {transform-origin: left;animation: revealing-bars 3.5s 0.1s linear;}
