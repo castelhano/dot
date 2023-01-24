@@ -21,18 +21,26 @@
   </style>
 </head>
 <body style="margin: 10px;">
-  <h1>999 PAGE</h1>
-  <a class="d-none" id="home" href="{% url 'index' %}"></a>
-  <a class="d-none" id="clear" href="{% url 'handler' '999' %}"></a>
-  <hr>
-
-
-
   
-<div id="dot_alert" class="alert alert-dismissible fade mb-1" role="alert">
-  <span id="dot_alert_message"></span>
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
+  <div class="container-fluid">
+    <h1>999 PAGE</h1>
+    <a class="d-none" id="home" href="{% url 'index' %}"></a>
+    <a class="d-none" id="clear" href="{% url 'handler' '999' %}"></a>
+    <hr>
+    
+    <div class="row">
+      <div class="col-md"></div>
+      <div class="col-md" id="calendar_container"></div>
+    </div>
+    
+    
+    <div id="dot_alert" class="alert alert-dismissible fade mb-1" role="alert">
+      <span id="dot_alert_message"></span>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    
+  </div>
+  
 
   <script src="{% static 'js/listener.js' %}"></script>
   <script src="{% static 'js/calendar.js' %}"></script>
@@ -40,10 +48,26 @@
   <script src="{% static 'js/dot.js' %}"></script>
   <script src="/static/js/vendor/bootstrap.bundle.min.js"></script>
   <script>
+    const feriados = {
+      '2023-01-01': 'Ano Novo',
+      '2023-01-22': 'Dia do Indio',
+      '2023-02-05': 'Dia da macumba'
+    }
+    const eventos = {
+      '2023-01-01': 'Foooooooooo',
+      '2023-01-08': 'Reunição gerencial diretoria',
+      '2023-02-14': 'Desligamento Maria do Rosario',
+    }
     const calendar = new jsCalendar({
       // year: 2022,
-      // month: 2
+      container: document.getElementById('calendar_container'),
+      month: 2,
+      holidays: feriados,
+      events: eventos,
+      showSummary: true,
+      onclick: trataEvento
     });
+    function trataEvento(data){console.log(data);}
   </script>
 </body>
 </html>
