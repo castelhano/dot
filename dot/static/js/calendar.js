@@ -1,9 +1,9 @@
 /*
 * jsCalendar   Implementa componte de calendario
 *
-* @version  1.01
+* @version  1.02
 * @since    23/01/2023
-* @release  23/01/2023
+* @release  25/01/2023 [implementado metodo goTo, e controles de acesso]
 * @author   Rafael Gustavo Alves {@email castelhano.rafael@gmail.com}
 * @depend   boostrap 5.2.0, fontawesome 5.15.4
 */
@@ -16,19 +16,23 @@ class jsCalendar{
         this.monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
         this.summary = {'uteis':0, 'sabados':0, 'domingos':0, 'feriados':0};
         this.summaryEl = null;
+        this.selectedDays = [];
         // --------------------------
         this.container = options?.container || document.body; // parentNode do calendario, caso nao informado append no body
         this.holidays = options?.holidays || {}; // Dicionario com os feriados no período
         this.events = options?.events || {}; // Armazena json com os eventos, exige dia como ocupado
         this.showSummary = options?.showSummary != undefined ? options.showSummary : false; // Booleano defini se sera exibido resumo da quantidade de dias por tipo (util, sab, dom, etc..)
         this.onclick = options?.onclick != undefined ? options.onclick : false; // Funcao definida aqui sera acionada no evento click do calendario, repassando o dia clicado
+        this.canSelectDay = options?.canSelectDay != undefined ? options.canSelectDay : true; // Booleano defini se as datas sao selecionaveis
+        this.multiSelect = options?.multiSelect != undefined ? options.multiSelect : false; // Booleano defini se eh permitido multipla seleao de dias
         // --------------------------
-        this.calendarClasslist = options?.calendarClasslist || 'table border caption-top text-center mb-2'; // classlist do calendar
+        this.calendarClasslist = options?.calendarClasslist || 'table border caption-top text-center mb-2 user-select-none'; // classlist do calendar
         this.headerClasslist = options?.headerClasslist || 'border'; // classlist do cabecalho
         this.customDayClasslist = options?.customDayClasslist || 'border py-3 bg-light fs-5'; // classlist de dia padrao
         this.holidayClasslist = options?.holidayClasslist || 'border py-3 bg-danger-light fs-5'; // classlist do feriado
         this.busyDayClasslist = options?.busyDayClasslist || 'border py-3 bg-purple-light fs-5'; // classlist de dia com evento (busy day)
         this.emptyDayClasslist = options?.emptyDayClasslist || 'border py-3 fs-5'; // classlist do calendar
+        this.selectDayClasslist = options?.selectDayClasslist || 'border py-3 bg-warning fs-5'; // classlist do dia selecionado
         this.calendarControlsCurrentClasslist = options?.calendarControlsCurrentClasslist || 'btn btn-sm btn-secondary fs-8 me-1'; // classlist dos controles de navegacao
         this.calendarControlsClasslist = options?.calendarControlsClasslist || 'btn btn-sm btn-light'; // classlist dos controles de navegacao
 
@@ -45,10 +49,44 @@ class jsCalendar{
     createCalendar(){
         this.calendar = document.createElement('table');this.calendar.classList = this.calendarClasslist;this.calendar.style.tableLayout = 'fixed';
         let caption = document.createElement('caption');
-        let row = document.createElement('div');row.classList = 'row';
-        let td1 = document.createElement('div');td1.classList = 'col';
+        let row = document.createElement('div');row.classList = 'row align-items-end g-1';
+        let td1 = document.createElement('div');td1.classList = 'col d-flex';
         let td2 = document.createElement('div');td2.classList = 'col-auto';
-        this.monthName = document.createElement('h5');this.monthName.classList = 'col';
+        this.monthName = document.createElement('h5');this.monthName.style.marginTop = '0px';this.monthName.style.marginBlockEnd = '0px';
+        this.monthName.onclick = () => { // Quando clicado no nome do ano, exibe controles para escolher ano/mes
+            this.monthName.classList.add('d-none');
+            td2.classList.add('d-none');
+            let monthPicker = document.createElement('select');monthPicker.classList = 'form-select form-select-sm me-1';
+            for(let i = 1;i <= this.monthNames.length;i++){
+                let opt = document.createElement('option');
+                opt.value = i;opt.innerHTML = this.monthNames[i-1].toUpperCase();
+                monthPicker.appendChild(opt);
+            }
+            monthPicker.value = this.month; // Inicia o select com o mes em foco
+            let yearPicker = document.createElement('input');yearPicker.type = 'number';yearPicker.min = '1990';yearPicker.max = '2999';yearPicker.classList = 'form-control form-control-sm me-1';
+            yearPicker.value = this.year;
+            let btnSelectDate = document.createElement('button');btnSelectDate.classList = 'btn btn-sm btn-primary';btnSelectDate.style.width = '70px';btnSelectDate.innerHTML = '<i class="fas fa-arrow-right"></i>';
+            btnSelectDate.onclick = () => {
+                this.year = yearPicker.value;
+                this.month = monthPicker.value;
+                btnCancelSelectDate.click();
+            };
+            let btnCancelSelectDate = document.createElement('button');btnCancelSelectDate.classList = 'btn btn-sm btn-secondary me-1';btnCancelSelectDate.style.width = '70px';btnCancelSelectDate.innerHTML = '<i class="fas fa-times"></i>';
+            btnCancelSelectDate.onclick = () => {
+                monthPicker.remove();
+                yearPicker.remove();
+                btnSelectDate.remove();
+                btnCancelSelectDate.remove();
+                this.monthName.classList.remove('d-none');
+                td2.classList.remove('d-none');
+                this.calendarRebuild();
+            };
+
+            td1.appendChild(monthPicker);
+            td1.appendChild(yearPicker);
+            td1.appendChild(btnCancelSelectDate);
+            td1.appendChild(btnSelectDate);
+        }
         td1.appendChild(this.monthName);
         // Contruindo os controles de navegacao do calendario
         this.currentMonthBtn = document.createElement('button');this.currentMonthBtn.classList = this.calendarControlsCurrentClasslist;this.currentMonthBtn.innerHTML = 'HOJE';
@@ -141,7 +179,31 @@ class jsCalendar{
             if(this.onclick){
                 td.style.cursor = 'pointer';
                 td.dataset.type = 'day';
-                td.onclick = () => this.onclick(dateFormated);
+                td.onclick = () => {
+                    this.onclick(dateFormated);
+                    if(this.canSelectDay){ //Implementa funcao para selecao de dia(s) no calendario
+                        if(td.dataset.selected != 'true'){
+                            if(!this.multiSelect && this.selectedDays.length > 0){ // Se nao permitido multi selecao desmarca dia marcado
+                                let target = this.tbody.querySelector('[data-selected=true]');
+                                let index = this.selectedDays.indexOf(target.dataset.day); // Localiza a data no array
+                                this.selectedDays.splice(index,1); // Remove a data do array
+                                target.classList = target.dataset.ocl;
+                                target.removeAttribute('data-selected');
+                            }
+                            this.selectedDays.push(dateFormated);
+                            td.setAttribute('data-ocl', td.classList); // Armazena o classlist original caso desmarcado dia
+                            td.classList = this.selectDayClasslist;
+                            td.setAttribute('data-selected','true');
+                        }
+                        else{
+                            let index = this.selectedDays.indexOf(dateFormated); // Localiza a data no array
+                            this.selectedDays.splice(index,1); // Remove a data do array
+                            td.classList = td.dataset.ocl;
+                            td.removeAttribute('data-selected');
+                        }
+                    }
+
+                };
             }
         }
         else{td.classList = this.emptyDayClasslist;}
@@ -160,6 +222,18 @@ class jsCalendar{
     nextMonth(){
         if(this.month == 12){this.month = 1;this.year++;}
         else{this.month++;}
+        this.calendarRebuild();
+    }
+    clearSelectedDays(){
+        this.tbody.querySelectorAll('[data-selected=true]').forEach(e => {
+            e.classList = e.dataset.ocl;
+            e.removeAttribute('data-selected');
+        });
+        this.selectedDays = [];
+    }
+    goTo(year, month){ // Altera vizualizacao para ano e mes informados
+        this.year = year;
+        this.month = month;
         this.calendarRebuild();
     }
 }

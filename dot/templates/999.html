@@ -28,8 +28,9 @@
     <a class="d-none" id="clear" href="{% url 'handler' '999' %}"></a>
     <hr>
     
+    
     <div class="row">
-      <div class="col-md"></div>
+      <div class="col-md d-flex align-items-end"></div>
       <div class="col-md" id="calendar_container"></div>
     </div>
     
@@ -65,9 +66,10 @@
       holidays: feriados,
       events: eventos,
       showSummary: true,
-      onclick: trataEvento
+      onclick: (data) => {console.log(data)},
+      multiSelect: true,
+      // canSelectDay: false
     });
-    function trataEvento(data){console.log(data);}
   </script>
 </body>
 </html>
