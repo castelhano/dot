@@ -53,7 +53,7 @@
 
           <h3 id="configuracoes">Configurações</h3>
           <hr>
-          <h5 id="recursos">Recursos</h5>
+          <h5 id="recursos" class="mt-1">Recursos</h5>
           <div class="table-responsive">
             <table class="table table-sm">
               <thead>
@@ -66,47 +66,109 @@
               </thead>
               <tbody>
                 <tr><td>year</td><td>int</td><td>Ano do calendario</td><td>[ano atual]</td></tr>
-                <tr><td>month</td><td>int</td><td>Mês de exibição</td><td>null</td></tr>
-                <tr><td>holidays</td><td>dict</td><td>Dicionário com datas de feriados<br />Ex.: <code>{holidays: {'2023-01-01':'Ano novo','2023-02-25':'Carnaval'}}</code></td><td>[]</td></tr>
-                <tr><td>events</td><td>dict</td><td>Dicionário com datas de eventos (busy day)<br />Ex.: <code>{events: {'2023-01-05':'Reunião Gerencial'}}</code></td><td>[]</td></tr>
+                <tr><td>month</td><td>int</td><td>Mês de exibição</td><td>[mes atual]</td></tr>
+                <tr><td>monthNames</td><td>array</td><td>Nomes dos meses</td><td>['Janeiro, 'Fevereiro',...]</td></tr>
+                <tr><td>holidays</td><td>dict</td><td>Dicionário com datas de feriados<br >Ex.: <code>{holidays: {'2023-01-01':'Ano novo','2023-02-25':'Carnaval'}}</code></td><td>{ }</td></tr>
+                <tr><td>events</td><td>dict</td><td>Dicionário com datas de eventos (busy day)<br >Ex.: <code>{events: {'2023-01-05':'Reunião Gerencial'}}</code></td><td>{ }</td></tr>
+                <tr><td>selectedDays</td><td>array</td><td>Array com dias pre selecionados<br >Ex.: <code>{selectedDays: ['2023-01-22']</code></td><td>[ ]</td></tr>
                 <tr><td>showSummary</td><td>bool</td><td>Exibe/oculta resumo de dias (uteis, sab, etc)</td><td>false</td></tr>
-                <tr><td>onclick</td><td>function</td><td>Função de resposta para evento de click, ver <a href="#evento_onclick">aqui</a></td><td>true</td></tr>
-                <tr><td>cropperEnable</td><td>bool</td><td>Ativa integração com componente cropper.js</td><td>true</td></tr>
-                <tr><td>cropperShape</td><td>string</td><td><p class="m-0">Altera formato de saida da imagem</p><small>Disponivel: 'circ' (circular)</small></td><td>'default'</td></tr>
-                <tr><td>cropperFixed</td><td>bool</td><td>Força dimensão de 1x1 (aspectRatio: 1)</td><td>false</td></tr>
-                <tr><td>cropperRotateAngle</td><td>int</td><td>Grau base para rotação da imagem</td><td>3</td></tr>
-                <tr><td>cropperOptions</td><td>dict</td><td>Dicionario para o cropper.js</td><td>{viewMode: 1, autoCropArea:1, dragMode: 'move'}</td></tr>
+                <tr><td>canSelectDay</td><td>bool</td><td>Permite seleção de dia(s)</td><td>false</td></tr>
+                <tr><td>multiSelect</td><td>bool</td><td>Habilita multiseleção</td><td>false</td></tr>
+                <tr><td>onclick</td><td>function</td><td>Função de resposta para evento de click, ver <a href="#evento_onclick">aqui</a></td><td>false</td></tr>
               </tbody>
             </table>
           </div>
 
-          <h3 id="evento_onclick" class="mt-4">Evento onclick</h3>
+          <h5 id="estilizacao">Estilização</h5>
+          <div class="table-responsive">
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th>Chave</th>
+                  <th>Tipo</th>
+                  <th>Descrição</th>
+                  <th>Default</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>calendarClasslist</td><td>string</td><td>Classes do calendario (table)</td><td>'table border caption-top text-center mb-2 user-select-none'</td></tr>
+                <tr><td>headerClasslist</td><td>string</td><td>Classes dos cabeçalhos</td><td>'border'</td></tr>
+                <tr><td>customDayClasslist</td><td>string</td><td>Classes padrão para dias</td><td>'border py-3 bg-light fs-5'</td></tr>
+                <tr><td>holidayClasslist</td><td>string</td><td>Classes para dia tipo <b>feriado</b></td><td>'border py-3 bg-danger-light fs-5'</td></tr>
+                <tr><td>busyDayClasslist</td><td>string</td><td>Classes para dia com <b>evento</b></td><td>'border py-3 bg-purple-light fs-5'</td></tr>
+                <tr><td>emptyDayClasslist</td><td>string</td><td>Classes para espaço vazio</td><td>'border py-3 fs-5'</td></tr>
+                <tr><td>selectDayClasslist</td><td>string</td><td>Classes para dia <b>selecionado</b></td><td>'border py-3 bg-warning fs-5'</td></tr>
+                <tr><td>calendarControlsCurrentClasslist</td><td>string</td><td>Classes do botão "Hoje"</td><td>'btn btn-sm btn-secondary fs-8 me-1'</td></tr>
+                <tr><td>calendarControlsClasslist</td><td>string</td><td>Classes dos botões de navegação</td><td>'btn btn-sm btn-light'</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+            <h3 id="metodos">Métodos</h3>
+            <hr>
+            <div class="table-responsive">
+              <table class="table table-sm">
+                <thead>
+                  <tr>
+                    <th>Metodo</th>
+                    <th>Param</th>
+                    <th>Retorno</th>
+                    <th>Descrição</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>currentMonth</td>
+                    <td>()</td>
+                    <td>null</td>
+                    <td>Altera vizualização para o mês/ano atual</td>
+                  </tr>
+                  <tr>
+                    <td>previousMonth</td>
+                    <td>()</td>
+                    <td>null</td>
+                    <td>Altera vizualização para o mês/ano anterior ao em foco</td>
+                  </tr>
+                  <tr>
+                    <td>nextMonth</td>
+                    <td>()</td>
+                    <td>null</td>
+                    <td>Altera vizualização para o próximo mês</td>
+                  </tr>
+                  <tr>
+                    <td>clearSelectedDays</td>
+                    <td>()</td>
+                    <td>null</td>
+                    <td>Limpa a seleçãod e datas</td>
+                  </tr>
+                  <tr>
+                    <td>goTo</td>
+                    <td>(ano,mes)</td>
+                    <td>null</td>
+                    <td>Altera vizualização para ano/mes informados.<br >Ex.: <code>calendar.goTo(2024, 8)</code></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3 id="evento_onclick" class="mt-4">Evento onclick</h3>
           <p>Ao instanciar o objeto, é possivel repassar uma função que irá responder no evento click do calendário.</p>
           <pre><code class="language-javascript">const calendar = new jsCalendar({
-  onclick: (data) => {...doSomething};
+  onclick: (data) => {if(data == '2023-01-15'){...doSomething}},
 });</code></pre>
+
         
-        <p class="mt-5" id="apontadores">Apontadores para elementos do componente</p>
-        <pre><code class="language-javascript">photo.cropper // Aponta para instancia do cropper.js
-photo.modal // Aponta para o modal
-photo.image // Aponta para o imagem do modal
-photo.streaming // Booleando informa se webcam esta gravando (nao alterar)
-photo.video // Aponta para o elemento video
-photo.canvas // Aponta para canvas que recebe a imagem capturada
-photo.saveModalBtn // Aponta para botao salvar
-photo.btnUpload // Aponta para botao de upload de arquivo
-photo.jsCalendarInput // Aponta para input:file (display=none)
-photo.btnWebcam // Aponta para botao da webcam
-photo.btnZoomIn // Aponta para botao dde zoom +
-photo.btnZoomOut // Aponta para botao dde zoom -
-photo.btnRotateLeft // Aponta para botao de rotacao p esquerda
-photo.btnRotateRight // Aponta para botao de rotacao p direita
-photo.btnScaleX // Aponta para botao p inverter na horizontal
-photo.btnScaleY // Aponta para botao p inverter na vertical
-photo.btnReset // Aponta para botao p resetar imagem original
-photo.btnStreamingToogle // Aponta para botao p ligar/desligar webcam
-photo.btnStreamingCapture // Aponta para botao p capturar imagem
-photo.btnStreamingEnd // Aponta para botao p fechar visualizacao de webcam</code></pre>
+        <p class="mt-5" id="apontadores">Variáveis e Apontadores para elementos do componente</p>
+        <pre><code class="language-javascript">calendar.summary // Retorna dicionario com o resumo do mes em foco
+calendar.calendar // Elemento principal (table)
+calendar.monthName // Titulo com o mes/ano
+calendar.monthPicker // Select com os meses para selecao
+calendar.yearPicker // Input para entrada do ano
+calendar.currentMonthBtn // Botao para mes atual
+calendar.previousMonthBtn // Botao para mes atual anterior
+calendar.nextMonthBtn // Botao para proximo mes
+calendar.btnCancelSelectDate // Botao para cancelar alteracao do mes em foco
+calendar.btnSelectDate // Botao confirmar e carregar calendario</code></pre>
 
         <div style="margin-bottom: 80px;">&nbsp;</div>
         </div><!-- Fim Container principal -->
@@ -115,8 +177,10 @@ photo.btnStreamingEnd // Aponta para botao p fechar visualizacao de webcam</code
             <li><i class="fas fa-book fa-fw"></i><b><a href="#utilizacao">Utilização</a></b></li>
             <li><i class="fas none fa-fw"></i><a href="#instanciando_componente">Instanciando o componente</a></li>
             <li><i class="fas fa-sliders-h fa-fw mt-2"></i><b><a href="#configuracoes">Configurações</a></b></li>
-            <li><i class="fas none fa-fw"></i><a href="#recursos">Recursos</a></li>
-            <li><i class="fas fa-code fa-fw mt-2"></i><b><a href="#apontadores">Apontadores</a></b></li>
+            <li><i class="fas none fa-fw"></i><a href="#estilizacao">Estilização</a></li>
+            <li><i class="fas fa-code fa-fw mt-2"></i><b><a href="#metodos">Métodos</a></b></li>
+            <li><i class="fas none fa-fw"></i><a href="#evento_onclick">Evento onclick</a></li>
+            <li><i class="fas fa-arrow-right fa-fw mt-2"></i><b><a href="#apontadores">Apontadores</a></b></li>
           </ul>
         </div>
       </div>
@@ -129,8 +193,8 @@ photo.btnStreamingEnd // Aponta para botao p fechar visualizacao de webcam</code
 {% endblock%}
 
 {% block add_script_src %}
-<script src="{% static 'js/vendor/prism.js' %}" charset="utf-8"></script>
-<script src="{% static 'js/calendar.js' %}" charset="utf-8"></script>
+<script src="{% static 'js/vendor/prism.js' %}"></script>
+<script src="{% static 'js/calendar.js' %}"></script>
 {% endblock %}
 
 <script>
@@ -143,10 +207,13 @@ photo.btnStreamingEnd // Aponta para botao p fechar visualizacao de webcam</code
     month: 1,
     holidays: {'2023-01-01':'Ano novo','2023-02-21':'Carnaval'},
     events: {'2023-01-14':'08:30 Reunião Gerencial'},
+    selectedDays: ['2023-01-22','2023-01-23'],
     showSummary: true,
-    onclick: () => {}
-  })
-  
+    canSelectDay: true,
+    multiSelect: true,
+    onclick: (data) => {dotAlert('warning', `<b>jsCalendar</b>: Data selecionada <b>${data}</b>.`, false)}
+  });
+
   window.addEventListener('scroll', function() {
     if(window.scrollY > 500) {document.getElementById('link_start_page').style.opacity = '1';}
     else{document.getElementById('link_start_page').style.opacity = '0';}

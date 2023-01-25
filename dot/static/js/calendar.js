@@ -6,6 +6,7 @@
 * @release  25/01/2023 [implementado metodo goTo, e controles de acesso]
 * @author   Rafael Gustavo Alves {@email castelhano.rafael@gmail.com}
 * @depend   boostrap 5.2.0, fontawesome 5.15.4
+* @TODO     Implementar pre carregamento de datas selecionadas {seletedDays: ['..']}
 */
 
 class jsCalendar{
@@ -13,7 +14,7 @@ class jsCalendar{
         this.today = new Date();
         this.year = options?.year || this.today.getFullYear();
         this.month = options?.month > 0 && options?.month < 13 ? options?.month : false || this.today.getMonth() + 1;
-        this.monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+        this.monthNames = options?.monthNames || ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
         this.summary = {'uteis':0, 'sabados':0, 'domingos':0, 'feriados':0};
         this.summaryEl = null;
         this.selectedDays = [];
@@ -23,7 +24,7 @@ class jsCalendar{
         this.events = options?.events || {}; // Armazena json com os eventos, exige dia como ocupado
         this.showSummary = options?.showSummary != undefined ? options.showSummary : false; // Booleano defini se sera exibido resumo da quantidade de dias por tipo (util, sab, dom, etc..)
         this.onclick = options?.onclick != undefined ? options.onclick : false; // Funcao definida aqui sera acionada no evento click do calendario, repassando o dia clicado
-        this.canSelectDay = options?.canSelectDay != undefined ? options.canSelectDay : true; // Booleano defini se as datas sao selecionaveis
+        this.canSelectDay = options?.canSelectDay != undefined ? options.canSelectDay : false; // Booleano defini se as datas sao selecionaveis
         this.multiSelect = options?.multiSelect != undefined ? options.multiSelect : false; // Booleano defini se eh permitido multipla seleao de dias
         // --------------------------
         this.calendarClasslist = options?.calendarClasslist || 'table border caption-top text-center mb-2 user-select-none'; // classlist do calendar
@@ -56,36 +57,36 @@ class jsCalendar{
         this.monthName.onclick = () => { // Quando clicado no nome do ano, exibe controles para escolher ano/mes
             this.monthName.classList.add('d-none');
             td2.classList.add('d-none');
-            let monthPicker = document.createElement('select');monthPicker.classList = 'form-select form-select-sm me-1';
+            this.monthPicker = document.createElement('select');this.monthPicker.classList = 'form-select form-select-sm me-1';
             for(let i = 1;i <= this.monthNames.length;i++){
                 let opt = document.createElement('option');
                 opt.value = i;opt.innerHTML = this.monthNames[i-1].toUpperCase();
-                monthPicker.appendChild(opt);
+                this.monthPicker.appendChild(opt);
             }
-            monthPicker.value = this.month; // Inicia o select com o mes em foco
-            let yearPicker = document.createElement('input');yearPicker.type = 'number';yearPicker.min = '1990';yearPicker.max = '2999';yearPicker.classList = 'form-control form-control-sm me-1';
-            yearPicker.value = this.year;
-            let btnSelectDate = document.createElement('button');btnSelectDate.classList = 'btn btn-sm btn-primary';btnSelectDate.style.width = '70px';btnSelectDate.innerHTML = '<i class="fas fa-arrow-right"></i>';
-            btnSelectDate.onclick = () => {
-                this.year = yearPicker.value;
-                this.month = monthPicker.value;
-                btnCancelSelectDate.click();
+            this.monthPicker.value = this.month; // Inicia o select com o mes em foco
+            this.yearPicker = document.createElement('input');this.yearPicker.type = 'number';this.yearPicker.min = '1990';this.yearPicker.max = '2999';this.yearPicker.classList = 'form-control form-control-sm me-1';
+            this.yearPicker.value = this.year;
+            this.btnSelectDate = document.createElement('button');this.btnSelectDate.classList = 'btn btn-sm btn-primary';this.btnSelectDate.style.width = '70px';this.btnSelectDate.innerHTML = '<i class="fas fa-arrow-right"></i>';
+            this.btnSelectDate.onclick = () => {
+                this.year = this.yearPicker.value;
+                this.month = this.monthPicker.value;
+                this.btnCancelSelectDate.click();
             };
-            let btnCancelSelectDate = document.createElement('button');btnCancelSelectDate.classList = 'btn btn-sm btn-secondary me-1';btnCancelSelectDate.style.width = '70px';btnCancelSelectDate.innerHTML = '<i class="fas fa-times"></i>';
-            btnCancelSelectDate.onclick = () => {
-                monthPicker.remove();
-                yearPicker.remove();
-                btnSelectDate.remove();
-                btnCancelSelectDate.remove();
+            this.btnCancelSelectDate = document.createElement('button');this.btnCancelSelectDate.classList = 'btn btn-sm btn-secondary me-1';this.btnCancelSelectDate.style.width = '70px';this.btnCancelSelectDate.innerHTML = '<i class="fas fa-times"></i>';
+            this.btnCancelSelectDate.onclick = () => {
+                this.monthPicker.remove();
+                this.yearPicker.remove();
+                this.btnSelectDate.remove();
+                this.btnCancelSelectDate.remove();
                 this.monthName.classList.remove('d-none');
                 td2.classList.remove('d-none');
                 this.calendarRebuild();
             };
 
-            td1.appendChild(monthPicker);
-            td1.appendChild(yearPicker);
-            td1.appendChild(btnCancelSelectDate);
-            td1.appendChild(btnSelectDate);
+            td1.appendChild(this.monthPicker);
+            td1.appendChild(this.yearPicker);
+            td1.appendChild(this.btnCancelSelectDate);
+            td1.appendChild(this.btnSelectDate);
         }
         td1.appendChild(this.monthName);
         // Contruindo os controles de navegacao do calendario
@@ -119,7 +120,7 @@ class jsCalendar{
         this.summary.uteis = 0;this.summary.sabados = 0;this.summary.domingos = 0;this.summary.feriados = 0;
         this.startAt = new Date(`${this.year}-${this.month}-1`).getDay(); // Retorna de 0-6 (dom=0, seg=1,...)
         this.totalDays = new Date(this.year, this.month, 0).getDate(); // Retorna quantidade de dias do mes
-        this.monthName.innerHTML = `${this.monthNames[this.month - 1]} de ${this.year}`;
+        this.monthName.innerHTML = `${this.monthNames[this.month - 1]} ${this.year}`;
         this.tbody.innerHTML = ''; // Limpa o tbody
         while(daysCount <= this.totalDays){
             let row = document.createElement('tr');
@@ -176,11 +177,11 @@ class jsCalendar{
             else{td.classList = this.customDayClasslist;} // Caso contrario usa formado padrao
             td.innerHTML = day;
             td.dataset.date = dateFormated; // Adiciona data-attr 'date' usado no evento click do calendario
-            if(this.onclick){
+            if(this.onclick || this.canSelectDay){
                 td.style.cursor = 'pointer';
                 td.dataset.type = 'day';
                 td.onclick = () => {
-                    this.onclick(dateFormated);
+                    if(this.onclick){this.onclick(dateFormated);} // Aciona funcao fornecida ao instanciar objeto (caso exista)
                     if(this.canSelectDay){ //Implementa funcao para selecao de dia(s) no calendario
                         if(td.dataset.selected != 'true'){
                             if(!this.multiSelect && this.selectedDays.length > 0){ // Se nao permitido multi selecao desmarca dia marcado
@@ -202,7 +203,7 @@ class jsCalendar{
                             td.removeAttribute('data-selected');
                         }
                     }
-
+                    
                 };
             }
         }
@@ -233,7 +234,7 @@ class jsCalendar{
     }
     goTo(year, month){ // Altera vizualizacao para ano e mes informados
         this.year = year;
-        this.month = month;
+        if(month > 0 && month < 13){this.month = month;}
         this.calendarRebuild();
     }
 }
