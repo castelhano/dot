@@ -65,7 +65,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr><td>year</td><td>int</td><td>Ano do calendario</td><td>[ano atual]</td></tr>
+                <tr><td>year</td><td>int</td><td>Ano de exibição</td><td>[ano atual]</td></tr>
                 <tr><td>month</td><td>int</td><td>Mês de exibição</td><td>[mes atual]</td></tr>
                 <tr><td>monthNames</td><td>array</td><td>Nomes dos meses</td><td>['Janeiro, 'Fevereiro',...]</td></tr>
                 <tr><td>holidays</td><td>dict</td><td>Dicionário com datas de feriados<br >Ex.: <code>{holidays: {'2023-01-01':'Ano novo','2023-02-25':'Carnaval'}}</code></td><td>{ }</td></tr>
@@ -147,6 +147,12 @@
                     <td>null</td>
                     <td>Altera vizualização para ano/mes informados.<br >Ex.: <code>calendar.goTo(2024, 8)</code></td>
                   </tr>
+                  <tr>
+                    <td>selectDays</td>
+                    <td>(array)</td>
+                    <td>null</td>
+                    <td>Seleciona dias no calendário.<br >Ex.: <code>calendar.selectDays(['2023-01-22','2023-01-23'])</code></td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -207,10 +213,10 @@ calendar.btnSelectDate // Botao confirmar e carregar calendario</code></pre>
     month: 1,
     holidays: {'2023-01-01':'Ano novo','2023-02-21':'Carnaval'},
     events: {'2023-01-14':'08:30 Reunião Gerencial'},
-    selectedDays: ['2023-01-22','2023-01-23'],
+    // selectedDays: ['2023-01-22','2023-01-23','2023-02-15'],
     showSummary: true,
     canSelectDay: true,
-    multiSelect: true,
+    // multiSelect: true,
     onclick: (data) => {dotAlert('warning', `<b>jsCalendar</b>: Data selecionada <b>${data}</b>.`, false)}
   });
 

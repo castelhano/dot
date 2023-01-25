@@ -1,12 +1,11 @@
 /*
 * jsCalendar   Implementa componte de calendario
 *
-* @version  1.02
+* @version  1.03
 * @since    23/01/2023
-* @release  25/01/2023 [implementado metodo goTo, e controles de acesso]
+* @release  25/01/2023 [implementado metodos goTo, selectDays]
 * @author   Rafael Gustavo Alves {@email castelhano.rafael@gmail.com}
 * @depend   boostrap 5.2.0, fontawesome 5.15.4
-* @TODO     Implementar pre carregamento de datas selecionadas {seletedDays: ['..']}
 */
 
 class jsCalendar{
@@ -17,11 +16,13 @@ class jsCalendar{
         this.monthNames = options?.monthNames || ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
         this.summary = {'uteis':0, 'sabados':0, 'domingos':0, 'feriados':0};
         this.summaryEl = null;
-        this.selectedDays = [];
+        this.selectedDays = options?.selectedDays || [];
         // --------------------------
         this.container = options?.container || document.body; // parentNode do calendario, caso nao informado append no body
         this.holidays = options?.holidays || {}; // Dicionario com os feriados no período
         this.events = options?.events || {}; // Armazena json com os eventos, exige dia como ocupado
+        this.yearMin = options?.yearMin || 1500; // Define ano minimo para pesquisa (ignora valores menores)
+        this.yearMax = options?.yearMax || 2999; // Define ano maximo para pesquisa (ignora valores maiores)
         this.showSummary = options?.showSummary != undefined ? options.showSummary : false; // Booleano defini se sera exibido resumo da quantidade de dias por tipo (util, sab, dom, etc..)
         this.onclick = options?.onclick != undefined ? options.onclick : false; // Funcao definida aqui sera acionada no evento click do calendario, repassando o dia clicado
         this.canSelectDay = options?.canSelectDay != undefined ? options.canSelectDay : false; // Booleano defini se as datas sao selecionaveis
@@ -44,7 +45,7 @@ class jsCalendar{
     }
     __configureCssClass(){
         let style = document.createElement('style');
-        style.innerHTML = '[data-type=day]:hover{box-shadow: inset 1px 1px 7px 7px rgba(158,155,158,0.2);}';
+        style.innerHTML = '[data-date]:hover{box-shadow: inset 1px 1px 7px 7px rgba(158,155,158,0.2);}';
         document.getElementsByTagName('head')[0].appendChild(style);
     }
     createCalendar(){
@@ -53,7 +54,7 @@ class jsCalendar{
         let row = document.createElement('div');row.classList = 'row align-items-end g-1';
         let td1 = document.createElement('div');td1.classList = 'col d-flex';
         let td2 = document.createElement('div');td2.classList = 'col-auto';
-        this.monthName = document.createElement('h5');this.monthName.style.marginTop = '0px';this.monthName.style.marginBlockEnd = '0px';
+        this.monthName = document.createElement('h5');this.monthName.classList = 'mt-0 pointer';this.monthName.style.marginBlockEnd = '0px';
         this.monthName.onclick = () => { // Quando clicado no nome do ano, exibe controles para escolher ano/mes
             this.monthName.classList.add('d-none');
             td2.classList.add('d-none');
@@ -64,11 +65,11 @@ class jsCalendar{
                 this.monthPicker.appendChild(opt);
             }
             this.monthPicker.value = this.month; // Inicia o select com o mes em foco
-            this.yearPicker = document.createElement('input');this.yearPicker.type = 'number';this.yearPicker.min = '1990';this.yearPicker.max = '2999';this.yearPicker.classList = 'form-control form-control-sm me-1';
+            this.yearPicker = document.createElement('input');this.yearPicker.type = 'number';this.yearPicker.min = this.yearMin;this.yearPicker.max = this.yearMax;this.yearPicker.classList = 'form-control form-control-sm me-1';
             this.yearPicker.value = this.year;
             this.btnSelectDate = document.createElement('button');this.btnSelectDate.classList = 'btn btn-sm btn-primary';this.btnSelectDate.style.width = '70px';this.btnSelectDate.innerHTML = '<i class="fas fa-arrow-right"></i>';
             this.btnSelectDate.onclick = () => {
-                this.year = this.yearPicker.value;
+                this.year = this.yearPicker.value >= this.yearMin && this.yearPicker.value <= this.yearMax ? this.yearPicker.value : this.year;
                 this.month = this.monthPicker.value;
                 this.btnCancelSelectDate.click();
             };
@@ -136,6 +137,7 @@ class jsCalendar{
             ajust = 0;
         }
         if(this.showSummary){this.buildSummary();}
+        if(this.selectedDays.length > 0){this.selectDays(this.selectedDays, true)};
     }
     buildSummary(){
         if(this.summaryEl == null){ // Caso container do summary ainda nao exista, cria elemento abaixo do calendario
@@ -179,7 +181,6 @@ class jsCalendar{
             td.dataset.date = dateFormated; // Adiciona data-attr 'date' usado no evento click do calendario
             if(this.onclick || this.canSelectDay){
                 td.style.cursor = 'pointer';
-                td.dataset.type = 'day';
                 td.onclick = () => {
                     if(this.onclick){this.onclick(dateFormated);} // Aciona funcao fornecida ao instanciar objeto (caso exista)
                     if(this.canSelectDay){ //Implementa funcao para selecao de dia(s) no calendario
@@ -236,5 +237,16 @@ class jsCalendar{
         this.year = year;
         if(month > 0 && month < 13){this.month = month;}
         this.calendarRebuild();
+    }
+    selectDays(datas=[], printOnly=false){
+        for(let i = 0;i < datas.length;i++){
+            let target = this.tbody.querySelector(`[data-date='${datas[i]}']`);
+            if(target){
+                target.dataset.ocl = target.classList;
+                target.classList = this.selectDayClasslist;
+                target.dataset.selected = 'true';
+                if(!printOnly){this.selectedDays.push(datas[i]);}
+            }
+        }
     }
 }
