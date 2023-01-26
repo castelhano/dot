@@ -1,11 +1,11 @@
 /*
 * jsForm   Implementa formulario para manipular objeto json (extrutura predefinida)
 *
-* @version      2.0
+* @version      1.1
 * @since        02/09/2022
-* @release      27/01/2023 [alterado layout do json integrado schema em this.data]
+* @release      26/01/2023 [correcao de bugs]
 * @author       Rafael Gustavo ALves {@email castelhano.rafael@gmail.com}
-* @example      [{"name":"nome","value":"Rafael Alves"},{"name":"email","schema"{"group":"Contato","email":"c@gmail.com"}}, .....]
+* @example      [{"name":"nome","value":"Rafael Alves"},{"name":"email","group":"Contato","email":"c@gmail.com"}, .....]
 * @depend       boostrap 5.2.0, fontawesome 5.15.4, dot.css, dot.js
 */
 class jsForm{
@@ -18,7 +18,8 @@ class jsForm{
         this.formContainer = null; // Div (col) onde eh exibido os campos em exibicao
         this.form = null; // Elemento table
         this.tbody = null; // Elemento tbody
-        this.groups = []; // Array com nome dos grupos
+        this.groups = {}; // Dicionario com os grupos (e seus respectivos campos) {nomeGrupo:[tr,tr,tr...]}
+        this.schema = {}; // Dicionario com os schemas {fieldName: "type=text;name=foo;value=55"}
         this.groupOnFocus = null; // String que armazena o nome do grupo em exibicao no momento
         this.saveBtn = null; // Aponta para o botao salvar
         this.addBtn = null; // Aponta para o botao para adicionar linha
@@ -59,6 +60,9 @@ class jsForm{
         this.buildGroupMenu(); // Monta o menu dos grupos
         this.buildListeners(); // Adiciona os listeners para evento click dos menus
         
+        // Exibe um grupo
+        let [group] = 'Geral' in this.groups ? ['Geral'] : Object.keys(this.groups); // Seleciona o grupo Geral (caso exista) ou o primeiro grupo cadastrado
+        if(group && group.length > 0){this.groupFocus(group);} // Exibe grupo
     }
     createForm(){
         this.form = document.createElement('table');
@@ -127,19 +131,24 @@ class jsForm{
         this.container.appendChild(row);
     }
     buildGroupMenu(){
+        let grupos = Object.keys(this.groups);
         let list_itens = '';
-        if(this.groups.includes('Geral')){
-            this.groups = this.groups.filter((e) => {return e != 'Geral'}); // Remove o grupo geral da lista (sera inserido logo no inicio)
+        if(grupos.includes('Geral')){
+            grupos = grupos.filter((e) => {return e != 'Geral'}); // Remove o grupo geral da lista (sera inserido logo no inicio)
             list_itens = '<a data-type="group-link" data-groupname="Geral" class="list-group-item list-group-item-action pointer">Geral</a>';
         }
-        for(let i = 0; i < this.groups.length;i++){
-            list_itens += `<a data-type="group-link" data-groupname="${this.groups[i]}" class="list-group-item list-group-item-action pointer">${this.groups[i]}</a>`;
+        for(let i = 0; i < grupos.length;i++){
+            list_itens += `<a data-type="group-link" data-groupname="${grupos[i]}" class="list-group-item list-group-item-action pointer">${grupos[i]}</a>`;
         }
         let list = `<div class="col-auto" style="min-width: 180px;"><div class="list-group" id="list-tab" role="tablist">${list_itens}</div></div>`;
         this.groupsMenu.innerHTML = list;
     }
-    buildRows(){ // Monta tabela para o grupo em foco
+    buildRows(){
         this.cleanForm();
+        if(this.data.length == 0){
+            this.tbody.innerHTML = `<tr><td colspan="2" class="${this.valueClassList}">${this.textFormEmpty}</td></tr>`
+            return false;
+        }
         for(let item in this.data){ // Percorre todas as linhas alocando cada registro no respectivo grupo
             let tr = document.createElement('tr');
             let th = document.createElement('th');
@@ -148,6 +157,10 @@ class jsForm{
             th.innerHTML = this.data[item].name;
             if(this.canChangeKey){th.contentEditable = true}
             let td = document.createElement('td');
+            let schema = '';
+            let avoid = ['name', 'value']; // Para name e value sera considerado conteudo alterado (se alterado) pelo usuario
+            for(let attr in this.data[item]){if(!avoid.includes(attr)){schema += `${attr}=${this.data[item][attr]};`}}
+            this.schema[this.data[item].name.replace(' ', '_')] = schema.slice(0, -1); // Adiciona string com schema (slice remove ; no final do texto)
             td.classList = this.valueClassList;
             if(!this.readOnly)(td.contentEditable = true);
             td.innerHTML = this.data[item].value;

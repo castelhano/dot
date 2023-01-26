@@ -28,35 +28,52 @@
     <a class="d-none" id="clear" href="{% url 'handler' '999' %}"></a>
     <hr>
     
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+      Launch demo modal
+    </button>
+    
     
     <div class="row">
       <div class="col-md d-flex align-items-end"></div>
-      <div class="col-md" id="calendar_container"></div>
+      <div class="col-md" id="form_editor"></div>
     </div>
     
     
     <div id="dot_alert" class="alert alert-dismissible fade mb-1" role="alert">
       <span id="dot_alert_message"></span>
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    
+    </div>    
   </div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div id="calendar_container" class="modal-body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
   
 
   <script src="{% static 'js/listener.js' %}"></script>
   <script src="{% static 'js/calendar.js' %}"></script>
+  <script src="{% static 'js/form.js' %}"></script>
   <!-- <script src="{% static 'js/vendor/cropper.js' %}"></script> -->
   <script src="{% static 'js/dot.js' %}"></script>
   <script src="/static/js/vendor/bootstrap.bundle.min.js"></script>
   <script>
     const feriados = {
+      '1998-05-01': 'Dia internacional da preguiça',
       '2023-01-01': 'Ano Novo',
       '2023-01-22': 'Dia do Indio',
       '2023-02-05': 'Dia da macumba'
     }
     const eventos = {
       '2023-01-01': 'Foooooooooo',
-      '2023-01-08': 'Reunição gerencial diretoria',
+      '1998-05-08': 'Reunião gerencial diretoria',
       '2023-02-14': 'Desligamento Maria do Rosario',
     }
     const calendar = new jsCalendar({
@@ -65,10 +82,16 @@
       month: 2,
       holidays: feriados,
       events: eventos,
-      showSummary: true,
-      onclick: (data) => {console.log(data)},
-      multiSelect: true,
-      // canSelectDay: false
+      // showSummary: true,
+      // onclick: (data) => {console.log(data)},
+      canSelectDay: true,
+      // multiSelect: true,
+    });
+
+    const form = new jsForm({
+      container: document.getElementById('form_editor'),
+      canChangeKey: true,
+      data: [{name:'2023-01-10',value:'Ano do gato'},{name:'2023-01-12',value:'Ano do foo', schema:{group:'Pessoal'}}]
     });
   </script>
 </body>

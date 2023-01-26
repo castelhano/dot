@@ -1,11 +1,11 @@
 /*
 * jsCalendar   Implementa componte de calendario
 *
-* @version  1.03
+* @version  1.04
 * @since    23/01/2023
-* @release  25/01/2023 [implementado metodos goTo, selectDays]
+* @release  25/01/2023 [ajuste bug ao selecionar dia]
 * @author   Rafael Gustavo Alves {@email castelhano.rafael@gmail.com}
-* @depend   boostrap 5.2.0, fontawesome 5.15.4
+* @depend   boostrap 5.2.0, fontawesome 5.15.4, dot.css, dot.js
 */
 
 class jsCalendar{
@@ -187,10 +187,12 @@ class jsCalendar{
                         if(td.dataset.selected != 'true'){
                             if(!this.multiSelect && this.selectedDays.length > 0){ // Se nao permitido multi selecao desmarca dia marcado
                                 let target = this.tbody.querySelector('[data-selected=true]');
-                                let index = this.selectedDays.indexOf(target.dataset.day); // Localiza a data no array
+                                let index = this.selectedDays.indexOf(dateFormated); // Localiza o indice da data no array
+                                if(target){ // Se selecao anterior estiver sendo exibido (mesmo mes), altera a formatacao e remove do array
+                                    target.classList = target.dataset.ocl;
+                                    target.removeAttribute('data-selected');
+                                }
                                 this.selectedDays.splice(index,1); // Remove a data do array
-                                target.classList = target.dataset.ocl;
-                                target.removeAttribute('data-selected');
                             }
                             this.selectedDays.push(dateFormated);
                             td.setAttribute('data-ocl', td.classList); // Armazena o classlist original caso desmarcado dia
