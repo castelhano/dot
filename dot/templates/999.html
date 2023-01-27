@@ -21,7 +21,7 @@
   </style>
 </head>
 <body style="margin: 10px;">
-  
+
   <div class="container-fluid">
     <h1>999 PAGE</h1>
     <a class="d-none" id="home" href="{% url 'index' %}"></a>
@@ -59,10 +59,10 @@
   
 
   <script src="{% static 'js/listener.js' %}"></script>
-  <script src="{% static 'js/calendar.js' %}"></script>
-  <script src="{% static 'js/form.js' %}"></script>
-  <!-- <script src="{% static 'js/vendor/cropper.js' %}"></script> -->
   <script src="{% static 'js/dot.js' %}"></script>
+  <script src="{% static 'js/calendar.js' %}"></script>
+  <script src="{% static 'js/form_extra.js' %}"></script>
+  <!-- <script src="{% static 'js/vendor/cropper.js' %}"></script> -->
   <script src="/static/js/vendor/bootstrap.bundle.min.js"></script>
   <script>
     const feriados = {
@@ -88,11 +88,17 @@
       // multiSelect: true,
     });
 
-    const form = new jsForm({
+    const form = new jsFormx({
       container: document.getElementById('form_editor'),
-      canChangeKey: true,
-      data: [{name:'2023-01-10',value:'Ano do gato'},{name:'2023-01-12',value:'Ano do foo', schema:{group:'Pessoal'}}]
+      // canChangeKey: true,
+      canDeleteRow: true,
+      fileName: 'foo.json',
+      legend: '<h5>Teste do pai</h5>',
+      // data: {nome:'Rafael Gustavo',email:'castelhano.rafael@gmail.com'},
+      data: [{name:'2023-01-10',value:'Ano do gato',schema:{tipo:'facultativo'}},{name:'2023-01-12',value:'Ano do foo', schema:{group:'Pessoal'}},{name:'2023-01-16',value:'Ano do feooo', schema:{group:'Pessoal'}}]
     });
+
+    form.addBtn.id = 'add';
   </script>
 </body>
 </html>

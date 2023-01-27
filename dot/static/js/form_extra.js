@@ -1,14 +1,14 @@
 /*
-* jsForm   Implementa formulario para manipular objeto json (extrutura predefinida)
+* jsFormx   Implementa formulario para manipular objeto json (extrutura predefinida)
 *
-* @version      1.1
+* @version      2.0
 * @since        02/09/2022
-* @release      26/01/2023 [correcao de bugs]
+* @release      27/01/2023 [alterado layout do json integrado schema em this.data, modificado metodos]
 * @author       Rafael Gustavo ALves {@email castelhano.rafael@gmail.com}
-* @example      [{"name":"nome","value":"Rafael Alves"},{"name":"email","group":"Contato","email":"c@gmail.com"}, .....]
+* @example      [{"name":"nome","value":"Rafael Alves",schema:{}},{"name":"email","schema"{"group":"Contato","email":"c@gmail.com"}}, .....]
 * @depend       boostrap 5.2.0, fontawesome 5.15.4, dot.css, dot.js
 */
-class jsForm{
+class jsFormx{
     constructor(options){
         // Variaveis internas
         this.legendContainer = null; // Div (col) com conteudo da legenda do form 
@@ -18,8 +18,7 @@ class jsForm{
         this.formContainer = null; // Div (col) onde eh exibido os campos em exibicao
         this.form = null; // Elemento table
         this.tbody = null; // Elemento tbody
-        this.groups = {}; // Dicionario com os grupos (e seus respectivos campos) {nomeGrupo:[tr,tr,tr...]}
-        this.schema = {}; // Dicionario com os schemas {fieldName: "type=text;name=foo;value=55"}
+        this.groups = []; // Array com nome dos grupos
         this.groupOnFocus = null; // String que armazena o nome do grupo em exibicao no momento
         this.saveBtn = null; // Aponta para o botao salvar
         this.addBtn = null; // Aponta para o botao para adicionar linha
@@ -28,7 +27,7 @@ class jsForm{
         this.jsonBtn = null; // Aponta para o botao para exportar json
         this.editingSchema = false; // Indica se esta sendo editado schema neste momento (usado para travar algumas operacoes)
         // Configuracao
-        this.data = options?.data || [{name:'Key', value:"Value"}]; // Json com dados do form
+        this.data = options?.data || [{name:'Key', value:"Value",schema:{}}]; // Json com dados do form
         this.container = options?.container || document.body; // parentNode do form, caso nao informado append no document.body
         this.legend = options?.legend || ''; // String com a legenda do form
         this.readOnly = options?.readOnly != undefined ? options.readOnly : false; // Se definido pata true, desabilita opcao de editar campos, save, sort, etc..
@@ -46,6 +45,7 @@ class jsForm{
         this.canChangeSchema = options?.canChangeSchema != undefined ? options.canChangeSchema : true;
         this.canSort = options?.canSort != undefined ? options.canSort : true;
         this.canExportJson = options?.canExportJson != undefined ? options.canExportJson : true;
+        this.canImportFile = options?.canImportFile != undefined ? options.canImportFile : true;
         // Estilizacao
         this.formClassList = options?.formClassList || 'table table-hover border';
         this.groupsMenuClasslist = 'col-auto';
@@ -56,13 +56,10 @@ class jsForm{
         
         this.buildControls(); // Cria controles do form
         this.createForm(); // Cria container para submenus do form e container para campos do form
-        this.buildRows(); // Cria fields do form no respectivo grupo 
         this.buildGroupMenu(); // Monta o menu dos grupos
         this.buildListeners(); // Adiciona os listeners para evento click dos menus
+        this.showGroup(this.groupOnFocus, false); // Exibe o primeiro grupo disponivel
         
-        // Exibe um grupo
-        let [group] = 'Geral' in this.groups ? ['Geral'] : Object.keys(this.groups); // Seleciona o grupo Geral (caso exista) ou o primeiro grupo cadastrado
-        if(group && group.length > 0){this.groupFocus(group);} // Exibe grupo
     }
     createForm(){
         this.form = document.createElement('table');
@@ -118,6 +115,28 @@ class jsForm{
             this.schemaBtn.onclick = () => this.loadSchema();
             this.controls.appendChild(this.schemaBtn);
         }
+        if(this.canImportFile){
+            this.importBtn = document.createElement('button');
+            this.importBtn.classList = 'btn btn-sm btn-danger px-3';
+            this.importBtn.innerHTML = '<i class="fas fa-upload"></i>';
+            this.importBtn.onclick = (e) => {
+                let inputFile = document.createElement('input');
+                inputFile.type = 'file';
+                inputFile.style.display = 'none';
+                inputFile.accept = '.json';
+                let obj = this;
+                inputFile.onchange = () => {
+                    let fr = new FileReader();
+                    fr.onload = (function(){
+                        obj.loadData(JSON.parse(fr.result));
+                        inputFile.remove();
+                    });
+                    fr.readAsText(inputFile.files[0]);
+                };
+                inputFile.click();
+            };
+            this.controls.appendChild(this.importBtn);
+        }
         if(this.canExportJson){
             this.jsonBtn = document.createElement('button');
             this.jsonBtn.classList = 'btn btn-sm btn-secondary';
@@ -131,97 +150,91 @@ class jsForm{
         this.container.appendChild(row);
     }
     buildGroupMenu(){
-        let grupos = Object.keys(this.groups);
         let list_itens = '';
-        if(grupos.includes('Geral')){
-            grupos = grupos.filter((e) => {return e != 'Geral'}); // Remove o grupo geral da lista (sera inserido logo no inicio)
-            list_itens = '<a data-type="group-link" data-groupname="Geral" class="list-group-item list-group-item-action pointer">Geral</a>';
+        for(let item in this.data){ // Percorre todos os itens para popular os grupos
+            if(this.data[item].schema?.group){this.groups.push(this.data[item].schema.group);} // Se item tem grupo definido, carrega grupo no array
+            else{this.data[item].schema.group = 'Geral';this.groups.push('Geral');} // Caso nao, atualiza campo para grupo geral e adiciona geral ao array
         }
-        for(let i = 0; i < grupos.length;i++){
-            list_itens += `<a data-type="group-link" data-groupname="${grupos[i]}" class="list-group-item list-group-item-action pointer">${grupos[i]}</a>`;
+        this.groups = [...new Set(this.groups)]; // Remove duplicatas no array
+
+        if(this.groups.includes('Geral')){
+            let geral = this.groups.splice(this.groups.indexOf('Geral'), 1); // Remove o grupo geral da lista (sera inserido logo no inicio)
+            this.groups.sort(); // Reordena o array em ordem alfabetica
+            this.groups.splice(0, 0 , 'Geral'); // Reincere o geral no inicio do array
+        }
+        for(let i = 0; i < this.groups.length;i++){ // Insere os links para os grupos
+            list_itens += `<a data-type="group-link" data-groupname="${this.groups[i]}" class="list-group-item list-group-item-action pointer">${this.groups[i]}</a>`;
         }
         let list = `<div class="col-auto" style="min-width: 180px;"><div class="list-group" id="list-tab" role="tablist">${list_itens}</div></div>`;
         this.groupsMenu.innerHTML = list;
-    }
-    buildRows(){
-        this.cleanForm();
-        if(this.data.length == 0){
-            this.tbody.innerHTML = `<tr><td colspan="2" class="${this.valueClassList}">${this.textFormEmpty}</td></tr>`
-            return false;
-        }
-        for(let item in this.data){ // Percorre todas as linhas alocando cada registro no respectivo grupo
-            let tr = document.createElement('tr');
-            let th = document.createElement('th');
-            th.setAttribute('data-originalName', this.data[item].name);
-            th.classList = this.keyClassList;
-            th.innerHTML = this.data[item].name;
-            if(this.canChangeKey){th.contentEditable = true}
-            let td = document.createElement('td');
-            let schema = '';
-            let avoid = ['name', 'value']; // Para name e value sera considerado conteudo alterado (se alterado) pelo usuario
-            for(let attr in this.data[item]){if(!avoid.includes(attr)){schema += `${attr}=${this.data[item][attr]};`}}
-            this.schema[this.data[item].name.replace(' ', '_')] = schema.slice(0, -1); // Adiciona string com schema (slice remove ; no final do texto)
-            td.classList = this.valueClassList;
-            if(!this.readOnly)(td.contentEditable = true);
-            td.innerHTML = this.data[item].value;
-            tr.appendChild(th);
-            tr.appendChild(td);
-            if(this.canDeleteRow){ // Adiciona botar para deletar caso habilitado funcao
-                let td_controls = document.createElement('td');
-                td_controls.classList = 'text-end fit pb-0 py-1';
-                let btnDeleteRow = document.createElement('button');
-                btnDeleteRow.classList = 'btn btn-sm btn-danger';
-                btnDeleteRow.innerHTML = '<i class="fas fa-trash"></i>';
-                btnDeleteRow.onclick = () => this.__deleteRow(tr);
-                td_controls.appendChild(btnDeleteRow);
-                tr.appendChild(td_controls);
-            }
-            if(this.data[item].group == undefined){ // Se nao existe grupo associado adicona linha no grupo Geral
-                if('Geral' in this.groups){this.groups.Geral.push(tr);}
-                else{this.groups['Geral'] = [tr];} // Caso ainda nao exista registro para o grupo, insere no dicionario
-            }
-            else{ // Caso exista grupo, insere a linha no respectivo grupo -> this.groups
-                if(this.data[item].group in this.groups){this.groups[this.data[item].group].push(tr)} // Se grupo ja tem registros faz append na tr para o grupo
-                else{this.groups[this.data[item].group] = [tr];} // Caso ainda nao exista registro para o grupo, insere no dicionario
-            }
-        }
+        this.groupOnFocus = this.groups[0]; // Move o foco para o primeiro grupo cadastrado
     }
     buildListeners(){
         let links = this.groupsMenu.querySelectorAll('[data-type="group-link"]');
         for(let i = 0;i < links.length;i++){
-            links[i].addEventListener('click', () => this.groupFocus(`${links[i].dataset.groupname}`));
+            links[i].addEventListener('click', () => this.showGroup(`${links[i].dataset.groupname}`));
         }
     }
     loadData(data){
+        this.cleanForm();
         this.data = data;
-        this.buildRows();
         this.buildGroupMenu();
         this.buildListeners();
-        let [group] = 'Geral' in this.groups ? ['Geral'] : Object.keys(this.groups); // Seleciona o grupo Geral (caso exista) ou o primeiro grupo cadastrado
-        if(group && group.length > 0){this.groupFocus(group);} // Exibe grupo
+        this.showGroup(this.groups[0], false);
     }
-    groupFocus(group){ // Carrega campos do respectivo grupo no form
+    showGroup(group, update=true){ // Carrega campos do respectivo grupo no form
         if(this.editingSchema){return false} // Trava operacao se estiver na edicao do schema
+        if(update){this.__updateData();} // Salva alteracoes antes de exibir proximo grupo
+        if(!this.groups.includes(group)){dotAlert('danger', '<b>Erro</b> Grupo informado inexistente', false);return false;} // Verifica se grupo existe, caso não exibe msg de erro
         this.tbody.innerHTML = '';
         this.groupOnFocus = group;
-        try{this.groupsMenu.querySelector('[data-type="group-link"].active').classList.remove('active');}catch(e){} // Caso acionado na criacao da tabela vai gerar excecao pois nao existe nenhum ativo
-        this.groupsMenu.querySelector(`[data-groupname="${group}"]`).classList.add('active');
-        this.groups[group].forEach(e => { this.tbody.appendChild(e)});
+        for(let item in this.data){
+            if(this.data[item].schema?.group == group){ // Se item for do grupo em foco exibe linha no form
+                let tr = document.createElement('tr');
+                tr.dataset.schema = JSON.stringify(this.data[item].schema);
+                let th = document.createElement('th');
+                th.setAttribute('data-originalName', this.data[item].name);
+                th.classList = this.keyClassList;
+                th.innerHTML = this.data[item].name;
+                if(this.canChangeKey){th.contentEditable = true}
+                let td = document.createElement('td');
+                td.classList = this.valueClassList;
+                if(!this.readOnly)(td.contentEditable = true);
+                td.innerHTML = this.data[item].value;
+                tr.appendChild(th);
+                tr.appendChild(td);
+                if(this.canDeleteRow){ // Adiciona botar para deletar caso habilitado funcao
+                    let td_controls = document.createElement('td');
+                    td_controls.classList = 'text-end fit pb-0 py-1';
+                    let btnDeleteRow = document.createElement('button');
+                    btnDeleteRow.classList = 'btn btn-sm btn-danger';
+                    btnDeleteRow.innerHTML = '<i class="fas fa-trash"></i>';
+                    btnDeleteRow.onclick = () => this.__deleteRow(tr);
+                    btnDeleteRow.tabIndex = '-1';
+                    td_controls.appendChild(btnDeleteRow);
+                    tr.appendChild(td_controls);
+                }
+                this.tbody.appendChild(tr);
+            }
+        }
+        if(this.tbody.innerHTML == ''){this.tbody.innerHTML = `<tr data-type="emptyRow"><td colspan="2" class="${this.valueClassList}">${this.textFormEmpty}</td></tr>`;}
+        try {this.container.querySelector(`[data-type=group-link].active`).classList.remove('active');}catch (e){} // Se existir grupo ativo, revome classe active
+        this.container.querySelector(`[data-groupname=${group}]`).classList.add('active'); // Adiciona classe active ao grupo alvo
     }
     previousGroup(){
         if(this.editingSchema){return false} // Trava operacao se estiver na edicao do schema
-        let grupos = Object.keys(this.groups);
-        let index = grupos.indexOf(this.groupOnFocus);
-        if(index > 0){this.groupFocus(grupos[index-1])}
+        let index = this.groups.indexOf(this.groupOnFocus);
+        if(index > 0){this.showGroup(this.groups[index-1])}
     }
     nextGroup(){
         if(this.editingSchema){return false} // Trava operacao se estiver na edicao do schema
-        let grupos = Object.keys(this.groups);
-        let index = grupos.indexOf(this.groupOnFocus);
-        if(index + 1 < grupos.length){this.groupFocus(grupos[index+1])}
+        let index = this.groups.indexOf(this.groupOnFocus);
+        if(index + 1 < this.groups.length){this.showGroup(this.groups[index+1])}
     }
     addRow(){
+        this.tbody.querySelectorAll('[data-type=emptyRow]').forEach((e) => {e.remove();})
         let tr = document.createElement('tr');
+        tr.dataset.schema = '{"group":"Geral"}';
         let th = document.createElement('th');
         th.classList = this.keyClassList;
         th.contentEditable = true;
@@ -229,17 +242,26 @@ class jsForm{
         let td = document.createElement('td');
         td.classList = this.valueClassList;
         td.contentEditable = true;
-        td.setAttribute('type', 'text');
-        td.dataset.type = 'newRow';
         td.innerHTML = '';
         tr.appendChild(th);
         tr.appendChild(td);
-        this.groups[this.groupOnFocus].push(tr);
+        if(this.canDeleteRow){ // Adiciona botar para deletar caso habilitado funcao
+            let td_controls = document.createElement('td');
+            td_controls.classList = 'text-end fit pb-0 py-1';
+            let btnDeleteRow = document.createElement('button');
+            btnDeleteRow.classList = 'btn btn-sm btn-danger';
+            btnDeleteRow.innerHTML = '<i class="fas fa-trash"></i>';
+            btnDeleteRow.onclick = () => this.__deleteRow(tr);
+            btnDeleteRow.tabIndex = '-1';
+            td_controls.appendChild(btnDeleteRow);
+            tr.appendChild(td_controls);
+        }
         this.tbody.appendChild(tr);
+        th.focus();
     }
     sort(asc=true){
-        let rows = this.groups[this.groupOnFocus] || null; // Carrega todas as linhas do grupo em foco
-        if(!rows || rows.length == 0){ return null } // Se tabela for fazia, nao executa processo para classificar
+        let rows = Array.from(this.tbody.querySelectorAll('tr')); // Carrega todas as linhas do grupo em foco
+        if(!rows){ return null } // Se tabela for vazia, termina processo
         const modifier = asc ? 1 : -1; // Modificador para classificar em order crecente (asc=true) ou decrescente (asc=false)
         const sortedRows = rows.sort((a, b) => {
             const aColText = a.querySelector(`th:nth-child(1)`).textContent.trim().toLowerCase();
@@ -251,7 +273,7 @@ class jsForm{
     }
     saveJson(){
         if(this.url){
-            if(!this.__validateForm()){dotAlert('danger', '<b>Erro:</b> Chave duplicada ou vazia, corrija antes de prosseguir'); return false;}
+            if(!this.__validateForm()){return false;}
             if(!this.beforeSave()){return false;} // Chama metodo beforeSave antes de executar codigo, espera retorno true para dar sequencia
             let btnSave = this.saveBtn; // Workaround para acessar botao save dentro da funcao ajax
             let onSuccess = this.onSuccess; // Workaround para acessar funcao dentro da funcao ajax
@@ -265,13 +287,14 @@ class jsForm{
             xhttp.setRequestHeader('X-CSRFToken', this.token);
             xhttp.send(JSON.stringify(this.getJson()));
         }
-        else{console.log("jsForm: Informe nas opcoes a url (POST) que ira receber o json {url: 'minha/url'} ou defina uma funcao personalizada {save: suaFuncao}");}
+        else{console.log("jsFormx: Informe nas opcoes a url (POST) que ira receber o json {url: 'minha/url'} ou defina uma funcao personalizada {save: suaFuncao}");}
     }
     beforeSaveJson(){return true}
     onSaveSuccess(){try {dotAlert('success', 'Arquivo salvo com <b>sucesso</b>');}catch(e){}} // Caso finalizado com sucesso, tenta chamar metodo de alerta
     onSaveError(status){try {dotAlert('danger', `<b>Erro</b> ao salvar o arquivo. [ <b>${status}</b> ]`);}catch(e){}} // Caso finalizado com erro, tenta chamar metodo de alerta
     loadSchema(){
         this.editingSchema = true;
+        this.__updateData(); // Atualiza this.data
         this.tbody.innerHTML = '';
         this.groupsMenu.classList.add('d-none'); // Oculta os botoes do form
         this.controls.classList.add('d-none'); // Oculta o menu dos grupos
@@ -287,18 +310,16 @@ class jsForm{
         cancel.onclick = () => this.__endSchemaEdit();
         this.controlsContainer.appendChild(btnSaveSchema);
         this.controlsContainer.appendChild(cancel);
-        for(let field in this.schema){
+        for(let i in this.data){
             let tr = document.createElement('tr');
             let th = document.createElement('th');
             th.classList = this.keyClassList;
-            th.innerHTML = field;
+            th.innerHTML = this.data[i].name;
             let td = document.createElement('td');
             td.classList = this.valueClassList;
-            let attrs = this.schema[field.replace(' ', '_')].split(';');
-            attrs = attrs.filter((e)=>{return e != ''})
-            let size = attrs.length;
-            for(let i = 0; i < size; i++){
-                let label_text = `<span class="label-name bg-dark text-white user-select-none">${attrs[i].split('=')[0]}</span><span style="display: none;">=</span><span class="label-status bg-warning cursor-text" contenteditable="true">${attrs[i].split('=')[1]}</span>`;
+            let attrs = this.data[i].schema;
+            for(let item in attrs){
+                let label_text = `<span class="label-name bg-dark text-white user-select-none">${item}</span><span style="display: none;">=</span><span class="label-status bg-warning cursor-text" contenteditable="true">${attrs[item]}</span>`;
                 let label = document.createElement('label');
                 label.classList = 'label opacity-75';
                 label.innerHTML = label_text;
@@ -328,72 +349,53 @@ class jsForm{
         target.before(label);
     }
     __saveSchema(){
+        if(!this.editingSchema){return false;}
         let trs = this.tbody.querySelectorAll('tr');
         let size = trs.length;
+        let newGroups = false;
         for(let i = 0; i < size; i++){ // Salva no dicionario schema dados ajustados
-            let labels = [];
+            let schema = {};
             trs[i].querySelectorAll('.label').forEach((e)=>{
-                if(e.textContent != '='){labels.push(e.textContent)}
+                schema[e.textContent.split('=')[0]] = e.textContent.split('=')[1];
             });
             let key = trs[i].querySelector('th').innerText;
-            this.schema[key] = labels.join(';')
+            this.data[i].schema = schema;
+            if(!this.groups.includes(schema.group)){newGroups = true;}
         }
+        if(newGroups){this.buildGroupMenu();this.buildListeners();} // Se inserido novo grupo, refaz menu
         this.__endSchemaEdit(); // Fecha schema e reexibe form
     }
     __endSchemaEdit(){
         this.tbody.innerHTML = '';
-        this.groups[this.groupOnFocus].forEach(e => {this.tbody.appendChild(e)}); // Monta no tbody as tr do grupo em foco 
         document.querySelectorAll('[data-type=btnSaveSchema],[data-type=cancelSchemaBtn]').forEach((e) => e.remove()); // Remove os botoes para gravar e cancelar schema
         this.groupsMenu.classList.remove('d-none'); // Reexibe os botoes do form
         this.controls.classList.remove('d-none'); // Reexibe o menu dos grupos
         this.editingSchema = false;
+        this.showGroup(this.groupOnFocus, false);
     }
     __deleteRow(tr){
-        let key = tr.querySelector('th').innerText;
-        let schema_index = key.replace(' ', '_');
-        try{delete this.schema[schema_index]}catch(e){} // Tenta apagar schema (caso exista)
-        tr.setAttribute('to_delete', 'true');
         tr.remove();
-        let size = this.groups[this.groupOnFocus].length;
-        for(let i = 0; i < size; i++){
-            let to_delete = false;
-            try{
-                if(this.groups[this.groupOnFocus][i].getAttribute('to_delete') == 'true'){to_delete = true;}
-            }catch(e){}
-            if(to_delete){this.groups[this.groupOnFocus].splice(i, 1)}            
-        }
+        if(this.tbody.innerHTML == ''){this.tbody.innerHTML = `<tr data-type="emptyRow"><td colspan="2" class="${this.valueClassList}">${this.textFormEmpty}</td></tr>`;}
     }
     getJson(){
-        let result_json = [];
-        for(let grupo in this.groups){
-            for(let row in this.groups[grupo]){
-                let tr = this.groups[grupo][row];
-                let th = tr.querySelector('th');
-                let td = tr.querySelector('td'); // Busca o campo de valor (que contem todos atributos do json)
-                let json_item = {name:th.innerText, value:td.innerText};
-                if(td.dataset.type != 'newRow'){ // Carrega schema se nao for newRow
-                    let schema = this.schema[th.dataset.originalname.replace(' ', '_')];
-                    json_item = this.__addSchema(json_item, schema);
-                }
-                result_json.push(json_item); // Insere campo formatado no array json
-            }
-        }
-        return result_json;
+        if(this.editingSchema){console.log('jsFormx: Comando desativado enquanto edita schema'); return false;} // Ignora comando enquanto editando esquema 
+        this.__updateData();
+        return this.data;
     }
-    __addSchema(field, schema){ // Funcao (private) que adiciona os demais atributos ao field
-        let fields = schema.split(';');
-        let size = fields.length;
-        for(let i = 0; i < size; i++){
-            let [key, value] = fields[i].split('=');
-            field[key] = value;
-        }
-        return field;
+    __updateData(){ // Atualiza this.data
+        let newData = []; // Inicia novo array (json)
+        for(let item in this.data){if(this.data[item].schema.group != this.groupOnFocus){newData.push(this.data[item]);}} // Para itens que nao estao em foco apenas copia para novo array
+        this.tbody.querySelectorAll('tr').forEach((e) => { // Para os itens em foco (tbody) atualiza dados antes de inserir no array
+            if(!e.dataset.type ||  e.dataset.type != 'emptyRow'){newData.push({'name':e.firstChild.innerHTML,'value':e.children[1].innerHTML,'schema':JSON.parse(e.dataset.schema)});}
+        });
+        this.data = newData;
     }
     exportJson(e){
-        if(!this.__validateForm()){dotAlert('danger', '<b>Erro:</b> Chave duplicada ou vazia, corrija antes de prosseguir'); return false;}
+        this.__updateData();
+        if(!this.__validateForm()){return false;}
         let data = JSON.stringify(this.getJson());
         let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(data);
-        let filename = 'form.json';
+        let filename = 'form_extra.json';
         let btn = document.createElement('a');
         btn.style.display = 'none';
         btn.setAttribute('href', dataUri);
@@ -410,31 +412,22 @@ class jsForm{
     __validateForm(){
         let has_errors = false;
         let key_names = []; // Armazena chaves (name) do objeto json
-        for(let grupo in this.groups){
-            let size = this.groups[grupo].length;
-            for(let i = 0; i < size; i++){
-                let tr = this.groups[grupo][i];
-                let key = tr.querySelector('th').innerText;
-                if(!this.enableDuplicates && key_names.includes(key)){ // Valida se viagem nao eh duplicada
-                    tr.classList.add('table-danger');
-                    has_errors = true;
-                }
-                else if(key.trim() == ''){ // Valida se key eh vazia
-                    tr.classList.add('table-danger');
-                    has_errors = true;
-                }
-                else{
-                    key_names.push(key);
-                    tr.classList.remove('table-danger');
-                }
+        for(let item in this.data){
+            if(this.data[item].name.trim() == '' || !this.enableDuplicates && key_names.includes(this.data[item].name)){
+                this.data[item].has_error = true;
+                has_errors = true;
             }
+            else{key_names.push(this.data[item].name)}
         }
-        return has_errors ? false : true;
+        if(has_errors){
+            dotAlert('danger', '<b>Erro:</b> Chave duplicada ou vazia, corrija antes de prosseguir');
+            this.showGroup(this.groupOnFocus, false);
+        }
+        return !has_errors;
     }
     cleanForm(){
         this.tbody.innerHTML = '';
-        this.groups = {};
-        this.schema = {};
+        this.groups = [];
     }
     
 }

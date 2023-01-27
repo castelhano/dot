@@ -1,7 +1,7 @@
 {% extends "layout/dot.html" %}
 {% load static %}
 {% block title %}Docs{% endblock %}
-{% block model %}<span>docs</span><i class="fas fa-angle-right fs-6 mx-2"></i><span>jsForm</span>{% endblock %}
+{% block model %}<span>docs</span><i class="fas fa-angle-right fs-6 mx-2"></i><span>jsFormx</span>{% endblock %}
 {% block model_menu %}{% include "_component/menu/visitor.html" %}{% endblock%}
 {% block style_src %}
 <link rel="stylesheet" href="{% static 'css/docs.css' %}">
@@ -9,7 +9,7 @@
 {% endblock%}
 
 {% block content_fluid %}
-<a class="d-none" id="clear" href="{% url 'docs' 'jsForm' %}"></a>
+<a class="d-none" id="clear" href="{% url 'docs' 'jsFormx' %}"></a>
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
@@ -21,17 +21,15 @@
     <div class="tab-pane fade show active" id="base" role="tabpanel">
       <div class="row mt-2">
         <div class="col-lg-8 order-2 order-lg-1"><!-- Container principal -->
-          <h1>jsForm</h1>
+          <h1>jsFormx</h1>
           <hr>
-          
           <div class="callout callout-orange mb-4">
-            <div class="body"><i class="fas fa-info mx-2"></i> Para formulário com campos adicionais veja <a href="{% url 'docs' 'jsFormx' %}">jsFormx</a>.</div>
+            <div class="body"><i class="fas fa-info mx-2"></i> Para formulário simples <code>{key:value}</code> use <a href="{% url 'docs' 'jsForm' %}">jsForm</a>.</div>
           </div>
-
           <p>Library em javascript ( vanilla ) para manipulação de objetos json.</p>
           <blockquote class="callout callout-primary fs-7">
             <div class="body">
-              Version: <b>1.0</b><br>
+              Version: <b>2.0</b><br>
               Release: <b>27/01/2023</b><br>
               Author: &nbsp;<b>Rafael Gustavo Faria Alves</b><br>
               Depend: <a class="badge bg-orange text-white" href="https://getbootstrap.com/docs/5.2/getting-started/introduction/" target="_blank">bootstrap 5.x</a> <a class="badge bg-purple text-white" href="https://fontawesome.com/v5/search?m=free" target="_blank">fontawesome 5.x</a><br>
@@ -41,30 +39,37 @@
           <h3 id="utilizacao">Utilização</h3>
           <hr>
           <p>Importe o arquivo form.js na sua página html.</p>
-          <pre><code class="language-html">&lt;script src="form.js"&gt;&lt;/script&gt;</code></pre>
+          <pre><code class="language-html">&lt;script src="form_extra.js"&gt;&lt;/script&gt;</code></pre>
           
           <h5 id="formato_json">Formato arquivo json</h5>
-          <pre><code class="language-javascript">{"nome":"Rafael Alves", "email":"castelhano.rafael@gmail.com",...}</code></pre>
+          <p>O objeto <b>json</b> precisa obrigatoriamente conter os campos <b>name</b>, <b>value</b> e <b>schema</b></p>
+          <pre><code class="language-javascript">[{"name":"nome", "value":"Rafael Alves","schema":{}}, {"name":"email", "value":"c@gmail.com","schema":{"group":"Contato","tipo":"pop3"}}]</code></pre>
           
           <h5 id="instanciando_form">Instanciando o Form</h5>
-          <p>Crie uma instancia do objeto</p>
-          <pre><code class="language-javascript">const form = new jsForm({});</code></pre>
-          <p class="mt-4">Ou passe dados previamente preenchidos</p>
-          <pre><code class="language-javascript">const form = new jsForm({data:meusDados});</code></pre>
+          <p>Crie uma instancia do objeto <b>jsFormx</b>.</p>
+          <pre><code class="language-javascript">const form = new jsFormx({});</code></pre>
+          <p class="mt-4">Caso ja exista dados para pré carregamento.</p>
+          <pre><code class="language-javascript">const form = new jsFormx({data: meusDados});</code></pre>
+          <div class="card d-none d-md-flex">
+            <div class="card-body">
+              <h6>Instanciando form</h6>
+              <img src="{% static 'img/docs/jsForm01.png' %}">
+            </div>
+          </div><br >
 
-
-          <h6 class="mt-3">Detalhando os controles do form:</h6>
+          <h6>Detalhando os controles do form:</h6>
           <p class="mb-1"><button class="btn btn-sm btn-success me-2"><i class="fas fa-plus"></i></button> Cria nova linha no grupo em foco</p>
           <p class="mb-1"><button class="btn btn-sm btn-primary me-2"><i class="fas fa-save"></i></button> Aciona o método save do form, ver em <a href="#save_method">save()</a></p>
           <p class="mb-1"><button class="btn btn-sm btn-warning me-2"><i class="fas fa-sort-amount-down"></i></button> Classifica as chaves por ordem de nome</a></p>
+          <p class="mb-1"><button class="btn btn-sm btn-purple me-2"><i class="fas fa-tag me-2"></i> Schema</button> Abre a interface de edição do schema, ver em <a href="#schema">schema</a></a></p>
           <p class="mb-1"><button class="btn btn-sm btn-secondary me-2"><i class="fas fa-download me-2"></i> JSON</button> Baixa arquivo JSON com dados do form</a></p>
           
           <p id="loaddata_example" class="mt-4 mb-0">Para carregar dados após instanciar objeto, utilize o método <b>loadData()</b></p>
-          <pre><code class="language-javascript">const form = new jsForm({});
+          <pre><code class="language-javascript">const form = new jsFormx({});
 form.loadData(meu_json);</code></pre>
           
-            <h5 id="integracao_appdata">Integração com <b>app_data()</b>:</h5>
-          <pre><code class="language-javascript">const form = new jsForm({});
+            <h5 id="integracao_appdata">Integração com <b>app_data()</b> (ajax):</h5>
+          <pre><code class="language-javascript">const form = new jsFormx({});
 dotAppData('{&#37; url 'app_data' 'app/meu_json.json' &#37;}').then((d) => {form.loadData(d)});</code></pre>
 
           <h3 id="save_method">Método <b>save()</b></h3>
@@ -76,25 +81,25 @@ dotAppData('{&#37; url 'app_data' 'app/meu_json.json' &#37;}').then((d) => {form
             <li><a href="#via_custom_method">Informando método customizado que irá tratar do salvamento do form</a></li>
           </ul>
           <h5 id="via_url">Via URL, ajax (método integrado)</h5>
-          <pre><code class="language-javascript">const form = new jsForm({
+          <pre><code class="language-javascript">const form = new jsFormx({
   url: 'minha_url'
 })</code></pre>
 
           <p class="mt-5">É possivel informar um token (X-CSRFToken) para adição nos headers da requisição.</p>
-          <pre><code class="language-javascript">const form = new jsForm({
+          <pre><code class="language-javascript">const form = new jsFormx({
   url: 'minha_url',
   token: 'meu_token'
 })</code></pre>
 
           <p class="mt-5">Caso use a biblioteca <b>dot.js</b> é possivel acionar a função <b>getCookie()</b> para buscar o token.</p>
-          <pre><code class="language-javascript">const form = new jsForm({
+          <pre><code class="language-javascript">const form = new jsFormx({
   url: 'minha_url',
   token: getCookie('csrftoken')
 })</code></pre>
 
 
           <h5 id="via_custom_method">Via método personalizado</h5>
-          <pre><code class="language-javascript">const form = new jsForm({
+          <pre><code class="language-javascript">const form = new jsFormx({
   save: meuSave
 })
 function meuSave(){
@@ -102,11 +107,22 @@ function meuSave(){
   ...
 }</code></pre>
           <p id="save_metodos_auxiliares" class="mt-4"><i class="fas fa-info-circle text-orange fs-5 me-1"></i> São disponibilizado 3 métodos auxiliares, <b>beforeSave()</b>, <b>onSuccess()</b> e <b>onError()</b>.</p>
-          <pre><code class="language-javascript">const form = new jsForm({
+          <pre><code class="language-javascript">const form = new jsFormx({
   beforeSave: () => {return true}, // Sera acionado ANTES de salvar, deve retornar true ou false
   onSuccess: () => {do_something...}, // Sera acionado em caso de sucesso ao salvar
   onError: () => {do_something...}, // Sera acionado em caso de erro ao salvar
 })</code></pre>
+
+          <h3 id="schema">Modificando o Schema</b></h3>
+          <p>É possivel informar atributos adicionais ao registro através da chave <code>schema</code>, e é disponibilizado interface para edição ao pressionar <button class="btn btn-sm btn-purple"><i class="fas fa-tag me-2"></i> Schema</button> quando habilitado a opção { <b>canChangeSchema: true</b> } (habilitada por padrão)</p>
+          <div class="card d-none d-md-flex">
+            <div class="card-body">
+              <h6>Schema</h6>
+              <img src="{% static 'img/docs/jsForm03.png' %}" title="Resultado: Exemplo 01">
+            </div>
+          </div><br >
+          <p>É possivel <b>alterar</b> o valor da atributo, inserir <b>novos atributos</b> clicando no botao <span class="bg-light border rounded-circle px-2 py-1 mx-2 pointer"><i class="fas fa-plus text-muted"></i></span> ou <b>remover</b> um atributo pressionando <b>Ctrl</b> e duplo click do mouse no atributo a ser removido.</p>
+          <p>O atributo <code>group</code> é obrigatorio, e caso removido será adicionado automaticamente ao grupo <b>Geral</b>. Não é possivel alterar o nome do atributo, neste caso remova o atual e insira um novo.</p>
 
           <h3 id="configuracoes">Configurações</h3>
           <hr>
@@ -136,6 +152,8 @@ function meuSave(){
                 <tr><td>canAddRow</td><td>bool</td><td>Altere para exibir controle para nova linha</td><td>true</td></tr>
                 <tr><td>canDeleteRow</td><td>bool</td><td>Altere para exibir controle excluir linha</td><td>false</td></tr>
                 <tr><td>canChangeKey</td><td>bool</td><td>Altere para <b>true</b> para permitir alterar name do campo</td><td>false</td></tr>
+                <tr><td>enableDuplicates</td><td>bool</td><td>Altere para <b>true</b> para permitir duplicata de chaves</td><td>false</td></tr>
+                <tr><td>canChangeSchema</td><td>bool</td><td>Exibe opção para alterar atributos adicionais dos campos</td><td>true</td></tr>
                 <tr><td>canSort</td><td>bool</td><td>Libera classificação pelo nome da chave</td><td>true</td></tr>
                 <tr><td>canExportJson</td><td>bool</td><td>Mostra botão para exportar dados em JSON</td><td>false</td></tr>
               </tbody>
@@ -155,6 +173,7 @@ function meuSave(){
               </thead>
               <tbody>
                 <tr><td>formClassList</td><td>string</td><td>Classes do form (table element)</td><td>'table table-hover border'</td></tr>
+                <tr><td>groupsMenuClasslist</td><td>string</td><td>Classes do container (col) do menu de grupos</td><td>'col-auto'</td></tr>
                 <tr><td>formContainerClasslist</td><td>string</td><td>Classes do container (col) dos campos do form</td><td>'col'</td></tr>
                 <tr><td>keyClassList</td><td>string</td><td>Classes das chaves (th element)</td><td>'fit pe-5'</td></tr>
                 <tr><td>valueClassList</td><td>string</td><td>Classes dos campos (td element)</td><td>'bg-light border'</td></tr>
@@ -183,6 +202,24 @@ function meuSave(){
                   <td>Carrega dados no form (limpa registros atuais)</td>
                 </tr>
                 <tr>
+                  <td>showGroup</td>
+                  <td>(string)</td>
+                  <td>null</td>
+                  <td>Muda o foco para o grupo informado</td>
+                </tr>
+                <tr>
+                  <td>previousGroup</td>
+                  <td>()</td>
+                  <td>null</td>
+                  <td>Exibe o grupo anterior (caso exista)</td>
+                </tr>
+                <tr>
+                  <td>nextGroup</td>
+                  <td>()</td>
+                  <td>null</td>
+                  <td>Exibe o grupo posterior (caso exista)</td>
+                </tr>
+                <tr>
                   <td>addRow</td>
                   <td>()</td>
                   <td>null</td>
@@ -204,11 +241,19 @@ function meuSave(){
             </table>
           </div>
 
+          <h5 id="integracao_listener_js">Integração com <b class="text-orange">listener.js</b></h5>
+          <pre><code class="language-javascript">SHORTCUT_MAP['arrowdownFTF'] = ':nextGroup';
+SHORTCUT_MAP['arrowupFTF'] = ':previousGroup';
+function nextGroup(){form.nextGroup();}
+function previousGroup(){form.previousGroup();}</code></pre>
+
         <p class="mt-5">Apontadores para elementos do form</p>
         <pre><code class="language-javascript">form.saveBtn // Aponta para botao de salvamento
 form.addBtn // Aponta para o botao para adicionar linha
+form.schemaBtn // Aponta para o botao de exibir o schema
 form.sortBtn // Aponta para o botao de classificar
-form.jsonBtn // Aponta para o botao para exportar json</code></pre>
+form.jsonBtn // Aponta para o botao para exportar json
+form.editingSchema // Booleano indica se esta sendo editado schema no momento (apenas leitura, não deve ser alterado)</code></pre>
 
 
         <div style="margin-bottom: 80px;">&nbsp;</div>
@@ -221,10 +266,12 @@ form.jsonBtn // Aponta para o botao para exportar json</code></pre>
             <li><i class="fas none fa-fw"></i><a href="#loaddata_example">Carregando dados após instanciado</a></li>
             <li><i class="fas none fa-fw"></i><a href="#save_method">Método Save()</a></li>
             <li><i class="fas none fa-fw"></i><i class="fas none fa-fw"></i><a href="#save_metodos_auxiliares">Métodos auxiliares</a></li>
+            <li><i class="fas none fa-fw"></i><a href="#schema">Editando o Schema</a></li>
             <li><i class="fas fa-sliders-h fa-fw mt-2"></i><b><a href="#configuracoes">Configurações</a></b></li>
             <li><i class="fas none fa-fw"></i><a href="#recursos">Recursos</a></li>
             <li><i class="fas none fa-fw"></i><a href="#estilizacao">Estilização</a></li>
             <li><i class="fas fa-code fa-fw mt-2"></i><b><a href="#metodos">Métodos</a></b></li>
+            <li><i class="fas none fa-fw"></i><a href="#integracao_listener_js">Integração com <b class="text-muted">listener.js</b></a></li>
           </ul>
         </div>
       </div>

@@ -469,7 +469,7 @@ class jsTable{
         }
     }
     sort(column, asc=true){
-        if(this.raw.length == 0){ return null } // Se tabela for fazia, nao executa processo para classificar
+        if(this.raw.length == 0){ return null } // Se tabela for vazia, nao executa processo para classificar
         const modifier = asc ? 1 : -1; // Modificador para classificar em order crecente (asc=true) ou decrescente (asc=false)
         let rows = this.filteredRows.length > 0 ? this.filteredRows : this.raw; // Busca linhas em this.filteredRows (caso filtrado) ou em this.raw caso nao
         const sortedRows = rows.sort((a, b) => {
