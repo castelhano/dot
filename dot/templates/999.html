@@ -27,17 +27,14 @@
     <a class="d-none" id="home" href="{% url 'index' %}"></a>
     <a class="d-none" id="clear" href="{% url 'handler' '999' %}"></a>
     <hr>
-    
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-      Launch demo modal
-    </button>
-    
-    
+  
     <div class="row">
-      <div class="col-md d-flex align-items-end"></div>
-      <div class="col-md" id="form_editor"></div>
+      <div class="col-md">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+          Launch demo modal
+        </button>
+      </div>
     </div>
-    
     
     <div id="dot_alert" class="alert alert-dismissible fade mb-1" role="alert">
       <span id="dot_alert_message"></span>
@@ -61,10 +58,9 @@
   <script src="{% static 'js/listener.js' %}"></script>
   <script src="{% static 'js/dot.js' %}"></script>
   <script src="{% static 'js/calendar.js' %}"></script>
-  <script src="{% static 'js/form_extra.js' %}"></script>
-  <!-- <script src="{% static 'js/vendor/cropper.js' %}"></script> -->
   <script src="/static/js/vendor/bootstrap.bundle.min.js"></script>
   <script>
+
     const feriados = {
       '1998-05-01': 'Dia internacional da preguiça',
       '2023-01-01': 'Ano Novo',
@@ -77,28 +73,17 @@
       '2023-02-14': 'Desligamento Maria do Rosario',
     }
     const calendar = new jsCalendar({
-      // year: 2022,
       container: document.getElementById('calendar_container'),
-      month: 2,
+      // view: 'tasks',
+      canChangeView: false,
       holidays: feriados,
       events: eventos,
-      // showSummary: true,
-      // onclick: (data) => {console.log(data)},
+      // showSummary: false,
+      onclick: (data) => {console.log(data)},
       canSelectDay: true,
-      // multiSelect: true,
+      multiSelect: true,
     });
 
-    const form = new jsFormx({
-      container: document.getElementById('form_editor'),
-      // canChangeKey: true,
-      canDeleteRow: true,
-      fileName: 'foo.json',
-      legend: '<h5>Teste do pai</h5>',
-      // data: {nome:'Rafael Gustavo',email:'castelhano.rafael@gmail.com'},
-      data: [{name:'2023-01-10',value:'Ano do gato',schema:{tipo:'facultativo'}},{name:'2023-01-12',value:'Ano do foo', schema:{group:'Pessoal'}},{name:'2023-01-16',value:'Ano do feooo', schema:{group:'Pessoal'}}]
-    });
-
-    form.addBtn.id = 'add';
   </script>
 </body>
 </html>

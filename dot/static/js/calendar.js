@@ -1,9 +1,9 @@
 /*
 * jsCalendar   Implementa componte de calendario
 *
-* @version  1.04
+* @version  1.05
 * @since    23/01/2023
-* @release  25/01/2023 [ajuste bug ao selecionar dia]
+* @release  30/01/2023 [adicionado visao de tarefas]
 * @author   Rafael Gustavo Alves {@email castelhano.rafael@gmail.com}
 * @depend   boostrap 5.2.0, fontawesome 5.15.4, dot.css, dot.js
 */
@@ -19,11 +19,14 @@ class jsCalendar{
         this.selectedDays = options?.selectedDays || [];
         // --------------------------
         this.container = options?.container || document.body; // parentNode do calendario, caso nao informado append no body
+        this.view = options?.view || 'calendar'; // define tipo de vizualizacao ['calendar','tasks']
+        if(!['calendar','tasks'].includes(this.view)){this.view = 'calendar'}; // se repassado view invalido, ajusta para view default
         this.holidays = options?.holidays || {}; // Dicionario com os feriados no período
         this.events = options?.events || {}; // Armazena json com os eventos, exige dia como ocupado
         this.yearMin = options?.yearMin || 1500; // Define ano minimo para pesquisa (ignora valores menores)
         this.yearMax = options?.yearMax || 2999; // Define ano maximo para pesquisa (ignora valores maiores)
         this.showSummary = options?.showSummary != undefined ? options.showSummary : false; // Booleano defini se sera exibido resumo da quantidade de dias por tipo (util, sab, dom, etc..)
+        this.canChangeView = options?.canChangeView != undefined ? options.canChangeView : true; // Booleano defini sera exibido botao para mudar view (calendario, tarefas)
         this.onclick = options?.onclick != undefined ? options.onclick : false; // Funcao definida aqui sera acionada no evento click do calendario, repassando o dia clicado
         this.canSelectDay = options?.canSelectDay != undefined ? options.canSelectDay : false; // Booleano defini se as datas sao selecionaveis
         this.multiSelect = options?.multiSelect != undefined ? options.multiSelect : false; // Booleano defini se eh permitido multipla seleao de dias
@@ -37,6 +40,7 @@ class jsCalendar{
         this.selectDayClasslist = options?.selectDayClasslist || 'border py-3 bg-warning fs-5'; // classlist do dia selecionado
         this.calendarControlsCurrentClasslist = options?.calendarControlsCurrentClasslist || 'btn btn-sm btn-secondary fs-8 me-1'; // classlist dos controles de navegacao
         this.calendarControlsClasslist = options?.calendarControlsClasslist || 'btn btn-sm btn-light'; // classlist dos controles de navegacao
+        this.taskContainerClassList = options?.taskContainerClassList || ''; // classlist do container das tasks
 
         // --------------------------
         this.createCalendar();
@@ -83,7 +87,6 @@ class jsCalendar{
                 td2.classList.remove('d-none');
                 this.calendarRebuild();
             };
-
             td1.appendChild(this.monthPicker);
             td1.appendChild(this.yearPicker);
             td1.appendChild(this.btnCancelSelectDate);
@@ -91,6 +94,11 @@ class jsCalendar{
         }
         td1.appendChild(this.monthName);
         // Contruindo os controles de navegacao do calendario
+        if(this.canChangeView){
+            this.changeViewBtn = document.createElement('button');this.changeViewBtn.classList = 'btn btn-sm btn-secondary me-1';this.changeViewBtn.style.width = '40px';this.changeViewBtn.innerHTML = this.view == 'calendar' ? '<i class="fas fa-list-ul"></i>' : '<i class="fas fa-calendar-alt"></i>';
+            this.changeViewBtn.onclick = () => this.changeView();
+            td2.appendChild(this.changeViewBtn);
+        }
         this.currentMonthBtn = document.createElement('button');this.currentMonthBtn.classList = this.calendarControlsCurrentClasslist;this.currentMonthBtn.innerHTML = 'HOJE';
         this.currentMonthBtn.onclick = () => this.currentMonth();
         this.previousMonthBtn = document.createElement('button');this.previousMonthBtn.classList = this.calendarControlsClasslist;this.previousMonthBtn.innerHTML = '<i class="fas fa-chevron-left px-1"></i>';
@@ -105,23 +113,30 @@ class jsCalendar{
         caption.appendChild(row);
         this.calendar.appendChild(caption);
         // --------------
-        
-        let thead = document.createElement('thead');
+        this.thead = document.createElement('thead');
         let headers = document.createElement('tr');
         headers.innerHTML = `<td class="${this.headerClasslist}">DOM</td><td class="${this.headerClasslist}">SEG</td><td class="${this.headerClasslist}">TER</td><td class="${this.headerClasslist}">QUA</td><td class="${this.headerClasslist}">QUI</td><td class="${this.headerClasslist}">SEX</td><td class="${this.headerClasslist}">SAB</td>`;
-        thead.appendChild(headers);
+        this.thead.appendChild(headers);
         this.tbody = document.createElement('tbody');
-        this.calendar.appendChild(thead);
+        this.calendar.appendChild(this.thead);
         this.calendar.appendChild(this.tbody);
+        // Contruindo a div de tasks
+        this.taskContainer = document.createElement('div');this.taskContainer.classList = this.taskContainerClassList;
+        this.taskList = document.createElement('ul');this.taskList.classList = 'list-unstyled';
+        this.taskContainer.appendChild(this.taskList);
         this.container.appendChild(this.calendar);
+        this.container.appendChild(this.taskContainer);
+        if(this.view == 'calendar'){this.taskContainer.classList.add('d-none');}
+        else{this.thead.classList.add('d-none');}
     }
     calendarRebuild(){
+        this.monthName.innerHTML = `${this.monthNames[this.month - 1]} ${this.year}`;
+        if(this.view == 'tasks'){this.tasksRebuild();this.summary = {};return false;}
         let daysCount = 1;
         let ajust = 0;
         this.summary.uteis = 0;this.summary.sabados = 0;this.summary.domingos = 0;this.summary.feriados = 0;
         this.startAt = new Date(`${this.year}-${this.month}-1`).getDay(); // Retorna de 0-6 (dom=0, seg=1,...)
         this.totalDays = new Date(this.year, this.month, 0).getDate(); // Retorna quantidade de dias do mes
-        this.monthName.innerHTML = `${this.monthNames[this.month - 1]} ${this.year}`;
         this.tbody.innerHTML = ''; // Limpa o tbody
         while(daysCount <= this.totalDays){
             let row = document.createElement('tr');
@@ -138,6 +153,24 @@ class jsCalendar{
         }
         if(this.showSummary){this.buildSummary();}
         if(this.selectedDays.length > 0){this.selectDays(this.selectedDays, true)};
+    }
+    tasksRebuild(){
+        if(this.view != 'tasks'){return false;}
+        let count = 0;
+        this.taskList.innerHTML = '';
+        for(let item in this.events){
+            if(item.includes(`${this.year}-${'0'+this.month+''.slice(-2)}`)){
+                count++;
+                let option = document.createElement('li');
+                option.innerHTML = `<b>${item.slice(-2)}</b> - ${this.events[item]}`;
+                this.taskList.appendChild(option);
+            }
+        }
+        if(count == 0){
+            let option = document.createElement('li');
+            option.innerHTML = 'Nenhum evento registrado.';
+            this.taskList.appendChild(option);
+        }
     }
     buildSummary(){
         if(this.summaryEl == null){ // Caso container do summary ainda nao exista, cria elemento abaixo do calendario
@@ -158,10 +191,10 @@ class jsCalendar{
             else{this.summary['uteis']++;}
             curDate.setDate(curDate.getDate() + 1); // Incrementa data
         }
-        this.summaryEl.innerHTML = `<label class="badge fs-7 me-1 bg-success">UTIL: ${this.summary.uteis}</label>`;
-        this.summaryEl.innerHTML += `<label class="badge fs-7 me-1 bg-primary">SAB: ${this.summary.sabados}</label>`;
-        this.summaryEl.innerHTML += `<label class="badge fs-7 me-1 bg-orange">DOM: ${this.summary.domingos}</label>`;
-        this.summaryEl.innerHTML += `<label class="badge fs-7 bg-dark">FER: ${this.summary.feriados}</label>`;
+        this.summaryEl.innerHTML = `<label class="badge opacity-75 fs-7 me-1 bg-success">UTIL: ${this.summary.uteis}</label>`;
+        this.summaryEl.innerHTML += `<label class="badge opacity-75 fs-7 me-1 bg-primary">SAB: ${this.summary.sabados}</label>`;
+        this.summaryEl.innerHTML += `<label class="badge opacity-75 fs-7 me-1 bg-orange">DOM: ${this.summary.domingos}</label>`;
+        this.summaryEl.innerHTML += `<label class="badge opacity-75 fs-7 bg-dark">FER: ${this.summary.feriados}</label>`;
         
     }
     getTargetDay(day=''){
@@ -238,6 +271,26 @@ class jsCalendar{
     goTo(year, month){ // Altera vizualizacao para ano e mes informados
         this.year = year;
         if(month > 0 && month < 13){this.month = month;}
+        this.calendarRebuild();
+    }
+    changeView(){
+        if(this.view == 'calendar'){
+            this.view = 'tasks';
+            if(this.canChangeView){this.changeViewBtn.innerHTML = '<i class="fas fa-calendar-alt"></i>'}
+            this.taskContainer.classList.remove('d-none');
+            this.thead.classList.add('d-none');
+            this.tbody.classList.add('d-none');
+            this.detail.innerHTML = '';
+            if(this.summaryEl){this.summaryEl.classList.add('d-none');}
+        }
+        else{
+            this.view = 'calendar';
+            if(this.canChangeView){this.changeViewBtn.innerHTML = '<i class="fas fa-list-ul"></i>';}
+            this.thead.classList.remove('d-none');
+            this.tbody.classList.remove('d-none');
+            if(this.summaryEl){this.summaryEl.classList.remove('d-none');}
+            this.taskContainer.classList.add('d-none');
+        }
         this.calendarRebuild();
     }
     selectDays(datas=[], printOnly=false){

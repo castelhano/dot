@@ -68,23 +68,13 @@
 
         <div class="callout callout-primary mt-4"><div class="body"><i class="fas fa-info me-2"></i>Animação do elemento é feito pela nova <i>feature</i> <code>@property</code> animando a variavel passada no estilo do elemento <code>style:'--v:'</code>, na data da criação apenas navegadores <i class="text-muted">chromium based</i> davam suporte a esta feature.</div></div>
 
-        <h5 id="semipie_label"><i class="fas fa-chart-pie me-2"></i> Semipie charts</h5>
+        <h5 id="semipie_label" class="mb-4"><i class="fas fa-chart-pie me-2"></i> Semipie charts</h5>
         
         <div class="semipie animate" style="--v:30;--c:green;">30%</div>
         <div class="semipie animate hover" style="--v:50;--w:200px;--b:30px;">50%</div>
-        <div class="semipie-multi" style="--fs:24px;">JavaScript
-          <div class="node" data-name="jQuery" style="--v : 80; --c: #0669AD ;"></div>
-          <div class="node" data-name="Angular" style="--v : 60; --c: #E62A39 ;"></div>
-          <div class="node" data-name="React" style="--v : 30; --c: #FEDA3E ;"></div>
-        </div><br ><br >
 
         <pre><code class="language-html">&lt;div class="semipie animate" style="--v:30;--c:green;"&gt;30%&lt;/div&gt;
-&lt;div class="semipie animate hover" style="--v:50;--w:200px;--b:30px;"&gt;50%&lt;/div&gt;
-&lt;div class="semipie-multi" style="--fs:24px;"&gt;JavaScript
-  &lt;div class="node" data-name="jQuery" style="--v : 80; --c: #0669AD ;"&gt;&lt;/div&gt;
-  &lt;div class="node" data-name="Angular" style="--v : 60; --c: #E62A39 ;"&gt;&lt;/div&gt;
-  &lt;div class="node" data-name="React" style="--v : 30; --c: #FEDA3E ;"&gt;&lt;/div&gt;
-&lt;/div&gt;</code></pre>
+&lt;div class="semipie animate hover" style="--v:50;--w:200px;--b:30px;"&gt;50%&lt;/div&gt;</code></pre>
 
         <h5>Chart CSS Bar</h5>
         <div class="row mb-4">
@@ -269,7 +259,7 @@
         <p class="mt-4">Lógica utiliza de dicionário (object) pré carregado [ <b>SHORTCUT_MAP</b> ] onde a <code>key</code> representa a combinação de atalho a ser capturada e o <code>value</code> o comando a ser executado.</p>
         <p>A Key deve ser formada pela tecla alvo seguido das letras <b>T</b> ou <b>F</b> (true ou false) que representam a combinação com as teclas Alt, Ctrl e Shift (respectivamente), ou seja a key <b>'mFTF'</b> responde pelo comando Ctrl + M (case insensitive).</p>
         <p>Já o Value deve apontar para o ID de um elemento (será acionado o evento click) ou apontar para uma função. Para pontar para um elemento informe o caractere sustenido (sharp) seguido do id do elemento, Ex '#meuBotao'.</p>
-        <p>Para retornar uma função, informe o caractere dois pontos (colon) seguido do nome da função sem parenteses. Ex ':minhaFuncao', não é possivel passar variaveis para a função (implementação futura).</p>
+        <p>Para retornar uma função, informe o caractere dois pontos (colon) seguido do nome da função sem parenteses. Ex ':minhaFuncao', não é possivel passar variaveis, na chamada da função é repassado o evento que pode ser tratado na página de origem. </p>
         <p>Por padrão já são carregados os atalhos abaixo no dicionario SHORTCUT_MAP:</p>
 
         <pre><code class="language-javascript">SHORTCUT_MAP = {
@@ -283,13 +273,13 @@
   '.TFF':'#app_root', // Alt + .: Aciona evento click do elemento ID app_root
   'mTFF':'#messages', // Alt + M: Aciona evento click do elemento ID messages
   'sTFF':'#system',   // Alt + S: Aciona evento click do elemento ID system
-  'dFTF':'#docs' // Ctrl + D: Aciona evento click do elemento ID docs
+  'dTFF':'#docs' // Ctrl + D: Aciona evento click do elemento ID docs
 }</code></pre>
         <h6 class="mt-4">Inserir novo atalho (ou alterar):</h6>
         <pre><code class="language-javascript">SHORTCUT_MAP['xFTF'] = '#meuBotao';</code></pre>
         <p>ou</p>
         <pre><code class="language-javascript">SHORTCUT_MAP['yTTF'] = ':minhaFuncao';
-function minhaFuncao(){
+function minhaFuncao(event){
   ...
 }</code></pre>
 
@@ -355,7 +345,7 @@ function minhaFuncao(){
         <p class="mt-3">fazendo o <i>translate</i> dos dados antes de exibir</p>
         <pre><code class="language-html">&lt;label data-itKey="view" data-itTranslate='{"180":"06 meses"}'&gt;&lt;/label&gt;</code></pre>
         <h6 class="mt-4">no javascript:</h6>
-        <pre><code class="language-javascript">var map={'nome':'Rafael Alves','salario':'2522.35'};
+        <pre><code class="language-javascript">var map={'nome':'Jonas Silva','salario':'2522.35'};
 dotPlot(map);</code></pre>
           
           <p class="mt-4">É possivel ainda interpolar os valores passados via GET na url:</p>
@@ -415,14 +405,87 @@ dotPlot(map);</code></pre>
         <pre><code class="language-javascript">if(urlHasParam('nome')){...}</code></pre>
 
         <h5 id="js_mask">Mask JS</h5>
+        <a href="https://github.com/vanilla-masker/vanilla-masker" target="_blank"><i class="fab fa-github"></i> Github Repo</a>
+        <p>Implementa máscara para elemento <b>input#text</b>.</p>
+        <pre class="mb-4"><code class="language-html">&lt;script src="{&#37; static 'js/vendor/mask.js' &#37;}"&gt;&lt;/script&gt;</code></pre>
+        <small>HTML:</small>
+        <pre class="mb-4"><code class="language-html">&lt;input type="text" id="id_cpf" value=""&gt</code></pre>
+        <small>Javascript:</small>
+        <pre class="mb-4"><code class="language-javascript">VMasker(document.getElementById("id_cpf")).maskPattern('999.999.999-99');</code></pre>
+        <small>Patterns:</small>
+        <pre><code class="language-javascript">VMasker(document.getElementById("input")).maskMoney();// Mascara para currency
+VMasker(document.getElementById("id_renavan")).maskNumber(); // Mascara para inteiro
+VMasker(document.getElementById("input")).unMask(); // Remove a mascara para o campo
+// Custom Patterns: (A=ALPHA, 9=NUMBER, S=ALPHA or NUMBER)
+VMasker(document.getElementById("id_placa")).maskPattern('AAA-9S99');
+VMasker(document.getElementById("id_cnh")).maskPattern('999.999.999-99');
+VMasker(document.getElementById("id_cnpj")).maskPattern('99.999.999/9999-99');
+VMasker(document.getElementById("id_cpf")).maskPattern('999.999.999-99');
+
+// FONE MASK
+function inputHandler(masks, max, event) {
+  var c = event.target;
+  var v = c.value.replace(/\D/g, '');
+  var m = c.value.length > max ? 1 : 0;
+  VMasker(c).unMask();
+  VMasker(c).maskPattern(masks[m]);
+  c.value = VMasker.toPattern(v, masks[m]);
+}
+var telMask = ['(99) 9999-99999', '(99) 99999-9999'];
+var fone1 = document.getElementById('id_fone1');
+var fone2 = document.getElementById('id_fone2');
+VMasker(fone1).maskPattern(telMask[0]);
+VMasker(fone2).maskPattern(telMask[0]);
+fone1.addEventListener('input', inputHandler.bind(undefined, telMask, 14), false);
+fone2.addEventListener('input', inputHandler.bind(undefined, telMask, 14), false);
+
+fone1.dispatchEvent(new Event("input"));
+fone2.dispatchEvent(new Event("input"));</code></pre>
+
+
         <h5 id="js_prism">Prism JS</h5>
         <p>Adiciona <code>highlight text</code> para uma variedade de linguagens de programação.</p>
         <pre><code class="language-html">&lt;pre&gt;&lt;code class="language-javascript"&gt;...&lt;/code&gt;&lt;/pre&gt;</code></pre>
         <p class="mt-3">Prism.js: Mais detalhes na <a href="https://prismjs.com/">página do projeto</a></p>
         
         <h5 id="js_sortable">Sortable JS</h5>
-        <h5 id="js_tagin">Tagin JS</h5>
-        <p>Implementa controle ( input:text ) para inclusão de tags</p>
+        <a href="http://sortablejs.github.io/Sortable/" target="_blank"><i class="fas fa-link"></i> Página do projeto</a> | 
+        <a href="https://github.com/SortableJS/Sortable" target="_blank"><i class="fab fa-github"></i> Github Repo</a>
+        <p class="mt-4">Implementa comportamento de arrastar e soltar (drag-and-drop) em elementos HTML.</p>
+        <div class="row mb-4">
+          <div class="col-lg-6">
+            <ul id="items" class="list-group mt-2">
+              <li class="list-group-item list-group-item-primary list-group-item-action pointer">item 1</li>
+              <li class="list-group-item list-group-item-warning list-group-item-action pointer">item 2</li>
+              <li class="list-group-item list-group-item-danger list-group-item-action pointer">item 3</li>
+            </ul>
+          </div>
+        </div>
+        
+        <pre class="mb-4"><code class="language-html">&lt;script src="'js/vendor/sortable.min.js'"&gt;&lt;/script&gt;</code></pre>
+        <small>HTML</small>
+        <pre class="mb-4"><code class="language-html">&lt;ul id="items" class="list-group"&gt;
+  &lt;li class="list-group-item list-group-item-action pointer active"&gt;item 1&lt;/li&gt;
+  &lt;li class="list-group-item list-group-item-action pointer"&gt;item 2&lt;/li&gt;
+  &lt;li class="list-group-item list-group-item-action pointer"&gt;item 3&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+        <small>Javascript</small>
+        <pre class="mb-4"><code class="language-javascript">const sort = new Sortable(document.getElementById('items'), {});</code></pre>
+        <small>Options:</small>
+        <pre class="mb-4"><code class="language-javascript">{
+group:'teste', // default='' Opcional, inverte somente dentro do grupo
+animation:100, // default=0 Duracao da animacao
+delay: 80, // default=0 Delay para realizar troca
+delayOnTouchOnly: true // default=false Se true, delay ocorre somente em touch devices
+}</code></pre>
+
+
+        
+        <h5 id="js_tagin">Tagin JS <sup class="bg-purple-light border rounded px-2 text-white fs-8">Fork</sup></h5>
+        <a href="https://tagin.netlify.app/" target="_blank"><i class="fas fa-link"></i> Página do projeto</a> | 
+        <a href="https://github.com/erwinheldy/tagin" target="_blank"><i class="fab fa-github"></i> Github Repo</a>
+        
+        <p class="mt-4">Implementa controle <b>input#text</b> para inclusão de tags</p>
         <pre><code class="language-html">&lt;link rel="stylesheet" href="{&#37; static 'css/vendor/tagin.css' &#37;}" type="text/css"/&gt
 &lt;script src="{&#37; static 'js/vendor/tagin.js' &#37;}"&gt;</script></code></pre>
 
@@ -432,6 +495,15 @@ dotPlot(map);</code></pre>
             <label for="taginExample">Linguagens</label>
           </div>
         </div>
+        <small>HTML:</small>
+        <pre class="mb-4"><code class="language-html">&lt;div class="row g-1"&gt;
+  &lt;div class="form-floating my-4 col-lg-6"&gt;
+    &lt;input type="text" class="form-control tagin" id="taginExample" value="Python;Javascript"&gt;
+    &lt;label for="taginExample"&gt;Linguagens&lt;/label&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+        <small>Javascript:</small>
         <pre><code class="language-javascript">new Tagin(document.getElementById('taginExample'), {separator:';'});</code></pre>
         <h6 class="mt-4">Configuração</h6>
 
@@ -495,6 +567,7 @@ dotPlot(map);</code></pre>
 {% block add_script_src %}
 <script src="{% static 'js/vendor/prism.js' %}"></script>
 <script src="{% static 'js/vendor/tagin.js' %}"></script>
+<script src="{% static 'js/vendor/sortable.min.js' %}"></script>
 {% endblock %}
 
 <script>
@@ -502,6 +575,7 @@ dotPlot(map);</code></pre>
   prismStart();
   TAB_ON_ENTER = true;
 
+  const sort = new Sortable(document.getElementById('items'), {animation:100, delay: 80, delayOnTouchOnly: true});
   new Tagin(document.getElementById('taginExample'), {separator:';', tagColor: 'primary',placeholder: 'Seu placeholder', enter:true});
 
   {% endblock %}

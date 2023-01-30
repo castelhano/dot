@@ -19,7 +19,7 @@
 * -- 
 * @desc    3a ETAPA: CHAMA FUNCAO eventHandler(e) QUE DEVE SER CRIADA E TRATADA NA ORIGEM CASO NAO LOCALIZE CORRESPONDENTE NAS ETAPAS ANTERIORES
 */
-var SHORTCUT_MAP = {'vTFF':'#back','nTFF':'#add','lTFF':'#clear','gTFF':'#submit','/FTF':'#search','dTFF':'#download','iTFF':'#home','.TFF':'#app_root','mTFF':'#messages','sTFF':'#system','dFTF':'#docs'};
+var SHORTCUT_MAP = {'vTFF':'#back','nTFF':'#add','lTFF':'#clear','gTFF':'#submit','/FTF':'#search','dTFF':'#download','iTFF':'#home','.TFF':'#app_root','mTFF':'#messages','sTFF':'#system','dTFF':'#docs'};
 
 document.addEventListener('keydown', (e) => {
 	// console.log(e);
@@ -30,7 +30,7 @@ document.addEventListener('keydown', (e) => {
 		if(SHORTCUT_MAP[command].charAt(0) == '#'){
 			e.preventDefault();
 			try {document.getElementById(SHORTCUT_MAP[command].substr(1,SHORTCUT_MAP[command].length)).click();} catch(err){}
-		}else if(SHORTCUT_MAP[command].charAt(0) == ':'){e.preventDefault();window[SHORTCUT_MAP[command].substr(1,SHORTCUT_MAP[command].length)]();}
+		}else if(SHORTCUT_MAP[command].charAt(0) == ':'){e.preventDefault();window[SHORTCUT_MAP[command].substr(1,SHORTCUT_MAP[command].length)](e);}
 	}  
 	// 2) ETAPA
 	else if (e.key === 'Enter' && (typeof TAB_ON_ENTER !== 'undefined' && TAB_ON_ENTER == true) && (e.target.nodeName === 'INPUT' || e.target.nodeName === 'SELECT')) {
