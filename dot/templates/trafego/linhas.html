@@ -100,7 +100,8 @@ const table = new jsTable(document.getElementById('main_table'), {
   canFilter: true,
   filterCols: ['Cod', 'Nome', 'Origem', 'Destino'],
   enablePaginate: true,
-  canExportJson: true
+  canExportJson: true,
+  fileName: 'linhas'  
 });
 SHORTCUT_MAP['/FTF'] = ':filterFocus';
 SHORTCUT_MAP['arrowrightFTF'] = ':nextPage';
@@ -111,10 +112,7 @@ SHORTCUT_MAP['enterFTF'] = ':enterRow';
 
 function nextRow(){table.nextRow();}
 function previousRow(){table.previousRow();}
-function enterRow(){
-  console.log('ACIONANDO ENTER ROW');
-  table.enterRow();
-}
+function enterRow(){table.enterRow();}
 function filterFocus(){table.filterInput.select();}
 function nextPage(){table.nextPage();}
 function previousPage(){table.previousPage();}

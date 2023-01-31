@@ -1,9 +1,9 @@
 /*
 * jsTable   Implementa operacoes com tabelas previamente criadas ou gera tabela a partir de dados json
 *
-* @version  2.16
+* @version  2.17
 * @since    07/08/2022
-* @release  23/01/2023 [correcao de bug no dataUrlGet]
+* @release  31/01/2023 [adicionado fileName nas configuracoes]
 * @author   Rafael Gustavo Alves {@email castelhano.rafael@gmail.com}
 * @depend   boostrap 5.2.0, fontawesome 5.15.4, dot.css, dot.js
 */
@@ -52,6 +52,7 @@ class jsTable{
         this.csvHeaders = options?.csvHeaders != undefined ? options.csvHeaders : true; // Define se sera incluido cabecalhos no arquivo de exportacao CSV
         this.canExportJson = options?.canExportJson != undefined ? options.canExportJson : false;
         this.editableCols = options?.editableCols || [];
+        this.fileName = options?.fileName || this.id; // Nome dos arquivos de exportacao (sem a extensao)
         this.enablePaginate = options?.enablePaginate != undefined ? options.enablePaginate : false; // Booleno setado para true se paginacao estiver ativa para tabela
         this.pgControlContainer = options?.pgControlContainer || false; // Controles de paginacao por default criados logo abaixo da tabela, pode ser alterado setando esta variavel
         this.rowsPerPage = options?.rowsPerPage || 15; // Quantidade de registros a serem exibidos por pagina
@@ -573,7 +574,7 @@ class jsTable{
     exportJson(e){
         let data = this.getJson();
         let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(data);
-        let filename = `${this.id}.json`;
+        let filename = `${this.fileName}.json`;
         let btn = document.createElement('a');
         btn.classList = 'd-none';
         btn.setAttribute('href', dataUri);
@@ -603,7 +604,7 @@ class jsTable{
             csv.push(row.join(this.csvSeparator));
         }
         let csv_string = csv.join('\n');
-        let filename = `${this.id}.csv`;
+        let filename = `${this.fileName}.csv`;
         let link = document.createElement('a');
         link.style.display = 'none';
         link.setAttribute('target', '_blank');
