@@ -187,7 +187,8 @@
 <script>
   {% block add_script %}
   
-  SHORTCUT_MAP['xTFF'] = '#btn_comparar';
+  SHORTCUT_MAP['xTFF'] = () => {try{document.getElementById('btn_comparar').click()}catch(e){}};
+  SHORTCUT_MAP['.TFF'] = () => {document.getElementById('cadastro_planejamento').click()};
   
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
   function submitForm(){modal_loading.show();return true;}

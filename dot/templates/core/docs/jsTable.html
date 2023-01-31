@@ -26,9 +26,9 @@
           <p>Library em javascript ( vanilla ) para operações com tabelas preexistentes ou criadas dinamicamente.</p>
           <blockquote class="callout callout-primary fs-7">
             <div class="body">
-              Version: <b>2.16</b><br>
+              Version: <b>2.17</b><br>
               Since: &nbsp;&nbsp;&nbsp;<b>12/08/2022</b><br>
-              Release: <b>23/01/2023</b><br>
+              Release: <b>31/01/2023</b><br>
               Author: &nbsp;<b>Rafael Gustavo Faria Alves</b><br>
               Depend: <a class="badge bg-orange text-white" href="https://getbootstrap.com/docs/5.2/getting-started/introduction/" target="_blank">bootstrap 5.x</a> <a class="badge bg-purple text-white" href="https://fontawesome.com/v5/search?m=free" target="_blank">fontawesome 5.x</a><br>
             </div>
@@ -41,7 +41,9 @@
           
           <h5 id="instanciando_tabela_existente">Instanciando uma tabela existente</h5>
           <blockquote class="callout callout-warning mt-3">
-            <div class="body"><i class="fas fa-info text-warning me-2"></i> Tabela precisa ser composta com elementos <b>thead</b> e <b>tbody</b>. Tabelas com mais de um tbody serão ajustadas para operar num único tbody</div>
+            <div class="body">
+              <i class="fas fa-info text-warning me-2"></i> Tabela precisa ser composta com elementos <b>thead</b> e <b>tbody</b>. Tabelas com mais de um tbody serão ajustadas para operar num único tbody.<br>
+              Para mais de uma instancia de jsTable na mesma página, é necessário fornecer um <b>id</b> único para cada tabela.</div>
           </blockquote>
           <p>Crie uma instancia apontando para a tabela e (opcional) dicionário com as configurações.</p>
           <pre><code class="language-javascript">const tabela = new jsTable(document.querySelector('table'), {});</code></pre>
@@ -141,13 +143,9 @@ emptyTableMessage: 'Selecione um filtro ou mude o criterio da pesquisa'
 });
 
 // Integrando com listener.js
-SHORTCUT_MAP['arrowdownFFF'] = ':nextRow';
-SHORTCUT_MAP['arrowupFFF'] = ':previousRow';
-SHORTCUT_MAP['enterFTF'] = ':enterRow';
-
-function nextRow(){table.nextRow();}
-function previousRow(){table.previousRow();}
-function enterRow(){table.enterRow();}</code></pre>
+SHORTCUT_MAP['arrowdownFFF'] = () => {table.nextRow()}
+SHORTCUT_MAP['arrowupFFF'] = () => {table.previousRow()}
+SHORTCUT_MAP['enterFTF'] = () => {table.enterRow()}</code></pre>
           
           <h5 id="estilizacao">Estilização</h5>
           <div class="table-responsive">
@@ -331,21 +329,13 @@ function enterRow(){table.enterRow();}</code></pre>
 table.restoreButton.onclick = () => {..dosomething}</code></pre>
 
           <h5 id="integracao_listener_js">Integração com <b class="text-orange">listener.js</b></h5>
-          <pre><code class="language-javascript">SHORTCUT_MAP['/FTF'] = ':filterFocus';
-SHORTCUT_MAP['+FTF'] = ':addRow';
-SHORTCUT_MAP['arrowrightFTF'] = ':nextPage';
-SHORTCUT_MAP['arrowleftFTF'] = ':previousPage';
-SHORTCUT_MAP['arrowdownFFF'] = ':nextRow';
-SHORTCUT_MAP['arrowupFFF'] = ':previousRow';
-SHORTCUT_MAP['enterFTF'] = ':enterRow';
-
-function filterFocus(){table.filterInput.select();}
-function addRow(){table.addRow();}
-function nextPage(){table.nextPage();}
-function previousPage(){table.previousPage();}
-function nextRow(){table.nextRow();}
-function previousRow(){table.previousRow();}
-function enterRow(){table.enterRow();}</code></pre>
+          <pre><code class="language-javascript">SHORTCUT_MAP['/FTF'] = () => {table.filterInput.select()};
+SHORTCUT_MAP['+FTF'] = () => {table.addRow()};
+SHORTCUT_MAP['arrowrightFTF'] = () => {table.nextPage()};
+SHORTCUT_MAP['arrowleftFTF'] = () => {table.previousPage()};
+SHORTCUT_MAP['arrowdownFFF'] = () => {table.nextRow()};
+SHORTCUT_MAP['arrowupFFF'] = () => {table.previousRow()};
+SHORTCUT_MAP['enterFTF'] = () => {table.enterRow()};</code></pre>
 
 
           <h3>Exemplos</h3>

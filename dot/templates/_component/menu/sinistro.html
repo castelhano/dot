@@ -21,27 +21,27 @@
   </ul>
 </li>
 <script>
-  SHORTCUT_MAP['cTFF'] = '#menu_cadastro';
   
-  if(document.getElementById('cadastro_list_options').childElementCount == 0){document.getElementById('cadastro_list_container').classList.add('d-none');}
-  // if(document.getElementById('cadastro_sinistro_list_options').childElementCount == 0){document.getElementById('cadastro_sinistro_list_container').classList.add('d-none');}
+  SHORTCUT_MAP['cTFF'] = () => {document.getElementById('menu_cadastro').click()}
+  SHORTCUT_MAP['dFFF'] = () => {if(exibindoCadastro()){try{submenuToggle(document.getElementById('submenu_docs_link'));}catch(e){}}}
+  
+  if(document.getElementById('cadastro_sinistro_list_options').childElementCount == 0){document.getElementById('cadastro_sinistro_list_container').classList.add('d-none');}
+  else{
+    SHORTCUT_MAP['sFFF'] = () => {if(exibindoCadastro()){try{submenuToggle(document.getElementById('submenu_sinistro_link'));}catch(e){}}}
+    SHORTCUT_MAP['aFFF'] = () => {if(exibindoCadastroSinistro()){try{document.getElementById('app_root').click();}catch (e){}}}
+    SHORTCUT_MAP['cFFF'] = () => {if(exibindoCadastroSinistro()){try{document.getElementById('cadastro_classificacao').click();}catch (e){}}}
+    SHORTCUT_MAP['fFFF'] = () => {if(exibindoCadastroSinistro()){try{document.getElementById('cadastro_forma').click();}catch (e){}}}
+    SHORTCUT_MAP['oFFF'] = () => {if(exibindoCadastroSinistro()){try{document.getElementById('cadastro_oficina').click();}catch (e){}}}
+    
+  }
   if(document.getElementById('cadastro_docs_list_options').childElementCount == 0){document.getElementById('cadastro_docs_list_container').classList.add('d-none');}
-  function eventHandler(e){
-    {% include '_component/menu/global_handler.js' %}
-    else{
-      try{cadastro = document.getElementById('menu_cadastro').classList.contains('show') ? true : false;}catch(err){}
-      try{cadastro_sinistro = document.getElementById('cadastro_sinistro_list_options').style.display == 'block' ? true : false;}catch(err){}
-      try{cadastro_docs = document.getElementById('cadastro_docs_list_options').style.display == 'block' ? true : false;}catch(err){}
-      if(cadastro_sinistro && e.key.toLowerCase() == 'a')try{e.preventDefault();document.getElementById('app_root').click();}catch(err){}
-      else if(cadastro_sinistro && e.key.toLowerCase() == 'c')try{e.preventDefault();document.getElementById('cadastro_classificacao').click();}catch(err){}
-      else if(cadastro_sinistro && e.key.toLowerCase() == 't')try{e.preventDefault();document.getElementById('cadastro_tipodespesa').click();}catch(err){}
-      else if(cadastro_sinistro && e.key.toLowerCase() == 'f')try{e.preventDefault();document.getElementById('cadastro_forma').click();}catch(err){}
-      else if(cadastro_sinistro && e.key.toLowerCase() == 'o')try{e.preventDefault();document.getElementById('cadastro_oficina').click();}catch(err){}
-      else if(cadastro_docs && e.key.toLowerCase() == 't')try{e.preventDefault();document.getElementById('cadastro_termo').click();}catch(err){}
-      else if(cadastro && e.key.toLowerCase() == 's')try{submenuToggle(document.getElementById('submenu_sinistro_link'));cadastro_sinistro = true;}catch(err){}
-      else if(cadastro && e.key.toLowerCase() == 'd')try{submenuToggle(document.getElementById('submenu_docs_link'));}catch(err){}
-      else{try{eventLocalHandler(e);}catch(e){}}
-    }
+  SHORTCUT_MAP['tFFF'] = () => {
+    if(exibindoCadastroSinistro()){try{document.getElementById('cadastro_tipodespesa').click();}catch (e){}}
+    else if(exibindoCadastroDocs()){try{document.getElementById('cadastro_termo').click();}catch (e){}}
   }
   
+  function exibindoCadastro(){return document.getElementById('menu_cadastro').classList.contains('show') ? true : false;}
+  function exibindoCadastroSinistro(){return document.getElementById('cadastro_sinistro_list_options').style.display == 'block' ? true : false;}
+  function exibindoCadastroDocs(){return document.getElementById('cadastro_docs_list_options').style.display == 'block' ? true : false;}
+
 </script>

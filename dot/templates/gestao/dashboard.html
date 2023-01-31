@@ -219,8 +219,10 @@
 
 <script>
   {% block add_script %}
-  SHORTCUT_MAP['2FTF'] = '#roadmap_link';
-  SHORTCUT_MAP['3FTF'] = '#analytics_link';
+
+  SHORTCUT_MAP['2FTF'] = () => {document.getElementById('roadmap_link').click()};
+  SHORTCUT_MAP['3FTF'] = () => {document.getElementById('analytics_link').click()};
+
   if(document.getElementById('menu_diretriz_options').childElementCount == 0){document.getElementById('menu_diretriz_container').classList.add('d-none');}
   
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});

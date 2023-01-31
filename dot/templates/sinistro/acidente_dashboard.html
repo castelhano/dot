@@ -178,7 +178,7 @@
 <script>
   {% block add_script %}
   
-  SHORTCUT_MAP['fFFF'] = '#adicional_filters_link';
+  SHORTCUT_MAP['fFFF'] = () => {document.getElementById('adicional_filters_link').click()};
 
   const table = new jsTable(document.getElementById('table_terceiros'), {});
   table.sort(3, false); // Classifica os maiores custos

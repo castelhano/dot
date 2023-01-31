@@ -111,12 +111,9 @@
 <script>
 {% block add_script %}
 const table = new jsTable(document.getElementById('main_table'),{});
-SHORTCUT_MAP['arrowdownFFF'] = ':nextRow';
-SHORTCUT_MAP['arrowupFFF'] = ':previousRow';
-SHORTCUT_MAP['enterFTF'] = ':enterRow';
+SHORTCUT_MAP['arrowdownFFF'] = () => {table.nextRow();};
+SHORTCUT_MAP['arrowupFFF'] = () => {table.previousRow();};
+SHORTCUT_MAP['enterFTF'] = () => {table.enterRow();};
 
-function nextRow(){table.nextRow();}
-function previousRow(){table.previousRow();}
-function enterRow(){table.enterRow();}
 {% endblock %}
 </script>

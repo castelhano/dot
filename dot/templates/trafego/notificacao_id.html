@@ -90,7 +90,8 @@
 <script>
   {% block add_script %}
   var TAB_ON_ENTER = true;
-  SHORTCUT_MAP['pTFF'] = '#capa_print';
+  SHORTCUT_MAP['pTFF'] = () => {document.getElementById('capa_print').click()};
+  SHORTCUT_MAP['.TFF'] = () => {document.getElementById('cadastro_notificacao').click()};
   
   VMasker(document.getElementById("id_valor")).maskMoney();
   let valor = document.getElementById('id_valor');

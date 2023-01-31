@@ -70,6 +70,7 @@
 <script>
   {% block add_script %}
   var TAB_ON_ENTER = true;
+  SHORTCUT_MAP['.TFF'] = () => {document.getElementById('cadastro_planejamento').click()};
   
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
   function submitForm(){modal_loading.show();return true;}

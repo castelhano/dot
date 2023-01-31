@@ -173,22 +173,15 @@
 	});
 	if(__ss != 'sm'){
 		table.filterInput.placeholder = 'Filtrar* [ Ctrl + F ]';
-		SHORTCUT_MAP['fFTF'] = ':filterImputSelect';
+		SHORTCUT_MAP['fFTF'] = () => {table.filterInput.select()};
 	}
 	
-	SHORTCUT_MAP['1FTF'] = '#tab_funcionarios_table';
-	SHORTCUT_MAP['arrowrightFTF'] = ':nextPage';
-	SHORTCUT_MAP['arrowleftFTF'] = ':previousPage';
-	SHORTCUT_MAP['arrowdownFFF'] = ':nextRow';
-	SHORTCUT_MAP['arrowupFFF'] = ':previousRow';
-	SHORTCUT_MAP['enterFTF'] = ':enterRow';
-	
-	function nextRow(){table.nextRow();}
-	function previousRow(){table.previousRow();}
-	function enterRow(){table.enterRow();}	
-	function nextPage(){table.nextPage();}
-	function previousPage(){table.previousPage();}
-	function filterImputSelect(){table.filterInput.select();}
+	SHORTCUT_MAP['1FTF'] = () => {document.getElementById('tab_funcionarios_table').click()};	
+	SHORTCUT_MAP['arrowdownFFF'] = () => {table.nextRow();}
+	SHORTCUT_MAP['arrowupFFF'] = () => {table.previousRow();};
+	SHORTCUT_MAP['enterFTF'] = () => {table.enterRow();}
+	SHORTCUT_MAP['arrowrightFTF'] = () => {table.nextPage()};
+	SHORTCUT_MAP['arrowleftFTF'] = () => {table.previousPage()};
 	
 	function carregaEmpresas() {
 		var xhttp = new XMLHttpRequest();

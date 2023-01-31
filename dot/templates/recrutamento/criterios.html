@@ -68,19 +68,12 @@ const table = new jsTable(document.getElementById('main_table'), {
   enablePaginate: true
 });
 
-SHORTCUT_MAP['/FTF'] = ':filterFocus';
-SHORTCUT_MAP['arrowrightFTF'] = ':nextPage';
-SHORTCUT_MAP['arrowleftFTF'] = ':previousPage';
-SHORTCUT_MAP['arrowdownFFF'] = ':nextRow';
-SHORTCUT_MAP['arrowupFFF'] = ':previousRow';
-SHORTCUT_MAP['enterFTF'] = ':enterRow';
-
-function nextRow(){table.nextRow();}
-function previousRow(){table.previousRow();}
-function enterRow(){table.enterRow();}
-function filterFocus(){table.filterInput.select();}
-function nextPage(){table.nextPage();}
-function previousPage(){table.previousPage();}
+SHORTCUT_MAP['/FTF'] = () => {table.filterInput.select()};
+SHORTCUT_MAP['arrowdownFFF'] = () => {table.nextRow();}
+SHORTCUT_MAP['arrowupFFF'] = () => {table.previousRow();};
+SHORTCUT_MAP['enterFTF'] = () => {table.enterRow();}
+SHORTCUT_MAP['arrowrightFTF'] = () => {table.nextPage()};
+SHORTCUT_MAP['arrowleftFTF'] = () => {table.previousPage()};
 
 {% endblock %}
 </script>

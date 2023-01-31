@@ -57,12 +57,8 @@ const table = new jsTable(document.getElementById('main_table'),{
   rowsPerPage: 20
 });
 
-SHORTCUT_MAP['/FTF'] = ':filterFocus';
-SHORTCUT_MAP['arrowrightFTF'] = ':nextPage';
-SHORTCUT_MAP['arrowleftFTF'] = ':previousPage';
-
-function filterFocus(){table.filterInput.select();}
-function nextPage(){table.nextPage();}
-function previousPage(){table.previousPage();}
+SHORTCUT_MAP['/FTF'] = () => {table.filterInput.select();}
+SHORTCUT_MAP['arrowrightFTF'] = () => {table.nextPage();}
+SHORTCUT_MAP['arrowleftFTF'] = () => {table.previousPage();}
 {% endblock %}
 </script>

@@ -65,7 +65,7 @@
 <script>
   {% block add_script %}
   var TAB_ON_ENTER = true;
-  SHORTCUT_MAP['1FTF'] = '#escala_add';
+  SHORTCUT_MAP['1FTF'] = () => {document.getElementById('escala_add').click()}
   var json_obj_target = document.getElementById('id_matriculas');
   
   today(0,0,0,true, document.getElementById('id_data'));

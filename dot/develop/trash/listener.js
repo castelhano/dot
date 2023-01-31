@@ -1,37 +1,25 @@
 /*
 * FUNCAO LISTENER PARA EVENTOS DE TECLADO (keydown) DIVIDIDO EM 3 ETAPAS, PASSANDO PARA A PROXIMA ETAPA SOMENTE SE CORRESPONDENTE NAO LOCALIZADO 
 * --
-* @version 3.0
+* @version 2.1
 * @since   02/03/2022
-* @release 31/01/2023
 * @author  Rafael Gustavo Alves {@email castelhano.rafael@gmail.com}
 * @desc    1a ETAPA: LISTENER DE ATALHOS
 * @param {dict} SHORTCUT_MAP DICIONARIO CONTENDO O MAPA DE TECLAS DE ATALHO, ONDE:
 *   -> KEY DO DICT DEVE SER FORMADA PELA TECLA A SER ANALISADA (lowercase), SEGUIDO DE T (true) OU F (false) PARA OS COMBOS DE TECLA ALT, CTRL E SHIFT (NESTA ORDEM)
-*   -> O VALOR DEVE SER UMA FUNCAO QUE SERA EXECUTADA AO ACIONAR TECLAS DEFINIDAS
-* @example  SHORTCUT_MAP['xTFF'] = () => {meuBotao.click()}; ACIONA EVENTO CLICK DO ELEMENTO AO PRECIONAR ALT + X 
-* @example  SHORTCUT_MAP['enterFTF'] = minhaFuncao; CHAMA FUNCAO minhafuncao() AO PRECIONAR CTRL + ENTER
+*   -> O VALOR DO DICIONARIO PODE SER O TRIGGER CLICK DE UM ELEMENTO (PARA ISSO INFORME # SEQUIDO DO ID DO OBJETO ALVO) OU
+*   :: A CHAMADA DE UMA FUNCAO, PARA ISSO INICIE COM : SEGUIDO DO NOME DA FUNCAO A SER ACIONADA
+* @example  SHORTCUT_MAP['xTFF'] = '#meubotao' EVENTO CLICK DO ELEMENTO ID: meubotao ACIONADO AO PRECIONAR ALT + X 
+* @example  SHORTCUT_MAP['enterFTF'] = ':minhafuncao' CHAMA FUNCAO minhafuncao() AO PRECIONAR CTRL + ENTER
 * -- 
 * @desc    2a ETAPA: SIMULA TABULACAO AO PRECIONAR ENTER EM FORMULARIOS <form>, ONDE:
-*   ->  FUNCAO TRATA ELEMENTOS OCULTOS, DISABLED, OU COM tabindex MENOR QUE 0 (ZERO), BUSCANDO NESTES CASOS O PROXIMO ELEMENTO
+*   ->  FUNCAO IGNORA ELEMENTOS OCULTOS, DISABLED, OU COM tabindex MENOR QUE 0 (ZERO), BUSCANDO NESTES CASOS O PROXIMO ELEMENTO
 * @param {boolean} TAB_ON_ENTER BOOLEANO QUE DEVE SER INSTANCIADO NA ORIGEM E SETADO PARA true PARA ATIVAR EVENTO DE TABULAR COM A TECLA ENTER:
 * @example var TAB_ON_ENTER = true;
+* -- 
+* @desc    3a ETAPA: CHAMA FUNCAO eventHandler(e) QUE DEVE SER CRIADA E TRATADA NA ORIGEM CASO NAO LOCALIZE CORRESPONDENTE NAS ETAPAS ANTERIORES
 */
-var SHORTCUT_MAP = {
-	'vTFF':() => {try{document.getElementById('back').click()}catch(e){}},
-	'nTFF':() => {try{document.getElementById('add').click()}catch(e){}},
-	'lTFF':() => {try{document.getElementById('clear').click()}catch(e){}},
-	'gTFF':() => {try{document.getElementById('submit').click()}catch(e){}},
-	'/FTF':() => {try{document.getElementById('search').click()}catch(e){}},
-	'dTFF':() => {try{document.getElementById('download').click()}catch(e){}},
-	'iTFF':() => {try{document.getElementById('home').click()}catch(e){}},
-	'.TFF':() => {try{document.getElementById('app_root').click()}catch(e){}},
-	'mTFF':() => {try{document.getElementById('messages').click()}catch(e){}},
-	'sTFF':() => {try{document.getElementById('system').click()}catch(e){}},
-	'f1TFF':() => {try{document.getElementById('docs').click()}catch(e){}},
-	'f2TFF':() => {try{document.getElementById('shortcut_link_list').click()}catch(e){}},
-	'qTFF':() => {try{document.getElementById('logout_link').click()}catch(e){}},
-};
+var SHORTCUT_MAP = {'vTFF':'#back','nTFF':'#add','lTFF':'#clear','gTFF':'#submit','/FTF':'#search','dTFF':'#download','iTFF':'#home','.TFF':'#app_root','mTFF':'#messages','sTFF':'#system','dTFF':'#docs'};
 
 document.addEventListener('keydown', (e) => {
 	// console.log(e);
@@ -39,8 +27,10 @@ document.addEventListener('keydown', (e) => {
 	let command = null;
 	try {command = e.key.toLowerCase();command += e.altKey == true ? 'T': 'F';command += e.ctrlKey == true ? 'T': 'F';command += e.shiftKey == true ? 'T': 'F';}catch(err){command = '';}
 	if(SHORTCUT_MAP[command]){
-		if(command.slice(-3) != 'FFF'){e.preventDefault();} // Caso atalho seja sem combo (alt, ctrl, shift), nao previne comportamento default
-		SHORTCUT_MAP[command](e);
+		if(SHORTCUT_MAP[command].charAt(0) == '#'){
+			e.preventDefault();
+			try {document.getElementById(SHORTCUT_MAP[command].substr(1,SHORTCUT_MAP[command].length)).click();} catch(err){}
+		}else if(SHORTCUT_MAP[command].charAt(0) == ':'){e.preventDefault();window[SHORTCUT_MAP[command].substr(1,SHORTCUT_MAP[command].length)](e);}
 	}  
 	// 2) ETAPA
 	else if (e.key === 'Enter' && (typeof TAB_ON_ENTER !== 'undefined' && TAB_ON_ENTER == true) && (e.target.nodeName === 'INPUT' || e.target.nodeName === 'SELECT')) {
@@ -59,4 +49,6 @@ document.addEventListener('keydown', (e) => {
 				}
 			}
 		}catch(e){}}
+		// 3) ETAPA
+		else{try{eventHandler(e);}catch(e){}}
 	});

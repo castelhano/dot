@@ -256,10 +256,10 @@
     function addSelected(){residual = document.createElement("select");for(var i=0; i < disponiveis.length; i++){if(disponiveis[i].selected){let newOption = new Option(disponiveis[i].text,disponiveis[i].value);selecionados.add(newOption);}else{let newOption = new Option(disponiveis[i].text,disponiveis[i].value);residual.add(newOption);}}disponiveis.innerHTML = residual.innerHTML;}
     function removeSelected(){residual = document.createElement("select");for(var i=0; i < selecionados.length; i++){if(selecionados[i].selected){let newOption = new Option(selecionados[i].text,selecionados[i].value);disponiveis.add(newOption);}else{let newOption = new Option(selecionados[i].text,selecionados[i].value);residual.add(newOption);}}selecionados.innerHTML = residual.innerHTML;}
     
-    SHORTCUT_MAP['1FTF'] = '#tab_link_base';
-    SHORTCUT_MAP['2FTF'] = '#tab_link_metrics';
-    SHORTCUT_MAP['3FTF'] = '#tab_link_comp';
-    SHORTCUT_MAP['4FTF'] = '#tab_link_detalhe';
+    SHORTCUT_MAP['1FTF'] = () => {document.getElementById('tab_link_base').click()};
+    SHORTCUT_MAP['2FTF'] = () => {document.getElementById('tab_link_metrics').click()};
+    SHORTCUT_MAP['3FTF'] = () => {document.getElementById('tab_link_comp').click()};
+    SHORTCUT_MAP['4FTF'] = () => {document.getElementById('tab_link_detalhe').click()};
     
     {% if 'frota_add' in request.get_full_path %}
     function carregaComponentes() {

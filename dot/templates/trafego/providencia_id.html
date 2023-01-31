@@ -101,5 +101,7 @@
 {% block add_script_src %}{% endblock %}
 
 <script>
-  {% block add_script %}{% endblock %}
+  {% block add_script %}
+  SHORTCUT_MAP['.TFF'] = () => {document.getElementById('cadastro_ocorrencia').click()};
+  {% endblock %}
 </script>

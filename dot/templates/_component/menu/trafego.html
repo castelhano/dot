@@ -30,31 +30,41 @@
   </ul>
 </li>
 <script>
-  SHORTCUT_MAP['cTFF'] = '#menu_cadastro';
-  
   if(document.getElementById('cadastro_linha_list_options').childElementCount == 0){document.getElementById('cadastro_linha_list_container').classList.add('d-none');}
   if(document.getElementById('cadastro_ocorrencia_list_options').childElementCount == 0){document.getElementById('cadastro_ocorrencia_list_container').classList.add('d-none');}
   if(document.getElementById('cadastro_notificacao_list_options').childElementCount == 0){document.getElementById('cadastro_notificacao_list_container').classList.add('d-none');}
-  function eventHandler(e){
-    {% include '_component/menu/global_handler.js' %}
-    else{
-      try{cadastro = document.getElementById('menu_cadastro').classList.contains('show') ? true : false;}catch(err){}
-      try{cadastro_linha = document.getElementById('cadastro_linha_list_options').style.display == 'block' ? true : false;}catch(err){}
-      try{cadastro_ocorrencia = document.getElementById('cadastro_ocorrencia_list_options').style.display == 'block' ? true : false;}catch(err){}
-      try{cadastro_notificacao = document.getElementById('cadastro_notificacao_list_options').style.display == 'block' ? true : false;}catch(err){}
-      if(cadastro_linha && e.key.toLowerCase() == 'l')try{e.preventDefault();document.getElementById('app_root').click();}catch(err){}
-      else if(cadastro_linha && e.key.toLowerCase() == 'c')try{e.preventDefault();document.getElementById('cadastro_localidade').click();}catch(err){}
-      else if(cadastro_linha && e.key.toLowerCase() == 'p')try{e.preventDefault();document.getElementById('cadastro_planejamento').click();}catch(err){}
-      else if(cadastro_ocorrencia && e.key.toLowerCase() == 'o')try{e.preventDefault();document.getElementById('cadastro_ocorrencia').click();}catch(err){}
-      else if(cadastro_ocorrencia && e.key.toLowerCase() == 'e')try{e.preventDefault();document.getElementById('cadastro_evento').click();}catch(err){}
-      else if(cadastro_ocorrencia && e.key.toLowerCase() == 'p')try{e.preventDefault();document.getElementById('cadastro_providencia').click();}catch(err){}
-      else if(cadastro_notificacao && e.key.toLowerCase() == 'n')try{e.preventDefault();document.getElementById('cadastro_notificacao').click();}catch(err){}
-      else if(cadastro_notificacao && e.key.toLowerCase() == 'g')try{e.preventDefault();document.getElementById('cadastro_orgao').click();}catch(err){}
-      else if(cadastro_notificacao && e.key.toLowerCase() == 'a')try{e.preventDefault();document.getElementById('cadastro_agente').click();}catch(err){}
-      else if(cadastro_notificacao && e.key.toLowerCase() == 'e')try{e.preventDefault();document.getElementById('cadastro_enquadramento').click();}catch(err){}
-      else if(cadastro && e.key.toLowerCase() == 'l')try{submenuToggle(document.getElementById('submenu_linha_link'));cadastro_linha = true;}catch(err){}
-      else if(cadastro && e.key.toLowerCase() == 'o')try{submenuToggle(document.getElementById('submenu_ocorrencia_link'));cadastro_ocorrencia = true;}catch(err){}
-      else if(cadastro && e.key.toLowerCase() == 'n')try{submenuToggle(document.getElementById('submenu_notificacao_link'));cadastro_ocorrencia = true;}catch(err){}
-    }
+
+  SHORTCUT_MAP['cTFF'] = () => {document.getElementById('menu_cadastro').click()}
+  SHORTCUT_MAP['lFFF'] = () => {
+    if(exibindoCadastroLinha()){try{document.getElementById('app_root').click();}catch (e){}}
+    else if(exibindoCadastro()){try{submenuToggle(document.getElementById('submenu_linha_link'));}catch(e){}}
   }
+  SHORTCUT_MAP['oFFF'] = () => {
+    if(exibindoCadastroOcorrencia()){try{document.getElementById('cadastro_ocorrencia').click();}catch (e){}}
+    else if(exibindoCadastro()){try{submenuToggle(document.getElementById('submenu_ocorrencia_link'));}catch(e){}}
+  }
+  SHORTCUT_MAP['nFFF'] = () => {
+    if(exibindoCadastroNotificacao()){try{document.getElementById('cadastro_notificacao').click();}catch (e){}}
+    else if(exibindoCadastro()){try{submenuToggle(document.getElementById('submenu_notificacao_link'));}catch(e){}}
+  }
+
+  SHORTCUT_MAP['cFFF'] = () => {if(exibindoCadastroLinha()){try{document.getElementById('cadastro_localidade').click();}catch (e){}}}
+  SHORTCUT_MAP['pFFF'] = () => {
+    if(exibindoCadastroOcorrencia()){try{document.getElementById('cadastro_providencia').click();}catch (e){}}
+    else if(exibindoCadastroLinha()){try{document.getElementById('cadastro_planejamento').click();}catch (e){}}
+  }
+  
+  SHORTCUT_MAP['eFFF'] = () => {
+    if(exibindoCadastroNotificacao()){try{document.getElementById('cadastro_enquadramento').click();}catch (e){}}
+    else if(exibindoCadastroOcorrencia()){try{document.getElementById('cadastro_evento').click();}catch (e){}}
+  }
+  
+  SHORTCUT_MAP['gFFF'] = () => {if(exibindoCadastroNotificacao()){try{document.getElementById('cadastro_orgao').click();}catch (e){}}}
+  SHORTCUT_MAP['aFFF'] = () => {if(exibindoCadastroNotificacao()){try{document.getElementById('cadastro_agente').click();}catch (e){}}}
+  
+  function exibindoCadastro(){return document.getElementById('menu_cadastro').classList.contains('show') ? true : false;}
+  function exibindoCadastroLinha(){return document.getElementById('cadastro_linha_list_options').style.display == 'block' ? true : false;}
+  function exibindoCadastroOcorrencia(){return document.getElementById('cadastro_ocorrencia_list_options').style.display == 'block' ? true : false;}
+  function exibindoCadastroNotificacao(){return document.getElementById('cadastro_notificacao_list_options').style.display == 'block' ? true : false;}
+  
 </script>

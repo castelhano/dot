@@ -10,7 +10,7 @@
 class jsTable{
     constructor(id, options){
         // Variaveis internas ********
-        this.id = typeof id == 'string' ? id : id.id ? id.id : 'jsTable' ; // Armazena id da tabela (ou jsTable caso na informado id)
+        this.id = typeof id == 'string' ? id : id.id ? id.id : 'jsTable' ; // Armazena id da tabela (ou jsTable caso nao informado id)
         this.table = typeof id == 'object' ? id : null; // Aponta para tabela alvo
         this.raw = []; // Guarda todos os TRs da tabela
         this.filteredRows = []; // Guarda as rows filtradas

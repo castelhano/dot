@@ -44,10 +44,10 @@
     cropperFixed: true
   });
 
-  SHORTCUT_MAP['1FTF'] = '#menu_funcionario_basico';
-  SHORTCUT_MAP['2FTF'] = '#menu_funcionario_docs';
-  SHORTCUT_MAP['3FTF'] = '#menu_funcionario_contato';
-  SHORTCUT_MAP['4FTF'] = '#menu_funcionario_detalhe';
+  SHORTCUT_MAP['1FTF'] = () => {document.getElementById('menu_funcionario_basico').click()};
+  SHORTCUT_MAP['2FTF'] = () => {document.getElementById('menu_funcionario_docs').click()};
+  SHORTCUT_MAP['3FTF'] = () => {document.getElementById('menu_funcionario_contato').click()};
+  SHORTCUT_MAP['4FTF'] = () => {document.getElementById('menu_funcionario_detalhe').click()};
   
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
   function submitForm(){modal_loading.show();return true;} 

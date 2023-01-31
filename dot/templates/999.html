@@ -7,8 +7,6 @@
   <title>999 Test Page</title>
   <link rel="shortcut icon" href="{% static 'img/favicon.ico'%}">
   <link rel="stylesheet" href="{% static 'css/dot.css' %}" type="text/css">
-  <link rel="stylesheet" href="{% static 'css/chart.css' %}" type="text/css">
-  <!-- <link rel="stylesheet" href="{% static 'css/vendor/cropper.css' %}" type="text/css"> -->
   <link rel="stylesheet" href="{% static 'css/vendor/all.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/fontawesome.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.min.css' %}" type="text/css">
@@ -27,14 +25,9 @@
     <a class="d-none" id="home" href="{% url 'index' %}"></a>
     <a class="d-none" id="clear" href="{% url 'handler' '999' %}"></a>
     <hr>
+
+
   
-    <div class="row">
-      <div class="col-md">
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-          Launch demo modal
-        </button>
-      </div>
-    </div>
     
     <div id="dot_alert" class="alert alert-dismissible fade mb-1" role="alert">
       <span id="dot_alert_message"></span>
@@ -42,47 +35,18 @@
     </div>    
   </div>
 
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div id="calendar_container" class="modal-body"></div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
-    </div>
-  </div>
-</div>
   
 
   <script src="{% static 'js/listener.js' %}"></script>
   <script src="{% static 'js/dot.js' %}"></script>
-  <script src="{% static 'js/calendar.js' %}"></script>
   <script src="/static/js/vendor/bootstrap.bundle.min.js"></script>
   <script>
 
-    const feriados = {
-      '1998-05-01': 'Dia internacional da preguiça',
-      '2023-01-01': 'Ano Novo',
-      '2023-01-22': 'Dia do Indio',
-      '2023-02-05': 'Dia da macumba'
+    SHORTCUT_MAP['dFFF'] = minhaFuncao;
+
+    function minhaFuncao(){
+      console.log('UIIIIIIII');
     }
-    const eventos = {
-      '2023-01-01': 'Foooooooooo',
-      '1998-05-08': 'Reunião gerencial diretoria',
-      '2023-02-14': 'Desligamento Maria do Rosario',
-    }
-    const calendar = new jsCalendar({
-      container: document.getElementById('calendar_container'),
-      // view: 'tasks',
-      canChangeView: false,
-      holidays: feriados,
-      events: eventos,
-      // showSummary: false,
-      onclick: (data) => {console.log(data)},
-      canSelectDay: true,
-      multiSelect: true,
-    });
 
   </script>
 </body>

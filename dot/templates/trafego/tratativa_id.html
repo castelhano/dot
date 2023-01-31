@@ -117,6 +117,7 @@
 <script>
   {% block add_script %}
   var TAB_ON_ENTER = true;
+  SHORTCUT_MAP['.TFF'] = () => {document.getElementById('cadastro_ocorrencia').click()};
   document.getElementById('id_providencia').focus();
   {% endblock %}
 </script>

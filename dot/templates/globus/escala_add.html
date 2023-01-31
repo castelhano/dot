@@ -27,7 +27,7 @@
 <script>
   {% block add_script %}
   var TAB_ON_ENTER = true;
-  SHORTCUT_MAP['2FTF'] = '#evento_lote';
+  SHORTCUT_MAP['2FTF'] = () => {document.getElementById('evento_lote').click()};
   
   {% endblock %}
 </script>

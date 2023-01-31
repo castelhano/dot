@@ -16,7 +16,7 @@
       <li class="nav-item ms-1"><a class="nav-link border" id="add" href="{% url 'sinistro_terceiro_add' acidente.id|safe%}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
       {% endif %}
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'sinistro_acidente_id' acidente.id|safe%}"><i class="fas fa-undo"></i></a></li>
-      <li class="nav-item"><a id="acidentes_link" class="nav-link" href="{% url 'sinistro_acidentes' %}"  title="Fechar: Acidentes"><i class="fas fa-reply-all"></i></a></li>
+      <li class="nav-item"><a id="acidentes_link" class="nav-link" href="{% url 'sinistro_acidentes' %}"  title="Fechar: Acidentes [Alt + F]"><i class="fas fa-reply-all"></i></a></li>
       {% if perms.core.view_log %}
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
@@ -86,14 +86,12 @@
 
 <script>
 {% block add_script %}
-SHORTCUT_MAP['fTFF'] = '#acidentes_link';
-const table = new jsTable(document.getElementById('main_table'), {});
-SHORTCUT_MAP['arrowdownFFF'] = ':nextRow';
-SHORTCUT_MAP['arrowupFFF'] = ':previousRow';
-SHORTCUT_MAP['enterFTF'] = ':enterRow';
 
-function nextRow(){table.nextRow();}
-function previousRow(){table.previousRow();}
-function enterRow(){table.enterRow();}
+SHORTCUT_MAP['fTFF'] = () => {document.getElementById('acidentes_link').click()};
+
+const table = new jsTable(document.getElementById('main_table'), {});
+SHORTCUT_MAP['arrowdownFFF'] = () => {table.nextRow();}
+SHORTCUT_MAP['arrowupFFF'] = () => {table.previousRow();};
+SHORTCUT_MAP['enterFTF'] = () => {table.enterRow();}
 {% endblock %}
 </script>

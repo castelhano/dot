@@ -33,8 +33,8 @@
 <script>
   {% block add_script %}
   var TAB_ON_ENTER = true;
-  SHORTCUT_MAP['1FTF'] = '#tab_link_base';
-  SHORTCUT_MAP['2FTF'] = '#tab_link_veiculo';
+  SHORTCUT_MAP['1FTF'] = () => {document.getElementById('tab_link_base').click()};
+  SHORTCUT_MAP['2FTF'] = () => {document.getElementById('tab_link_veiculo').click()};
   
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
   

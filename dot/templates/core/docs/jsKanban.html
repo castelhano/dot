@@ -185,10 +185,8 @@ function meuSave(){
           </div>
 
           <h5 id="integracao_listener_js">Integração com <b class="text-orange">listener.js</b></h5>
-          <pre><code class="language-javascript">SHORTCUT_MAP['arrowdownTFF'] = ':kanbanDownload';
-SHORTCUT_MAP['/FTF'] = ':searchFocus';
-function kanbanDownload(){kanban.exportJsonBtn.click()}
-function searchFocus(){kanban.searchInput.select();}</code></pre>
+          <pre><code class="language-javascript">SHORTCUT_MAP['arrowdownTFF'] = () => {kanban.exportJsonBtn.click()};
+SHORTCUT_MAP['/FTF'] = () => {kanban.searchInput.select()};</code></pre>
 
         <p id="apontadores_elementos" class="mt-5">Apontadores para elementos do kanban</p>
         <pre><code class="language-javascript">kanban.saveBtn // Aponta para botao de salvamento

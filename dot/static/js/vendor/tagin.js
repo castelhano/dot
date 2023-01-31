@@ -20,7 +20,7 @@
 *       </div>
 *     </div>
 *
-*     new Tagin(document.getElementById('id_tags')) ou
+*     new Tagin(document.getElementById('id_tags'),{}) ou
 *     new Tagin(document.getElementById('id_tags'), {
 *       separator: ';',                             # Default = ','
 *       tagColor: 'primary',                        # Default = '' Valores possiveis: [primary, success, warning, danger, purple, orange]

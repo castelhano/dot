@@ -158,10 +158,10 @@
 <script>
   {% block add_script %}
   var TAB_ON_ENTER = true;
-  SHORTCUT_MAP['1FTF'] = '#link_tab_base';
-  SHORTCUT_MAP['2FTF'] = '#link_tab_contato';
-  SHORTCUT_MAP['3FTF'] = '#link_tab_detalhe';
-  SHORTCUT_MAP['4FTF'] = '#link_tab_config';
+  SHORTCUT_MAP['1FTF'] = () => {document.getElementById('link_tab_base').click()};
+  SHORTCUT_MAP['2FTF'] = () => {document.getElementById('link_tab_contato').click()};
+  SHORTCUT_MAP['3FTF'] = () => {document.getElementById('link_tab_detalhe').click()};
+  SHORTCUT_MAP['4FTF'] = () => {document.getElementById('link_tab_config').click()};
   
   if(document.getElementById('candidato_options_list').childElementCount == 0){document.getElementById('candidato_options_container').classList.add('d-none');}
   

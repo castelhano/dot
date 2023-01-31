@@ -66,16 +66,11 @@ const table = new jsTable(document.getElementById('main_table'), {
   canFilter: true,
   filterCols: ['Nome']
 });
-SHORTCUT_MAP['/FTF'] = ':filterFocus';
-SHORTCUT_MAP['arrowdownFFF'] = ':nextRow';
-SHORTCUT_MAP['arrowupFFF'] = ':previousRow';
-SHORTCUT_MAP['enterFTF'] = ':enterRow';
 
-function nextRow(){table.nextRow();}
-function previousRow(){table.previousRow();}
-function enterRow(){table.enterRow();}
-
-function filterFocus(){table.filterInput.select();}
+SHORTCUT_MAP['/FTF'] = () => {table.filterInput.select()};
+SHORTCUT_MAP['arrowdownFFF'] = () => {table.nextRow();}
+SHORTCUT_MAP['arrowupFFF'] = () => {table.previousRow();};
+SHORTCUT_MAP['enterFTF'] = () => {table.enterRow();}
 
 
 {% endblock %}

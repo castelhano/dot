@@ -29,14 +29,14 @@
   
 <script>
 {% block add_script %}
-SHORTCUT_MAP['1FTF'] = '#widget_action_gestao';
-SHORTCUT_MAP['pFTF'] = '#widget_action_pessoal';
-SHORTCUT_MAP['rFTF'] = '#widget_action_recrutamento';
-SHORTCUT_MAP['2FTF'] = '#widget_action_sac';
-SHORTCUT_MAP['oFTF'] = '#widget_action_oficina';
-SHORTCUT_MAP['gFTF'] = '#widget_action_linha';
-SHORTCUT_MAP['3FTF'] = '#widget_action_planejamento';
-SHORTCUT_MAP['kFTF'] = '#widget_action_acidente';
+SHORTCUT_MAP['1FTF'] = () => {document.getElementById('widget_action_gestao').click()};
+SHORTCUT_MAP['pFTF'] = () => {document.getElementById('widget_action_pessoal').click()};
+SHORTCUT_MAP['rFTF'] = () => {document.getElementById('widget_action_recrutamento').click()};
+SHORTCUT_MAP['2FTF'] = () => {document.getElementById('widget_action_sac').click()};
+SHORTCUT_MAP['oFTF'] = () => {document.getElementById('widget_action_oficina').click()};
+SHORTCUT_MAP['gFTF'] = () => {document.getElementById('widget_action_linha').click()};
+SHORTCUT_MAP['3FTF'] = () => {document.getElementById('widget_action_planejamento').click()};
+SHORTCUT_MAP['kFTF'] = () => {document.getElementById('widget_action_acidente').click()};
 
 {% include '_component/script/update_alertas.js' %}
 {% endblock %}

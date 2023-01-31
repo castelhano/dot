@@ -123,18 +123,12 @@
     enablePaginate: true
   });
 
-  SHORTCUT_MAP['arrowrightFTF'] = ':nextPage';
-  SHORTCUT_MAP['arrowleftFTF'] = ':previousPage';
-  SHORTCUT_MAP['arrowdownFFF'] = ':nextRow';
-  SHORTCUT_MAP['arrowupFFF'] = ':previousRow';
-  SHORTCUT_MAP['enterFTF'] = ':enterRow';
+  SHORTCUT_MAP['arrowrightFTF'] = () => {table.nextPage();}
+  SHORTCUT_MAP['arrowleftFTF'] = () => {table.previousPage();}
+  SHORTCUT_MAP['arrowdownFFF'] = () => {table.nextRow();}
+  SHORTCUT_MAP['arrowupFFF'] = () => {table.previousRow();};
+  SHORTCUT_MAP['enterFTF'] = () => {table.enterRow();}
   
-  function nextPage(){table.nextPage();}
-  function previousPage(){table.previousPage();}
-  function nextRow(){table.nextRow();}
-  function previousRow(){table.previousRow();}
-  function enterRow(){table.enterRow();}
-
   const usuario_filters = {
     'is_active=True':'id_ativos',
     'is_active=False':'id_bloqueados',

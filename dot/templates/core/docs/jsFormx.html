@@ -242,10 +242,8 @@ function meuSave(){
           </div>
 
           <h5 id="integracao_listener_js">Integração com <b class="text-orange">listener.js</b></h5>
-          <pre><code class="language-javascript">SHORTCUT_MAP['arrowdownFTF'] = ':nextGroup';
-SHORTCUT_MAP['arrowupFTF'] = ':previousGroup';
-function nextGroup(){form.nextGroup();}
-function previousGroup(){form.previousGroup();}</code></pre>
+          <pre><code class="language-javascript">SHORTCUT_MAP['arrowdownFTF'] = () => {form.nextGroup()};
+SHORTCUT_MAP['arrowupFTF'] = () => {form.previousGroup()};</code></pre>
 
         <p class="mt-5">Apontadores para elementos do form</p>
         <pre><code class="language-javascript">form.saveBtn // Aponta para botao de salvamento

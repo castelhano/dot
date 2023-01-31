@@ -21,29 +21,22 @@
   </ul>
 </li>
 <script>
-  SHORTCUT_MAP['cTFF'] = '#menu_cadastro';
-  
   if(document.getElementById('cadastro_list_options').childElementCount == 0){document.getElementById('cadastro_list_container').classList.add('d-none');}
-  // if(document.getElementById('cadastro_frota_list_options').childElementCount == 0){document.getElementById('cadastro_frota_list_container').classList.add('d-none');}
-  // if(document.getElementById('cadastro_outros_list_options').childElementCount == 0){document.getElementById('cadastro_outros_list_container').classList.add('d-none');}
-  function eventHandler(e){
-    {% include '_component/menu/global_handler.js' %}
-    else{
-      let cadastro = false;
-      let cadastro_frota = false;
-      try{cadastro = document.getElementById('menu_cadastro').classList.contains('show') ? true : false;}catch(err){}
-      try{cadastro_frota = document.getElementById('cadastro_frota_list_options').style.display == 'block' ? true : false;}catch(err){}
-      // try{cadastro_outros = document.getElementById('cadastro_outros_list_options').style.display == 'block' ? true : false;}catch(err){}
-      if(cadastro_frota && e.key.toLowerCase() == 'f')try{e.preventDefault();document.getElementById('app_root').click();}catch(err){}
-      else if(cadastro_frota && e.key.toLowerCase() == 'm')try{e.preventDefault();document.getElementById('cadastro_marca').click();}catch(err){}
-      else if(cadastro_frota && e.key.toLowerCase() == 'l')try{e.preventDefault();document.getElementById('cadastro_modelo').click();}catch(err){}
-      else if(cadastro_frota && e.key.toLowerCase() == 'c')try{e.preventDefault();document.getElementById('cadastro_classificacao').click();}catch(err){}
-      else if(cadastro_frota && e.key.toLowerCase() == 't')try{e.preventDefault();document.getElementById('cadastro_categoria').click();}catch(err){}
-      else if(cadastro_frota && e.key.toLowerCase() == 'r')try{e.preventDefault();document.getElementById('cadastro_carroceria').click();}catch(err){}
-      else if(cadastro_frota && e.key.toLowerCase() == 'p')try{e.preventDefault();document.getElementById('cadastro_componente').click();}catch(err){}
-      else if(cadastro && e.key.toLowerCase() == 'f')try{submenuToggle(document.getElementById('submenu_frota_link'));cadastro_frota = true;}catch(err){}
-      // else if(cadastro && e.key.toLowerCase() == 'o')try{submenuToggle(document.getElementById('submenu_outros_link'));}catch(err){}
+  else{ // TODO: Aqui deve ser tratado se vazio cadastro_frota_list_options, considerar possiveis outros menus
+    SHORTCUT_MAP['cTFF'] = () => {document.getElementById('menu_cadastro').click()}
+    SHORTCUT_MAP['fFFF'] = () => {
+      if(exibindoCadastroFrota()){try{document.getElementById('app_root').click();}catch (e){}}
+      else if(exibindoCadastro()){try{submenuToggle(document.getElementById('submenu_frota_link'));}catch(e){}}
     }
+    SHORTCUT_MAP['mFFF'] = () => {if(exibindoCadastroFrota()){try{document.getElementById('cadastro_marca').click();}catch (e){}}}
+    SHORTCUT_MAP['lFFF'] = () => {if(exibindoCadastroFrota()){try{document.getElementById('cadastro_modelo').click();}catch (e){}}}
+    SHORTCUT_MAP['cFFF'] = () => {if(exibindoCadastroFrota()){try{document.getElementById('cadastro_classificacao').click();}catch (e){}}}
+    SHORTCUT_MAP['tFFF'] = () => {if(exibindoCadastroFrota()){try{document.getElementById('cadastro_categoria').click();}catch (e){}}}
+    SHORTCUT_MAP['rFFF'] = () => {if(exibindoCadastroFrota()){try{document.getElementById('cadastro_carroceria').click();}catch (e){}}}
+    SHORTCUT_MAP['pFFF'] = () => {if(exibindoCadastroFrota()){try{document.getElementById('cadastro_componente').click();}catch (e){}}}
+    
+    function exibindoCadastro(){return document.getElementById('menu_cadastro').classList.contains('show') ? true : false;}
+    function exibindoCadastroFrota(){return document.getElementById('cadastro_frota_list_options').style.display == 'block' ? true : false;}
   }
-  
+    
 </script>

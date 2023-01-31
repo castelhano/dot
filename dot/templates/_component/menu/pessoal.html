@@ -21,26 +21,19 @@
 </li>
 
 <script>
-  SHORTCUT_MAP['cTFF'] = '#menu_cadastro';
-  
   if(document.getElementById('cadastro_list_options').childElementCount == 0){document.getElementById('cadastro_list_container').classList.add('d-none');}
-  function eventHandler(e){
-    {% include '_component/menu/global_handler.js' %}
-    else{
-      let cadastro = false;
-      let cadastro_funcionario = false;
-      // let cadastro_frequencia = false;
-      try{cadastro = document.getElementById('menu_cadastro').classList.contains('show') ? true : false;}catch(err){}
-      try{cadastro_funcionario = document.getElementById('cadastro_funcionario_list_options').style.display == 'block' ? true : false;}catch(err){}
-      try{cadastro_frequencia = document.getElementById('cadastro_frequencia_list_options').style.display == 'block' ? true : false;}catch(err){}
-      if(cadastro_funcionario && e.key.toLowerCase() == 'f'){e.preventDefault();document.getElementById('app_root').click();}
-      else if(cadastro_funcionario && e.key.toLowerCase() == 's'){e.preventDefault();document.getElementById('cadastro_setor').click();}
-      else if(cadastro_funcionario && e.key.toLowerCase() == 'c'){e.preventDefault();document.getElementById('cadastro_cargo').click();}
-      else if(cadastro_funcionario && e.key.toLowerCase() == 'x'){e.preventDefault();document.getElementById('cadastro_funcaofixa').click();}
-      // else if(cadastro_frequencia && e.key.toLowerCase() == 'e'){e.preventDefault();document.getElementById('cadastro_evento').click();}
-      else if(cadastro && e.key.toLowerCase() == 'f')try{submenuToggle(document.getElementById('submenu_funcionario_link'));cadastro_funcionario = true;}catch(err){}
-      // else if(cadastro && e.key.toLowerCase() == 'q')try{submenuToggle(document.getElementById('submenu_frequencia_link'));cadastro_frequencia = true;}catch(err){}
-      else{try{eventLocalHandler(e);}catch(e){}}
+  else{
+    SHORTCUT_MAP['cTFF'] = () => {document.getElementById('menu_cadastro').click()}
+    SHORTCUT_MAP['fFFF'] = () => {
+      if(exibindoCadastroFuncionario()){try{document.getElementById('app_root').click();}catch (e){}}
+      else if(exibindoCadastro()){try{submenuToggle(document.getElementById('submenu_funcionario_link'));}catch(e){}}
     }
+    SHORTCUT_MAP['sFFF'] = () => {if(exibindoCadastroFuncionario()){try{document.getElementById('cadastro_setor').click();}catch (e){}}}
+    SHORTCUT_MAP['cFFF'] = () => {if(exibindoCadastroFuncionario()){try{document.getElementById('cadastro_cargo').click();}catch (e){}}}
+    SHORTCUT_MAP['xFFF'] = () => {if(exibindoCadastroFuncionario()){try{document.getElementById('cadastro_funcaofixa').click();}catch (e){}}}
+    
+    function exibindoCadastro(){return document.getElementById('menu_cadastro').classList.contains('show') ? true : false;}
+    function exibindoCadastroFuncionario(){return document.getElementById('cadastro_funcionario_list_options').style.display == 'block' ? true : false;}
   }
+  
 </script>

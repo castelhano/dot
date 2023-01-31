@@ -111,11 +111,11 @@
   
   var TAB_ON_ENTER = true;
   
-  SHORTCUT_MAP['1FTF'] = '#tab_link_base';
-  SHORTCUT_MAP['2FTF'] = '#tab_link_local';
-  SHORTCUT_MAP['3FTF'] = '#tab_link_conclusao';
-  SHORTCUT_MAP['4FTF'] = '#acidente_extra_link';
-  SHORTCUT_MAP['pFTF'] = '#widget_acidente_capa';
+  SHORTCUT_MAP['1FTF'] = () => {document.getElementById('tab_link_base').click()};
+  SHORTCUT_MAP['2FTF'] = () => {document.getElementById('tab_link_local').click()};
+  SHORTCUT_MAP['3FTF'] = () => {document.getElementById('tab_link_conclusao').click()};
+  SHORTCUT_MAP['4FTF'] = () => {document.getElementById('acidente_extra_link').click()};
+  SHORTCUT_MAP['pFTF'] = () => {document.getElementById('widget_acidente_capa').click()};
   
   function eventLocalHandler(e){
     let extras = false;

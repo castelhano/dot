@@ -256,9 +256,9 @@
   {% block add_script %}
   var analytics_loading = new bootstrap.Modal(document.getElementById('analytics_loading'), {keyboard: false});
   
-  SHORTCUT_MAP['1FTF'] = '#dashboard_link';
-  SHORTCUT_MAP['2FTF'] = '#roadmap_link';
-  SHORTCUT_MAP['3FTF'] = '#back';
+  SHORTCUT_MAP['1FTF'] = () => {document.getElementById('dashboard_link').click()};
+  SHORTCUT_MAP['2FTF'] = () => {document.getElementById('roadmap_link').click()};
+  SHORTCUT_MAP['3FTF'] = () => {document.getElementById('back').click()};
   
   var analises_list = document.querySelectorAll(".analise_menu");
   for (var i = 0; i < analises_list.length; i++){

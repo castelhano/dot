@@ -254,34 +254,28 @@
         
         <h5 id="js_listener">Listener JS</h5>
         
-        <p>Biblioteca padrão (já inclusa no layout base) que trata eventos de teclado (keydown) possibilitando adicionar atalhos de teclado além de oferecer suporte a tabulação na tecla Enter para formulários.</p>
+        <p>Biblioteca padrão (já inclusa no layout base) que trata eventos de teclado (keydown) possibilitando adicionar atalhos, além de oferecer suporte a tabulação na tecla Enter para formulários.</p>
         <pre><code class="language-html">&lt;script src="{&#37; static 'js/listener.js' &#37;}"&gt;&lt;/script&gt;</code></pre>
         <p class="mt-4">Lógica utiliza de dicionário (object) pré carregado [ <b>SHORTCUT_MAP</b> ] onde a <code>key</code> representa a combinação de atalho a ser capturada e o <code>value</code> o comando a ser executado.</p>
         <p>A Key deve ser formada pela tecla alvo seguido das letras <b>T</b> ou <b>F</b> (true ou false) que representam a combinação com as teclas Alt, Ctrl e Shift (respectivamente), ou seja a key <b>'mFTF'</b> responde pelo comando Ctrl + M (case insensitive).</p>
-        <p>Já o Value deve apontar para o ID de um elemento (será acionado o evento click) ou apontar para uma função. Para pontar para um elemento informe o caractere sustenido (sharp) seguido do id do elemento, Ex '#meuBotao'.</p>
-        <p>Para retornar uma função, informe o caractere dois pontos (colon) seguido do nome da função sem parenteses. Ex ':minhaFuncao', não é possivel passar variaveis, na chamada da função é repassado o evento que pode ser tratado na página de origem. </p>
+        <p>No value deve ser inserido a função que responde pelo atalho, Ex.: <code>SHORTCUT_MAP['dTFF'] = () => {document.getElementById('id_el').click()}</code></p>
         <p>Por padrão já são carregados os atalhos abaixo no dicionario SHORTCUT_MAP:</p>
 
         <pre><code class="language-javascript">SHORTCUT_MAP = {
-  'vTFF':'#back',     // Alt + V: Evento click do elemento ID back
-  'nTFF':'#add',      // Alt + N: Evento click do elemento ID add
-  'lTFF':'#clear',    // Alt + L: Evento click do elemento ID clear
-  'gTFF':'#submit',   // Alt + G: Evento click do elemento ID submit
-  '/FTF':'#search',   // Ctrl + /: Evento click do elemento ID search
-  'dTFF':'#download', // Ctrl + D: Aciona evento click do elemento ID download
-  'iTFF':'#home',     // Alt + I: Aciona evento click do elemento ID home
-  '.TFF':'#app_root', // Alt + .: Aciona evento click do elemento ID app_root
-  'mTFF':'#messages', // Alt + M: Aciona evento click do elemento ID messages
-  'sTFF':'#system',   // Alt + S: Aciona evento click do elemento ID system
-  'dTFF':'#docs' // Ctrl + D: Aciona evento click do elemento ID docs
+  'vTFF':{...}, // Alt + V: Evento click do elemento ID back
+  'nTFF':{...}, // Alt + N: Evento click do elemento ID add
+  'lTFF':{...}, // Alt + L: Evento click do elemento ID clear
+  'gTFF':{...}, // Alt + G: Evento click do elemento ID submit
+  '/FTF':{...}, // Ctrl + /: Evento click do elemento ID search
+  'dTFF':{...}, // Ctrl + D: Aciona evento click do elemento ID download
+  'iTFF':{...}, // Alt + I: Aciona evento click do elemento ID home
+  '.TFF':{...}, // Alt + .: Aciona evento click do elemento ID app_root
+  'mTFF':{...}, // Alt + M: Aciona evento click do elemento ID messages
+  'sTFF':{...}, // Alt + S: Aciona evento click do elemento ID system
+  'dTFF':{...}  // Ctrl + D: Aciona evento click do elemento ID docs
 }</code></pre>
         <h6 class="mt-4">Inserir novo atalho (ou alterar):</h6>
-        <pre><code class="language-javascript">SHORTCUT_MAP['xFTF'] = '#meuBotao';</code></pre>
-        <p>ou</p>
-        <pre><code class="language-javascript">SHORTCUT_MAP['yTTF'] = ':minhaFuncao';
-function minhaFuncao(event){
-  ...
-}</code></pre>
+        <pre><code class="language-javascript">SHORTCUT_MAP['xFTF'] = () => {...};</code></pre>
 
         <h5 id="tabonenter">Tabulando forms fields ao pressionar Enter</h5>
         <p>Listener.js implementa a tabulação de campos de formulário ao pressionar a tecla Enter, para ativar crie uma variavel <code>TAB_ON_ENTER</code> e defina o valor dela para <code>true</code></p>

@@ -52,14 +52,14 @@
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle pt-1 fw-bold" id="system" href="#" data-bs-toggle="dropdown" title="ALT + S">{{user.username|title}}</a>
             <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end mt-1" id="user_list_options">
-              <li><a class="dropdown-item" id="change_password_link" href="{% url 'change_password' %}"><i class="fas fa-fw fa-unlock-alt"></i> Alterar <b>S</b>enha</a></li>
-              <li class="d-none d-lg-block"><a class="dropdown-item pointer" id="shortcut_link_list" data-bs-toggle="modal" data-bs-target="#shortcut_modal"><i class="fas fa-fw fa-keyboard"></i> <b>A</b>talhos / Sobre</a></li>
+              <li><a class="dropdown-item" id="change_password_link" href="{% url 'change_password' %}"><i class="fas fa-fw fa-unlock-alt"></i> Alterar Senha <kbd class="ms-1">Alt+F3</kbd></a></li>
+              <li class="d-none d-lg-block"><a class="dropdown-item pointer" id="shortcut_link_list" data-bs-toggle="modal" data-bs-target="#shortcut_modal"><i class="fas fa-fw fa-keyboard"></i> Atalhos / Sobre <kbd class="ms-1">Alt+F2</kbd></a></li>
               {% if perms.core.docs %}
-              <li><a class="dropdown-item" id="docs" href="{% url 'docs' 'core' %}"><i class="fas fa-fw fa-terminal"></i> <b>D</b>ocumentação</a></li>
+              <li><a class="dropdown-item" id="docs" href="{% url 'docs' 'core' %}"><i class="fas fa-fw fa-terminal"></i> Documentação <kbd class="ms-1">Alt+F1</kbd></a></li>
               {% endif %}
-              <li class="d-lg-none"><span class="dropdown-item pointer" onclick="forceReload()"><i class="fas fa-fw fa-sync-alt"></i> Force Reload</span></li>
+              <li class="d-lg-none"><span class="dropdown-item pointer" onclick="forceReload()"><i class="fas fa-fw fa-sync-alt"></i> Force Reload <kbd class="ms-1">Ctrl+F5</kbd></span></li>
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-fw fa-sign-out-alt"></i> Sair</a></li>
+              <li><a class="dropdown-item" id="logout_link" href="{% url 'logout' %}"><i class="fas fa-fw fa-sign-out-alt"></i> Sair <kbd class="ms-1">Alt+Q</kbd></a></li>
             </ul>
           </li>
         </ul>          
@@ -135,6 +135,8 @@
                 <tr><td class="fw-bold" style="min-width:80px;"><kbd>ALT + V</kbd></td><td>Voltar a origem</td></tr>
                 <tr><td class="fw-bold" style="min-width:80px;"><kbd>ALT + D</kbd></td><td>Baixa em formato CSV registros da janela ativa (quando disponível)</td></tr>
                 <tr><td class="fw-bold" style="min-width:80px;"><kbd>CTRL + /</kbd></td><td>Abre o form de consulta para janela ativa</td></tr>
+                <tr><td class="fw-bold" style="min-width:80px;"><kbd>ALT + F2</kbd></td><td>Abre modal com atalhos de teclado</td></tr>
+                <tr><td class="fw-bold" style="min-width:80px;"><kbd>ALT + Q</kbd></td><td>Finaliza o sistema (logout)</td></tr>
               </table>
             </div>
             <div class="col-lg-5">

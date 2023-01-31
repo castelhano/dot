@@ -185,15 +185,13 @@
     filterCols: ['Responsável', 'Evento', 'Linha', 'Veiculo', 'Condutor']
   });
   
-  SHORTCUT_MAP['1FTF'] = '#menu_ocorrencias_list';
-  SHORTCUT_MAP['tTFF'] = '#menu_tratativas';
-  SHORTCUT_MAP['arrowdownFFF'] = ':nextRow';
-  SHORTCUT_MAP['arrowupFFF'] = ':previousRow';
-  SHORTCUT_MAP['enterFTF'] = ':enterRow';
+  SHORTCUT_MAP['.TFF'] = () => {}; // Limpa o app_root redirect
+  SHORTCUT_MAP['1FTF'] = () => {document.getElementById('menu_ocorrencias_list').click()};
+  SHORTCUT_MAP['tTFF'] = () => {document.getElementById('menu_tratativas').click()};
   
-  function nextRow(){table.nextRow();}
-  function previousRow(){table.previousRow();}
-  function enterRow(){table.enterRow();}
+  SHORTCUT_MAP['arrowdownFFF'] = () => {table.nextRow();}
+  SHORTCUT_MAP['arrowupFFF'] = () => {table.previousRow();};
+  SHORTCUT_MAP['enterFTF'] = () => {table.enterRow();}
 
 
   

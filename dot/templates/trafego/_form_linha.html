@@ -158,8 +158,8 @@
   <script>
     var TAB_ON_ENTER = true;
     
-    SHORTCUT_MAP['1FTF'] = '#tab_link_base';
-    SHORTCUT_MAP['2FTF'] = '#tab_link_extensoes';
-    SHORTCUT_MAP['3FTF'] = '#tab_link_trajetos';
+    SHORTCUT_MAP['1FTF'] = () => {document.getElementById('tab_link_base').click()};
+    SHORTCUT_MAP['2FTF'] = () => {document.getElementById('tab_link_extensoes').click()};
+    SHORTCUT_MAP['3FTF'] = () => {try {document.getElementById('tab_link_trajetos').click()}catch(e){}};
     
   </script>

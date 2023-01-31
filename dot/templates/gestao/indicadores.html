@@ -88,16 +88,11 @@
     filterCols: ['Nome']
   });
 
-  SHORTCUT_MAP['/FTF'] = ':indicadorSearch';
-  SHORTCUT_MAP['arrowdownFFF'] = ':nextRow';
-  SHORTCUT_MAP['arrowupFFF'] = ':previousRow';
-  SHORTCUT_MAP['enterFTF'] = ':enterRow';
+  SHORTCUT_MAP['/FTF'] = () => {table.filterInput.select()};
+  SHORTCUT_MAP['arrowdownFFF'] = () => {table.nextRow();}
+  SHORTCUT_MAP['arrowupFFF'] = () => {table.previousRow();};
+  SHORTCUT_MAP['enterFTF'] = () => {table.enterRow();}
 
-  function nextRow(){table.nextRow();}
-  function previousRow(){table.previousRow();}
-  function enterRow(){table.enterRow();}
-  function indicadorSearch(){table.filterInput.select()}
-  
   const staff_filters = {
     'ativo=True':'id_ativos',
     'ativo=False':'id_inativos'

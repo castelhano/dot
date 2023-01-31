@@ -119,11 +119,10 @@
   <script>
     {% block add_script %}
     var TAB_ON_ENTER = true;
-    SHORTCUT_MAP['1FTF'] = '#dashboard_link';
-    SHORTCUT_MAP['2FTF'] = '#roadmap_link';
-    SHORTCUT_MAP['/FTF'] = ':filterFocus';
-    
-    function filterFocus(){table.filterInput.select();}
+
+    SHORTCUT_MAP['1FTF'] = () => {document.getElementById('dashboard_link').click()};
+    SHORTCUT_MAP['2FTF'] = () => {document.getElementById('roadmap_link').click()};
+    SHORTCUT_MAP['/FTF'] = () => {table.filterInput.select()};
 
     
     const table = new jsTable(document.getElementById('analytics_table'), {

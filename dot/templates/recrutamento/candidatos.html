@@ -103,22 +103,16 @@
     enablePaginate: true
   });
 
-  SHORTCUT_MAP['arrowrightFTF'] = ':nextPage';
-  SHORTCUT_MAP['arrowleftFTF'] = ':previousPage';
-  SHORTCUT_MAP['arrowdownFFF'] = ':nextRow';
-  SHORTCUT_MAP['arrowupFFF'] = ':previousRow';
-  SHORTCUT_MAP['enterFTF'] = ':enterRow';
-
-  function nextRow(){table.nextRow();}
-  function previousRow(){table.previousRow();}
-  function enterRow(){table.enterRow();}  
-  function nextPage(){table.nextPage();}
-  function previousPage(){table.previousPage();}
+  SHORTCUT_MAP['arrowdownFFF'] = () => {table.nextRow();}
+  SHORTCUT_MAP['arrowupFFF'] = () => {table.previousRow();};
+  SHORTCUT_MAP['enterFTF'] = () => {table.enterRow();}
+  SHORTCUT_MAP['arrowrightFTF'] = () => {table.nextPage()};
+  SHORTCUT_MAP['arrowleftFTF'] = () => {table.previousPage()};
 }catch (error) {}
   
+SHORTCUT_MAP['1FTF'] = () => {document.getElementById('candidato_tab_link').click()};
   
 
-  SHORTCUT_MAP['1FTF'] = '#candidato_tab_link';
   
   function carregaVagas() {
     var xhttp = new XMLHttpRequest();

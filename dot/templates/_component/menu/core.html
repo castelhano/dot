@@ -13,7 +13,7 @@
   </ul>
 </li>
 <li id="gestao_list_container" class="nav-item dropdown">
-  <a class="nav-link dropdown-toggle" id="menu_relatorios" href="#" data-bs-toggle="dropdown" title="ALT + T">G<b>e</b>stão</a>
+  <a class="nav-link dropdown-toggle" id="menu_gestao" href="#" data-bs-toggle="dropdown" title="ALT + T">G<b>e</b>stão</a>
   <ul id="gestao_list_options" class="dropdown-menu dropdown-menu-dark">
     {% if perms.core.view_alerta %}
     <li><a class="dropdown-item" id="relatorio_alertas" href="{% url 'core_alertas' %}"><b>A</b>lertas</a></li>
@@ -22,22 +22,19 @@
 </li>
 
 <script>
-  SHORTCUT_MAP['cTFF'] = '#menu_cadastro';
-  SHORTCUT_MAP['eTFF'] = '#menu_relatorios';
-  
   if(document.getElementById('cadastro_list_options').childElementCount == 0){document.getElementById('cadastro_list_container').classList.add('d-none');}
-  if(document.getElementById('gestao_list_options').childElementCount == 0){document.getElementById('gestao_list_container').classList.add('d-none');}
-  function eventHandler(e){
-    {% include '_component/menu/global_handler.js' %}
-    else{
-      let cadastro = false;
-      let relatorios = false;
-      try{cadastro = document.getElementById('menu_cadastro').classList.contains('show') ? true : false;}catch(err){}
-      try{relatorios = document.getElementById('menu_relatorios').classList.contains('show') ? true : false;}catch(err){}
-      if(cadastro && e.key.toLowerCase() == 'e'){e.preventDefault();document.getElementById('cadastro_empresa').click();}
-      else if(cadastro && e.key.toLowerCase() == 'u'){e.preventDefault();document.getElementById('cadastro_usuario').click();}
-      else if(cadastro && e.key.toLowerCase() == 'g'){e.preventDefault();document.getElementById('cadastro_grupo').click();}
-      else if(relatorios && e.key.toLowerCase() == 'a'){e.preventDefault();document.getElementById('relatorio_alertas').click();}
-    }
+  else{
+    SHORTCUT_MAP['cTFF'] = () => {document.getElementById('menu_cadastro').click()}
+    SHORTCUT_MAP['eTFF'] = () => {document.getElementById('menu_gestao').click()}
+    SHORTCUT_MAP['eFFF'] = () => {if(exibindoCadastro()){try{document.getElementById('cadastro_empresa').click();}catch (e){}}}
+    SHORTCUT_MAP['uFFF'] = () => {if(exibindoCadastro()){try{document.getElementById('cadastro_usuario').click();}catch (e){}}}
+    SHORTCUT_MAP['gFFF'] = () => {if(exibindoCadastro()){try{document.getElementById('cadastro_grupo').click();}catch (e){}}}
+    function exibindoCadastro(){return document.getElementById('menu_cadastro').classList.contains('show') ? true : false;}
   }
+  if(document.getElementById('gestao_list_options').childElementCount == 0){document.getElementById('gestao_list_container').classList.add('d-none');}
+  else{
+    SHORTCUT_MAP['aFFF'] = () => {if(exibindoGestao()){try{document.getElementById('relatorio_alertas').click();}catch (e){}}}
+    function exibindoGestao(){return document.getElementById('menu_gestao').classList.contains('show') ? true : false;}
+  }
+  
 </script>

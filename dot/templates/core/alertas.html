@@ -97,7 +97,6 @@
   
 <script>
 {% block add_script %}
-SHORTCUT_MAP['1FTF'] = '#id_dados_alerta';
 
 const table = new jsTable(document.getElementById('main_table'), {
   canFilter: true,
@@ -105,13 +104,9 @@ const table = new jsTable(document.getElementById('main_table'), {
   enablePaginate: true
 })
 
-SHORTCUT_MAP['/TFF'] = ':filterFocus';
-SHORTCUT_MAP['arrowrightFTF'] = ':nextPage';
-SHORTCUT_MAP['arrowleftFTF'] = ':previousPage';
-
-function filterFocus(){table.filterInput.select();}
-function nextPage(){table.nextPage();}
-function previousPage(){table.previousPage();}
+SHORTCUT_MAP['1FTF'] = () => {document.getElementById('id_dados_alerta').click()}
+SHORTCUT_MAP['arrowrightFTF'] = () => {table.nextPage();}
+SHORTCUT_MAP['arrowleftFTF'] = () => {table.previousPage();}
 
 function carregaUsuarios() {
 	var xhttp = new XMLHttpRequest();

@@ -13,7 +13,7 @@
       <li class="nav-item"><a class="nav-link active disabled" data-bs-toggle="tab" data-bs-target="#fotos" href="#"><i class="fas fa-camera"></i></a></li>
       <li class="nav-item"><a class="nav-link border pointer ms-1" id="add" data-bs-toggle="modal" data-bs-target="#fotos_modal" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'sinistro_acidente_id' acidente.id|safe%}"><i class="fas fa-undo"></i></a></li>
-      <li class="nav-item"><a id="acidentes_link" class="nav-link" href="{% url 'sinistro_acidentes' %}" title="Fechar: Acidentes"><i class="fas fa-reply-all"></i></a></li>
+      <li class="nav-item"><a id="acidentes_link" class="nav-link" href="{% url 'sinistro_acidentes' %}" title="Fechar: Acidentes [Alt + F]"><i class="fas fa-reply-all"></i></a></li>
     </ul>
   </div>
   <div class="card-body tab-content">
@@ -76,6 +76,6 @@
 
 <script>
   {% block add_script %}
-  SHORTCUT_MAP['fTFF'] = '#acidentes_link';
+  SHORTCUT_MAP['fTFF'] = () => {document.getElementById('acidentes_link').click()};
   {% endblock %}
 </script>
