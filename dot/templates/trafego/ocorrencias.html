@@ -182,7 +182,8 @@
   
   const table = new jsTable(document.getElementById('main_table'), {
     canFilter: true,
-    filterCols: ['Responsável', 'Evento', 'Linha', 'Veiculo', 'Condutor']
+    filterCols: ['Responsável', 'Evento', 'Linha', 'Veiculo', 'Condutor'],
+    fileName: 'ocorrencias'
   });
   
   SHORTCUT_MAP['.TFF'] = () => {}; // Limpa o app_root redirect

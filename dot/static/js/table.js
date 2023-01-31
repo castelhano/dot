@@ -248,6 +248,7 @@ class jsTable{
             this.exportButtonCSV.classList = 'btn btn-sm btn-outline-secondary';
             this.exportButtonCSV.onclick = (e) => this.exportCsv(e);
             this.exportButtonCSV.innerHTML = 'CSV';
+            this.exportButtonCSV.id = 'jsTableDownloadCSV';
             capControlsGroup.appendChild(this.exportButtonCSV);
         }
         if(this.canExportJson){
