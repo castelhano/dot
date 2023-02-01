@@ -29,7 +29,7 @@
             </div>
           </li>
         </ul>
-        <a id="adicional_filters_link" class="btn btn-sm btn-dark" data-bs-toggle="collapse" href="#adicional_filters" role="button"><i class="fas fa-caret-down"></i></a>
+        <a id="adicional_filters_link" class="btn btn-sm btn-dark" data-bs-toggle="collapse" href="#adicional_filters" role="button" title="Ctrl + F"><i class="fas fa-caret-down"></i></a>
       </div>
     </div>
     
@@ -155,7 +155,7 @@
 <script>
   {% block add_script %}
   
-  SHORTCUT_MAP['fFFF'] = () => {document.getElementById('adicional_filters_link').click()};
+  SHORTCUT_MAP['fFTF'] = () => {document.getElementById('adicional_filters_link').click()};
   
   var ctx = document.getElementById('frota_idade');
   ctx.style.backgroundColor = '#F7F7F7';  

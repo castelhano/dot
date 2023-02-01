@@ -22,10 +22,10 @@
     		if(this.readyState == 4 && this.status == 200){
     			if(this.responseText == '' || this.responseText == '{}'){enquadramento_nome.classList.add('is-invalid');}
     			else{
-						enquadramento_nome.classList.remove('is-invalid');
+					enquadramento_nome.classList.remove('is-invalid');
     				let obj = JSON.parse(this.responseText);
     				let enquadramentos = document.getElementById("enquadramento_datalist");
-            enquadramentos.innerHTML = '';
+            		enquadramentos.innerHTML = '';
     				for(key in obj){enquadramentos.innerHTML += '<option value="' + key + '" data-id="' + obj[key] + '">';}
     			}
     		}

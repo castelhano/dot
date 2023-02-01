@@ -1,4 +1,4 @@
-<div class="form-floating {{breakpoint|default:'col-lg-12 mb-1'}}">
+	<div class="form-floating {{breakpoint|default:'col-lg-12 mb-1'}}">
 	<input type="hidden" id="id_{{field_name|default:'local'}}" name="{{field_name|default:'local'}}" value="{{id|safe}}">
 	<input type="text" autocomplete="off" class="form-control" list="localidade_datalist" id="id_{{field_name|default:'local'}}_nome" value="{{nome}}" oninput="cleanLocalID();localidadeGetList();" onblur="validadeLocalidade()" onfocus="this.select()"{% if required %} required{% endif %}>
   <label for="id_{{field_name|default:'local'}}_nome">Local</label>
@@ -22,11 +22,14 @@
     		if(this.readyState == 4 && this.status == 200){
     			if(this.responseText == '' || this.responseText == '{}'){el.classList.add('is-invalid');}
     			else{
-						el.classList.remove('is-invalid');
+					el.classList.remove('is-invalid');
     				let obj = JSON.parse(this.responseText);
+					// console.log(obj);
     				let locais = dl;
-            locais.innerHTML = '';
-    				for(key in obj){locais.innerHTML += '<option value="' + key + '" data-id="' + obj[key] + '">';}
+            		locais.innerHTML = '';
+    				for(key in obj){
+						locais.innerHTML += '<option value="' + obj[key].Nome + '" data-id="' + obj[key]['#'] + '">';
+						}
     			}
     		}
         spinner.classList.add('d-none');

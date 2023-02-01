@@ -31,7 +31,7 @@
     </div>
     <div class="input-group ms-1">
       <a id="back" class="btn btn-sm btn-purple-light" href="{% url 'trafego_ocorrencias' %}"><i class="fas fa-undo"></i></a>
-      <a id="adicional_filters_link" class="btn btn-sm btn-purple-light" data-bs-toggle="collapse" href="#adicional_filters" role="button"><i class="fas fa-caret-down"></i></a>
+      <a id="adicional_filters_link" class="btn btn-sm btn-purple-light" data-bs-toggle="collapse" href="#adicional_filters" role="button" title="Ctrl + F"><i class="fas fa-caret-down"></i></a>
     </div>
   </div>
 </div>
@@ -184,7 +184,7 @@
 
 <script>
   {% block add_script %}
-  SHORTCUT_MAP['fFFF'] = () => {document.getElementById('adicional_filters_link').click()};
+  SHORTCUT_MAP['fFTF'] = () => {document.getElementById('adicional_filters_link').click()};
 
   const table = new jsTable(document.getElementById('table_terceiros'), {});  
   

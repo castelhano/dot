@@ -150,6 +150,8 @@ class Diretriz(models.Model):
         permissions = [
             ("dashboard", "Pode ver dashboard"),
             ("staff", "Gerir a Staff"),
+            ("view_kanban", "Visualizar Kanban"),
+            ("change_kanban", "Editar Kanban"),
         ]
         default_permissions = []
     

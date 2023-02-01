@@ -17,20 +17,7 @@ from datetime import date, datetime
 @login_required
 @permission_required('trafego.view_localidade')
 def localidades(request):
-    localidades = None
-    # localidades = Localidade.objects.all().order_by('nome')
-    # param = {}
-    # if request.GET.get('garagem', None) == 'true':
-    #     param['eh_garagem'] = True
-    # if request.GET.get('tturno', None) == 'true':
-    #     param['troca_turno'] = True
-    # if request.GET.get('controle', None) == 'true':
-    #     param['ponto_de_controle'] = True
-    # if len(param) == 0:
-    #     localidades = None
-    # else:
-    #     localidades = localidades.filter(**param)
-    return render(request,'trafego/localidades.html', {'localidades' : localidades})
+    return render(request,'trafego/localidades.html')
 
 @login_required
 @permission_required('trafego.view_linha')
@@ -1303,6 +1290,7 @@ def get_localidades(request):
                 item_dict['cnt'] = f'<a class="btn btn-sm btn-dark float-end" href="/trafego_localidade_id/{item.id}"><i class="fas fa-pen"></i></a>'
             itens.append(item_dict)
         dataJSON = dumps(itens)
+        print(dataJSON)
         return HttpResponse(dataJSON)
     except:
         return HttpResponse('')

@@ -82,9 +82,9 @@
                     <span class="badge bg-purple d-none d-lg-inline-block">{{label}}</span>
                     {% endfor %}
                     {% endwith %}
-                    <span class="badge btn-primary" style="width: 35px;">{{p.seq|safe}}</span>
+                    <span class="btn btn-sm btn-primary py-0 disabled" style="width: 35px;">{{p.seq|safe}}</span>
                     {% if perms.trafego.change_linha %}
-                    <a class="badge btn-dark" href="{% url 'trafego_trajeto_delete' p.id|safe %}"><i class="fas fa-times"></i></a>
+                    <a class="btn btn-sm btn-dark py-0" href="{% url 'trafego_trajeto_delete' p.id|safe %}"><i class="fas fa-times"></i></a>
                     {% endif %}
                   </div>
                 </li>
@@ -104,9 +104,14 @@
                 <li class="event{% if p.fechado %} event-danger{% endif %}">
                   {{p.local.nome}}{% if p.detalhe != '' %}<i class="fas fa-info-circle text-purple ms-2 help" title="{{p.detalhe}}"></i>{% endif %}
                   <div class="event-controls">
-                    <span class="badge btn-primary" style="width: 35px;">{{p.seq|safe}}</span>
+                    {% with p.labels|split:"," as labels %}
+                    {% for label in labels %}
+                    <span class="badge bg-purple d-none d-lg-inline-block">{{label}}</span>
+                    {% endfor %}
+                    {% endwith %}
+                    <span class="btn btn-sm btn-primary py-0 disabled" style="width: 35px;">{{p.seq|safe}}</span>
                     {% if perms.trafego.change_linha %}
-                    <a class="badge btn-dark" href="{% url 'trafego_trajeto_delete' p.id|safe %}"><i class="fas fa-times"></i></a>
+                    <a class="btn btn-sm btn-dark py-0" href="{% url 'trafego_trajeto_delete' p.id|safe %}"><i class="fas fa-times"></i></a>
                     {% endif %}
                   </div>
                 </li>
@@ -128,7 +133,7 @@
                   <div class="event-controls">
                     <span class="badge btn-primary" style="width: 35px;">{{p.seq|safe}}</span>
                     {% if perms.trafego.change_linha %}
-                    <a class="badge btn-dark" href="{% url 'trafego_trajeto_delete' p.id|safe %}"><i class="fas fa-times"></i></a>
+                    <a class="badge bg-dark" href="{% url 'trafego_trajeto_delete' p.id|safe %}"><i class="fas fa-times"></i></a>
                     {% endif %}
                   </div>
                 </li>

@@ -12,14 +12,12 @@
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a id="tratativas_list" class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
       <li class="nav-item"><a class="nav-link" id="search" data-bs-toggle="tab" data-bs-target="#filter" href="#" onclick="setTimeout(function(){document.getElementById('id_pesquisa').focus();},220);" title="CTRL + /"><i class="fas fa-filter"></i></a></li>
-      {% if perms.trafego.change_tratativa %}
       <li class="nav-item">
         <a class="nav-link" data-bs-toggle="dropdown" href="#"><i class="fas fa-caret-down text-dark"></i></a>
         <ul class="dropdown-menu">
           <li><a class="dropdown-item dropdown-item-danger" data-bs-toggle="modal" data-bs-target="#tratar_todas_modal" href="#">Marcar <b>todas</b> tratadas</a></li>
         </ul>
       </li>
-      {% endif %}
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'trafego_ocorrencias' %}"><i class="fas fa-undo"></i></a></li>
     </ul>
   </div>

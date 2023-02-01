@@ -31,12 +31,12 @@
         <div class="row">
           <div class="col-lg bg-light border rounded py-1">
             <dl class="row">
-              <dt class="col-3">Empresa:</dt><dd class="col-9">{{ocorrencia.empresa.nome}}</dd>
-              <dt class="col-3">Data:</dt><dd class="col-9">{{ocorrencia.data|date:'d/m/Y'}} [ {{ocorrencia.hora}} ]</dd>
-              <dt class="col-3">Veiculo:</dt><dd class="col-9">{{ocorrencia.veiculo.prefixo}}</dd>
-              <dt class="col-3">Linha:</dt><dd class="col-9">{{ocorrencia.linha.codigo}} - {{ocorrencia.linha.nome}}</dd>
-              <dt class="col-3">Inspetor:</dt><dd class="col-9">{{ocorrencia.usuario.username|title}}</dd>
-              <dt class="col-3">Condutor:</dt><dd class="col-9">{{ocorrencia.condutor.matricula}} - {{ocorrencia.condutor.nome}}</dd>
+              <dt class="col-4">Empresa:</dt><dd class="col-8">{{ocorrencia.empresa.nome}}</dd>
+              <dt class="col-4">Data:</dt><dd class="col-8">{{ocorrencia.data|date:'d/m/Y'}} [ {{ocorrencia.hora}} ]</dd>
+              <dt class="col-4">Veiculo:</dt><dd class="col-8">{{ocorrencia.veiculo.prefixo}}</dd>
+              <dt class="col-4">Linha:</dt><dd class="col-8">{{ocorrencia.linha.codigo}} - {{ocorrencia.linha.nome}}</dd>
+              <dt class="col-4">Inspetor:</dt><dd class="col-8">{{ocorrencia.usuario.username|title}}</dd>
+              <dt class="col-4">Condutor:</dt><dd class="col-8">{{ocorrencia.condutor.matricula}} - {{ocorrencia.condutor.nome}}</dd>
               <dd class="col-12">{{ocorrencia.detalhe}}</dd>
             </dl>
           </div>
