@@ -1,9 +1,9 @@
 /*
 * jsTable   Implementa operacoes com tabelas previamente criadas ou gera tabela a partir de dados json
 *
-* @version  2.17
+* @version  2.18
 * @since    07/08/2022
-* @release  31/01/2023 [adicionado fileName nas configuracoes]
+* @release  01/02/2023 [adicionado showCounterLabel nas configuracoes]
 * @author   Rafael Gustavo Alves {@email castelhano.rafael@gmail.com}
 * @depend   boostrap 5.2.0, fontawesome 5.15.4, dot.css, dot.js
 */
@@ -38,6 +38,7 @@ class jsTable{
         this.dataUrlMinDigits = options?.dataUrlMinDigits != undefined ? options.dataUrlMinDigits : 3; // Busca ajax eh acionada com no minimo de digitos setado em dataUrlMinDigits
         this.container = options?.container || document.body; // parentNode da tabela, usado na construcao de tabela pelo evento createTable(), caso nao informado append nova tabela no body
         this.caption = options?.caption || null;
+        this.showCounterLabel = options?.showCounterLabel != undefined ? options.showCounterLabel : true;
         this.canAddRow = options?.canAddRow != undefined ? options.canAddRow : false;
         this.canDeleteRow = options?.canDeleteRow != undefined ? options.canDeleteRow : false;
         this.canSave = options?.canSave != undefined ? options.canSave : false; // Boolean para exibicao do botao para salvar dados da tabela (funcao deve ser definida na origem)
@@ -148,7 +149,7 @@ class jsTable{
             if(!this.enablePaginate){this.tbody.appendChild(row)}; // Se nao tenha paginacao insere elemento no tbody
         }
         if(data_size == 0){this.addEmptyRow();} // Caso nao exista nenhum registro, adiciona linha vazia
-        this.rowsCountLabel.innerHTML = data_size;
+        if(this.showCounterLabel){this.rowsCountLabel.innerHTML = data_size};
     }
     rowAddControls(row){ // Adiciona os controles na linha (tr) alvo
         if(this.canDeleteRow){
@@ -167,7 +168,7 @@ class jsTable{
         this.cleanTbody();
         if(this.enablePaginate){this.paginate()}
         else{for(let i = 0; i < size; i++){this.tbody.appendChild(this.raw[i]);}}
-        this.rowsCountLabel.innerHTML = size;
+        if(this.showCounterLabel){this.rowsCountLabel.innerHTML = size};
     }
     buildControls(){
         this.table.classList.add('caption-top'); // Adiciona a classe caption top (caso nao exista)
@@ -217,11 +218,13 @@ class jsTable{
         }
         let capControlsGroup = document.createElement('div'); // Inicia btn-group
         capControlsGroup.classList = 'btn-group';
-        this.rowsCountLabel = document.createElement('button'); // Cria elemento que vai armazenar a quantidade de registros na tabela
-        this.rowsCountLabel.classList = this.rowsCountLabelClasslist;
-        this.rowsCountLabel.disabled = true;
-        this.rowsCountLabel.innerHTML = this.raw.length;
-        capControlsGroup.appendChild(this.rowsCountLabel);
+        if(this.showCounterLabel){
+            this.rowsCountLabel = document.createElement('button'); // Cria elemento que vai armazenar a quantidade de registros na tabela
+            this.rowsCountLabel.classList = this.rowsCountLabelClasslist;
+            this.rowsCountLabel.disabled = true;
+            this.rowsCountLabel.innerHTML = this.raw.length;
+            capControlsGroup.appendChild(this.rowsCountLabel);
+        }
         if(this.canAddRow){
             let btn = document.createElement('button');
             btn.classList = this.addRowButtonClasslist;
@@ -332,11 +335,11 @@ class jsTable{
             xhttp.open("GET", `${self.dataUrl}?${self.dataUrlKeyName}=${criterio}${self.dataUrlAdicionalFilters}`, true);
             xhttp.send();
         }
-        else{this.cleanRows();this.rowsCountLabel.innerHTML = 0;this.addEmptyRow()}
+        else{this.cleanRows();if(this.showCounterLabel){this.rowsCountLabel.innerHTML = 0};this.addEmptyRow()}
     }
     filter(e, criterio=null){
         if(this.raw.length == 0){ return null; } // Se tabela for vazia nao executa processo para filtro
-        if([37, 38, 39, 40, 13].includes(e.keyCode)){return false;} // Nao busca registros caso tecla seja enter ou arrows
+        if([37, 38, 39, 40, 13].includes(e.keyCode)){this.filterInput.blur();return false;} // Nao busca registros caso tecla seja enter ou arrows
         let c = criterio || this.filterInput.value.toLowerCase();
         if(this.canFilter && this.filterCols.length > 0 && c != ""){
             this.filteredRows = []; // Limpa os filtros
@@ -362,11 +365,11 @@ class jsTable{
                 tr.innerHTML = `<td colspan="${this.canDeleteRow ? this.headers.length + 1 : this.headers.length}">Nenhum registro encontrado com o criterio informado</td>`;
                 this.filteredRows.push(tr);
             }
-            this.rowsCountLabel.innerHTML = row_count;
+            if(this.showCounterLabel){this.rowsCountLabel.innerHTML = row_count};
         }
         else if(c == ""){
             this.filteredRows = [];
-            this.rowsCountLabel.innerHTML = this.raw.length
+            if(this.showCounterLabel){this.rowsCountLabel.innerHTML = this.raw.length}
             
         }; // Ao limpar filtro, limpa array com rows filtradas
         if(this.enablePaginate){this.paginate()} // Refaz paginacao
@@ -505,7 +508,7 @@ class jsTable{
         this.raw.push(tr);
         this.tbody.appendChild(tr);
         this.rawNextId++; // Incrementa o rawNextId para eventual proximo elemento a ser inserido
-        this.rowsCountLabel.innerHTML = this.raw.length; // Ajusta contador para tabela
+        if(this.showCounterLabel){this.rowsCountLabel.innerHTML = this.raw.length}; // Ajusta contador para tabela
     }
     deleteRow(row){
         let done = false;
@@ -519,7 +522,7 @@ class jsTable{
             i++;
         }
         row.remove(); // Remove o elemento da tabela
-        this.rowsCountLabel.innerHTML = this.raw.length; // Ajusta contador para tabela
+        if(this.showCounterLabel){this.rowsCountLabel.innerHTML = this.raw.length}; // Ajusta contador para tabela
         if(this.raw.length == 0){this.addEmptyRow()} // Se linha excluida for a unica da tabela, adiciona emptyRow
         if(this.enablePaginate){
             try {this.tbody.appendChild(this.raw[this.leid]);}catch(error){} // Adiciona (se existir) proximo elemento ao final do tbody
@@ -534,7 +537,7 @@ class jsTable{
         this.tbody.appendChild(tr);
         this.raw.push(tr);
         if(this.trash.length == 0){this.restoreButton.classList.add('d-none');}
-        this.rowsCountLabel.innerHTML = this.raw.length; // Ajusta contador para tabela
+        if(this.showCounterLabel){this.rowsCountLabel.innerHTML = this.raw.length}; // Ajusta contador para tabela
     }
     getRows(){ // Retorna array com todas as linhas da tabela
         let items = [];

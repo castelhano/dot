@@ -88,17 +88,18 @@
   </div>
   
   {% for message in messages %}
-  <div data-type="dotAlert" class="alert alert-{{message.tags}} alert-dismissible fade show mb-1" role="alert">
+  <div id="dot_sys_message" data-type="dotAlert" class="alert alert-{{message.tags}} alert-dismissible fade show mb-1" role="alert">
     {{ message|safe }}
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
+  <script>if('{{message.tags}}' != 'danger'){setTimeout(function() {document.getElementById('dot_sys_message').remove()}, 5000);}</script>
   {% endfor %}
   
   {% if form.errors %}
   {% for field in form %}
   {% if field.errors %}
   {% for error in field.errors %}
-  <div data-type="dotAlert" class="alert alert-danger alert-dismissible fade show mb-1" role="alert">
+  <div id="form_error_msg" data-type="dotAlert" class="alert alert-danger alert-dismissible fade show mb-1" role="alert">
     {{ error|escape }} <span class="fw-bold">[ field: {{ field.name }} ]</span>
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>

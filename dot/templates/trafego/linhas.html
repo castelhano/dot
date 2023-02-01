@@ -103,6 +103,7 @@ const table = new jsTable(document.getElementById('main_table'), {
   canExportJson: true,
   fileName: 'linhas'  
 });
+SHORTCUT_MAP['.TFF'] = () => {}; // Limpa app_root
 SHORTCUT_MAP['fFTF'] = () => {table.filterInput.select()};
 SHORTCUT_MAP['arrowdownFTF'] = () => {table.nextRow();}
 SHORTCUT_MAP['arrowupFTF'] = () => {table.previousRow();};
