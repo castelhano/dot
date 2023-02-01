@@ -57,7 +57,7 @@ const table = new jsTable(document.getElementById('main_table'),{
   rowsPerPage: 20
 });
 
-SHORTCUT_MAP['/FTF'] = () => {table.filterInput.select();}
+SHORTCUT_MAP['fFTF'] = () => {table.filterInput.select();}
 SHORTCUT_MAP['arrowrightFTF'] = () => {table.nextPage();}
 SHORTCUT_MAP['arrowleftFTF'] = () => {table.previousPage();}
 {% endblock %}
