@@ -6,6 +6,7 @@
 * @author   Erwin Heldy G
 * @licence  MIT (https://github.com/erwinheldy/tagin/blob/master/LICENSE)
 * @fork Adicionado atributo tagColor para cor da tag
+* @fork Adicionado opcao para autofocus
 * @method el.addTag('yellow')           # Adiciona a tag 'yellow'
 * @method el.addTag(['cyan', 'black'])  # Adiciona tags 'cyan' e 'black'
 * @method el.getTag()                   # Retorna  tags as string red,green,blue,yellow,cyan,black
@@ -64,10 +65,12 @@
             this.duplicate = options?.duplicate || inputElement.dataset.taginDuplicate !== undefined;
             this.transform = options?.transform || inputElement.dataset.taginTransform || 'input => input';
             this.enter = options?.enter || inputElement.dataset.taginEnter !== undefined;
+            this.autofocus = options?.autofocus || inputElement.autofocus;
             this.tagColor = options?.tagColor || inputElement.dataset.tagColor || '';
             this.createWrapper();
             this.autowidth();
             this.addEventListener();
+            if(this.autofocus){this.input.focus()}
         }
         createWrapper() {
             const tags = this.getValue() === '' ? '' : this.getValues().map(val => this.createTag(val)).join('');
