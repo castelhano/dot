@@ -95,6 +95,8 @@ class Cargo(models.Model):
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='pessoal.cargo',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
+    class Meta:
+        ordering = ['nome']
 
 class FuncaoFixa(models.Model):
     FFIXA_CHOICES = (
@@ -110,6 +112,7 @@ class FuncaoFixa(models.Model):
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='pessoal.funcao_fixa',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
+    
     
 class Funcionario(Pessoa):
     STATUS_CHOICES = (

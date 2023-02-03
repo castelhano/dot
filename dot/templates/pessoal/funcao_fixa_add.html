@@ -16,7 +16,7 @@
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'pessoal_funcoes_fixas' %}"><i class="fas fa-undo"></i></a></li>
     </ul>
   </div>
-  <form id="app_form" action="{% url 'pessoal_funcao_fixa_add' %}" method="POST" autocomplete="off" onsubmit="return submitForm();">
+  <form id="app_form" action="{% url 'pessoal_funcao_fixa_add' %}" method="POST" autocomplete="off">
     {% csrf_token %}
     <div class="card-body tab-content">
       <h5 class="card-title mb-3">Cadastro de Função Fixa</h5>
@@ -25,3 +25,16 @@
   </form>
 </div>
 {% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/selectm.js' %}"></script>
+{% endblock %}
+
+<script>
+{% block add_script%}
+
+const select = new jsSelectm(document.getElementById('id_cargos'), {
+  title: 'Cargos'
+});
+{% endblock%}
+</script>
