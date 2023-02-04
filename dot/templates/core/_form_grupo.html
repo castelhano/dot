@@ -1,32 +1,16 @@
 <div class="card-body tab-content">
   <h5 class="card-title mb-3">Cadastro de Grupo</h5>
   <div class="tab-pane fade show active" id="base" role="tabpanel">
-    <div class="row">
-      <div class="col-lg">
-        <div class="row g-1">
-          <div class="form-floating mb-lg-1 col-lg">
-            {{ form.name }}
-            <label for="id_name">Nome</label>
-          </div>
-        </div>
-        <div class="row g-1">
-          <div class="mb-1 col-lg">
-            <select class="form-control" id="perms_disponiveis" style="min-height:180px;" multiple></select>
-          </div>
-          <div class="col-lg-auto">
-            <div class="d-flex justify-content-center d-lg-grid gap-1">
-              <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add" onclick="addSelected();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-right rotate-lg-90"></i></a>
-              <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add_all" onclick="addAll();"><i class="fas fa-angle-double-right rotate-lg-90"></i></a>
-              <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove" onclick="removeSelected();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-left rotate-lg-90"></i></a>
-              <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove_all" onclick="removeAll();"><i class="fas fa-angle-double-left rotate-lg-90"></i></a>
-            </div>
-          </div>
-          <div class="mb-1 col-lg">
-            <select class="form-control" name="permissions" id="id_permissions" style="min-height:180px;" multiple></select>
-          </div>
-        </div>
+    <div class="row g-1">
+      <div class="form-floating mb-lg-1 col-lg-4">
+        {{ form.name }}
+        <label for="id_name">Nome</label>
       </div>
-      <div class="col-lg"></div>
+    </div>
+    <div class="row g-1">
+      <div class="col-lg-4">
+        {{form.permissions}}
+      </div>
     </div>
   </div>
   <!-- CONTROLES DO FORM -->
@@ -37,51 +21,6 @@
   </div>
 </div>
 
-
 <script>
-  // SET onsubmit="return submitForm();" ON FORM
-  disponiveis = document.getElementById("perms_disponiveis");
-  selecionados = document.getElementById("id_permissions");
-    
-  function submitForm(){options = selecionados.options;for(i=0; i < options.length; i++){options[i].selected = "true";}modal_loading.show();return true;}
-  
-  function addAll(){selecionados.innerHTML += disponiveis.innerHTML;disponiveis.innerHTML = '';}
-  function removeAll(){disponiveis.innerHTML += selecionados.innerHTML;selecionados.innerHTML = '';}
-  function addSelected(){residual = document.createElement("select");for(var i=0; i < disponiveis.length; i++){if(disponiveis[i].selected){let newOption = new Option(disponiveis[i].text,disponiveis[i].value);selecionados.add(newOption);}else{let newOption = new Option(disponiveis[i].text,disponiveis[i].value);residual.add(newOption);}}disponiveis.innerHTML = residual.innerHTML;}
-  function removeSelected(){residual = document.createElement("select");for(var i=0; i < selecionados.length; i++){if(selecionados[i].selected){let newOption = new Option(selecionados[i].text,selecionados[i].value);disponiveis.add(newOption);}else{let newOption = new Option(selecionados[i].text,selecionados[i].value);residual.add(newOption);}}selecionados.innerHTML = residual.innerHTML;}
-  
-  function carregaPermsDisponiveis() {
-  	var xhttp = new XMLHttpRequest();
-  	xhttp.onreadystatechange = function() {
-  		if(this.readyState == 4 && this.status == 200){
-  			if(this.responseText == ''){}
-  			else{
-  				let obj = JSON.parse(this.responseText);
-  				perms = document.getElementById("perms_disponiveis")
-  				for(key in obj){perms.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
-  			}
-  		}
-  	};
-  	xhttp.open("GET", "{% url 'core_get_group_perms' %}?tipo=disponiveis&grupo={% if 'grupo_add' in request.get_full_path %}new{% else %}{{grupo.id|safe}}{% endif%}", true);
-  	xhttp.send();
-  }
-  carregaPermsDisponiveis();
-  {% if 'grupo_id' in request.get_full_path %}
-  function carregaPermsCadastrados() {
-  	var xhttp = new XMLHttpRequest();
-  	xhttp.onreadystatechange = function() {
-  		if(this.readyState == 4 && this.status == 200){
-  			if(this.responseText == ''){}
-  			else{
-  				let obj = JSON.parse(this.responseText);
-  				perms = document.getElementById("id_permissions")
-  				for(key in obj){perms.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
-  			}
-  		}
-  	};
-  	xhttp.open("GET", "{% url 'core_get_group_perms' %}?tipo=cadastrados&grupo={{grupo.id|safe}}", true);
-  	xhttp.send();
-  }
-  carregaPermsCadastrados();
-  {% endif%}
+  function submitForm(){modal_loading.show();return true;}
 </script>

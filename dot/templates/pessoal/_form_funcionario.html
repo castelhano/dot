@@ -4,9 +4,9 @@
   <div class="row g-lg-3">
     <div class="col-lg-auto bg-dark-light bg-gradient rounded p-2 widget-thumb-container">
       {% if funcionario.foto %}
-      <img src="{{funcionario.foto_url}}" class="widget-thumb-img pointer" style="min-width: 110px;" onclick="photo.modal.show();" id="funcionarioFoto">
+      <img src="{{funcionario.foto_url}}" class="widget-thumb-img pointer" style="min-width: 110px;" onclick="photo.modal.show();" id="funcionarioFoto" alt="Foto Funcionario">
       {% else %}
-      <img src="{% static 'img/default_user.jpg' %}" class="widget-thumb-img pointer" style="min-width: 110px;" onclick="photo.modal.show();" id="funcionarioFoto">
+      <img src="{% static 'img/default_user.jpg' %}" class="widget-thumb-img pointer" style="min-width: 110px;" onclick="photo.modal.show();" id="funcionarioFoto" alt="Foto Funcionario">
       {% endif %}
       <div class="widget-thumb-controls ms-2 ms-lg-0">
         <div class="row g-0">
@@ -139,7 +139,7 @@
             <label class="form-check-label" for="id_pne">PNE Portador de necessidades especiais</label>
           </div>
         </div>
-        <div class="tab-pane fade" id="docs" role="tabpanel">
+        <div class="tab-pane fade" id="documents" role="tabpanel">
           <div class="row g-1">
             <div class="form-floating mb-lg-1 col-lg-5">
               {{ form.rg }}

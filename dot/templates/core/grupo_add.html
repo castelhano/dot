@@ -14,7 +14,7 @@
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'core_grupos' %}"><i class="fas fa-undo"></i></a></li>
     </ul>
   </div>
-  <form id="app_form" action="{% url 'core_grupo_add' %}" method="POST" autocomplete="off" onsubmit="return submitForm();">
+  <form id="app_form" action="{% url 'core_grupo_add' %}" method="POST" autocomplete="off" onsubmit="return submitForm()">
     {% csrf_token %}
     {% include 'core/_form_grupo.html' %}
   </form>
@@ -24,12 +24,16 @@
 
 {% endblock%}
 
-{% block add_script_src %}{% endblock %}
+{% block add_script_src %}<script src="{% static 'js/selectm.js' %}"></script>{% endblock %}
 
 <script>
   {% block add_script %}
   var TAB_ON_ENTER = true;
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false})
+
+  const select = new jsSelectm(document.getElementById('id_permissions'), {
+    title: 'Permissões'
+  });
   
   {% endblock %}
 </script>
