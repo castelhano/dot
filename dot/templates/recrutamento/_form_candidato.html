@@ -57,29 +57,9 @@
               <label for="id_rg">RG</label>
             </div>
           </div>
-          <div class="row"><div class="col"><input type="text" class="form-control mb-1 text-center bg-light fw-bold" name="" value="VAGAS" disabled></div></div>
           <div class="row g-1 mb-1">
             <div class="col-lg">
-              <select class="form-control" id="vagas_disponiveis" style="min-height:180px;" multiple>
-                {% for vaga in candidato.vagas_disponiveis %}
-                <option value="{{vaga.id|safe}}">{{vaga.cargo.nome}}</option>
-                {% endfor %}
-              </select>
-            </div>
-            <div class="col-lg-auto">
-              <div class="d-flex justify-content-center d-lg-grid gap-1">
-                <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add" onclick="addSelected();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-right rotate-lg-90"></i></a>
-                <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add_all" onclick="addAll();"><i class="fas fa-angle-double-right rotate-lg-90"></i></a>
-                <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove" onclick="removeSelected();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-left rotate-lg-90"></i></a>
-                <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove_all" onclick="removeAll();"><i class="fas fa-angle-double-left rotate-lg-90"></i></a>
-              </div>
-            </div>
-            <div class="col-lg">
-              <select class="form-control" name="vagas" id="id_vagas" style="min-height:180px;" multiple>
-                {% for vaga in candidato.vagas.all %}
-                <option value="{{vaga.id|safe}}">{{vaga.cargo.nome}}</option>
-                {% endfor %}
-              </select>
+              {{ form.vagas }}
             </div>
           </div>
           <div class="row g-1">

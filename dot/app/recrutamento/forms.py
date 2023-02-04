@@ -20,7 +20,6 @@ class CandidatoForm(forms.ModelForm):
         fields = ['nome','rg','cpf','sexo','vagas','data_nascimento','endereco','bairro','cidade','uf','fone1','fone2','email','indicacao','pne','bloqueado_ate','detalhe','curriculo']
     origem = forms.ChoiceField(required=False,choices=Candidato.ORIGEM_CHOICES, widget=forms.Select(attrs={'class':'form-select bg-light','tabindex':'-1'}))
     nome = forms.CharField(error_messages={'required': 'Informe o nome'},widget=forms.TextInput(attrs={'class': 'form-control bg-light','placeholder':' ','autofocus':'autofocus'}))
-    vagas = forms.CharField(error_messages={'required': 'Necessário informar pelo menos uma vaga'})
     rg = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
     cpf = forms.CharField(error_messages={'required': 'Informe o CPF', 'unique': 'CPF já cadastrado'},widget=forms.TextInput(attrs={'class': 'form-control bg-light','placeholder':' '}))
     sexo = forms.ChoiceField(required=False,choices=Candidato.SEXO_CHOICES, widget=forms.Select(attrs={'class':'form-select'}))

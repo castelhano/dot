@@ -23,7 +23,7 @@
       </li>
     </ul>
   </div>
-  <form id="gestao_form" action="{% url 'gestao_plano_update' plano.id|safe %}" method="POST" autocomplete="off" onsubmit="return submitForm();">
+  <form id="gestao_form" action="{% url 'gestao_plano_update' plano.id|safe %}" method="POST" autocomplete="off">
     {% csrf_token %}
     {% include 'gestao/_form_plano.html' %}
   </form>
@@ -82,8 +82,13 @@
 </div>
 {% endblock%}
 
-{% block add_script_src %}{% endblock %}
+{% block add_script_src %}
+<script src="{% static 'js/selectm.js' %}"></script>
+{% endblock %}
 
 <script>
-  {% block add_script %}{% endblock %}
+  {% block add_script %}
+  
+  const select = new jsSelectm(document.getElementById('id_staff'), staffOptions)
+  {% endblock %}
 </script>

@@ -1,5 +1,5 @@
 from django.db import models
-from datetime import datetime
+from datetime import datetime, date
 from core.models import Log, Empresa
 from django.contrib.auth.models import User
 from django.db.models import Avg
@@ -59,6 +59,8 @@ class Staff(models.Model):
     )
     usuario = models.OneToOneField(User, on_delete=models.RESTRICT)
     role = models.CharField(max_length=3,choices=ROLE_CHOICES, default='O')
+    def __str__(self):
+        return self.usuario.username
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='gestao.staff',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
@@ -166,7 +168,7 @@ class Plano(models.Model):
     diretriz = models.ForeignKey(Diretriz, on_delete=models.RESTRICT)
     titulo = models.CharField(max_length=150, blank=False)
     detalhe = models.TextField(blank=True)
-    inicio = models.DateField(blank=True, null=True, default=datetime.today)
+    inicio = models.DateField(blank=True, null=True, default=date.today)
     termino = models.DateField(blank=True, null=True)
     responsavel = models.ForeignKey(Staff, blank=True, null=True, related_name='plano_responsavel', on_delete=models.PROTECT)
     staff = models.ManyToManyField(Staff, related_name='plano_staff', blank=True)

@@ -86,13 +86,138 @@
 
 {% endblock%}
 
-{% block add_script_src %}{% endblock %}
+{% block add_script_src %} <script src="{% static 'js/selectm.js' %}"></script> {% endblock %}
 
 <script>
   {% block add_script %}
   
   var TAB_ON_ENTER = true;  
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false})
+
+  const selectEmpresas = new jsSelectm(document.getElementById('id_empresas'),{emptySelectMessage: '<small class="text-muted">Nenhuma empresa disponivel</small>'});
+  
+  const empresasTodas = {};
+  const empresasSelecionadas = [];
+  function getEmpresas() {
+    selectEmpresas.optionsContainer.innerHTML = '<small class="text-muted">Buscando empresas, aguarde....</small>';
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if(this.readyState == 4 && this.status == 200){
+        if(this.responseText == ''){}
+        else{
+          let obj = JSON.parse(this.responseText);
+          for(item in obj){empresasTodas[obj[item].id] = obj[item].nome;}
+          getEmpresasUsuario();
+        }
+      }
+    };
+    xhttp.open("GET", "{% url 'core_get_empresas' %}?usuario=new", true);
+    xhttp.send();
+  }
+  getEmpresas();
+  
+  function getEmpresasUsuario() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if(this.readyState == 4 && this.status == 200){
+        if(this.responseText == ''){}
+        else{
+          let obj = JSON.parse(this.responseText);
+          for(item in obj){empresasSelecionadas.push(`${obj[item].id}`);}
+          selectEmpresas.options = empresasTodas;
+          selectEmpresas.optionsSelected = empresasSelecionadas;
+          selectEmpresas.buildOptions();  // Monta componente select
+          selectEmpresas.rebuildTargetOptions(); // Atualiza innerHTML do form
+
+        }
+      }
+    };
+    xhttp.open("GET", "{% url 'core_get_empresas' %}?usuario={{usuario.id}}", true);
+    xhttp.send();
+  }
+  {% if not usuario.is_superuser %}
+    const selectGrupos = new jsSelectm(document.getElementById('id_grupos'), {emptySelectMessage: '<small class="text-muted">Nenhum grupo cadastrado</small>'});
+    const selectPerms = new jsSelectm(document.getElementById('id_perms'), {emptySelectMessage: '<small class="text-muted">Nada a exibir</small>'});
+    const gruposTodos = {};
+    const gruposSelecionados = [];
+    function getGrupos() {
+      selectGrupos.optionsContainer.innerHTML = '<small class="text-muted">Buscando grupos, aguarde....</small>';
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if(this.readyState == 4 && this.status == 200){
+          if(this.responseText == ''){}
+          else{
+            let obj = JSON.parse(this.responseText);
+            for(item in obj){gruposTodos[obj[item].id] = obj[item].name;}
+            getGruposUsuario();
+          }
+        }
+      };
+      xhttp.open("GET", "{% url 'core_get_grupos' %}?usuario=new", true);
+      xhttp.send();
+    }
+    getGrupos();
+    
+    function getGruposUsuario() {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if(this.readyState == 4 && this.status == 200){
+          if(this.responseText == ''){}
+          else{
+            let obj = JSON.parse(this.responseText);
+            for(item in obj){gruposSelecionados.push(`${obj[item].id}`);}
+            selectGrupos.options = gruposTodos;
+            selectGrupos.optionsSelected = gruposSelecionados;
+            selectGrupos.buildOptions(); // Monta componente select
+            selectGrupos.rebuildTargetOptions(); // Atualiza innerHTML do form
+
+          }
+        }
+      };
+      xhttp.open("GET", "{% url 'core_get_grupos' %}?usuario={{usuario.id}}", true);
+      xhttp.send();
+    }
+    
+    const permsTodos = {};
+    const permsSelecionados = [];
+    function getPerms() {
+      selectPerms.optionsContainer.innerHTML = '<small class="text-muted">Buscando permissões, aguarde....</small>';
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if(this.readyState == 4 && this.status == 200){
+          if(this.responseText == ''){}
+          else{
+            let obj = JSON.parse(this.responseText);
+            for(item in obj){permsTodos[obj[item].id] = obj[item].nome;}
+            getPermsUsuario();
+          }
+        }
+      };
+      xhttp.open("GET", "{% url 'core_get_user_perms' %}?usuario=new", true);
+      xhttp.send();
+    }
+    getPerms();
+    
+    function getPermsUsuario() {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if(this.readyState == 4 && this.status == 200){
+          if(this.responseText == ''){}
+          else{
+            let obj = JSON.parse(this.responseText);
+            for(item in obj){permsSelecionados.push(`${obj[item].id}`);}
+            selectPerms.options = permsTodos;
+            selectPerms.optionsSelected = permsSelecionados;
+            selectPerms.buildOptions(); // Monta componente select
+            selectPerms.rebuildTargetOptions(); // Atualiza innerHTML do form
+
+          }
+        }
+      };
+      xhttp.open("GET", "{% url 'core_get_user_perms' %}?usuario={{usuario.id}}", true);
+      xhttp.send();
+    }
+  {% endif %}
 
   {% endblock %}
 </script>

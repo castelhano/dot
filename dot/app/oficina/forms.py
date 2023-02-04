@@ -54,7 +54,7 @@ class FrotaForm(forms.ModelForm):
     categoria = forms.ModelChoiceField(required=False, queryset = Categoria.objects.all().order_by('nome'), widget=forms.Select(attrs={'class':'form-select'}))
     carroceria = forms.ModelChoiceField(required=False, queryset = Carroceria.objects.all().order_by('nome'), widget=forms.Select(attrs={'class':'form-select'}))
     classificacao = forms.ModelChoiceField(required=False, queryset = Classificacao.objects.all().order_by('nome'), widget=forms.Select(attrs={'class':'form-select'}))
-    componentes = forms.ModelMultipleChoiceField(required=False, queryset = Componente.objects.all().order_by('nome'), widget=forms.widgets.SelectMultiple(attrs={'class':'form-select','style':'min-height:200px'}))
+    componentes = forms.ModelMultipleChoiceField(required=False, queryset = Componente.objects.all().order_by('nome'))
     ano_fabricacao = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':'1980','max':'2100'}))
     ano_modelo = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':'1980','max':'2100'}))
     inicio_operacao = forms.DateField(required=False,initial=date.today(),widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))

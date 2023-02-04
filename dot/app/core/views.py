@@ -479,38 +479,11 @@ def app_data(request, fpath):
             pass
     return HttpResponse('')
 
-
-# @login_required
-# def get_empresas(request):
-#     try:
-#         tipo = request.GET.get('tipo',None)
-#         if request.GET.get('usuario', None) == 'new':
-#             usuario = User()
-#         else:
-#             usuario = request.user if request.GET.get('usuario', None) == None else User.objects.get(id=request.GET.get('usuario', None))
-#         if tipo == None or tipo == 'cadastrados': # Retorna as empresas cadastradas para usuario
-#             empresas = usuario.profile.empresas.all().order_by('nome')
-#         elif tipo == 'disponiveis':
-#             if request.GET.get('usuario', None) == 'new':
-#                 empresas = Empresa.objects.all().order_by('nome')
-#             else:
-#                 empresas = Empresa.objects.all().exclude(profile__user=usuario).order_by('nome')
-#         else:
-#             empresas = None
-#         itens = {}
-#         for item in empresas:
-#             itens[item.nome] = item.id
-#         dataJSON = json.dumps(itens)
-#         return HttpResponse(dataJSON)
-#     except:
-#         return HttpResponse('')
-
 @login_required
 def get_empresas(request):
     # Metodo retorna JSON com dados das empresas
     try:
         if request.GET.get('usuario', None) == 'new':
-            usuario = User()
             empresas = Empresa.objects.all().order_by('nome')
         else:
             usuario = request.user if request.GET.get('usuario', None) == None else User.objects.get(id=request.GET.get('usuario', None))
@@ -543,20 +516,16 @@ def get_usuarios(request):
 @login_required
 def get_grupos(request):
     try:
-        tipo = request.GET.get('tipo',None)
-        if request.GET.get('usuario',None) != 'new':
-            usuario = User.objects.get(id=request.GET.get('usuario',None))
-            if tipo == 'disponiveis':
-                grupos = Group.objects.all().exclude(user=usuario).order_by('name')
-            elif tipo == 'cadastrados':
-                grupos = usuario.groups.all().order_by('name')
-            else:
-                pass
-        else:
+        if request.GET.get('usuario', None) == 'new':
             grupos = Group.objects.all().order_by('name')
-        itens = {}
+        else:
+            usuario = request.user if request.GET.get('usuario', None) == None else User.objects.get(id=request.GET['usuario'])
+            grupos = Group.objects.filter(user=usuario).order_by('name')
+        itens = []
         for item in grupos:
-            itens[item.name] = item.id
+            item_dict = vars(item) # Converte objetos em dicionario
+            if '_state' in item_dict: del item_dict['_state'] # Remove _state do dict (se existir)
+            itens.append(item_dict)
         dataJSON = json.dumps(itens)
         return HttpResponse(dataJSON)
     except:
@@ -565,21 +534,16 @@ def get_grupos(request):
 @login_required
 def get_user_perms(request):
     try:
-        tipo = request.GET.get('tipo',None)
         exclude_itens = ['sessions','contenttypes','admin']
-        if request.GET.get('usuario',None) != 'new':
-            usuario = User.objects.get(id=request.GET.get('usuario',None))
-            if tipo == 'disponiveis':
-                perms = Permission.objects.all().exclude(user=usuario).exclude(content_type__app_label__in=exclude_itens).order_by('content_type__app_label', 'content_type__model', 'name')
-            elif tipo == 'cadastrados':
-                perms = Permission.objects.all().filter(user=usuario).exclude(content_type__app_label__in=exclude_itens).order_by('content_type__app_label', 'content_type__model', 'name')
-            else:
-                pass
-        else:
+        if request.GET.get('usuario', None) == 'new':
             perms = Permission.objects.all().exclude(content_type__app_label__in=exclude_itens).order_by('content_type__app_label', 'content_type__model', 'name')
-        itens = {}
+        else:
+            usuario = request.user if request.GET.get('usuario', None) == None else User.objects.get(id=request.GET['usuario'])
+            perms = Permission.objects.filter(user=usuario).exclude(content_type__app_label__in=exclude_itens).order_by('content_type__app_label', 'content_type__model', 'name')
+        itens = []
         for item in perms:
-            itens[f'{item.content_type.app_label} | {item.content_type.model} | {item.name}'] = item.id
+            item_dict = {'id':item.id,'nome':f'{item.content_type.app_label} | {item.content_type.model} | {item.name}'}
+            itens.append(item_dict)
         dataJSON = json.dumps(itens)
         return HttpResponse(dataJSON)
     except:

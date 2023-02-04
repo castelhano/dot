@@ -138,22 +138,11 @@
       
       <div class="row g-1  mb-3">
         <div class="col-md">
-          <select class="form-control" id="vagas_disponiveis" style="min-height:180px;" multiple>
+          <select name="vagas" id="id_vagas" multiple>
             {% for vaga in vagas %}
-            <option value="{{vaga.id|safe}}">{{vaga.cargo.nome}}</option>
+            <option value="{{vaga.id}}">{{vaga.cargo.nome}}</option>
             {% endfor %}
           </select>
-        </div>
-        <div class="col-lg-auto">
-          <div class="d-flex justify-content-center d-lg-grid gap-1">
-            <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add" onclick="addSelected();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-right rotate-lg-90"></i></a>
-            <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add_all" onclick="addAll();"><i class="fas fa-angle-double-right rotate-lg-90"></i></a>
-            <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove" onclick="removeSelected();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-left rotate-lg-90"></i></a>
-            <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove_all" onclick="removeAll();"><i class="fas fa-angle-double-left rotate-lg-90"></i></a>
-          </div>
-        </div>
-        <div class="col-md">
-          <select class="form-control" name="vagas" id="id_vagas" style="min-height:180px;" multiple></select>
         </div>
       </div>
       

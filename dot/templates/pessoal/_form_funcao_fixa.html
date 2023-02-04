@@ -17,3 +17,13 @@
     <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"><b>G</b>ravar</button>
   </div>
 </div>
+
+
+<script>
+  document.getElementById('id_cargos').required = false;
+  function submitForm(){
+    if(select.optionsSelected.length > 0){return true}
+    dotAlert('danger', '<b>Erro:</b> É necessário associar pelo menos um <b>cargo</b>.', false)
+    return false;
+  }
+</script>

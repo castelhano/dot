@@ -45,18 +45,7 @@
               <div class="accordion-body">
                 <div class="row g-1">
                   <div class="mb-1 col-lg">
-                    <select class="form-control" id="empresas_disponiveis" style="min-height:138px;" multiple></select>
-                  </div>
-                  <div class="col-lg-auto">
-                    <div class="d-flex justify-content-center d-lg-grid gap-1">
-                      <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add_2" onclick="addSelected_2();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-right rotate-lg-90"></i></a>
-                      <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add_all_2" onclick="addAll_2();"><i class="fas fa-angle-double-right rotate-lg-90"></i></a>
-                      <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove_2" onclick="removeSelected_2();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-left rotate-lg-90"></i></a>
-                      <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove_all_2" onclick="removeAll_2();"><i class="fas fa-angle-double-left rotate-lg-90"></i></a>
-                    </div>
-                  </div>
-                  <div class="mb-1 col-lg">
-                    <select class="form-control" name="empresas" id="id_empresas" style="min-height:138px;" multiple></select>
+                    <select name="empresas" id="id_empresas" multiple></select>
                   </div>
                 </div>
               </div>
@@ -71,20 +60,9 @@
               <div class="accordion-body">
                 <div class="row g-1">
                   <div class="mb-1 col-lg">
-                    <select class="form-control" id="grupos_disponiveis" style="min-height:180px;" multiple></select>
+                    <select name="grupos" id="id_grupos" multiple></select>
                   </div>
-                  <div class="col-lg-auto">
-                    <div class="d-flex justify-content-center d-lg-grid gap-1">
-                      <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add" onclick="addSelected();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-right rotate-lg-90"></i></a>
-                      <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add_all" onclick="addAll();"><i class="fas fa-angle-double-right rotate-lg-90"></i></a>
-                      <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove" onclick="removeSelected();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-left rotate-lg-90"></i></a>
-                      <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove_all" onclick="removeAll();"><i class="fas fa-angle-double-left rotate-lg-90"></i></a>
-                    </div>
-                  </div>
-                  <div class="mb-1 col-lg">
-                    <select class="form-control" name="grupos" id="id_grupos" style="min-height:180px;" multiple></select>
-                  </div>
-                </div>
+                </div>                
               </div>
             </div>
           </div>
@@ -96,20 +74,9 @@
               <div class="accordion-body">
                 <div class="row g-1">
                   <div class="mb-1 col-lg">
-                    <select class="form-control" id="perms_disponiveis" style="min-height:180px;" multiple></select>
+                    <select name="perms" id="id_perms" multiple></select>
                   </div>
-                  <div class="col-lg-auto">
-                    <div class="d-flex justify-content-center d-lg-grid gap-1">
-                      <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add_3" onclick="addSelected_3();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-right rotate-lg-90"></i></a>
-                      <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add_all_3" onclick="addAll_3();"><i class="fas fa-angle-double-right rotate-lg-90"></i></a>
-                      <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove_3" onclick="removeSelected_3();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-left rotate-lg-90"></i></a>
-                      <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove_all_3" onclick="removeAll_3();"><i class="fas fa-angle-double-left rotate-lg-90"></i></a>
-                    </div>
-                  </div>
-                  <div class="mb-1 col-lg">
-                    <select class="form-control" name="perms" id="id_perms" style="min-height:180px;" multiple></select>
-                  </div>
-                </div>
+                </div>                 
               </div>
             </div>
           </div>
@@ -170,147 +137,6 @@
     if(document.getElementById('resetar_senha').checked){document.getElementById('id_reset_password').disabled = false;document.getElementById('id_reset_password').focus();}
     else{document.getElementById('id_reset_password').disabled = true;}
   }
-  {% endif %}
-  
-  function carregaEmpresasDisponiveis() {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-      if(this.readyState == 4 && this.status == 200){
-        if(this.responseText == ''){}
-        else{
-          let obj = JSON.parse(this.responseText);
-          let empresas_disponiveis = document.getElementById("empresas_disponiveis");
-          for(key in obj){empresas_disponiveis.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
-        }
-      }
-    };
-    xhttp.open("GET", "{% url 'core_get_empresas' %}?tipo=disponiveis&usuario={% if 'usuario_add' in request.get_full_path %}new{% else %}{{usuario.id|safe}}{% endif%}", true);
-    xhttp.send();
-  }
-  carregaEmpresasDisponiveis();
-  
-  let empresas_disponiveis = document.getElementById("empresas_disponiveis");
-  let empresas_selecionadas = document.getElementById("id_empresas");
-  function addAll_2(){empresas_selecionadas.innerHTML += empresas_disponiveis.innerHTML;empresas_disponiveis.innerHTML = '';}
-  function removeAll_2(){empresas_disponiveis.innerHTML += empresas_selecionadas.innerHTML;empresas_selecionadas.innerHTML = '';}
-  function addSelected_2(){residual_2 = document.createElement("select");for(var i=0; i < empresas_disponiveis.length; i++){if(empresas_disponiveis[i].selected){let newOption = new Option(empresas_disponiveis[i].text,empresas_disponiveis[i].value);empresas_selecionadas.add(newOption);}else{let newOption = new Option(empresas_disponiveis[i].text,empresas_disponiveis[i].value);residual_2.add(newOption);}}empresas_disponiveis.innerHTML = residual_2.innerHTML;}
-  function removeSelected_2(){residual_2 = document.createElement("select");for(var i=0; i < empresas_selecionadas.length; i++){if(empresas_selecionadas[i].selected){let newOption = new Option(empresas_selecionadas[i].text,empresas_selecionadas[i].value);empresas_disponiveis.add(newOption);}else{let newOption = new Option(empresas_selecionadas[i].text,empresas_selecionadas[i].value);residual_2.add(newOption);}}empresas_selecionadas.innerHTML = residual_2.innerHTML;}
-  
-  {% if not usuario.is_superuser %}
-  
-  function carregaGruposDisponiveis() {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-      if(this.readyState == 4 && this.status == 200){
-        if(this.responseText == ''){}
-        else{
-          let obj = JSON.parse(this.responseText);
-          let grupos_disponiveis = document.getElementById("grupos_disponiveis");
-          for(key in obj){grupos_disponiveis.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
-        }
-      }
-    };
-    xhttp.open("GET", "{% url 'core_get_grupos' %}?tipo=disponiveis&usuario={% if 'usuario_add' in request.get_full_path %}new{% else %}{{usuario.id|safe}}{% endif%}", true);
-    xhttp.send();
-  }
-  carregaGruposDisponiveis();
-  
-  function carregaPermsDisponiveis() {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-      if(this.readyState == 4 && this.status == 200){
-        if(this.responseText == ''){}
-        else{
-          let obj = JSON.parse(this.responseText);
-          let perms_disponiveis = document.getElementById("perms_disponiveis");
-          for(key in obj){perms_disponiveis.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
-        }
-      }
-    };
-    xhttp.open("GET", "{% url 'core_get_user_perms' %}?tipo=disponiveis&usuario={% if 'usuario_add' in request.get_full_path %}new{% else %}{{usuario.id|safe}}{% endif%}", true);
-    xhttp.send();
-  }
-  carregaPermsDisponiveis();
-  
-  let disponiveis = document.getElementById("grupos_disponiveis");
-  let selecionados = document.getElementById("id_grupos");
-  function addAll(){selecionados.innerHTML += disponiveis.innerHTML;disponiveis.innerHTML = '';}
-  function removeAll(){disponiveis.innerHTML += selecionados.innerHTML;selecionados.innerHTML = '';}
-  function addSelected(){residual = document.createElement("select");for(var i=0; i < disponiveis.length; i++){if(disponiveis[i].selected){let newOption = new Option(disponiveis[i].text,disponiveis[i].value);selecionados.add(newOption);}else{let newOption = new Option(disponiveis[i].text,disponiveis[i].value);residual.add(newOption);}}disponiveis.innerHTML = residual.innerHTML;}
-  function removeSelected(){residual = document.createElement("select");for(var i=0; i < selecionados.length; i++){if(selecionados[i].selected){let newOption = new Option(selecionados[i].text,selecionados[i].value);disponiveis.add(newOption);}else{let newOption = new Option(selecionados[i].text,selecionados[i].value);residual.add(newOption);}}selecionados.innerHTML = residual.innerHTML;}
-  
-  let perms_disponiveis = document.getElementById("perms_disponiveis");
-  let perms_selecionadas = document.getElementById("id_perms");
-  function addAll_3(){perms_selecionadas.innerHTML += perms_disponiveis.innerHTML;perms_disponiveis.innerHTML = '';}
-  function removeAll_3(){perms_disponiveis.innerHTML += perms_selecionadas.innerHTML;perms_selecionadas.innerHTML = '';}
-  function addSelected_3(){residual_3 = document.createElement("select");for(var i=0; i < perms_disponiveis.length; i++){if(perms_disponiveis[i].selected){let newOption = new Option(perms_disponiveis[i].text,perms_disponiveis[i].value);perms_selecionadas.add(newOption);}else{let newOption = new Option(perms_disponiveis[i].text,perms_disponiveis[i].value);residual_3.add(newOption);}}perms_disponiveis.innerHTML = residual_3.innerHTML;}
-  function removeSelected_3(){residual_3 = document.createElement("select");for(var i=0; i < perms_selecionadas.length; i++){if(perms_selecionadas[i].selected){let newOption = new Option(perms_selecionadas[i].text,perms_selecionadas[i].value);perms_disponiveis.add(newOption);}else{let newOption = new Option(perms_selecionadas[i].text,perms_selecionadas[i].value);residual_3.add(newOption);}}perms_selecionadas.innerHTML = residual_3.innerHTML;}
-  {% else %}
-  function submitForm(){return true;}
-  {% endif %}
-  
-  {% if 'usuario_id' in request.get_full_path %}
-  function carregaEmpresasSelecionadas() {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-      if(this.readyState == 4 && this.status == 200){
-        if(this.responseText == ''){}
-        else{
-          let obj = JSON.parse(this.responseText);
-          let empresas_selecionadas = document.getElementById("id_empresas");
-          for(key in obj){empresas_selecionadas.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
-        }
-      }
-    };
-    xhttp.open("GET", "{% url 'core_get_empresas' %}?tipo=cadastrados&usuario={{usuario.id|safe}}", true);
-    xhttp.send();
-  }
-  carregaEmpresasSelecionadas();
-  {% endif %}
-  
-  {% if 'usuario_id' in request.get_full_path and not usuario.is_superuser %}
-  function carregaGruposSelecionados() {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-      if(this.readyState == 4 && this.status == 200){
-        if(this.responseText == ''){}
-        else{
-          let obj = JSON.parse(this.responseText);
-          let grupos_selecionados = document.getElementById("id_grupos");
-          for(key in obj){grupos_selecionados.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
-        }
-      }
-    };
-    xhttp.open("GET", "{% url 'core_get_grupos' %}?tipo=cadastrados&usuario={{usuario.id|safe}}", true);
-    xhttp.send();
-  }
-  carregaGruposSelecionados();
-  
-  function carregaPermsSelecionados() {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-      if(this.readyState == 4 && this.status == 200){
-        if(this.responseText == ''){}
-        else{
-          let obj = JSON.parse(this.responseText);
-          let perms_selecionados = document.getElementById("id_perms");
-          for(key in obj){perms_selecionados.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
-        }
-      }
-    };
-    xhttp.open("GET", "{% url 'core_get_user_perms' %}?tipo=cadastrados&usuario={{usuario.id|safe}}", true);
-    xhttp.send();
-  }
-  carregaPermsSelecionados();
-  {% endif %}
-  
-  function submitForm(){
-    options_2 = empresas_selecionadas.options;for(i=0; i < options_2.length; i++){options_2[i].selected = "true";};
-    {% if not usuario.is_superuser %}
-    options = selecionados.options;for(i=0; i < options.length; i++){options[i].selected = "true";}
-    options_3 = perms_selecionadas.options;for(i=0; i < options_3.length; i++){options_3[i].selected = "true";}
-    {% endif %}
-    modal_loading.show();return true;
-  }
-  
+  {% endif %} 
+  function submitForm(){ modal_loading.show();return true; }
 </script>

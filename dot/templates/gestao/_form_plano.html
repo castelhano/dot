@@ -33,28 +33,7 @@
         </div>
         <div class="row g-1">
           <div class="mb-1 col-lg">
-            <select class="form-control" id="staff_disponivel" style="min-height:180px;" multiple>
-              {% for staff in plano.staff_disponivel %}
-              <option value="{{staff.id}}">{{staff.usuario.username|title}}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="col-lg-auto">
-            <div class="d-flex justify-content-center d-lg-grid gap-1">
-              <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add" onclick="addSelected();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-right rotate-lg-90"></i></a>
-              <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add_all" onclick="addAll();"><i class="fas fa-angle-double-right rotate-lg-90"></i></a>
-              <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove" onclick="removeSelected();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-left rotate-lg-90"></i></a>
-              <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove_all" onclick="removeAll();"><i class="fas fa-angle-double-left rotate-lg-90"></i></a>
-            </div>
-          </div>
-          <div class="mb-1 col-lg">
-            <select class="form-control" name="staff" id="id_staff" style="min-height:180px;" onchange="loadResponsavelBox()" multiple>
-              {% if plano.id %}
-              {% for staff in plano.staff.all %}
-              <option value="{{staff.id}}">{{staff.usuario.username|title}}</option>
-              {% endfor %}
-              {% endif %}
-            </select>
+            {{form.staff}}
           </div>
         </div>
         <div class="row g-1">
@@ -95,38 +74,30 @@
 
 <script>
   {% block add_script %}
-  
   var TAB_ON_ENTER = true;
-  disponiveis = document.getElementById("staff_disponivel");
-  selecionados = document.getElementById("id_staff");
-  function submitForm(){options = selecionados.options;for(i=0; i < options.length; i++){options[i].selected = "true";}return true;}
   
-  function addAll(){selecionados.innerHTML += disponiveis.innerHTML;disponiveis.innerHTML = '';loadResponsavelBox();}
-  function removeAll(){disponiveis.innerHTML += selecionados.innerHTML;selecionados.innerHTML = '';loadResponsavelBox();}
-  function addSelected(){residual = document.createElement("select");for(var i=0; i < disponiveis.length; i++){if(disponiveis[i].selected){let newOption = new Option(disponiveis[i].text,disponiveis[i].value);selecionados.add(newOption);}else{let newOption = new Option(disponiveis[i].text,disponiveis[i].value);residual.add(newOption);}}disponiveis.innerHTML = residual.innerHTML;loadResponsavelBox();}
-  function removeSelected(){residual = document.createElement("select");for(var i=0; i < selecionados.length; i++){if(selecionados[i].selected){let newOption = new Option(selecionados[i].text,selecionados[i].value);disponiveis.add(newOption);}else{let newOption = new Option(selecionados[i].text,selecionados[i].value);residual.add(newOption);}}selecionados.innerHTML = residual.innerHTML;loadResponsavelBox();}
-  
-  var responsavelAtual = '{{plano.responsavel.id|safe}}';
-  var resp = document.getElementById('id_responsavel');
+  let responsavelAtual = '{{plano.responsavel.id|safe}}';
+  let resp = document.getElementById('id_responsavel');
   function loadResponsavelBox(){
-    resp.innerHTML = '<option value="" selected>---------</option>' + selecionados.innerHTML;
+    let selectedOptions = '';
+    for(let option of document.getElementById('id_staff').options){if(option.selected) {selectedOptions += `<option value="${option.value}">${option.innerText}</option>`;}}
+    resp.innerHTML = '<option value="" selected>---------</option>' + selectedOptions;
     if(responsavelAtual != ''){
       resp.value = responsavelAtual;
       if(resp.value == ''){resp.value = '';}
     }
   }
   loadResponsavelBox();
-  
-
+  const staffOptions = {
+    title:'Staff',
+    onchange: loadResponsavelBox
+  }
+  // {# if staff.role != 'M' and staff.role != 'E' and not 'plano_add' in request.get_full_path and not plano.bloqueado and plano.responsavel.id != user.id #}
   {% if staff.role != 'M' and staff.role != 'E' and not 'plano_add' in request.get_full_path %}
+  staffOptions['disabled'] = true;
   document.getElementById('id_inicio').readOnly = true;
   document.getElementById('id_termino').readOnly = true;
   document.getElementById('id_titulo').readOnly = true;
-  document.getElementById('select_multiple_add').classList.add('disabled');
-  document.getElementById('select_multiple_add_all').classList.add('disabled');
-  document.getElementById('select_multiple_remove').classList.add('disabled');
-  document.getElementById('select_multiple_remove_all').classList.add('disabled');
-  document.getElementById('staff_disponivel').classList.add('readonly');
   document.getElementById('id_staff').classList.add('readonly');
   document.getElementById('id_responsavel').classList.add('readonly');
   
@@ -136,9 +107,6 @@
   {% endif %}
   
   {% endif %}
-  
-  // {# if staff.role != 'M' and staff.role != 'E' and not 'plano_add' in request.get_full_path and not plano.bloqueado and plano.responsavel.id != user.id #}
-  
   
   {% if staff.role == 'M' and plano.diretriz.ativo %}
   var container = document.getElementById('id_labels_container');

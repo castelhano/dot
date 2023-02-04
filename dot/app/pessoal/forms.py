@@ -22,7 +22,7 @@ class FuncaoFixaForm(forms.ModelForm):
     class Meta:
         model = FuncaoFixa
         fields = ['nome','cargos']
-    nome = forms.ChoiceField(error_messages={'unique': 'Função Fixa para está função já tem associações'},choices=FuncaoFixa.FFIXA_CHOICES, widget=forms.Select(attrs={'class':'form-select bg-light fw-bold','autofocus':'autofocus'}))
+    nome = forms.ChoiceField(error_messages={'unique': 'Função Fixa para está função já tem associações'},choices=FuncaoFixa.FFIXA_CHOICES, widget=forms.Select(attrs={'class':'form-select bg-light fw-bold'}))
 
 class AfastamentoForm(forms.ModelForm):
     class Meta:

@@ -153,6 +153,7 @@
 
 {% block add_script_src %}
 <script src="{% static 'js/vendor/mask.js' %}"></script>
+<script src="{% static 'js/selectm.js' %}"></script>
 {% endblock %}
 
 <script>
@@ -185,19 +186,11 @@
   
   fone1.dispatchEvent(new Event("input"));
   fone2.dispatchEvent(new Event("input"));
-  
-  
-  // SET onsubmit="return submitForm();" ON FORM
-  disponiveis = document.getElementById("vagas_disponiveis");
-  selecionados = document.getElementById("id_vagas");
+
+  const selectVagas = new jsSelectm(document.getElementById('id_vagas'),{title:'Vagas'})
   
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
-  function submitForm(){options = selecionados.options;for(i=0; i < options.length; i++){options[i].selected = "true";}modal_loading.show();return true;}
-  
-  function addAll(){selecionados.innerHTML += disponiveis.innerHTML;disponiveis.innerHTML = '';}
-  function removeAll(){disponiveis.innerHTML += selecionados.innerHTML;selecionados.innerHTML = '';}
-  function addSelected(){residual = document.createElement("select");for(var i=0; i < disponiveis.length; i++){if(disponiveis[i].selected){let newOption = new Option(disponiveis[i].text,disponiveis[i].value);selecionados.add(newOption);}else{let newOption = new Option(disponiveis[i].text,disponiveis[i].value);residual.add(newOption);}}disponiveis.innerHTML = residual.innerHTML;}
-  function removeSelected(){residual = document.createElement("select");for(var i=0; i < selecionados.length; i++){if(selecionados[i].selected){let newOption = new Option(selecionados[i].text,selecionados[i].value);disponiveis.add(newOption);}else{let newOption = new Option(selecionados[i].text,selecionados[i].value);residual.add(newOption);}}selecionados.innerHTML = residual.innerHTML;}
+  function submitForm(){modal_loading.show();return true;}
   
   {% endblock %}
 </script>

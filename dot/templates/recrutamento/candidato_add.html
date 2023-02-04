@@ -34,6 +34,7 @@
 
 {% block add_script_src %}
 <script src="{% static 'js/vendor/mask.js' %}"></script>
+<script src="{% static 'js/selectm.js' %}"></script>
 {% endblock %}
 
 <script>
@@ -64,34 +65,11 @@
   
   fone1.dispatchEvent(new Event("input"));
   fone2.dispatchEvent(new Event("input"));
-  
-  // SET onsubmit="return submitForm();" ON FORM
-  disponiveis = document.getElementById("vagas_disponiveis");
-  selecionados = document.getElementById("id_vagas");
+
+  const selectVagas = new jsSelectm(document.getElementById('id_vagas'),{title:'Vagas'})
   
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
-  function submitForm(){options = selecionados.options;for(i=0; i < options.length; i++){options[i].selected = "true";}modal_loading.show();return true;}
+  function submitForm(){modal_loading.show();return true;}
   
-  function addAll(){selecionados.innerHTML += disponiveis.innerHTML;disponiveis.innerHTML = '';}
-  function removeAll(){disponiveis.innerHTML += selecionados.innerHTML;selecionados.innerHTML = '';}
-  function addSelected(){residual = document.createElement("select");for(var i=0; i < disponiveis.length; i++){if(disponiveis[i].selected){let newOption = new Option(disponiveis[i].text,disponiveis[i].value);selecionados.add(newOption);}else{let newOption = new Option(disponiveis[i].text,disponiveis[i].value);residual.add(newOption);}}disponiveis.innerHTML = residual.innerHTML;}
-  function removeSelected(){residual = document.createElement("select");for(var i=0; i < selecionados.length; i++){if(selecionados[i].selected){let newOption = new Option(selecionados[i].text,selecionados[i].value);disponiveis.add(newOption);}else{let newOption = new Option(selecionados[i].text,selecionados[i].value);residual.add(newOption);}}selecionados.innerHTML = residual.innerHTML;}
-  
-  
-  function carregaVagasDisponiveis() {
-  	var xhttp = new XMLHttpRequest();
-  	xhttp.onreadystatechange = function() {
-  		if(this.readyState == 4 && this.status == 200){
-  			if(this.responseText == ''){}
-  			else{
-  				let obj = JSON.parse(this.responseText);
-  				for(key in obj){disponiveis.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
-  			}
-  		}
-  	};
-  	xhttp.open("GET", "{% url 'recrutamento_get_vagas' %}?ocultos=True&vazios=True", true);
-  	xhttp.send();
-  }
-  carregaVagasDisponiveis();
   {% endblock %}
 </script>

@@ -61,6 +61,7 @@
   
   <script src="{% static 'js/vendor/mask.js' %}"></script>
   <script src="{% static 'js/listener.js' %}"></script>
+  <script src="{% static 'js/selectm.js' %}"></script>
   <script src="{% static 'js/vendor/bootstrap.bundle.min.js' %}"></script>
   
   <script type="text/javascript">
@@ -84,15 +85,8 @@
   VMasker(fone2).maskPattern(telMask[0]);
   fone1.addEventListener('input', inputHandler.bind(undefined, telMask, 14), false);
   fone2.addEventListener('input', inputHandler.bind(undefined, telMask, 14), false);
-  
-  
-  disponiveis = document.getElementById("vagas_disponiveis");
-  selecionados = document.getElementById("id_vagas");
-  function submitForm(){options = selecionados.options;for(i=0; i < options.length; i++){options[i].selected = "true";}return true;}
-  function addAll(){selecionados.innerHTML += disponiveis.innerHTML;disponiveis.innerHTML = '';}
-  function removeAll(){disponiveis.innerHTML += selecionados.innerHTML;selecionados.innerHTML = '';}
-  function addSelected(){residual = document.createElement("select");for(var i=0; i < disponiveis.length; i++){if(disponiveis[i].selected){let newOption = new Option(disponiveis[i].text,disponiveis[i].value);selecionados.add(newOption);}else{let newOption = new Option(disponiveis[i].text,disponiveis[i].value);residual.add(newOption);}}disponiveis.innerHTML = residual.innerHTML;}
-  function removeSelected(){residual = document.createElement("select");for(var i=0; i < selecionados.length; i++){if(selecionados[i].selected){let newOption = new Option(selecionados[i].text,selecionados[i].value);disponiveis.add(newOption);}else{let newOption = new Option(selecionados[i].text,selecionados[i].value);residual.add(newOption);}}selecionados.innerHTML = residual.innerHTML;}
+
+  const selectVagas = new jsSelectm(document.getElementById('id_vagas'),{title:'Selecione uma ou mais opções'})
   
   </script>
 </body>

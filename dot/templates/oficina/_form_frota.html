@@ -120,26 +120,7 @@
       <div class="tab-pane fade show" id="comp" role="tabpanel">
         <div class="row g-1">
           <div class="col-lg">
-            <select class="form-control" id="componentes_disponiveis" style="min-height:180px;" multiple>
-              {% for componente in frota.componentes_disponiveis %}
-              <option value="{{componente.id|safe}}">{{componente.nome}}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="col-lg-auto">
-            <div class="d-flex justify-content-center d-lg-grid gap-1">
-              <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add" onclick="addSelected();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-right rotate-lg-90"></i></a>
-              <a class="btn btn-sm btn-secondary pointer" id="select_multiple_add_all" onclick="addAll();"><i class="fas fa-angle-double-right rotate-lg-90"></i></a>
-              <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove" onclick="removeSelected();" style="padding-left: 11px;padding-right: 11px;"><i class="fas fa-angle-left rotate-lg-90"></i></a>
-              <a class="btn btn-sm btn-secondary pointer" id="select_multiple_remove_all" onclick="removeAll();"><i class="fas fa-angle-double-left rotate-lg-90"></i></a>
-            </div>
-          </div>
-          <div class="col-lg">
-            <select class="form-control" name="componentes" id="id_componentes" style="min-height:180px;" multiple>
-              {% for componente in frota.componentes.all %}
-              <option value="{{componente.id|safe}}">{{componente.nome}}</option>
-              {% endfor %}           
-            </select>
+            {{form.componentes}}
           </div>
         </div>
       </div>
@@ -248,36 +229,9 @@
       }
     }
     
-    disponiveis = document.getElementById("componentes_disponiveis");
-    selecionados = document.getElementById("id_componentes");
-    
-    function addAll(){selecionados.innerHTML += disponiveis.innerHTML;disponiveis.innerHTML = '';}
-    function removeAll(){disponiveis.innerHTML += selecionados.innerHTML;selecionados.innerHTML = '';}
-    function addSelected(){residual = document.createElement("select");for(var i=0; i < disponiveis.length; i++){if(disponiveis[i].selected){let newOption = new Option(disponiveis[i].text,disponiveis[i].value);selecionados.add(newOption);}else{let newOption = new Option(disponiveis[i].text,disponiveis[i].value);residual.add(newOption);}}disponiveis.innerHTML = residual.innerHTML;}
-    function removeSelected(){residual = document.createElement("select");for(var i=0; i < selecionados.length; i++){if(selecionados[i].selected){let newOption = new Option(selecionados[i].text,selecionados[i].value);disponiveis.add(newOption);}else{let newOption = new Option(selecionados[i].text,selecionados[i].value);residual.add(newOption);}}selecionados.innerHTML = residual.innerHTML;}
-    
     SHORTCUT_MAP['1FTF'] = () => {document.getElementById('tab_link_base').click()};
     SHORTCUT_MAP['2FTF'] = () => {document.getElementById('tab_link_metrics').click()};
     SHORTCUT_MAP['3FTF'] = () => {document.getElementById('tab_link_comp').click()};
     SHORTCUT_MAP['4FTF'] = () => {document.getElementById('tab_link_detalhe').click()};
-    
-    {% if 'frota_add' in request.get_full_path %}
-    function carregaComponentes() {
-      var xhttp = new XMLHttpRequest();
-      xhttp.onreadystatechange = function() {
-        if(this.readyState == 4 && this.status == 200){
-          if(this.responseText == ''){}
-          else{
-            let obj = JSON.parse(this.responseText);
-            let componentes = document.getElementById("componentes_disponiveis");
-            for(key in obj){componentes.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
-          }
-        }
-      };
-      xhttp.open("GET", "{% url 'oficina_get_componentes' %}", true);
-      xhttp.send();
-    }
-    carregaComponentes();
-    {% endif %}
     
   </script>

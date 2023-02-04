@@ -20,7 +20,9 @@ class jsSelectm{
         this.iconUncheckedClasslist = options?.iconUncheckedClasslist || 'far fa-square fa-fw'; // Classes do icone desmarcado
         this.iconCheckedClasslist = options?.iconCheckedClasslist || 'far fa-check-square fa-fw'; // Classes do icone marcado
         this.emptySelectMessage = options?.emptySelectMessage || '<p class="text-muted">Nenhuma opção disponivel</p>'; // Mensagem exibida em caso de select vazio
+        this.onchange = options?.onchange != undefined ? options.onchange : () => {}; // Funcao a ser chamada ao alterar componente
         this.reorderOptions = options?.reorderOptions != undefined ? options.reorderOptions : true; // Se sim reordena opcoes baseado no innerText
+        this.disabled = options?.disabled != undefined ? options.disabled : false; // Se sim desativa operacoes nos eventos click e altera formatacao
 
         this.__buildSelect();
         if(!this.customStyles){this.__addStyles();} // Cria estilos padrao caso nao definido estilos customizados
@@ -29,18 +31,20 @@ class jsSelectm{
     __addStyles(){
         let style = document.createElement('style');
         style.innerHTML = '.jsSelectm_wrapper{border: 1px solid #ced4da;border-radius: 0.375rem;padding: 0.375rem 0.875rem 0.475rem 0.75rem;}';
+        style.innerHTML += '.jsSelectm_wrapper.disabled{background-color: #E9ECEF;}';
         style.innerHTML += '.jsSelectm_wrapper:focus-within{border-color: #86b7fe;outline: 0;box-shadow: 0 0 0 0.25rem rgb(13 110 253 / 25%);}';
         style.innerHTML += '.jsSelectm_wrapper small{display: block; margin-bottom: 5px;}';
         style.innerHTML += '.jsSelectm_wrapper > div{max-height:230px;overflow-y: scroll;}';
         style.innerHTML += '.jsSelectm_wrapper li{background-color: aqua;}';
-        style.innerHTML += '.jsSelectm_wrapper div[data-value]{cursor: pointer; padding: 2px 5px 2px 5px; border-radius: 3px;}';
+        style.innerHTML += '.jsSelectm_wrapper div[data-value]{padding: 2px 5px 2px 5px; border-radius: 3px;}';
         style.innerHTML += '.jsSelectm_wrapper div[data-select]{background-color: rgba(25, 135, 84, 0.25)!important;}';
-        style.innerHTML += '@media(min-width: 992px){.jsSelectm_wrapper div[data-value]:hover{background-color: #ced4da; opacity: 0.5;}}';
+        if(!this.disabled){style.innerHTML += '@media(min-width: 992px){.jsSelectm_wrapper div[data-value]:hover{cursor: pointer;background-color: #ced4da; opacity: 0.5;}}';}
         document.getElementsByTagName('head')[0].appendChild(style);
     }
     __buildSelect(){
         this.target.style.display = 'none'; // Oculta select original
         this.wrapper = document.createElement('div');this.wrapper.classList = this.wrapperClassList;
+        if(this.disabled){this.wrapper.classList.add('disabled')}
         if(this.title){
             this.titleEl = document.createElement('small');this.titleEl.innerHTML = this.title;
             this.wrapper.appendChild(this.titleEl);
@@ -86,9 +90,11 @@ class jsSelectm{
             optionTxt.innerHTML = this.options[key];
             option.appendChild(checkIcon);
             option.appendChild(optionTxt);
-            option.onclick = () => {
-                this.__switchOption(option);
-            };
+            if(!this.disabled){
+                option.onclick = () => {
+                    this.__switchOption(option);
+                };
+            }
             this.optionsContainer.appendChild(option);
         }
         if(Object.keys(this.options).length == 0){
@@ -107,13 +113,13 @@ class jsSelectm{
             opt.querySelector('i').classList = this.iconCheckedClasslist;
             this.optionsSelected.push(opt.dataset.value);
         }
-        this.__rebuildTargetOptions();
+        this.rebuildTargetOptions();
     }
-    __rebuildTargetOptions(){
+    rebuildTargetOptions(){
         this.target.innerHTML = ''; // Limpa os options
         this.optionsContainer.querySelectorAll('[data-select]').forEach((e) => {
             this.target.innerHTML += `<option value="${e.dataset.value}" selected>${e.innerText}</option>`;
         })
+        this.onchange();
     }
-
 }

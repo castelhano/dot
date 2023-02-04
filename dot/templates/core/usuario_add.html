@@ -23,11 +23,76 @@
 
 {% endblock%}
 
-{% block add_script_src %}{% endblock %}
+{% block add_script_src %} <script src="{% static 'js/selectm.js' %}"></script> {% endblock %}
 
 <script>
   {% block add_script %}
   var TAB_ON_ENTER = true;
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false})
+
+
+  const selectEmpresas = new jsSelectm(document.getElementById('id_empresas'),{emptySelectMessage: '<small class="text-muted">Nenhuma empresa disponivel</small>'});
+  const selectGrupos = new jsSelectm(document.getElementById('id_grupos'), {emptySelectMessage: '<small class="text-muted">Nenhum grupo cadastrado</small>'});
+  const selectPerms = new jsSelectm(document.getElementById('id_perms'), {emptySelectMessage: '<small class="text-muted">Nada a exibir</small>'});
+
+  function getEmpresas() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if(this.readyState == 4 && this.status == 200){
+        if(this.responseText == ''){}
+        else{
+          let obj = JSON.parse(this.responseText);
+          let empresas = {};
+          for(item in obj){empresas[obj[item].id] = obj[item].nome;}
+          selectEmpresas.options = empresas;
+          selectEmpresas.buildOptions();
+        }
+      }
+    };
+    xhttp.open("GET", "{% url 'core_get_empresas' %}?usuario=new", true);
+    xhttp.send();
+  }
+  getEmpresas();
+  
+  function getGrupos() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if(this.readyState == 4 && this.status == 200){
+        if(this.responseText == ''){}
+        else{
+          let obj = JSON.parse(this.responseText);
+          let grupos = {};
+          for(item in obj){grupos[obj[item].id] = obj[item].name;}
+          selectGrupos.options = grupos;
+          selectGrupos.buildOptions();
+        }
+      }
+    };
+    xhttp.open("GET", "{% url 'core_get_grupos' %}?usuario=new", true);
+    xhttp.send();
+  }
+  getGrupos();
+  
+  function getPerms() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if(this.readyState == 4 && this.status == 200){
+        if(this.responseText == ''){}
+        else{
+          let obj = JSON.parse(this.responseText);
+          let perms = {};
+          for(item in obj){perms[obj[item].id] = obj[item].nome;}
+          selectPerms.options = perms;
+          selectPerms.buildOptions();
+        }
+      }
+    };
+    xhttp.open("GET", "{% url 'core_get_user_perms' %}?usuario=new", true);
+    xhttp.send();
+  }
+  getPerms();
+
+  
+
   {% endblock %}
 </script>

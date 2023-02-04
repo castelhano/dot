@@ -154,4 +154,4 @@ function prismStart(){
 // Todo o codigo abaixo sera executado antes do fechamento do </body>           *
 // ******************************************************************************
 // ALTERA TAB INDEX DE SELECTS COM A CLASS readonly
-const readonly_els = document.querySelectorAll('select.readonly');for(let i = 0; i < readonly_els.length; i++){readonly_els[i].tabIndex = -1;}
+document.querySelectorAll('select.readonly').forEach((e) => {e.tabIndex = -1});
