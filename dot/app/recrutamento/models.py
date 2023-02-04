@@ -158,4 +158,4 @@ class Settings(models.Model):
         logs = Log.objects.filter(modelo='recrutamento.settings',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
     class Meta:
-        default_permissions = [('view','change')]
+        default_permissions = ('view','change')

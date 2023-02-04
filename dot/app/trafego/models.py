@@ -92,7 +92,7 @@ class Patamar(models.Model):
         logs = Log.objects.filter(modelo='trafego.patamar',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
     class Meta:
-        default_permissions = [('change')]
+        default_permissions = ('change')
 
 class Planejamento(models.Model):
     DIA_TIPO = (
@@ -251,7 +251,7 @@ class FotoOcorrencia(models.Model):
     def url_abbr(self):
         return self.foto.url.replace("/media/trafego/","")
     class Meta:
-        default_permissions = [('add','view','delete')]
+        default_permissions = ('add','view','delete')
 
 class Orgao(models.Model):
     nome = models.CharField(max_length=40, blank=False)

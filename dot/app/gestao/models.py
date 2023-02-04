@@ -48,7 +48,7 @@ class Apontamento(models.Model):
     meta = models.DecimalField(default=None, max_digits=10, decimal_places=2, null=True)
     evolucao = models.IntegerField(choices=EVOLUCAO_CHOICES, blank=True, null=True)
     class Meta:
-        default_permissions = ['add']
+        default_permissions = ('add',)
 
 class Staff(models.Model):
     ROLE_CHOICES = (
@@ -151,7 +151,7 @@ class Diretriz(models.Model):
             ("dashboard", "Pode ver dashboard"),
             ("staff", "Gerir a Staff"),
             ("view_kanban", "Visualizar Kanban"),
-            ("change_kanban", "Editar Kanban"),
+            ("change_kanban", "Editar Kanban")
         ]
         default_permissions = []
     
