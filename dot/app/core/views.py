@@ -1,5 +1,6 @@
 import re
 import json
+from json import dumps
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import auth, messages
@@ -479,29 +480,47 @@ def app_data(request, fpath):
     return HttpResponse('')
 
 
+# @login_required
+# def get_empresas(request):
+#     try:
+#         tipo = request.GET.get('tipo',None)
+#         if request.GET.get('usuario', None) == 'new':
+#             usuario = User()
+#         else:
+#             usuario = request.user if request.GET.get('usuario', None) == None else User.objects.get(id=request.GET.get('usuario', None))
+#         if tipo == None or tipo == 'cadastrados': # Retorna as empresas cadastradas para usuario
+#             empresas = usuario.profile.empresas.all().order_by('nome')
+#         elif tipo == 'disponiveis':
+#             if request.GET.get('usuario', None) == 'new':
+#                 empresas = Empresa.objects.all().order_by('nome')
+#             else:
+#                 empresas = Empresa.objects.all().exclude(profile__user=usuario).order_by('nome')
+#         else:
+#             empresas = None
+#         itens = {}
+#         for item in empresas:
+#             itens[item.nome] = item.id
+#         dataJSON = json.dumps(itens)
+#         return HttpResponse(dataJSON)
+#     except:
+#         return HttpResponse('')
+
 @login_required
 def get_empresas(request):
+    # Metodo retorna JSON com dados das empresas
     try:
-        tipo = request.GET.get('tipo',None)
         if request.GET.get('usuario', None) == 'new':
             usuario = User()
+            empresas = Empresa.objects.all().order_by('nome')
         else:
             usuario = request.user if request.GET.get('usuario', None) == None else User.objects.get(id=request.GET.get('usuario', None))
-        # if usuario.is_superuser: # Caso superusuario retorna todas as empresas
-        #     empresas = Empresa.objects.all().order_by('nome')
-        if tipo == None or tipo == 'cadastrados': # Retorna as empresas cadastradas para usuario
             empresas = usuario.profile.empresas.all().order_by('nome')
-        elif tipo == 'disponiveis':
-            if request.GET.get('usuario', None) == 'new':
-                empresas = Empresa.objects.all().order_by('nome')
-            else:
-                empresas = Empresa.objects.all().exclude(profile__user=usuario).order_by('nome')
-        else:
-            empresas = None
-        itens = {}
+        itens = []
         for item in empresas:
-            itens[item.nome] = item.id
-        dataJSON = json.dumps(itens)
+            item_dict = vars(item) # Converte objetos em dicionario
+            if '_state' in item_dict: del item_dict['_state'] # Remove _state do dict (se existir)
+            itens.append(item_dict)
+        dataJSON = dumps(itens)
         return HttpResponse(dataJSON)
     except:
         return HttpResponse('')

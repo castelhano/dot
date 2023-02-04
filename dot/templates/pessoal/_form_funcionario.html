@@ -46,10 +46,7 @@
               {{ form.matricula }}
               <label for="id_matricula">Matricula</label>
             </div>
-            <div class="form-floating mb-1 col-lg">
-              <select class="form-select" id="id_empresa" name="empresa"></select>
-              <label for="id_empresa">Empresa</label>
-            </div>
+            {% include "_component/field/empresa.html" with empresa_atual=linha.empresa.id|safe attrs='autofocus' %}
           </div>
           <div class="row g-1">
             <div class="form-floating mb-lg-1 col-lg-9">
@@ -268,27 +265,6 @@
 </div>
 
 <script>
-  function carregaEmpresas() {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-      if(this.readyState == 4 && this.status == 200){
-        if(this.responseText == ''){}
-        else{
-          let obj = JSON.parse(this.responseText);
-          empresas = document.getElementById("id_empresa");
-          empresa_atual = '{{funcionario.empresa.id|safe}}';
-          for(key in obj){
-            selected = empresa_atual == obj[key] ? ' selected' : '';
-            empresas.innerHTML += `<option value="${obj[key]}"${selected}>${key}</option>`;
-          }
-        }
-      }
-    };
-    xhttp.open("GET", "{% url 'core_get_empresas' %}", true);
-    xhttp.send();
-  }
-  carregaEmpresas();
-  
   function carregaSetores(loading_page=false) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {

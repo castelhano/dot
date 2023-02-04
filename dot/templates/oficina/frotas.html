@@ -100,12 +100,13 @@
               </div>  
             </div>
             <div class="row g-1">
-              <div class="form-floating mb-lg-1 col-lg-6">
-                <select class="form-select" id="id_empresa" name="empresa" onchange="changeEmpresa();">
+              {% include "_component/field/empresa.html" with blank_row='true' container_classlist='form-floating mb-lg-1 col-lg-6' empresa_atual=linha.empresa.id|safe attrs='onchange="changeEmpresa()" autofocus' %}
+              <!-- <div class="form-floating mb-lg-1 col-lg-6">
+                <select class="form-select" id="id_empresa" name="empresa" onchange="changeEmpresa()">
                   <option value="" selected>Todas</option>
                 </select>
                 <label for="id_empresa">Empresa</label>
-              </div>
+              </div> -->
               <div class="form-floating mb-1 col-lg-6">
                 <select class="form-select" id="id_componente" name="componente">
                   <option value="" selected>Todos</option>
@@ -174,22 +175,7 @@
     else{document.getElementById('id_status').value = '';}
   }
   
-  function carregaEmpresas() {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-      if(this.readyState == 4 && this.status == 200){
-        if(this.responseText == ''){}
-        else{
-          let obj = JSON.parse(this.responseText);
-          empresas = document.getElementById("id_empresa")
-          for(key in obj){empresas.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
-        }
-      }
-    };
-    xhttp.open("GET", "{% url 'core_get_empresas' %}", true);
-    xhttp.send();
-  }
-  carregaEmpresas();
+  
   
   function carregaMarcas() {
     var xhttp = new XMLHttpRequest();

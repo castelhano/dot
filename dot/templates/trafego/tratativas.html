@@ -73,15 +73,10 @@
           </div>
         </div>
         <div class="row g-1">
-        	<div class="form-floating mb-1 col-lg-4">
-        		<select class="form-select" id="id_empresa" name="empresa">
-        			<option value="" selected>Todas</option>
-        		</select>
-        		<label for="id_empresa">Empresa</label>
-        	</div>
+          {% include "_component/field/empresa.html" with blank_row='true' container_classlist='form-floating mb-1 col-lg-4' %}
         </div>
         <div class="row g-1">
-        	<div class="form-floating mb-1 col-lg-2">
+        	<div class="form-floating mb-lg-1 col-lg-2">
         		<input type="date" class="form-control" name="inicio" id="id_inicio" value="">
         		<label for="id_inicio">De</label>
         	</div>
@@ -147,21 +142,5 @@ SHORTCUT_MAP['enterFTF'] = () => {table.enterRow();}
 SHORTCUT_MAP['arrowrightFTF'] = () => {table.nextPage()};
 SHORTCUT_MAP['arrowleftFTF'] = () => {table.previousPage()};
 
-function carregaEmpresas() {
-	var xhttp = new XMLHttpRequest();
-	xhttp.onreadystatechange = function() {
-		if(this.readyState == 4 && this.status == 200){
-			if(this.responseText == ''){}
-			else{
-				let obj = JSON.parse(this.responseText);
-				empresas = document.getElementById("id_empresa");
-				for(key in obj){empresas.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
-			}
-		}
-	};
-	xhttp.open("GET", "{% url 'core_get_empresas' %}", true);
-	xhttp.send();
-}
-carregaEmpresas();
 {% endblock %}
 </script>

@@ -269,7 +269,7 @@
         else{
           let obj = JSON.parse(this.responseText);
           empresas = document.getElementById("id_empresa");
-          for(key in obj){empresas.innerHTML += `<li><a class="dropdown-item pointer" onclick="urlFilter('empresa','${obj[key]}')">${key}</a></li>`;}
+          for(key in obj){empresas.innerHTML += `<li><a class="dropdown-item pointer" onclick="urlFilter('empresa','${obj[key].id}')">${obj[key].nome}</a></li>`;}
         }
       }
     };
