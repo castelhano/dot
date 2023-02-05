@@ -69,6 +69,10 @@
     <br>
 
     <div class="row">
+      <div class="col"><select id="meu_select"></select></div>
+    </div>
+
+    <div class="row">
       <div class="col-1">
         <ul class="timeline-h">
           <li></li>
@@ -109,14 +113,11 @@
     
     var TAB_ON_ENTER = true;
 
-    const select = new jsSelectm(document.getElementById('original'), {
-      title: 'Meu novo select',
-      groups: {
-        'Basico':['1','2'],
-        'Desligados':['3','4']
-      },
-      reorderOptions:false
-    });
+    const select = new jsSelectm(document.getElementById('meu_select'), {});
+
+    select.options = { '1':'Opcao 01', '2':'Opcao 02'}
+    select.buildOptions();
+
 
   </script>
 </body>

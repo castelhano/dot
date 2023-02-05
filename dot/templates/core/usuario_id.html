@@ -136,8 +136,12 @@
     xhttp.send();
   }
   {% if not usuario.is_superuser %}
-    const selectGrupos = new jsSelectm(document.getElementById('id_grupos'), {emptySelectMessage: '<small class="text-muted">Nenhum grupo cadastrado</small>'});
+    const selectGrupos = new jsSelectm(document.getElementById('id_grupos'), {
+      customStyles:true,
+      emptySelectMessage: '<small class="text-muted">Nenhum grupo cadastrado</small>'}
+      );
     const selectPerms = new jsSelectm(document.getElementById('id_perms'), {
+      customStyles:true,
       reorderOptions: false,
       wrapperClassList: 'jsSelectm_wrapper border-0 p-0',
       emptySelectMessage: '<small class="text-muted">Nada a exibir</small>'}
