@@ -13,6 +13,7 @@ class jsSelectm{
         // Configuracoes
         this.optionsSelected = options?.optionsSelected || []; // Opcoes pre selecionadas ao instanciar objeto
         this.options = options?.options || this.__initializeOptions();
+        this.groups = options?.groups || false; // Informa grupo para os select
         this.title = options?.title || false; // Titulo do select (opcional)
         this.customStyles = options?.customStyles != undefined ? options.customStyles : false; // Se false criar estilos
         // Estilizacao
@@ -77,6 +78,7 @@ class jsSelectm{
     }
     buildOptions(){ // Monta os options  
         this.optionsContainer.innerHTML = '';
+        if(this.groups){this.__buildGroupsContainer();}
         for(let key in this.options){
             let option = document.createElement('div');
             let checkIcon = document.createElement('i');
@@ -95,12 +97,36 @@ class jsSelectm{
                     this.__switchOption(option);
                 };
             }
-            this.optionsContainer.appendChild(option);
+            if(this.groups){this.__getGroupContainer(key).appendChild(option);} // Se trabalhando com grupos adiciona item no devido grupo
+            else{this.optionsContainer.appendChild(option);} // Caso nao insere no container
         }
         if(Object.keys(this.options).length == 0){
             this.optionsContainer.innerHTML = this.emptySelectMessage;
         }
         else if(this.reorderOptions){this.__reorderOptions();}
+    }
+    __buildGroupsContainer(){
+        let acc = document.createElement('div');acc.classList = 'accordion';acc.setAttribute('data-jsSelect-role','group_container');
+        for(let i in this.groups){
+            let acc_item = document.createElement('div');acc_item.classList = 'accordion-item';
+            let acc_header = document.createElement('div');acc_header.classList = 'accordion-header pointer';
+            let acc_button = document.createElement('span');acc_button.classList = 'accordion-button collapsed fs-6 py-2';acc_button.setAttribute('data-bs-toggle','collapse');acc_button.setAttribute('data-bs-target',`[data-group=${i}]`);
+            acc_button.innerHTML = i;
+            let acc_container = document.createElement('div');acc_container.classList = 'accordion-collapse collapse';acc_container.setAttribute('data-group', i);acc_container.setAttribute('data-bs-parent', '[data-jsSelect-role=group_container]');
+            let acc_body = document.createElement('div');acc_body.classList = 'accordion-collapse collapse';
+            acc_container.appendChild(acc_body);
+            acc_header.appendChild(acc_button);
+            acc_item.appendChild(acc_header);
+            acc_item.appendChild(acc_container);
+            acc.appendChild(acc_item);
+            this.optionsContainer.appendChild(acc);
+        }
+    }
+    __getGroupContainer(key){ // Localiza se item esta em algum grupo, se sim retorna o container do grupo, caso nao retorna o container principal
+        for(let group in this.groups){
+            if(this.groups[group].includes(key)){return this.optionsContainer.querySelector(`[data-group=${group}]`);}
+        }
+        return this.optionsContainer;
     }
     __switchOption(opt){ // Altera stilo e data-attr do option e chama funcao que refaz conteudo do select target 
         if(opt.dataset.select != undefined){

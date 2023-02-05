@@ -44,7 +44,7 @@
   </div>
   <div class="col-lg-8 order-lg-1">
     <h4 class="mb-3">Dados pessoais</h4>
-    <form role="form" action="{% url 'recrutamento_cadastro_site' %}" method="POST" enctype="multipart/form-data" autocomplete="off" onsubmit="return submitForm();">
+    <form role="form" action="{% url 'recrutamento_cadastro_site' %}" method="POST" enctype="multipart/form-data" autocomplete="off" onsubmit="return submitForm();" novalidate>
       {% csrf_token %}
       <div class="row">
         <div class="col-lg-12 mb-3">
@@ -114,7 +114,7 @@
             <input type="text" class="form-control" name="fone1" id="id_fone1" placeholder="Fone 01" required>
           </div>
         </div>
-        <div class="col-lg-4">
+        <div id="vagas_delimiter_sm" class="col-lg-4">
           <label>&nbsp;</label>
           <div class="input-group">
             <input type="text" class="form-control" name="fone2" id="id_fone2" placeholder="Fone 02">
@@ -129,7 +129,7 @@
         </div>
       </div>
       <hr class="mb-3">
-      <div class="form-check form-switch">
+      <div id="vagas_delimiter_lg" class="form-check form-switch">
         {{form.pne}}
         <label class="form-check-label" for="id_pne">PNE Pessoa com necessidades especiais (PCD)</label>
       </div>
@@ -171,4 +171,17 @@
     </form>
   </div>
 </div>
+<script>
+  function submitForm(){
+    if(document.getElementById('id_nome').value.trim() == ''){dotAlert('danger', 'O campo <b>nome</b> é obrigatório.',false);document.getElementById('id_nome').focus();return false;}
+    if(document.getElementById('id_cpf').value.length < 14){dotAlert('danger', 'Informe um <b>CPF</b> valido para continuar.', false);document.getElementById('id_cpf').focus();return false;}
+    if(document.getElementById('id_fone1').value.length < 14){dotAlert('danger', 'Informe pelo menos um <b>telefone (valido) para contato</b> com DDD.', false);document.getElementById('id_fone1').focus();return false;}
+    if(selectVagas.optionsSelected.length == 0){
+      dotAlert('danger', 'Selecione uma ou mais <b>vagas</b>.', false);
+      if(__ss == 'sm'){setTimeout(() => {window.scroll(0,1645)}, 100);}
+      return false;
+    }
+    return true;
+  }
+</script>
 {% endif %}

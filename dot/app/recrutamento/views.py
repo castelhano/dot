@@ -361,7 +361,7 @@ def candidato_movimentar(request, id):
     l.objeto_str = candidato.nome[0:48]
     l.usuario = request.user
     l.save()
-    messages.warning(request,f'Candidato <b>{candidato.nome.split(" ")[0]}</b> {l.mensagem.lower()}')
+    messages.success(request,f'Candidato <b>{candidato.nome.split(" ")[0]}</b> {l.mensagem.lower()}')
     if request.GET.get('operacao', None) == 'contratar' and settings.redirecinar_cadastro_ao_aprovar and request.user.has_perm('pessoal.add_funcionario'): # Precarrega form com dados do candidato e redireciona para tela de criação de funcionario
         form = FuncionarioForm(instance=candidato)
         return render(request, 'pessoal/funcionario_add.html', {'form':form})

@@ -4,6 +4,8 @@
 {% block model_menu %}
 {% include "_component/menu/core.html" %}
 {% endblock%}
+
+
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'core_usuario_add' %}"></a>
 <div class="card mt-2">
@@ -33,8 +35,11 @@
 
   const selectEmpresas = new jsSelectm(document.getElementById('id_empresas'),{emptySelectMessage: '<small class="text-muted">Nenhuma empresa disponivel</small>'});
   const selectGrupos = new jsSelectm(document.getElementById('id_grupos'), {emptySelectMessage: '<small class="text-muted">Nenhum grupo cadastrado</small>'});
-  const selectPerms = new jsSelectm(document.getElementById('id_perms'), {emptySelectMessage: '<small class="text-muted">Nada a exibir</small>'});
-
+  const selectPerms = new jsSelectm(document.getElementById('id_perms'), {
+    reorderOptions: false,
+    wrapperClassList: 'jsSelectm_wrapper border-0 p-0',
+    emptySelectMessage: '<small class="text-muted">Nada a exibir</small>'}
+    );
   function getEmpresas() {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
@@ -73,6 +78,7 @@
   }
   getGrupos();
   
+  const permsGroups = {};
   function getPerms() {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
@@ -81,8 +87,18 @@
         else{
           let obj = JSON.parse(this.responseText);
           let perms = {};
-          for(item in obj){perms[obj[item].id] = obj[item].nome;}
+          for(item in obj){
+            let nome_split = obj[item].nome.split(' | ');
+            if(Object.keys(permsGroups).includes(nome_split[0])){ // Verifica se grupo ja foi iniciado, se sim adiciona item no grupo
+              permsGroups[nome_split[0]].push(`${obj[item].id}`);
+            }
+            else{ // Caso nao, inicia grupo
+              permsGroups[nome_split[0]] = [`${obj[item].id}`];
+            }
+            perms[obj[item].id] = `<span class="text-purple">${nome_split[1]}</span>: ${nome_split[2]}`;
+          }
           selectPerms.options = perms;
+          selectPerms.groups = permsGroups;
           selectPerms.buildOptions();
         }
       }

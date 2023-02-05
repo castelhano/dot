@@ -13,6 +13,17 @@
   <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/dot.css' %}" type="text/css">
   <title>Cadastro</title>
+
+  <style>
+    @media(max-width: 992px){
+      .dotAlertCustom{
+        top: 1px!important;
+        width: calc(100% - 20px);
+        margin-left: 10px;
+        margin-top: 4px;
+      }
+    }
+  </style>
 </head>
 
 <body class="bg-light">
@@ -60,6 +71,7 @@
   
   
   <script src="{% static 'js/vendor/mask.js' %}"></script>
+  <script src="{% static 'js/dot.js' %}"></script>
   <script src="{% static 'js/listener.js' %}"></script>
   <script src="{% static 'js/selectm.js' %}"></script>
   <script src="{% static 'js/vendor/bootstrap.bundle.min.js' %}"></script>

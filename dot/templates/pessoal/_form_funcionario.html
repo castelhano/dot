@@ -46,7 +46,7 @@
               {{ form.matricula }}
               <label for="id_matricula">Matricula</label>
             </div>
-            {% include "_component/field/empresa.html" with empresa_atual=linha.empresa.id|safe attrs='autofocus' %}
+            {% include "_component/field/empresa.html" with container_classlist='form-floating col mb-1' empresa_atual=linha.empresa.id|safe attrs='autofocus' %}
           </div>
           <div class="row g-1">
             <div class="form-floating mb-lg-1 col-lg-9">
@@ -317,7 +317,7 @@
         let nome = document.getElementById('id_nome');
         let baseTabHidden = isHidden(matricula);
         if(matricula.value == ''){
-          dotAlert('danger', 'Campo <b>matricula<b> é obrigatório.');
+          dotAlert('danger', 'Campo <b>matricula<b> é obrigatório.',false);
           if(baseTabHidden){
             document.getElementById('menu_funcionario_basico').click();
             setTimeout(() => {matricula.focus()}, 480);
@@ -326,7 +326,7 @@
           return false;
         }
         if(empresa.value == ''){
-          dotAlert('danger', 'Campo <b>empresa<b> é obrigatório.');
+          dotAlert('danger', 'Campo <b>empresa<b> é obrigatório.',false);
           if(baseTabHidden){
             document.getElementById('menu_funcionario_basico').click();
             setTimeout(() => {empresa.focus()}, 480);
@@ -335,7 +335,7 @@
           return false;
         }
         if(nome.value.trim() == ''){
-          dotAlert('danger', 'Campo <b>nome<b> é obrigatório.');
+          dotAlert('danger', 'Campo <b>nome<b> é obrigatório.',false);
           if(baseTabHidden){
             document.getElementById('menu_funcionario_basico').click();
             setTimeout(() => {nome.focus()}, 480);

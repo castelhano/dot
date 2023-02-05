@@ -8,6 +8,7 @@
   <link rel="shortcut icon" href="{% static 'img/favicon.ico'%}">
   <link rel="stylesheet" href="{% static 'css/dot.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/all.min.css' %}" type="text/css">
+  <link rel="stylesheet" href="{% static 'css/timeline.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/fontawesome.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.min.css' %}" type="text/css">
   
@@ -60,11 +61,35 @@
             <option value="2">Maria</option>
             <option value="3" selected>Joaquim</option>
             <option value="4">Douglas</option>
+            <option value="22">Brizeida</option>
           </select>
         </div>
       </div>
     </form>
+    <br>
 
+    <div class="row">
+      <div class="col-1">
+        <ul class="timeline-h">
+          <li></li>
+          <li class="active">2</li>
+          <li class="success"></li>
+        </ul>
+        
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-4">
+        <ul class="timeline timeline-legend timeline-sm">
+          <li class="event" data-date="20/05/22 - 14h05">Evento simples</li>
+          <li class="event event-danger" data-date="Mai 22">Evento danger</li>
+          <li class="event event-success" data-date="20/05/22 - 14h05"><small>Texto do evento</small></li>
+        </ul>
+      </div>
+    </div>
+
+    
     
 
     
@@ -86,10 +111,12 @@
 
     const select = new jsSelectm(document.getElementById('original'), {
       title: 'Meu novo select',
-      // options: {5:'Foo',7:'Bar'},
-      // optionsSelected: ['7']
+      groups: {
+        'Basico':['1','2'],
+        'Desligados':['3','4']
+      },
+      reorderOptions:false
     });
-    
 
   </script>
 </body>
