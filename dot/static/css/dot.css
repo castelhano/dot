@@ -10,6 +10,7 @@ Classes Gerais do sistema, carregado em TODAS as paginas
 .cursor-text{cursor:text;}
 select.readonly{background: rgb(233, 236, 239)!important;pointer-events: none;touch-action: none;}
 input[readonly], textarea[readonly]{background: rgb(233, 236, 239)!important;}
+/* input[readonly],input.readonly, textarea[readonly], textarea.readonly{background: rgb(233, 236, 239)!important;} */
 
 .table td.fit,.table th.fit {white-space: nowrap;width: 1%;}
 .table-sortable th {cursor: pointer;}

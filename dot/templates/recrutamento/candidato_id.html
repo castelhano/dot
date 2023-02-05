@@ -33,7 +33,7 @@
       </li>
     </ul>
   </div>
-  <form id="recrutamento_form" action="{% url 'recrutamento_candidato_update' candidato.id|safe %}" enctype="multipart/form-data" method="POST" autocomplete="off" onsubmit="return submitForm();">
+  <form id="recrutamento_form" action="{% url 'recrutamento_candidato_update' candidato.id|safe %}" enctype="multipart/form-data" method="POST" autocomplete="off" onsubmit="return submitForm();" novalidate>
     {% csrf_token %}
     {% include 'recrutamento/_form_candidato.html' %}
   </form>
@@ -190,7 +190,6 @@
   const selectVagas = new jsSelectm(document.getElementById('id_vagas'),{title:'Vagas'})
   
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
-  function submitForm(){modal_loading.show();return true;}
   
   {% endblock %}
 </script>

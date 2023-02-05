@@ -30,7 +30,7 @@
       </li>
     </ul>
   </div>
-  <form id="pessoal_form" action="{% url 'pessoal_funcionario_update' funcionario.id|safe %}" method="POST" enctype="multipart/form-data" autocomplete="off" onsubmit="return submitForm();">
+  <form id="pessoal_form" action="{% url 'pessoal_funcionario_update' funcionario.id|safe %}" method="POST" enctype="multipart/form-data" autocomplete="off" onsubmit="return submitForm();" novalidate>
     {% csrf_token %}
     {% include 'pessoal/_form_funcionario.html' %}
   </form>
@@ -141,6 +141,37 @@
 <script>
   {% block add_script %}
   var TAB_ON_ENTER = true;
+  
+  let matricula = document.getElementById('id_matricula');
+  let empresa = document.getElementById('id_empresa');
+  matricula.readOnly = true;
+  matricula.classList.add('readonly');
+  empresa.classList.add('readonly');empresa.tabIndex = '-1';
+  document.getElementById('id_nome').focus();
+  
+  {% if perms.pessoal.change_funcionario %}
+  let locked = true;
+  // Cria boao lock
+  let lockBtn = document.createElement('div');
+  lockBtn.classList = 'col-auto btn btn-secondary form-floating-display mx-1';
+  lockBtn.innerHTML = '<i class="fas fa-lock px-2"></i>';
+  lockBtn.onclick = () => {
+    if(locked){
+      matricula.readOnly = false;
+      empresa.classList.remove('readonly');empresa.tabIndex = '2';
+      lockBtn.innerHTML = '<i class="fas fa-unlock px-2"></i>';
+      locked = false;
+    }
+    else{
+      matricula.readOnly = true;
+      empresa.classList.add('readonly');empresa.tabIndex = '-1';
+      lockBtn.innerHTML = '<i class="fas fa-lock px-2"></i>';
+      locked = true;
+    }
+  };
+  document.getElementById('id_empresa').parentNode.after(lockBtn);
+  {% endif %}
+
 
   const photo = new jsPhoto({
     {% if funcionario.foto %}imageSrc: '{{ funcionario.foto_url }}',{% endif %}
@@ -157,7 +188,6 @@
   SHORTCUT_MAP['5FTF'] = () => {document.getElementById('menu_funcionario_extras').click()};
   
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
-  function submitForm(){modal_loading.show();return true;}
   
   function eventLocalHandler(e){
     let extras = false;

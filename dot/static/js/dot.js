@@ -149,6 +149,17 @@ function prismStart(){
   }
 }
 
+/*
+* Funcao verifica se elemento nao esta visivel (retorna true para hidden e false para visivel)
+*
+* @version  1.0
+* @since    05/02/2023
+* @author   Rafael Gustavo Alves {@email castelhano.rafael@gmail.com }
+* @param    {Elm} Elemento html
+* @example  isHidden(document.getElementById('id_cpf'))
+*/
+function isHidden(el){return (el.offsetParent === null)}
+
 // ******************************************************************************
 // ONLOAD EVENTS                                                                *
 // Todo o codigo abaixo sera executado antes do fechamento do </body>           *

@@ -23,7 +23,7 @@
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'recrutamento_candidatos' %}"><i class="fas fa-undo"></i></a></li>
     </ul>
   </div>
-  <form id="app_form" action="{% url 'recrutamento_candidato_add' %}" method="POST" autocomplete="off" enctype="multipart/form-data" onsubmit="return submitForm();">
+  <form id="app_form" action="{% url 'recrutamento_candidato_add' %}" method="POST" autocomplete="off" enctype="multipart/form-data" onsubmit="return submitForm();" novalidate>
     {% csrf_token %}
     {% include 'recrutamento/_form_candidato.html' %}
   </form>
@@ -69,7 +69,7 @@
   const selectVagas = new jsSelectm(document.getElementById('id_vagas'),{title:'Vagas'})
   
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
-  function submitForm(){modal_loading.show();return true;}
+
   
   {% endblock %}
 </script>

@@ -151,3 +151,24 @@
     </div>
   </div>
 </div>
+<script>
+  document.getElementById('id_vagas').required = false; // Remove para evitar comportamento padrao do browser
+  function submitForm(){
+    let cpf = document.getElementById('id_cpf');
+    let hiddenMainTab = isHidden(cpf);
+    if(cpf.value == ''){
+      dotAlert('danger', '<b>Erro:</b> Campo <b>CPF</b> é obrigatório.', false);
+      if(hiddenMainTab){
+        document.getElementById('link_tab_base').click();
+        setTimeout(() => {cpf.focus()}, 480);
+      }
+      else{cpf.focus();}
+      return false;
+    }
+    if(selectVagas.optionsSelected.length == 0){
+      if(hiddenMainTab){document.getElementById('link_tab_base').click();}
+      dotAlert('danger', '<b>Erro:</b> É necessário informar pelo menos uma <b>vaga</b>.', false);
+      return false;
+    }
+    modal_loading.show();return true;}
+</script>

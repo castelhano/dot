@@ -20,7 +20,7 @@
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'pessoal_funcionarios' %}"><i class="fas fa-undo"></i></a></li>
     </ul>
   </div>
-  <form id="app_form" action="{% url 'pessoal_funcionario_add' %}" method="POST" enctype="multipart/form-data" autocomplete="off" onsubmit="return submitForm();">
+  <form id="app_form" action="{% url 'pessoal_funcionario_add' %}" method="POST" enctype="multipart/form-data" autocomplete="off" onsubmit="return submitForm();" novalidate>
     {% csrf_token %}
     {% include 'pessoal/_form_funcionario.html' %}
   </form>
@@ -50,7 +50,6 @@
   SHORTCUT_MAP['4FTF'] = () => {document.getElementById('menu_funcionario_detalhe').click()};
   
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
-  function submitForm(){modal_loading.show();return true;} 
   
   VMasker(document.getElementById("id_cnh")).maskPattern('999.999.999-99');
   VMasker(document.getElementById("id_cpf")).maskPattern('999.999.999-99');
