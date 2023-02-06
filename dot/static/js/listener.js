@@ -29,7 +29,7 @@ var SHORTCUT_MAP = {
 	'mTFF':() => {try{document.getElementById('messages').click()}catch(e){}},
 	'sTFF':() => {try{document.getElementById('system').click()}catch(e){}},
 	'f1TFF':() => {try{document.getElementById('docs').click()}catch(e){}},
-	'f2TFF':() => {try{document.getElementById('shortcut_link_list').click()}catch(e){}},
+	'kTFF':() => {try{document.getElementById('shortcut_link_list').click()}catch(e){}},
 	'qTFF':() => {try{document.getElementById('logout_link').click()}catch(e){}},
 };
 

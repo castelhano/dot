@@ -65,7 +65,7 @@ class Log(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.RESTRICT, null=True)
     mensagem = models.CharField(max_length=50, blank=True)
     class Meta:
-        default_permissions = ('view')
+        default_permissions = ('view',)
     
 class Alerta(models.Model):
     titulo = models.CharField(max_length=50, blank=True)

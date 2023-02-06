@@ -52,7 +52,7 @@
             <a class="nav-link dropdown-toggle pt-1 fw-bold" id="system" href="#" data-bs-toggle="dropdown" title="ALT + S">{{user.username|title}}</a>
             <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end mt-1" id="user_list_options">
               <li class="sys_item d-flex justify-content-between"><a class="dropdown-item" id="change_password_link" href="{% url 'change_password' %}"><i class="fas fa-fw fa-unlock-alt"></i> Alterar Senha</a></li>
-              <li class="sys_item d-none d-lg-flex justify-content-between"><a class="dropdown-item pointer" id="shortcut_link_list" data-bs-toggle="modal" data-bs-target="#shortcut_modal"><i class="fas fa-fw fa-keyboard"></i> Atalhos / Sobre</a><kbd class="align-self-center me-2">Alt+F2</kbd></li>
+              <li class="sys_item d-none d-lg-flex justify-content-between"><a class="dropdown-item pointer" id="shortcut_link_list" data-bs-toggle="modal" data-bs-target="#shortcut_modal"><i class="fas fa-fw fa-keyboard"></i> Atalhos / Sobre</a><kbd class="align-self-center me-2">Alt+K</kbd></li>
               {% if perms.core.docs %}
               <li class="sys_item d-flex justify-content-between"><a class="dropdown-item" id="docs" href="{% url 'docs' 'core' %}"><i class="fas fa-fw fa-terminal"></i> Documentação</a><kbd class="align-self-center me-2">Alt+F1</kbd></li>
               {% endif %}

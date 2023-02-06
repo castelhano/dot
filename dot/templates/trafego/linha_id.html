@@ -18,7 +18,7 @@
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a id="tab_link_base" class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" onclick="setTimeout(function(){document.getElementById('id_empresa').focus();},220);" href="#"><i class="fas fa-road"></i></a></li>
       <li class="nav-item"><a id="tab_link_extensoes" class="nav-link" data-bs-toggle="tab" data-bs-target="#extensoes" onclick="setTimeout(function(){document.getElementById('id_extensao_ida').focus();},220);" href="#"><i class="fas fa-pencil-ruler"></i></a></li>
-      <li class="nav-item ms-1"><a id="tab_link_trajetos" class="nav-link text-purple active border" href="{% url 'trafego_trajetos' linha.id|safe %}"><i class="fas fa-route"></i></a></li>
+      <li class="nav-item ms-1"><a id="tab_link_trajetos" class="nav-link text-purple active border" href="{% url 'trafego_trajetos' linha.id|safe %}" title="Trajetos [Ctrl + 3]"><i class="fas fa-route"></i></a></li>
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'trafego_linhas' %}"><i class="fas fa-undo"></i></a></li>
       <li class="nav-item dropdown ms-auto">
         <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>

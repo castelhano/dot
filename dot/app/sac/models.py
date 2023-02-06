@@ -60,7 +60,7 @@ class Reclamacao(models.Model):
 class Settings(models.Model):
     prazo_resposta = models.PositiveIntegerField(default=2, blank=True, null=True)
     class Meta:
-        default_permissions = ('view','change')
+        default_permissions = ('view','change',)
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='sac.settings',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
