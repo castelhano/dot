@@ -70,7 +70,7 @@
         if(empresa == null){dotAlert('warning', '<b>Info:</b> Selecione uma empresa antes de salvar');return false;}
         loadingModalToogle();
         loadingKanbanVisible = true;
-        let url = `/app_data/gestao__${empresa}.json`;
+        let url = `/app_data/gestao__kanban__${empresa}.json`;
         let token = getCookie('csrftoken');
         let xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
@@ -96,7 +96,7 @@
         loadingKanbanVisible = true;
         empresa = empresa_id;
         document.getElementById('empresa_link').innerHTML = el.innerText;
-        dotAppData(`/app_data/gestao__${empresa_id}.json`).then((d) => {
+        dotAppData(`/app_data/gestao__kanban__${empresa_id}.json`).then((d) => {
             if(d == ''){
                 startingKanban = true;
                 saveKanban();

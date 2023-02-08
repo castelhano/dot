@@ -14,32 +14,6 @@
   
   <style>
     /* body{ background-color: #1F2428; } */
-    .foo_wrapper{
-      border: 1px solid #ced4da;
-      border-radius: 0.375rem;
-      padding: 0.375rem 2.25rem 0.475rem 0.75rem;
-    }
-    .foo_wrapper:focus-within{
-      border-color: #86b7fe;
-      outline: 0;
-      box-shadow: 0 0 0 0.25rem rgb(13 110 253 / 25%);
-    }
-    .foo_wrapper li{
-      background-color: aqua;
-    }
-    .foo_wrapper input{margin-bottom: 10px;}
-    .foo_option{
-      cursor: pointer;
-      padding: 2px 5px 2px 5px;
-      border-radius: 3px;
-    }
-    .foo_option[data-select]{
-      background-color: rgba(25, 135, 84, 0.25)!important;
-    }
-    .foo_option:hover{
-      background-color: #ced4da;
-      opacity: 0.5;
-    }
   </style>
 </head>
 <body style="margin: 10px;">
@@ -50,58 +24,18 @@
     <a class="d-none" id="clear" href="{% url 'handler' '999' %}"></a>
     <hr>
 
-
-
-    <form action="">
-
-      <div class="row g-1">
-        <div class="col">
-          <select name="original" id="original" multiple>
-            <option value="1" selected>Rafael</option>
-            <option value="2">Maria</option>
-            <option value="3" selected>Joaquim</option>
-            <option value="4">Douglas</option>
-            <option value="22">Brizeida</option>
-          </select>
-        </div>
-      </div>
-    </form>
-    <br>
-
     <div class="row">
-      <div class="col"><select id="meu_select"></select></div>
-    </div>
-
-    <div class="row">
-      <div class="col-1">
-        <ul class="timeline-h">
-          <li></li>
-          <li class="active">2</li>
-          <li class="success"></li>
-        </ul>
-        
+      <div class="col-3">
+        <select name="" id="meu_select" multiple>
+          <option value="1">Marcio</option>
+          <option value="2">Sandro</option>
+          <option value="3">Abner</option>
+          <option value="222">Coisa feia</option>
+          <option value="4">Opção 04</option>
+          <option value="5">Opção 05</option>
+        </select>
       </div>
     </div>
-
-    <div class="row">
-      <div class="col-4">
-        <ul class="timeline timeline-legend timeline-sm">
-          <li class="event" data-date="20/05/22 - 14h05">Evento simples</li>
-          <li class="event event-danger" data-date="Mai 22">Evento danger</li>
-          <li class="event event-success" data-date="20/05/22 - 14h05"><small>Texto do evento</small></li>
-        </ul>
-      </div>
-    </div>
-
-    
-    
-
-    
-    <div id="dot_alert" class="alert alert-dismissible fade mb-1" role="alert">
-      <span id="dot_alert_message"></span>
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>    
-  </div>
 
   
 
@@ -113,10 +47,21 @@
     
     var TAB_ON_ENTER = true;
 
-    const select = new jsSelectm(document.getElementById('meu_select'), {});
+    const select = new jsSelectm(document.getElementById('meu_select'), {
+      title: 'Novo Select',
+      optionsSelected: ['1','2'],
+      groups: {'Basico': ['1','3'],'Outros':['2','4']}
+    });
+    
+    let dataUpdate = {
+      url: '/app_data_foo.json',
+      data: JSON.stringify(select.options),
+      onSuccessType: 'warning',
+      onSuccessMsg: 'Salfo com foo mais <b>fooooooo</b>',
+    }
+    
+    dotAppDataUpdate(dataUpdate);
 
-    select.options = { '1':'Opcao 01', '2':'Opcao 02'}
-    select.buildOptions();
 
 
   </script>
