@@ -39,34 +39,16 @@ function getCookie(name) {let cookieValue = null;if (document.cookie && document
 *           dotAppData('{% url 'app_data' 'data_test.json' %}').then((r) => data = r).catch(() = > {...});
 */
 function dotAppData(url) {return new Promise(function(resolve, reject) {var xhr = new XMLHttpRequest();xhr.onload = function() {let d = JSON.parse(this.responseText);if(typeof d != 'object'){d = JSON.parse(d)}resolve(d);};xhr.onerror = reject;xhr.open('GET', url);xhr.send();});}
+
 /*
 * dotAppDataUpdate Salva (ajax) no diretorio app_data, objeto json informando o path relativo
 *
 * @version  1.0
 * @since    08/02/2023
 * @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }
-* @example  
+* @example  dotAppDataUpdate({url: '/app_data/foo.json',data: JSON.stringify({...}),onSuccessMsg: 'Registro salvo com <b>success</b>'})
 */
-function dotAppDataUpdate(options){
-  let token = getCookie('csrftoken');
-  let xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-      if(this.readyState === 4 ){
-        console.log('ENTREI');
-        if(this.status === 200){
-          dotAlert(options?.onSuccessType || 'success', options?.onSuccessMsg || 'Registro salvo com <b>successo</b>');
-          if(options?.onSuccess){options.onSuccess()}
-        }
-        else{
-          dorAlert(options?.onErrorType || 'danger', options?.onErrorMsg || '<b>Erro</b> ao salvar registro');
-          if(options?.onError){options.onError()}
-        }
-      }
-  };
-  xhttp.open("POST", `${options.url}`, true);
-  xhttp.setRequestHeader('X-CSRFToken', token);
-  xhttp.send(options.data);
-}
+function dotAppDataUpdate(options){let token = getCookie('csrftoken');let xhttp = new XMLHttpRequest();xhttp.onreadystatechange = function(){if(this.readyState == 4){if(this.status == 200){dotAlert(options?.onSuccessType || 'success', options?.onSuccessMsg || 'Registro salvo com <b>sucesso</b>');if(options?.onSuccess){options.onSuccess()}}else{dotAlert(options?.onErrorType || 'danger', options?.onErrorMsg || '<b>Erro</b> ao salvar registro');if(options?.onError){options.onError()}}}};xhttp.open("POST", `${options.url}`, true);xhttp.setRequestHeader('X-CSRFToken', token);xhttp.send(options.data);}
 
 /*
 * Tooltip initializer

@@ -15,6 +15,7 @@
   <style>
     /* body{ background-color: #1F2428; } */
   </style>
+  <script>window.addEventListener('error', (ev) => {document.getElementById('page-error-icon').classList.remove('d-none');});</script>
 </head>
 <body style="margin: 10px;">
 
@@ -38,7 +39,9 @@
     </div>
 
   
-
+  
+  
+  <div id="page-error-icon" class="bug_icon d-none"><i class="fas fa-bug"></i></div>
   <script src="{% static 'js/listener.js' %}"></script>
   <script src="{% static 'js/dot.js' %}"></script>
   <script src="{% static 'js/selectm.js' %}"></script>
@@ -54,14 +57,11 @@
     });
     
     let dataUpdate = {
-      url: '/app_data_foo.json',
+      url: '/app_data/foo.json',
       data: JSON.stringify(select.options),
-      onSuccessType: 'warning',
-      onSuccessMsg: 'Salfo com foo mais <b>fooooooo</b>',
     }
     
     dotAppDataUpdate(dataUpdate);
-
 
 
   </script>
