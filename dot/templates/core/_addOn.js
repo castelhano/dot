@@ -4,11 +4,13 @@ dotSaveUserProfileConfig()      # Salva profile ao clicar botao Gravar (offcanva
 addOnAgenda_start()             # Cria o widget da agenda e chama addOnAgenda_update() e addOnAgenda_modal_create()
 addOnAgenda_update()            # Busca dados da agenda do usuario
 addOnAgenda_modal_create()      # Cria modal para edicao dos eventos da agenda
+addOnTarefa_start()            # Cria o widget para tarefas e chama addOnTarefa_update() e addOnTarefa_modal_create()
+addOnTarefa_update()            # Busca dados das tarefas do usuario
 **********************
 addOnAgenda_agenda              # Aponta para dicionario com agenda do usuario
 addOnAgenda_table               # Instancia jsTable da agenda
 addOnAgenda_modal               # Instancia modal bootstrap
-addOn_list                      # Lista (ul) com eventos da agenda (mostrados no widget)
+addOnAgenda_list                      # Lista (ul) com eventos da agenda (mostrados no widget)
 addOnAgenda_modal_created       # Booleado define se modal foi criado
 addOnAgenda_modal_view          # String define se view esta em eventos futuros ou passados 'new' ou 'old'
 
@@ -26,8 +28,8 @@ function dotGetUserProfileConfig(){
         else{
             document.getElementById('id_addOnAgenda').checked = d.addOnAgenda;
             document.getElementById('id_addOnTarefas').checked = d.addOnTarefas;
-            if(d.addOnAgenda){addOnAgenda_start()}
-            if(d.addOnTarefas){}
+            if(d.addOnAgenda){addOnAgenda_start();}
+            if(d.addOnTarefas){addOnTarefa_start();}
         }
     });
 }
@@ -50,31 +52,30 @@ function dotSaveUserProfileConfig(options=null){
     });
 }
 
-var addOn_list = null;
+var addOnAgenda_list = null;
 function addOnAgenda_start(){
     let addOn = document.createElement('div');addOn.classList = 'card-widget col-12 col-lg-8 col-xl-4 btn-dark pointer';
     addOn.onclick = () => {addOnAgenda_modal.toggle()};
     let addOn_title = document.createElement('span');addOn_title.classList = 'text-light';addOn_title.innerHTML = '<i class="fas fa-calendar-alt me-2"></i>Agenda';
-    addOn_list = document.createElement('ul');addOn_list.classList = 'list-unstyled fs-7 mt-1 mb-0';
-    // Busca dados da agenda
+    addOnAgenda_list = document.createElement('ul');addOnAgenda_list.classList = 'list-unstyled fs-7 mt-1 mb-0';
     addOnAgenda_modal_create();
-    addOnAgenda_update(addOn_list);  
+    addOnAgenda_update(addOnAgenda_list);  
     addOn.appendChild(addOn_title);
-    addOn.appendChild(addOn_list);
+    addOn.appendChild(addOnAgenda_list);
     document.getElementById('messages_widget').before(addOn);
 }
 
 var addOnAgenda_agenda = {};
 var addOnAgenda_table = null;
 function addOnAgenda_update(){
-    addOn_list.innerHTML = '<li><div class="text-center"><div class="spinner-border text-success"></div></div></li>';
+    addOnAgenda_list.innerHTML = '<li><div class="text-center"><div class="spinner-border text-success"></div></div></li>';
     dotAppData(`/app_data/core__agenda__{{user.id}}.json`).then((agenda) => {
         let countNextEvents = 0;
         let excedeuEventos = false;
         let translateDayWeek = {0:'Dom',1:'Seg',2:'Ter',3:'Qua',4:'Qui',5:'Sex',6:'Sab'};
         let translateMonth = {0:'Jan',1:'Fev',2:'Mar',3:'Abr',4:'Mai',5:'Jun',6:'Jul',7:'Ago',8:'Set',9:'Out',10:'Nov',11:'Dez'};
         let hoje = new Date();
-        addOn_list.innerHTML = '';
+        addOnAgenda_list.innerHTML = '';
         for(let item in agenda.new){
             let data = new Date(`${agenda.new[item].date} 23:00`);
             let prazo = dateDelta(data,hoje);
@@ -86,7 +87,7 @@ function addOnAgenda_update(){
             event.innerHTML += `<div class="col-auto dotAgenda-data-dayWeek">${translateDayWeek[data.getDay()]}</div>`;
             event.innerHTML += `<div class="col dotAgenda-title text-truncate">${agenda.new[item].title}</div>`;
             event.innerHTML += `<div class="col-auto"><small class="badge bg-purple-light ms-1 float-end">${prazo}</small></div>`;
-            addOn_list.appendChild(event);
+            addOnAgenda_list.appendChild(event);
             countNextEvents++;
         }
         addOnAgenda_agenda = agenda || {old:[],new:[]}; // Salva agenda na variavel global addOnAgenda_agenda
@@ -109,10 +110,10 @@ function addOnAgenda_update(){
             addOnAgenda_table.appendData(addOnAgenda_agenda[addOnAgenda_modal_view]);
         }
         if(countNextEvents == 0){
-            addOn_list.innerHTML = '<p>Nenhum evento cadastrado</p>';
+            addOnAgenda_list.innerHTML = '<p>Nenhum evento cadastrado</p>';
             addOnAgenda_table.addEmptyRow();
         }
-        else if(excedeuEventos){addOn_list.innerHTML += '<small>mais...</small>'}
+        else if(excedeuEventos){addOnAgenda_list.innerHTML += '<small>mais...</small>'}
     });
 }
 
@@ -133,7 +134,7 @@ function addOnAgenda_modal_create(options){
     let modalBtnAction = document.createElement('button');modalBtnAction.setAttribute('data-type', 'modalAction');
     modalBtnAction.classList = 'btn btn-sm btn-primary ms-1';modalBtnAction.innerHTML = 'Gravar';
     modalBtnAction.onclick = () => {
-        addOn_list.innerHTML = '<li><div class="text-center"><div class="spinner-border text-success"></div></div></li>';
+        addOnAgenda_list.innerHTML = '<li><div class="text-center"><div class="spinner-border text-success"></div></div></li>';
         addOnAgenda_agenda[addOnAgenda_modal_view] = addOnAgenda_table.getRows(); // Atualiza dicionario com dados da tabela em exibicao (possivel alterada)
         // Ajusta eventos no old / new antes de salvar
         let hoje = new Date();
@@ -203,4 +204,45 @@ function addOnAgenda_showNew(){
     else{addOnAgenda_table.cleanTbody();addOnAgenda_table.addEmptyRow();}
     document.querySelector('[data-type=addOnAgendaBtnShowNew]').classList.add('active');
     document.querySelector('[data-type=addOnAgendaBtnShowOld]').classList.remove('active');
+}
+
+var addOnTarefa_list = null;
+function addOnTarefa_start(){
+    let addOn = document.createElement('div');addOn.classList = 'card-widget col-6 col-lg-4 col-xl-2 bg-dark text-light';
+    let addOn_title = document.createElement('span');addOn_title.classList = 'text-light';addOn_title.innerHTML = '<i class="fas fa-list me-2"></i>Tarefas';
+    let addOnTarefa_container = document.createElement('div');addOnTarefa_container.classList = 'container-fluid p-1';addOnTarefa_container.style = 'max-height: 150px;overflow-y: scroll;';
+    addOnTarefa_list = document.createElement('ul');addOnTarefa_list.classList = 'list-unstyled fs-7 mt-1 mb-0';
+    addOnTarefa_update(addOnTarefa_list);  
+    addOnTarefa_container.appendChild(addOnTarefa_list);
+    addOn.appendChild(addOn_title);
+    addOn.appendChild(addOnTarefa_container);
+    document.getElementById('messages_widget').before(addOn);
+}
+
+var addOnTarefa_tarefas = null;
+function addOnTarefa_update(){
+    addOnTarefa_list.innerHTML = '<li><div class="text-center"><div class="spinner-border text-success"></div></div></li>';
+    dotAppData(`/app_data/core__tarefa__{{user.id}}.json`).then((obj) => {
+        addOnTarefa_list.innerHTML = '';
+        addOnTarefa_tarefas = obj;
+        for(let item in obj){
+            let event = document.createElement('li');event.classList = 'dotTarefa-event row g-1 pb-0';
+            let controlDiv = document.createElement('div');controlDiv.classList = 'col-auto';
+            let textDiv = document.createElement('div');textDiv.classList = 'col dotTarefa-title text-truncate';
+            let checkbox = document.createElement('input');checkbox.type = "checkbox";checkbox.classList = 'form-check-input me-1';checkbox.id = `addOnTarefa__${item}`;
+            let label = document.createElement('label');label.classList = 'form-check-label';label.setAttribute('for',`addOnTarefa__${item}`);label.innerHTML = obj[item].title;
+            checkbox.onclick = () => {
+                if(checkbox.checked){label.classList.add('text-decoration-line-through','fst-italic','text-muted');}
+                else{label.classList.remove('text-decoration-line-through','fst-italic','text-muted');}
+            }
+            controlDiv.appendChild(checkbox)
+            textDiv.appendChild(label);
+            event.appendChild(controlDiv);
+            event.appendChild(textDiv);
+            addOnTarefa_list.appendChild(event);
+        }
+        if(addOnTarefa_tarefas.length == 0){
+            addOnTarefa_list.innerHTML = '<p>Nenhum evento cadastrado</p>';
+        }
+    });
 }
