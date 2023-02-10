@@ -75,7 +75,7 @@ class jsTable{
         this.activeRowClasslist = options?.activeRowClasslist || 'table-dark';
         this.pgControlClasslist = options?.pgControlClasslist || 'pagination justify-content-end'; 
         this.pgPageClasslist = options?.pgPageClasslist || 'page-item';
-        this.pgLinkClasslist = options?.pgLinkClasslist || 'page-link';
+        this.pgLinkClasslist = options?.pgLinkClasslist || 'page-link fs-7 px-2 py-1';
         this.pgFirstButtonLabel = options?.pgFirstButtonLabel || '<i class="fas fa-angle-double-left"></i>';
         this.pgPreviousButtonLabel = options?.pgPreviousButtonLabel || '<i class="fas fa-angle-left"></i>';
         this.pgNextButtonLabel = options?.pgNextButtonLabel || '<i class="fas fa-angle-right"></i>';

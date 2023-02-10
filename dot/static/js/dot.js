@@ -48,7 +48,7 @@ function dotAppData(url) {return new Promise(function(resolve, reject) {var xhr 
 * @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }
 * @example  dotAppDataUpdate({url: '/app_data/foo.json',data: JSON.stringify({...}),onSuccessMsg: 'Registro salvo com <b>success</b>'})
 */
-function dotAppDataUpdate(options){let token = getCookie('csrftoken');let xhttp = new XMLHttpRequest();xhttp.onreadystatechange = function(){if(this.readyState == 4){if(this.status == 200){if(options?.showSuccessAlert){dotAlert(options?.onSuccessType || 'success', options?.onSuccessMsg || 'Registro salvo com <b>sucesso</b>')};if(options?.onSuccess){options.onSuccess()}}else{dotAlert(options?.onErrorType || 'danger', options?.onErrorMsg || '<b>Erro</b> ao salvar registro');if(options?.onError){options.onError()}}}};xhttp.open("POST", `${options.url}`, true);xhttp.setRequestHeader('X-CSRFToken', token);xhttp.send(options.data);}
+function dotAppDataUpdate(options){let token = getCookie('csrftoken');let xhttp = new XMLHttpRequest();xhttp.onreadystatechange = function(){if(this.readyState == 4){if(this.status == 200){if(options?.showSuccessAlert == true || options?.showSuccessAlert == undefined){dotAlert(options?.onSuccessType || 'success', options?.onSuccessMsg || 'Registro salvo com <b>sucesso</b>')};if(options?.onSuccess){options.onSuccess()}}else{dotAlert(options?.onErrorType || 'danger', options?.onErrorMsg || '<b>Erro</b> ao salvar registro');if(options?.onError){options.onError()}}}};xhttp.open("POST", `${options.url}`, true);xhttp.setRequestHeader('X-CSRFToken', token);xhttp.send(options.data);}
 
 /*
 * Tooltip initializer

@@ -81,7 +81,8 @@ function addOnAgenda_update(){
             let prazo = dateDelta(data,hoje);
             if(countNextEvents == 4){excedeuEventos = true;continue;} // Mostra maximo de x eventos
             let event = document.createElement('li');event.classList = 'dotAgenda-event row g-1 pb-0';
-            if(prazo == 0){prazo = 'Hoje'};
+            if(prazo == 0){prazo = 'Hoje'}
+            else if(prazo == 1){prazo = 'Amanhã'}
             event.innerHTML = `<div class="col-auto"><span class="dotAgenda-data-dia">${agenda.new[item].date.slice(-2)}</span></div> `;
             event.innerHTML += `<div class="col-auto dotAgenda-data-mes">${translateMonth[data.getMonth()]}</div> `;
             event.innerHTML += `<div class="col-auto dotAgenda-data-dayWeek">${translateDayWeek[data.getDay()]}</div>`;
@@ -96,6 +97,8 @@ function addOnAgenda_update(){
                 canDeleteRow: true,
                 canExportCsv:false,
                 canSort:false,
+                enablePaginate: true,
+                rowsPerPage: 6,
                 showCounterLabel:false,
                 emptyTableMessage: 'Nenhum evento cadastrado',
                 editableColsClasslist: 'text-muted',
@@ -191,7 +194,7 @@ function addOnAgenda_showOld(){
     addOnAgenda_agenda.new = addOnAgenda_table.getRows();
     addOnAgenda_table.data = [];addOnAgenda_table.raw = [];
     if(addOnAgenda_agenda.old.length > 0){addOnAgenda_table.appendData(addOnAgenda_agenda.old)}
-    else{addOnAgenda_table.cleanTbody();addOnAgenda_table.addEmptyRow();}
+    else{addOnAgenda_table.cleanTbody(); addOnAgenda_table.paginate();addOnAgenda_table.addEmptyRow();}
     document.querySelector('[data-type=addOnAgendaBtnShowNew]').classList.remove('active');
     document.querySelector('[data-type=addOnAgendaBtnShowOld]').classList.add('active');
 }
@@ -201,27 +204,26 @@ function addOnAgenda_showNew(){
     addOnAgenda_agenda.old = addOnAgenda_table.getRows();
     addOnAgenda_table.data = [];addOnAgenda_table.raw = [];
     if(addOnAgenda_agenda.new.length > 0){addOnAgenda_table.appendData(addOnAgenda_agenda.new)}
-    else{addOnAgenda_table.cleanTbody();addOnAgenda_table.addEmptyRow();}
+    else{addOnAgenda_table.cleanTbody();addOnAgenda_table.paginate();addOnAgenda_table.addEmptyRow();}
     document.querySelector('[data-type=addOnAgendaBtnShowNew]').classList.add('active');
     document.querySelector('[data-type=addOnAgendaBtnShowOld]').classList.remove('active');
 }
 
 var addOnTarefa_list = null;
 function addOnTarefa_start(){
-    let addOn = document.createElement('div');addOn.classList = 'card-widget col-6 col-lg-4 col-xl-2 bg-dark text-light';
-    let addOn_title = document.createElement('span');addOn_title.classList = 'text-light';addOn_title.innerHTML = '<i class="fas fa-list me-2"></i>Tarefas';
+    let addOn = document.createElement('div');addOn.classList = 'card-widget col-12 col-lg-4 col-xl-2 bg-dark text-light';
+    let addOnHeader = `<div class="row mb-2"><div class="col"><i class="fas fa-list me-2"></i>Tarefas</div><div class="col-auto"><span class="addOnTarefaSave" onclick="addOnTarefaSave()"><i class="fas fa-save"></i></span><span class="addOnTarefaAdd" onclick="addOnTarefaAdd()"><i class="fas fa-plus"></i></span></div></div>`;
     let addOnTarefa_container = document.createElement('div');addOnTarefa_container.classList = 'container-fluid p-1';addOnTarefa_container.style = 'max-height: 150px;overflow-y: scroll;';
     addOnTarefa_list = document.createElement('ul');addOnTarefa_list.classList = 'list-unstyled fs-7 mt-1 mb-0';
     addOnTarefa_update(addOnTarefa_list);  
     addOnTarefa_container.appendChild(addOnTarefa_list);
-    addOn.appendChild(addOn_title);
+    addOn.innerHTML = addOnHeader;
     addOn.appendChild(addOnTarefa_container);
     document.getElementById('messages_widget').before(addOn);
 }
 
 var addOnTarefa_tarefas = null;
 function addOnTarefa_update(){
-    addOnTarefa_list.innerHTML = '<li><div class="text-center"><div class="spinner-border text-success"></div></div></li>';
     dotAppData(`/app_data/core__tarefa__{{user.id}}.json`).then((obj) => {
         addOnTarefa_list.innerHTML = '';
         addOnTarefa_tarefas = obj;
@@ -229,8 +231,23 @@ function addOnTarefa_update(){
             let event = document.createElement('li');event.classList = 'dotTarefa-event row g-1 pb-0';
             let controlDiv = document.createElement('div');controlDiv.classList = 'col-auto';
             let textDiv = document.createElement('div');textDiv.classList = 'col dotTarefa-title text-truncate';
-            let checkbox = document.createElement('input');checkbox.type = "checkbox";checkbox.classList = 'form-check-input me-1';checkbox.id = `addOnTarefa__${item}`;
-            let label = document.createElement('label');label.classList = 'form-check-label';label.setAttribute('for',`addOnTarefa__${item}`);label.innerHTML = obj[item].title;
+            let checkbox = document.createElement('input');checkbox.type = "checkbox";checkbox.classList = 'form-check-input me-1';
+            let label = document.createElement('div');label.classList = 'pointer';label.innerHTML = obj[item].title;
+            label.onclick = () => {
+                label.style.display = 'none';
+                let input = document.createElement('input');input.value = label.innerText;input.classList = 'form-control form-control-sm fs-8 py-0';input.style.minHeight = '20px';
+                label.after(input);
+                input.onblur = () => {
+                    if(input.value.trim() != ''){
+                        label.innerHTML = input.value;
+                        label.style.display = 'block';
+                        input.remove();
+                    }
+                    else{event.remove()} // Se texto vazio inserido remove o item
+                };
+                input.onkeydown = (e) => {if(e.key == 'Enter'){input.blur();}}
+                input.select();
+            };
             checkbox.onclick = () => {
                 if(checkbox.checked){label.classList.add('text-decoration-line-through','fst-italic','text-muted');}
                 else{label.classList.remove('text-decoration-line-through','fst-italic','text-muted');}
@@ -245,4 +262,44 @@ function addOnTarefa_update(){
             addOnTarefa_list.innerHTML = '<p>Nenhum evento cadastrado</p>';
         }
     });
+}
+function addOnTarefaSave(){
+    let tarefas = [];
+    addOnTarefa_list.querySelectorAll('input[type=checkbox]').forEach((e) => {
+        if(e.checked){e.parentNode.parentNode.remove()}
+        else{tarefas.push({title:e.parentNode.parentNode.childNodes[1].innerText})}
+    });
+    dotAppDataUpdate({url:'/app_data/core__tarefa__{{user.id}}.json',data:JSON.stringify(tarefas),onSuccessMsg:'Tarefas <b>salvas</b>'});
+}
+
+function addOnTarefaAdd(){
+    let event = document.createElement('li');event.classList = 'dotTarefa-event row g-1 pb-0';
+    let controlDiv = document.createElement('div');controlDiv.classList = 'col-auto';
+    let textDiv = document.createElement('div');textDiv.classList = 'col dotTarefa-title text-truncate';
+    let checkbox = document.createElement('input');checkbox.type = "checkbox";checkbox.classList = 'form-check-input me-1';
+    let label = document.createElement('div');label.classList = 'pointer';label.innerHTML = 'nova tarefa...';
+    label.onclick = () => {
+        label.style.display = 'none';
+        let input = document.createElement('input');input.value = label.innerText;input.classList = 'form-control form-control-sm fs-8 py-0';input.style.minHeight = '20px';
+        label.after(input);
+        input.onblur = () => {
+            if(input.value.trim() != ''){
+                label.innerHTML = input.value;
+                label.style.display = 'block';
+                input.remove();
+            }
+            else{event.remove()} // Se texto vazio inserido remove o item
+        };
+        input.onkeydown = (e) => {if(e.key == 'Enter'){input.blur();}}
+        input.select();
+    };
+    checkbox.onclick = () => {
+        if(checkbox.checked){label.classList.add('text-decoration-line-through','fst-italic','text-muted');}
+        else{label.classList.remove('text-decoration-line-through','fst-italic','text-muted');}
+    }
+    controlDiv.appendChild(checkbox)
+    textDiv.appendChild(label);
+    event.appendChild(controlDiv);
+    event.appendChild(textDiv);
+    addOnTarefa_list.appendChild(event);
 }

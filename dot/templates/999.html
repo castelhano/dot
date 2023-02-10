@@ -14,11 +14,6 @@
   
   <style>
     /* body{ background-color: #1F2428; } */
-    .dotAgenda-event, .dotTarefa-event{margin-bottom: 4px;}
-.dotAgenda-data-dia{border-radius: 20px;padding: 3px 4px; margin-right: 2px; background-color:#79589F; color:#FFF;font-size:0.7rem;font-weight:bold;font-family: monospace;}
-.dotAgenda-data-month{font-family: monospace;}
-.dotAgenda-data-dayWeek{color: #79589F;font-family: monospace;}
-.dotTarefa-icon{padding: 0 8px;background-color: #79589F;border-radius: 50%; font-size: 16px;}
   </style>
   <script>window.addEventListener('error', (ev) => {document.getElementById('page-error-icon').classList.remove('d-none');});</script>
 </head>
@@ -31,34 +26,10 @@
     <hr>
 
     <div class="row">
-      <div class="col"><span class="dotTarefa-icon">&nbsp;</span>Teste</div>
+      <div class="col"><input type="text" class="form-control form-control-sm fs-8 py-0" style="min-height: 24px;" value="Meu texto"></div>
     </div>
 
-    <table class="table table-sm border table-striped table-hover mt-1">
-      <thead>
-        <tr>
-          <th>foo</th>
-          <th>bar</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
 
-    
-
-    <div class="row">
-      <div class="col-3">
-        <select name="" id="meu_select" multiple>
-          <option value="1">Marcio</option>
-          <option value="2">Sandro</option>
-          <option value="3">Abner</option>
-          <option value="222">Coisa feia</option>
-          <option value="4">Opção 04</option>
-          <option value="5">Opção 05</option>
-        </select>
-      </div>
-    </div>
-  
   
   
   <div id="page-error-icon" class="bug_icon d-none"><i class="fas fa-bug"></i></div>
@@ -69,18 +40,6 @@
   <script>
     
     var TAB_ON_ENTER = true;
-
-    const table = new jsTable(document.querySelector('table'),{
-      data:[{foo:'Rafael',bar:55}],
-      canAddRow: true,
-      canDeleteRow: true,
-      canExportCsv:false,
-      canSort:false,
-      showCounterLabel:  false,
-      emptyTableMessage: 'Nenhum evento cadastrado',
-      deleteRowButtonClasslist: 'pe-2 pointer',
-      editableCols: ['date','hour','title']
-    });
 
 
   </script>
