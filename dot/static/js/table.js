@@ -470,7 +470,7 @@ class jsTable{
     }
     enterRow(){
         if(this.activeRow != null){
-            try {this.tbody.querySelectorAll('tr')[this.activeRow].querySelector(this.actionRowSelector).click();}catch (e){console.log(e);}
+            try {this.tbody.querySelectorAll('tr')[this.activeRow].querySelector(this.actionRowSelector).click();}catch(e){console.log(e);}
         }
     }
     sort(column, asc=true){
@@ -625,8 +625,7 @@ class jsTable{
     cleanTable(){this.headers = [];this.raw = [];this.thead.innerHTML = '';this.tbody.innerHTML = '';}
     cleanRows(){this.raw = [];this.tbody.innerHTML = '';this.rawNextId = 0;this.leid = 0;} // Reinicia this.raw e limpa this.tbody
     cleanTbody(){this.tbody.innerHTML = '';}
-    addEmptyRow(){this.tbody.innerHTML = `<tr class="emptyRow"><td data-type="emptyRow" colspan="${this.headers.length}">${this.emptyTableMessage}</td></tr>`;}
-    removeEmptyRow(){}
+    addEmptyRow(){this.tbody.innerHTML = `<tr class="emptyRow"><td data-type="emptyRow" colspan="${this.canDeleteRow ? this.headers.length + 1 : this.headers.length}">${this.emptyTableMessage}</td></tr>`;}
     loading(done=false){
         if(done){this.loadingEl.classList.add('d-none')}
         else{this.loadingEl.classList.remove('d-none')}
@@ -640,8 +639,8 @@ class jsTable{
             ths[i].setAttribute('data-key',ths[i].innerText); // Ajusta o data-attr key com o valor informado no th
             this.headers.push(ths[i].innerText); // Adiciona o header no array de headers
             if(this.canFilter && this.filterCols.includes(ths[i].innerText)){ths[i].innerHTML += '*'} // Verifica se header esta marcado para ser filtrado, se sim adiciona caracter identificador
-            
         }
+        if(this.canDeleteRow){this.thead.querySelector('tr').innerHTML += "<th></th>";} // Insere header para controle caso canDeleteRow
         
         let trs = this.table.querySelectorAll('tbody tr'); // Busca todas as linhas dentro de um tbody
         let trs_count = trs.length;

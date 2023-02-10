@@ -83,6 +83,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     empresas = models.ManyToManyField(Empresa)
     force_password_change = models.BooleanField(default=True)
+    config = models.TextField(blank=True)
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='auth.user',objeto_id=self.user.id).order_by('-data')[:15]
         return reversed(logs)

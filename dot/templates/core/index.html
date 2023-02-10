@@ -1,10 +1,21 @@
 {% extends "layout/dot.html" %}
+{% load static %}
 {% block title %}SIT{% endblock %}
 {% block model_menu %}{% include "_component/menu/core.html" %}{% endblock%}
 
+
+<style>
+{% block style %}
+.dotAgenda-event{margin-bottom: 4px;}
+.dotAgenda-data-dia{border-radius: 20px;padding: 3px 4px; margin-right: 2px; background-color:#79589F; color:#FFF;font-size:0.7rem;font-weight:bold;font-family: monospace;}
+.dotAgenda-data-month{font-family: monospace;}
+.dotAgenda-data-dayWeek{color: #79589F;font-family: monospace;}
+{% endblock%}
+</style>
+
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'index' %}"></a>
-<div class="row px-1 pt-lg-2">
+<div id="dotWidgetsContainer" class="row px-1 pt-lg-2">
   <div id="messages_widget" class="card-widget col-6 col-lg-4 col-xl-2 btn-secondary d-none"><i class="fas fa-inbox lead-image"> <sup id="alertas_badge" style="font-family: var(--bs-body-font-family); font-size:2rem;">0</sup></i><a class="widget-label stretched-link" data-bs-toggle="offcanvas" href="#offcanvas" role="button" title="ALT + M">Notificações<kbd class="float-end fs-9">alt m</kbd></a></div>
   {% if perms.core.console %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-dark" title="Ctrl + C"><i class="fas fa-window-restore lead-image"></i><a id="console_link" class="widget-label stretched-link" href="{% url 'console' %}">Admin Console</a></div>{% endif %}
   {% if perms.gestao.dashboard %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-dark" title="Ctrl + C"><i class="fas fa-chart-pie lead-image"></i><a id="widget_action_gestao" class="widget-label stretched-link" href="{% url 'gestao_dashboard' %}">Gerencial<kbd class="float-end fs-9 bg-light text-dark fw-bold">ctrl 1</kbd></a></div>{% endif %}
@@ -20,13 +31,30 @@
   {% if perms.globus.view_escala %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-orange"><i class="fas fa-file-import lead-image"></i><a id="widget_action_globus" class="widget-label stretched-link" href="{% url 'globus_escalas' %}">Escalas (Globus)</a></div>{% endif %}
   {% if perms.globus.consultar_escala %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-orange"><i class="fas fa-user-clock lead-image"></i><a id="widget_action_consultar_escala" class="widget-label stretched-link" href="{% url 'globus_consultar_escala' %}">Consultar Escala</a></div>{% endif %}
   {% if perms.globus.localizar_escala %}
-  <div class="card-widget col-6 col-lg-4 col-xl-2 btn-orange"><i class="fas fa-search lead-image"></i><a id="widget_action_consultar_escala" class="widget-label stretched-link" href="{% url 'globus_localizar_escala' %}">Pesquisa Escala</a></div>
+  <div class="card-widget col-6 col-lg-4 col-xl-2 btn-orange"><i class="fas fa-search lead-image"></i><a id="widget_action_localizar_escala" class="widget-label stretched-link" href="{% url 'globus_localizar_escala' %}">Pesquisa Escala</a></div>
   <div class="card-widget col-6 col-lg-4 col-xl-2 btn-orange"><i class="fas fa-clipboard-list lead-image"></i><a id="widget_action_planejamento_linha" class="widget-label stretched-link" href="{% url 'globus_planejamento_linha' %}">Horários Linha</a></div>
   {% endif %}
 </div>
 {% endblock%}
 
+{% block offcanvas_body %}
+<h6 data-type="dotOffcanvasAncor" class="text-muted mt-3">Configurações:</h6>
+<div class="form-check form-switch">
+  <input class="form-check-input" type="checkbox" role="switch" name="addOnAgenda" id="id_addOnAgenda">
+  <label class="form-check-label" for="id_addOnAgenda">Addon: <b class="text-purple">Agenda</b></label>
+</div>
+<div class="form-check form-switch">
+  <input class="form-check-input" type="checkbox" role="switch" name="addOnTarefas" id="id_addOnTarefas">
+  <label class="form-check-label" for="id_addOnTarefas">Addon: <b class="text-purple">Tarefas</b></label>
+</div>
+<button class="btn btn-sm btn-primary mt-3" onclick="dotSaveUserProfileConfig()">Salvar</button>
+{% endblock %}
+
   
+{% block add_script_src %}
+<script src="{% static 'js/date.js' %}"></script>
+<script src="{% static 'js/table.js' %}"></script>
+{% endblock %}
 <script>
 {% block add_script %}
 SHORTCUT_MAP['1FTF'] = () => {document.getElementById('widget_action_gestao').click()};
@@ -38,6 +66,11 @@ SHORTCUT_MAP['gFTF'] = () => {document.getElementById('widget_action_linha').cli
 SHORTCUT_MAP['3FTF'] = () => {document.getElementById('widget_action_planejamento').click()};
 SHORTCUT_MAP['kFTF'] = () => {document.getElementById('widget_action_acidente').click()};
 
+
+
+
+
+{% include 'core/_addOn.js' %}
 {% include '_component/script/update_alertas.js' %}
 {% endblock %}
 </script>

@@ -25,6 +25,18 @@
     <a class="d-none" id="clear" href="{% url 'handler' '999' %}"></a>
     <hr>
 
+    <table class="table table-sm border table-striped table-hover mt-1">
+      <thead>
+        <tr>
+          <th>foo</th>
+          <th>bar</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    
+
     <div class="row">
       <div class="col-3">
         <select name="" id="meu_select" multiple>
@@ -37,31 +49,29 @@
         </select>
       </div>
     </div>
-
   
   
   
   <div id="page-error-icon" class="bug_icon d-none"><i class="fas fa-bug"></i></div>
   <script src="{% static 'js/listener.js' %}"></script>
   <script src="{% static 'js/dot.js' %}"></script>
-  <script src="{% static 'js/selectm.js' %}"></script>
+  <script src="{% static 'js/table.js' %}"></script>
   <script src="/static/js/vendor/bootstrap.bundle.min.js"></script>
   <script>
     
     var TAB_ON_ENTER = true;
 
-    const select = new jsSelectm(document.getElementById('meu_select'), {
-      title: 'Novo Select',
-      optionsSelected: ['1','2'],
-      groups: {'Basico': ['1','3'],'Outros':['2','4']}
+    const table = new jsTable(document.querySelector('table'),{
+      data:[{foo:'Rafael',bar:55}],
+      canAddRow: true,
+      canDeleteRow: true,
+      canExportCsv:false,
+      canSort:false,
+      showCounterLabel:  false,
+      emptyTableMessage: 'Nenhum evento cadastrado',
+      deleteRowButtonClasslist: 'pe-2 pointer',
+      editableCols: ['date','hour','title']
     });
-    
-    let dataUpdate = {
-      url: '/app_data/foo.json',
-      data: JSON.stringify(select.options),
-    }
-    
-    dotAppDataUpdate(dataUpdate);
 
 
   </script>
