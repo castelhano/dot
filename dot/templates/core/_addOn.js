@@ -76,11 +76,15 @@ function addOnAgenda_update(){
         let translateMonth = {0:'Jan',1:'Fev',2:'Mar',3:'Abr',4:'Mai',5:'Jun',6:'Jul',7:'Ago',8:'Set',9:'Out',10:'Nov',11:'Dez'};
         let hoje = new Date();
         addOnAgenda_list.innerHTML = '';
+        let ajustedOld = agenda.old || [];
+        let ajustedNew = [];
         for(let item in agenda.new){
             let data = new Date(`${agenda.new[item].date} 23:00`);
             let prazo = dateDelta(data,hoje);
             if(countNextEvents == 4){excedeuEventos = true;continue;} // Mostra maximo de x eventos
             let event = document.createElement('li');event.classList = 'dotAgenda-event row g-1 pb-0';
+            if(prazo < 0){ajustedOld.push(agenda.new[item]);continue;}
+            ajustedNew.push(agenda.new[item])
             if(prazo == 0){prazo = 'Hoje'}
             else if(prazo == 1){prazo = 'Amanhã'}
             event.innerHTML = `<div class="col-auto"><span class="dotAgenda-data-dia">${agenda.new[item].date.slice(-2)}</span></div> `;
@@ -91,7 +95,7 @@ function addOnAgenda_update(){
             addOnAgenda_list.appendChild(event);
             countNextEvents++;
         }
-        addOnAgenda_agenda = agenda || {old:[],new:[]}; // Salva agenda na variavel global addOnAgenda_agenda
+        addOnAgenda_agenda = {old:ajustedOld,new:ajustedNew}; // Salva agenda na variavel global addOnAgenda_agenda
         if(addOnAgenda_table == null){ // Caso instancia jsTable ainda nao criada, inicia instancia
             addOnAgenda_table = new jsTable(document.getElementById('addOnAgenda_table_el'), {
                 canDeleteRow: true,
@@ -233,7 +237,7 @@ function addOnTarefa_update(){
             let textDiv = document.createElement('div');textDiv.classList = 'col dotTarefa-title text-truncate';
             let checkbox = document.createElement('input');checkbox.type = "checkbox";checkbox.classList = 'form-check-input me-1';
             let label = document.createElement('div');label.classList = 'pointer';label.innerHTML = obj[item].title;
-            label.onclick = () => {
+            label.ondblclick = () => {
                 label.style.display = 'none';
                 let input = document.createElement('input');input.value = label.innerText;input.classList = 'form-control form-control-sm fs-8 py-0';input.style.minHeight = '20px';
                 label.after(input);
@@ -243,7 +247,10 @@ function addOnTarefa_update(){
                         label.style.display = 'block';
                         input.remove();
                     }
-                    else{event.remove()} // Se texto vazio inserido remove o item
+                    else{ // Se texto vazio inserido remove o item
+                        event.remove();
+                        if(addOnTarefa_tarefas.length == 0){addOnTarefa_list.innerHTML = '<p>Nenhum evento cadastrado</p>';}
+                    }
                 };
                 input.onkeydown = (e) => {if(e.key == 'Enter'){input.blur();}}
                 input.select();
@@ -258,9 +265,7 @@ function addOnTarefa_update(){
             event.appendChild(textDiv);
             addOnTarefa_list.appendChild(event);
         }
-        if(addOnTarefa_tarefas.length == 0){
-            addOnTarefa_list.innerHTML = '<p>Nenhum evento cadastrado</p>';
-        }
+        if(addOnTarefa_tarefas.length == 0){addOnTarefa_list.innerHTML = '<p>Nenhum evento cadastrado</p>';}
     });
 }
 function addOnTarefaSave(){
@@ -270,15 +275,17 @@ function addOnTarefaSave(){
         else{tarefas.push({title:e.parentNode.parentNode.childNodes[1].innerText})}
     });
     dotAppDataUpdate({url:'/app_data/core__tarefa__{{user.id}}.json',data:JSON.stringify(tarefas),onSuccessMsg:'Tarefas <b>salvas</b>'});
+    if(tarefas.length == 0){addOnTarefa_list.innerHTML = '<p>Nenhuma evento cadastrado</p>'}
 }
 
 function addOnTarefaAdd(){
+    addOnTarefa_list.querySelectorAll('p').forEach((e) => {e.remove()}); // Remove texto de (Nenhuma tarefa ....) caso exista
     let event = document.createElement('li');event.classList = 'dotTarefa-event row g-1 pb-0';
     let controlDiv = document.createElement('div');controlDiv.classList = 'col-auto';
     let textDiv = document.createElement('div');textDiv.classList = 'col dotTarefa-title text-truncate';
     let checkbox = document.createElement('input');checkbox.type = "checkbox";checkbox.classList = 'form-check-input me-1';
     let label = document.createElement('div');label.classList = 'pointer';label.innerHTML = 'nova tarefa...';
-    label.onclick = () => {
+    label.ondblclick = () => {
         label.style.display = 'none';
         let input = document.createElement('input');input.value = label.innerText;input.classList = 'form-control form-control-sm fs-8 py-0';input.style.minHeight = '20px';
         label.after(input);
@@ -288,7 +295,10 @@ function addOnTarefaAdd(){
                 label.style.display = 'block';
                 input.remove();
             }
-            else{event.remove()} // Se texto vazio inserido remove o item
+            else{ // Se texto vazio inserido remove o item
+                event.remove();
+                if(addOnTarefa_tarefas.length == 0){addOnTarefa_list.innerHTML = '<p>Nenhum evento cadastrado</p>';}
+            }
         };
         input.onkeydown = (e) => {if(e.key == 'Enter'){input.blur();}}
         input.select();

@@ -32,14 +32,22 @@ class jsCalendar{
         this.multiSelect = options?.multiSelect != undefined ? options.multiSelect : false; // Booleano defini se eh permitido multipla seleao de dias
         // --------------------------
         this.calendarClasslist = options?.calendarClasslist || 'table border caption-top text-center mb-2 user-select-none'; // classlist do calendar
+        this.captionClasslist =  options?.captionClasslist || ''; // classlist do caption
         this.headerClasslist = options?.headerClasslist || 'border'; // classlist do cabecalho
+        this.monthNameClassList = options?.monthNameClassList || 'mt-0 pointer'; // classlist do h5 com o nome do mes
+        this.monthPickerClassList = options?.monthPickerClassList || 'form-select form-select-sm me-1'; // classlist do select para mes
+        this.yearPickerClassList = options?.yearPickerClassList || 'form-control form-control-sm me-1'; // classlist do input number para ano
+        this.taskListClasslist = options?.taskListClasslist || 'list-unstyled fs-7'; // classlist da lista de eventos (ul)
         this.customDayClasslist = options?.customDayClasslist || 'border py-3 bg-light fs-5'; // classlist de dia padrao
         this.holidayClasslist = options?.holidayClasslist || 'border py-3 bg-danger-light fs-5'; // classlist do feriado
         this.busyDayClasslist = options?.busyDayClasslist || 'border py-3 bg-purple-light fs-5'; // classlist de dia com evento (busy day)
         this.emptyDayClasslist = options?.emptyDayClasslist || 'border py-3 fs-5'; // classlist do calendar
         this.selectDayClasslist = options?.selectDayClasslist || 'border py-3 bg-warning fs-5'; // classlist do dia selecionado
+        this.calendarControlsChangeViewClasslist = options?.calendarControlsChangeViewClasslist || 'btn btn-sm btn-secondary me-1';
         this.calendarControlsCurrentClasslist = options?.calendarControlsCurrentClasslist || 'btn btn-sm btn-secondary fs-8 me-1'; // classlist dos controles de navegacao
-        this.calendarControlsClasslist = options?.calendarControlsClasslist || 'btn btn-sm btn-light'; // classlist dos controles de navegacao
+        this.calendarControlsNavegateClasslist = options?.calendarControlsNavegateClasslist || 'btn btn-sm btn-light'; // classlist dos controles de navegacao
+        this.calendarControlsCancelClasslist = options?.calendarControlsCancelClasslist || 'btn btn-sm btn-secondary me-1'; // classlist do botao cancelar escolha de dia
+        this.calendarControlsSelectDayClasslist = options?.calendarControlsSelectDayClasslist || 'btn btn-sm btn-primary'; // classlist do botao selecionar dia
         this.taskContainerClassList = options?.taskContainerClassList || ''; // classlist do container das tasks
 
         // --------------------------
@@ -54,30 +62,30 @@ class jsCalendar{
     }
     createCalendar(){
         this.calendar = document.createElement('table');this.calendar.classList = this.calendarClasslist;this.calendar.style.tableLayout = 'fixed';
-        let caption = document.createElement('caption');
+        let caption = document.createElement('caption');caption.classList = this.captionClasslist;
         let row = document.createElement('div');row.classList = 'row align-items-end g-1';
-        let td1 = document.createElement('div');td1.classList = 'col d-flex';
+        let td1 = document.createElement('div');td1.classList = 'col d-flex align-items-start';
         let td2 = document.createElement('div');td2.classList = 'col-auto';
-        this.monthName = document.createElement('h5');this.monthName.classList = 'mt-0 pointer';this.monthName.style.marginBlockEnd = '0px';
+        this.monthName = document.createElement('h5');this.monthName.classList = this.monthNameClassList;this.monthName.style.marginBlockEnd = '0px';
         this.monthName.onclick = () => { // Quando clicado no nome do ano, exibe controles para escolher ano/mes
             this.monthName.classList.add('d-none');
             td2.classList.add('d-none');
-            this.monthPicker = document.createElement('select');this.monthPicker.classList = 'form-select form-select-sm me-1';
+            this.monthPicker = document.createElement('select');this.monthPicker.classList = this.monthPickerClassList;
             for(let i = 1;i <= this.monthNames.length;i++){
                 let opt = document.createElement('option');
                 opt.value = i;opt.innerHTML = this.monthNames[i-1].toUpperCase();
                 this.monthPicker.appendChild(opt);
             }
             this.monthPicker.value = this.month; // Inicia o select com o mes em foco
-            this.yearPicker = document.createElement('input');this.yearPicker.type = 'number';this.yearPicker.min = this.yearMin;this.yearPicker.max = this.yearMax;this.yearPicker.classList = 'form-control form-control-sm me-1';
+            this.yearPicker = document.createElement('input');this.yearPicker.type = 'number';this.yearPicker.min = this.yearMin;this.yearPicker.max = this.yearMax;this.yearPicker.classList = this.yearPickerClassList;
             this.yearPicker.value = this.year;
-            this.btnSelectDate = document.createElement('button');this.btnSelectDate.classList = 'btn btn-sm btn-primary';this.btnSelectDate.style.width = '70px';this.btnSelectDate.innerHTML = '<i class="fas fa-arrow-right"></i>';
+            this.btnSelectDate = document.createElement('button');this.btnSelectDate.classList = this.calendarControlsSelectDayClasslist;this.btnSelectDate.style.width = '70px';this.btnSelectDate.innerHTML = '<i class="fas fa-arrow-right"></i>';
             this.btnSelectDate.onclick = () => {
                 this.year = this.yearPicker.value >= this.yearMin && this.yearPicker.value <= this.yearMax ? this.yearPicker.value : this.year;
                 this.month = this.monthPicker.value;
                 this.btnCancelSelectDate.click();
             };
-            this.btnCancelSelectDate = document.createElement('button');this.btnCancelSelectDate.classList = 'btn btn-sm btn-secondary me-1';this.btnCancelSelectDate.style.width = '70px';this.btnCancelSelectDate.innerHTML = '<i class="fas fa-times"></i>';
+            this.btnCancelSelectDate = document.createElement('button');this.btnCancelSelectDate.classList = this.calendarControlsCancelClasslist;this.btnCancelSelectDate.style.width = '70px';this.btnCancelSelectDate.innerHTML = '<i class="fas fa-times"></i>';
             this.btnCancelSelectDate.onclick = () => {
                 this.monthPicker.remove();
                 this.yearPicker.remove();
@@ -95,15 +103,15 @@ class jsCalendar{
         td1.appendChild(this.monthName);
         // Contruindo os controles de navegacao do calendario
         if(this.canChangeView){
-            this.changeViewBtn = document.createElement('button');this.changeViewBtn.classList = 'btn btn-sm btn-secondary me-1';this.changeViewBtn.style.width = '40px';this.changeViewBtn.innerHTML = this.view == 'calendar' ? '<i class="fas fa-list-ul"></i>' : '<i class="fas fa-calendar-alt"></i>';
+            this.changeViewBtn = document.createElement('button');this.changeViewBtn.classList = this.calendarControlsChangeViewClasslist;this.changeViewBtn.style.width = '40px';this.changeViewBtn.innerHTML = this.view == 'calendar' ? '<i class="fas fa-list-ul"></i>' : '<i class="fas fa-calendar-alt"></i>';
             this.changeViewBtn.onclick = () => this.changeView();
             td2.appendChild(this.changeViewBtn);
         }
         this.currentMonthBtn = document.createElement('button');this.currentMonthBtn.classList = this.calendarControlsCurrentClasslist;this.currentMonthBtn.innerHTML = 'HOJE';
         this.currentMonthBtn.onclick = () => this.currentMonth();
-        this.previousMonthBtn = document.createElement('button');this.previousMonthBtn.classList = this.calendarControlsClasslist;this.previousMonthBtn.innerHTML = '<i class="fas fa-chevron-left px-1"></i>';
+        this.previousMonthBtn = document.createElement('button');this.previousMonthBtn.classList = this.calendarControlsNavegateClasslist;this.previousMonthBtn.innerHTML = '<i class="fas fa-chevron-left px-1"></i>';
         this.previousMonthBtn.onclick = () => this.previousMonth();
-        this.nextMonthBtn = document.createElement('button');this.nextMonthBtn.classList = this.calendarControlsClasslist;this.nextMonthBtn.innerHTML = '<i class="fas fa-chevron-right px-1"></i>';
+        this.nextMonthBtn = document.createElement('button');this.nextMonthBtn.classList = this.calendarControlsNavegateClasslist;this.nextMonthBtn.innerHTML = '<i class="fas fa-chevron-right px-1"></i>';
         this.nextMonthBtn.onclick = () => this.nextMonth();
         td2.appendChild(this.currentMonthBtn);
         td2.appendChild(this.previousMonthBtn);
@@ -122,7 +130,7 @@ class jsCalendar{
         this.calendar.appendChild(this.tbody);
         // Contruindo a div de tasks
         this.taskContainer = document.createElement('div');this.taskContainer.classList = this.taskContainerClassList;
-        this.taskList = document.createElement('ul');this.taskList.classList = 'list-unstyled';
+        this.taskList = document.createElement('ul');this.taskList.classList = this.taskListClasslist;
         this.taskContainer.appendChild(this.taskList);
         this.container.appendChild(this.calendar);
         this.container.appendChild(this.taskContainer);
@@ -280,7 +288,7 @@ class jsCalendar{
             this.taskContainer.classList.remove('d-none');
             this.thead.classList.add('d-none');
             this.tbody.classList.add('d-none');
-            this.detail.innerHTML = '';
+            if(this.showSummary){this.detail.innerHTML = '';}
             if(this.summaryEl){this.summaryEl.classList.add('d-none');}
         }
         else{

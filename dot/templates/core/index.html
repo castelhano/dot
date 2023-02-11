@@ -22,6 +22,7 @@
   <div id="messages_widget" class="card-widget col-6 col-lg-4 col-xl-2 btn-secondary d-none"><i class="fas fa-inbox lead-image"> <sup id="alertas_badge" style="font-family: var(--bs-body-font-family); font-size:2rem;">0</sup></i><a class="widget-label stretched-link" data-bs-toggle="offcanvas" href="#offcanvas" role="button" title="ALT + M">Notificações<kbd class="float-end fs-9">alt m</kbd></a></div>
   {% if perms.core.console %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-dark" title="Ctrl + C"><i class="fas fa-window-restore lead-image"></i><a id="console_link" class="widget-label stretched-link" href="{% url 'console' %}">Admin Console</a></div>{% endif %}
   {% if perms.gestao.dashboard %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-dark" title="Ctrl + C"><i class="fas fa-chart-pie lead-image"></i><a id="widget_action_gestao" class="widget-label stretched-link" href="{% url 'gestao_dashboard' %}">Gerencial<kbd class="float-end fs-9 bg-light text-dark fw-bold">ctrl 1</kbd></a></div>{% endif %}
+  {% if perms.core.view_agenda %}<div class="card-widget card-widget-fixed col-12 col-lg-4 col-xl-2 p-0 bg-purple"><div id="widget_core_agenda" class="h-100 container-fluid px-1"></div></div>{% endif %}
   {% if perms.pessoal.view_funcionario %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-purple"><i class="fas fa-user-tie lead-image"></i><a id="widget_action_pessoal" class="widget-label stretched-link" href="{% url 'pessoal_funcionarios' %}">Pessoal<kbd class="float-end fs-9">ctrl p</kbd></a></div>{% endif %}
   {% if perms.recrutamento.view_selecao %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-purple"><i class="fas fa-users lead-image"></i><a id="widget_action_recrutamento" class="widget-label stretched-link" href="{% url 'recrutamento_selecoes' %}">Recrutamento<kbd class="float-end fs-9">ctrl r</kbd></a></div>{% endif %}
   {% if perms.sac.view_reclamacao %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-purple"><i class="fas fa-headset lead-image"></i><a id="widget_action_sac" class="widget-label stretched-link" href="{% url 'sac_reclamacoes' %}">SAC<kbd class="float-end fs-9">ctrl 2</kbd></a></div>{% endif %}
@@ -57,6 +58,7 @@
 {% block add_script_src %}
 <script src="{% static 'js/date.js' %}"></script>
 <script src="{% static 'js/table.js' %}"></script>
+{% if perms.core.view_agenda %}<script src="{% static 'js/calendar.js' %}"></script>{% endif %}
 {% endblock %}
 <script>
 {% block add_script %}
@@ -69,7 +71,30 @@ SHORTCUT_MAP['gFTF'] = () => {document.getElementById('widget_action_linha').cli
 SHORTCUT_MAP['3FTF'] = () => {document.getElementById('widget_action_planejamento').click()};
 SHORTCUT_MAP['kFTF'] = () => {document.getElementById('widget_action_acidente').click()};
 
+{% if perms.core.view_agenda %}
+const agenda = new jsCalendar({
+  container: document.getElementById('widget_core_agenda'),
+  holidays: {'2023-02-22':'Nsa dos cachorros'},
+  events: {'2023-02-05':'12:30 Desligamento Manoel','2023-02-25':'08:00 Reunião Gerencial'},
+  onclick: (day) => {console.log(day);},
+  calendarClasslist: 'table table-sm border caption-top text-center mb-0 user-select-none fs-9',
+  captionClasslist: 'py-1',
+  headerClasslist: 'border border-light-subtle py-0 bg-light text-muted fs-9',
+  customDayClasslist: 'border border-light-subtle py-0 bg-light fs-7',
+  holidayClasslist: 'border border-light-subtle py-0 bg-danger-light fs-7',
+  busyDayClasslist: 'border border-light-subtle py-0 bg-purple-light fs-7',
+  emptyDayClasslist: 'border border-light-subtle bg-light bg-opacity-50 py-0',
+  monthNameClassList: 'mt-0 ps-1 pointer text-light fs-6',
+  monthPickerClassList: 'form-select form-select-sm me-1 py-1 fs-9',
+  yearPickerClassList: 'form-control form-control-sm me-1 py-0 fs-9',
+  calendarControlsChangeViewClasslist: 'btn btn-sm btn-light fs-9 py-1 py-lg-0 me-1',
+  calendarControlsCurrentClasslist: 'btn btn-sm btn-light fs-9 py-1 py-lg-0 me-1',
+  calendarControlsNavegateClasslist: 'btn btn-sm btn-light py-1 py-lg-0 fs-9 me-1',
+  calendarControlsCancelClasslist: 'btn btn-sm btn-light text-muted py-1 me-1 fs-9',
+  calendarControlsSelectDayClasslist: 'btn btn-sm btn-light text-success py-1 me-1 fs-9',
+})
 
+{% endif %}
 
 
 
