@@ -1,7 +1,8 @@
 import os
 from django.db import models
 from django.contrib.auth.models import User, Group
-from datetime import datetime
+from datetime import datetime, date
+from .validators import validate_excluded_files
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -78,6 +79,19 @@ class Alerta(models.Model):
     action_class_list = models.CharField(max_length=60, blank=True)
     create_at = models.DateTimeField(default=datetime.now)
     lido_at = models.DateTimeField(blank=True, null=True)
+
+class Agenda(models.Model):
+    data = models.DateField(default=date.today)
+    inicio = models.TimeField(blank=True, null=True)
+    termino = models.TimeField(blank=True, null=True)
+    titulo = models.CharField(max_length=50)
+    detalhe = models.TextField(blank=True)
+    local = models.CharField(max_length=220, blank=True)
+    tags = models.CharField(max_length=220, blank=True)
+    anexo = FileField(upload_to="core/agenda/anexos/%Y/%m/%d",blank=True, validators=[validate_excluded_files])
+    cancelado = models.BooleanField(default=False)
+    create_at = models.DateTimeField(default=datetime.now)
+    create_by = models.ForeignKey(User, blank=True, null=True, on_delete=models.RESTRICT)
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
