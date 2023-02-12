@@ -6,8 +6,8 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import auth, messages
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.contenttypes.models import ContentType
-from .models import Empresa, Log, Alerta
-from .forms import EmpresaForm, UserForm, GroupForm
+from .models import Empresa, Log, Alerta, Agenda
+from .forms import EmpresaForm, UserForm, GroupForm, AgendaForm
 from .extras import clean_request
 from .console import Run
 from datetime import datetime
@@ -71,8 +71,14 @@ def logs(request):
     return render(request,'core/logs.html',{'logs':logs})
 
 @login_required
+@permission_required('core.docs')
 def docs(request, page='core'):
     return render(request,f'core/docs/{page}.html')
+
+@login_required
+@permission_required('core.view_agenda')
+def agendas(request):
+    return render(request,f'core/agendas.html')
 
 @login_required
 @permission_required('core.view_alerta')
@@ -198,6 +204,31 @@ def grupo_add(request):
         form = GroupForm()
     return render(request,'core/grupo_add.html',{'form':form})
 
+@login_required
+@permission_required('core.add_agenda')
+def agenda_add(request):
+    if request.method == 'POST':
+        form = AgendaForm(request.POST, request.FILES)
+        if form.is_valid():
+            try:
+                registro = form.save()
+                registro.create_by = user
+                registro.save()
+                l = Log()
+                l.modelo = "core.agenda"
+                l.objeto_id = registro.id
+                l.objeto_str = registro.titulo[0:48]
+                l.usuario = request.user
+                l.mensagem = "CREATED"
+                l.save()
+                messages.success(request,'Evento <b>cadastrado</b>')
+                return redirect('core_agendas')
+            except:
+                messages.error(request,'Erro ao inserir agenda [INVALID FORM]')
+                return redirect('core_agendas')
+    else:
+        form = AgendaForm()
+    return render(request,'core/agenda_add.html',{'form':form})
 
 # METODOS GET
 @login_required

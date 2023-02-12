@@ -74,9 +74,9 @@ SHORTCUT_MAP['kFTF'] = () => {document.getElementById('widget_action_acidente').
 {% if perms.core.view_agenda %}
 const agenda = new jsCalendar({
   container: document.getElementById('widget_core_agenda'),
-  holidays: {'2023-02-22':'Nsa dos cachorros'},
-  events: {'2023-02-05':'12:30 Desligamento Manoel','2023-02-25':'08:00 Reunião Gerencial'},
-  onclick: (day) => {console.log(day);},
+  // holidays: {'2023-02-22':'Nsa dos cachorros'},
+  // events: {'2023-02-05':'12:30 Desligamento Manoel','2023-02-25':'08:00 Reunião Gerencial'},
+  onclick: (day) => {window.location.href = `{% url 'core_agendas' %}?data=${day}`;},
   calendarClasslist: 'table table-sm border caption-top text-center mb-0 user-select-none fs-9',
   captionClasslist: 'py-1',
   headerClasslist: 'border border-light-subtle py-0 bg-light text-muted fs-9',
@@ -88,8 +88,8 @@ const agenda = new jsCalendar({
   monthPickerClassList: 'form-select form-select-sm me-1 py-1 fs-9',
   yearPickerClassList: 'form-control form-control-sm me-1 py-0 fs-9',
   calendarControlsChangeViewClasslist: 'btn btn-sm btn-light fs-9 py-1 py-lg-0 me-1',
-  calendarControlsCurrentClasslist: 'btn btn-sm btn-light fs-9 py-1 py-lg-0 me-1',
-  calendarControlsNavegateClasslist: 'btn btn-sm btn-light py-1 py-lg-0 fs-9 me-1',
+  calendarControlsCurrentClasslist: 'btn btn-sm btn-light fs-9 py-1 py-lg-0',
+  calendarControlsNavegateClasslist: 'btn btn-sm btn-light py-1 py-lg-0 fs-9 ms-1',
   calendarControlsCancelClasslist: 'btn btn-sm btn-light text-muted py-1 me-1 fs-9',
   calendarControlsSelectDayClasslist: 'btn btn-sm btn-light text-success py-1 me-1 fs-9',
 })

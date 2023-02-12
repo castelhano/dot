@@ -30,7 +30,7 @@ def cargos(request):
 def funcionarios(request):
     funcionarios = None
     if request.method == 'POST':
-        funcionarios = Funcionario.objects.all().order_by('matricula')
+        funcionarios = Funcionario.objects.filter(empresa__in=request.user.profile.empresas.all()).order_by('matricula')
         validado = False #Precisa informar pelo menos um filtro, ou metodo retorna None
         if(request.POST['pesquisa'] != '' and len(request.POST['pesquisa']) > 2):
             if request.POST['pesquisa'][0] == '#':
@@ -79,13 +79,21 @@ def funcionarios(request):
 @login_required
 @permission_required('pessoal.view_afastamento')
 def afastamentos(request, id):
-    funcionario = Funcionario.objects.get(id=id)
+    try:
+        funcionario = Funcionario.objects.get(id=id,empresa__in=request.user.profile.empresas.all())
+    except Exception as e:
+        messages.warning(request,'<b>Atenção:</b> Funcionário não localizado')
+        return redirect('pessoal_funcionarios')
     return render(request,'pessoal/afastamentos.html', {'funcionario' : funcionario})
 
 @login_required
 @permission_required('pessoal.view_dependente')
 def dependentes(request, id):
-    funcionario = Funcionario.objects.get(id=id)
+    try:
+        funcionario = Funcionario.objects.get(id=id,empresa__in=request.user.profile.empresas.all())
+    except Exception as e:
+        messages.warning(request,'<b>Atenção:</b> Funcionário não localizado')
+        return redirect('pessoal_funcionarios')
     return render(request,'pessoal/dependentes.html', {'funcionario' : funcionario})
 
 @login_required
@@ -280,7 +288,11 @@ def cargo_id(request,id):
 @login_required
 @permission_required('pessoal.view_funcionario')
 def funcionario_id(request,id):
-    funcionario = Funcionario.objects.get(pk=id)
+    try:
+        funcionario = Funcionario.objects.get(pk=id,empresa__in=request.user.profile.empresas.all())
+    except Exception as e:
+        messages.warning(request,'Funcionário <b>não localizado</b>')
+        return redirect('pessoal_funcionarios')
     form = FuncionarioForm(instance=funcionario)
     return render(request,'pessoal/funcionario_id.html',{'form':form,'funcionario':funcionario})
 
