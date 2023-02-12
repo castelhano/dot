@@ -31,10 +31,10 @@ class AgendaForm(forms.ModelForm):
     data = forms.DateField(error_messages={'required': 'Informe a data do evento'},initial=date.today(),widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
     inicio = forms.TimeField(required=False, widget=forms.TextInput(attrs={'class':'form-control','type':'time'}))
     termino = forms.TimeField(required=False, widget=forms.TextInput(attrs={'class':'form-control','type':'time'}))
-    participantes = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control tagin','placeholder':' '}))
-    tags = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control tagin','placeholder':' '}))
+    participantes = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control tagin','placeholder':' '}))
+    tags = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control tagin','placeholder':' '}))
     detalhe = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','style':'min-height:200px;','placeholder':' '}))
-    local = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
+    local = forms.CharField(required=False, max_length=200, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
 
 class UserForm(forms.ModelForm):
     class Meta:

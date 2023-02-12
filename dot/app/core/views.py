@@ -10,7 +10,7 @@ from .models import Empresa, Log, Alerta, Agenda
 from .forms import EmpresaForm, UserForm, GroupForm, AgendaForm
 from .extras import clean_request
 from .console import Run
-from datetime import datetime
+from datetime import datetime, date
 from django.http import HttpResponse, JsonResponse
 from django.core import serializers
 from django.conf import settings
@@ -78,7 +78,9 @@ def docs(request, page='core'):
 @login_required
 @permission_required('core.view_agenda')
 def agendas(request):
-    return render(request,f'core/agendas.html')
+    data = request.GET.get('data',date.today())
+    agendas = Agenda.objects.filter(data=data).order_by('data','inicio','termino')
+    return render(request,f'core/agendas.html',{'agendas':agendas})
 
 @login_required
 @permission_required('core.view_alerta')
@@ -212,7 +214,7 @@ def agenda_add(request):
         if form.is_valid():
             try:
                 registro = form.save()
-                registro.create_by = user
+                registro.create_by = request.user
                 registro.save()
                 l = Log()
                 l.modelo = "core.agenda"

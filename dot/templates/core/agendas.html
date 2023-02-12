@@ -38,7 +38,16 @@
                                     <th>Tags</th>
                                 </tr>
                             </thead>
-                            <tbody id="day_timeline"></tbody>
+                            <tbody id="day_timeline">
+                                {% for agenda in agendas %}
+                                <tr>
+                                    <td>{{agenda.inicio}} a {{agenda.termino}}</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                    
+                                {% endfor %}
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -61,6 +70,7 @@
 
 <script>
 {% block add_script %}
+let events = {}
 const calendar = new jsCalendar({
     container: document.getElementById('calendar_widget'),
     canChangeView: false,
