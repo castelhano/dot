@@ -35,6 +35,7 @@ class AgendaForm(forms.ModelForm):
     tags = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control tagin','placeholder':' '}))
     detalhe = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','style':'min-height:200px;','placeholder':' '}))
     local = forms.CharField(required=False, max_length=200, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
+    anexo = forms.FileField(required=False, widget=forms.ClearableFileInput(attrs={'class': 'form-control form-control-sm'}))
 
 class UserForm(forms.ModelForm):
     class Meta:

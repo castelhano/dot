@@ -78,9 +78,7 @@ def docs(request, page='core'):
 @login_required
 @permission_required('core.view_agenda')
 def agendas(request):
-    data = request.GET.get('data',date.today())
-    agendas = Agenda.objects.filter(data=data).order_by('data','inicio','termino')
-    return render(request,f'core/agendas.html',{'agendas':agendas})
+    return render(request,f'core/agendas.html')
 
 @login_required
 @permission_required('core.view_alerta')
@@ -610,6 +608,17 @@ def get_alertas(request):
     alertas = Alerta.objects.filter(usuario=request.user,lido=False).order_by('create_at')
     data = serializers.serialize('json', alertas)
     return HttpResponse(data, content_type="application/json")
+
+@login_required
+@permission_required('core.view_agenda')
+def get_agenda(request):
+    data = request.GET.get('data', date.today())
+    if not data:
+        agenda = Agenda.objects.filter(data=date.today).order_by('data','inicio','termino')
+    else:
+        agenda = Agenda.objects.filter(data=data).order_by('data','inicio','termino')
+    obj = serializers.serialize('json', agenda)
+    return HttpResponse(obj, content_type="application/json")
 
 @login_required
 def get_contenttypes(request):
