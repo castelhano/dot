@@ -48,17 +48,20 @@
                                 <label for="id_local">Local</label>
                             </div>
                         </div>
-                        <div class="row g-1">
-                            <div class="form-floating mb-1 col-lg-7">
+                        <div class="row">
+                            <div class="col-lg">
                                 {{ form.participantes }}
-                                <label for="id_participantes">Participantes</label>
                             </div>
-                            <div class="form-floating mb-1 col-lg-5">
-                                {{ form.tags }}
-                                <label for="id_tags">Tags</label>
+                            <div class="col-lg">
+                                <div class="row g-1">
+                                    <div class="form-floating mb-1 col-lg-12">
+                                        {{ form.tags }}
+                                        <label for="id_tags">Tags</label>
+                                    </div>
+                                </div>
+                                {{ form.anexo }}
                             </div>
                         </div>
-                        {{ form.anexo }}
                     </div>
                     <div class="col-lg-5">
                         {{form.detalhe}}
@@ -83,13 +86,6 @@
 
 <script>
 {% block add_script %}
-const participantes = new Tagin(document.getElementById('id_participantes'), {
-    separator:';',
-    enter: true,
-    transform: 'input => input.toUpperCase()',
-    placeholder: 'Enter ou ;',
-    duplicate: false
-});
 
 const tags = new Tagin(document.getElementById('id_tags'), {
     separator:';',

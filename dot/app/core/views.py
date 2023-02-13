@@ -212,7 +212,7 @@ def agenda_add(request):
         if form.is_valid():
             try:
                 registro = form.save()
-                registro.create_by = request.user
+                registro.create_by = request.user.username
                 registro.save()
                 l = Log()
                 l.modelo = "core.agenda"

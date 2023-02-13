@@ -86,13 +86,13 @@ class Agenda(models.Model):
     termino = models.TimeField(blank=True, null=True)
     titulo = models.CharField(max_length=50)
     detalhe = models.TextField(blank=True)
-    participantes = models.CharField(max_length=220, blank=True)
+    participantes = models.ManyToManyField(User)
     local = models.CharField(max_length=220, blank=True)
     tags = models.CharField(max_length=220, blank=True)
     anexo = FileField(upload_to="core/agenda/anexos/%Y/%m/%d",blank=True, validators=[validate_excluded_files])
     cancelado = models.BooleanField(default=False)
     create_at = models.DateTimeField(default=datetime.now)
-    create_by = models.ForeignKey(User, blank=True, null=True, on_delete=models.RESTRICT)
+    create_by = models.CharField(max_length=50)
     def tags_as_list(self):
         return self.tags.split('/')
 
