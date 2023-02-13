@@ -95,6 +95,18 @@ class Agenda(models.Model):
     create_by = models.CharField(max_length=50)
     def tags_as_list(self):
         return self.tags.split('/')
+    def ultimas_alteracoes(self):
+        logs = Log.objects.filter(modelo='core.agenda',objeto_id=self.id).order_by('-data')[:15]
+        return reversed(logs)
+    def anexo_filename(self):
+        return os.path.basename(self.anexo.name)
+
+class Feriado(models.Model):
+    data = models.DateField(unique=True)
+    nome = models.CharField(max_length=50)
+    def ultimas_alteracoes(self):
+        logs = Log.objects.filter(modelo='core.feriado',objeto_id=self.id).order_by('-data')[:15]
+        return reversed(logs)
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

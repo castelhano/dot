@@ -15,9 +15,8 @@
 <li id="gestao_list_container" class="nav-item dropdown">
   <a class="nav-link dropdown-toggle" id="menu_gestao" href="#" data-bs-toggle="dropdown" title="ALT + T">G<b>e</b>stão</a>
   <ul id="gestao_list_options" class="dropdown-menu dropdown-menu-dark">
-    {% if perms.core.view_alerta %}
-    <li><a class="dropdown-item" id="relatorio_alertas" href="{% url 'core_alertas' %}"><b>A</b>lertas</a></li>
-    {% endif %}
+    {% if perms.core.view_agenda %}<li><a class="dropdown-item" id="relatorio_agendas" href="{% url 'core_agendas' %}"><b>A</b>genda</a></li>{% endif %}
+    {% if perms.core.view_alerta %}<li><a class="dropdown-item" id="relatorio_alertas" href="{% url 'core_alertas' %}">Aler<b>t</b>as</a></li>{% endif %}
   </ul>
 </li>
 
@@ -33,7 +32,8 @@
   }
   if(document.getElementById('gestao_list_options').childElementCount == 0){document.getElementById('gestao_list_container').classList.add('d-none');}
   else{
-    SHORTCUT_MAP['aFFF'] = () => {if(exibindoGestao()){try{document.getElementById('relatorio_alertas').click();}catch (e){}}}
+    SHORTCUT_MAP['aFFF'] = () => {if(exibindoGestao()){try{document.getElementById('relatorio_agendas').click();}catch (e){}}}
+    SHORTCUT_MAP['tFFF'] = () => {if(exibindoGestao()){try{document.getElementById('relatorio_alertas').click();}catch (e){}}}
     function exibindoGestao(){return document.getElementById('menu_gestao').classList.contains('show') ? true : false;}
   }
   

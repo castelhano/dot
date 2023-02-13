@@ -6,8 +6,8 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import auth, messages
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.contenttypes.models import ContentType
-from .models import Empresa, Log, Alerta, Agenda
-from .forms import EmpresaForm, UserForm, GroupForm, AgendaForm
+from .models import Empresa, Log, Alerta, Agenda, Feriado
+from .forms import EmpresaForm, UserForm, GroupForm, AgendaForm, FeriadoForm
 from .extras import clean_request
 from .console import Run
 from datetime import datetime, date
@@ -78,7 +78,14 @@ def docs(request, page='core'):
 @login_required
 @permission_required('core.view_agenda')
 def agendas(request):
-    return render(request,f'core/agendas.html')
+    return render(request,'core/agendas.html')
+
+@login_required
+@permission_required('core.view_feriado')
+def feriados(request):
+    ano = request.POST['ano'] if request.method == 'POST' else date.today().year
+    feriados = Feriado.objects.filter(data__year=ano).order_by('data')
+    return render(request,'core/feriados.html',{'feriados':feriados,'ano':ano})
 
 @login_required
 @permission_required('core.view_alerta')
@@ -230,6 +237,30 @@ def agenda_add(request):
         form = AgendaForm()
     return render(request,'core/agenda_add.html',{'form':form})
 
+@login_required
+@permission_required('core.add_feriado')
+def feriado_add(request):
+    if request.method == 'POST':
+        form = FeriadoForm(request.POST)
+        if form.is_valid():
+            try:
+                registro = form.save()
+                l = Log()
+                l.modelo = "core.feriado"
+                l.objeto_id = registro.id
+                l.objeto_str = registro.nome
+                l.usuario = request.user
+                l.mensagem = "CREATED"
+                l.save()
+                messages.success(request,'Feriado <b>cadastrado</b>')
+                return redirect('core_feriado_add')
+            except:
+                messages.error(request,'Erro ao inserir feriado [INVALID FORM]')
+                return redirect('core_feriado_add')
+    else:
+        form = FeriadoForm()
+    return render(request,'core/feriado_add.html',{'form':form})
+
 # METODOS GET
 @login_required
 @permission_required('core.change_empresa')
@@ -257,6 +288,20 @@ def grupo_id(request, id):
 def alerta_id(request, id):
     alerta = Alerta.objects.get(id=id)
     return render(request,'core/alerta_id.html',{'alerta':alerta})
+
+@login_required
+@permission_required('core.view_agenda')
+def agenda_id(request, id):
+    agenda = Agenda.objects.get(id=id)
+    form = AgendaForm(instance=agenda)
+    return render(request,'core/agenda_id.html',{'form':form,'agenda':agenda})
+
+@login_required
+@permission_required('core.view_feriado')
+def feriado_id(request, id):
+    feriado = Feriado.objects.get(id=id)
+    form = FeriadoForm(instance=feriado)
+    return render(request,'core/feriado_id.html',{'form':form,'feriado':feriado})
 
 # METODOS UPDATE
 @login_required
@@ -352,6 +397,25 @@ def alerta_marcar_lido(request):
     alerta.save()
     return HttpResponse('')
 
+@login_required
+@permission_required('core.change_feriado')
+def feriado_update(request, id):
+    feriado = Feriado.objects.get(pk=id)
+    form = FeriadoForm(request.POST, instance=feriado)
+    if form.is_valid():
+        registro = form.save()
+        l = Log()
+        l.modelo = "core.feriado"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.nome
+        l.usuario = request.user
+        l.mensagem = "UPDATE"
+        l.save()
+        messages.success(request,f'Feriado <b>{registro.nome}</b> alterado')
+        return redirect('core_feriado_id',id)
+    else:
+        return render(request,'core/feriado_id.html',{'form':form,'feriado':feriado})
+
 # METODOS DELETE
 @login_required
 @permission_required('core.delete_empresa')
@@ -421,6 +485,26 @@ def alerta_delete(request, id):
     except:
         messages.error(request,'ERRO ao apagar alerta')
         return redirect('core_alerta_id', id)
+
+@login_required
+@permission_required('core.delete_feriado')
+def feriado_delete(request, id):
+    try:
+        registro = Feriado.objects.get(pk=id)
+        l = Log()
+        l.modelo = "core.feriado"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.nome
+        l.usuario = request.user
+        l.mensagem = "DELETE"
+        registro.delete()
+        l.save()
+        messages.warning(request,f'Feriado <b>{registro.nome}</b> apagado')
+        return redirect('core_feriados')
+    except:
+        messages.error(request,'ERRO ao apagar feriado')
+        return redirect('core_feriado_id', id)
+
 
 # AUTENTICACAO E PERMISSAO
 def login(request):
@@ -536,11 +620,8 @@ def get_usuarios(request):
         usuarios = User.objects.all().order_by('username')
         if not request.GET.get('inativos', None):
             usuarios = usuarios.filter(is_active=True)
-        itens = {}
-        for item in usuarios:
-            itens[item.username] = item.id
-        dataJSON = json.dumps(itens)
-        return HttpResponse(dataJSON)
+        data = serializers.serialize('json', usuarios)
+        return HttpResponse(data, content_type="application/json")
     except:
         return HttpResponse('')
 
@@ -612,12 +693,20 @@ def get_alertas(request):
 @login_required
 @permission_required('core.view_agenda')
 def get_agenda(request):
-    data = request.GET.get('data', date.today())
-    if not data:
-        agenda = Agenda.objects.filter(data=date.today).order_by('data','inicio','termino')
-    else:
-        agenda = Agenda.objects.filter(data=data).order_by('data','inicio','termino')
+    ano = request.GET.get('ano', date.today().year)
+    mes = request.GET.get('mes', date.today().month)
+    agenda = Agenda.objects.filter(data__year=ano,data__month=mes).order_by('data','inicio','termino')
     obj = serializers.serialize('json', agenda)
+    return HttpResponse(obj, content_type="application/json")
+
+@login_required
+def get_feriados(request):
+    ano = request.GET.get('ano', date.today().year)
+    feriados = Feriado.objects.filter(data__year=ano).order_by('data')
+    list = {}
+    for feriado in feriados:
+        list[feriado.data.strftime("%Y-%m-%d")] = feriado.nome
+    obj = json.dumps(list)
     return HttpResponse(obj, content_type="application/json")
 
 @login_required

@@ -116,7 +116,7 @@ function carregaUsuarios() {
 			else{
 				let obj = JSON.parse(this.responseText);
 				usuarios = document.getElementById("id_user")
-				for(key in obj){usuarios.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
+				for(key in obj){usuarios.innerHTML += '<option value="' + obj[key].pk + '">' + obj[key].fields.username + '</option>';}
 			}
 		}
 	};

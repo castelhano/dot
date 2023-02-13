@@ -101,7 +101,7 @@
   {% if field.errors %}
   {% for error in field.errors %}
   <div id="form_error_msg" data-type="dotAlert" class="alert alert-danger alert-dismissible fade show mb-1" role="alert">
-    {{ error|escape }} <span class="fw-bold">[ field: {{ field.name }} ]</span>
+    {{ error|safe }} <span class="fw-bold">[ field: {{ field.name }} ]</span>
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
   {% endfor %}

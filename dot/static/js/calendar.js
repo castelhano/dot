@@ -28,6 +28,7 @@ class jsCalendar{
         this.showSummary = options?.showSummary != undefined ? options.showSummary : false; // Booleano defini se sera exibido resumo da quantidade de dias por tipo (util, sab, dom, etc..)
         this.canChangeView = options?.canChangeView != undefined ? options.canChangeView : true; // Booleano defini sera exibido botao para mudar view (calendario, tarefas)
         this.onclick = options?.onclick != undefined ? options.onclick : false; // Funcao definida aqui sera acionada no evento click do calendario, repassando o dia clicado
+        this.onchange = options?.onchange != undefined ? options.onchange : false; // Funcao definida aqui sera acionada sempre apos o calendarRebuild() 
         this.canSelectDay = options?.canSelectDay != undefined ? options.canSelectDay : false; // Booleano defini se as datas sao selecionaveis
         this.multiSelect = options?.multiSelect != undefined ? options.multiSelect : false; // Booleano defini se eh permitido multipla seleao de dias
         // --------------------------
@@ -161,6 +162,7 @@ class jsCalendar{
         }
         if(this.showSummary){this.buildSummary();}
         if(this.selectedDays.length > 0){this.selectDays(this.selectedDays, true)};
+        if(this.onchange){this.onchange()};
     }
     tasksRebuild(){
         if(this.view != 'tasks'){return false;}
