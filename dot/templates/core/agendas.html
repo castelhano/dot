@@ -64,9 +64,12 @@
 <script>
 {% block add_script %}
 
-let originalDate = urlGetParam('data', today(0,0,0,true));
-let year = originalDate.split('-')[0];
-let month = originalDate.split('-')[1];
+if(document.getElementById('modelos_auxiliares_list').childElementCount == 0){document.getElementById('modelos_auxiliares_container').classList.add('d-none');}
+
+let originalDate = urlGetParam('data', dotToday(0,0,0,true));
+let today = dotToday(0,0,0,true);
+let year = parseInt(originalDate.split('-')[0]);
+let month = parseInt(originalDate.split('-')[1]);
 let usuarios = {};
 
 let agendaMes = {};
@@ -83,9 +86,29 @@ const calendar = new jsCalendar({
     canSelectDay: true,
     showSummary: true,
     selectedDays: [originalDate],
+    wait: true,
     onclick: (data) => {showDayTimeline(data)},
-    onchange: () => { // Carrega agendaMes e se alterado ano carregaFeriados
-
+    onchange: (origin) => { // Carrega agendaMes e se alterado ano carregaFeriados
+        if(calendar.year != year){ // Se alterou ano, busca feriados do ano correspondente e atualiza agenda do mes
+            if(origin == 'currentMonth'){
+                get_feriados({ano:calendar.year}).then(() => {getAgenda({ano:calendar.year,mes:calendar.month}).then(() => {calendar.calendarRebuild();showDayTimeline(today);})})
+            }
+            else{
+                get_feriados({ano:calendar.year}).then(() => {getAgenda({ano:calendar.year,mes:calendar.month}).then(() => {calendar.calendarRebuild()})})
+            }
+            year = calendar.year;
+            month = calendar.month;
+        }
+        else if(calendar.month != month){ // Caso nao, apenas atualiza agenda do mes (caso alterado mes)
+            if(origin == 'currentMonth'){
+                getAgenda({ano:calendar.year,mes:calendar.month}).then(() => {calendar.calendarRebuild();showDayTimeline(today);});
+            }
+            else{
+                getAgenda({ano:calendar.year,mes:calendar.month}).then(() => {calendar.calendarRebuild()});
+            }
+            month = calendar.month;
+        }
+        else if(origin == 'currentMonth'){showDayTimeline(today)}
     },
     calendarControlsCurrentClasslist: 'btn btn-sm btn-purple-light fs-8 me-1 py-1 py-lg-0',
     calendarControlsSelectDayClasslist: 'btn btn-sm btn-purple-light fs-9'
@@ -94,8 +117,7 @@ const calendar = new jsCalendar({
 {% include 'core/_script_agenda.js' %}
 
 get_usuarios();
-get_feriados(year);
-getAgenda(year,month, true);
+get_feriados({ano:year}).then(() => {getAgenda({ano:year,mes:month}).then(() => {calendar.calendarRebuild(true);showDayTimeline(originalDate);})});
 
 {% endblock %}
 </script>

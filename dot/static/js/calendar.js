@@ -31,6 +31,7 @@ class jsCalendar{
         this.onchange = options?.onchange != undefined ? options.onchange : false; // Funcao definida aqui sera acionada sempre apos o calendarRebuild() 
         this.canSelectDay = options?.canSelectDay != undefined ? options.canSelectDay : false; // Booleano defini se as datas sao selecionaveis
         this.multiSelect = options?.multiSelect != undefined ? options.multiSelect : false; // Booleano defini se eh permitido multipla seleao de dias
+        this.wait = options?.wait != undefined ? options.wait : false; // Booleano, se true nao chama funcao calendarRebuild()
         // --------------------------
         this.calendarClasslist = options?.calendarClasslist || 'table table-sm border caption-top text-center mb-1 user-select-none fs-9'; // classlist do calendar
         this.captionClasslist =  options?.captionClasslist || 'py-1'; // classlist do caption
@@ -54,7 +55,7 @@ class jsCalendar{
         // --------------------------
         this.createCalendar();
         if(this.onclick){this.__configureCssClass();} // Adiciona classes adicionais caso informado evento onclick
-        this.calendarRebuild();
+        if(!this.wait){this.calendarRebuild(true)}
     }
     __configureCssClass(){
         let style = document.createElement('style');
@@ -84,6 +85,7 @@ class jsCalendar{
             this.btnSelectDate.onclick = () => {
                 this.year = this.yearPicker.value >= this.yearMin && this.yearPicker.value <= this.yearMax ? this.yearPicker.value : this.year;
                 this.month = this.monthPicker.value;
+                this.goTo(this.year,this.month);
                 this.btnCancelSelectDate.click();
             };
             this.btnCancelSelectDate = document.createElement('button');this.btnCancelSelectDate.type = 'button';this.btnCancelSelectDate.classList = this.calendarControlsCancelClasslist;this.btnCancelSelectDate.style.width = '70px';this.btnCancelSelectDate.innerHTML = '<i class="fas fa-times"></i>';
@@ -94,7 +96,6 @@ class jsCalendar{
                 this.btnCancelSelectDate.remove();
                 this.monthName.classList.remove('d-none');
                 td2.classList.remove('d-none');
-                this.calendarRebuild();
             };
             td1.appendChild(this.monthPicker);
             td1.appendChild(this.yearPicker);
@@ -150,11 +151,11 @@ class jsCalendar{
         while(daysCount <= this.totalDays){
             let row = document.createElement('tr');
             if(daysCount == 1){ // Bloco executado somente no inicio da construcao, para preencher dias vazios
-                for(let j = 0; j < this.startAt;j++){row.appendChild(this.getTargetDay());}
+                for(let j = 0; j < this.startAt;j++){row.appendChild(this.__getTargetDay());}
                 ajust = this.startAt;
             }
             for(let i = 0; i < 7 - ajust;i++){
-                row.appendChild(this.getTargetDay(daysCount));
+                row.appendChild(this.__getTargetDay(daysCount));
                 daysCount++;
             }
             this.tbody.appendChild(row);
@@ -162,7 +163,6 @@ class jsCalendar{
         }
         if(this.showSummary){this.buildSummary();}
         if(this.selectedDays.length > 0){this.selectDays(this.selectedDays, true)};
-        if(this.onchange){this.onchange()};
     }
     tasksRebuild(){
         if(this.view != 'tasks'){return false;}
@@ -207,7 +207,7 @@ class jsCalendar{
         this.summaryEl.innerHTML += `<label class="badge opacity-75 fs-9 bg-dark">FER: ${this.summary.feriados}</label>`;
         
     }
-    getTargetDay(day=''){
+    __getTargetDay(day=''){
         let td = document.createElement('td');
         let dateFormated = `${this.year}-${('0'+this.month).slice(-2)}-${('0'+day).slice(-2)}`; // Armazena a data formatada 'yyyy-mm-dd'
         if(day <= this.totalDays && day != ''){ // Caso seja data valida....
@@ -259,17 +259,20 @@ class jsCalendar{
     currentMonth(){
         this.month = this.today.getMonth() + 1;
         this.year = this.today.getFullYear();
-        this.calendarRebuild();
+        if(this.onchange){this.onchange('currentMonth')}
+        else{this.calendarRebuild()}
     }
     previousMonth(){
         if(this.month == 1){this.month = 12;this.year--;}
         else{this.month--;}
-        this.calendarRebuild();
+        if(this.onchange){this.onchange('previousMonth')}
+        else{this.calendarRebuild()}
     }
     nextMonth(){
         if(this.month == 12){this.month = 1;this.year++;}
         else{this.month++;}
-        this.calendarRebuild();
+        if(this.onchange){this.onchange('nextMonth')}
+        else{this.calendarRebuild()}
     }
     clearSelectedDays(){
         this.tbody.querySelectorAll('[data-selected=true]').forEach(e => {
@@ -281,7 +284,8 @@ class jsCalendar{
     goTo(year, month){ // Altera vizualizacao para ano e mes informados
         this.year = year;
         if(month > 0 && month < 13){this.month = month;}
-        this.calendarRebuild();
+        if(this.onchange){this.onchange('goTo')}
+        else{this.calendarRebuild()}
     }
     changeView(){
         if(this.view == 'calendar'){

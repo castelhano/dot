@@ -19,7 +19,16 @@
     </div>
     <form id="app_form" action="{% url 'core_agenda_add' %}" method="POST" autocomplete="off" enctype="multipart/form-data">
     {% csrf_token %}
-    {% include 'core/_form_agenda.html' %}
+    <div class="card-body tab-content">
+        <h5 class="card-title mb-3">Agenda: <b class="text-purple">Novo evento</b></h5>
+        {% include 'core/_form_agenda.html' %}
+        <!-- CONTROLES DO FORM -->
+        <div class="row mt-3">
+            <div class="col">
+                <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"><b>G</b>ravar</button>
+            </div>
+        </div>
+    </div>
     </form>
 </div>
 

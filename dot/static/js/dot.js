@@ -38,7 +38,7 @@ function getCookie(name) {let cookieValue = null;if (document.cookie && document
 *           dotAppData('{% url 'app_data' 'data_test.json' %}').then((r) => data = r);
 *           dotAppData('{% url 'app_data' 'data_test.json' %}').then((r) => data = r).catch(() = > {...});
 */
-function dotAppData(url) {return new Promise(function(resolve, reject) {var xhr = new XMLHttpRequest();xhr.onload = function() {let d = JSON.parse(this.responseText);if(typeof d != 'object'){d = JSON.parse(d)}resolve(d);};xhr.onerror = reject;xhr.open('GET', url);xhr.send();});}
+function dotAppData(url) {return new Promise(function(resolve, reject) {let xhr = new XMLHttpRequest();xhr.onload = function() {let d = JSON.parse(this.responseText);if(typeof d != 'object'){d = JSON.parse(d)}resolve(d);};xhr.onerror = reject;xhr.open('GET', url);xhr.send();});}
 
 /*
 * dotAppDataUpdate Salva (ajax) no diretorio app_data, objeto json informando o path relativo
@@ -59,7 +59,7 @@ function dotAppDataUpdate(options){let token = getCookie('csrftoken');let xhttp 
 * @desc     Ao carregar a pagina, chame a funcao tooltipActivate()
 * @example  tooltipActivate(); <span data-bs-toggle="tooltip" data-bs-placement="top" title="Meu foo">FOO</span>
 */
-function tooltipActivate(){var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {return new bootstrap.Tooltip(tooltipTriggerEl)})}
+function tooltipActivate(){let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {return new bootstrap.Tooltip(tooltipTriggerEl)})}
 
 /*
 * Retorna ou atualiza elemento com a 'data atual' podendo ser acrescido dias, meses ou anos
@@ -74,13 +74,13 @@ function tooltipActivate(){var tooltipTriggerList = [].slice.call(document.query
 * @param    {Element} el Elemento html que ira receber o valor, se omitido retorna a data na chamada da funcao
 * @returns  {String} Retorna Data formatada caso nao definido elemento na chamada da funcao
 * @example  
-*    today();                 Retorna data atual (dd/mm/yyyy)
-*    today(5);                Retorna data atual somando 5 dias
-*    today(0,0,0,true);       Retorna data atual no formato native (yyyy-mm-dd)
-*    today(0,0,0,false, el);  Insere a data atual no atributo value (ou innerHTML) do elemento informando
+*    dotToday();                 Retorna data atual (dd/mm/yyyy)
+*    dotToday(5);                Retorna data atual somando 5 dias
+*    dotToday(0,0,0,true);       Retorna data atual no formato native (yyyy-mm-dd)
+*    dotToday(0,0,0,false, el);  Insere a data atual no atributo value (ou innerHTML) do elemento informando
 */
-function today(dias=0, meses=0, anos=0, native=false, el=null){
-  var today = new Date();
+function dotToday(dias=0, meses=0, anos=0, native=false, el=null){
+  let today = new Date();
   today.setDate(today.getDate() + dias);
   today.setMonth(today.getMonth() + meses + 1);
   today.setFullYear(today.getFullYear() + anos);
@@ -110,7 +110,7 @@ function today(dias=0, meses=0, anos=0, native=false, el=null){
 *    now(0,0,0, el);  Insere a hora atual no atributo value (ou innerHTML) do elemento informando
 */
 function now(horas=0, minutos=0, segundos=false, el=null){
-  var today = new Date();
+  let today = new Date();
   today.setHours(today.getHours() + horas);
   today.setMinutes(today.getMinutes() + minutos);
   const hh = String(today.getHours()).padStart(2, '0');

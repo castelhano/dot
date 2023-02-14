@@ -398,6 +398,25 @@ def alerta_marcar_lido(request):
     return HttpResponse('')
 
 @login_required
+@permission_required('core.change_agenda')
+def agenda_update(request, id):
+    agenda = Agenda.objects.get(pk=id)
+    form = AgendaForm(request.POST, request.FILES, instance=agenda)
+    if form.is_valid():
+        registro = form.save()
+        l = Log()
+        l.modelo = "core.agenda"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.titulo
+        l.usuario = request.user
+        l.mensagem = "UPDATE"
+        l.save()
+        messages.success(request,'Evento alterada')
+        return redirect('core_agenda_id',id)
+    else:
+        return render(request,'core/agenda_id.html',{'form':form,'agenda':agenda})
+
+@login_required
 @permission_required('core.change_feriado')
 def feriado_update(request, id):
     feriado = Feriado.objects.get(pk=id)
@@ -485,6 +504,25 @@ def alerta_delete(request, id):
     except:
         messages.error(request,'ERRO ao apagar alerta')
         return redirect('core_alerta_id', id)
+
+@login_required
+@permission_required('core.delete_agenda')
+def agenda_delete(request, id):
+    try:
+        registro = Agenda.objects.get(pk=id)
+        l = Log()
+        l.modelo = "core.agenda"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.titulo
+        l.usuario = request.user
+        l.mensagem = "DELETE"
+        registro.delete()
+        l.save()
+        messages.warning(request,f'Evento apagado')
+        return redirect('core_agendas')
+    except:
+        messages.error(request,'ERRO ao apagar evento')
+        return redirect('core_agenda_id', id)
 
 @login_required
 @permission_required('core.delete_feriado')

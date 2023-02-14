@@ -28,8 +28,17 @@
         </ul>
     </div>
     <form id="core_form" action="{% url 'core_agenda_update' agenda.id|safe %}" method="POST" autocomplete="off" enctype="multipart/form-data">
-    {% csrf_token %}
-    {% include 'core/_form_agenda.html' %}
+        {% csrf_token %}
+        <div class="card-body tab-content">
+            <h5 class="card-title mb-3">Agenda: <b class="text-purple">Editar evento</b></h5>
+            {% include 'core/_form_agenda.html' %}
+            <!-- CONTROLES DO FORM -->
+            <div class="row mt-3">
+                <div class="col">
+                    <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"><b>G</b>ravar</button>
+                </div>
+            </div>
+        </div>
     </form>
 </div>
 
@@ -46,7 +55,7 @@
                 <div class="row mt-2">
                     <div class="col text-end">
                         <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
-                        <a class="btn btn-danger px-3" href="url">Excluir</a>
+                        <a class="btn btn-danger px-3" href="{% url 'core_agenda_delete' agenda.id|safe %}">Excluir</a>
                     </div>
                 </div>
             </div>
