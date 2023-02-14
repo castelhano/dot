@@ -249,7 +249,7 @@ function addOnTarefa_update(){
                     }
                     else{ // Se texto vazio inserido remove o item
                         event.remove();
-                        if(addOnTarefa_tarefas.length == 0){addOnTarefa_list.innerHTML = '<p>Nenhum evento cadastrado</p>';}
+                        if(addOnTarefa_tarefas.length == 0){addOnTarefa_list.innerHTML = '<p>Nenhuma tarefa adicionada</p>';}
                     }
                 };
                 input.onkeydown = (e) => {if(e.key == 'Enter'){input.blur();}}
@@ -265,7 +265,7 @@ function addOnTarefa_update(){
             event.appendChild(textDiv);
             addOnTarefa_list.appendChild(event);
         }
-        if(addOnTarefa_tarefas.length == 0){addOnTarefa_list.innerHTML = '<p>Nenhum evento cadastrado</p>';}
+        if(addOnTarefa_tarefas.length == 0){addOnTarefa_list.innerHTML = '<p>Nenhuma tarefa adicionada</p>';}
     });
 }
 function addOnTarefaSave(){
@@ -275,7 +275,7 @@ function addOnTarefaSave(){
         else{tarefas.push({title:e.parentNode.parentNode.childNodes[1].innerText})}
     });
     dotAppDataUpdate({url:'/app_data/core__tarefa__{{user.id}}.json',data:JSON.stringify(tarefas),onSuccessMsg:'Tarefas <b>salvas</b>'});
-    if(tarefas.length == 0){addOnTarefa_list.innerHTML = '<p>Nenhuma evento cadastrado</p>'}
+    if(tarefas.length == 0){addOnTarefa_list.innerHTML = '<p>Nenhuma tarefa adicionada</p>'}
 }
 
 function addOnTarefaAdd(){
@@ -297,7 +297,7 @@ function addOnTarefaAdd(){
             }
             else{ // Se texto vazio inserido remove o item
                 event.remove();
-                if(addOnTarefa_tarefas.length == 0){addOnTarefa_list.innerHTML = '<p>Nenhum evento cadastrado</p>';}
+                if(addOnTarefa_tarefas.length == 0){addOnTarefa_list.innerHTML = '<p>Nenhuma tarefa adicionada</p>';}
             }
         };
         input.onkeydown = (e) => {if(e.key == 'Enter'){input.blur();}}
