@@ -53,7 +53,7 @@
             </div>                
         </div>
     </div>
-</div>
+</div>  
 {% endblock%}
 
 {% block add_script_src %}
@@ -63,7 +63,6 @@
 
 <script>
 {% block add_script %}
-
 if(document.getElementById('modelos_auxiliares_list').childElementCount == 0){document.getElementById('modelos_auxiliares_container').classList.add('d-none');}
 
 let originalDate = urlGetParam('data', dotToday(0,0,0,true));
@@ -118,6 +117,7 @@ const calendar = new jsCalendar({
 
 get_usuarios();
 get_feriados({ano:year}).then(() => {getAgenda({ano:year,mes:month}).then(() => {calendar.calendarRebuild(true);showDayTimeline(originalDate);})});
+
 
 {% endblock %}
 </script>

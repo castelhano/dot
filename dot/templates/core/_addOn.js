@@ -56,7 +56,7 @@ var addOnAgenda_list = null;
 function addOnAgenda_start(){
     let addOn = document.createElement('div');addOn.classList = 'card-widget col-12 col-lg-8 col-xl-4 btn-dark pointer';
     addOn.onclick = () => {addOnAgenda_modal.toggle()};
-    let addOn_title = document.createElement('span');addOn_title.classList = 'text-light';addOn_title.innerHTML = '<i class="fas fa-calendar-alt me-2"></i>Agenda';
+    let addOn_title = document.createElement('span');addOn_title.classList = 'text-light';addOn_title.innerHTML = '<i class="fas fa-calendar-alt me-2"></i>Agenda Pessoal';
     addOnAgenda_list = document.createElement('ul');addOnAgenda_list.classList = 'list-unstyled fs-7 mt-1 mb-0';
     addOnAgenda_modal_create();
     addOnAgenda_update(addOnAgenda_list);  
@@ -90,7 +90,7 @@ function addOnAgenda_update(){
             event.innerHTML = `<div class="col-auto"><span class="dotAgenda-data-dia">${agenda.new[item].date.slice(-2)}</span></div> `;
             event.innerHTML += `<div class="col-auto dotAgenda-data-mes">${translateMonth[data.getMonth()]}</div> `;
             event.innerHTML += `<div class="col-auto dotAgenda-data-dayWeek">${translateDayWeek[data.getDay()]}</div>`;
-            event.innerHTML += `<div class="col dotAgenda-title text-truncate">${agenda.new[item].title}</div>`;
+            event.innerHTML += `<div class="col dotAgenda-title text-truncate">${agenda.new[item].hour != '' ? '<span class="text-muted">' + agenda.new[item].hour + ' </span>' : ''}${agenda.new[item].title}</div>`;
             event.innerHTML += `<div class="col-auto"><small class="badge bg-purple-light ms-1 float-end">${prazo}</small></div>`;
             addOnAgenda_list.appendChild(event);
             countNextEvents++;
