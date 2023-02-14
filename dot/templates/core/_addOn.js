@@ -134,7 +134,7 @@ function addOnAgenda_modal_create(options){
     let modalContent = document.createElement('div');modalContent.classList = 'modal-content';
     let modalBody = document.createElement('div');modalBody.classList = 'modal-body';
     modalBody.innerHTML = `<div class="row g-1"><div class="col"><h6 class="text-muted mb-3">Editar Agenda<h6></div><div class="col-auto"><div class="btn-group fs-7" role="group"><button type="button" data-type="addOnAgendaBtnShowOld" class="btn btn-sm px-3 py-0 btn-outline-secondary" title="Eventos Passados" onclick="addOnAgenda_showOld()"><i class="fas fa-calendar-check"></i></button><button type="button" data-type="addOnAgendaBtnShowNew" class="btn btn-sm px-3 py-0 btn-outline-primary active" title="Novos Eventos" onclick="addOnAgenda_showNew()"><i class="far fa-calendar-alt"></i></button></div><button class="btn btn-sm btn-success py-0 px-3 ms-1" onclick="addOnAgenda_table.addRow();"><i class="fas fa-plus"></i></button></div></div>`;
-    modalBody.innerHTML += `<div class="table-responsive"><table id="addOnAgenda_table_el" class="table table-sm border table-striped table-hover mt-1"><thead><tr><th>date</th><th>hour</th><th>title</th></tr></thead><tbody></tbody></table></div>`;
+    modalBody.innerHTML += `<div class="table-responsive fs-7"><table id="addOnAgenda_table_el" class="table table-sm border table-striped table-hover mt-1"><thead><tr><th>date</th><th>hour</th><th>title</th></tr></thead><tbody></tbody></table></div>`;
     let modalFooter = document.createElement('div');modalFooter.classList = 'text-end mt-3';
     let modalBtnCancel = document.createElement('button');modalBtnCancel.classList = 'btn btn-sm btn-secondary';modalBtnCancel.setAttribute('data-bs-dismiss','modal');modalBtnCancel.innerHTML = 'Cancelar';
     modalBtnCancel.onclick = () => {addOnAgenda_showNew()}
@@ -249,7 +249,7 @@ function addOnTarefa_update(){
                     }
                     else{ // Se texto vazio inserido remove o item
                         event.remove();
-                        if(addOnTarefa_tarefas.length == 0){addOnTarefa_list.innerHTML = '<p>Nenhuma tarefa adicionada</p>';}
+                        if(addOnTarefa_list.childElementCount == 0){addOnTarefa_list.innerHTML = '<p>Nenhuma tarefa adicionada</p>';}
                     }
                 };
                 input.onkeydown = (e) => {if(e.key == 'Enter'){input.blur();}}
@@ -297,7 +297,7 @@ function addOnTarefaAdd(){
             }
             else{ // Se texto vazio inserido remove o item
                 event.remove();
-                if(addOnTarefa_tarefas.length == 0){addOnTarefa_list.innerHTML = '<p>Nenhuma tarefa adicionada</p>';}
+                if(addOnTarefa_list.childElementCount == 0){addOnTarefa_list.innerHTML = '<p>Nenhuma tarefa adicionada</p>';}
             }
         };
         input.onkeydown = (e) => {if(e.key == 'Enter'){input.blur();}}

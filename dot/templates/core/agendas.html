@@ -31,7 +31,7 @@
                     <div id="calendar_widget"></div>
                 </div>
                 <div class="col-lg mt-3 mt-lg-2">
-                    <div class="row">
+                    <div class="row g-0">
                         <div class="col"><h5 class="text-muted" id="title_selected_day"></h5></div>
                         {% if perms.core.add_agenda %}<div class="col-auto pe-4"><a id="add" class="btn btn-sm btn-success" href="{% url 'core_agenda_add' %}"><i class="fas fa-plus"></i></a></div>{% endif %}
                     </div>
@@ -90,10 +90,10 @@ const calendar = new jsCalendar({
     onchange: (origin) => { // Carrega agendaMes e se alterado ano carregaFeriados
         if(calendar.year != year){ // Se alterou ano, busca feriados do ano correspondente e atualiza agenda do mes
             if(origin == 'currentMonth'){
-                get_feriados({ano:calendar.year}).then(() => {getAgenda({ano:calendar.year,mes:calendar.month}).then(() => {calendar.calendarRebuild();showDayTimeline(today);})})
+                getFeriados({ano:calendar.year}).then(() => {getAgenda({ano:calendar.year,mes:calendar.month}).then(() => {calendar.calendarRebuild();showDayTimeline(today);})})
             }
             else{
-                get_feriados({ano:calendar.year}).then(() => {getAgenda({ano:calendar.year,mes:calendar.month}).then(() => {calendar.calendarRebuild()})})
+                getFeriados({ano:calendar.year}).then(() => {getAgenda({ano:calendar.year,mes:calendar.month}).then(() => {calendar.calendarRebuild()})})
             }
             year = calendar.year;
             month = calendar.month;
@@ -116,7 +116,7 @@ const calendar = new jsCalendar({
 {% include 'core/_script_agenda.js' %}
 
 get_usuarios();
-get_feriados({ano:year}).then(() => {getAgenda({ano:year,mes:month}).then(() => {calendar.calendarRebuild(true);showDayTimeline(originalDate);})});
+getFeriados({ano:year}).then(() => {getAgenda({ano:year,mes:month}).then(() => {calendar.calendarRebuild(true);showDayTimeline(originalDate);})});
 
 
 {% endblock %}

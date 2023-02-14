@@ -13,6 +13,9 @@
 .addOnTarefaSave{padding: 2px 6px;border-radius: 20%;cursor: pointer;background-color: #F1F1F1;color: #333;opacity: 0.7;transition: all 0.5s;}
 .addOnTarefaAdd{margin-left: 4px; padding: 2px 6px;border-radius: 20%;cursor: pointer;background-color: #F1F1F1;color: #198754;opacity: 0.7;transition: all 0.5s;}
 .addOnTarefaSave:hover,.addOnTarefaAdd:hover{opacity: 1;border-radius: 10%;}
+@media(max-width: 768px){
+  .addOnTarefaSave, .addOnTarefaAdd{padding: 4px 10px;}
+}
 {% endblock%}
 </style>
 
@@ -72,10 +75,44 @@ SHORTCUT_MAP['3FTF'] = () => {document.getElementById('widget_action_planejament
 SHORTCUT_MAP['kFTF'] = () => {document.getElementById('widget_action_acidente').click()};
 
 {% if perms.core.view_agenda %}
-const agenda = new jsCalendar({
+
+let today = new Date();
+let year = today.getFullYear();
+let month = today.getMonth() + 1;
+let events = {};
+let holidays = {};
+function getAgenda() {
+    return new Promise(function(resolve, reject) {
+        var xhr = new XMLHttpRequest();
+        xhr.onload = function() {
+            let obj = JSON.parse(this.responseText);
+            for(item in obj){events[obj[item].fields.data] = 'Eventos: Click para visualizar';}
+            resolve(events);
+        };
+        xhr.onerror = reject;
+        xhr.open("GET", `{% url 'core_get_agenda' %}?ano=${year}&mes=${month}`, true);
+        xhr.send();
+    });
+}
+
+function getFeriados() {
+    return new Promise(function(resolve, reject) {
+        var xhr = new XMLHttpRequest();
+        xhr.onload = function() {
+            holidays = JSON.parse(this.responseText);
+            resolve(holidays);
+        };
+        xhr.onerror = reject;
+        xhr.open("GET", `{% url 'core_get_feriados' %}?ano=${year}`, true);
+        xhr.send();
+    });
+}
+getAgenda().then(() => {getFeriados().then(() => {
+  const agenda = new jsCalendar({
   container: document.getElementById('widget_core_agenda'),
-  // holidays: {'2023-02-22':'Nsa dos cachorros'},
-  // events: {'2023-02-05':'12:30 Desligamento Manoel','2023-02-25':'08:00 Reunião Gerencial'},
+  holidays: holidays,
+  events: events,
+  canChangeView: false,
   onclick: (day) => {window.location.href = `{% url 'core_agendas' %}?data=${day}`;},
   calendarClasslist: 'table table-sm border caption-top text-center mb-0 user-select-none fs-9',
   captionClasslist: 'py-1',
@@ -93,6 +130,7 @@ const agenda = new jsCalendar({
   calendarControlsCancelClasslist: 'btn btn-sm btn-light text-muted py-1 me-1 fs-9',
   calendarControlsSelectDayClasslist: 'btn btn-sm btn-light text-success py-1 me-1 fs-9',
 })
+})})
 
 {% endif %}
 

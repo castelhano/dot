@@ -186,7 +186,7 @@ class jsCalendar{
         if(this.summaryEl == null){ // Caso container do summary ainda nao exista, cria elemento abaixo do calendario
             this.summaryEl = document.createElement('div');
             this.calendar.after(this.summaryEl);
-            this.detail = document.createElement('div');this.detail.classList = 'pt-1';
+            this.detail = document.createElement('div');this.detail.classList = 'pt-1 fs-7';
             this.summaryEl.after(this.detail);
         }
         let curDate = new Date(`${this.year}-${this.month}-1`);

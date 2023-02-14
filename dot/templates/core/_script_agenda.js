@@ -4,7 +4,7 @@ function showDayTimeline(day){
     let data = new Date(`${day} 00:00`);
     let [ano, mes, dia] = day.split('-');
     title.innerHTML = `${dia} ${calendar.monthNames[parseInt(mes) - 1]} <span class="text-purple">${translateWeekDay[data.getDay()]}</span> ${ano}`;
-    if(calendar.holidays[day]){title.innerHTML += `<b class="ms-2 text-danger help" title="${calendar.holidays[day]}">FERIADO</b>`;}
+    if(calendar.holidays[day]){title.innerHTML += ` <b class="ms-1 text-danger help" title="${calendar.holidays[day]}">FERIADO</b>`;}
     // ***
     if(agendaMes[day]){
         for(key in agendaMes[day]){
@@ -19,6 +19,9 @@ function showDayTimeline(day){
             {% endif %}
             tbody.innerHTML += `<tr class="pointer" onclick="showDetails(this,'${day}','${key}')"><td>${record?.inicio ? record.inicio.slice(0,5) : '--'} a ${record.termino ? record.termino.slice(0,5) : '--'}</td><td>${record.titulo}</td><td>${tagsEl}</td>${action}</tr>`;
         }
+    }
+    if(tbody.children.length == 0){
+        tbody.innerHTML = '<tr><td colspan="4">Nenhum evento cadastrado</td></tr>';
     }
 }
 
@@ -63,7 +66,7 @@ function getAgenda(options) {
     });
 }
 
-function get_feriados(options) {
+function getFeriados(options) {
     return new Promise(function(resolve, reject) {
         var xhr = new XMLHttpRequest();
         xhr.onload = function() {
