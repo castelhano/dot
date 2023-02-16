@@ -1,5 +1,6 @@
 import base64
 import os, glob
+from pathlib import Path
 
 # Monta dicionario com parametros recebidos no request
 # --
@@ -40,6 +41,8 @@ def create_image(data_url, file_path, file_name, older_prefix_to_remove=False):
             for filename in glob.glob(f'{file_path}/{older_prefix_to_remove}*'):
                 os.remove(filename)
         image_bin = data_url.split(',')[1]
+        if not os.path.exists(file_path):
+            Path(file_path).mkdir(parents=True, exist_ok=True)
         output = open(f'{file_path}/{file_name}', 'wb')
         output.write(base64.b64decode(image_bin))
         output.close()
