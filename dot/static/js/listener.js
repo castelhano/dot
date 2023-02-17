@@ -45,6 +45,7 @@ document.addEventListener('keydown', (e) => {
 	// 2) ETAPA
 	else if (e.key === 'Enter' && (typeof TAB_ON_ENTER !== 'undefined' && TAB_ON_ENTER == true) && (e.target.nodeName === 'INPUT' || e.target.nodeName === 'SELECT')) {
 		e.preventDefault();
+		if(e.target.getAttribute('listener-js') == 'escape-tab'){return false;}
 		try{
 			var form = e.target.form;
 			var index = Array.prototype.indexOf.call(form, e.target);

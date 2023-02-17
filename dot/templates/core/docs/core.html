@@ -324,16 +324,10 @@
           <div class="body">
             <p class="m-0"><i class="fas fa-info me-2"></i> Lógica somente faz a tabulação de campos dentro de um elemento <code>form</code> .</p>
             <p class="m-0">Implementação trata campos desabilitados (disabled) e campos não visiveis, e busca próximo elemento disponível.</p>
+            <hr>
+            <p class="m-0">Para evitar tabulação em um input em especifico adicione o atributo <code>listener-js="escape-tab"</code></p>
           </div>
         </div>
-
-        <h5>Event handler()</h5>
-        <p>É possivel ainda criar um função auxiliar para tratar os eventos de teclado. Caso combinação de teclas não seja resolvido em nenhuma entrada no dicionario SHORTCUT_MAP, será acionado (caso exista) a função <code>eventHandler(e)</code> repassando o evento.</p>
-        <h6 class="mt-3">Função eventHandler deve ser implementada na página de origem</h6>
-        <pre><code class="language-javascript">function eventHandler(e){
-  if(e.key == 'j'){...}
-</code></pre>
-
 
         <h5 id="js_interpolate">Interpolate JS <sup class="bg-warning bg-opacity-50 border border-warning rounded px-2 text-dark fs-8 me-2">Beta</sup></h5>
         <p>Biblioteca implementa interpolação de valores com javascript.</p>

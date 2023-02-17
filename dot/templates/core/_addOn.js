@@ -236,7 +236,7 @@ function addOnTarefa_update(){
             let controlDiv = document.createElement('div');controlDiv.classList = 'col-auto';
             let textDiv = document.createElement('div');textDiv.classList = 'col dotTarefa-title text-truncate';
             let checkbox = document.createElement('input');checkbox.type = "checkbox";checkbox.classList = 'form-check-input me-1';
-            let label = document.createElement('div');label.classList = 'pointer';label.innerHTML = obj[item].title;
+            let label = document.createElement('div');label.classList = 'pointer user-select-none';label.innerHTML = obj[item].title;
             label.ondblclick = () => {
                 label.style.display = 'none';
                 let input = document.createElement('input');input.value = label.innerText;input.classList = 'form-control form-control-sm fs-8 py-0';input.style.minHeight = '20px';
@@ -284,7 +284,7 @@ function addOnTarefaAdd(){
     let controlDiv = document.createElement('div');controlDiv.classList = 'col-auto';
     let textDiv = document.createElement('div');textDiv.classList = 'col dotTarefa-title text-truncate';
     let checkbox = document.createElement('input');checkbox.type = "checkbox";checkbox.classList = 'form-check-input me-1';
-    let label = document.createElement('div');label.classList = 'pointer';label.innerHTML = 'nova tarefa...';
+    let label = document.createElement('div');label.classList = 'pointer user-select-none';label.innerHTML = 'nova tarefa...';
     label.ondblclick = () => {
         label.style.display = 'none';
         let input = document.createElement('input');input.value = label.innerText;input.classList = 'form-control form-control-sm fs-8 py-0';input.style.minHeight = '20px';

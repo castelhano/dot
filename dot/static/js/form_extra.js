@@ -319,9 +319,9 @@ class jsFormx{
             td.classList = this.valueClassList;
             let attrs = this.data[i].schema;
             for(let item in attrs){
-                let label_text = `<span class="label-name bg-dark text-white user-select-none">${item}</span><span style="display: none;">=</span><span class="label-status bg-warning cursor-text" contenteditable="true">${attrs[item]}</span>`;
+                let label_text = `<span class="jsFormExtra-label-name bg-dark text-white user-select-none">${item}</span><span style="display: none;">=</span><span class="jsFormExtra-label-status bg-warning cursor-text" contenteditable="true">${attrs[item]}</span>`;
                 let label = document.createElement('label');
-                label.classList = 'label opacity-75';
+                label.classList = 'jsFormExtra-label opacity-75';
                 label.innerHTML = label_text;
                 label.ondblclick = (e) => {if(e.ctrlKey){e.preventDefault();label.remove();}};
                 td.appendChild(label);
@@ -343,8 +343,8 @@ class jsFormx{
     __addKeyOnSchema(target){
         if(target.tagName != 'SPAN'){target = target.parentElement} // Trata caso evento pegue o elemento I ao inves do SPAN
         let label = document.createElement('div');
-        label.classList = 'label' ;
-        label.innerHTML = '<span class="label-name bg-success text-white" contenteditable="true">key</span><span style="display: none;">=</span><span class="label-status bg-warning" contenteditable="true">value</span>';
+        label.classList = 'jsFormExtra-label' ;
+        label.innerHTML = '<span class="jsFormExtra-label-name bg-success text-white" contenteditable="true">key</span><span style="display: none;">=</span><span class="jsFormExtra-label-status bg-warning" contenteditable="true">value</span>';
         label.ondblclick = (e) => {if(e.ctrlKey){e.preventDefault();label.remove();}};
         target.before(label);
     }
@@ -355,7 +355,7 @@ class jsFormx{
         let newGroups = false;
         for(let i = 0; i < size; i++){ // Salva no dicionario schema dados ajustados
             let schema = {};
-            trs[i].querySelectorAll('.label').forEach((e)=>{
+            trs[i].querySelectorAll('.jsFormExtra-label').forEach((e)=>{
                 schema[e.textContent.split('=')[0]] = e.textContent.split('=')[1];
             });
             let key = trs[i].querySelector('th').innerText;

@@ -102,10 +102,12 @@
 
 <script>
 {% block add_script %}
+var TAB_ON_ENTER = true;
+
 const tags = new Tagin(document.getElementById('id_tags'), {
     separator:';',
     tagColor: 'purple',
-    enter: true,
+    // enter: true,
     transform: 'input => input.toUpperCase()',
     placeholder: 'Enter ou ;',
     duplicate: false

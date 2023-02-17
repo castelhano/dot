@@ -17,7 +17,11 @@
             <li id="modelos_auxiliares_container" class="nav-item dropdown ms-1">
                 <a class="nav-link dropdown-toggle text-dark" id="sac_extra" data-bs-toggle="dropdown" href="#" role="button"></a>
                 <ul id="modelos_auxiliares_list" class="dropdown-menu fs-7">
-                    {% if perms.core.view_feriado %}<li><a class="dropdown-item" href="{% url 'core_feriados' %}"><i class="fas fa-fw fa-calendar-plus text-orange"></i> Feriados</a></li>{% endif %}
+                    {% if perms.core.view_feriado %}
+                    <li>
+                        <a id="feriados_link" class="dropdown-item d-flex justify-content-between align-items-center pe-2" href="{% url 'core_feriados' %}"><span><i class="fas fa-fw fa-calendar-plus text-orange"></i> Feriados</span><kbd class="ms-4 bg-light text-dark">Alt+F</kbd></a>
+                    </li>
+                    {% endif %}
                 </ul>
             </li>
             <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'index' %}"><i class="fas fa-undo"></i></a></li>
@@ -64,6 +68,11 @@
 <script>
 {% block add_script %}
 if(document.getElementById('modelos_auxiliares_list').childElementCount == 0){document.getElementById('modelos_auxiliares_container').classList.add('d-none');}
+else{
+    SHORTCUT_MAP['fTFF'] = () => {document.getElementById('feriados_link').click()};
+}
+
+
 
 let originalDate = urlGetParam('data', dotToday(0,0,0,true));
 let today = dotToday(0,0,0,true);
@@ -90,9 +99,13 @@ const calendar = new jsCalendar({
     onchange: (origin) => { // Carrega agendaMes e se alterado ano carregaFeriados
         if(calendar.year != year){ // Se alterou ano, busca feriados do ano correspondente e atualiza agenda do mes
             if(origin == 'currentMonth'){
+                calendar.clearSelectedDays();
+                calendar.selectedDays = [today];
                 getFeriados({ano:calendar.year}).then(() => {getAgenda({ano:calendar.year,mes:calendar.month}).then(() => {calendar.calendarRebuild();showDayTimeline(today);})})
             }
             else{
+                calendar.clearSelectedDays();
+                calendar.selectedDays = [today];
                 getFeriados({ano:calendar.year}).then(() => {getAgenda({ano:calendar.year,mes:calendar.month}).then(() => {calendar.calendarRebuild()})})
             }
             year = calendar.year;
@@ -100,6 +113,7 @@ const calendar = new jsCalendar({
         }
         else if(calendar.month != month){ // Caso nao, apenas atualiza agenda do mes (caso alterado mes)
             if(origin == 'currentMonth'){
+                calendar.selectedDays = [today];
                 getAgenda({ano:calendar.year,mes:calendar.month}).then(() => {calendar.calendarRebuild();showDayTimeline(today);});
             }
             else{
@@ -107,7 +121,11 @@ const calendar = new jsCalendar({
             }
             month = calendar.month;
         }
-        else if(origin == 'currentMonth'){showDayTimeline(today)}
+        else if(origin == 'currentMonth'){
+            calendar.clearSelectedDays();
+            calendar.selectedDays = [today];
+            showDayTimeline(today)
+        }
     },
     calendarControlsCurrentClasslist: 'btn btn-sm btn-purple-light fs-8 me-1 py-1 py-lg-0',
     calendarControlsSelectDayClasslist: 'btn btn-sm btn-purple-light fs-9'

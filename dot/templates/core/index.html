@@ -9,10 +9,12 @@
 .dotAgenda-event, .dotTarefa-event{margin-bottom: 4px;}
 .dotAgenda-data-dia, .dotTarefa-icon{border-radius: 20px;padding: 3px 4px; margin-right: 2px; background-color:#79589F; color:#FFF;font-size:0.7rem;font-weight:bold;font-family: monospace;}
 .dotAgenda-data-month{font-family: monospace;}
-.dotAgenda-data-dayWeek{color: #79589F;font-family: monospace;}
+.dotAgenda-data-dayWeek{color: #79589F;font-family: monospace;font-size:1rem;}
 .addOnTarefaSave{padding: 2px 6px;border-radius: 20%;cursor: pointer;background-color: #F1F1F1;color: #333;opacity: 0.7;transition: all 0.5s;}
 .addOnTarefaAdd{margin-left: 4px; padding: 2px 6px;border-radius: 20%;cursor: pointer;background-color: #F1F1F1;color: #198754;opacity: 0.7;transition: all 0.5s;}
 .addOnTarefaSave:hover,.addOnTarefaAdd:hover{opacity: 1;border-radius: 10%;}
+.loadingWidget{position: absolute;width: 100%;height: 100%;text-align: center;background-color: #FFF;opacity: 0.8;padding-top: 40px;}
+.loadingWidget span{display: block;color: #333;}
 @media(max-width: 768px){
   .addOnTarefaSave, .addOnTarefaAdd{padding: 4px 10px;}
 }
@@ -24,8 +26,8 @@
 <div id="dotWidgetsContainer" class="row px-1 pt-lg-2">
   <div id="messages_widget" class="card-widget col-6 col-lg-4 col-xl-2 btn-secondary d-none"><i class="fas fa-inbox lead-image"> <sup id="alertas_badge" style="font-family: var(--bs-body-font-family); font-size:2rem;">0</sup></i><a class="widget-label stretched-link" data-bs-toggle="offcanvas" href="#offcanvas" role="button" title="ALT + M">Notificações<kbd class="float-end fs-9">alt m</kbd></a></div>
   {% if perms.core.console %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-dark" title="Ctrl + C"><i class="fas fa-window-restore lead-image"></i><a id="console_link" class="widget-label stretched-link" href="{% url 'console' %}">Admin Console</a></div>{% endif %}
-  {% if perms.gestao.dashboard %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-dark" title="Ctrl + C"><i class="fas fa-chart-pie lead-image"></i><a id="widget_action_gestao" class="widget-label stretched-link" href="{% url 'gestao_dashboard' %}">Gerencial<kbd class="float-end fs-9 bg-light text-dark fw-bold">ctrl 1</kbd></a></div>{% endif %}
-  {% if perms.core.view_agenda %}<div class="card-widget card-widget-fixed col-12 col-lg-4 col-xl-2 p-0 bg-purple"><div id="widget_core_agenda" class="h-100 container-fluid px-1"></div></div>{% endif %}
+  {% if perms.gestao.dashboard %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-dark" title="Ctrl + C"><i class="fas fa-chart-pie lead-image"></i><a id="widget_action_gestao" class="widget-label stretched-link" href="{% url 'gestao_dashboard' %}">Gerencial<kbd class="float-end fs-9 bg-light text-dark fw-bold pb-0">ctrl 1</kbd></a></div>{% endif %}
+  {% if perms.core.view_agenda %}<div class="card-widget card-widget-fixed col-12 col-lg-4 col-xl-2 p-0 bg-purple"><div id="loadingScreenAgenda" class="loadingWidget"><div class="spinner-border text-success"></div><span>Carregando Agenda...</span></div><div id="widget_core_agenda" class="h-100 container-fluid px-1"></div></div>{% endif %}
   {% if perms.pessoal.view_funcionario %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-purple"><i class="fas fa-user-tie lead-image"></i><a id="widget_action_pessoal" class="widget-label stretched-link" href="{% url 'pessoal_funcionarios' %}">Pessoal<kbd class="float-end fs-9">ctrl p</kbd></a></div>{% endif %}
   {% if perms.recrutamento.view_selecao %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-purple"><i class="fas fa-users lead-image"></i><a id="widget_action_recrutamento" class="widget-label stretched-link" href="{% url 'recrutamento_selecoes' %}">Recrutamento<kbd class="float-end fs-9">ctrl r</kbd></a></div>{% endif %}
   {% if perms.sac.view_reclamacao %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-purple"><i class="fas fa-headset lead-image"></i><a id="widget_action_sac" class="widget-label stretched-link" href="{% url 'sac_reclamacoes' %}">SAC<kbd class="float-end fs-9">ctrl 2</kbd></a></div>{% endif %}
@@ -122,7 +124,7 @@ getAgenda().then(() => {getFeriados().then(() => {
   holidayClasslist: 'border border-light-subtle py-0 bg-danger-light fs-7',
   busyDayClasslist: 'border border-light-subtle py-0 bg-purple-light fs-7',
   emptyDayClasslist: 'border border-light-subtle bg-light bg-opacity-50 py-0',
-  selectDayClasslist: 'border py-1 bg-purple-light fs-7',
+  selectDayClasslist: 'border py-0 bg-purple-light fs-7',
   monthNameClassList: 'mt-0 ps-1 pointer text-light fs-6',
   monthPickerClassList: 'form-select form-select-sm me-1 py-1 fs-9',
   yearPickerClassList: 'form-control form-control-sm me-1 py-0 fs-9',
@@ -131,7 +133,8 @@ getAgenda().then(() => {getFeriados().then(() => {
   calendarControlsNavegateClasslist: 'btn btn-sm btn-light py-1 py-lg-0 fs-9 ms-1',
   calendarControlsCancelClasslist: 'btn btn-sm btn-light text-muted py-1 me-1 fs-9',
   calendarControlsSelectDayClasslist: 'btn btn-sm btn-light text-success py-1 me-1 fs-9',
-})
+});
+document.getElementById('loadingScreenAgenda').remove();
 })})
 
 {% endif %}
