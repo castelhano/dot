@@ -26,7 +26,10 @@
     </ul>
   </div>
   <div class="card-body tab-content">
-    <h5 class="card-title mb-0">Candidatos</h5>
+    <div class="row">
+      <div class="col"><h5 class="card-title mb-1">Candidatos</h5></div>
+      <div class="col-auto"><a class="btn btn-sm btn-primary d-block d-lg-none" href="{% url 'recrutamento_selecoes' %}" title="Alt+B">Seleções</a></div>
+    </div>
     <div class="tab-pane fade show active" id="base" role="tabpanel">
       {% include 'recrutamento/_extract_candidatos.html' %}
     </div>
@@ -100,6 +103,7 @@
     const table = new jsTable(document.getElementById('main_table'), {
     canFilter: true,
     filterCols: ['Nome','CPF','PNE'],
+    actionRowSelector: '.btn-dark',
     enablePaginate: true
   });
 

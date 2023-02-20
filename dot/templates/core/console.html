@@ -70,7 +70,7 @@
   </form>
 </div>
 
-{% include "_component/modal/loading.html" with message='Executando....' %}
+{% include "_component/modal/loading.html" with spinner_classlist='text-success' message='Processando requisição...' %}
 {% endblock%}
 
 {% block add_script_src %}{% endblock %}
@@ -100,8 +100,8 @@
   function console_clean(){dotConsole.innerHTML = '<small class="text-muted">Console V1.0</small>';addParam.classList.add('d-none');}
   function console_addParam(){dotConsole.innerHTML += '\n<span class="badge bg-primary" contenteditable="true">param=value</span>';}
   
+  let modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
   function console_submit(){
-    let modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
     let list = dotConsole.textContent.split('\n');
     let operation = String(list[0]);
     let raw_params = list.slice(1, list.length);

@@ -61,6 +61,16 @@ function dotAppDataUpdate(options){let token = getCookie('csrftoken');let xhttp 
 */
 function tooltipActivate(){let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {return new bootstrap.Tooltip(tooltipTriggerEl)})}
 
+
+function formDisable(form){
+  let elements = form.elements;
+  for(i in elements){
+    if(elements[i] instanceof HTMLElement && elements[i].getAttribute('dot-role') == 'alwaysEnable'){continue;} // Para habilitar um controle num form disabled adicione o attr dot-role='always_enable'
+    if(['INPUT','TEXTAREA','BUTTON'].includes(elements[i].tagName)){elements[i].disabled = true;}
+    else if(elements[i].tagName == 'SELECT'){elements[i].classList.add('readonly')}
+  }
+}
+
 /*
 * Retorna ou atualiza elemento com a 'data atual' podendo ser acrescido dias, meses ou anos
 *

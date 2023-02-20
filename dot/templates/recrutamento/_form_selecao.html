@@ -6,7 +6,7 @@
       <div class="col-lg-5">
         <div class="row g-1">
           <div class="form-floating mb-1 col-lg-12">
-            <select class="form-select bg-light fw-bold" id="id_candidato" name="candidato">
+            <select class="form-select bg-light fw-bold readonly" id="id_candidato" name="candidato">
               {% if 'selecao_id' in request.get_full_path %}
               <option value="{{selecao.candidato.id|safe}}" selected>{{selecao.candidato.nome}}</option>
               {% else %}

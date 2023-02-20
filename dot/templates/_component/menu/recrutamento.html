@@ -3,7 +3,7 @@
   <ul class="dropdown-menu dropdown-menu-dark" id="cadastro_list_options">
     {% if perms.recrutamento.view_vaga %}<li><a class="dropdown-item" id="cadastro_vaga" href="{% url 'recrutamento_vagas' %}"><b>V</b>agas</a></li>{% endif %}
     {% if perms.recrutamento.view_criterio %}<li><a class="dropdown-item" id="cadastro_criterio" href="{% url 'recrutamento_criterios' %}"><b>C</b>ritério</a></li>{% endif %}
-    {% if user.is_superuser %}<li><a class="dropdown-item" id="cadastro_site_preview" href="{% url 'recrutamento_cadastro_site' %}" target="_blank">Site <b>P</b>review</a></li>{% endif %}
+    {% if user.is_superuser %}<li><a class="dropdown-item" id="cadastro_site_preview" href="{% url 'recrutamento' %}" target="_blank">Site <b>P</b>review</a></li>{% endif %}
     {% if perms.recrutamento.view_settings %}<li><a class="dropdown-item" id="cadastro_settings" href="{% url 'recrutamento_settings' %}">Confi<b>g</b>urações</a></li>{% endif %}
   </ul>
 </li>

@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.db.models import Q
 from core.extras import clean_request
-from datetime import date
+from datetime import date, timedelta
 from django.conf import settings as ROOT
 
 # METODOS SHOW
@@ -51,6 +51,12 @@ def selecoes(request):
     if request.method == 'POST':
         if request.POST['pesquisa'] != '':
             selecoes = selecoes.filter(candidato__nome__contains=request.POST['pesquisa'])
+        if request.POST['de'] != '' and request.POST['ate'] != '':
+            selecoes = selecoes.filter(data__range=[request.POST['de'],request.POST['ate']])
+        else:
+            ate = date.today()
+            de = ate - timedelta(days=90)
+            selecoes = selecoes.filter(data__range=[de,ate])
         if request.POST['cargo'] != '':
             selecoes = selecoes.filter(vaga__id=request.POST['cargo'])
         if request.POST['resultado'] != '':
@@ -125,7 +131,6 @@ def cadastro_site(request):
                 l.usuario = None
                 l.mensagem = "CREATED AT SITE"
                 l.save()
-                messages.success(request, 'Cadastro realizado com sucesso')
                 return render(request, 'recrutamento/site.html',{'status':'CREATED'})
             except:
                 return render(request, 'recrutamento/site.html',{'status':'ERROR'})

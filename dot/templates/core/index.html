@@ -67,14 +67,14 @@
 {% endblock %}
 <script>
 {% block add_script %}
-SHORTCUT_MAP['1FTF'] = () => {document.getElementById('widget_action_gestao').click()};
-SHORTCUT_MAP['pFTF'] = () => {document.getElementById('widget_action_pessoal').click()};
-SHORTCUT_MAP['rFTF'] = () => {document.getElementById('widget_action_recrutamento').click()};
-SHORTCUT_MAP['2FTF'] = () => {document.getElementById('widget_action_sac').click()};
-SHORTCUT_MAP['oFTF'] = () => {document.getElementById('widget_action_oficina').click()};
-SHORTCUT_MAP['gFTF'] = () => {document.getElementById('widget_action_linha').click()};
-SHORTCUT_MAP['3FTF'] = () => {document.getElementById('widget_action_planejamento').click()};
-SHORTCUT_MAP['kFTF'] = () => {document.getElementById('widget_action_acidente').click()};
+SHORTCUT_MAP['1FTF'] = () => {try{document.getElementById('widget_action_gestao').click()}catch(e){}};
+SHORTCUT_MAP['pFTF'] = () => {try{document.getElementById('widget_action_pessoal').click()}catch(e){}};
+SHORTCUT_MAP['rFTF'] = () => {try{document.getElementById('widget_action_recrutamento').click()}catch(e){}};
+SHORTCUT_MAP['2FTF'] = () => {try{document.getElementById('widget_action_sac').click()}catch(e){}};
+SHORTCUT_MAP['oFTF'] = () => {try{document.getElementById('widget_action_oficina').click()}catch(e){}};
+SHORTCUT_MAP['gFTF'] = () => {try{document.getElementById('widget_action_linha').click()}catch(e){}};
+SHORTCUT_MAP['3FTF'] = () => {try{document.getElementById('widget_action_planejamento').click()}catch(e){}};
+SHORTCUT_MAP['kFTF'] = () => {try{document.getElementById('widget_action_acidente').click()}catch(e){}};
 
 {% if perms.core.view_agenda %}
 

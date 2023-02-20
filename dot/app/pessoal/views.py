@@ -219,6 +219,9 @@ def afastamento_add(request, id):
     else:
         form = AfastamentoForm()
         funcionario = Funcionario.objects.get(id=id)
+        if funcionario.status == 'D':
+            messages.error(request,'<b>Erro:</b> Não é possivel movimentar funcionários desligados')
+            return redirect('pessoal_afastamentos', funcionario.id)
     return render(request,'pessoal/afastamento_add.html',{'form':form,'funcionario':funcionario})
 
 @login_required
@@ -244,6 +247,9 @@ def dependente_add(request, id):
     else:
         form = DependenteForm()
         funcionario = Funcionario.objects.get(id=id)
+        if funcionario.status == 'D':
+            messages.error(request,'<b>Erro:</b> Não é possivel movimentar funcionários desligados')
+            return redirect('pessoal_dependentes', funcionario.id)
     return render(request,'pessoal/dependente_add.html',{'form':form,'funcionario':funcionario})
 
 @login_required
@@ -361,6 +367,9 @@ def cargo_update(request,id):
 @permission_required('pessoal.change_funcionario')
 def funcionario_update(request,id):
     funcionario = Funcionario.objects.get(pk=id)
+    if funcionario.status == 'D':
+        messages.error(request,'<b>Erro:</b> Não é possivel movimentar funcionários desligados')
+        return redirect('pessoal_funcionario_id', id)
     form = FuncionarioForm(request.POST, request.FILES, instance=funcionario)
     if form.is_valid():
         has_warnings = False
@@ -394,6 +403,9 @@ def funcionario_update(request,id):
 @permission_required('pessoal.change_afastamento')
 def afastamento_update(request,id):
     afastamento = Afastamento.objects.get(pk=id)
+    if afastamento.funcionario.status == 'D':
+        messages.error(request,'<b>Erro:</b> Não é possivel movimentar funcionários desligados')
+        return redirect('pessoal_afastamento_id', id)
     form = AfastamentoForm(request.POST, instance=afastamento)
     if form.is_valid():
         try:
@@ -427,6 +439,9 @@ def afastamento_update(request,id):
 @permission_required('pessoal.change_dependente')
 def dependente_update(request,id):
     dependente = Dependente.objects.get(pk=id)
+    if dependente.funcionario.status == 'D':
+        messages.error(request,'<b>Erro:</b> Não é possivel movimentar funcionários desligados')
+        return redirect('pessoal_dependentes', funcionario.id)
     form = DependenteForm(request.POST, instance=dependente)
     if form.is_valid():
         try:

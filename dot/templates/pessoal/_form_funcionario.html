@@ -21,7 +21,7 @@
           </div></div>
           {% if 'funcionario_id' in request.get_full_path or 'funcionario_update' in request.get_full_path %}
           <div class="col-auto">
-            <button type="button" id="menu_funcionario_extras" class="btn btn-sm" data-bs-toggle="dropdown"><i class="fas fa-angle-down text-light"></i></button>
+            <button type="button" id="menu_funcionario_extras" class="btn btn-sm" data-bs-toggle="dropdown" dot-role="alwaysEnable"><i class="fas fa-angle-down text-light"></i></button>
             <ul id="funcionario_extra_options" class="dropdown-menu fs-7">
               <li><a class="dropdown-item" href="{% url 'pessoal_export_funcionario_csv' funcionario.id|safe %}">Baixar CSV</a></li>
               {% if perms.pessoal.view_dependente %}<li><a id="extras_link_dependentes" class="dropdown-item" href="{% url 'pessoal_dependentes' funcionario.id|safe%}"><b>D</b>ependentes</a></li>{% endif %}
