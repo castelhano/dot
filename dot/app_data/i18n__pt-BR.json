@@ -1,0 +1,12 @@
+{
+    "common":{
+        "cancel": "Cancel",
+        "submit": "Save"
+    },
+    "core":{
+        "usuario":{
+            "usuario_add": "User <b>sucefull</b> created",
+            "usuario_change": "User sucefull updated"
+        }
+    }
+}

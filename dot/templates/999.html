@@ -7,7 +7,6 @@
   <title>999 Test Page</title>
   <link rel="shortcut icon" href="{% static 'img/favicon.ico'%}">
   <link rel="stylesheet" href="{% static 'css/vendor/all.min.css' %}" type="text/css">
-  <link rel="stylesheet" href="{% static 'css/timeline.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/fontawesome.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/dot.css' %}" type="text/css">
@@ -26,36 +25,10 @@
     <a class="d-none" id="clear" href="{% url 'handler' '999' %}"></a>
     <hr>
 
-<details class="mt-5">
-  <summary>
-    <span><i class="fas fa-tshirt"></i></span>
-    <h5>
-      <strong>CART</strong>
-      <small class="text-muted">Foo bar non</small>
-    </h5>
-    <span>R$ 39,35</span>
-  </summary>
-  <dl>
-    <div><dt>UNIT</dt><dd>4,50</dd></div>
-    <div><dt>Cartão Usado</dt><dd>**** 6820</dd></div>
-    <div><dt>TOTAL</dt><dd>55</dd></div>
-  </dl>
-</details>
-<details open>
-  <summary>
-    <span><i class="fas fa-car"></i></span>
-    <h5>
-      <strong>SONAR</strong>
-      <small class="text-muted">Actur sna ballur</small>
-    </h5>
-    <span>R$ 1.539,22</span>
-  </summary>
-  <dl>
-    <div><dt>UNIT</dt><dd>4,50</dd></div>
-    <div><dt>Cartão Usado</dt><dd>**** 6820</dd></div>
-    <div><dt>TOTAL</dt><dd>55</dd></div>
-  </dl>
-</details>
+    <div class="row">
+      <div class="col" data-i18n="core.usuario.usuario_foo">Usuário cadastrado com sucesso.</div>
+    </div>
+
 
 
   
@@ -63,7 +36,7 @@
   <div id="page-error-icon" class="bug_icon d-none"><i class="fas fa-bug"></i></div>
   <script src="{% static 'js/listener.js' %}"></script>
   <script src="{% static 'js/dot.js' %}"></script>
-  <script src="{% static 'js/table.js' %}"></script>
+  <script src="{% static 'js/i18n.js' %}"></script>
   <script src="/static/js/vendor/bootstrap.bundle.min.js"></script>
   <script>
     
