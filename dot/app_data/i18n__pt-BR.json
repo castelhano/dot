@@ -6,7 +6,9 @@
     "core":{
         "usuario":{
             "usuario_add": "User <b>sucefull</b> created",
-            "usuario_change": "User sucefull updated"
+            "usuario_change": "User sucefull updated",
+            "usuario_delete": "User sucefull <b class=\"text-danger\">deleted</b>",
+            "usuario_loging": "User sucefull login"
         }
     }
 }
