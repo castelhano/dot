@@ -1,0 +1,48 @@
+{
+    "common":{
+        "register": "Register",
+        "cancel": "Cancel",
+        "submit": "Save",
+        "back": "Back",
+        "error": "Error",
+        "name": "Name",
+        "full_name": "Full name",
+        "birth": "Birth",
+        "sex": "Sex",
+        "male": "Male",
+        "address": "Address",
+        "city": "City",
+        "state": "State",
+        "district": "District",
+        "female": "Female",
+        "contact": "Contact",
+        "not_inform": "Do not inform",
+        "mandatory": "mandatory",
+        "optional": "optional",
+        "curriculum": "Curriculum",
+        "accepted_extensions": "accepted extensions"
+    },
+    "recrutamento":{
+        "candidato":{
+            "cadastro_titulo": "Candidate Registration",
+            "cadastro_success": "Registered <b class=\"text-success\">successfully</b>"
+        },
+        "vaga":{
+            "vagas": "Vacancies",
+            "disponiveis_titulo": "Available vacancies",
+            "selecione_uma_ou_mais": "Select one or more vacancies"
+        },
+        "site":{
+            "welcome_message": "After completing the registration, wait for our Human Resources team to contact you to schedule an interview",
+            "contact_email": " or by email",
+            "contact_number": ", questions contact the number",
+            "dados_pessoais": "Personal data",
+            "quem_indicou": "Who referred you to our company",
+            "pne_descricao": "Person with special needs",
+            "apresentacao": "Presentation",
+            "apresentacao_tip": "Describe your professional experiences (optional)",
+            "erro_msg": "registration has not been completed. Check the fields entered",
+            "sem_vagas_msg": "<b class=\"text-warning\">Informative:</b> At the moment we don't have any vacancies, you can try again in the future or send your CV to our human resources department"
+        }
+    }
+}

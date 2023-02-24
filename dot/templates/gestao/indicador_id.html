@@ -128,7 +128,7 @@
   
   VMasker(document.getElementById("id_meta")).maskMoney();
   let meta = document.getElementById('id_meta');
-  function submitForm(){meta.value = meta.value.replace(',','.');return true;}
+  function submitForm(){meta.value = meta.value.replace('.','').replace(',','.');return true;}
   
   var qmm = document.getElementById('id_quanto_maior_melhor');
   var label = document.getElementById('id_qmm_label');

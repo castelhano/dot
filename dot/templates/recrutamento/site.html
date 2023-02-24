@@ -30,7 +30,7 @@
   <div class="container">
     <div class="py-5 text-center">
       <img class="d-block mx-auto mb-4" src="{% static 'img/logo.png' %}" alt="" width="140">
-      <h2>Cadastro de Candidato</h2>
+      <h2 data-i18n="recrutamento.candidato.cadastro_titulo">Cadastro de Candidato</h2>
     </div>
     {% include 'recrutamento/_extract_site.html' with status=status %}    
     
@@ -74,6 +74,7 @@
   <script src="{% static 'js/dot.js' %}"></script>
   <script src="{% static 'js/listener.js' %}"></script>
   <script src="{% static 'js/selectm.js' %}"></script>
+  <script src="{% static 'js/i18n.js' %}"></script>
   <script src="{% static 'js/vendor/bootstrap.bundle.min.js' %}"></script>
   
   <script type="text/javascript">
@@ -99,7 +100,7 @@
     fone1.addEventListener('input', inputHandler.bind(undefined, telMask, 14), false);
     fone2.addEventListener('input', inputHandler.bind(undefined, telMask, 14), false);
 
-    const selectVagas = new jsSelectm(document.getElementById('id_vagas'),{title:'Selecione uma ou mais opções'})
+    const selectVagas = new jsSelectm(document.getElementById('id_vagas'),{title:'<span data-i18n="recrutamento.vaga.selecione_uma_ou_mais">Selecione uma ou mais opções</span>'})
   {% endif %}
   
   

@@ -1,24 +1,24 @@
 {% if status == 'CREATED' %}
 <div class="col-lg-12 text-center">
-  <p class="display-2">Cadastro realizado com <b class="text-success">sucesso</b></p>
-  <p class="mt-5"><a class="h3 text-decoration-none text-orange" href="{{ROOT.homepage|default:'index'}}">Voltar</a></p>
+  <p class="display-2" data-i18n="recrutamento.candidato.cadastro_success">Cadastro realizado com <b class="text-success">sucesso</b></p>
+  <p class="mt-5"><a class="h3 text-decoration-none text-orange" href="{{ROOT.homepage|default:'index'}}" data-i18n="common.back">Voltar</a></p>
 </div>
 {% elif status == 'ERROR' %}
 <div class="col-lg-12 text-center">
-  <p class="display-6"><b class="text-danger">Erro:</b> o cadastro não foi concluido. Verifique os campos digitados{% if ROOT.recrutamento_fone %}, dúvidas entre em contato pelo número  <span class="text-nowrap text-orange">{{ROOT.recrutamento_fone}}</span>{% endif %}</p>
-  <p class="mt-5"><a class="h3 text-decoration-none text-orange" href="{{ROOT.homepage|default:'index'}}">Voltar</a></p>
+  <p class="display-6"><b class="text-danger" data-i18n="common.error">Erro:</b> <span data-i18n="recrutamento.site.erro_msg">o cadastro não foi concluido. Verifique os campos digitados</span>{% if ROOT.recrutamento_fone %}<span data-i18n="recrutamento.site.contact_number"> , dúvidas entre em contato pelo número</span> <span class="text-nowrap text-orange">{{ROOT.recrutamento_fone}}</span>{% endif %}</p>
+  <p class="mt-5"><a class="h3 text-decoration-none text-orange" href="{{ROOT.homepage|default:'index'}}" data-i18n="common.back">Voltar</a></p>
 </div>
 {% elif status == 'SEMVAGAS' %}
 <div class="col-lg-12 text-center">
-  <p class="h2"><b class="text-warning">Informativo:</b> No momento não temos nenhuma vaga em aberto, você pode tentar novamente no futuro ou enviar seu curriculo para nosso setor de recursos humanos{% if ROOT.recrutamento_fone %}, dúvidas entre em contato pelo número  <span class="text-nowrap text-orange">{{ROOT.recrutamento_fone}}</span>{% endif %}{% if ROOT.recrutamento_email %} ou pelo email <a class="text-nowrap text-decoration-none text-orange" href="mailto:{{ROOT.recrutamento_email}}?subject=Recrutamento">{{ROOT.recrutamento_email|default:''}}</a>{% endif %}</p>
-  <p class="mt-5"><a class="h3 text-decoration-none text-orange" href="{{ROOT.homepage|default:'index'}}">Voltar</a></p>
+  <p class="h2"><span data-i18n="recrutamento.site.sem_vagas_msg"><b class="text-warning">Informativo:</b> No momento não temos nenhuma vaga em aberto, você pode tentar novamente no futuro ou enviar seu curriculo para nosso setor de recursos humanos</span>{% if ROOT.recrutamento_fone %}<span data-i18n="recrutamento.site.contact_number">, dúvidas entre em contato pelo número</span> <span class="text-nowrap text-orange">{{ROOT.recrutamento_fone}}</span>{% endif %}{% if ROOT.recrutamento_email %} <span data-i18n="recrutamento.site.contact_email">ou pelo email</span> <a class="text-nowrap text-decoration-none text-orange" href="mailto:{{ROOT.recrutamento_email}}?subject=Recrutamento">{{ROOT.recrutamento_email|default:''}}</a>{% endif %}</p>
+  <p class="mt-5"><a class="h3 text-decoration-none text-orange" href="{{ROOT.homepage|default:'index'}}" data-i18n="common.back">Voltar</a></p>
 </div>
 {% else %}
-<p class="lead text-center mb-4">Após concluir o cadastro aguarde o contato da nossa equipe de Recursos Humanos para agendamento de entrevista{% if ROOT.recrutamento_fone %}, dúvidas entre em contato pelo número <span class="text-nowrap text-orange">{{ROOT.recrutamento_fone}}</span>{% endif %}{% if ROOT.recrutamento_email %} ou pelo email <a class="text-nowrap text-decoration-none text-orange" href="mailto:{{ROOT.recrutamento_email}}?subject=Recrutamento">{{ROOT.recrutamento_email|default:''}}</a>{% endif %}</p>
+<p class="lead text-center mb-4"><span data-i18n="recrutamento.site.welcome_message">Após concluir o cadastro aguarde o contato da nossa equipe de Recursos Humanos para agendamento de entrevista</span>{% if ROOT.recrutamento_fone %}<span data-i18n="recrutamento.site.contact_number">, dúvidas entre em contato pelo número</span> <span class="text-nowrap text-orange">{{ROOT.recrutamento_fone}}</span>{% endif %}{% if ROOT.recrutamento_email %}<span data-i18n="recrutamento.site.contact_email"> ou pelo email</span> <a class="text-nowrap text-decoration-none text-orange" href="mailto:{{ROOT.recrutamento_email}}?subject=Recrutamento">{{ROOT.recrutamento_email|default:''}}</a>{% endif %}</p>
 <div class="row">
   <div class="col-lg-4 order-lg-2 mb-4">
     <h4 class="d-flex justify-content-between align-items-center mb-3">
-      <span>Vagas Disponíveis</span>
+      <span data-i18n="recrutamento.vaga.disponiveis_titulo">Vagas Disponíveis</span>
     </h4>
     <ul class="list-group mb-3">
       {% for vaga in vagas %}
@@ -31,54 +31,46 @@
         <span class="text-muted">{{ vaga.quantidade }}</span>
         {% endif %}
       </li>
-      {% empty %}
-      <li class="list-group-item d-flex justify-content-between lh-condensed">
-        <div>
-          <h6 class="my-0">Indisponível</h6>
-          <small class="text-muted">Não temos vagas em aberto no momento</small>
-        </div>
-        <span class="text-muted">0</span>
-      </li>
       {% endfor %}
     </ul>
   </div>
   <div class="col-lg-8 order-lg-1">
-    <h4 class="mb-3">Dados pessoais</h4>
+    <h4 class="mb-3" data-i18n="recrutamento.site.dados_pessoais">Dados pessoais</h4>
     <form role="form" action="{% url 'recrutamento' %}" method="POST" enctype="multipart/form-data" autocomplete="off" onsubmit="return submitForm();" novalidate>
       {% csrf_token %}
       <div class="row">
         <div class="col-lg-12 mb-3">
-          <label for="id_nome">Nome</label>
-          <input type="text" class="form-control" name="nome" id="id_nome" placeholder="Nome completo" autofocus>
+          <label for="id_nome" data-i18n="common.name">Nome</label>
+          <input type="text" class="form-control" name="nome" id="id_nome" placeholder="Nome completo" data-i18n="common.full_name" data-i18n-target="placeholder" autofocus>
         </div>
       </div>
       <div class="row">
         <div class="mb-3 col-lg-4">
-          <label for="id_cpf">CPF <sup>(obrigatório)*</sup></label>
+          <label for="id_cpf">CPF <sup>( <span data-i18n="common.mandatory">obrigatório</span> ) *</sup></label>
           <div class="input-group">
             <input type="text" class="form-control" name="cpf" id="id_cpf" placeholder="000.000.000-00">
           </div>
         </div>
         <div class="mb-3 col-lg-4">
-          <label for="username">Nascimento</label>
+          <label for="username" data-i18n="common.birth">Nascimento</label>
           <div class="input-group">
             {{ form.data_nascimento }}
           </div>
         </div>
         <div class="mb-3 col-lg-4">
-          <label for="username">Sexo</label>
+          <label for="username" data-i18n="common.sex">Sexo</label>
           <div class="input-group">
             <select class="form-select" name="sexo">
-              <option value="M">Masculino</option>
-              <option value="F">Feminino</option>
-              <option value="N">Não Informar</option>
+              <option value="M" data-i18n="common.male">Masculino</option>
+              <option value="F" data-i18n="common.female">Feminino</option>
+              <option value="N" data-i18n="common.not_inform">Não Informar</option>
             </select>
           </div>
         </div>
       </div>
       
       <div class="mb-3">
-        <label for="address">Endereço</label>
+        <label for="address" data-i18n="common.address">Endereço</label>
         {{ form.endereco }}
       </div>
       <div class="row">
@@ -89,13 +81,13 @@
           </div>
         </div>
         <div class="mb-3 col-md">
-          <label for="username">Cidade</label>
+          <label for="username" data-i18n="common.city">Cidade</label>
           <div class="input-group">
             {{ form.cidade }}
           </div>
         </div>
         <div class="mb-3 col-md">
-          <label for="username">Bairro</label>
+          <label for="username" data-i18n="common.district">Bairro</label>
           <div class="input-group">
             {{form.bairro}}
           </div>
@@ -103,13 +95,13 @@
       </div>
       
       <div class="mb-3">
-        <label for="email">Email <span class="text-muted">(opcional)</span></label>
+        <label for="email">Email <sup>( <span data-i18n="common.optional">opcional</span> )</sup></label>
         {{ form.email }}
       </div>
       
       <div class="row mb-4">
         <div class="mb-1 col-lg-4">
-          <label>Contatos</label>
+          <label data-i18n="common.contact">Contato</label>
           <div class="input-group">
             <input type="text" class="form-control" name="fone1" id="id_fone1" placeholder="Fone 01" required>
           </div>
@@ -124,17 +116,17 @@
       
       <div class="row">
         <div class="col-lg-12 mb-3">
-          <label for="id_indicacao">Quem te indicou nossa empresa</label>
+          <label for="id_indicacao" data-i18n="recrutamento.site.quem_indicou">Quem te indicou nossa empresa</label>
           {{ form.indicacao }}
         </div>
       </div>
       <hr class="mb-3">
       <div id="vagas_delimiter_lg" class="form-check form-switch">
         {{form.pne}}
-        <label class="form-check-label" for="id_pne">PNE Pessoa com necessidades especiais (PCD)</label>
+        <label class="form-check-label" for="id_pne" data-i18n="recrutamento.site.pne_descricao">PNE Pessoa com necessidades especiais (PCD)</label>
       </div>
       <hr class="mb-4">
-      <h4 class="mb-3">Vagas</h4>
+      <h4 class="mb-3" data-i18n="recrutamento.vaga.vagas">Vagas</h4>
       
       <div class="row g-1  mb-3">
         <div class="col-md">
@@ -147,16 +139,16 @@
       </div>
       
       <div class="mb-4 col-lg-12 fs-7">
-        <label for="username">Curriculo <small class="text-muted fw-bold">( extensões aceitas: <span class="text-primary">PDF, DOC, DOCX, ODT</span> )</small></label>
+        <label for="username"><span data-i18n="common.curriculum">Curriculo</span> <small class="text-muted fw-bold">( <span data-i18n="common.accepted_extensions">extensões aceitas</span>: <span class="text-primary">PDF, DOC, DOCX, ODT</span> )</small></label>
         <div class="input-group">
           {{ form.curriculo }}
         </div>
       </div>
       
-      <h4 class="mb-2">Apresentação</h4>
+      <h4 class="mb-2" data-i18n="recrutamento.site.apresentacao">Apresentação</h4>
       <div class="row">
         <div class="col-lg-12 mb-3">
-          <label for="id_apresentacao">Descreva suas experiências profissionais (opcional)</label>
+          <label for="id_apresentacao" data-i18n="recrutamento.site.apresentacao_tip">Descreva suas experiências profissionais (opcional)</label>
           {{ form.apresentacao }}
         </div>
       </div>
@@ -164,8 +156,8 @@
       <hr class="mb-4">
       <div class="row">
         <div class="col">
-          <button class="btn btn-primary" type="submit">Cadastrar</button>
-          <a class="btn btn-secondary" href="{{ROOT.homepage|default:'index'}}">Voltar</a>
+          <button class="btn btn-primary" type="submit" data-i18n="common.register">Cadastrar</button>
+          <a class="btn btn-secondary" href="{{ROOT.homepage|default:'index'}}" data-i18n="common.back">Voltar</a>
         </div>
       </div>
     </form>

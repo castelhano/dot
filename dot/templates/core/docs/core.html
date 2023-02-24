@@ -182,7 +182,7 @@
 
 
         <h3 id="bibliotecas_javascript">Bibliotecas Javascript</h3>
-        <hr />
+        <hr>
 
         <h5 id="js_dot">Dot JS</h5>
         <p>Biblioteca básica do sistema, disponivel em <b>todas</b> as páginas</p>
@@ -347,6 +347,44 @@ dotPlot(map);</code></pre>
           
           <p class="mt-4">É possivel ainda interpolar os valores passados via GET na url:</p>
           <pre><code class="language-javascript">urlPlot(); // ou urlPlot('--'), onde valores null serão convertidos para '--'</code></pre>
+        
+        <h5 id="i18n">I18N JS Internationalization</h5>
+        <p>Implementa funcionalidade para tradução de texto para outros idiomas (pre cadastro de entradas de chaves para cada idioma).</p>
+        <span class="text-purple">Como funciona:</span>
+        <ol>
+          <li>Ao carregar página lib verifica qual o <i>language</i> do cliente através do <code>navigator.language</code>.</li>
+          <li>Caso linguagem seja diferente da default <b>pt-BR</b> será solicitado ao servidor (via ajax) arquivo com biblioteca para o requerido idioma.</li>
+          <li>Caso linguagem seja a default, nenhum código é realizado.</li>
+          <li>No HTML defina o atributo <code>data-i18n</code> com o valor da chave a ser procurada</li>
+          <span>Ex: <code>&lt;span <span class="text-purple">data-i18n="core.user.new"</span>&gt;Novo Usuário&lt;/span&gt;</code></span>
+          <li>Será buscado na extrutura do objeto caminho informado no atributo data-i18n, caso encontrado retorna valor da chave</li>
+          <li>Caso não encontrado chave exibe alert no log do navegador <code>console.log()</code> com a chave(s) não encontrada</li>
+          <li>Por padrão, o texto traduzido será inserido no innerHTML do elemento, este comportamento pode ser alterado definido <code>data-i18n-target</code></li>
+          <span>Ex: <code>&lt;input type="text" data-i18n="core.user.name" <span class="text-purple">data-i18n-taget="placeholder"</span> /&gt;</code></span>
+        </ol>
+
+
+        <small>Importe a biblioteca ao final do body (requer <code>dot.js</code>):</small>
+        <pre class="mb-4"><code class="language-html">&lt;script src="{&#37; static 'js/i18n.js' &#37;}"&gt;&lt;/script&gt;</code></pre>
+        <small>No html:</small>
+        <pre class="mb-4"><code class="language-html">&lt;span data-i18n="common.submit"&gt;Salvar&lt;/span&gt;</code></pre>
+        <small>Exemplo de arquivo de chaves <code>i18n__en-US.json</code>:</small>
+        <pre><code class="language-javascript">{
+    "common":{
+        "register": "Register",
+        "cancel": "Cancel",
+        "submit": "Save",
+        ...
+    },
+    "core":{
+        "user":{
+            "created": "User Created",
+            ..
+        }
+    }
+}</code></pre>
+
+
         <h5 id="js_time">Time JS</h5>
         <p>Realiza operações com hora.</p>
         <pre><code class="language-html">&lt;script src="{&#37; static 'js/time.js' &#37;}"&gt;&lt;/script&gt;</code></pre>
@@ -536,6 +574,7 @@ delayOnTouchOnly: true // default=false Se true, delay ocorre somente em touch d
             <li><i class="fas none fa-fw"></i><a href="#js_listener">Listener.js</a></li>
             <li><i class="fas none fa-fw"></i><i class="fas none fa-fw"></i><a href="#tabonenter">Forms: Tabular na tecla Enter</a></li>
             <li><i class="fas none fa-fw"></i><a href="#js_interpolate"><span class="bg-warning bg-opacity-50 border border-warning rounded px-2 text-dark fs-8 me-2">Beta</span>Interpolate.js</a></li>
+            <li><i class="fas none fa-fw"></i><a href="#i18n">i18n.js</a></li>
             <li><i class="fas none fa-fw"></i><a href="#js_time">Time.js</a></li>
             <li><i class="fas none fa-fw"></i><a href="#js_url">URL.js</a></li>
             <!-- <li><span class="fw-bold text-muted">Vendor</span></li> -->
@@ -543,7 +582,7 @@ delayOnTouchOnly: true // default=false Se true, delay ocorre somente em touch d
             <li><i class="fas none fa-fw"></i><span class="bg-danger bg-opacity-75 border rounded px-2 text-white fs-8 me-2">Vendor</span><a href="#js_prism">prism.js</a> | <a href="https://prismjs.com/" target="_blank">Project Page</a></li>
             <li><i class="fas none fa-fw"></i><span class="bg-danger bg-opacity-75 border rounded px-2 text-white fs-8 me-2">Vendor</span><a href="#js_sortable">sortable.js</a> | <a href="https://github.com/SortableJS/Sortable" target="_blank">Github</a> | <a href="https://sortablejs.github.io/Sortable/" target="_blank">Project Page</a></li>
             <li><i class="fas none fa-fw"></i><span class="bg-danger bg-opacity-75 border rounded px-2 text-white fs-8 me-1">Vendor</span><span class="bg-purple-light border rounded px-2 text-white fs-8 me-2">Fork</span><a href="#js_tagin">tagin.js</a></li>
-            <li><hr /></li>
+            <li><hr></li>
             <li><i class="fab fa-js-square text-purple fa-fw mt-2"></i><a href="{% url 'docs' 'jsTable' %}">jsTable</a> <i>Manipulação de tabelas</i></li>
             <li><i class="fab fa-js-square text-purple fa-fw mt-2"></i><a href="{% url 'docs' 'jsSelectm' %}">jsSelectm</a> <i>Componente para select multiple</i></li>
             <li><i class="fab fa-js-square text-purple fa-fw mt-2"></i><a href="{% url 'docs' 'jsForm' %}">jsForm</a> <i>Geração automatica de table#forms (extra attrs)</i></li>

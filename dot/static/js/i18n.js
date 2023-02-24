@@ -6,8 +6,7 @@
 * @author   Rafael Gustavo Alves {@email castelhano.rafael@gmail.com }
 */
 const __lang = navigator.language || navigator.userLanguage;
-const __langDefault = 'en';
-const __langPath = './i18n';
+const __langDefault = 'pt-BR';
 var __langDB = {};
 
 
@@ -16,10 +15,11 @@ function i18n_start(){
     document.querySelectorAll('[data-i18n]').forEach((e) => {
         try{
             let result = e.dataset.i18n.split('.').reduce((previous, current) => previous[current], __langDB);
-            e.innerHTML =  result || e.innerHTML;
+            if(e.getAttribute('data-i18n-target') == null){e.innerHTML =  result || e.innerHTML}
+            else{e.setAttribute(e.getAttribute('data-i18n-target'), result || e.innerHTML)}
             if(!result){trow}
         }
-        catch(error){console.log(`i18n: Entry [${e.dataset.i18n}] not found for (${__lang})`)}
+        catch(error){console.log(`i18n: [ERROR] Entry [${e.dataset.i18n}] not found for (${__lang})`)}
     })
     console.log(`i18n: End translating at ${dotNow(0,0,true)}`);
 }
