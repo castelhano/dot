@@ -36,25 +36,16 @@
     <a class="d-none" id="clear" href="{% url 'handler' '999' %}"></a>
     <hr>
 
-    <div class="row">
-      <div class="col" data-i18n="core.usuario.usuario_add">Usuário cadastrado com sucesso.</div>
-      <div class="col" data-i18n="core.usuario.usuario_change">Usuário atualizado com sucesso.</div>
-      <div class="col" data-i18n="core.usuario.usuario_doo">Usuário doo com sucesso.</div>
-      <div class="col" data-i18n="core.usuario.usuario_delete">Usuário excluido com sucesso.</div>
-    </div>
-
-
-
   
   
   <div id="page-error-icon" class="bug_icon d-none"><i class="fas fa-bug"></i></div>
   <script src="{% static 'js/listener.js' %}"></script>
   <script src="{% static 'js/dot.js' %}"></script>
-  <script src="{% static 'js/i18n.js' %}"></script>
   <script src="/static/js/vendor/bootstrap.bundle.min.js"></script>
   <script>
     
     var TAB_ON_ENTER = true;
+    localStorage.clear()
 
 
   </script>
