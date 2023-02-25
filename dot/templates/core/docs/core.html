@@ -19,7 +19,7 @@
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-book"></i></a></li>
       <li class="nav-item ms-1">
-        <a class="nav-link pointer text-dark" data-bs-toggle="dropdown" id="btn_extra"><i class="fas fa-angle-down"></i></a>
+        <a class="nav-link pointer" data-bs-toggle="dropdown" id="btn_extra"><i class="fas fa-angle-down"></i></a>
         <ul class="dropdown-menu fs-7">
           <li><a class="dropdown-item" href="{% url 'docs' 'jsTable' %}"><i class="fab fa-js-square fa-fw text-success"></i> jsTable</a></li>
           <li><a class="dropdown-item" href="{% url 'docs' 'jsSelectm' %}"><i class="fab fa-js-square fa-fw text-success"></i> jsSelectm</a></li>
@@ -355,12 +355,10 @@ dotPlot(map);</code></pre>
           <li>Ao carregar página lib verifica qual o <i>language</i> do cliente através do <code>navigator.language</code>.</li>
           <li>Caso linguagem seja diferente da default <b>pt-BR</b> será solicitado ao servidor (via ajax) arquivo com biblioteca para o requerido idioma.</li>
           <li>Caso linguagem seja a default, nenhum código é realizado.</li>
-          <li>No HTML defina o atributo <code>data-i18n</code> com o valor da chave a ser procurada</li>
-          <span>Ex: <code>&lt;span <span class="text-purple">data-i18n="core.user.new"</span>&gt;Novo Usuário&lt;/span&gt;</code></span>
+          <li>No HTML defina o atributo <code>data-i18n</code> com o valor da chave a ser procurada <br><span>Ex: <code>&lt;span <span class="text-purple">data-i18n="core.user.new"</span>&gt;Novo Usuário&lt;/span&gt;</code></span></li>
           <li>Será buscado na extrutura do objeto caminho informado no atributo data-i18n, caso encontrado retorna valor da chave</li>
           <li>Caso não encontrado chave exibe alert no log do navegador <code>console.log()</code> com a chave(s) não encontrada</li>
-          <li>Por padrão, o texto traduzido será inserido no innerHTML do elemento, este comportamento pode ser alterado definido <code>data-i18n-target</code></li>
-          <span>Ex: <code>&lt;input type="text" data-i18n="core.user.name" <span class="text-purple">data-i18n-taget="placeholder"</span> /&gt;</code></span>
+          <li>Por padrão, o texto traduzido será inserido no innerHTML do elemento, este comportamento pode ser alterado definido <code>data-i18n-target</code><span>Ex: <code>&lt;input type="text" data-i18n="core.user.name" <span class="text-purple">data-i18n-taget="placeholder"</span> /&gt;</code></span></li>
         </ol>
 
 
@@ -412,7 +410,7 @@ dotPlot(map);</code></pre>
                 </tr>
                 <tr>
                   <td>timeCompare(h1, h2)</td>
-                  <td>Retorna <b>1 se h1 > h2</b> ou <b>0 se h1 == h2</b> ou <b>-1 se h1 < h2</b></td>
+                  <td>Retorna <b>1 se h1 &gt; h2</b> ou <b>0 se h1 == h2</b> ou <b>-1 se h1 &lt; h2</b></td>
                 </tr>
                 <tr>
                   <td>timeStamp(prefix='', posfix='')</td>
@@ -444,7 +442,7 @@ dotPlot(map);</code></pre>
         <p>Implementa máscara para elemento <b>input#text</b>.</p>
         <pre class="mb-4"><code class="language-html">&lt;script src="{&#37; static 'js/vendor/mask.js' &#37;}"&gt;&lt;/script&gt;</code></pre>
         <small>HTML:</small>
-        <pre class="mb-4"><code class="language-html">&lt;input type="text" id="id_cpf" value=""&gt</code></pre>
+        <pre class="mb-4"><code class="language-html">&lt;input type="text" id="id_cpf" value=""&gt;</code></pre>
         <small>Javascript:</small>
         <pre class="mb-4"><code class="language-javascript">VMasker(document.getElementById("id_cpf")).maskPattern('999.999.999-99');</code></pre>
         <small>Patterns:</small>
@@ -521,8 +519,8 @@ delayOnTouchOnly: true // default=false Se true, delay ocorre somente em touch d
         <a href="https://github.com/erwinheldy/tagin" target="_blank"><i class="fab fa-github"></i> Github Repo</a>
         
         <p class="mt-4">Implementa controle <b>input#text</b> para inclusão de tags</p>
-        <pre><code class="language-html">&lt;link rel="stylesheet" href="{&#37; static 'css/vendor/tagin.css' &#37;}" type="text/css"/&gt
-&lt;script src="{&#37; static 'js/vendor/tagin.js' &#37;}"&gt;</script></code></pre>
+        <pre><code class="language-html">&lt;link rel="stylesheet" href="{&#37; static 'css/vendor/tagin.css' &#37;}" type="text/css"/&gt;
+&lt;script src="{&#37; static 'js/vendor/tagin.js' &#37;}"&gt;&lt;/script&gt;</code></pre>
 
         <div class="row g-1">
           <div class="form-floating my-4 col-lg-6">
@@ -610,6 +608,7 @@ delayOnTouchOnly: true // default=false Se true, delay ocorre somente em touch d
 
 <script>
   {% block add_script %}
+
   prismStart();
   TAB_ON_ENTER = true;
 

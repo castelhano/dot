@@ -17,18 +17,47 @@
   
   <style media="screen">
     @media(min-width: 992px){.navbar-dot{height: 45px;}}
-    .bug_icon{
+    .bug_icon, .settings_icon{
       display: inline-block;
-      position: absolute;
-      right: 30px;
-      bottom: 30px;
-      background-color: #dc3545;
-      color: #FFF;
-      font-size: 1.5rem;
-      padding: 8px 15px;
+      position: fixed;
+      bottom: 20px;
       border-radius: 50px;
     }
+    .bug_icon{
+      background-color: #dc3545;
+      color: #FFF;
+      right: 70px;
+      font-size: 1.5rem;
+      padding: 8px 15px;
+    }
+
+    .settings_icon{
+      display: none;
+      background-color: #424649;
+      cursor: pointer;
+      color: #d4ebf2;
+      right: -40px;
+      z-index: 250;
+      font-size: 1.5rem;
+      padding: 4px 50px 4px 10px;
+      transition: right ease-in 0.1s;
+    }
+    @media(max-width: 992px){.settings_icon{display: block;}}
+    .settings_icon:hover{right: -30px;}
     li.sys_item:hover kbd{opacity: 0.6;}
+    .theme-switch__input,.theme-switch__label {position: relative;cursor: pointer;}
+    .theme-switch__input {opacity: 0;}
+    .theme-switch__input:hover + .theme-switch__label, .theme-switch__input:focus + .theme-switch__label {background-color: lightSlateGray;}
+    .theme-switch__input:hover + .theme-switch__label span::after, .theme-switch__input:focus + .theme-switch__label span::after {background-color: #d4ebf2;}
+    .theme-switch__label {transition: background-color 200ms ease-in-out;width: 50px;height: 25px;border-radius: 50px;text-align: center;background-color: slateGray;box-shadow: -4px 4px 15px inset rgba(0, 0, 0, 0.4);}
+    .theme-switch__label::before, .theme-switch__label::after {font-size: 1.8rem;position: absolute;transform: translate3d(0, -50%, 0);top: 50%;}
+    .theme-switch__label::before {content: "☼"; right: 100%;margin-right: 5px;color: orange;}
+    .theme-switch__label::after{content: "☾"; left: 100%; margin-left: 5px; color: lightSlateGray;}
+    .theme-switch__label span::after{position: absolute; top: 5px;left: 5px;width: 15px;height: 15px;content: "";border-radius: 50%;background-color: lightBlue;transition: transform 200ms, background-color 200ms;box-shadow: -3px 3px 8px rgba(0, 0, 0, 0.4); }
+    .theme-switch__input:checked ~ .theme-switch__label{background-color: lightSlateGray;}
+    .theme-switch__input:checked ~ .theme-switch__label::before {color: lightSlateGray;}
+    .theme-switch__input:checked ~ .theme-switch__label::after {color: turquoise;}
+    .theme-switch__input:checked ~ .theme-switch__label span::after {transform: translate3d(26px, 0, 0);}
     {% block style %}{% endblock %}
   </style>
   <script src="{% static 'js/listener.js' %}"></script>
@@ -37,7 +66,7 @@
   {% endif %}
   <title>{% block title %}SIT{% endblock %}</title>
 </head>
-<body class="{% block body_classlist %}{% endblock %}" style="{% block body_style %}{% endblock %}">
+<body data-bs-theme="light" class="{% block body_classlist %}{% endblock %}" style="{% block body_style %}{% endblock %}">
   <nav class="navbar navbar-expand-lg sticky-top py-1 shadow-sm border-bottom navbar-dot {% block navbar_classlist %}navbar-dark bg-dark bg-gradient{% endblock %}">
     <div class="container-fluid">
       <ul class="navbar-nav"><li class="nav-item"><a class="nav-link ps-0 pe-3" id="home" href="{% url 'index' %}" title="INICIO [ ALT + I ]"><i class="fas fa-th-large fs-5"></i></a></li></ul>
@@ -48,6 +77,7 @@
           {% block model_menu %}{% endblock%}
         </ul>
         <ul class="navbar-nav ms-auto">
+          <li id="themeSwitch_container" class="pt-1 pe-4 mx-auto"><input type="checkbox" id="themeSwitch" name="theme-switch" class="theme-switch__input" /> <label for="themeSwitch" class="theme-switch__label"><span></span></label></li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle pt-1 fw-bold" id="system" href="#" data-bs-toggle="dropdown" title="ALT + S">{{user.username|title}}</a>
             <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end mt-1" id="user_list_options">
@@ -76,6 +106,12 @@
     </div>
     <div class="offcanvas-body p-1">
       <div class="container-fluid">
+        {% if canChangeTheme %}
+        <div class="ps-2">
+          <input type="checkbox" id="themeSwitch" name="theme-switch" class="theme-switch__input" />
+          <label for="themeSwitch" class="theme-switch__label"><span></span></label>
+        </div>
+        {% endif %}
         <div class="row px-2" id="offcanvas_body"></div>
         {% block offcanvas_body %}{% endblock %}
       </div>
@@ -162,14 +198,35 @@
       </div>
     </div>
   </div>
-  
   {% if perms.core.debug %}<div id="page-error-icon" class="bug_icon d-none"><i class="fas fa-bug"></i></div>{% endif %}
+  <a id="page-settings-icon" class="settings_icon" data-bs-toggle="offcanvas" href="#offcanvas" role="button"><i class="fas fa-cogs"></i></a>
   
   <script src="{% static 'js/vendor/bootstrap.bundle.min.js' %}"></script>
   <script src="{% static 'js/dot.js' %}"></script>
   {% block add_script_src %}{% endblock %}
   <script>
     function forceReload(){window.location.href = window.location.href;}
+    function settingsIconHide(){document.getElementById('page-settings-icon').style.visibility = 'hidden';}
+
+
+    
+    if(localStorage.theme){
+      document.body.dataset.bsTheme = localStorage.theme;
+      document.getElementById('themeSwitch').checked = localStorage.theme == 'dark';
+    }
+
+    document.getElementById('themeSwitch').onclick = (e) => {
+      if(e.target.checked){
+        document.body.dataset.bsTheme = 'dark';
+        localStorage.theme = 'dark'
+      }
+      else{
+        document.body.dataset.bsTheme = 'light';
+        localStorage.theme = 'light'
+      }
+    };
+
+
     {% block add_script %}{% endblock %}
   </script>
   <p class="py-5 d-block d-lg-none">&nbsp;</p>

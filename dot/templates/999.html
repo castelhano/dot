@@ -24,17 +24,98 @@
       border-radius: 50px;
     }
     /* body{ background-color: #1F2428; } */
-    
+
+
+
+.theme-switch__input,.theme-switch__label {position: relative;cursor: pointer;}
+.theme-switch__input {opacity: 0;}
+.theme-switch__input:hover + .theme-switch__label, .theme-switch__input:focus + .theme-switch__label {background-color: lightSlateGray;}
+.theme-switch__input:hover + .theme-switch__label span::after, .theme-switch__input:focus + .theme-switch__label span::after {background-color: #d4ebf2;}
+.theme-switch__label {transition: background-color 200ms ease-in-out;width: 50px;height: 25px;border-radius: 50px;text-align: center;background-color: slateGray;box-shadow: -4px 4px 15px inset rgba(0, 0, 0, 0.4);}
+.theme-switch__label::before, .theme-switch__label::after {font-size: 1.8rem;position: absolute;transform: translate3d(0, -50%, 0);top: 50%;}
+.theme-switch__label::before {content: "☼"; right: 100%;margin-right: 5px;color: orange;}
+.theme-switch__label::after{content: "☾"; left: 100%; margin-left: 5px; color: lightSlateGray;}
+.theme-switch__label span::after{position: absolute; top: 5px;left: 5px;width: 15px;height: 15px;content: "";border-radius: 50%;background-color: lightBlue;transition: transform 200ms, background-color 200ms;box-shadow: -3px 3px 8px rgba(0, 0, 0, 0.4); }
+.theme-switch__input:checked ~ .theme-switch__label{background-color: lightSlateGray;}
+.theme-switch__input:checked ~ .theme-switch__label::before {color: lightSlateGray;}
+.theme-switch__input:checked ~ .theme-switch__label::after {color: turquoise;}
+.theme-switch__input:checked ~ .theme-switch__label span::after {transform: translate3d(26px, 0, 0);}
+
   </style>
   <script>window.addEventListener('error', (ev) => {document.getElementById('page-error-icon').classList.remove('d-none');});</script>
 </head>
-<body style="margin: 10px;">
+<body data-bs-theme="dark" style="margin: 10px;">
 
   <div class="container-fluid">
     <h1>999 PAGE</h1>
     <a class="d-none" id="home" href="{% url 'index' %}"></a>
     <a class="d-none" id="clear" href="{% url 'handler' '999' %}"></a>
     <hr>
+
+<div class="row">
+  <div class="col">
+    
+    <input type="checkbox" id="themeSwitch" name="theme-switch" class="theme-switch__input" />
+    <label for="themeSwitch" class="theme-switch__label"><span></span></label>
+    
+  </div>
+</div>
+<hr>
+
+    
+
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="#">Color modes</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Dark</li>
+    </ol>
+
+    <p>This should be shown in a <strong>dark</strong> theme at all times.</p>
+
+    <div class="dropdown mb-4">
+      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButtonDark2" data-bs-toggle="dropdown" aria-expanded="false">
+        Dark dropdown
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButtonDark2">
+        <li><a class="dropdown-item active" href="#">Action</a></li>
+        <li><a class="dropdown-item" href="#">Action</a></li>
+        <li><a class="dropdown-item" href="#">Another action</a></li>
+        <li><a class="dropdown-item" href="#">Something else here</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="#">Separated link</a></li>
+      </ul>
+    </div>
+
+    <div data-bs-theme="blue" class="p-3 text-body bg-body rounded">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="#">Color modes</a></li>
+          <li class="breadcrumb-item"><a href="#">Dark</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Light</li>
+        </ol>
+      </nav>
+  
+      <p>This should be shown in a <strong>light</strong> theme at all times.</p>
+  
+      <div class="progress mb-4">
+        <div class="progress-bar" role="progressbar" aria-label="Basic example" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+      </div>
+  
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButtonLight2" data-bs-toggle="dropdown" aria-expanded="false">
+          Light dropdown
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButtonLight2">
+          <li><a class="dropdown-item active" href="#">Action</a></li>
+          <li><a class="dropdown-item" href="#">Action</a></li>
+          <li><a class="dropdown-item" href="#">Another action</a></li>
+          <li><a class="dropdown-item" href="#">Something else here</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="#">Separated link</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  
 
   
   

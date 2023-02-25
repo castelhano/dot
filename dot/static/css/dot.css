@@ -113,11 +113,13 @@ div.btn-light:hover{background-color: #d3d4d5;}
 .fs-8{font-size: 0.8rem!important;}
 .fs-9{font-size: 0.7rem!important;}
 
+[data-bs-theme="dark"] .text-dark{color: rgb(173, 181, 189)!important;}
 .text-justify{text-align: justify;}
 
 .placeholder-end::placeholder {text-align: right;font-weight: bold;color: #999;}
 
 .callout{border: 1px solid #e9ecef;border-left-width: .25rem;border-radius: .25rem;}
+[data-bs-theme="dark"] .callout{background-color: #FFF;color: #666;}
 .callout-secondary{border-left-color: #6C757D;}
 .callout-primary{border-left-color: #0D6EFD;}
 .callout-info{border-left-color: #5bc0de;}
