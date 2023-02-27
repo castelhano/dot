@@ -7,7 +7,7 @@ class AcidenteForm(forms.ModelForm):
     class Meta:
         model = Acidente
         fields = ['empresa','pasta','classificacao','data','hora','veiculo','linha','condutor','inspetor','endereco','bairro','cidade','uf','culpabilidade','detalhe','concluido']
-    pasta = forms.CharField(error_messages={'required': 'Informe uma identificação para a pasta','unique': 'Código de pasta já cadastrado'},widget=forms.TextInput(attrs={'class': 'form-control bg-light fw-bold','placeholder':' '}))
+    pasta = forms.CharField(error_messages={'required': 'Informe uma identificação para a pasta','unique': 'Código de pasta já cadastrado'},widget=forms.TextInput(attrs={'class': 'form-control fw-bold','placeholder':' '}))
     classificacao = forms.ModelChoiceField(required=False, queryset = Classificacao.objects.all().order_by('nome'), widget=forms.Select(attrs={'class':'form-select'}))
     data = forms.DateField(required=False,initial=date.today(),widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
     hora = forms.TimeField(required=False, widget=forms.TextInput(attrs={'class':'form-control','type':'time'}))
@@ -90,7 +90,7 @@ class TermoForm(forms.ModelForm):
     class Meta:
         model = Termo
         fields = ['nome','titulo','representante','cargo','local','rodape']
-    nome = forms.CharField(error_messages={'required': 'Informe um nome para o termo'},max_length=20,widget=forms.TextInput(attrs={'class': 'form-control bg-light fw-bold','placeholder':' ','autofocus':'autofocus'}))
+    nome = forms.CharField(error_messages={'required': 'Informe um nome para o termo'},max_length=20,widget=forms.TextInput(attrs={'class': 'form-control fw-bold','placeholder':' ','autofocus':'autofocus'}))
     titulo = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
     representante = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
     cargo = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))

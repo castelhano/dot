@@ -51,7 +51,7 @@
         {% csrf_token %}
         <div class="row g-1">
           <div class="form-floating mb-1 col-lg-4">
-            <select class="form-select bg-light" id="id_user" name="user" required autofocus>
+            <select class="form-select" id="id_user" name="user" required autofocus>
               <option value="" selected>---------</option>
             </select>
             <label for="id_user">Usuário*</label>
@@ -59,7 +59,7 @@
         </div>
         <div class="row g-1">
           <div class="form-floating mb-1 col-lg-4">
-            <input type="text" class="form-control bg-light" id="id_pesquisa" name="pesquisa" value="">
+            <input type="text" class="form-control" id="id_pesquisa" name="pesquisa" value="">
             <label for="id_pesquisa">Titulo alerta</label>
           </div>
         </div>

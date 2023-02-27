@@ -338,8 +338,8 @@
         <pre><code class="language-html">&lt;label data-itKey="idade" data-itMask="000"&gt;&lt;/label&gt;</code></pre>
         <p class="mt-4">adicionando <i>prefixo</i> ou <i>posfixo</i></p>
         <pre><code class="language-html">&lt;label data-itKey="salario" data-itMask="cur" data-itPrefix="R$" data-itPosfix="real-BR"&gt;&lt;/label&gt;</code></pre>
-        <div class="callout callout-warning mt-3"><div class="body"><i class="fas fa-info me-2 text-warning"></i>O formato 'cur' (moeda) requer a biblioteca <code>vendor/mask.js</code></div></div>
-        <p class="mt-3">fazendo o <i>translate</i> dos dados antes de exibir</p>
+        <div class="callout callout-warning mt-4"><div class="body"><i class="fas fa-info me-2 text-warning"></i>O formato 'cur' (moeda) requer a biblioteca <code>vendor/mask.js</code></div></div>
+        <p class="mt-4">fazendo o <i>translate</i> dos dados antes de exibir</p>
         <pre><code class="language-html">&lt;label data-itKey="view" data-itTranslate='{"180":"06 meses"}'&gt;&lt;/label&gt;</code></pre>
         <h6 class="mt-4">no javascript:</h6>
         <pre><code class="language-javascript">var map={'nome':'Jonas Silva','salario':'2522.35'};
@@ -358,7 +358,7 @@ dotPlot(map);</code></pre>
           <li>No HTML defina o atributo <code>data-i18n</code> com o valor da chave a ser procurada <br><span>Ex: <code>&lt;span <span class="text-purple">data-i18n="core.user.new"</span>&gt;Novo Usuário&lt;/span&gt;</code></span></li>
           <li>Será buscado na extrutura do objeto caminho informado no atributo data-i18n, caso encontrado retorna valor da chave</li>
           <li>Caso não encontrado chave exibe alert no log do navegador <code>console.log()</code> com a chave(s) não encontrada</li>
-          <li>Por padrão, o texto traduzido será inserido no innerHTML do elemento, este comportamento pode ser alterado definido <code>data-i18n-target</code><span>Ex: <code>&lt;input type="text" data-i18n="core.user.name" <span class="text-purple">data-i18n-taget="placeholder"</span> /&gt;</code></span></li>
+          <li>Por padrão, o texto traduzido será inserido no innerHTML do elemento, este comportamento pode ser alterado definindo <code>data-i18n-target</code><br>Ex: <code>&lt;input type="text" data-i18n="core.user.name" <span class="text-purple">data-i18n-taget="placeholder"</span>&gt;</code></li>
         </ol>
 
 
@@ -436,6 +436,14 @@ dotPlot(map);</code></pre>
         <pre><code class="language-javascript">urlRedirect('dot.com/usuarios_bloqueados')</code></pre>
         <h6 class="mt-4"><span class="text-purple">urlHasParam(param)</span>: Verifica se o parâmetro informado consta na URI</h6>
         <pre><code class="language-javascript">if(urlHasParam('nome')){...}</code></pre>
+        <h6 class="mt-4"><span class="text-purple">urlMap( )</span>: Retorna dicionário com todos os parâmetros da URI</h6>
+        <pre><code class="language-javascript">let params = urlMap();</code></pre>
+        <h6 class="mt-4"><span class="text-purple">urlParams( )</span>: Similar ao <code>urlMap()</code> retorna string com os parâmetros da URI</h6>
+        <pre><code class="language-javascript">let params = urlParams();</code></pre>
+        <h6 class="mt-4"><span class="text-purple">urlGet(param, if_null=null)</span>: Retorna valor do parâmetro na URL</h6>
+        <pre><code class="language-javascript">let x = urlGet('empresa'); // ou urlGet('empresa', '--')</code></pre>
+        <h6 class="mt-4"><span class="text-purple">urlSetFiltersActive(listMap)</span>: Função auxiliar, adiciona classe 'active' a elemento corresponde a parâmetro na URI</h6>
+        <pre><code class="language-javascript">urlSetFiltersActive({'nome':'id_nome_label','email':'id_email_label'})</code></pre>
 
         <h5 id="js_mask">Mask JS</h5>
         <a href="https://github.com/vanilla-masker/vanilla-masker" target="_blank"><i class="fab fa-github"></i> Github Repo</a>

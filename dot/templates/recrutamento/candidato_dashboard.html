@@ -6,7 +6,7 @@
 {% block navbar_classlist %}navbar-dark bg-purple bg-gradient{% endblock %}
 {% block model_menu %}{% include "_component/menu/recrutamento.html" %}{% endblock%}
 
-{% block body_classlist %}bg-light{% endblock%}
+{% block body_classlist %}bg-body-secondary{% endblock%}
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'recrutamento_candidato_dashboard' %}"></a>
 <div class="d-flex justify-content-between mt-3">
@@ -169,7 +169,7 @@
                   <td>{{vaga.saldo_banco}}</td>
                 </tr>
                 {% endfor %}
-                <tfoot class="fw-bold table-light">
+                <tfoot class="fw-bold bg-light">
                   <td>Total</td>
                   <td>{{metrics.banco_totalizado}}</td>
                 </tfoot>

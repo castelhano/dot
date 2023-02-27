@@ -6,7 +6,7 @@
 {% block navbar_classlist %}navbar-dark bg-primary bg-gradient{% endblock %}
 {% block model_menu %}{% include "_component/menu/trafego.html" %}{% endblock%}
 
-{% block body_classlist %}bg-light{% endblock%}
+{% block body_classlist %}bg-body-secondary{% endblock%}
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'trafego_ocorrencia_dashboard' %}"></a>
 <div class="d-flex justify-content-between mt-3">
@@ -63,7 +63,7 @@
       <div class="col-sm-6">
         <div class="card widget-flat">
           <div class="card-body">
-            <div class="float-end"><i class="fas fa-car-crash widget-icon"></i></div>
+            <div class="float-end"><i class="fas fa-calendar-alt widget-icon"></i></div>
             <h6 class="text-muted fw-normal">Média por Dia</h6>
             <h3 class="my-3">{{metrics.media_dia_ocorrencias|default:0|floatformat:0}}</h3>
             <p class="mb-0 text-muted"><span class="text-success me-2"></span><span class="text-nowrap"></span></p>        
@@ -73,7 +73,7 @@
       <div class="col-sm-6">
         <div class="card widget-flat">
           <div class="card-body">
-            <div class="float-end"><i class="fas fa-car-crash widget-icon"></i></div>
+            <div class="float-end"><i class="fas fa-users widget-icon"></i></div>
             <h6 class="text-muted fw-normal">Por indisciplina</h6>
             <h3 class="my-3">{{metrics.indisciplina}}</h3>
             <p class="mb-0 text-muted"><span class="text-danger me-2">{{metrics.indisciplina_percentual|floatformat:0}}%</span><span class="text-nowrap fs-7">Sobre o total</span></p>        
@@ -83,7 +83,7 @@
       <div class="col-sm-6">
         <div class="card widget-flat">
           <div class="card-body">
-            <div class="float-end"><i class="fas fa-car-crash widget-icon"></i></div>
+            <div class="float-end"><i class="fas fa-stopwatch widget-icon"></i></div>
             <h6 class="text-muted fw-normal">Omissão período</h6>
             <h3 class="my-3">{{metrics.omissao}}</h3>
             <p class="mb-0 text-muted"><span class="text-danger me-2">{{metrics.omissao_percentual|floatformat:0}}%</span><span class="text-nowrap fs-7">Sobre o total</span></p>        

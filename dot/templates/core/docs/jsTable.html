@@ -370,7 +370,7 @@ SHORTCUT_MAP['enterFTF'] = () => {table.enterRow()};</code></pre>
 &lt;/table&gt;</code></pre>
             
             <blockquote class="callout callout-primary mt-5 fs-7"><div class="body"><b>Exemplo 01:</b> Utilização básica<br>Script:</div></blockquote>
-            <pre><code class="language-javascript">var table = new jsTable('myTable', {})</code></pre>
+            <pre><code class="language-javascript">const table = new jsTable(document.getElementById('myTable'), {})</code></pre>
 
             <div class="card d-none d-md-flex">
               <div class="card-body">
@@ -381,7 +381,7 @@ SHORTCUT_MAP['enterFTF'] = () => {table.enterRow()};</code></pre>
 
             
             <blockquote class="callout callout-primary mt-5 fs-7"><div class="body"><b>Exemplo 02:</b> Liberando recursos de <b>adicionar linha</b>, <b>excluir linha</b>, e <b>filtrar tabela</b><br>Script:</div></blockquote>
-            <pre><code class="language-javascript">let foo = new jsTable(document.querySelector('table'), {
+            <pre><code class="language-javascript">const table = new jsTable(document.querySelector('table'), {
   canAddRow: true,
   canDeleteRow: true,
   canFilter: true,
@@ -395,8 +395,8 @@ SHORTCUT_MAP['enterFTF'] = () => {table.enterRow()};</code></pre>
               </div>
             </div>
 
-            <blockquote class="callout callout-primary mt-5 fs-7"><div class="body"><b>Exemplo 03:</b> Liberando recursos de <b>adicionar linha</b>, <b>excluir linha</b>, e <b>filtrar tabela</b><br>Script:</div></blockquote>
-            <pre><code class="language-javascript">let foo = new jsTable(document.querySelector('table'), {
+            <blockquote class="callout callout-primary mt-5 fs-7"><div class="body"><b>Exemplo 03:</b> Habilitando função <b>salvar</b><br>Script:</div></blockquote>
+            <pre><code class="language-javascript">const table = new jsTable(document.querySelector('table'), {
   canSave: true,
   save: minhaFuncao
 });

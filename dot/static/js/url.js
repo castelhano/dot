@@ -70,7 +70,7 @@ function urlFilters(filters, values){let h = window.location.href;for(i=0;i < fi
 * @param    {Array } values Valores para serem alterados para o parametro (sempre aciona o proximo valor apos ao valor atual)
 * @example  urlFilterToogle('ativo', ['true', 'false'])
 */
-function urlFilterToogle(filter, values){let atual = urlGetParam(filter, false);if(atual){let atual_id = values.indexOf(atual);let next = atual_id < values.length - 1 ? values[atual_id + 1] : values[0];urlFilter(filter, next);}else{urlFilter(filter, values[0])}}
+function urlFilterToogle(filter, values){let atual = urlGet(filter, false);if(atual){let atual_id = values.indexOf(atual);let next = atual_id < values.length - 1 ? values[atual_id + 1] : values[0];urlFilter(filter, next);}else{urlFilter(filter, values[0])}}
 
 /*
 * filtersClean() Remove parametros da URL
@@ -126,16 +126,16 @@ function urlMap(){
 }
 
 /*
-* urlGetParam Retorna o valor do na url
+* urlGet Retorna o valor do parametro na url
 *
 * @version  1.0
 * @since    07/04/2022
 * @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }
 * @param    {String} param Nome do parametro
 * @returns  {Generic} Retorno caso parametro nao seja encontrado na url, default = null
-* @example  let param = urlGetParam('nome')
+* @example  let param = urlGet('nome')
 */
-function urlGetParam(param, if_null=null){
+function urlGet(param, if_null=null){
   const urlParams = new URLSearchParams(window.location.search);
   let value = urlParams.get(param);
   if(value == null){return if_null}
@@ -160,9 +160,9 @@ function urlParams(){return window.location.search;}
 * @since    10/02/2022
 * @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }
 * @param    {Dict} filters Dicionario com key sendo o parametro a ser analizado e value sendo o id do elemento a ser estilizado
-* @example  urlSetFiltersActive({'nome':'id_nome_label','email':'id_nome_label'})
+* @example  urlSetFiltersActive({'nome':'id_nome_label','email':'id_email_label'})
 */
-function urlSetFiltersActive(filters){
-  for(i in filters){
-    if(i.includes('=') && urlParams().includes(i)){document.getElementById(filters[i]).classList.add('active');}
-    else {if(urlHasParam(i)){document.getElementById(filters[i]).classList.add('active');}}}}
+function urlSetFiltersActive(listMap){
+  for(i in listMap){
+    if(i.includes('=') && urlParams().includes(i)){document.getElementById(listMap[i]).classList.add('active');}
+    else {if(urlHasParam(i)){document.getElementById(listMap[i]).classList.add('active');}}}}

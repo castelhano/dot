@@ -77,7 +77,7 @@
           {% block model_menu %}{% endblock%}
         </ul>
         <ul class="navbar-nav ms-auto">
-          <li id="themeSwitch_container" class="pt-1 pe-4 mx-auto"><input type="checkbox" id="themeSwitch" name="theme-switch" class="theme-switch__input" /> <label for="themeSwitch" class="theme-switch__label"><span></span></label></li>
+          <li id="themeSwitch_container" class="pt-1 pe-4 mx-auto"><input type="checkbox" id="themeSwitch" name="theme-switch" class="theme-switch__input"> <label for="themeSwitch" class="theme-switch__label"><span></span></label></li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle pt-1 fw-bold" id="system" href="#" data-bs-toggle="dropdown" title="ALT + S">{{user.username|title}}</a>
             <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end mt-1" id="user_list_options">
@@ -108,7 +108,7 @@
       <div class="container-fluid">
         {% if canChangeTheme %}
         <div class="ps-2">
-          <input type="checkbox" id="themeSwitch" name="theme-switch" class="theme-switch__input" />
+          <input type="checkbox" id="themeSwitch" name="theme-switch" class="theme-switch__input">
           <label for="themeSwitch" class="theme-switch__label"><span></span></label>
         </div>
         {% endif %}

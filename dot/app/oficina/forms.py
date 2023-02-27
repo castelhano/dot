@@ -44,7 +44,7 @@ class FrotaForm(forms.ModelForm):
     class Meta:
         model = Frota
         fields = ['empresa','prefixo','placa','renavan','chassi','modelo','capacidade_tanque','catraca_inicial','media_ideal','categoria','carroceria','classificacao','ano_fabricacao','ano_modelo','aniversario','inicio_operacao','km_inicial','componentes','crlv','foto_chassi','detalhe']
-    prefixo = forms.CharField(error_messages={'required': 'É necessário informar um prefixo para o veiculo'},widget=forms.TextInput(attrs={'class':'form-control bg-light fw-bold','placeholder':' '}))
+    prefixo = forms.CharField(error_messages={'required': 'É necessário informar um prefixo para o veiculo'},widget=forms.TextInput(attrs={'class':'form-control fw-bold','placeholder':' '}))
     placa = forms.CharField(required=False,widget=forms.TextInput(attrs={'class':'form-control','placeholder':' '}))
     renavan = forms.CharField(required=False, max_length=11, widget=forms.TextInput(attrs={'class':'form-control','placeholder':' '}))
     chassi = forms.CharField(required=False, max_length=17, widget=forms.TextInput(attrs={'class':'form-control','placeholder':' '}))

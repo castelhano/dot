@@ -19,7 +19,7 @@
                 <ul id="modelos_auxiliares_list" class="dropdown-menu fs-7">
                     {% if perms.core.view_feriado %}
                     <li>
-                        <a id="feriados_link" class="dropdown-item d-flex justify-content-between align-items-center pe-2" href="{% url 'core_feriados' %}"><span><i class="fas fa-fw fa-calendar-plus text-orange"></i> Feriados</span><kbd class="ms-4 bg-light text-dark">Alt+F</kbd></a>
+                        <a id="feriados_link" class="dropdown-item d-flex justify-content-between align-items-center pe-2" href="{% url 'core_feriados' %}"><span><i class="fas fa-fw fa-calendar-plus text-orange"></i> Feriados</span><kbd class="ms-4">Alt+F</kbd></a>
                     </li>
                     {% endif %}
                 </ul>
@@ -74,7 +74,7 @@ else{
 
 
 
-let originalDate = urlGetParam('data', dotToday(0,0,0,true));
+let originalDate = urlGet('data', dotToday(0,0,0,true));
 let today = dotToday(0,0,0,true);
 let year = parseInt(originalDate.split('-')[0]);
 let month = parseInt(originalDate.split('-')[1]);

@@ -10,7 +10,7 @@
           </div>
           {% if 'usuario_add' in request.get_full_path %}
           <div class="form-floating mb-1 col-lg">
-            <input type="password" class="form-control bg-light" name="password" id="id_password">
+            <input type="password" class="form-control" name="password" id="id_password">
             <label for="id_password">Password</label>
           </div>
           {% else %}
@@ -39,7 +39,7 @@
         <div class="accordion" id="accordion_user_profile">
           <div class="accordion-item">
             <h2 class="accordion-header">
-              <button class="accordion-button collapsed bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#accordion_empresas"><i class="fas fa-laptop-house text-muted me-2"></i> Empresas</button>
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion_empresas"><i class="fas fa-laptop-house text-muted me-2"></i> Empresas</button>
             </h2>
             <div id="accordion_empresas" class="accordion-collapse collapse" data-bs-parent="#accordion_user_profile">
               <div class="accordion-body">
@@ -54,7 +54,7 @@
           {% if not usuario.is_superuser %}
           <div class="accordion-item">
             <h2 class="accordion-header">
-              <button class="accordion-button collapsed bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#accordion_grupos"><i class="fas fa-user-tag text-muted me-2"></i> Grupos</button>
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion_grupos"><i class="fas fa-user-tag text-muted me-2"></i> Grupos</button>
             </h2>
             <div id="accordion_grupos" class="accordion-collapse collapse" data-bs-parent="#accordion_user_profile">
               <div class="accordion-body">
@@ -68,7 +68,7 @@
           </div>
           <div class="accordion-item">
             <h2 class="accordion-header">
-              <button class="accordion-button collapsed bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#accordion_permittions"><i class="fas fa-user-lock text-muted me-2"></i> Permissões</button>
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion_permittions"><i class="fas fa-user-lock text-muted me-2"></i> Permissões</button>
             </h2>
             <div id="accordion_permittions" class="accordion-collapse collapse" data-bs-parent="#accordion_user_profile">
               <div class="accordion-body">

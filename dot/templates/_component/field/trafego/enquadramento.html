@@ -1,6 +1,6 @@
 <div class="form-floating {{breakpoint|default:'col-lg-12 mb-1'}}">
 	<input type="hidden" id="id_enquadramento" name="enquadramento" value="{{id|safe}}">
-	<input type="text" autocomplete="off" class="form-control bg-light fw-bold" list="enquadramento_datalist" id="id_enquadramento_nome" value="{{nome}}" oninput="cleanEnquadramentoID();enquadramentoGetList()" onblur="validadeEnquadramento()" onfocus="this.select()" {% if required %} required{% endif %}>
+	<input type="text" autocomplete="off" class="form-control fw-bold" list="enquadramento_datalist" id="id_enquadramento_nome" value="{{nome}}" oninput="cleanEnquadramentoID();enquadramentoGetList()" onblur="validadeEnquadramento()" onfocus="this.select()" {% if required %} required{% endif %}>
   <label for="id_enquadramento_nome">Enquadramento</label>
   <datalist id="enquadramento_datalist"></datalist>
   <div id="enquadramento_spinner" class="spinner-grow text-success d-none" style="position: absolute; top:12px; right:15px; z-index:10;"></div>

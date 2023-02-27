@@ -70,7 +70,7 @@
           </div>
           <div class="row g-1">
             <div class="form-floating mb-lg-1 col-lg-3">
-              <select class="form-select bg-light" id="id_setor" name="setor" onchange="carregaCargos()">
+              <select class="form-select" id="id_setor" name="setor" onchange="carregaCargos()">
                 <option value="">---------</option>
               </select>
               <label for="id_setor">Setor</label>
@@ -109,11 +109,11 @@
           {% if funcionario.status == 'D' %}
           <div class="row g-1">
             <div class="form-floating mb-lg-1 col-lg-4">
-              <input type="date" class="form-control bg-light fw-bold" id="id_data_desligamento" value="{{funcionario.data_desligamento|date:'Y-m-d'}}" disabled>
+              <input type="date" class="form-control fw-bold" id="id_data_desligamento" value="{{funcionario.data_desligamento|date:'Y-m-d'}}" disabled>
               <label for="id_data_desligamento">Data Desligamento</label>
             </div>
             <div class="form-floating mb-1 col-lg">
-              <input type="text" class="form-control bg-light fw-bold" id="id_motivo_desligamento" value=" {{funcionario.get_motivo_desligamento_display }}" disabled>
+              <input type="text" class="form-control fw-bold" id="id_motivo_desligamento" value=" {{funcionario.get_motivo_desligamento_display }}" disabled>
               <label for="id_motivo_desligamento">Motivo Desligamento</label>
             </div>
           </div>
@@ -200,11 +200,11 @@
             </div>
             <div class="form-floating col-lg">
               {% if funcionario.cnh == None %}
-              <input type="text" class="form-control bg-light" id="id_situacao_cnh" value="" disabled>
+              <input type="text" class="form-control" id="id_situacao_cnh" value="" disabled>
               {% elif funcionario.cnh_eh_valida %}
-              <input type="text" class="form-control bg-light" id="id_situacao_cnh" value="No prazo" disabled>
+              <input type="text" class="form-control" id="id_situacao_cnh" value="No prazo" disabled>
               {% else %}
-              <input type="text" class="form-control bg-warning-light" id="id_situacao_cnh" value="Vencida" disabled>
+              <input type="text" class="form-control bg-warning-subtle" id="id_situacao_cnh" value="Vencida" disabled>
               {% endif %}
               <label for="id_situacao_cnh">Status</label>
             </div>

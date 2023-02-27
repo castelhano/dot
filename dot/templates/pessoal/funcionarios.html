@@ -86,18 +86,18 @@
 					<div class="col-lg-6">
 						<div class="row g-1">
 							<div class="form-floating mb-lg-1 col-lg-6">
-								<input type="text" class="form-control bg-light" name="pesquisa" value="" id="id_pesquisa" onfocus="this.value = '#';" placeholder="" autofocus>
+								<input type="text" class="form-control" name="pesquisa" value="" id="id_pesquisa" onfocus="this.value = '#';" placeholder="" autofocus>
 								<label for="id_pesquisa">Termo pesquisa</label>
 							</div>
 							<div class="form-floating mb-1 col-lg-6">
-								<input type="date" class="form-control bg-light" id="id_vencimento_cnh" name="vencimento_cnh">
+								<input type="date" class="form-control" id="id_vencimento_cnh" name="vencimento_cnh">
 								<label for="id_vencimento_cnh">Vencimento CNH</label>
 							</div>
 						</div>
 						<div class="row g-1">
 							{% include "_component/field/empresa.html" with blank_row='true' container_classlist='form-floating mb-lg-1 col-lg-6' %}
 							<div class="form-floating mb-1 col-lg-6">
-								<select class="form-select bg-light" id="id_regime" name="regime">
+								<select class="form-select" id="id_regime" name="regime">
 									<option value="" selected>Todos</option>
 									<option value="CLT">CLT</option>
 									<option value="PJ">Pessoa Jurídica</option>
