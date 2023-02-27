@@ -49,14 +49,13 @@
 {% block offcanvas_body %}
 <h6 data-type="dotOffcanvasAncor" class="text-muted mt-3">Configurações:</h6>
 <div class="form-check form-switch">
-  <input class="form-check-input" type="checkbox" role="switch" name="addOnAgenda" id="id_addOnAgenda">
+  <input class="form-check-input" type="checkbox" role="switch" name="addOnAgenda" id="id_addOnAgenda" onclick="localStorage.addonAgenda = this.checked">
   <label class="form-check-label" for="id_addOnAgenda">Addon: <b class="text-purple">Agenda</b></label>
 </div>
 <div class="form-check form-switch">
-  <input class="form-check-input" type="checkbox" role="switch" name="addOnTarefas" id="id_addOnTarefas">
+  <input class="form-check-input" type="checkbox" role="switch" name="addOnTarefas" id="id_addOnTarefas" onclick="localStorage.addonTarefas = this.checked">
   <label class="form-check-label" for="id_addOnTarefas">Addon: <b class="text-purple">Tarefas</b></label>
 </div>
-<button class="btn btn-sm btn-primary mt-3" onclick="dotSaveUserProfileConfig()">Salvar</button>
 {% endblock %}
 
   
@@ -141,7 +140,7 @@ document.getElementById('loadingScreenAgenda').remove();
 
 
 
-{% include 'core/_addOn.js' %}
+{% include 'core/_addOnOLD.js' %}
 {% include '_component/script/update_alertas.js' %}
 {% endblock %}
 </script>
