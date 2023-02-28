@@ -1,87 +1,32 @@
+{% extends "layout/dot.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>999 Test Page</title>
-  <link rel="shortcut icon" href="{% static 'img/favicon.ico'%}">
-  <link rel="stylesheet" href="{% static 'css/vendor/all.min.css' %}" type="text/css">
-  <link rel="stylesheet" href="{% static 'css/vendor/fontawesome.min.css' %}" type="text/css">
-  <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.min.css' %}" type="text/css">
-  <link rel="stylesheet" href="{% static 'css/dot.css' %}" type="text/css">
-  
-  <style>
-    .bug_icon{
-      display: inline-block;
-      position: absolute;
-      right: 30px;
-      bottom: 30px;
-      background-color: #dc3545;
-      color: #FFF;
-      font-size: 1.5rem;
-      padding: 8px 15px;
-      border-radius: 50px;
-    }
-    /* body{ background-color: #1F2428; } */
+
+{% block model %}999{% endblock %}
+
+{% block style_src %}
+<link rel="stylesheet" href="{% static 'css/timeline.css' %}">
+{% endblock%}
+<style>
+  {% block style %}
+  {% endblock%}
+</style>
+
+{% block content_fluid %}
+<a class="d-none" href="{% url 'handler' '999' %}" id="clear"></a>
+  <ol class="breadcrumb mt-3">
+    <li class="breadcrumb-item"><a href="#">Home</a></li>
+    <li class="breadcrumb-item"><a href="#">Library</a></li>
+    <li class="breadcrumb-item active">Data</li>
+  </ol>
+{% endblock%}
 
 
-  </style>
-  <script>window.addEventListener('error', (ev) => {document.getElementById('page-error-icon').classList.remove('d-none');});</script>
-</head>
-<body data-bs-theme="dark" style="margin: 10px;">
-
-  <div class="container-fluid">
-    <h1>999 PAGE</h1>
-    <a class="d-none" id="home" href="{% url 'index' %}"></a>
-    <a class="d-none" id="clear" href="{% url 'handler' '999' %}"></a>
-    <hr>
-  </div>
-
-  <table class="table table-sm border">
-    <thead>
-      <tr>
-        <th>Foo</th>
-        <th>Bar</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>22</td>
-        <td>Rafael</td>
-      </tr>
-      <tr>
-        <td>12</td>
-        <td>Jonas</td>
-      </tr>
-      <tr>
-        <td>33</td>
-        <td>Mari</td>
-      </tr>
-    </tbody>
-
-  </table>
+{% block add_script_src %}
+<!-- <script src="{% static 'js/table.js' %}"></script> -->
+{% endblock %}
 
 
-  
-  
-  <div id="page-error-icon" class="bug_icon d-none"><i class="fas fa-bug"></i></div>
-  <script src="{% static 'js/listener.js' %}"></script>
-  <script src="{% static 'js/dot.js' %}"></script>
-  <script src="{% static 'js/table.js' %}"></script>
-  <script src="/static/js/vendor/bootstrap.bundle.min.js"></script>
-  <script>
-    
-    var TAB_ON_ENTER = true;
-
-    const table = new jsTable(document.querySelector('table'),{
-      canAddRow: true,
-      canDeleteRow:true,
-      canSort:false,
-      enablePaginate:true
-    })
-
-
-  </script>
-</body>
-</html>
+<script>
+{% block add_script %}
+{% endblock %}
+</script>

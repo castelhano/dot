@@ -5,7 +5,6 @@
 
 class addOnAgenda{
     constructor(options){
-        // this.enter = options?.enter || !options.enter == undefined;
         this.modal = null;
         this.events = {};
         this.table = null;
@@ -210,17 +209,157 @@ class addOnAgenda{
             showSuccessAlert:false
         }); // Ajusta json no server com dados da agenda
     }
+    destroy(){
+        this.addOn.remove();
+        this.modal._element.remove();
+    }
     loading(){
         this.list.innerHTML = '<li><div class="text-center"><div class="spinner-border text-success"></div></div></li>';
     }
 }
 
 class addOnTarefas{
-    constructor(options){}
-    start(){}
-    addEvent(){}
-    getTasks(){}
+    constructor(options){
+        this.tasks = {};
+        // *****************
+        this.start();
+        this.getTasks();
+    }
+    start(){
+        this.addOn = document.createElement('div');this.addOn.classList = 'card-widget col-12 col-lg-4 col-xl-2 bg-dark text-light';
+        let header = document.createElement('div');header.classList = 'row mb-2';
+        let col1 = document.createElement('div');col1.classList = 'col';col1.innerHTML = '<i class="fas fa-list me-2"></i>Tarefas';
+        let col2 = document.createElement('div');col2.classList = 'col-auto';
+        this.btnSave = document.createElement('span');this.btnSave.style = 'padding: 2px 6px;border-radius: 20%;cursor: pointer;background-color: #F1F1F1;color: #333;opacity: 0.7;transition: all 0.5s;';this.btnSave.innerHTML = '<i class="fas fa-save"></i>';
+        this.btnSave.onclick = () => {this.save();};
+        this.btnAddTask = document.createElement('span');this.btnAddTask.style = 'margin-left: 4px; padding: 2px 6px;border-radius: 20%;cursor: pointer;background-color: #F1F1F1;color: #198754;opacity: 0.7;transition: all 0.5s;';this.btnAddTask.innerHTML = '<i class="fas fa-plus"></i>';
+        this.btnAddTask.onclick = () => {this.addTask()};
+        col2.appendChild(this.btnSave);
+        col2.appendChild(this.btnAddTask);
+        header.appendChild(col1);
+        header.appendChild(col2);
+        let addOnTarefa_container = document.createElement('div');addOnTarefa_container.classList = 'container-fluid p-1';addOnTarefa_container.style = 'max-height: 150px;overflow-y: scroll;';
+        this.list = document.createElement('ul');this.list.classList = 'list-unstyled fs-7 mt-1 mb-0';
+        addOnTarefa_container.appendChild(this.list);
+        this.addOn.appendChild(header);
+        this.addOn.appendChild(addOnTarefa_container);
+        document.getElementById('messages_widget').before(this.addOn);
+    }
+    getTasks(){
+        this.loading();
+        dotAppData(`/app_data/core__tarefa__{{user.id}}.json`).then((obj) => {
+            this.list.innerHTML = '';
+            this.tasks = obj;
+            for(let item in obj){
+                let event = document.createElement('li');event.classList = 'dotTarefa-event row g-1 pb-0';
+                let controlDiv = document.createElement('div');controlDiv.classList = 'col-auto';
+                let textDiv = document.createElement('div');textDiv.classList = 'col dotTarefa-title text-truncate';
+                let checkbox = document.createElement('input');checkbox.type = "checkbox";checkbox.classList = 'form-check-input me-1';
+                let label = document.createElement('div');label.classList = 'pointer user-select-none';label.innerHTML = obj[item].title;
+                label.ondblclick = () => {
+                    label.style.display = 'none';
+                    let input = document.createElement('input');input.value = label.innerText;input.classList = 'form-control form-control-sm fs-8 py-0';input.style.minHeight = '20px';
+                    label.after(input);
+                    input.onblur = () => {
+                        if(input.value.trim() != ''){
+                            label.innerHTML = input.value;
+                            label.style.display = 'block';
+                            input.remove();
+                        }
+                        else{ // Se texto vazio inserido remove o item
+                            event.remove();
+                            if(this.list.childElementCount == 0){this.list.innerHTML = '<p>Nenhuma tarefa adicionada</p>';}
+                        }
+                    };
+                    input.onkeydown = (e) => {if(e.key == 'Enter'){input.blur();}}
+                    input.select();
+                };
+                checkbox.onclick = () => {
+                    if(checkbox.checked){label.classList.add('text-decoration-line-through','fst-italic','text-body-secondary');}
+                    else{label.classList.remove('text-decoration-line-through','fst-italic','text-body-secondary');}
+                }
+                controlDiv.appendChild(checkbox)
+                textDiv.appendChild(label);
+                event.appendChild(controlDiv);
+                event.appendChild(textDiv);
+                this.list.appendChild(event);
+            }
+            if(this.tasks.length == 0){this.list.innerHTML = '<p>Nenhuma tarefa adicionada</p>';}
+        });
+    }
+    save(){
+        let tarefas = [];
+        this.list.querySelectorAll('input[type=checkbox]').forEach((e) => {
+            if(e.checked){e.parentNode.parentNode.remove()}
+            else{tarefas.push({title:e.parentNode.parentNode.childNodes[1].innerText})}
+        });
+        dotAppDataUpdate({url:'/app_data/core__tarefa__{{user.id}}.json',data:JSON.stringify(tarefas),onSuccessMsg:'Tarefas <b>salvas</b>'});
+        if(tarefas.length == 0){this.list.innerHTML = '<p>Nenhuma tarefa adicionada</p>'}
+    }
+    destroy(){this.addOn.remove();}
+    addTask(){
+        this.list.querySelectorAll('p').forEach((e) => {e.remove()}); // Remove texto de (Nenhuma tarefa ....) caso exista
+        let event = document.createElement('li');event.classList = 'dotTarefa-event row g-1 pb-0';
+        let controlDiv = document.createElement('div');controlDiv.classList = 'col-auto';
+        let textDiv = document.createElement('div');textDiv.classList = 'col dotTarefa-title text-truncate';
+        let checkbox = document.createElement('input');checkbox.type = "checkbox";checkbox.classList = 'form-check-input me-1';
+        let label = document.createElement('div');label.classList = 'pointer user-select-none';label.innerHTML = 'nova tarefa...';
+        label.ondblclick = () => {
+            label.style.display = 'none';
+            let input = document.createElement('input');input.value = label.innerText;input.classList = 'form-control form-control-sm fs-8 py-0';input.style.minHeight = '20px';
+            label.after(input);
+            input.onblur = () => {
+                if(input.value.trim() != ''){
+                    label.innerHTML = input.value;
+                    label.style.display = 'block';
+                    input.remove();
+                }
+                else{ // Se texto vazio inserido remove o item
+                    event.remove();
+                    if(this.list.childElementCount == 0){this.list.innerHTML = '<p>Nenhuma tarefa adicionada</p>';}
+                }
+            };
+            input.onkeydown = (e) => {if(e.key == 'Enter'){input.blur();}}
+            input.select();
+        };
+        checkbox.onclick = () => {
+            if(checkbox.checked){label.classList.add('text-decoration-line-through','fst-italic','text-body-secondary');}
+            else{label.classList.remove('text-decoration-line-through','fst-italic','text-body-secondary');}
+        }
+        controlDiv.appendChild(checkbox)
+        textDiv.appendChild(label);
+        event.appendChild(controlDiv);
+        event.appendChild(textDiv);
+        this.list.appendChild(event);
+    }
+    loading(){
+        this.list.innerHTML = '<li><div class="text-center"><div class="spinner-border text-success"></div></div></li>';
+    }
 }
 
+var addOn_agenda = null;
+var addOn_tarefas = null;
+const models = {'addOnAgenda':addOnAgenda,'addOnTarefas':addOnTarefas}
+function addOnSettingsChange(el){
+    localStorage.setItem(el.name, el.checked); // Altera valor da entrada referente ao addon no localStorage
+    if(el.checked){
+        if(window[el.name] == null){window[el.name] = new models[el.dataset.model]();}
+    }
+    else{
+        window[el.name].destroy();
+        window[el.name] = null;
+    }
 
-const addon_agenda = new addOnAgenda();
+}
+
+// *******************************
+// Onload Calls
+
+if(localStorage.addOn_agenda == 'true'){
+    document.getElementById('id_addOnAgenda').checked = true;
+    addOn_agenda = new addOnAgenda({});
+}
+if(localStorage.addOn_tarefas == 'true'){
+    document.getElementById('id_addOnTarefas').checked = true;
+    addOn_tarefas = new addOnTarefas({});
+}

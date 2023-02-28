@@ -23,14 +23,14 @@
     .form-signin input[type="password"] {margin-bottom: 10px;border-top-left-radius: 0;border-top-right-radius: 0;}
   </style>
 </head>
-<body class="text-center">
+<body data-bs-theme="dark" class="text-center bg-body">
   <main class="form-signin">
     <form role="form" id="login_form" action="{% url 'authenticate' %}" method="POST" autocomplete="off">
       {% csrf_token %}
       <img class="mb-4" src="{% static 'img/logo.png' %}" alt="" width="75" height="74">
       <!-- <h1 class="h3 mb-3 fw-normal">Entrar</h1> -->
-      <input type="text" id="id_username" name="username" class="form-control" placeholder="Username" required autofocus>
-      <input type="password" id="id_password" name="password" class="form-control" placeholder="Password">
+      <input type="text" id="id_username" name="username" class="form-control bg-light" placeholder="Username" required autofocus>
+      <input type="password" id="id_password" name="password" class="form-control bg-light" placeholder="Password">
       <button class="w-100 btn btn-lg btn-primary" type="submit">Entrar</button>
         {% for message in messages %}
         <div class="alert alert-{{message.tags}} alert-dismissible fade show text-start" role="alert">
@@ -43,5 +43,9 @@
   </main>
 
   <script src="{% static 'js/vendor/bootstrap.bundle.min.js' %}"></script>
+<script>
+  document.body.setAttribute('data-bs-theme', localStorage.theme || 'light');
+</script>
+
 </body>
 </html>

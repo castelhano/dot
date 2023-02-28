@@ -6,8 +6,8 @@
 
 <style>
 {% block style %}
-/* .addOnTarefaSave{padding: 2px 6px;border-radius: 20%;cursor: pointer;background-color: #F1F1F1;color: #333;opacity: 0.7;transition: all 0.5s;} */
-/* .addOnTarefaAdd{margin-left: 4px; padding: 2px 6px;border-radius: 20%;cursor: pointer;background-color: #F1F1F1;color: #198754;opacity: 0.7;transition: all 0.5s;} */
+/* .addOnTarefaSave{padding: 2px 6px;border-radius: 20%;cursor: pointer;background-color: #F1F1F1;color: #333;opacity: 0.7;transition: all 0.5s;}
+.addOnTarefaAdd{margin-left: 4px; padding: 2px 6px;border-radius: 20%;cursor: pointer;background-color: #F1F1F1;color: #198754;opacity: 0.7;transition: all 0.5s;} */
 /* .addOnTarefaSave:hover,.addOnTarefaAdd:hover{opacity: 1;border-radius: 10%;} */
 .loadingWidget{position: absolute;width: 100%;height: 100%;text-align: center;background-color: #FFF;opacity: 0.8;padding-top: 40px;}
 .loadingWidget span{display: block;color: #333;}
@@ -45,11 +45,11 @@
 {% block offcanvas_body %}
 <h6 data-type="dotOffcanvasAncor" class="text-body-secondary mt-3">Configurações:</h6>
 <div class="form-check form-switch">
-  <input class="form-check-input" type="checkbox" role="switch" name="addOnAgenda" id="id_addOnAgenda" onclick="localStorage.addonAgenda = this.checked">
+  <input class="form-check-input" type="checkbox" role="switch" name="addOn_agenda" id="id_addOnAgenda" data-model="addOnAgenda" onclick="addOnSettingsChange(this)">
   <label class="form-check-label" for="id_addOnAgenda">Addon: <b class="text-purple">Agenda</b></label>
 </div>
 <div class="form-check form-switch">
-  <input class="form-check-input" type="checkbox" role="switch" name="addOnTarefas" id="id_addOnTarefas" onclick="localStorage.addonTarefas = this.checked">
+  <input class="form-check-input" type="checkbox" role="switch" name="addOn_tarefas" id="id_addOnTarefas" data-model="addOnTarefas" onclick="addOnSettingsChange(this)">
   <label class="form-check-label" for="id_addOnTarefas">Addon: <b class="text-purple">Tarefas</b></label>
 </div>
 {% endblock %}
@@ -70,6 +70,8 @@ SHORTCUT_MAP['oFTF'] = () => {try{document.getElementById('widget_action_oficina
 SHORTCUT_MAP['gFTF'] = () => {try{document.getElementById('widget_action_linha').click()}catch(e){}};
 SHORTCUT_MAP['3FTF'] = () => {try{document.getElementById('widget_action_planejamento').click()}catch(e){}};
 SHORTCUT_MAP['kFTF'] = () => {try{document.getElementById('widget_action_acidente').click()}catch(e){}};
+
+
 
 {% if perms.core.view_agenda %}
 
