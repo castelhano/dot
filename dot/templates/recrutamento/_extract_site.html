@@ -25,10 +25,10 @@
       <li class="list-group-item d-flex justify-content-between lh-condensed">
         <div>
           <h6 class="my-0">{{ vaga.cargo.nome }}</h6>
-          <small class="text-muted">{{ vaga.descricao|default:'&nbsp' }}</small>
+          <small class="text-body-secondary">{{ vaga.descricao|default:'&nbsp' }}</small>
         </div>
         {% if mostrar_quantidade_vagas %}
-        <span class="text-muted">{{ vaga.quantidade }}</span>
+        <span class="text-body-secondary">{{ vaga.quantidade }}</span>
         {% endif %}
       </li>
       {% endfor %}
@@ -139,7 +139,7 @@
       </div>
       
       <div class="mb-4 col-lg-12 fs-7">
-        <label for="username"><span data-i18n="common.curriculum">Curriculo</span> <small class="text-muted fw-bold">( <span data-i18n="common.accepted_extensions">extensões aceitas</span>: <span class="text-primary">PDF, DOC, DOCX, ODT</span> )</small></label>
+        <label for="username"><span data-i18n="common.curriculum">Curriculo</span> <small class="text-body-secondary fw-bold">( <span data-i18n="common.accepted_extensions">extensões aceitas</span>: <span class="text-primary">PDF, DOC, DOCX, ODT</span> )</small></label>
         <div class="input-group">
           {{ form.curriculo }}
         </div>

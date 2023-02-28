@@ -12,8 +12,8 @@
 <div class="d-flex justify-content-between mt-3">
   <div>
     <h5 class="card-title">
-      <span class="d-none d-lg-inline text-muted">Dashboard: </span><b class="text-purple">Ocorrências</b>
-      <p class="fs-6 fw-bold text-muted">{{metrics.empresa_nome|default:''}}</p>
+      <span class="d-none d-lg-inline text-body-secondary">Dashboard: </span><b class="text-purple">Ocorrências</b>
+      <p class="fs-6 fw-bold text-body-secondary">{{metrics.empresa_nome|default:''}}</p>
     </h5>
   </div>
   <div class="d-flex align-items-center">
@@ -54,9 +54,9 @@
         <div class="card widget-flat">
           <div class="card-body">
             <div class="float-end"><i class="fas fa-car-crash widget-icon"></i></div>
-            <h6 class="text-muted fw-normal">Total Ocorrências</h6>
+            <h6 class="text-body-secondary fw-normal">Total Ocorrências</h6>
             <h3 class="my-3">{{metrics.qtd_ocorrencias|default:0}}</h3>
-            <p class="mb-0 text-muted"><span class="text-success me-2"></span><span class="text-nowrap"></span></p>        
+            <p class="mb-0 text-body-secondary"><span class="text-success me-2"></span><span class="text-nowrap"></span></p>        
           </div>
         </div>
       </div>
@@ -64,9 +64,9 @@
         <div class="card widget-flat">
           <div class="card-body">
             <div class="float-end"><i class="fas fa-calendar-alt widget-icon"></i></div>
-            <h6 class="text-muted fw-normal">Média por Dia</h6>
+            <h6 class="text-body-secondary fw-normal">Média por Dia</h6>
             <h3 class="my-3">{{metrics.media_dia_ocorrencias|default:0|floatformat:0}}</h3>
-            <p class="mb-0 text-muted"><span class="text-success me-2"></span><span class="text-nowrap"></span></p>        
+            <p class="mb-0 text-body-secondary"><span class="text-success me-2"></span><span class="text-nowrap"></span></p>        
           </div>
         </div>
       </div>
@@ -74,9 +74,9 @@
         <div class="card widget-flat">
           <div class="card-body">
             <div class="float-end"><i class="fas fa-users widget-icon"></i></div>
-            <h6 class="text-muted fw-normal">Por indisciplina</h6>
+            <h6 class="text-body-secondary fw-normal">Por indisciplina</h6>
             <h3 class="my-3">{{metrics.indisciplina}}</h3>
-            <p class="mb-0 text-muted"><span class="text-danger me-2">{{metrics.indisciplina_percentual|floatformat:0}}%</span><span class="text-nowrap fs-7">Sobre o total</span></p>        
+            <p class="mb-0 text-body-secondary"><span class="text-danger me-2">{{metrics.indisciplina_percentual|floatformat:0}}%</span><span class="text-nowrap fs-7">Sobre o total</span></p>        
           </div>
         </div>
       </div>
@@ -84,9 +84,9 @@
         <div class="card widget-flat">
           <div class="card-body">
             <div class="float-end"><i class="fas fa-stopwatch widget-icon"></i></div>
-            <h6 class="text-muted fw-normal">Omissão período</h6>
+            <h6 class="text-body-secondary fw-normal">Omissão período</h6>
             <h3 class="my-3">{{metrics.omissao}}</h3>
-            <p class="mb-0 text-muted"><span class="text-danger me-2">{{metrics.omissao_percentual|floatformat:0}}%</span><span class="text-nowrap fs-7">Sobre o total</span></p>        
+            <p class="mb-0 text-body-secondary"><span class="text-danger me-2">{{metrics.omissao_percentual|floatformat:0}}%</span><span class="text-nowrap fs-7">Sobre o total</span></p>        
           </div>
         </div>
       </div>
@@ -119,7 +119,7 @@
           <table id="table_terceiros" class="table table-nowrap table-hover fs-7">
             <caption>Resumo por Inspetor</caption>
             <thead>
-              <tr class="text-muted">
+              <tr class="text-body-secondary">
                 <th>Inspetor</th>
                 <th>Qtde</th>
                 <th>%</th>

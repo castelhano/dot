@@ -40,10 +40,10 @@
                 <dt class="col-4">Frota</dt><dd class="col-8">{{ativo.qtd_carros|zfill:2}}</dd>
                 <dt class="col-4">Condutores</dt><dd class="col-8">--</dd>
                 <dt class="col-4">Viagens</dt><dd class="col-8">{{ativo.qtd_viagens|zfill:3}}</dd>
-                <dt class="col-4 text-muted">Produtivas</dt><dd class="col-8 text-muted">{{ativo.qtd_viagens_produtivas|zfill:3}}</dd>
-                <dt class="col-4 text-muted">Improdutivas</dt><dd class="col-8 text-muted">{{ativo.qtd_viagens_improdutivas|zfill:3}}</dd>
+                <dt class="col-4 text-body-secondary">Produtivas</dt><dd class="col-8 text-body-secondary">{{ativo.qtd_viagens_produtivas|zfill:3}}</dd>
+                <dt class="col-4 text-body-secondary">Improdutivas</dt><dd class="col-8 text-body-secondary">{{ativo.qtd_viagens_improdutivas|zfill:3}}</dd>
                 <dt class="col-4">Km</dt><dd class="col-8">{{ativo.km_planejada}}</dd>
-                <dt class="col-4 text-muted">Ociosa</dt><dd class="col-8 text-muted">{{ativo.km_ociosa}} <span class="text-orange ms-2">{{ativo.km_ociosa|percentual:ativo.km_planejada|floatformat:1}}%</span></dd>
+                <dt class="col-4 text-body-secondary">Ociosa</dt><dd class="col-8 text-body-secondary">{{ativo.km_ociosa}} <span class="text-orange ms-2">{{ativo.km_ociosa|percentual:ativo.km_planejada|floatformat:1}}%</span></dd>
                 <dt class="col-4">Horas OP</dt><dd class="col-8">--</dd>
                 <dt class="col-4 text-purple">IPK</dt><dd class="col-8 text-purple">--</dd>
                 <dt class="col-4 text-purple">HVD</dt><dd class="col-8 text-purple">--</dd>
@@ -68,7 +68,7 @@
           <div class="col-lg-4">
             <div class="card-widget bg-light border fs-7 rounded">
               <div class="row">
-                <div class="col"><h6 class="text-muted mt-1">Detalhes Planejamento</h6></div>
+                <div class="col"><h6 class="text-body-secondary mt-1">Detalhes Planejamento</h6></div>
                 <div class="col-auto">
                   {% if ativo %}
                   <button type="button" id="btn_comparar" class="btn btn-sm btn-purple" name="button" onclick="compararPlanejamentos()" title="Comparar com atual [ALT X]"><i class="fas fa-clone px-2"></i></button>
@@ -85,10 +85,10 @@
                 <dt class="col-4">Frota</dt><dd class="col-8">{{planejamento.qtd_carros|zfill:2}} {% if ativo %}<span class="ms-3 switch-view d-none">[ {{planejamento.qtd_carros|sub:ativo.qtd_carros|zfill:2}} ]</span>{% endif %}</dd>
                 <dt class="col-4">Condutores</dt><dd class="col-8">--</dd>
                 <dt class="col-4">Viagens</dt><dd class="col-8">{{planejamento.qtd_viagens|zfill:3}} {% if ativo %}<span class="ms-3 switch-view d-none">[ {{planejamento.qtd_viagens|sub:ativo.qtd_viagens|zfill:3}} ]{% endif %}</span></dd>
-                <dt class="col-4 text-muted">Produtivas</dt><dd class="col-8 text-muted">{{planejamento.qtd_viagens_produtivas|zfill:3}} {% if ativo %}<span class="ms-3 switch-view d-none">[ {{planejamento.qtd_viagens_produtivas|sub:ativo.qtd_viagens_produtivas|zfill:3}} ]{% endif %}</span></dd>
-                <dt class="col-4 text-muted">Improdutivas</dt><dd class="col-8 text-muted">{{planejamento.qtd_viagens_improdutivas|zfill:3}} {% if ativo %}<span class="ms-3 switch-view d-none">[ {{planejamento.qtd_viagens_improdutivas|sub:ativo.qtd_viagens_improdutivas|zfill:3}} ]{% endif %}</span></dd>
+                <dt class="col-4 text-body-secondary">Produtivas</dt><dd class="col-8 text-body-secondary">{{planejamento.qtd_viagens_produtivas|zfill:3}} {% if ativo %}<span class="ms-3 switch-view d-none">[ {{planejamento.qtd_viagens_produtivas|sub:ativo.qtd_viagens_produtivas|zfill:3}} ]{% endif %}</span></dd>
+                <dt class="col-4 text-body-secondary">Improdutivas</dt><dd class="col-8 text-body-secondary">{{planejamento.qtd_viagens_improdutivas|zfill:3}} {% if ativo %}<span class="ms-3 switch-view d-none">[ {{planejamento.qtd_viagens_improdutivas|sub:ativo.qtd_viagens_improdutivas|zfill:3}} ]{% endif %}</span></dd>
                 <dt class="col-4">Km</dt><dd class="col-8">{{planejamento.km_planejada}} {% if ativo %}<span class="ms-3 switch-view d-none">[ {{planejamento.km_planejada|sub:ativo.km_planejada}} ]{% endif %}</span></dd>
-                <dt class="col-4 text-muted">Ociosa</dt><dd class="col-8 text-muted">{{planejamento.km_ociosa}} <span class="text-orange ms-2">{{planejamento.km_ociosa|percentual:planejamento.km_planejada|floatformat:1}}%</span></dd>
+                <dt class="col-4 text-body-secondary">Ociosa</dt><dd class="col-8 text-body-secondary">{{planejamento.km_ociosa}} <span class="text-orange ms-2">{{planejamento.km_ociosa|percentual:planejamento.km_planejada|floatformat:1}}%</span></dd>
                 <dt class="col-4">Horas OP</dt><dd class="col-8">--</dd>
                 <dt class="col-4 text-purple">IPK</dt><dd class="col-8 text-purple">--</dd>
                 <dt class="col-4 text-purple">HVD</dt><dd class="col-8 text-purple">--</dd>
@@ -125,7 +125,7 @@
             </div>
             <div class="form-check form-switch">
               <input class="form-check-input" type="checkbox" role="switch" name="pin" id="id_pin"{% if planejamento.pin %} checked{% endif %}>
-              <label class="form-check-label" for="id_pin"><i class="fas fa-thumbtack fa-fw text-muted"></i>Fixar Planejamento</label>
+              <label class="form-check-label" for="id_pin"><i class="fas fa-thumbtack fa-fw text-body-secondary"></i>Fixar Planejamento</label>
             </div>
             <div class="form-check form-switch">
               <input class="form-check-input" type="checkbox" role="switch" name="ativo" id="id_ativo"{% if planejamento.ativo %} checked{% endif %}>
@@ -133,7 +133,7 @@
             </div>
             <div class="form-check form-switch">
               <input class="form-check-input" type="checkbox" role="switch" name="carregar_viagens" id="id_carregar_viagens" onclick="importarViagens()">
-              <label class="form-check-label" for="id_carregar_viagens"><i class="fas fa-random fa-fw text-muted"></i>Importar viagens</label>
+              <label class="form-check-label" for="id_carregar_viagens"><i class="fas fa-random fa-fw text-body-secondary"></i>Importar viagens</label>
             </div>
             <small id="label_alert_sobregravar" class="d-none"><b class="text-danger">Atenção!</b> Importar viagens irá apagar o planejamento atual, este processo não pode ser desfeito.</small>
             <input type="file" class="form-control mt-2" name="viagens" id="id_viagens" disabled>

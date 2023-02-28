@@ -10,7 +10,7 @@
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'sac_reclamacao_dashboard' %}"></a>
 <div class="row mt-3">
-  <div class="col"><h5 class="card-title"><span class="d-none d-lg-inline text-muted">Dashboard: </span><b class="text-purple">Reclamações</b></h5></div>
+  <div class="col"><h5 class="card-title"><span class="d-none d-lg-inline text-body-secondary">Dashboard: </span><b class="text-purple">Reclamações</b></h5></div>
 </div>
 <div class="row g-1">
   <div class="col-auto">
@@ -44,9 +44,9 @@
         <div class="card widget-flat">
           <div class="card-body">
             <div class="float-end"><i class="fas fa-headset widget-icon"></i></div>
-            <h6 class="text-muted fw-normal">Total Reclamações</h6>
+            <h6 class="text-body-secondary fw-normal">Total Reclamações</h6>
             <h3 class="my-3">{{qtd_reclamacoes|default:0}}</h3>
-            <p class="mb-0 text-muted"><span class="text-purple me-2">{{reclamacoes_site|percentual:qtd_reclamacoes|floatformat:0}}%</span><span class="text-nowrap">via site <sup class="badge bg-purple-light px-1 ms-1">{{reclamacoes_site}}</sup></span></p>        
+            <p class="mb-0 text-body-secondary"><span class="text-purple me-2">{{reclamacoes_site|percentual:qtd_reclamacoes|floatformat:0}}%</span><span class="text-nowrap">via site <sup class="badge bg-purple-light px-1 ms-1">{{reclamacoes_site}}</sup></span></p>        
           </div>
         </div>
       </div>
@@ -54,9 +54,9 @@
         <div class="card widget-flat">
           <div class="card-body">
             <div class="float-end"><i class="fas fa-exclamation-triangle widget-icon"></i></div>
-            <h6 class="text-muted fw-normal">Em aberto</h6>
+            <h6 class="text-body-secondary fw-normal">Em aberto</h6>
             <h3 class="my-3">{{reclamacoes_abertas}}</h3>
-            <p class="mb-0 text-muted"><span class="text-success me-2"></span><span class="text-nowrap"></span></p>        
+            <p class="mb-0 text-body-secondary"><span class="text-success me-2"></span><span class="text-nowrap"></span></p>        
           </div>
         </div>
       </div>      

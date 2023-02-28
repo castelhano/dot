@@ -11,8 +11,8 @@
 <a class="d-none" id="clear" href="{% url 'recrutamento_candidato_dashboard' %}"></a>
 <div class="d-flex justify-content-between mt-3">
   <div>
-    <h5 class="card-title"><span class="d-none d-lg-inline text-muted">Dashboard: </span><b class="text-purple">Recrutamento</b></h5>
-    <p class="fs-6 fw-bold text-muted">{{metrics.cargo_nome|default:''}}</p>
+    <h5 class="card-title"><span class="d-none d-lg-inline text-body-secondary">Dashboard: </span><b class="text-purple">Recrutamento</b></h5>
+    <p class="fs-6 fw-bold text-body-secondary">{{metrics.cargo_nome|default:''}}</p>
   </div>
   <div class="d-flex align-items-center">
     <div class="dropdown">
@@ -47,9 +47,9 @@
         <div class="card widget-flat">
           <div class="card-body">
             <div class="float-end"><i class="fas fa-user widget-icon"></i></div>
-            <h6 class="text-muted fw-normal">Cadastros Banco</h6>
+            <h6 class="text-body-secondary fw-normal">Cadastros Banco</h6>
             <h3 class="my-3">{{metrics.cadastros_banco}}</h3>
-            <p class="mb-0 text-muted"><span class="text-success me-2">{{metrics.candidatos_mulheres|percentual:metrics.cadastros_banco|floatformat:0}}%</span><span class="text-nowrap">{{metrics.candidatos_mulheres}} mulheres</span></p>
+            <p class="mb-0 text-body-secondary"><span class="text-success me-2">{{metrics.candidatos_mulheres|percentual:metrics.cadastros_banco|floatformat:0}}%</span><span class="text-nowrap">{{metrics.candidatos_mulheres}} mulheres</span></p>
           </div>
         </div>
       </div>
@@ -57,9 +57,9 @@
         <div class="card widget-flat">
           <div class="card-body">
             <div class="float-end"><i class="fas fa-user-tag widget-icon"></i></div>
-            <h6 class="text-muted fw-normal">Processos seletivos</h6>
+            <h6 class="text-body-secondary fw-normal">Processos seletivos</h6>
             <h3 class="my-3">{{metrics.processos_seletivos}}</h3>
-            <p class="mb-0 text-muted"><span class="text-success me-2">{{metrics.percentual_aprovacoes|floatformat:0}}%</span><span class="text-nowrap">aprovação</span></p>
+            <p class="mb-0 text-body-secondary"><span class="text-success me-2">{{metrics.percentual_aprovacoes|floatformat:0}}%</span><span class="text-nowrap">aprovação</span></p>
           </div>
         </div>
       </div>
@@ -67,9 +67,9 @@
         <div class="card widget-flat">
           <div class="card-body">
             <div class="float-end"><i class="fab fa-accessible-icon widget-icon"></i></div>
-            <h6 class="text-muted fw-normal">Candidatos PNE</h6>
+            <h6 class="text-body-secondary fw-normal">Candidatos PNE</h6>
             <h3 class="my-3">{{metrics.candidatos_pne}}</h3>
-            <p class="mb-0 text-muted"><span class="text-purple me-2">{{metrics.candidatos_pne|percentual:metrics.cadastros_banco|floatformat:0}}%</span><span class="text-nowrap fs-7">dos cadastros</span></p>        
+            <p class="mb-0 text-body-secondary"><span class="text-purple me-2">{{metrics.candidatos_pne|percentual:metrics.cadastros_banco|floatformat:0}}%</span><span class="text-nowrap fs-7">dos cadastros</span></p>        
           </div>
         </div>
       </div>
@@ -77,9 +77,9 @@
         <div class="card widget-flat">
           <div class="card-body">
             <div class="float-end"><i class="fas fa-check widget-icon"></i></div>
-            <h6 class="text-muted fw-normal">Contratações periodo</h6>
+            <h6 class="text-body-secondary fw-normal">Contratações periodo</h6>
             <h3 class="my-3">{{metrics.contratacoes_periodo}}</h3>
-            <p class="mb-0 text-muted"><span class="text-danger me-2"></span><span class="text-nowrap fs-7"></span></p>        
+            <p class="mb-0 text-body-secondary"><span class="text-danger me-2"></span><span class="text-nowrap fs-7"></span></p>        
           </div>
         </div>
       </div>
@@ -87,9 +87,9 @@
         <div class="card widget-flat">
           <div class="card-body">
             <div class="float-end"><i class="fas fa-id-card-alt widget-icon"></i></div>
-            <h6 class="text-muted fw-normal">Média de Idade</h6>
+            <h6 class="text-body-secondary fw-normal">Média de Idade</h6>
             <h3 class="my-3">{{metrics.media_idade}} anos</h3>
-            <p class="mb-0 text-muted"><span class="text-nowrap fs-7">* dos cadastrados no banco</span></p>        
+            <p class="mb-0 text-body-secondary"><span class="text-nowrap fs-7">* dos cadastrados no banco</span></p>        
           </div>
         </div>
       </div>
@@ -97,9 +97,9 @@
         <div class="card widget-flat">
           <div class="card-body">
             <div class="float-end"><i class="fas fa-link widget-icon"></i></div>
-            <h6 class="text-muted fw-normal">Cadastros Site</h6>
+            <h6 class="text-body-secondary fw-normal">Cadastros Site</h6>
             <h3 class="my-3">{{metrics.cadastros_site}}</h3>
-            <p class="mb-0 text-muted"><span class="text-purple me-2">{{metrics.cadastros_site|percentual:metrics.cadastros_banco|floatformat:0}}%</span><span class="text-nowrap fs-7">dos cadastros</span></p>        
+            <p class="mb-0 text-body-secondary"><span class="text-purple me-2">{{metrics.cadastros_site|percentual:metrics.cadastros_banco|floatformat:0}}%</span><span class="text-nowrap fs-7">dos cadastros</span></p>        
           </div>
         </div>
       </div>

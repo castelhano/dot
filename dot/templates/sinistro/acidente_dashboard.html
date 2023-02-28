@@ -10,7 +10,7 @@
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'sinistro_acidente_dashboard' %}"></a>
 <div class="d-flex justify-content-between mt-3">
-  <div><h5 class="card-title"><span class="d-none d-lg-inline text-muted">Dashboard: </span><b class="text-purple">Acidentes</b><sup class="badge bg-purple-light ms-2">{{metrics.empresa_nome|default:''}}</sup></h5></div>
+  <div><h5 class="card-title"><span class="d-none d-lg-inline text-body-secondary">Dashboard: </span><b class="text-purple">Acidentes</b><sup class="badge bg-purple-light ms-2">{{metrics.empresa_nome|default:''}}</sup></h5></div>
   <div class="d-flex align-items-center">
     <div class="dropdown">
       <button class="btn btn-sm btn-purple-light dropdown-toggle" type="button" data-bs-toggle="dropdown"><span class="d-none d-sm-inline"><b>{{metrics.periodo_de|date:'d/m/y'}}</b> a <b>{{metrics.periodo_ate|date:'d/m/y'}}</b></span><span class="d-inline d-sm-none">Periodo</span></button>
@@ -49,9 +49,9 @@
         <div class="card widget-flat">
           <div class="card-body">
             <div class="float-end"><i class="fas fa-car-crash widget-icon"></i></div>
-            <h6 class="text-muted fw-normal">Total Acidentes</h6>
+            <h6 class="text-body-secondary fw-normal">Total Acidentes</h6>
             <h3 class="my-3">{{metrics.qtd_acidentes|default:0}}</h3>
-            <p class="mb-0 text-muted"><span class="text-success me-2"></span><span class="text-nowrap"></span></p>        
+            <p class="mb-0 text-body-secondary"><span class="text-success me-2"></span><span class="text-nowrap"></span></p>        
           </div>
         </div>
       </div>
@@ -59,7 +59,7 @@
         <div class="card widget-flat">
           <div class="card-body">
             <div class="float-end"><i class="fas fa-dollar-sign widget-icon"></i></div>
-            <h6 class="text-muted fw-normal">Custos período</h6>
+            <h6 class="text-body-secondary fw-normal">Custos período</h6>
             <h3 id="label_custo_total" class="my-3">R$ {{metrics.custo_total|default:0|floatformat:2}}</h3>
             <h3 id="label_custo_acordos" class="my-3 d-none">R$ {{metrics.custo_acordos|default:0|floatformat:2}}</h3>
             <h3 id="label_custo_despesas" class="my-3 d-none">R$ {{metrics.custo_despesas|default:0|floatformat:2}}</h3>
@@ -109,7 +109,7 @@
           <table id="table_terceiros" class="table table-centered table-nowrap table-hover">
             <caption>Custos com Terceiros</caption>
             <thead>
-              <tr class="text-muted fs-7">
+              <tr class="text-body-secondary fs-7">
                 <th>Terceiro</th>
                 <th class="d-none d-md-table-cell">Acordo</th>
                 <th class="d-none d-md-table-cell">Despesas</th>
@@ -120,7 +120,7 @@
               {% for acidente in metrics.top_despesas %}
                 {% for terceiro in acidente.terceiros %}
                 <tr>
-                  <td><h6>{{terceiro.nome}}</h6><span class="text-muted fs-7">Pasta: <b>{{acidente.pasta}}</b> - {{terceiro.acidente.data|date:"d M y"}} - <b>{{terceiro.veiculo}}</b></span></td>
+                  <td><h6>{{terceiro.nome}}</h6><span class="text-body-secondary fs-7">Pasta: <b>{{acidente.pasta}}</b> - {{terceiro.acidente.data|date:"d M y"}} - <b>{{terceiro.veiculo}}</b></span></td>
                   <td class="d-none d-md-table-cell"><h6>{{terceiro.acordo|floatformat:2}}</h6></td>
                   <td class="d-none d-md-table-cell"><h6>{{terceiro.despesas|floatformat:2}}</h6></td>
                   <td><h6>{{terceiro.despesas|add:terceiro.acordo|floatformat:2}}</h6></td>

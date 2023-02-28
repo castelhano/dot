@@ -21,7 +21,7 @@
     <div class="row">
       <div class="col">
         <h5 class="card-title mb-0">Dashboard: <b class="text-purple">{{user.username|title}}</b></h5>
-        <p class="mb-3 fw-bold text-muted">{{staff.get_role_display|default:'<i class="fas fa-exclamation-triangle me-1 text-danger"></i>Não parametrizado'}}</p>      
+        <p class="mb-3 fw-bold text-body-secondary">{{staff.get_role_display|default:'<i class="fas fa-exclamation-triangle me-1 text-danger"></i>Não parametrizado'}}</p>      
       </div>
       <div class="col-auto">
         <div class="d-inline-flex">
@@ -43,7 +43,7 @@
       <div class="row g-3">
         <div class="col-lg order-2 order-lg-1">
           <div class="card h-100">
-            <div class="card-header text-muted fs-7">
+            <div class="card-header text-body-secondary fs-7">
               <div class="row">
                 <div class="col">Em Progresso</div>
               </div>
@@ -53,10 +53,10 @@
               {% for plano in planos_em_progresso %}
               <div class="border-top border-bottom p-2 mt-2 bg-light">
                 <div class="row">
-                  <div class="col text-truncate">{% if plano.bloqueado %}<i class="fas fa-lock text-muted me-1"></i>{% endif %}<a class="fw-bold text-decoration-none mb-0" href="{% url 'gestao_plano_id' plano.id %}">{{plano.titulo}}</a></div>
+                  <div class="col text-truncate">{% if plano.bloqueado %}<i class="fas fa-lock text-body-secondary me-1"></i>{% endif %}<a class="fw-bold text-decoration-none mb-0" href="{% url 'gestao_plano_id' plano.id %}">{{plano.titulo}}</a></div>
                   {% if plano.responsavel == staff and not plano.bloqueado or staff.role == 'M' or staff.role == 'E' %}
                   <div class="col-auto">
-                    <a class="text-muted px-2" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-caret-down"></i></a>
+                    <a class="text-body-secondary px-2" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu dropdown-menu-end fs-7">
                       <li><a class="dropdown-item pointer" href="{% url 'gestao_plano_movimentar' plano.id|safe %}?operacao=revisao" onclick="modal_loading.show()"><i class="fas fa-arrow-right fa-fw text-success"></i> Para revisão</a></li>
                       {% if staff.role == 'M' %}<li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#avaliar_modal" onclick="setAvaliacaoPlano({{plano.id|safe}}, {{plano.conclusao|safe}},{{plano.avaliacao|safe}},'{{plano.titulo}}', false)" href="#"><i class="fas fa-star fa-fw text-primary"></i> Avaliar</a></li>{% endif %}
@@ -81,9 +81,9 @@
                 </div>
                 <div class="row mt-1">
                   <div class="col text-truncate">
-                    <a class="text-decoration-none text-muted text-hover-purple" href="{% url 'gestao_diretriz_id' plano.diretriz.id|safe %}"><i class="fas fa-link"></i> {{plano.diretriz.titulo}}</a>
+                    <a class="text-decoration-none text-body-secondary text-hover-purple" href="{% url 'gestao_diretriz_id' plano.diretriz.id|safe %}"><i class="fas fa-link"></i> {{plano.diretriz.titulo}}</a>
                   </div>
-                  <div class="col-auto text-muted fs-8">{{plano.created_by|title}} - {{plano.created_on|date:'M y'}}</div>
+                  <div class="col-auto text-body-secondary fs-8">{{plano.created_by|title}} - {{plano.created_on|date:'M y'}}</div>
                 </div>
               </div>
               {% empty %}
@@ -99,16 +99,16 @@
         </div>
         <div class="col-lg order-3 order-lg-2">
           <div class="card h-100">
-            <div class="card-header text-muted fs-7">Em revisão</div>
+            <div class="card-header text-body-secondary fs-7">Em revisão</div>
             <div class="card-body p-0 pb-2 fs-7">
               {% call_method staff 'planos_em_avaliacao' empresa as planos_em_avaliacao %}
               {% for plano in planos_em_avaliacao %}
               <div class="border-top border-bottom p-2 mt-2 bg-light">
                 <div class="row">
-                  <div class="col text-truncate">{% if plano.bloqueado %}<i class="fas fa-lock text-muted me-1"></i>{% endif %}<a class="fw-bold text-decoration-none mb-0" href="{% url 'gestao_plano_id' plano.id %}">{{plano.titulo}}</a></div>
+                  <div class="col text-truncate">{% if plano.bloqueado %}<i class="fas fa-lock text-body-secondary me-1"></i>{% endif %}<a class="fw-bold text-decoration-none mb-0" href="{% url 'gestao_plano_id' plano.id %}">{{plano.titulo}}</a></div>
                   {% if staff.role == 'M' or staff.role == 'E' %}
                   <div class="col-auto">
-                    <a class="text-muted px-2" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-caret-down"></i></a>
+                    <a class="text-body-secondary px-2" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu dropdown-menu-end fs-7">
                       <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#avaliar_modal" onclick="setAvaliacaoPlano({{plano.id|safe}}, {{plano.conclusao|safe}},{{plano.avaliacao|safe}})" href="#"><i class="fas fa-star fa-fw text-primary"></i> Avaliar</a></li>
                       {% if plano.bloqueado and staff.role == 'M' %}
@@ -133,9 +133,9 @@
                 </div>
                 <div class="row mt-1">
                   <div class="col text-truncate">
-                    <a class="text-decoration-none text-muted text-hover-purple" href="{% url 'gestao_diretriz_id' plano.diretriz.id|safe %}"><i class="fas fa-link"></i> {{plano.diretriz.titulo}}</a>
+                    <a class="text-decoration-none text-body-secondary text-hover-purple" href="{% url 'gestao_diretriz_id' plano.diretriz.id|safe %}"><i class="fas fa-link"></i> {{plano.diretriz.titulo}}</a>
                   </div>
-                  <div class="col-auto text-muted fs-8">{{plano.created_by|title}} - {{plano.created_on|date:'M y'}}</div>
+                  <div class="col-auto text-body-secondary fs-8">{{plano.created_by|title}} - {{plano.created_on|date:'M y'}}</div>
                 </div>
               </div>
               {% empty %}
@@ -146,11 +146,11 @@
         </div>
         <div class="col-lg order-1 order-lg-3">
           <div class="card text-dark bg-light h-100">
-            <div class="card-header text-muted fs-7">
+            <div class="card-header text-body-secondary fs-7">
               <div class="row">
                 <div class="col">Diretrizes</div>
                 <div id="menu_diretriz_container" class="col-auto">
-                  <a class="text-muted" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-ellipsis-h"></i></a>
+                  <a class="text-body-secondary" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-ellipsis-h"></i></a>
                   <ul id="menu_diretriz_options" class="dropdown-menu fs-7">
                     {% if staff.role == 'M' or staff.role == 'E' %}<li><a class="dropdown-item pointer" href="{% url 'gestao_diretriz_add' %}"><i class="fas fa-plus text-success fa-fw"></i> Diretriz</a></li>{% endif %}
                     {% if staff and staff.role != 'O' %}
@@ -173,7 +173,7 @@
                   <div class="col text-truncate"><a class="fw-bold text-decoration-none mb-0" href="{% url 'gestao_diretriz_id' diretriz.id %}">{{diretriz.titulo}}</a></div>
                   {% if staff.role != 'O' %}
                   <div class="col-auto">
-                    <a class="text-muted px-2" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-caret-down"></i></a>
+                    <a class="text-body-secondary px-2" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu dropdown-menu-end fs-7">
                       <li><a class="dropdown-item" href="{% url 'gestao_plano_add' diretriz.id|safe %}"><i class="fas fa-plus fa-fw text-success"></i> Plano</a></li>
                       {% if staff.role == 'M' %}<li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#diretriz_finalizar_modal" onclick="setDiretrizPlano({{diretriz.id|safe}})" href="#"><i class="fas fa-download fa-fw text-danger"></i> Finalizar</a></li>{% endif %}
@@ -188,7 +188,7 @@
                   <div class="col-6">
                     <div class="progress mt-1"><div class="progress-bar" role="progressbar" style="width: {{diretriz.progresso|safe}}%">{{diretriz.progresso|safe}}%</div></div>
                   </div>
-                  <div class="col-6 fs-8 text-muted text-end">
+                  <div class="col-6 fs-8 text-body-secondary text-end">
                     {{diretriz.created_by|title}} - {{diretriz.created_on|date:'M y'}}
                   </div>
                 </div>

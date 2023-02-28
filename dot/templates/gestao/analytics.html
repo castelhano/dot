@@ -19,7 +19,7 @@
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
-      <li class="nav-item" title="Dashboard"><a id="dashboard_link" class="nav-link text-muted" href="{% url 'gestao_dashboard' %}"><i class="fas fa-columns"></i></a></li>
+      <li class="nav-item" title="Dashboard"><a id="dashboard_link" class="nav-link text-body-secondary" href="{% url 'gestao_dashboard' %}"><i class="fas fa-columns"></i></a></li>
       <li class="nav-item ms-1" title="Roadmap"><a id="roadmap_link" class="nav-link text-success" href="{% url 'gestao_roadmap' %}"><i class="fas fa-sliders-h"></i></a></li>
       <li class="nav-item ms-1" title="Analytics">
         <div id="analytics_menu_extra_container">
@@ -33,7 +33,7 @@
   </div>
   <div class="card-body tab-content">
     <h5 class="card-title mb-0">Analytics: <b class="text-purple">{{user.username|title}}</b></h5>
-    <p class="mb-1 fw-bold text-muted">{{staff.get_role_display}}</p>
+    <p class="mb-1 fw-bold text-body-secondary">{{staff.get_role_display}}</p>
     <div class="row g-1">
       <div class="col-auto">
         <div class="dropdown">

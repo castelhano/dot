@@ -33,12 +33,12 @@
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false})
 
 
-  const selectEmpresas = new jsSelectm(document.getElementById('id_empresas'),{emptySelectMessage: '<small class="text-muted">Nenhuma empresa disponivel</small>'});
-  const selectGrupos = new jsSelectm(document.getElementById('id_grupos'), {emptySelectMessage: '<small class="text-muted">Nenhum grupo cadastrado</small>'});
+  const selectEmpresas = new jsSelectm(document.getElementById('id_empresas'),{emptySelectMessage: '<small class="text-body-secondary">Nenhuma empresa disponivel</small>'});
+  const selectGrupos = new jsSelectm(document.getElementById('id_grupos'), {emptySelectMessage: '<small class="text-body-secondary">Nenhum grupo cadastrado</small>'});
   const selectPerms = new jsSelectm(document.getElementById('id_perms'), {
     reorderOptions: false,
     wrapperClassList: 'jsSelectm_wrapper border-0 p-0',
-    emptySelectMessage: '<small class="text-muted">Nada a exibir</small>'}
+    emptySelectMessage: '<small class="text-body-secondary">Nada a exibir</small>'}
     );
   function getEmpresas() {
     var xhttp = new XMLHttpRequest();

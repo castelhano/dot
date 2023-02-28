@@ -90,7 +90,7 @@ function addOnAgenda_update(){
             event.innerHTML = `<div class="col-auto"><span class="dotAgenda-data-dia">${agenda.new[item].date.slice(-2)}</span></div> `;
             event.innerHTML += `<div class="col-auto dotAgenda-data-mes">${translateMonth[data.getMonth()]}</div> `;
             event.innerHTML += `<div class="col-auto dotAgenda-data-dayWeek">${translateDayWeek[data.getDay()]}</div>`;
-            event.innerHTML += `<div class="col dotAgenda-title text-truncate">${agenda.new[item].hour != '' ? '<span class="text-muted">' + agenda.new[item].hour + ' </span>' : ''}${agenda.new[item].title}</div>`;
+            event.innerHTML += `<div class="col dotAgenda-title text-truncate">${agenda.new[item].hour != '' ? '<span class="text-body-secondary">' + agenda.new[item].hour + ' </span>' : ''}${agenda.new[item].title}</div>`;
             event.innerHTML += `<div class="col-auto"><small class="badge bg-purple-light ms-1 float-end">${prazo}</small></div>`;
             addOnAgenda_list.appendChild(event);
             countNextEvents++;
@@ -105,7 +105,7 @@ function addOnAgenda_update(){
                 rowsPerPage: 6,
                 showCounterLabel:false,
                 emptyTableMessage: 'Nenhum evento cadastrado',
-                editableColsClasslist: 'text-muted',
+                editableColsClasslist: 'text-body-secondary',
                 deleteRowButtonClasslist: 'pe-2 pointer',
                 editableCols: ['date','hour','title']
             });
@@ -133,7 +133,7 @@ function addOnAgenda_modal_create(options){
     let modalDialog = document.createElement('div');modalDialog.classList = `modal-dialog modal-lg`;
     let modalContent = document.createElement('div');modalContent.classList = 'modal-content';
     let modalBody = document.createElement('div');modalBody.classList = 'modal-body';
-    modalBody.innerHTML = `<div class="row g-1"><div class="col"><h6 class="text-muted mb-3">Editar Agenda<h6></div><div class="col-auto"><div class="btn-group fs-7" role="group"><button type="button" data-type="addOnAgendaBtnShowOld" class="btn btn-sm px-3 py-0 btn-outline-secondary" title="Eventos Passados" onclick="addOnAgenda_showOld()"><i class="fas fa-calendar-check"></i></button><button type="button" data-type="addOnAgendaBtnShowNew" class="btn btn-sm px-3 py-0 btn-outline-primary active" title="Novos Eventos" onclick="addOnAgenda_showNew()"><i class="far fa-calendar-alt"></i></button></div><button class="btn btn-sm btn-success py-0 px-3 ms-1" onclick="addOnAgenda_table.addRow();"><i class="fas fa-plus"></i></button></div></div>`;
+    modalBody.innerHTML = `<div class="row g-1"><div class="col"><h6 class="text-body-secondary mb-3">Editar Agenda<h6></div><div class="col-auto"><div class="btn-group fs-7" role="group"><button type="button" data-type="addOnAgendaBtnShowOld" class="btn btn-sm px-3 py-0 btn-outline-secondary" title="Eventos Passados" onclick="addOnAgenda_showOld()"><i class="fas fa-calendar-check"></i></button><button type="button" data-type="addOnAgendaBtnShowNew" class="btn btn-sm px-3 py-0 btn-outline-primary active" title="Novos Eventos" onclick="addOnAgenda_showNew()"><i class="far fa-calendar-alt"></i></button></div><button class="btn btn-sm btn-success py-0 px-3 ms-1" onclick="addOnAgenda_table.addRow();"><i class="fas fa-plus"></i></button></div></div>`;
     modalBody.innerHTML += `<div class="table-responsive fs-7"><table id="addOnAgenda_table_el" class="table table-sm border table-striped table-hover mt-1"><thead><tr><th>date</th><th>hour</th><th>title</th></tr></thead><tbody></tbody></table></div>`;
     let modalFooter = document.createElement('div');modalFooter.classList = 'text-end mt-3';
     let modalBtnCancel = document.createElement('button');modalBtnCancel.classList = 'btn btn-sm btn-secondary';modalBtnCancel.setAttribute('data-bs-dismiss','modal');modalBtnCancel.innerHTML = 'Cancelar';
@@ -256,8 +256,8 @@ function addOnTarefa_update(){
                 input.select();
             };
             checkbox.onclick = () => {
-                if(checkbox.checked){label.classList.add('text-decoration-line-through','fst-italic','text-muted');}
-                else{label.classList.remove('text-decoration-line-through','fst-italic','text-muted');}
+                if(checkbox.checked){label.classList.add('text-decoration-line-through','fst-italic','text-body-secondary');}
+                else{label.classList.remove('text-decoration-line-through','fst-italic','text-body-secondary');}
             }
             controlDiv.appendChild(checkbox)
             textDiv.appendChild(label);
@@ -304,8 +304,8 @@ function addOnTarefaAdd(){
         input.select();
     };
     checkbox.onclick = () => {
-        if(checkbox.checked){label.classList.add('text-decoration-line-through','fst-italic','text-muted');}
-        else{label.classList.remove('text-decoration-line-through','fst-italic','text-muted');}
+        if(checkbox.checked){label.classList.add('text-decoration-line-through','fst-italic','text-body-secondary');}
+        else{label.classList.remove('text-decoration-line-through','fst-italic','text-body-secondary');}
     }
     controlDiv.appendChild(checkbox)
     textDiv.appendChild(label);

@@ -94,12 +94,12 @@
   var TAB_ON_ENTER = true;  
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false})
 
-  const selectEmpresas = new jsSelectm(document.getElementById('id_empresas'),{emptySelectMessage: '<small class="text-muted">Nenhuma empresa disponivel</small>'});
+  const selectEmpresas = new jsSelectm(document.getElementById('id_empresas'),{emptySelectMessage: '<small class="text-body-secondary">Nenhuma empresa disponivel</small>'});
   
   const empresasTodas = {};
   const empresasSelecionadas = [];
   function getEmpresas() {
-    selectEmpresas.optionsContainer.innerHTML = '<small class="text-muted">Buscando empresas, aguarde....</small>';
+    selectEmpresas.optionsContainer.innerHTML = '<small class="text-body-secondary">Buscando empresas, aguarde....</small>';
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
       if(this.readyState == 4 && this.status == 200){
@@ -138,18 +138,18 @@
   {% if not usuario.is_superuser %}
     const selectGrupos = new jsSelectm(document.getElementById('id_grupos'), {
       customStyles:true,
-      emptySelectMessage: '<small class="text-muted">Nenhum grupo cadastrado</small>'}
+      emptySelectMessage: '<small class="text-body-secondary">Nenhum grupo cadastrado</small>'}
       );
     const selectPerms = new jsSelectm(document.getElementById('id_perms'), {
       customStyles:true,
       reorderOptions: false,
       wrapperClassList: 'jsSelectm_wrapper border-0 p-0',
-      emptySelectMessage: '<small class="text-muted">Nada a exibir</small>'}
+      emptySelectMessage: '<small class="text-body-secondary">Nada a exibir</small>'}
     );
     const gruposTodos = {};
     const gruposSelecionados = [];
     function getGrupos() {
-      selectGrupos.optionsContainer.innerHTML = '<small class="text-muted">Buscando grupos, aguarde....</small>';
+      selectGrupos.optionsContainer.innerHTML = '<small class="text-body-secondary">Buscando grupos, aguarde....</small>';
       var xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function() {
         if(this.readyState == 4 && this.status == 200){
@@ -190,7 +190,7 @@
     const permsSelecionados = [];
     const permsGroups = {};
     function getPerms() {
-      selectPerms.optionsContainer.innerHTML = '<small class="text-muted">Buscando permissões, aguarde....</small>';
+      selectPerms.optionsContainer.innerHTML = '<small class="text-body-secondary">Buscando permissões, aguarde....</small>';
       var xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function() {
         if(this.readyState == 4 && this.status == 200){
