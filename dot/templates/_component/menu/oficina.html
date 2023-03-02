@@ -1,10 +1,10 @@
 {% include "_component/layout/submenulist.html" %}
 <li id="cadastro_list_container" class="nav-item dropdown">
   <a class="nav-link dropdown-toggle" id="menu_cadastro" href="#" data-bs-toggle="dropdown" title="ALT + C"><b>C</b>adastro</a>
-  <ul id="cadastro_list_options" class="dropdown-menu dropdown-menu-dark">
+  <ul id="cadastro_list_options" class="dropdown-menu">
     <li id="cadastro_frota_list_container">
       <a id="submenu_frota_link" class="dropdown-item d-flex justify-content-between align-items-center pointer" data-bs-toggle="dropdown"><span><b>F</b>rota</span><i class="fas fa-chevron-right fs-8"></i></a>
-      <ul id="cadastro_frota_list_options" class="submenu dropdown-menu dropdown-menu-dark">
+      <ul id="cadastro_frota_list_options" class="submenu dropdown-menu">
         {% if perms.oficina.view_frota %}<li><a class="dropdown-item" id="app_root" href="{% url 'oficina_frotas' %}"><b>F</b>rota</a></li>{% endif %}
         {% if perms.oficina.view_marca %}<li><a class="dropdown-item" id="cadastro_marca" href="{% url 'oficina_marcas' %}"><b>M</b>arca</a></li>{% endif %}
         {% if perms.oficina.view_modelo %}<li><a class="dropdown-item" id="cadastro_modelo" href="{% url 'oficina_modelos' %}">Mode<b>l</b>o</a></li>{% endif %}
@@ -16,7 +16,7 @@
     </li>
     <!-- <li id="cadastro_outros_list_container">
       <a id="submenu_outros_link" class="dropdown-item d-flex justify-content-between align-items-center pointer" data-bs-toggle="dropdown"><span><b>O</b>utros</span><i class="fas fa-chevron-right fs-8"></i></a>
-      <ul id="cadastro_outros_list_options" class="submenu dropdown-menu dropdown-menu-dark"></ul>
+      <ul id="cadastro_outros_list_options" class="submenu dropdown-menu"></ul>
     </li> -->
   </ul>
 </li>

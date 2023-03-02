@@ -1,6 +1,6 @@
 <li id="cadastro_list_container" class="nav-item dropdown">
   <a class="nav-link dropdown-toggle" id="menu_cadastro" href="#" data-bs-toggle="dropdown" title="ALT + C"><b>C</b>adastro</a>
-  <ul id="cadastro_list_options" class="dropdown-menu dropdown-menu-dark">
+  <ul id="cadastro_list_options" class="dropdown-menu">
     {% if perms.core.view_empresa %}
     <li><a class="dropdown-item" id="cadastro_empresa" href="{% url 'core_empresas' %}"><b>E</b>mpresa</a></li>
     {% endif %}
@@ -14,7 +14,7 @@
 </li>
 <li id="gestao_list_container" class="nav-item dropdown">
   <a class="nav-link dropdown-toggle" id="menu_gestao" href="#" data-bs-toggle="dropdown" title="ALT + T">G<b>e</b>stão</a>
-  <ul id="gestao_list_options" class="dropdown-menu dropdown-menu-dark">
+  <ul id="gestao_list_options" class="dropdown-menu">
     {% if perms.core.view_agenda %}<li><a class="dropdown-item" id="relatorio_agendas" href="{% url 'core_agendas' %}"><b>A</b>genda</a></li>{% endif %}
     {% if perms.core.view_alerta %}<li><a class="dropdown-item" id="relatorio_alertas" href="{% url 'core_alertas' %}">Aler<b>t</b>as</a></li>{% endif %}
   </ul>

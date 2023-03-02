@@ -2,7 +2,7 @@
 {% load static %}
 {% block title %}Classificacao{% endblock %}
 {% block model %}Oficina{% endblock %}
-{% block navbar_classlist %}navbar-dark bg-success bg-gradient{% endblock %}
+{% block navbar_classlist %}navbar-text-light bg-success bg-gradient{% endblock %}
 {% block model_menu %}{% include "_component/menu/oficina.html" %}{% endblock%}
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'oficina_classificacao_id' classificacao.id|safe %}"></a>

@@ -1,10 +1,10 @@
 {% include "_component/layout/submenulist.html" %}
 <li class="nav-item dropdown" id="cadastro_list_container">
   <a class="nav-link dropdown-toggle" id="menu_cadastro" href="#" data-bs-toggle="dropdown" title="ALT + C"><b>C</b>adastro</a>
-  <ul class="dropdown-menu dropdown-menu-dark" id="cadastro_list_options">
+  <ul class="dropdown-menu" id="cadastro_list_options">
     <li id="cadastro_funcionario_list_container">
       <a id="submenu_funcionario_link" class="dropdown-item d-flex justify-content-between align-items-center pointer" data-bs-toggle="dropdown"><span><b>F</b>uncionário</span><i class="fas fa-chevron-right fs-8"></i></a>
-      <ul id="cadastro_funcionario_list_options" class="submenu dropdown-menu dropdown-menu-dark">
+      <ul id="cadastro_funcionario_list_options" class="submenu dropdown-menu">
         {% if perms.pessoal.view_funcionario %}<li><a class="dropdown-item" id="app_root" href="{% url 'pessoal_funcionarios' %}"><b>F</b>uncionário</a></li>{% endif %}
         {% if perms.pessoal.view_setor %}<li><a class="dropdown-item" id="cadastro_setor" href="{% url 'pessoal_setores' %}"><b>S</b>etor</a></li>{% endif %}
         {% if perms.pessoal.view_cargo %}<li><a class="dropdown-item" id="cadastro_cargo" href="{% url 'pessoal_cargos' %}"><b>C</b>argo</a></li>{% endif %}
@@ -13,7 +13,7 @@
     </li>    
     <!-- <li id="cadastro_frequencia_list_container">
       <a id="submenu_frequencia_link" class="dropdown-item d-flex justify-content-between align-items-center pointer" data-bs-toggle="dropdown"><span>Fre<b>q</b>uência</span><i class="fas fa-chevron-right fs-8"></i></a>
-      <ul id="cadastro_frequencia_list_options" class="submenu dropdown-menu dropdown-menu-dark">
+      <ul id="cadastro_frequencia_list_options" class="submenu dropdown-menu">
         <li><a class="dropdown-item" id="cadastro_evento" href=""><b>E</b>ventos</a></li>
       </ul>
     </li>     -->

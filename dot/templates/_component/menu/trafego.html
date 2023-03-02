@@ -1,10 +1,10 @@
 {% include "_component/layout/submenulist.html" %}
 <li id="cadastro_list_container" class="nav-item dropdown">
   <a class="nav-link dropdown-toggle" id="menu_cadastro" href="#" data-bs-toggle="dropdown" title="ALT + C"><b>C</b>adastro</a>
-  <ul id="cadastro_list_options" class="dropdown-menu dropdown-menu-dark">
+  <ul id="cadastro_list_options" class="dropdown-menu">
     <li id="cadastro_linha_list_container">
       <a id="submenu_linha_link" class="dropdown-item d-flex justify-content-between align-items-center pointer" data-bs-toggle="dropdown"><span><b>L</b>inha</span><i class="fas fa-chevron-right fs-8"></i></a>
-      <ul id="cadastro_linha_list_options" class="submenu dropdown-menu dropdown-menu-dark">
+      <ul id="cadastro_linha_list_options" class="submenu dropdown-menu">
         {% if perms.trafego.view_linha %}<li><a class="dropdown-item" id="app_root" href="{% url 'trafego_linhas' %}"><b>L</b>inha</a></li>{% endif %}
         {% if perms.trafego.view_localidade %}<li><a class="dropdown-item" id="cadastro_localidade" href="{% url 'trafego_localidades' %}">Lo<b>c</b>alidade</a></li>{% endif %}
         {% if perms.trafego.view_planejamento %}<li><a class="dropdown-item" id="cadastro_planejamento" href="{% url 'trafego_planejamentos' %}"><b>P</b>lanejamento</a></li>{% endif %}
@@ -12,7 +12,7 @@
     </li>
     <li id="cadastro_ocorrencia_list_container">
       <a id="submenu_ocorrencia_link" class="dropdown-item d-flex justify-content-between align-items-center pointer" data-bs-toggle="dropdown"><span><b>O</b>corrência</span><i class="fas fa-chevron-right fs-8"></i></a>
-      <ul id="cadastro_ocorrencia_list_options" class="submenu dropdown-menu dropdown-menu-dark">
+      <ul id="cadastro_ocorrencia_list_options" class="submenu dropdown-menu">
         {% if perms.trafego.view_ocorrencia %}<li><a class="dropdown-item" id="cadastro_ocorrencia" href="{% url 'trafego_ocorrencias' %}"><b>O</b>corrência</a></li>{% endif %}
         {% if perms.trafego.view_evento %}<li><a class="dropdown-item" id="cadastro_evento" href="{% url 'trafego_eventos' %}"><b>E</b>vento</a></li>{% endif %}
         {% if perms.trafego.view_providencia %}<li><a class="dropdown-item" id="cadastro_providencia" href="{% url 'trafego_providencias' %}"><b>P</b>rovidência</a></li>{% endif %}
@@ -20,7 +20,7 @@
     </li>
     <li id="cadastro_notificacao_list_container">
       <a id="submenu_notificacao_link" class="dropdown-item d-flex justify-content-between align-items-center pointer" data-bs-toggle="dropdown"><span><b>N</b>otificações</span><i class="fas fa-chevron-right fs-8"></i></a>
-      <ul id="cadastro_notificacao_list_options" class="submenu dropdown-menu dropdown-menu-dark">
+      <ul id="cadastro_notificacao_list_options" class="submenu dropdown-menu">
         {% if perms.trafego.view_notificacao %}<li><a class="dropdown-item" id="cadastro_notificacao" href="{% url 'trafego_notificacoes' %}"><b>N</b>otificações</a></li>{% endif %}
         {% if perms.trafego.view_orgao %}<li><a class="dropdown-item" id="cadastro_orgao" href="{% url 'trafego_orgaos' %}">Or<b>g</b>ãos</a></li>{% endif %}
         {% if perms.trafego.view_agente %}<li><a class="dropdown-item" id="cadastro_agente" href="{% url 'trafego_agentes' %}"><b>A</b>gentes</a></li>{% endif %}

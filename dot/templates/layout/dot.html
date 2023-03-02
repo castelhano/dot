@@ -44,7 +44,6 @@
     }
     @media(max-width: 992px){.settings_icon{display: block;}}
     .settings_icon:hover{right: -30px;}
-    li.sys_item:hover kbd{opacity: 0.6;}
     .theme-switch__input,.theme-switch__label {position: relative;cursor: pointer;}
     .theme-switch__input {opacity: 0;}
     .theme-switch__input:hover + .theme-switch__label, .theme-switch__input:focus + .theme-switch__label {background-color: lightSlateGray;}
@@ -67,10 +66,10 @@
   <title>{% block title %}SIT{% endblock %}</title>
 </head>
 <body data-bs-theme="light" class="{% block body_classlist %}{% endblock %}" style="{% block body_style %}{% endblock %}">
-  <nav class="navbar navbar-expand-lg sticky-top py-1 shadow-sm border-bottom navbar-dot {% block navbar_classlist %}navbar-dark bg-dark bg-gradient{% endblock %}">
+  <nav class="navbar navbar-expand-lg sticky-top py-1 shadow-sm border-bottom navbar-dot {% block navbar_classlist %}bg-gradient{% endblock %}">
     <div class="container-fluid">
       <ul class="navbar-nav"><li class="nav-item"><a class="nav-link ps-0 pe-3" id="home" href="{% url 'index' %}" title="INICIO [ ALT + I ]"><i class="fas fa-th-large fs-5"></i></a></li></ul>
-      <a class="navbar-brand user-select-none pt-0">{% block model %} SIT {% endblock%}</a>
+      <span class="navbar-brand user-select-none pt-0">{% block model %} SIT {% endblock%}</span>
       <button class="btn btn-sm navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navControls"><i class="fas fa-bars text-light fs-4"></i></button>
       <div class="collapse navbar-collapse ms-2" id="navControls">
         <ul id="app_nav_controls" class="navbar-nav">
@@ -80,17 +79,17 @@
           <li id="themeSwitch_container" class="pt-1 pe-4 mx-auto"><input type="checkbox" id="themeSwitch" name="theme-switch" class="theme-switch__input"> <label for="themeSwitch" class="theme-switch__label"><span></span></label></li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle pt-1 fw-bold" id="system" href="#" data-bs-toggle="dropdown" title="ALT + S">{{user.username|title}}</a>
-            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end mt-1" id="user_list_options">
-              <li class="sys_item d-flex justify-content-between"><a class="dropdown-item" id="change_password_link" href="{% url 'change_password' %}"><i class="fas fa-fw fa-unlock-alt"></i> Alterar Senha</a></li>
-              <li class="sys_item d-flex justify-content-between"><a class="dropdown-item" id="offCanvasLink" data-bs-toggle="offcanvas" href="#offcanvas" role="button"><i class="fas fa-sliders-h fa-fw"></i> Preferências</a></li>
+            <ul class="dropdown-menu dropdown-menu-end mt-1" id="user_list_options">
+              <li class="d-flex justify-content-between"><a class="dropdown-item" id="change_password_link" href="{% url 'change_password' %}"><i class="fas fa-fw fa-unlock-alt"></i> Alterar Senha</a></li>
+              <li><a class="dropdown-item d-flex justify-content-between pe-2" id="offCanvasLink" data-bs-toggle="offcanvas" href="#offcanvas" role="button"><span><i class="fas fa-sliders-h fa-fw"></i> Preferências</span><span class="fs-7 ms-3">Alt+M</span></a></li>
               <li><hr class="dropdown-divider"></li>
-              <li class="sys_item d-none d-lg-flex justify-content-between"><a class="dropdown-item pointer" id="shortcut_link_list" data-bs-toggle="modal" data-bs-target="#shortcut_modal"><i class="fas fa-fw fa-keyboard"></i> Atalhos / Sobre</a><kbd class="align-self-center me-2">Alt+K</kbd></li>
+              <li class="d-none d-lg-block"><a class="dropdown-item pointer d-flex justify-content-between pe-2" id="shortcut_link_list" data-bs-toggle="modal" data-bs-target="#shortcut_modal"><span><i class="fas fa-fw fa-keyboard"></i> Atalhos / Sobre</span><span class="fs-7 ms-3">Alt+K</span></a></li>
               {% if perms.core.docs %}
-              <li class="sys_item d-flex justify-content-between"><a class="dropdown-item" id="docs" href="{% url 'docs' 'core' %}"><i class="fas fa-fw fa-terminal"></i> Documentação</a><kbd class="align-self-center me-2">Alt+F1</kbd></li>
+              <li><a class="dropdown-item d-flex justify-content-between pe-2" id="docs" href="{% url 'docs' 'core' %}"><span><i class="fas fa-fw fa-terminal"></i> Documentação</span><span class="fs-7 ms-3">Alt+F1</span></a></li>
               {% endif %}
-              <li class="sys_item d-flex justify-content-between d-lg-none"><span class="dropdown-item pointer" onclick="forceReload()"><i class="fas fa-fw fa-sync-alt"></i> Force Reload</span><kbd class="align-self-center me-2">Ctrl+F5</kbd></li>
+              <li class="d-flex justify-content-between d-lg-none pe-2"><span class="dropdown-item pointer" onclick="forceReload()"><i class="fas fa-fw fa-sync-alt"></i> Force Reload</span><span class="fs-7 ms-3">Ctrl+F5</span></li>
               <li><hr class="dropdown-divider"></li>
-              <li class="sys_item d-flex justify-content-between"><a class="dropdown-item" id="logout_link" href="{% url 'logout' %}"><i class="fas fa-fw fa-sign-out-alt"></i> Sair</a><kbd class="align-self-center me-2">Alt+Q</kbd></li>
+              <li><a class="dropdown-item d-flex justify-content-between pe-2" id="logout_link" href="{% url 'logout' %}"><span><i class="fas fa-fw fa-sign-out-alt"></i> Sair</span><span class="fs-7 ms-3">Alt+Q</span></a></li>
             </ul>
           </li>
         </ul>          

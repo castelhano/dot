@@ -7,10 +7,14 @@ Classes Gerais do sistema, carregado em TODAS as paginas
 .cursor-default{cursor: default;}
 .pointer{cursor: pointer;}
 .help{cursor: help;}
+a{text-decoration: none;}
 .cursor-text{cursor:text;}
 select.readonly{background: rgb(233, 236, 239)!important;pointer-events: none;touch-action: none;}
 input[readonly], textarea[readonly]{background: rgb(233, 236, 239)!important;}
 [data-bs-theme="dark"] input[readonly], [data-bs-theme="dark"] .readonly, [data-bs-theme="dark"] .bg-light{background-color: #393939!important;color: #999!important;}
+
+
+.navbar-text-light *{--bs-navbar-brand-color: rgb(255, 255, 255);--bs-navbar-brand-hover-color: rgb(255, 255, 255); --bs-nav-link-color: rgba(255, 255, 255, 0.75); --bs-nav-link-hover-color: rgba(255, 255, 255, 0.9);}
 
 .table td.fit,.table th.fit {white-space: nowrap;width: 1%;}
 .table-sortable th {cursor: pointer;}
@@ -37,8 +41,8 @@ input[readonly], textarea[readonly]{background: rgb(233, 236, 239)!important;}
 .btn-pink, .bg-pink{background-color: #d63384;color: #FFF;}
 .btn-pink:hover{background-color: #ab296a;color: #FFF;}
 .btn-purple, .bg-purple{background-color: #6f42c1!important;color: #FFF!important;}
-.btn-purple-light, .bg-purple-light{background-color: #727cf5!important;color: #FFF!important;}
 .btn-purple:hover{background-color: #59359a!important;color: #FFF;}
+.btn-purple-light, .bg-purple-light{background-color: #727cf5!important;color: #FFF!important;}
 .btn-purple-light:hover{background-color: #6169d0!important;color: #FFF!important;}
 .btn-outline-purple{border-color: #6f42c1!important;color: #6f42c1!important;}
 .btn-outline-purple:hover{background-color: #6f42c1!important;color: #FFF!important;}
@@ -80,7 +84,7 @@ div.btn-light:hover{background-color: #d3d4d5;}
 [data-bs-theme="dark"] .filter-container{background-color: #3D3D3D;border:1px solid #3D3D3D;}
 [data-bs-theme="dark"] .filter-container a{color: #f1f1f1!important;}
 .filter-container ul{margin-bottom: 5px;}
-.filter-container ul a{text-decoration: none;color: #0d6efd!important;cursor: pointer;font-size:0.9rem;}
+.filter-container ul a{color: #0d6efd!important;cursor: pointer;font-size:0.9rem;}
 .filter-container a.active{font-weight: bold;}
 
 /* Estilos breakpoint LG+ */
@@ -136,10 +140,10 @@ div.btn-light:hover{background-color: #d3d4d5;}
 .callout-orange{border-left-color: #F35B04!important;}
 .callout > .body{padding: 10px;}
 .callout > .footer{background-color: #F9F9F9;}
+[data-bs-theme="dark"] .callout > .footer{background-color: #333333;}
 
 .fa-fw{margin-right: 4px;}
 .breadcrumb-item+.breadcrumb-item::before {content: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='8'><path d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='gray'/></svg>");}
-.breadcrumb-item > a{text-decoration: none;}
 
 .form-floating-display{padding: 1rem 0.75rem;border: 1px solid #ced4da;border-radius: 0.25rem;background-color: #e9ecef;}
 .form-floating-display, .form-floating-control{height: calc(3.5rem + 2px);line-height: 1.25;}
@@ -150,8 +154,8 @@ div.btn-light:hover{background-color: #d3d4d5;}
 .card-widget{min-height: 100px;border: 2px solid #FFF;position: relative;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;padding-right: 10px;}
 .card-widget > .lead-image{width: 100%;line-height: 250%;text-align: center;font-size: 3.2rem;}
 .card-widget-sm > .lead-image{width: 100%;line-height: 150%;text-align: center;font-size: 2.8rem;}
-.card-widget > .widget-label{font-size: 0.9rem;color: #FFF;text-decoration: none;}
-.card-widget-sm > .widget-label{font-size: 0.85rem;color: #FFF;text-decoration: none;}
+.card-widget > .widget-label{font-size: 0.9rem;color: #FFF;}
+.card-widget-sm > .widget-label{font-size: 0.85rem;color: #FFF;}
 .card-widget > .widget-control{position: absolute;padding-top: 5px;padding-bottom: 5px;padding-left: 14px;padding-right: 14px;border-radius: 25px;text-align: center;border: 1px solid transparent;cursor: pointer;top: 5px;right: 10px;z-index: 500;transition: background-color 0.3s;user-select: none;}
 .card-widget > .widget-control:hover{background-color: #FFF;opacity: 0.6;color: #444!important;}
 
