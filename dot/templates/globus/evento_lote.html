@@ -14,7 +14,7 @@
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'globus_escalas' %}"><i class="fas fa-undo"></i></a></li>
     </ul>
   </div>
-  <form id="app_form" action="{% url 'globus_evento_lote' %}" method="POST" autocomplete="off">
+  <form id="app_form" action="{% url 'globus_evento_lote' %}" method="POST" autocomplete="off" onsubmit="return submitForm()">
     {% csrf_token %}
     <div class="card-body tab-content">
       <h5 class="card-title mb-3">Escala: <span class="text-orange">Evento em Lote</span></h5>
@@ -29,7 +29,7 @@
           </ul>            
         </div>
         {% endif %}
-        {% include "_component/field/empresa.html" with empresa_atual=escala.empresa.id|safe breakpoint='col-lg-5 mb-1' attrs='autofocus' %}
+        {% include "_component/field/empresa.html" with empresa_atual=escala.empresa.id|safe container_classlist='form-floating col-lg-5 mb-1' attrs='autofocus' %}
         <div class="row g-1">
         	<div class="form-floating mb-lg-1 col-lg-3">
         		<select class="form-select bg-light" id="id_status" name="status">
@@ -58,6 +58,7 @@
   </form>
 </div>
 
+{% include "_component/modal/loading.html" with message='Processando requisição....' %}
 {% endblock%}
 
 {% block add_script_src %}{% endblock %}
@@ -66,6 +67,10 @@
   {% block add_script %}
   var TAB_ON_ENTER = true;
   SHORTCUT_MAP['1FTF'] = () => {document.getElementById('escala_add').click()}
+  
+  var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
+  function submitForm(){modal_loading.show();return true;}
+  
   var json_obj_target = document.getElementById('id_matriculas');
   
   dotToday(0,0,0,true, document.getElementById('id_data'));

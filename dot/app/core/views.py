@@ -733,7 +733,7 @@ def get_alertas(request):
 def get_agenda(request):
     ano = request.GET.get('ano', date.today().year)
     mes = request.GET.get('mes', date.today().month)
-    agenda = Agenda.objects.filter(data__year=ano,data__month=mes).order_by('data','inicio','termino')
+    agenda = Agenda.objects.filter(data__year=ano,data__month=mes,participantes=request.user).order_by('data','inicio','termino')
     obj = serializers.serialize('json', agenda)
     return HttpResponse(obj, content_type="application/json")
 

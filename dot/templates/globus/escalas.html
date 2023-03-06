@@ -88,7 +88,7 @@
             <td class="d-none d-md-table-cell">{{escala.tabela}}</td>
             <td>{{escala.inicio|default:''}}</td>
             <td class="d-none d-sm-table-cell">{{escala.termino|default:''}}</td>
-            <td class="d-none d-md-table-cell">{{escala.local_pegada}}</td>
+            <td class="d-none d-md-table-cell">{{escala.local_pegada|default:'--'}}</td>
             <td class="text-end fit py-1">
               {% if perms.globus.change_escala %}<a class="btn btn-sm btn-dark" href="{% url 'globus_escala_id' escala.id|safe %}"><i class="fas fa-pen"></i></a>{% endif %}
               {% if escala.status == 'E' %}<a class="btn btn-sm btn-dark" href="{% url 'globus_viagens' escala.id|safe %}?from=escalas"><i class="fas fa-list"></i></a>{% endif %}

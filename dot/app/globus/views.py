@@ -337,12 +337,14 @@ def evento_lote(request):
         try:
             empresa = Empresa.objects.get(id=request.POST['empresa'])
             matriculas = json.loads(request.POST['matriculas'])
+            log_importacao = datetime.now()
             has_errors = False
             for matricula in matriculas:
                 try:
                     e = Escala()
                     e.empresa = empresa
                     e.data = request.POST['data']
+                    e.log_importacao = log_importacao
                     e.status = request.POST['status']
                     e.funcionario = Funcionario.objects.get(matricula=matricula)
                     e.save()

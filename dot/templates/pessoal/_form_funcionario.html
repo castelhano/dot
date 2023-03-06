@@ -46,7 +46,7 @@
               {{ form.matricula }}
               <label for="id_matricula">Matricula</label>
             </div>
-            {% include "_component/field/empresa.html" with container_classlist='form-floating col mb-1' empresa_atual=linha.empresa.id|safe attrs='autofocus' %}
+            {% include "_component/field/empresa.html" with container_classlist='form-floating col mb-1' empresa_atual=funcionario.empresa.id|safe attrs='autofocus' %}
           </div>
           <div class="row g-1">
             <div class="form-floating mb-lg-1 col-lg-9">

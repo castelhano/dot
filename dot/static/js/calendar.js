@@ -41,10 +41,10 @@ class jsCalendar{
         this.yearPickerClassList = options?.yearPickerClassList || 'form-control form-control-sm me-1 fs-9'; // classlist do input number para ano
         this.taskListClasslist = options?.taskListClasslist || 'list-unstyled fs-7'; // classlist da lista de eventos (ul)
         this.customDayClasslist = options?.customDayClasslist || 'border py-1 bg-light fs-7'; // classlist de dia padrao
-        this.holidayClasslist = options?.holidayClasslist || 'border py-1 bg-danger-light fs-7'; // classlist do feriado
+        this.holidayClasslist = options?.holidayClasslist || 'border py-1 text-bg-danger bg-opacity-75 fs-7'; // classlist do feriado
         this.busyDayClasslist = options?.busyDayClasslist || 'border py-1 bg-purple-light fs-7'; // classlist de dia com evento (busy day)
         this.emptyDayClasslist = options?.emptyDayClasslist || 'border py-1'; // classlist do calendar
-        this.selectDayClasslist = options?.selectDayClasslist || 'border py-1 bg-warning fs-7'; // classlist do btn para selecionar dia
+        this.selectDayClasslist = options?.selectDayClasslist || 'border py-1 text-bg-warning fs-7'; // classlist do btn para selecionar dia
         this.calendarControlsChangeViewClasslist = options?.calendarControlsChangeViewClasslist || 'btn btn-sm btn-secondary fs-8 me-1 py-1 py-lg-0';
         this.calendarControlsCurrentClasslist = options?.calendarControlsCurrentClasslist || 'btn btn-sm btn-secondary fs-8 me-1 py-1 py-lg-0'; // classlist dos controles de navegacao
         this.calendarControlsNavegateClasslist = options?.calendarControlsNavegateClasslist || 'btn btn-sm btn-light fs-8 py-1 py-lg-0'; // classlist dos controles de navegacao

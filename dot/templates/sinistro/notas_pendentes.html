@@ -12,7 +12,7 @@
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
-      <li class="nav-item"><a class="nav-link pointer" id="search" data-bs-toggle="modal" data-bs-target="#search_modal" onclick="setTimeout(function(){document.getElementById('id_pesquisa').focus();},480);" title="CTRL + /"><i class="fas fa-search"></i></a></li>
+      <!-- <li class="nav-item"><a class="nav-link pointer" id="search" data-bs-toggle="modal" data-bs-target="#search_modal" onclick="setTimeout(function(){document.getElementById('id_pesquisa').focus();},480);" title="CTRL + /"><i class="fas fa-search"></i></a></li> -->
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'sinistro_oficinas' %}"><i class="fas fa-undo"></i></a></li>
     </ul>
   </div>
@@ -56,28 +56,6 @@
     </div>
   </div>
 </div>
-
-<div class="modal fade" id="search_modal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="row">
-        <div class="col"><h5 class="ms-3 mt-3">Pesquisa</h5></div>
-        <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
-      </div>
-      <div class="modal-body">
-        <form id="sinistro_form" action="{% url 'sinistro_notas_pendentes' %}" method="POST" autocomplete="off">
-          {% csrf_token %}
-          <div class="row g-1">
-            <div class="form-floating mb-1 col-lg-12">
-              <input type="text" class="form-control" name="pesquisa" value="" id="id_pesquisa" placeholder="">
-              <label for="id_pesquisa">Termo pesquisa</label>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
 {% endblock%}
 
 {% block add_script_src %}
@@ -88,10 +66,14 @@
 <script>
 {% block add_script %}
 const table = new jsTable(document.getElementById('main_table'), {
-  enablePaginate: true
+  enablePaginate: true,
+  canFilter: true,
+  filterCols: ['Oficina', 'Veiculo', 'Placa']
 });
 SHORTCUT_MAP['arrowdownFTF'] = () => {table.nextRow();}
 SHORTCUT_MAP['arrowupFTF'] = () => {table.previousRow();};
 SHORTCUT_MAP['enterFTF'] = () => {table.enterRow();}
+SHORTCUT_MAP['fFTF'] = () => {table.filterInput.select()};
+
 {% endblock %}
 </script>
