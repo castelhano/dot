@@ -13,6 +13,8 @@ select.readonly{background: rgb(233, 236, 239)!important;pointer-events: none;to
 input[readonly], textarea[readonly]{background: rgb(233, 236, 239)!important;}
 [data-bs-theme="dark"] input[readonly], [data-bs-theme="dark"] .readonly, [data-bs-theme="dark"] .bg-light, [data-bs-theme="dark"] textarea[readonly]{background-color: #393939!important;color: #999!important;}
 
+.slideIn{animation-fill-mode: both; animation-name: slideIn; animation-duration: 0.5s;}
+@keyframes slideIn{from{transform:translate3d(0,100%,0);visibility:visible;}to{transform:translate3d(0,0,0);}}
 
 .navbar-text-light *{--bs-navbar-brand-color: rgb(255, 255, 255);--bs-navbar-brand-hover-color: rgb(255, 255, 255); --bs-nav-link-color: rgba(255, 255, 255, 0.75); --bs-nav-link-hover-color: rgba(255, 255, 255, 0.9);}
 

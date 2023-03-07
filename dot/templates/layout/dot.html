@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="pt-br" dir="ltr">
+<html lang="pt-br" dir="ltr" data-bs-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,6 +29,13 @@
       right: 70px;
       font-size: 1.5rem;
       padding: 8px 15px;
+    }
+    #notify_container{
+      position: fixed;
+      top: 50px;
+      right: 0;
+      max-width: 450px;
+      z-index: 1000;
     }
 
     .settings_icon{
@@ -65,7 +72,7 @@
   {% endif %}
   <title>{% block title %}SIT{% endblock %}</title>
 </head>
-<body data-bs-theme="light" class="{% block body_classlist %}{% endblock %}" style="{% block body_style %}{% endblock %}">
+<body class="{% block body_classlist %}{% endblock %}" style="{% block body_style %}{% endblock %}">
   <nav class="navbar navbar-expand-lg sticky-top py-1 shadow-sm border-bottom navbar-dot {% block navbar_classlist %}bg-body bg-gradient{% endblock %}">
     <div class="container-fluid">
       <ul class="navbar-nav"><li class="nav-item"><a class="nav-link ps-0 pe-3" id="home" href="{% url 'index' %}" title="INICIO [ ALT + I ]"><i class="fas fa-th-large fs-5"></i></a></li></ul>
@@ -120,6 +127,7 @@
   
   
   <div class="container-fluid">
+    <div id="notify_container"></div>
     {% block content_fluid %}{% endblock %}        
   </div>
   
@@ -210,17 +218,17 @@
 
     
     if(localStorage.theme){
-      document.body.dataset.bsTheme = localStorage.theme;
+      document.documentElement.dataset.bsTheme = localStorage.theme;
       document.getElementById('themeSwitch').checked = localStorage.theme == 'dark';
     }
 
     document.getElementById('themeSwitch').onclick = (e) => {
       if(e.target.checked){
-        document.body.dataset.bsTheme = 'dark';
+        document.documentElement.dataset.bsTheme = 'dark';
         localStorage.theme = 'dark'
       }
       else{
-        document.body.dataset.bsTheme = 'light';
+        document.documentElement.dataset.bsTheme = 'light';
         localStorage.theme = 'light'
       }
     };

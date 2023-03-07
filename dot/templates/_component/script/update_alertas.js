@@ -16,7 +16,7 @@ function carregaAlertas() {
           if(obj[item].fields.link != ''){
             link = `<a class="${link_style} d-inline-block" href="${obj[item].fields.link}">Detalhes</a>`;
           }
-          let marcar_lido = `<button class="btn-close" role="button" onclick="marcarAlertaLido(${obj[item].pk})"></button>`;
+          let marcar_lido = `<button class="btn-close" data-bs-dismiss="alert" role="button" onclick="marcarAlertaLido(${obj[item].pk})"></button>`;
           let pin = obj[item].fields.critico == true ? '<sup><i class="fas fa-thumbtack text-body-tertiary ms-2 fs-7"></i></sup>' : '';
           let alerta = document.createElement('div');alerta.classList = `${alert_style}`;
           alerta.innerHTML = `<h6 class="m-0">${titulo}${pin}</h6></div><div class="fs-7">${mensagem}</div>${link}${marcar_lido}</div>`

@@ -4,7 +4,7 @@
 {% block model %}999 <b class="ms-2">Test Page</b>{% endblock %}
 
 {% block style_src %}
-<link rel="stylesheet" href="{% static 'css/timeline.css' %}">
+<!-- <link rel="stylesheet" href="{% static 'css/vendor/inmate.css' %}"> -->
 {% endblock%}
 <style>
   {% block style %}
@@ -24,27 +24,19 @@
     <li class="event event-danger" data-date="Mai 22">Evento danger</li>
     <li class="event event-success" data-date="20/05/22 - 14h05"><h5>Titulo evento</h5><p>Texto do evento</p></li>
   </ul>
-
 {% endblock%}
 
 {% block offcanvas_body %}
-  <div class="alert alert-dark alert-dismissible mb-1" role="alert">
-    <h6>Teste</h6>
+  <div data-bs-theme="dark" class="alert alert-dark alert-dismissible mb-1" role="alert">
     <div>A simple dark alert—check it out!</div>
-    <a href="">Detalhes</a>
+    <a href="">Detalhe</a>
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-  </div>
-  <div class="alert alert-dark mb-1" role="alert">
-    A simple dark alert—check it out!
-  </div>
-  <div class="alert alert-dark mb-1" role="alert">
-    A simple dark alert—check it out!
   </div>
   {% endblock %}
 
 
 {% block add_script_src %}
-<!-- <script src="{% static 'js/table.js' %}"></script> -->
+<!-- <script src="{% static 'js/vendor.js' %}"></script> -->
 {% endblock %}
 
 
