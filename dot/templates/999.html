@@ -25,10 +25,22 @@
     <li class="event event-success" data-date="20/05/22 - 14h05"><h5>Titulo evento</h5><p>Texto do evento</p></li>
   </ul>
 
-
-
-
 {% endblock%}
+
+{% block offcanvas_body %}
+  <div class="alert alert-dark alert-dismissible mb-1" role="alert">
+    <h6>Teste</h6>
+    <div>A simple dark alert—check it out!</div>
+    <a href="">Detalhes</a>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  <div class="alert alert-dark mb-1" role="alert">
+    A simple dark alert—check it out!
+  </div>
+  <div class="alert alert-dark mb-1" role="alert">
+    A simple dark alert—check it out!
+  </div>
+  {% endblock %}
 
 
 {% block add_script_src %}

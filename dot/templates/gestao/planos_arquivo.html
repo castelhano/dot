@@ -26,32 +26,36 @@
     <h5 class="card-title mb-0">Arquivo (planos): <b class="text-purple">{{user.username|title}}</b></h5>
     <p class="mb-0 fw-bold text-body-secondary">{{staff.get_role_display}}</p>
     <div class="tab-pane fade show active" id="base" role="tabpanel">
-      <table id="main_table" class="table border table-striped table-hover fs-7">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Empresa</th>
-            <th>Titulo</th>
-            <th>Responsavel</th>
-            <th>Inicio</th>
-            <th>Termino</th>
-            <th>&nbsp;</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for plano in planos %}
-          <tr>
-            <td>{{plano.id|safe}}</td>
-            <td>{{plano.diretriz.empresa.nome}}</td>
-            <td>{{plano.titulo|truncatechars:30}}</td>
-            <td>{{plano.responsavel.usuario.username|title|default:'--'}}</td>
-            <td>{{plano.inicio|date:'d/m/Y'|default:'--'}}</td>
-            <td>{{plano.termino|date:'d/m/Y'|default:'--'}}</td>
-            <td class="text-end fit py-1"><a class="btn btn-sm btn-secondary" href="{% url 'gestao_plano_id' plano.id %}"><i class="fas fa-pen"></i></a></td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+      <div class="">
+        <table id="main_table" class="table border table-striped table-hover fs-7">
+          <thead>
+            <tr>
+              <th class="d-none d-lg-table-cell">#</th>
+              <th>Empresa</th>
+              <th>Indicador</th>
+              <th>Titulo</th>
+              <th class="d-none d-lg-table-cell">Responsavel</th>
+              <th class="d-none d-lg-table-cell">Inicio</th>
+              <th class="d-none d-lg-table-cell">Termino</th>
+              <th>&nbsp;</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for plano in planos %}
+            <tr>
+              <td class="d-none d-lg-table-cell">{{plano.id|safe}}</td>
+              <td>{{plano.diretriz.empresa.nome}}</td>
+              <td>{{plano.diretriz.indicador.nome}}</td>
+              <td>{{plano.titulo}}</td>
+              <td class="d-none d-lg-table-cell">{{plano.responsavel.usuario.username|title|default:'--'}}</td>
+              <td class="d-none d-lg-table-cell">{{plano.inicio|date:'d/m/Y'|default:'--'}}</td>
+              <td class="d-none d-lg-table-cell">{{plano.termino|date:'d/m/Y'|default:'--'}}</td>
+              <td class="text-end fit py-1"><a class="btn btn-sm btn-secondary" href="{% url 'gestao_plano_id' plano.id %}"><i class="fas fa-pen"></i></a></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
@@ -67,7 +71,8 @@
 
   const table = new jsTable(document.getElementById('main_table'), {
     canFilter: true,
-    filterCols: ['Titulo', 'Responsavel']
+    filterCols: ['Titulo', 'Responsavel'],
+    enablePaginate: true
   });
 
   SHORTCUT_MAP['fFTF'] = () => {table.filterInput.select()};

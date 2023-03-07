@@ -110,7 +110,7 @@
                   <div class="col-auto">
                     <a class="text-body-secondary px-2" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu dropdown-menu-end fs-7">
-                      <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#avaliar_modal" onclick="setAvaliacaoPlano({{plano.id|safe}}, {{plano.conclusao|safe}},{{plano.avaliacao|safe}})" href="#"><i class="fas fa-star fa-fw text-primary"></i> Avaliar</a></li>
+                      <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#avaliar_modal" onclick="setAvaliacaoPlano({{plano.id|safe}}, {{plano.conclusao|safe}},{{plano.avaliacao|safe}}, '{{plano.titulo}}')" href="#"><i class="fas fa-star fa-fw text-primary"></i> Avaliar</a></li>
                       {% if plano.bloqueado and staff.role == 'M' %}
                       <li><a class="dropdown-item pointer" href="{% url 'gestao_plano_movimentar' plano.id|safe %}?operacao=unlock" onclick="modal_loading.show()"><i class="fas fa-lock-open fa-fw"></i> Desbloquear</a></li>
                       {% elif staff.role == 'M' %}
@@ -168,7 +168,7 @@
             </div>
             <div class="card-body p-0 pb-2 fs-7">
               {% for diretriz in diretrizes %}
-              <div class="border-top border-bottom p-2 mt-2 bg-white">
+              <div class="border-top border-bottom p-2 mt-2 bg-body">
                 <div class="row">
                   <div class="col text-truncate"><a class="fw-bold text-decoration-none mb-0" href="{% url 'gestao_diretriz_id' diretriz.id %}">{{diretriz.titulo}}</a></div>
                   {% if staff.role != 'O' %}

@@ -234,7 +234,9 @@ def agenda_add(request):
                 messages.error(request,'Erro ao inserir agenda [INVALID FORM]')
                 return redirect('core_agendas')
     else:
-        form = AgendaForm()
+        agenda = Agenda()
+        agenda.data = request.GET['data']
+        form = AgendaForm(instance=agenda)
     return render(request,'core/agenda_add.html',{'form':form})
 
 @login_required

@@ -33,6 +33,7 @@ class jsSelectm{
         let style = document.createElement('style');
         style.innerHTML = '.jsSelectm_wrapper{border: 1px solid #ced4da;border-radius: 0.375rem;padding: 0.375rem 0.875rem 0.475rem 0.75rem;}';
         style.innerHTML += '.jsSelectm_wrapper.disabled{background-color: #E9ECEF;}';
+        style.innerHTML += '[data-bs-theme="dark"] .jsSelectm_wrapper.disabled{background-color: #393939;}';
         style.innerHTML += '.jsSelectm_wrapper small{display: block; margin-bottom: 5px;}';
         style.innerHTML += '.jsSelectm_wrapper > div{max-height:230px;overflow-y: scroll;}';
         style.innerHTML += '.jsSelectm_wrapper div[data-value]{padding: 2px 5px 2px 5px; border-radius: 3px;}';

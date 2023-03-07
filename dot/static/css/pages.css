@@ -2,6 +2,7 @@ control-A4 {display: block;margin: 0 auto;width: 28cm;}
 /* Only on XXL Medias */
 @media(min-width: 1200px){
   page {background: white;margin: 0 auto;margin-bottom: 0.5cm;box-shadow: 0 0 0.1cm rgba(0,0,0,0.2);}
+  [data-bs-theme="dark"] page{background-color: #3d3d3d!important;}
   page[size="A4"] {width: 28cm;height: 29.7cm;}
   page[size="A4"][layout="landscape"] {width: 29.7cm;height: 21cm;}
   page[size="A3"] {width: 29.7cm;height: 42cm;}

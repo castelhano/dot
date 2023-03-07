@@ -10,16 +10,16 @@ function carregaAlertas() {
         for(item in obj){
           let titulo = obj[item].fields.titulo;
           let mensagem = obj[item].fields.mensagem;
-          let alert_style = obj[item].fields.alert_class_list != '' ? obj[item].fields.alert_class_list : 'bg-dark-alt border border-4 border-oil text-light';
-          let action_style = obj[item].fields.action_class_list != '' ? obj[item].fields.action_class_list : 'btn btn-sm btn-secondary opacity-75 rounded-0';
+          let alert_style = obj[item].fields.alert_class_list != '' ? obj[item].fields.alert_class_list : 'alert alert-dark alert-dismissible mb-1 pb-2';
+          let link_style = obj[item].fields.action_class_list != '' ? obj[item].fields.action_class_list : 'fs-7';
           let link = '';
           if(obj[item].fields.link != ''){
-            link = `<a class="${action_style}" href="${obj[item].fields.link}">Link</a>`;
+            link = `<a class="${link_style} d-inline-block" href="${obj[item].fields.link}">Detalhes</a>`;
           }
-          let marcar_lido = `<a class="${action_style}" onclick="marcarAlertaLido(${obj[item].pk})">Fechar</a>`;
-          let pin = obj[item].fields.critico == true ? '<i class="fas fa-thumbtack text-body-secondary ms-auto fs-5" style="position:absolute;top:0px;right:2px;"></i>' : '';
-          let alerta = document.createElement('div');alerta.classList = `col-12 ${alert_style} p-3 mb-2`;
-          alerta.innerHTML = `<div style="position:relative;"><h6 class="m-0">${titulo}</h6>${pin}</div><p class="text-justify mt-2 fs-7">${mensagem}</p><div class="row"><div class="col d-grid">${link}</div><div class="col d-grid">${marcar_lido}</div></div>`
+          let marcar_lido = `<button class="btn-close" role="button" onclick="marcarAlertaLido(${obj[item].pk})"></button>`;
+          let pin = obj[item].fields.critico == true ? '<sup><i class="fas fa-thumbtack text-body-tertiary ms-2 fs-7"></i></sup>' : '';
+          let alerta = document.createElement('div');alerta.classList = `${alert_style}`;
+          alerta.innerHTML = `<h6 class="m-0">${titulo}${pin}</h6></div><div class="fs-7">${mensagem}</div>${link}${marcar_lido}</div>`
           document.getElementById('offcanvas_body').appendChild(alerta);
           qtde++;
         }

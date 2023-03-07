@@ -28,11 +28,11 @@
       <table id="main_table" class="table border table-striped table-hover fs-7">
         <thead>
           <tr>
-            <th>#</th>
-            <th class="d-none d-lg-table-cell">Empresa</th>
-            <th class="d-none d-md-table-cell">Titulo</th>
+            <th class="d-none d-lg-table-cell">#</th>
+            <th>Empresa</th>
             <th class="d-none d-lg-table-cell">Indicador</th>
-            <th>Criado por</th>
+            <th>Titulo</th>
+            <th class="d-none d-lg-table-cell">Criado por</th>
             <th>Criado em</th>
             <th class="d-none d-md-table-cell">Analise</th>
             <th>&nbsp;</th>
@@ -41,11 +41,11 @@
         <tbody>
           {% for diretriz in diretrizes %}
           <tr>
-            <td>{{diretriz.id|safe}}</td>
-            <td class="d-none d-lg-table-cell">{{diretriz.empresa.nome}}</td>
-            <td class="d-none d-md-table-cell">{{diretriz.titulo|truncatechars:20}}</td>
-            <td class="d-none d-md-table-cell">{{diretriz.indicador.nome}}</td>
-            <td>{{diretriz.created_by.username|title}}</td>
+            <td class="d-none d-lg-table-cell">{{diretriz.id|safe}}</td>
+            <td>{{diretriz.empresa.nome}}</td>
+            <td class="d-none d-lg-table-cell">{{diretriz.indicador.nome}}</td>
+            <td>{{diretriz.titulo}}</td>
+            <td class="d-none d-lg-table-cell">{{diretriz.created_by.username|title}}</td>
             <td>{{diretriz.created_on|date:"d/m/Y"}}</td>
             <td class="d-none d-md-table-cell">{{diretriz.analise.id|default:'--'}}</td>            
             <td class="text-end fit py-1"><a class="btn btn-sm btn-secondary" href="{% url 'gestao_diretriz_id' diretriz.id|safe %}"><i class="fas fa-pen"></i></a></td>

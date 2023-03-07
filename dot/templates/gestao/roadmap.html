@@ -7,12 +7,12 @@
 {% block style_src %}<link rel="stylesheet" href="{% static 'css/color_extra.css' %}" type="text/css">{% endblock%}
 
 {% block style %}
-.rm-container{background-color: #F5F6F6;margin-bottom:4px;}
+.rm-container{margin-bottom:4px;}
 .rm-container:last-of-type{margin-bottom:0px;}
-.progress{height:22px;position:relative;color: inherit;}
-.rm-header{text-align: center;border-right: 1px solid #d6d6d6;}
+.progress{height:22px;position:relative;}
+.rm-header{text-align: center;border-right: 1px solid #999;}
 .rm-header:last-of-type{border: 0px;}
-.rm-item-label{position: absolute; right:8px; padding-top:2px;color: inherit;}
+.rm-item-label{position: absolute; right:8px; padding-top:2px;}
 
 @media(max-width: 992px){
 .progress-bar,.rm-item-label{color: transparent;}
@@ -53,10 +53,10 @@
         </div>
       </div>
       <div class="row mb-1 fs-7">
-        <div class="col-2 d-none d-md-flex text-center bg-light py-2" style="max-width: 180px;">
-          <span class="">Indicador</span>
+        <div class="col-2 d-none d-md-block text-center bg-body-tertiary pt-2" style="max-width: 180px;">
+          <span>Indicador</span>
         </div>
-        <div class="col rm-container py-2 px-0">
+        <div class="col bg-body-secondary py-2 px-0">
           <div class="row ps-2">
             {% for mes, abbr in meses %}
             <div class="col rm-header"><span class="d-none d-md-block">{{mes}}</span><span class="d-block d-md-none">{{abbr}}</span></div>

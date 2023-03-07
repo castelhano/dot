@@ -37,7 +37,7 @@
                 <div class="col-lg mt-3 mt-lg-2">
                     <div class="row g-0">
                         <div class="col"><h5 class="text-body-secondary" id="title_selected_day"></h5></div>
-                        {% if perms.core.add_agenda %}<div class="col-auto pe-4"><a id="add" class="btn btn-sm btn-success" href="{% url 'core_agenda_add' %}"><i class="fas fa-plus"></i></a></div>{% endif %}
+                        {% if perms.core.add_agenda %}<div class="col-auto pe-4"><span id="add" class="btn btn-sm btn-success" onclick="urlFilterTo('/core_agenda_add','data',`${calendar.selectedDays[0]}`)"><i class="fas fa-plus"></i></span></div>{% endif %}
                     </div>
                     <div class="table-responsive">
                         <table class="table table-sm table-hover fs-7 user-select-none">
@@ -127,7 +127,6 @@ const calendar = new jsCalendar({
             showDayTimeline(today)
         }
     },
-    calendarControlsCurrentClasslist: 'btn btn-sm btn-purple-light fs-8 me-1 py-1 py-lg-0',
     calendarControlsSelectDayClasslist: 'btn btn-sm btn-purple-light fs-9'
 });
 

@@ -11,7 +11,7 @@ const __ss = __sw == null ? null : __sw >= 1400 ? 'xxl' : __sw >= 1200 ? 'xl' : 
 * @example  dotAlert('warning', 'Este eh um <b>alerta de exemplo</b>')
 */
 function dotAlert(tipo, mensagem, autodismiss=true){
-  try {document.querySelector('[data-type="dotAlert"]').remove();}catch(e){}let e = document.createElement('div');e.setAttribute('data-type','dotAlert');e.style.zIndex = 100;let b = document.createElement('button');b.classList.add('btn-close');b.setAttribute('data-bs-dismiss','alert');e.classList.add('alert', `alert-${tipo}`,'alert-dismissible','fade','show','mb-0','dotAlertCustom');e.innerHTML = mensagem;e.appendChild(b);document.body.appendChild(e);if(autodismiss){setTimeout(function() {e.remove()}, 4500);}}
+  try {document.querySelector('[data-type="dotAlert"]').remove();}catch(e){}let e = document.createElement('div');e.setAttribute('data-type','dotAlert');e.style.zIndex = 100;let b = document.createElement('button');b.classList.add('btn-close');b.setAttribute('data-bs-dismiss','alert');e.classList.add('alert','dotAlert',`alert-${tipo}`,'alert-dismissible','fade','show','mb-0');e.innerHTML = mensagem;e.appendChild(b);document.body.appendChild(e);if(autodismiss){setTimeout(function() {e.remove()}, 4500);}}
 
 /*
 * getCookie Busca no arquivo de cookie pela chave informada e retorna o valor
