@@ -99,7 +99,7 @@ select.buildOptions();</code></pre>
             <div class="body"><i class="fas fa-info fa-fw text-info"></i>As opções que não forem localizadas nem nenhum grupo serão adicionadas ao final do select.</div>
           </div>
 
-          <h5 class="onchange">Método <code>onchange</code></h5>
+          <h5 id="onchange">Método <code>onchange</code></h5>
           <p>É possivel fornecer função auxiliar que será acionada sempre que o select for alterado.</p>
           <pre><code class="language-javascript">const select = new jsSelectm(document.getElementById('meu_select'), {
   onchange: () => {...doSomething}
@@ -126,6 +126,7 @@ select.buildOptions();</code></pre>
                 <tr><td>title</td><td>string</td><td>Titulo para o select</td><td>''</td></tr>
                 <tr><td>onchange</td><td>function</td><td>Função a ser acionada ao alterar opções <a href="#onchange">ver aqui</a>.</td><td>null</td></tr>
                 <tr><td>disabled</td><td>bool</td><td>Se definido para <i>true</i> desativa alterações no componente.</td><td>false</td></tr>
+                <tr><td>checkAll</td><td>bool</td><td>Se definido para <i>true</i> insere botão <b>selecionar todos</b>.</td><td>true</td></tr>
                 <tr><td>reorderOptions</td><td>bool</td><td>Se definido para <i>true</i> reordena options pelo innerText (incompatível quando usando grupos).</td><td>true</td></tr>
               </tbody>
             </table>

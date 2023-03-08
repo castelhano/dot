@@ -24,6 +24,8 @@
     <li class="event event-danger" data-date="Mai 22">Evento danger</li>
     <li class="event event-success" data-date="20/05/22 - 14h05"><h5>Titulo evento</h5><p>Texto do evento</p></li>
   </ul>
+
+  <span id="foo"></span>
 {% endblock%}
 
 {% block offcanvas_body %}
@@ -42,5 +44,22 @@
 
 <script>
 {% block add_script %}
+
+let element = document.getElementById('foo');
+let step = 0;
+let max = 300;
+let interval = 0; 
+function update() {
+  var identity = setInterval(scene, interval);
+  function scene() {
+    if (step >= max) {
+      clearInterval(identity);
+    } else {
+      step++; 
+      element.innerHTML = `${step} de ${max}`;
+    }
+  }
+}
+update()
 {% endblock %}
 </script>

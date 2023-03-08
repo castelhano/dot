@@ -31,8 +31,25 @@
   var TAB_ON_ENTER = true;
   var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false})
 
+  const targetOptions = document.getElementById('id_permissions').options;
+  let perms = {};
+  const permsGroups = {};
+  const avoidGroups = ['admin','contenttypes','sessions'];
+  for(i = 0; i < targetOptions.length; i++){
+    let nome_split = targetOptions[i].innerText.split(' | ');
+    if(avoidGroups.includes(nome_split[0])){continue;}
+    if(Object.keys(permsGroups).includes(nome_split[0])){ // Verifica se grupo ja foi iniciado, se sim adiciona item no grupo
+      permsGroups[nome_split[0]].push(`${targetOptions[i].value}`);
+    }
+    else{ // Caso nao, inicia grupo
+      permsGroups[nome_split[0]] = [`${targetOptions[i].value}`];
+    }
+    perms[targetOptions[i].value] = `<span class="text-purple">${nome_split[1]}</span>: ${nome_split[2]}`;
+  }
   const select = new jsSelectm(document.getElementById('id_permissions'), {
-    title: 'Permissões'
+    title: 'Permissões',
+    options: perms,
+    groups: permsGroups
   });
   
   {% endblock %}
