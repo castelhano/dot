@@ -31,8 +31,8 @@
           <table id="main_table" class="table border table-striped table-hover">
             <caption class="fs-7">
               <div class="d-flex flex-column pe-1">
-                <span class="me-1"><small class="badge bg-dark" style="width: 35px;">SU</small> Super usuário</span>
-                <span><small class="badge bg-primary" style="width: 35px;">ME</small> Membro de equipe</span>
+                <span class="me-1"><small class="badge me-2" style="background-color: var(--bs-dark-text); color: var(--bs-body-bg); width: 35px;">SU</small>Super usuário</span>
+                <span><small class="badge bg-primary me-2" style="width: 35px;">ME</small>Membro de equipe</span>
               </div>
             </caption>
             <thead>
@@ -52,7 +52,7 @@
               {% for usuario in usuarios %}
               <tr>
                 <td class="d-none d-sm-table-cell">{{usuario.id|safe}}</td>
-                <td>{{usuario.username}}{% if usuario.is_superuser %} <sup class="badge bg-dark fs-9" title="Super Usuário">SU</sup>{% endif %}{% if usuario.is_staff %} <sup class="badge bg-primary fs-9" title="Membro de equipe">ME</sup>{% endif %}</td>
+                <td>{{usuario.username}}{% if usuario.is_superuser %} <sup class="badge fs-9" style="background-color: var(--bs-dark-text); color: var(--bs-body-bg);" title="Super Usuário">SU</sup>{% endif %}{% if usuario.is_staff %} <sup class="badge bg-primary fs-9" title="Membro de equipe">ME</sup>{% endif %}</td>
                 <td class="d-none d-md-table-cell">{{usuario.first_name}}</td>
                 <td class="d-none d-md-table-cell">{{usuario.last_name}}</td>
                 <td>{{usuario.is_active|yesno:"<b class='text-success'>Ativo</b>,<b class='text-danger'>Inativo</b>"|safe}}</td>

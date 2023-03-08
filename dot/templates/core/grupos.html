@@ -6,8 +6,6 @@
 {% endblock%}
   
 {% block content_fluid %}
-<a class="d-none" id="clear" href="{% url 'core_grupos' %}"></a>
-
 <div class="card mt-2">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
@@ -58,7 +56,7 @@
       </div>
       <div class="col-lg-auto ps-auto ps-lg-0 order-1 order-lg-2">
         <div class="filter-container">
-          <h6 class="text-body-secondary" style="cursor: help;" title="ALT + L para limpar filtros">Filtros:</h6>
+          <h6 class="text-body-secondary d-flex justify-content-between">Filtros:<a class="text-body-secondary text-decoration-none fs-8" id="clear" href="{% url 'core_grupos' %}">Limpar</a></h6>
           <ul class="list-unstyled">
             <li><a id="id_sem_associacoes" onclick="urlFilter('_associacoes','False')">Sem associações</a></li>
           </ul>
