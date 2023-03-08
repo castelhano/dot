@@ -128,7 +128,6 @@ class jsSelectm{
         let optionTxt = document.createElement('span');optionTxt.classList = 'fs-7 text-secondary';optionTxt.innerHTML = 'Marcar todos';
         selectAll.onclick = (e) => {
             this.loadingStatus.style.display = 'inline-block';
-            this.target.innerHTML = ''; // Limpa as options do target pois nao sera chamado funcao rebuildTargetOptions por questoes de performance
             setTimeout(() => { // Adiciona timeout para exibir this.loadingStatus antes de inicar processo..
                 if(selectAll.dataset.checked != undefined){
                     checkIcon.classList = this.iconUncheckedClasslist;
@@ -146,10 +145,10 @@ class jsSelectm{
                     selectAll.parentNode.querySelectorAll('div[data-value]:not([data-select])').forEach((el) => {
                         el.setAttribute('data-select', '');
                         el.querySelector('i').classList = this.iconCheckedClasslist;
-                        this.target.innerHTML += `<option value="${el.dataset.value}" selected>${el.innerText}</option>`; // Insere option no target select para cada opcao selecionada
                     });
                 }
                 this.loadingStatus.style.display = 'none';
+                this.rebuildTargetOptions();
                 this.onchange();
             }, 15);
         };
@@ -177,6 +176,7 @@ class jsSelectm{
         this.rebuildTargetOptions();
     }
     rebuildTargetOptions(){
+        this.target.innerHTML = '';
         this.optionsContainer.querySelectorAll('[data-select]').forEach((e, i) => {
             this.target.innerHTML += `<option value="${e.dataset.value}" selected>${e.innerText}</option>`;
         })
