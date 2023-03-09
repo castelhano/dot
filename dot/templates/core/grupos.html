@@ -45,9 +45,12 @@
               <tr>
                 <td>{{grupo.id|safe}}</td>
                 <td>{{grupo.name}}</td>
-                {% if perms.auth.change_group %}
-                <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'core_grupo_id' grupo.id|safe %}"><i class="fas fa-pen"></i></a></td>
-                {% endif %}
+                <td class="text-end fit py-1">
+                  {% if perms.auth.change_group %}
+                  <a class="btn btn-sm btn-dark" href="{% url 'core_grupo_id' grupo.id|safe %}"><i class="fas fa-pen"></i></a>
+                  {% endif %}
+                  <a class="btn btn-sm btn-warning" href="{% url 'core_usuarios_grupo' grupo.id|safe %}" title="Usuarios do grupo"><i class="fas fa-users"></i></a>
+                </td>
               </tr>
               {% endfor %}
             </tbody>

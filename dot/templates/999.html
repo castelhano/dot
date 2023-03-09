@@ -45,21 +45,5 @@
 <script>
 {% block add_script %}
 
-let element = document.getElementById('foo');
-let step = 0;
-let max = 300;
-let interval = 0; 
-function update() {
-  var identity = setInterval(scene, interval);
-  function scene() {
-    if (step >= max) {
-      clearInterval(identity);
-    } else {
-      step++; 
-      element.innerHTML = `${step} de ${max}`;
-    }
-  }
-}
-update()
 {% endblock %}
 </script>

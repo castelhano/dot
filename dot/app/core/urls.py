@@ -21,6 +21,7 @@ urlpatterns = [
     path('core_usuario_id/<int:id>',views.usuario_id,name='core_usuario_id'),
     path('core_usuario_update/<int:id>',views.usuario_update,name='core_usuario_update'),
     path('core_usuario_delete/<int:id>',views.usuario_delete,name='core_usuario_delete'),
+    path('core_usuarios_grupo/<int:id>',views.usuarios_grupo,name='core_usuarios_grupo'),
     path('core_grupos',views.grupos,name='core_grupos'),
     path('core_grupo_add',views.grupo_add,name='core_grupo_add'),
     path('core_grupo_id/<int:id>',views.grupo_id,name='core_grupo_id'),

@@ -44,6 +44,15 @@ def grupos(request):
     return render(request,'core/grupos.html',{'grupos':grupos})
 
 @login_required
+@permission_required('auth.view_group')
+def usuarios_grupo(request, id):
+    grupo = Group.objects.get(pk=id)
+    usuarios = User.objects.filter(groups=grupo)
+    print(usuarios)
+    return render(request, 'core/usuarios_grupo.html',{'grupo':grupo,'usuarios':usuarios})
+
+
+@login_required
 @permission_required('auth.view_user')
 def usuarios(request):
     usuarios = User.objects.all().order_by('username')
