@@ -2,16 +2,18 @@ const __sw = screen?.width || null;
 const __ss = __sw == null ? null : __sw >= 1400 ? 'xxl' : __sw >= 1200 ? 'xl' : __sw >= 992 ? 'lg' : __sw >= 768 ? 'md' : 'sm' ;
 
 /*
-* dotAlert Gera um alerta (bootstrap alert)
+* dotAlert  Gera um alerta (bootstrap alert)
+* dotNotify Gera um alerta simples, na caixa de norificação do systema
 *
 * @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }
 * @param    {String} tipo Tipo do alerta (info, danger, warning, success, primary, etc..)
 * @param    {String} mensagem Mensagem do alerta
 * @param    {Bool} autodismiss [Opcional] Remove automaticamente alerta apos 4,5 segundos se setado para true (default), altere para false para exigir remocao manual
 * @example  dotAlert('warning', 'Este eh um <b>alerta de exemplo</b>')
+* @example  dotNotify('danger', 'Este eh um <b>alerta de exemplo</b>')
 */
 function dotAlert(tipo, mensagem, autodismiss=true){
-  try {document.querySelector('[data-type="dotAlert"]').remove();}catch(e){}let e = document.createElement('div');e.setAttribute('data-type','dotAlert');e.style.zIndex = 100;let b = document.createElement('button');b.classList.add('btn-close');b.setAttribute('data-bs-dismiss','alert');e.classList.add('alert','dotAlert',`alert-${tipo}`,'alert-dismissible','fade','show','mb-0');e.innerHTML = mensagem;e.appendChild(b);document.body.appendChild(e);if(autodismiss){setTimeout(function() {e.remove()}, 4500);}}
+  try {document.querySelector('[data-type="dotAlert"]').remove();}catch(e){}let e = document.createElement('div');e.setAttribute('data-type','dotAlert');e.style.zIndex = 100;let b = document.createElement('button');b.classList.add('btn-close');b.setAttribute('data-bs-dismiss','alert');e.classList.add('alert','slideIn','dotAlert',`alert-${tipo}`,'alert-dismissible','fade','show','mb-0');e.innerHTML = mensagem;e.appendChild(b);document.body.appendChild(e);if(autodismiss){setTimeout(function() {e.remove()}, 5000);}}
 
 function dotNotify(tipo, mensagem, autodismiss=true){
   try {document.querySelector('[data-type="dotAlert"]').remove();}catch(e){} let e = document.createElement('div'); e.classList = `alert alert-${tipo} alert-dismissible slideIn mb-2`; let b = document.createElement('button'); b.classList = 'btn-close'; b.setAttribute('data-bs-dismiss','alert'); e.innerHTML = mensagem; e.appendChild(b); document.getElementById('notify_container').appendChild(e); if(autodismiss){setTimeout(function() {e.remove()}, 4500);} }
