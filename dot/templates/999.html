@@ -4,7 +4,7 @@
 {% block model %}999 <b class="ms-2">Test Page</b>{% endblock %}
 
 {% block style_src %}
-<!-- <link rel="stylesheet" href="{% static 'css/vendor/inmate.css' %}"> -->
+<link rel="stylesheet" href="{% static 'css/timeline.css' %}">
 {% endblock%}
 <style>
   {% block style %}
@@ -19,13 +19,13 @@
     <li class="breadcrumb-item active">Data</li>
   </ol>
 
-  <ul class="timeline timeline-sm">
+  <ul class="timeline timeline-sm my-4">
     <li class="event" data-date="20/05/22 - 14h05">Evento simples <div class="event-controls"><a class="btn btn-sm btn-light" href="">FOO</a></div></li>
     <li class="event event-danger" data-date="Mai 22">Evento danger</li>
     <li class="event event-success" data-date="20/05/22 - 14h05"><h5>Titulo evento</h5><p>Texto do evento</p></li>
   </ul>
 
-  <span id="foo"></span>
+  <input type="text" id="myInput" class="form-control" onkeydown="onKeyDown()" onkeyup="onKeyUp()">
 {% endblock%}
 
 {% block offcanvas_body %}
@@ -36,6 +36,8 @@
   </div>
   {% endblock %}
 
+  
+
 
 {% block add_script_src %}
 <!-- <script src="{% static 'js/vendor.js' %}"></script> -->
@@ -44,6 +46,25 @@
 
 <script>
 {% block add_script %}
+
+let latsInput;
+let interval = 800;
+let input = document.getElementById('myInput');
+
+function onKeyUp(){
+  clearTimeout(latsInput);
+  latsInput = setTimeout(run,interval);
+}
+
+function onKeyDown(){
+  clearTimeout(latsInput);
+}
+
+function run(){
+  console.log('PAROU DE DIGITAR');
+}
+
+
 
 {% endblock %}
 </script>
