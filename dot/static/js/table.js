@@ -30,12 +30,14 @@ class jsTable{
         this.exportButtonCSV = null;
         this.saveBtn = null;
         this.filterInput = null;
+        this.dataUrlTimeout = null; // Armazena o timeout para realizar consulta ajax
         // Configuracao ********
         this.data = options?.data || []; // Json com dados para popular tabela
         this.dataUrl = options?.dataUrl || null; // URL para buscar registros (via ajax)
         this.dataUrlKeyName = options?.dataUrlKeyName || 'pesquisa'; // Nome da variavel usada na consulta ajax
         this.dataUrlAdicionalFilters = options?.dataUrlAdicionalFilters || ''; // Filtros adicionais a serem adicionados na consulta ajax
         this.dataUrlMinDigits = options?.dataUrlMinDigits != undefined ? options.dataUrlMinDigits : 3; // Busca ajax eh acionada com no minimo de digitos setado em dataUrlMinDigits
+        this.dataUrlDelay = options?.dataUrlDelay || 800; // Delay em milisegundos entre os inputs para realizar a consulta ajax
         this.container = options?.container || document.body; // parentNode da tabela, usado na construcao de tabela pelo evento createTable(), caso nao informado append nova tabela no body
         this.caption = options?.caption || null;
         this.showCounterLabel = options?.showCounterLabel != undefined ? options.showCounterLabel : true;
@@ -211,7 +213,10 @@ class jsTable{
             this.filterInput.disabled = this.filterCols.length || this.dataUrl != null ? false : true; // Disabled elemento se nao informado colunas para filtrar (filterCols) ou definido url para busca ajax
             this.filterInput.classList = 'form-control form-control-sm';
             this.filterInput.placeholder = this.dataUrl != null ? 'Pesquisa' : 'Filtrar*';
-            if(this.dataUrl != null){this.filterInput.onkeyup = (e) => this.dataUrlGet(e)} // Se dataUrl busca dados ajax ao digitar
+            if(this.dataUrl != null){ // Se dataUrl busca dados ajax ao digitar
+                this.filterInput.onkeyup = (e) => {this.dataUrlKeyup(e)};
+                this.filterInput.onkeydown = (e) => {this.dataUrlKeydown(e)};
+            }
             else{this.filterInput.onkeyup = (e) => this.filter(e);} // Caso nao, aciona metodo para filtrar eventos da tabela
             capFilter.appendChild(this.filterInput);
             capRow.appendChild(capFilter);
@@ -312,8 +317,13 @@ class jsTable{
         }
         this.rowsReset();
     }
-    dataUrlGet(e){ // Funcao chamada no keyup do filterInput se definido dataUrl
-        if(e != undefined && [37, 38, 39, 40, 13].includes(e.keyCode)){return false;} // Nao busca registros caso tecla seja enter ou arrows
+    dataUrlKeyup(e){
+        clearTimeout(this.dataUrlTimeout);
+        if(e != undefined && [16, 17, 18, 37, 38, 39, 40, 13].includes(e.keyCode)){return false;} // Nao busca registros caso tecla seja enter, arrows, shift, cntrl ou alt
+        this.dataUrlTimeout = setTimeout(this.dataUrlGet.bind(this), this.dataUrlDelay);
+    }
+    dataUrlKeydown(e){clearTimeout(this.dataUrlTimeout)}
+    dataUrlGet(){ // Funcao chamada no keyup do filterInput se definido dataUrl
         let criterio = this.filterInput.value.trim();
         let self = this; // Workaround para resolver conflito dentro da funcao ajax (this passa a se referir ao XMLHttpRequest)
         if(criterio.length >= this.dataUrlMinDigits){ // Aciona o ajax somente se tiver um minimo de caracteres digitados

@@ -1,6 +1,5 @@
 {% extends "layout/dot.html" %}
 {% load static %}
-
 {% block model %}999 <b class="ms-2">Test Page</b>{% endblock %}
 
 {% block style_src %}
@@ -19,13 +18,13 @@
     <li class="breadcrumb-item active">Data</li>
   </ol>
 
-  <ul class="timeline timeline-sm my-4">
-    <li class="event" data-date="20/05/22 - 14h05">Evento simples <div class="event-controls"><a class="btn btn-sm btn-light" href="">FOO</a></div></li>
-    <li class="event event-danger" data-date="Mai 22">Evento danger</li>
-    <li class="event event-success" data-date="20/05/22 - 14h05"><h5>Titulo evento</h5><p>Texto do evento</p></li>
-  </ul>
 
-  <input type="text" id="myInput" class="form-control" onkeydown="onKeyDown()" onkeyup="onKeyUp()">
+  <div class="row">
+    <div class="col-2">
+      <input type="date" id="myInput" class="form-control">
+    </div>
+  </div>
+
 {% endblock%}
 
 {% block offcanvas_body %}
@@ -40,30 +39,15 @@
 
 
 {% block add_script_src %}
-<!-- <script src="{% static 'js/vendor.js' %}"></script> -->
+<script src="{% static 'js/date.js' %}"></script>
 {% endblock %}
 
 
 <script>
 {% block add_script %}
 
-let latsInput;
-let interval = 800;
-let input = document.getElementById('myInput');
-
-function onKeyUp(){
-  clearTimeout(latsInput);
-  latsInput = setTimeout(run,interval);
-}
-
-function onKeyDown(){
-  clearTimeout(latsInput);
-}
-
-function run(){
-  console.log('PAROU DE DIGITAR');
-}
-
+var DATE_EXTRA_START = true;
+dateInputExtra_start();
 
 
 {% endblock %}

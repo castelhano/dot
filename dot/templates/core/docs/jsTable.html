@@ -82,7 +82,9 @@ emptyTableMessage: 'Selecione um filtro ou mude o criterio da pesquisa'
       return HttpResponse(dataJSON)
   except:
       return HttpResponse('')
-# Opcional: Informe dataUrlMinDigits: x para alterar a quantidade de digitos minimos antes de realizar o ajax (default 3)</code></pre>
+# Confuguracoes opcionais:
+# dataUrlMinDigits: x para alterar a quantidade de digitos minimos antes de realizar o ajax (default 3)
+# dataUrlDelay: x para alterar o delay em milisegundos entre inputs (800 por default)</code></pre>
 
           <h5 id="filtrando_registros">Filtrando Registros</h5>
           <pre><code class="language-javascript">const table = new jsTable(document.getElementById('table'), {
@@ -109,6 +111,7 @@ emptyTableMessage: 'Selecione um filtro ou mude o criterio da pesquisa'
                 <tr><td>dataUrlKeyName</td><td>string</td><td>Nome variavel do criterio consulta ajax</td><td>'pesquisa'</td></tr>
                 <tr><td>dataUrlAdicionalFilters</td><td>string</td><td>String com criterios adicionais para pesquisa</td><td>''</td></tr>
                 <tr><td>dataUrlMinDigits</td><td>int</td><td>Quantidade de digitos minimos para consulta ajax</td><td>3</td></tr>
+                <tr><td>dataUrlDelay</td><td>int</td><td>Milisegundos de delay antes de executar ajax</td><td>800</td></tr>
                 <tr><td>container</td><td>element</td><td>Parent element para a tabela a ser criada</td><td>document.body</td></tr>
                 <tr><td>caption</td><td>string</td><td>Texto do caption da tabela </td><td>''</td></tr>
                 <tr><td>showCounterLabel</td><td>bool</td><td>Exibir/oculta o contador de linhas</td><td>true</td></tr>

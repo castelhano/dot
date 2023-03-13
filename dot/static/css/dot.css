@@ -96,7 +96,7 @@ div.btn-light:hover{background-color: #d3d4d5;}
   .dropdown-menu > li:hover > .submenu{display: block;}
   .dropdown-menu li{position: relative;}
   .dropdown-menu > li:hover, .dropdown-menu > li.hover{background-color: #F1F1F1;}
-  [data-bs-theme="dark"] .dropdown-menu > li:hover, .dropdown-menu > li.hover{background-color: rgb(43, 48, 53);}
+  [data-bs-theme="dark"] .dropdown-menu > li:hover,[data-bs-theme="dark"] .dropdown-menu > li.hover{background-color: rgb(43, 48, 53);}
   .dropdown-menu-dark > li:hover, .dropdown-menu-dark > li.hover{background-color: #52575D;}
   .placeholder-end-lg::placeholder {text-align: right;font-weight: bold;color: #999;}
   .dotAlert{position: fixed;width: 100%;bottom: 1px;}
