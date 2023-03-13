@@ -75,27 +75,10 @@ def globus(request, params):
         return [False, '<b>Operação inválida</b>, verifique os dados digitados']
 
 def runScript(request, params):
-    # try:
+    try:
         if params['code'] == '666':
-            from gestao.models import Plano, Diretriz, Indicador
-            from datetime import date
-            i = Indicador.objects.get(id=1)
-            d = Diretriz()
-            d.indicador = i
-            d.titulo = 'Aumentar a media de combustivel em 5% ate Maio 22'
-            d.detalhe = 'Detalhes da diretriz seram exibidos desta forma.....'
-            d.created_on = date.today()
-            d.created_by = request.user
-            d.save()
-            p = Plano()
-            p.diretriz = d
-            p.titulo = 'Titulo do plano de ação para media de diesel'
-            p.created_on = date.today()
-            p.created_by = request.user
-            p.save()            
-            p.staff.add(request.user)
-            return [True, 'Done...']
+            return [True, 'Nenhum erro, mais <b>nada</b> a fazer']
         else:
             return [False, 'Código de script <b>inválido ou expirado</b>']
-    # except Exception as e:
-    #     return [False, 'Script mal formatado, verifique os dados lançados']
+    except Exception as e:
+        return [False, 'Script mal formatado, verifique os dados lançados']

@@ -18,13 +18,6 @@
     <li class="breadcrumb-item active">Data</li>
   </ol>
 
-
-  <div class="row">
-    <div class="col-2">
-      <input type="date" id="myInput" class="form-control">
-    </div>
-  </div>
-
 {% endblock%}
 
 {% block offcanvas_body %}
@@ -46,9 +39,7 @@
 <script>
 {% block add_script %}
 
-var DATE_EXTRA_START = true;
-dateInputExtra_start();
-
+dotNotify('warning', 'Texto de exemplo <a href="#" class="alert-link mx-2">Foo</a>', false);
 
 {% endblock %}
 </script>

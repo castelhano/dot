@@ -48,7 +48,7 @@
             </thead>
             <tbody>
               {% for indicador in indicadores %}
-              <tr class="{% if not indicador.ativo %}table-warning{% endif %}">
+              <tr class="{% if not indicador.ativo %}table-emphasis{% endif %}">
                 <td class="d-none">{{indicador.id|safe}}</td>
                 <td>{{indicador.nome}}</td>
                 <td class="d-none d-md-table-cell">{{indicador.meta|floatformat:indicador.precisao|default:'--'}} {{indicador.medida}}</td>

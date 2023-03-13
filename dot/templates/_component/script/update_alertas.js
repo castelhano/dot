@@ -14,7 +14,7 @@ function carregaAlertas() {
           let link_style = obj[item].fields.action_class_list != '' ? obj[item].fields.action_class_list : 'fs-7';
           let link = '';
           if(obj[item].fields.link != ''){
-            link = `<a class="${link_style} d-inline-block" href="${obj[item].fields.link}">Detalhes</a>`;
+            link = `<a class="${link_style} d-inline-block" href="${obj[item].fields.link}" target="_blank">Detalhes</a>`;
           }
           let marcar_lido = `<button class="btn-close" data-bs-dismiss="alert" role="button" onclick="marcarAlertaLido(${obj[item].pk})"></button>`;
           let pin = obj[item].fields.critico == true ? '<sup><i class="fas fa-thumbtack text-body-tertiary ms-2 fs-7"></i></sup>' : '';

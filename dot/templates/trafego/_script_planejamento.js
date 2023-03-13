@@ -5,7 +5,7 @@ function buildPatamares(){
   let tbody = document.getElementById('patamares_tbody');  
   tbody.innerHTML = '';
   for(i=0;i < patamares.length;i++){
-    tbody.innerHTML += `<tr><td class="table-secondary">${patamares[i][0]}</td><td class="table-secondary">${patamares[i][1]}</td><td id="${i}_2" contenteditable="true" oninput="setPatamar(this.id, this.innerHTML)">${patamares[i][2]}</td><td id="${i}_3" contenteditable="true" oninput="setPatamar(this.id, this.innerHTML)">${patamares[i][3]}</td><td id="${i}_4" contenteditable="true" oninput="setPatamar(this.id, this.innerHTML)">${patamares[i][4]}</td><td id="${i}_5" class="table-warning text-truncate">${patamares[i][5]}</td></tr>`;
+    tbody.innerHTML += `<tr><td class="table-secondary">${patamares[i][0]}</td><td class="table-secondary">${patamares[i][1]}</td><td id="${i}_2" contenteditable="true" oninput="setPatamar(this.id, this.innerHTML)">${patamares[i][2]}</td><td id="${i}_3" contenteditable="true" oninput="setPatamar(this.id, this.innerHTML)">${patamares[i][3]}</td><td id="${i}_4" contenteditable="true" oninput="setPatamar(this.id, this.innerHTML)">${patamares[i][4]}</td><td id="${i}_5" class="table-emphasis text-truncate">${patamares[i][5]}</td></tr>`;
   }
 }
 

@@ -184,6 +184,7 @@
 
 <script>
   {% block add_script %}
+  SHORTCUT_MAP['.TFF'] = () => {document.getElementById('cadastro_ocorrencia').click()};
   SHORTCUT_MAP['fFTF'] = () => {document.getElementById('adicional_filters_link').click()};
 
   const table = new jsTable(document.getElementById('table_terceiros'), {});  

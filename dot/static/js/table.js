@@ -74,7 +74,7 @@ class jsTable{
         this.saveButtonText = options?.saveButtonText || '<i class="fas fa-save px-1"></i>';
         this.restoreButtonClasslist = options?.restoreButtonClasslist || 'btn btn-sm btn-outline-secondary d-none';
         this.restoreButtonText = options?.restoreButtonText || '<i class="fas fa-history px-1"></i>';
-        this.activeRowClasslist = options?.activeRowClasslist || 'table-dark';
+        this.activeRowClass = options?.activeRowClass || 'bg-body-secondary';
         this.pgControlClasslist = options?.pgControlClasslist || 'pagination justify-content-end'; 
         this.pgPageClasslist = options?.pgPageClasslist || 'page-item';
         this.pgLinkClasslist = options?.pgLinkClasslist || 'page-link fs-7 px-2 py-1';
@@ -410,7 +410,7 @@ class jsTable{
         else{this.lastPage = 1; this.activePage = 1;} // Se tabela vazia, cria uma unica pagina e aponta p ela
         this.pgBuildPageControls(this.lastPage);
         this.activeRow = null; // Limpa foco na linha (caso linha focada)
-        try {this.activeRowEl.classList.remove(this.activeRowClasslist);}catch(e){} // Limpa foco na linha (caso linha focada)
+        try {this.activeRowEl.classList.remove(this.activeRowClass);}catch(e){} // Limpa foco na linha (caso linha focada)
         this.activeRowEl = null; // Limpa foco na linha (caso linha focada)
 
     }
@@ -445,10 +445,10 @@ class jsTable{
         if(tableRowsCount == this.activeRow + 1){this.firstRow();return false;} // Se estiver apontando para a ultima linha, retorna para a primeira
         if(this.activeRow == null){this.activeRow = 0;}
         else{
-            this.tbody.querySelectorAll('tr')[this.activeRow].classList.remove(this.activeRowClasslist); // Remove classe da linha em foco atual
+            this.tbody.querySelectorAll('tr')[this.activeRow].classList.remove(this.activeRowClass); // Remove classe da linha em foco atual
             this.activeRow ++;
         }
-        this.tbody.querySelectorAll('tr')[this.activeRow].classList.add(this.activeRowClasslist); // Adiciona classe na linha destino
+        this.tbody.querySelectorAll('tr')[this.activeRow].classList.add(this.activeRowClass); // Adiciona classe na linha destino
         this.activeRowEl = this.tbody.querySelectorAll('tr')[this.activeRow]; // Aponta para tr em foco
     }
     previousRow(){
@@ -457,26 +457,26 @@ class jsTable{
         if(this.activeRow == 0){this.lastRow();return false;} // Se estiver apontando para a primeira linha, foca ultima linha da tabela
         if(this.activeRow == null){this.activeRow = 0;}
         else{
-            this.tbody.querySelectorAll('tr')[this.activeRow].classList.remove(this.activeRowClasslist); // Remove classe da linha em foco atual
+            this.tbody.querySelectorAll('tr')[this.activeRow].classList.remove(this.activeRowClass); // Remove classe da linha em foco atual
             this.activeRow --;
         }
-        this.tbody.querySelectorAll('tr')[this.activeRow].classList.add(this.activeRowClasslist); // Adiciona classe na linha destino
+        this.tbody.querySelectorAll('tr')[this.activeRow].classList.add(this.activeRowClass); // Adiciona classe na linha destino
         this.activeRowEl = this.tbody.querySelectorAll('tr')[this.activeRow]; // Aponta para tr em foco
     }
     firstRow(){
         let tableRowsCount = this.tbody.querySelectorAll('tr:not(.emptyRow)').length;
         if(tableRowsCount == 0){return false;} // Se tabela vazia nao executa codigo
-        if(this.activeRow != null){this.tbody.querySelectorAll('tr')[this.activeRow].classList.remove(this.activeRowClasslist);} // Remove classe da linha em foco atual}
+        if(this.activeRow != null){this.tbody.querySelectorAll('tr')[this.activeRow].classList.remove(this.activeRowClass);} // Remove classe da linha em foco atual}
         this.activeRow = 0;
-        this.tbody.querySelectorAll('tr')[0].classList.add(this.activeRowClasslist); // Adiciona classe na linha destino
+        this.tbody.querySelectorAll('tr')[0].classList.add(this.activeRowClass); // Adiciona classe na linha destino
         this.tbody.querySelectorAll('tr')[0].focus(); // Move o foco
     }
     lastRow(){
         let tableRowsCount = this.tbody.querySelectorAll('tr:not(.emptyRow)').length;
         if(tableRowsCount == 0){return false;} // Se tabela vazia nao executa codigo
-        if(this.activeRow != null){this.tbody.querySelectorAll('tr')[this.activeRow].classList.remove(this.activeRowClasslist);} // Remove classe da linha em foco atual}
+        if(this.activeRow != null){this.tbody.querySelectorAll('tr')[this.activeRow].classList.remove(this.activeRowClass);} // Remove classe da linha em foco atual}
         this.activeRow = tableRowsCount - 1;
-        this.tbody.querySelectorAll('tr')[this.activeRow].classList.add(this.activeRowClasslist); // Adiciona classe na linha destino
+        this.tbody.querySelectorAll('tr')[this.activeRow].classList.add(this.activeRowClass); // Adiciona classe na linha destino
     }
     enterRow(){
         if(this.activeRow != null){

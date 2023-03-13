@@ -64,12 +64,8 @@
               <option value="{{msg.id|safe}}" data-message="{{msg.detalhe}}">{{msg.abbr}}</option>
               {% endfor %}              
         		</select>
+            <small class="ps-1">Mensagens pré-definidas</small>
         	</div>
-          {% if perms.trafego.view_predefinido %}
-          <div class="col-auto">
-            <a class="btn btn-warning" href="{% url 'trafego_predefinidos' %}"><i class="fas fa-list"></i></a>
-          </div>
-          {% endif %}
         </div>
       </div>
     </div>

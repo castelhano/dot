@@ -56,7 +56,7 @@ h7{display: block;}
         </thead>
         <tbody>
           {% for viagem in viagens %}
-          <tr class="{% if not viagem.produtiva %}table-warning{% endif %}">
+          <tr class="{% if not viagem.produtiva %}table-emphasis{% endif %}">
             <td class="d-none d-lg-table-cell">{{forloop.counter}}</td>
             <td><h6>{{viagem.escala.linha.codigo}}</h6><span>{{viagem.get_sentido_display|default:'--'}}</span></td>
             <td><h7>{{viagem.origem|default:'--'}}</h7><span>{{viagem.destino|default:'--'}}</span></td>
