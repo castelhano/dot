@@ -10,7 +10,7 @@
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
-      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'gestao_staffs' %}"><i class="fas fa-undo"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'gestao_staffs' %}?usuario__is_active=True"><i class="fas fa-undo"></i></a></li>
     </ul>
   </div>
   <form id="app_form" action="{% url 'gestao_staff_add' %}" method="POST" autocomplete="off">

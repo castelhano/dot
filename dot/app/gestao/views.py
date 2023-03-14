@@ -651,9 +651,10 @@ def analise_add(request):
             # Se analise for nao conforme ou melhoria gera alerta para staffs no grupo Manager informando da nova analise
             if analise.tipo in ['N','M']:
                 staffs = Staff.objects.filter(role__in=['M','E','G'], usuario__is_active=True).exclude(usuario=analise.created_by)
+                critico = '<br /><b class="text-danger">Critico</b>' if analise.critico else ''
                 params = {
-                    'titulo':'Nova análise crítica inserida',
-                    'mensagem':f'ID: <b>{analise.id}</b> <br />Tipo: <b>{analise.get_tipo_display()}</b> <br />Critico: <b>{analise.critico}</b> <br />Responsável: <b>{analise.created_by.username.title()}</b>',
+                    'titulo':'Nova análise crítica',
+                    'mensagem':f'ID: <b>{analise.id}</b> <br />Tipo: <b>{analise.get_tipo_display()}{critico}<br />Responsável: <b>{analise.created_by.username.title()}</b>',
                     'link': 'gestao_analises'
                 }
                 for item in staffs:
@@ -934,6 +935,7 @@ def analise_update(request):
         messages.error(request,f'<b>Erro</b> {e}')
         return redirect('gestao_dashboard')
     try:
+        changed_tipo = analise.tipo != request.POST['tipo']
         analise.descricao = request.POST['descricao']
         analise.tipo = request.POST['tipo']
         if 'critico' in request.POST:
@@ -941,6 +943,18 @@ def analise_update(request):
         else:
             analise.critico = False
         analise.save()
+        # Se analise for nao conforme ou melhoria gera alerta para staffs no grupo Manager informando da nova analise
+        if changed_tipo and analise.tipo in ['N','M']:
+            staffs = Staff.objects.filter(role__in=['M','E','G'], usuario__is_active=True).exclude(usuario=analise.created_by)
+            critico = '<br /><b class="text-danger">Critico</b>' if analise.critico else ''
+            params = {
+                'titulo':'Nova análise crítica',
+                'mensagem':f'ID: <b>{analise.id}</b> <br />Tipo: <b>{analise.get_tipo_display()}</b>{critico}<br />Responsável: <b>{analise.created_by.username.title()}</b>',
+                'link': f'gestao_analises'
+            }
+            for item in staffs:
+                params['usuario'] = item.usuario                    
+                Alerta.objects.create(**params)
         l = Log()
         l.modelo = "gestao.analise"
         l.objeto_id = analise.id

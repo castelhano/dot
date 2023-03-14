@@ -67,7 +67,7 @@
         </thead>
         <tbody>
           {% for linha in linhas %}
-          <tr class="{% if linha.status == 'I' %}table-danger{% endif %}">
+          <tr class="{% if linha.status == 'I' %}table-caution{% endif %}">
             <td class="d-none">{{linha.id|safe}}</td>
  						<td class="d-none d-lg-table-cell">{{linha.empresa.nome}}</td>
  						<td>{{linha.codigo}}</td>

@@ -157,7 +157,7 @@
                     <li><a class="dropdown-item pointer" href="{% url 'gestao_indicadores' %}"><i class="fas fa-chart-line fa-fw"></i> Indicadores</a></li>
                     <li><a class="dropdown-item pointer" href="{% url 'gestao_analises' %}"><i class="fas fa-check-double fa-fw"></i> Análises</a></li>
                     {% endif %}
-                    {% if perms.gestao.staff %}<li><a class="dropdown-item pointer" href="{% url 'gestao_staffs' %}"><i class="fas fa-users fa-fw"></i> Staff</a></li>{% endif %}
+                    {% if perms.gestao.staff %}<li><a class="dropdown-item pointer" href="{% url 'gestao_staffs' %}?usuario__is_active=True"><i class="fas fa-users fa-fw"></i> Staff</a></li>{% endif %}
                     {% if staff.role == 'M' %}
                     <li><a class="dropdown-item pointer" href="{% url 'gestao_labels' %}"><i class="fas fa-tags fa-fw"></i> Labels</a></li>
                     <li><a class="dropdown-item dropdown-item-purple pointer" href="{% url 'gestao_settings' %}"><i class="fas fa-cogs fa-fw"></i> Settings</a></li>

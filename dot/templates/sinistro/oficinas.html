@@ -50,7 +50,7 @@
         </thead>
         <tbody>
           {% for oficina in oficinas %}
-          <tr class="{% if not oficina.ativa %}table-danger{% endif %}">
+          <tr class="{% if not oficina.ativa %}table-caution{% endif %}">
             <td>{{oficina.id|safe}}</td>
             <td>{{oficina.nome}}</td>
             <td class="d-none d-md-table-cell">{{oficina.contato}}</td>

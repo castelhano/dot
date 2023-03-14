@@ -93,7 +93,7 @@
         </thead>
         <tbody>
           {% for reclamacao in reclamacoes %}
-          <tr class="{% if reclamacao.tratado %}table-success{% elif reclamacao.dias_pendentes > prazo %}table-danger{% endif %}">
+          <tr class="{% if reclamacao.tratado %}table-success{% elif reclamacao.dias_pendentes > prazo %}table-caution{% endif %}">
             <td class="d-none d-sm-table-cell">{{reclamacao.id|safe}}</td>
             <td class="d-none d-lg-table-cell">{{reclamacao.empresa.nome}}</td>
             <td>{{reclamacao.entrada|date:'d/m H:i'}}</td>

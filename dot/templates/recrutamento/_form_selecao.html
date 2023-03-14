@@ -59,7 +59,7 @@
           </thead>
           <tbody>
             {% for avaliacao in selecao.avaliacoes %}
-            <tr class="{% if avaliacao.status == 'R' %} table-danger{% elif avaliacao.status == 'A' %} table-success{% endif %}">
+            <tr class="{% if avaliacao.status == 'R' %} table-caution{% elif avaliacao.status == 'A' %} table-success{% endif %}">
               <td>{{avaliacao.criterio.nome}}</td>
               <td>{{avaliacao.get_status_display}}</td>
               {% if perms.recrutamento.delete_avaliacao %}

@@ -60,7 +60,7 @@
                     <a class="text-body-secondary px-2" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu dropdown-menu-end fs-7 analise_menu">
                       {% if staff.role == 'M' or staff.role == 'E' and analise.created_by == user %}
-                      <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#editar_modal" onclick="analiseEditar('{{analise.id|safe}}','{{analise.indicador.nome}}','{{analise.tipo}}',{{analise.critico|yesno:'true,false'}},'{{analise.descricao}}')" href="#"><i class="fas fa-pen fa-fw"></i> Editar</a></li>
+                      <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#editar_modal" onclick="analiseEditar('{{analise.id|safe}}','{{analise.indicador.nome}}','{{analise.tipo}}',{{analise.critico|yesno:'true,false'}},'{{analise.descricao|linebreaksbr}}')" href="#"><i class="fas fa-pen fa-fw"></i> Editar</a></li>
                       <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#arquivar_modal" onclick="analiseArquivar({{analise.id|safe}})" href="#"><i class="fas fa-check text-success fa-fw"></i> Concluir</a></li>
                       <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal" onclick="analiseDelete({{analise.id|safe}})" href="#"><i class="fas fa-times fa-fw"></i> Excluir</a></li>
                       {% endif %}
@@ -68,7 +68,7 @@
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col-12">{{analise.descricao}}</div>
+                  <div class="col-12">{{analise.descricao|linebreaksbr}}</div>
                   <div class="col-12 text-body-secondary fs-8"><b>{{analise.created_by.username|title}}</b> em <b>{{analise.created_on|date:"d/m/y"}}</b></div>
                 </div>
               </div>
@@ -76,7 +76,6 @@
               <p class="p-2">Nenhuma avaliação</p>                
               {% endfor %}                
             </div>
-            
           </div>
         </div>
         <div class="col-lg">
@@ -95,7 +94,7 @@
                     <a class="text-body-secondary px-2" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu dropdown-menu-end analise_menu fs-7">
                       {% if staff.role == 'M' or staff.role == 'E' and analise.created_by == user %}
-                      <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#editar_modal" onclick="analiseEditar('{{analise.id|safe}}','{{analise.indicador.nome}}','{{analise.tipo}}',{{analise.critico|yesno:'true,false'}},'{{analise.descricao}}')" href="#"><i class="fas fa-pen fa-fw"></i> Editar</a></li>
+                      <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#editar_modal" onclick="analiseEditar('{{analise.id|safe}}','{{analise.indicador.nome}}','{{analise.tipo}}',{{analise.critico|yesno:'true,false'}},'{{analise.descricao|linebreaksbr}}')" href="#"><i class="fas fa-pen fa-fw"></i> Editar</a></li>
                       <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#arquivar_modal" onclick="analiseArquivar({{analise.id|safe}})" href="#"><i class="fas fa-check text-success fa-fw"></i> Concluir</a></li>
                       <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal" onclick="analiseDelete({{analise.id|safe}})" href="#"><i class="fas fa-times fa-fw"></i> Excluir</a></li>
                       {% endif %}
@@ -103,7 +102,7 @@
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col-12">{{analise.descricao}}</div>
+                  <div class="col-12">{{analise.descricao|linebreaksbr}}</div>
                   <div class="col-12 text-body-secondary fs-8"><b>{{analise.created_by.username|title}}</b> em <b>{{analise.created_on|date:"d/m/y"}}</b></div>
                 </div>
               </div>
@@ -129,14 +128,14 @@
                     <a class="text-body-secondary px-2" data-bs-toggle="dropdown" href="#" role="button"><i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu dropdown-menu-end analise_menu fs-7">
                       {% if staff.role == 'M' or staff.role == 'E' and analise.created_by == user %}
-                      <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#editar_modal" onclick="analiseEditar('{{analise.id|safe}}','{{analise.indicador.nome}}','{{analise.tipo}}',{{analise.critico|yesno:'true,false'}},'{{analise.descricao}}')" href="#"><i class="fas fa-pen fa-fw"></i> Editar</a></li>
+                      <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#editar_modal" onclick="analiseEditar('{{analise.id|safe}}','{{analise.indicador.nome}}','{{analise.tipo}}',{{analise.critico|yesno:'true,false'}},'{{analise.descricao|linebreaksbr}}')" href="#"><i class="fas fa-pen fa-fw"></i> Editar</a></li>
                       <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal" onclick="analiseDelete({{analise.id|safe}})" href="#"><i class="fas fa-times fa-fw"></i> Excluir</a></li>
                       {% endif %}
                     </ul>
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col-12">{{analise.descricao}}</div>
+                  <div class="col-12">{{analise.descricao|linebreaksbr}}</div>
                   <div class="col-12 text-body-secondary fs-8"><b>{{analise.created_by.username|title}}</b> em <b>{{analise.created_on|date:"d/m/y"}}</b></div>
                 </div>
               </div>
@@ -275,7 +274,7 @@
       document.getElementById('id_analise_tipo').value = tipo;
       let swt = document.getElementById('id_critico');
       if(swt.checked && !critico || !swt.checked && critico){swt.click();}
-      document.getElementById('id_descricao').value = descricao;
+      document.getElementById('id_descricao').value = descricao.replaceAll('<br>','\n');
     }catch(e){console.log(e);}
   }
   

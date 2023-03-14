@@ -55,7 +55,7 @@
         </thead>
         <tbody>
           {% for frota in frotas %}
-          <tr class="{% if frota.status == 'V' %} table-danger{% elif frota.status != 'A' %} table-emphasis{% endif %}">
+          <tr class="{% if frota.status == 'V' %} table-caution{% elif frota.status != 'A' %} table-emphasis{% endif %}">
             <td class="d-none">{{frota.id|safe}}</td>
             <td class="d-none d-lg-table-cell">{{frota.empresa.nome}}</td>
             <td>{{frota.prefixo}}</td>

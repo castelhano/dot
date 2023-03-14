@@ -50,7 +50,7 @@
         </thead>
         <tbody>
           {% for selecao in selecoes %}
-          <tr class="{% if selecao.resultado == 'A' %} table-success {% elif selecao.resultado == 'R' %} table-danger{% endif %}">
+          <tr class="{% if selecao.resultado == 'A' %} table-success {% elif selecao.resultado == 'R' %} table-caution{% endif %}">
             <td class="d-none d-lg-table-cell">{{selecao.id|safe}}</td>
             <td>{% if perms.recrutamento.change_candidato %}<a class="px-2" href="{% url 'recrutamento_candidato_id' selecao.candidato.id|safe %}"><i class="fas fa-arrow-left text-primary"></i></a> {% endif %}{{selecao.candidato.nome}}</td>
             <td class="d-none d-lg-table-cell">{{selecao.vaga.cargo.nome}}</td>
@@ -198,7 +198,7 @@
   				for(key in obj){
             let dados = obj[key].split(';')
             let action = ``;
-            let resultado_display = dados[6] == '' ? '' : dados[6] == 'A' ? 'table-success' : 'table-danger';
+            let resultado_display = dados[6] == '' ? '' : dados[6] == 'A' ? 'table-success' : 'table-caution';
             agendamentos.innerHTML += `<tr class="${resultado_display}"><td class="d-none">${dados[0]}</td><td>${dados[1]}</td><td class="d-none d-lg-table-cell">${dados[2]}</td><td>${dados[3]}</td><td class="d-none d-lg-table-cell">${dados[4]}</td><td class="d-none d-lg-table-cell">${dados[5]}</td><td class="text-end fit py-1"><a class="btn btn-sm btn-dark{% if not perms.recrutamento.change_selecao %} disabled{% endif %}" href="recrutamento_selecao_id/${key}"><i class="fas fa-pen"></a></td></tr>`;
           }
   			}
