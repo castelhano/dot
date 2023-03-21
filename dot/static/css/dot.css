@@ -137,10 +137,7 @@ div.btn-light:hover{background-color: #d3d4d5;}
 .placeholder-end::placeholder {text-align: right;font-weight: bold;color: #999;}
 
 .callout{border: 1px solid #e9ecef;border-left-width: .25rem;border-radius: .25rem;}
-/* [data-bs-theme="dark"] .callout, */
-/* [data-bs-theme="dark"] .form-control, [data-bs-theme="dark"] .form-select
-{background-color: #3d3d3d;border-color: #3d3d3d; color: #F1F1F1;}
-[data-bs-theme="dark"] .form-control:focus, [data-bs-theme="dark"] .form-control:focus-within{background-color: #4f4f4f;} */
+[data-bs-theme="dark"] .callout{background-color: #393939}
 .callout-secondary{border-left-color: #6C757D!important;}
 .callout-primary{border-left-color: #0D6EFD!important;}
 .callout-info{border-left-color: #5bc0de!important;}
