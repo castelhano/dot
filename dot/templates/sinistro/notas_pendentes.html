@@ -46,7 +46,7 @@
             <td class="d-none d-lg-table-cell">{{terceiro.cor}}</td>
             <td class="d-none d-lg-table-cell">{{terceiro.placa}}</td>
             <td>{{terceiro.acordo}}</td>
-            {% if perms.acidente.change_terceiro %}
+            {% if perms.sinistro.change_terceiro %}
             <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'sinistro_terceiro_id' terceiro.id|safe %}"><i class="fas fa-user"></i></a></td>
             {% endif %}
           </tr>

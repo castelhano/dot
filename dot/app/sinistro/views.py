@@ -429,6 +429,9 @@ def acidente_id(request, id):
     if acidente.created_by != request.user and not request.user.has_perm('sinistro.tratar_acidente'):
         messages.warning(request,'<b>Atenção.</b> Você nao tem acesso para visualizar este acidente')
         return redirect('sinistro_acidentes')
+    if not request.user.profile.allow_empresa(acidente.empresa.id):
+        messages.warning(request,f'<b>Atenção.</b> Acidente de empresa não habiltada [<b>{acidente.empresa.nome}</b>]')
+        return redirect('sinistro_acidentes')
     form = AcidenteForm(instance=acidente)
     return render(request,'sinistro/acidente_id.html',{'form':form,'acidente':acidente})
 
