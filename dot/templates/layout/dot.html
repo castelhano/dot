@@ -220,6 +220,11 @@
       document.documentElement.dataset.bsTheme = localStorage.theme;
       document.getElementById('themeSwitch').checked = localStorage.theme == 'dark';
     }
+    else if(window.matchMedia){
+      let theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? 'dark' : 'light';
+      document.documentElement.dataset.bsTheme = theme;
+      document.getElementById('themeSwitch').checked = theme == 'dark';
+    }
 
     document.getElementById('themeSwitch').onclick = (e) => {
       if(e.target.checked){

@@ -44,7 +44,16 @@
 
   <script src="{% static 'js/vendor/bootstrap.bundle.min.js' %}"></script>
 <script>
-  document.body.setAttribute('data-bs-theme', localStorage.theme || 'light');
+  if(localStorage.theme){
+    document.documentElement.dataset.bsTheme = localStorage.theme;
+    document.getElementById('themeSwitch').checked = localStorage.theme == 'dark';
+  }
+  else if(window.matchMedia){
+    let theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? 'dark' : 'light';
+    document.documentElement.dataset.bsTheme = theme;
+    document.getElementById('themeSwitch').checked = theme == 'dark';
+  }
+  // document.body.setAttribute('data-bs-theme', localStorage.theme || 'light');
 </script>
 
 </body>
