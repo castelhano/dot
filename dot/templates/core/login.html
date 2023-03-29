@@ -9,7 +9,6 @@
   <link rel="shortcut icon" href="{% static 'img/favicon.ico'%}">
   <link rel="stylesheet" href="{% static 'css/dot.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/all.min.css' %}" type="text/css">
-  <link rel="stylesheet" href="{% static 'css/vendor/fontawesome.min.css' %}" type="text/css">
   <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.min.css' %}" type="text/css">
   <meta name="theme-color" content="#7952b3">
 
@@ -23,7 +22,7 @@
     .form-signin input[type="password"] {margin-bottom: 10px;border-top-left-radius: 0;border-top-right-radius: 0;}
   </style>
 </head>
-<body data-bs-theme="dark" class="text-center bg-body">
+<body class="text-center bg-body">
   <main class="form-signin">
     <form role="form" id="login_form" action="{% url 'authenticate' %}" method="POST" autocomplete="off">
       {% csrf_token %}
@@ -46,14 +45,11 @@
 <script>
   if(localStorage.theme){
     document.documentElement.dataset.bsTheme = localStorage.theme;
-    document.getElementById('themeSwitch').checked = localStorage.theme == 'dark';
   }
   else if(window.matchMedia){
     let theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? 'dark' : 'light';
     document.documentElement.dataset.bsTheme = theme;
-    document.getElementById('themeSwitch').checked = theme == 'dark';
   }
-  // document.body.setAttribute('data-bs-theme', localStorage.theme || 'light');
 </script>
 
 </body>
