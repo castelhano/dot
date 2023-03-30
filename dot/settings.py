@@ -6,7 +6,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 APP_DIR = os.path.join(BASE_DIR,'dot/app/')
 APP_DATA = os.path.join(BASE_DIR,'dot/app_data/')
 
-from .settings_local import ALLOWED_HOSTS, CSRF_TRUSTED_ORIGINS, DEBUG, SECRET_KEY, DATABASES, COMPANY_DATA
+from .settings_local import *
+# from .settings_local import ALLOWED_HOSTS, CSRF_TRUSTED_ORIGINS, DEBUG, SECRET_KEY, DATABASES, COMPANY_DATA
 
 INSTALLED_APPS = [
     'core',
