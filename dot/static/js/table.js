@@ -543,6 +543,7 @@ class jsTable{
     restoreRow(){
         let tr = this.trash.pop();
         tr.classList = 'table-warning';
+        if(this.raw.length == 0){this.tbody.innerHTML = ''} // Case tabela fazia, remove linha com mensagem de emptyrow
         if(this.enablePaginate){this.goToPage(this.lastPage)};
         this.tbody.appendChild(tr);
         this.raw.push(tr);
