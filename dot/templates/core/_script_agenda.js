@@ -39,8 +39,8 @@ function showDetails(el, day, id){
     detail.innerHTML += `<div class="mt-1">${dd.detalhe}</div>`;
     detail.innerHTML += `<div>${participantes}</div>`;
     detail.innerHTML += anexoFileName ? `<hr class="mt-2 mb-1">Anexo: <a href="/media/${dd.anexo}" target="_blank">${anexoFileName}</a>` : '';
-    tbody.querySelectorAll('tr.table-secondary').forEach((e) => {e.classList.remove('table-secondary')});
-    el.classList.add('table-secondary');
+    tbody.querySelectorAll('tr.table-emphasis').forEach((e) => {e.classList.remove('table-emphasis')});
+    el.classList.add('table-emphasis');
 }
 
 

@@ -26,8 +26,8 @@
           <p>Library em javascript ( vanilla ) implementa componente para calendario (vizualização de mês).</p>
           <blockquote class="callout callout-primary fs-7">
             <div class="body">
-              Version: <b>1.5</b><br>
-              Release: <b>30/01/2023</b><br>
+              Version: <b>1.6</b><br>
+              Release: <b>31/03/2023</b><br>
               Author: &nbsp;<b>Rafael Gustavo Faria Alves</b><br>
               Depend: <a class="badge bg-orange text-white" href="https://getbootstrap.com/docs/5.2/getting-started/introduction/" target="_blank">bootstrap 5.x</a> <a class="badge bg-purple text-white" href="https://fontawesome.com/v5/search?m=free" target="_blank">fontawesome 5.x</a><br>
             </div>
@@ -39,7 +39,7 @@
           
           <h3 id="utilizacao">Utilização</h3>
           <hr>
-          <p>Importe o arquivo <code>calendar.js</code> na sua página html.</p>
+          <p>Importe o arquivo <code>calendar.js</code>.</p>
           <pre><code class="language-html">&lt;script src="calendar.js"&gt;&lt;/script&gt;</code></pre>
 
           <h5 id="instanciando_componente">Instanciando o componente</h5>
@@ -74,6 +74,7 @@
                 <tr><td>showSummary</td><td>bool</td><td>Exibe/oculta resumo de dias (uteis, sab, etc)</td><td>false</td></tr>
                 <tr><td>canChangeView</td><td>bool</td><td>Permite alterar visão (calendario, eventos)</td><td>true</td></tr>
                 <tr><td>canSelectDay</td><td>bool</td><td>Permite seleção de dia(s)</td><td>false</td></tr>
+                <tr><td>required</td><td>bool</td><td>Exige pelo menos um item selecionado</td><td>false</td></tr>
                 <tr><td>multiSelect</td><td>bool</td><td>Habilita multiseleção</td><td>false</td></tr>
                 <tr><td>onclick</td><td>function</td><td>Função de resposta para evento de click, ver <a href="#evento_onclick">aqui</a></td><td>false</td></tr>
               </tbody>
@@ -228,7 +229,7 @@ calendar.btnSelectDate // Botao confirmar e carregar calendario</code></pre>
     showSummary: true,
     canSelectDay: true,
     // multiSelect: true,
-    onclick: (data) => {dotAlert('warning', `<b>jsCalendar</b>: Data selecionada <b>${data}</b>.`, false)}
+    onclick: (data) => {dotNotify('warning', `<b>jsCalendar</b>: Data selecionada <b>${data}</b>.`)}
   });
 
   window.addEventListener('scroll', function() {

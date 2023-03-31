@@ -14,6 +14,7 @@ from datetime import datetime, date
 from django.http import HttpResponse, JsonResponse
 from django.core import serializers
 from django.conf import settings
+from django.db.models import Q
 # from django.core.serializers.json import DjangoJSONEncoder
 
 
@@ -230,6 +231,15 @@ def agenda_add(request):
                 registro = form.save()
                 registro.create_by = request.user.username
                 registro.save()
+                params = {
+                    'titulo':'<b class="text-purple">Agenda:</b> Novo evento',
+                    'mensagem':f'<b>{registro.titulo}</b><br />Data: <b>{registro.data.strftime("%d/%m/%Y")}</b>',
+                    'link': f'core_agenda_id/{registro.id}'
+                }
+                perm = Permission.objects.get(codename='view_agenda')  
+                for participante in registro.participantes.filter(Q(groups__permissions=perm) | Q(user_permissions=perm)).distinct(): # Gera alerta para participantes do evento
+                    params['usuario'] = participante
+                    Alerta.objects.create(**params)
                 l = Log()
                 l.modelo = "core.agenda"
                 l.objeto_id = registro.id

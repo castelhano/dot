@@ -97,10 +97,10 @@ function formDisable(form){
 function dotToday(dias=0, meses=0, anos=0, native=false, el=null){
   let today = new Date();
   today.setDate(today.getDate() + dias);
-  today.setMonth(today.getMonth() + meses + 1);
+  today.setMonth(today.getMonth() + meses);
   today.setFullYear(today.getFullYear() + anos);
   const dd = String(today.getDate()).padStart(2, '0');
-  const mm = String(today.getMonth()).padStart(2, '0');
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
   const yyyy = today.getFullYear();
   if(!el){return native == true ? `${yyyy}-${mm}-${dd}` : `${dd}/${mm}/${yyyy}`;}
   else{

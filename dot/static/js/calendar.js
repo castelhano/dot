@@ -1,9 +1,9 @@
 /*
 * jsCalendar   Implementa componte de calendario
 *
-* @version  1.05
+* @version  1.06
 * @since    23/01/2023
-* @release  30/01/2023 [adicionado visao de tarefas]
+* @release  31/03/2023 [adicionado parametro required]
 * @author   Rafael Gustavo Alves {@email castelhano.rafael@gmail.com}
 * @depend   boostrap 5.2.0, fontawesome 5.15.4, dot.css, dot.js
 */
@@ -30,6 +30,7 @@ class jsCalendar{
         this.onclick = options?.onclick != undefined ? options.onclick : false; // Funcao definida aqui sera acionada no evento click do calendario, repassando o dia clicado
         this.onchange = options?.onchange != undefined ? options.onchange : false; // Funcao definida aqui sera acionada sempre apos o calendarRebuild() 
         this.canSelectDay = options?.canSelectDay != undefined ? options.canSelectDay : false; // Booleano defini se as datas sao selecionaveis
+        this.required = options?.required != undefined ? options.required : false; // Booleano define se pelo menos um dia selecionado eh requerido (usado ao tentar desmarcar item)
         this.multiSelect = options?.multiSelect != undefined ? options.multiSelect : false; // Booleano defini se eh permitido multipla seleao de dias
         this.wait = options?.wait != undefined ? options.wait : false; // Booleano, se true nao chama funcao calendarRebuild()
         // --------------------------
@@ -243,6 +244,7 @@ class jsCalendar{
                             td.setAttribute('data-selected','true');
                         }
                         else{
+                            if(this.required && this.selectedDays.length == 1){return false;} // Se required=true e lista alvo for o unico item da lista, termina codigo
                             let index = this.selectedDays.indexOf(dateFormated); // Localiza a data no array
                             this.selectedDays.splice(index,1); // Remove a data do array
                             td.classList = td.dataset.ocl;

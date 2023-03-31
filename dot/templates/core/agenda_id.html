@@ -113,6 +113,13 @@ const tags = new Tagin(document.getElementById('id_tags'), {
     duplicate: false
 });
 
-const participantes = new jsSelectm(document.getElementById('id_participantes'),{});
+let options = {}
+{% if not perms.core.change_agenda %}
+options['disabled'] = true;
+formDisable(document.getElementById('core_form'));
+{% endif %}
+const participantes = new jsSelectm(document.getElementById('id_participantes'),options);
+
+
 {% endblock %}
 </script>
