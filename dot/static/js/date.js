@@ -18,7 +18,7 @@ function dateDelta(d1,d2){
 }
 
 /*
-* dateInputExtras Adiciona a todos os input[type=date] listeners para data atual, ou para somar ou subtrair datas dias
+* dateInputExtras Adiciona a todos os input[type=date] listeners podendo carregar data atual, ou para somar ou subtrair dias
 *
 * @version  1.0
 * @since    13/03/2022
@@ -28,7 +28,7 @@ function dateDelta(d1,d2){
 function dateInputExtra_start(){
     document.querySelectorAll('input[type=date]').forEach((el) => {
         el.onkeydown = (e) => {
-            if(e.keyCode == 84){el.value = dotToday(0,0,0,true)} // Precionado a letra T, carrega data atual
+            if(e.keyCode == 84){el.value = dateToday({native:true})} // Precionado a letra T, carrega data atual
             else{
                 if(![107, 109].includes(e.keyCode)){return} // Se nao for teclas - ou + encerra bloco
                 let current = Date.parse(el.value + ' 00:00') ? new Date(el.value + ' 00:00') : new Date();

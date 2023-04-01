@@ -112,7 +112,7 @@ getAgenda().then(() => {getFeriados().then(() => {
   holidays: holidays,
   events: events,
   canChangeView: false,
-  selectedDays: [dotToday(0,0,0,true)],
+  selectedDays: [dateToday({native:true})],
   onclick: (day) => {window.location.href = `{% url 'core_agendas' %}?data=${day}`;},
   calendarClasslist: 'table table-sm border caption-top text-center mb-0 user-select-none fs-9',
   captionClasslist: 'py-1',

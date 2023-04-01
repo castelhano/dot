@@ -74,8 +74,8 @@ else{
 
 
 
-let originalDate = urlGet('data', dotToday(0,0,0,true));
-let today = dotToday(0,0,0,true);
+let originalDate = urlGet('data', dateToday({native:true}));
+let today = dateToday({native:true});
 let year = parseInt(originalDate.split('-')[0]);
 let month = parseInt(originalDate.split('-')[1]);
 let usuarios = {};

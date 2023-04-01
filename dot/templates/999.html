@@ -17,29 +17,25 @@
   <li class="breadcrumb-item"><a href="#">Library</a></li>
   <li class="breadcrumb-item active">Data</li>
 </ol>
+<form action="">
+  <input type="text" name="nome" id="id_nome">
+  <input type="text" name="idade" id="id_idade">
+  <input type="text" name="sexo" id="id_sexo">
+</form>
 {% endblock%}
-
-{% block offcanvas_body %}
-  <div data-bs-theme="dark" class="alert alert-dark alert-dismissible mb-1" role="alert">
-    <div>A simple dark alert—check it out!</div>
-    <a href="">Detalhe</a>
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    <ul class="dropdown-menu dropdown-menu-end">
-      <li><button type="button" class="dropdown-item d-flex align-itens-center active"><i class="fas fa-sun"></i> Light</button></li>
-    </ul>
-  </div>
-  {% endblock %}
-
-  
 
 
 {% block add_script_src %}
-<script src="{% static 'js/date.js' %}"></script>
+<script src="{% static 'js/i18n.js' %}"></script>
 {% endblock %}
 
 
 <script>
 {% block add_script %}
+dateToday({target:document.getElementById('foo'),days:2,months:5})
+formLoad({nome:"Rafael Alves", idade:25, sexo:'M'})
+let foo = form2Dict(document.querySelector('form'));
+console.log(foo);
 
 {% endblock %}
 </script>

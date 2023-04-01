@@ -30,6 +30,30 @@ function dotNotify(tipo, mensagem, autodismiss=true){
 */
 function getCookie(name) {let cookieValue = null;if (document.cookie && document.cookie !== ''){const cookies = document.cookie.split(';');for(let i = 0; i < cookies.length; i++){const cookie = cookies[i].trim();if (cookie.substring(0, name.length + 1) === (name + '=')){cookieValue = decodeURIComponent(cookie.substring(name.length + 1));break;}}}return cookieValue;}
 
+/*
+* form2Dict Retorna dados do formulario como dict (object)
+*
+* @version  1.0
+* @since    01/04/2023
+* @author   Rafael Gustavo Alves {@email castelhano.rafael@gmail.com }
+* @param    {Element} Formulario alvo
+* @returns  {Object}  Retorna dicionario com dados do form
+* @example  let data = form2Dict(document.getElementById('my_form'));
+*/
+function form2Dict(form){let formData = new FormData(form);let resp = {};for([key, value] of formData){resp[key] = value}return resp;}
+
+/*
+* formLoad  Recebe dicionario e carrega dados no respectivo campo (caso exista)
+*
+* @version  1.0
+* @since    01/04/2023
+* @author   Rafael Gustavo Alves {@email castelhano.rafael@gmail.com }
+* @param    {Object} Dicionario com dados a serem carregados
+* @param    {Array}  Lista com campos a serem ignorados. Ex: ['detalhe','sexo']
+* @example  formLoad({nome:'Rafael', idade:'25'}); Busca os campos id_nome e id_idade e atribui respectivo valor
+*/
+function formLoad(dict, ignore=[]){for(key in dict){if(!ignore.includes(key)){try{document.getElementById(`id_${key}`).value = dict[key]}catch(e){}}}}
+
 
 /*
 * dotAppData Busca (ajax) no diretorio app_data, objeto json informando o path relativo
@@ -82,30 +106,30 @@ function formDisable(form){
 * @version  1.1
 * @since    19/03/2022
 * @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com}
-* @param    {Int} dias Dias a serem acrecidos
-* @param    {Int} meses Meses a serem acrecidos
-* @param    {Int} anos Anos a serem acrecidos
-* @param    {Bool} native Se true retorna data no formato americano (yyyy-mm-dd), se nao retorna formatado para PT-BR (dd/mm/aaaa)
-* @param    {Element} el Elemento html que ira receber o valor, se omitido retorna a data na chamada da funcao
+* @param    {Int} days Dias a serem acrecidos
+* @param    {Int} months Meses a serem acrecidos
+* @param    {Int} yeras Anos a serem acrecidos
+* @param    {Bool} native Se true retorna data no formato (yyyy-mm-dd), se nao retorna formatado para PT-BR (dd/mm/aaaa)
+* @param    {Element} target Elemento html que ira receber o valor, se omitido retorna a data na chamada da funcao
 * @returns  {String} Retorna Data formatada caso nao definido elemento na chamada da funcao
 * @example  
-*    dotToday();                 Retorna data atual (dd/mm/yyyy)
-*    dotToday(5);                Retorna data atual somando 5 dias
-*    dotToday(0,0,0,true);       Retorna data atual no formato native (yyyy-mm-dd)
-*    dotToday(0,0,0,false, el);  Insere a data atual no atributo value (ou innerHTML) do elemento informando
+*    dateToday();               Retorna data atual (dd/mm/yyyy)
+*    dateToday({days:5});       Retorna data atual somando 5 dias
+*    dateToday({native:true});  Retorna data atual no formato native (yyyy-mm-dd)
+*    dateToday({target: el});   Insere a data atual no atributo value (ou innerHTML) do elemento informando
 */
-function dotToday(dias=0, meses=0, anos=0, native=false, el=null){
+function dateToday(opt={}){
   let today = new Date();
-  today.setDate(today.getDate() + dias);
-  today.setMonth(today.getMonth() + meses);
-  today.setFullYear(today.getFullYear() + anos);
+  if(opt.days){today.setDate(today.getDate() + opt.days)}
+  if(opt.months){today.setMonth(today.getMonth() + opt.months)}
+  if(opt.years){today.setFullYear(today.getFullYear() + opt.years)}
   const dd = String(today.getDate()).padStart(2, '0');
   const mm = String(today.getMonth() + 1).padStart(2, '0');
   const yyyy = today.getFullYear();
-  if(!el){return native == true ? `${yyyy}-${mm}-${dd}` : `${dd}/${mm}/${yyyy}`;}
+  if(!opt.target){return opt.native == true ? `${yyyy}-${mm}-${dd}` : `${dd}/${mm}/${yyyy}`;}
   else{
-    if(el.hasAttribute('value')){el.value = native == true ? `${yyyy}-${mm}-${dd}` : `${dd}/${mm}/${yyyy}`;}
-    else{el.innerHTML = native == true ? `${yyyy}-${mm}-${dd}` : `${dd}/${mm}/${yyyy}`;}
+    if(opt.target.hasAttribute('value')){opt.target.value = opt.native == true ? `${yyyy}-${mm}-${dd}` : `${dd}/${mm}/${yyyy}`;}
+    else{opt.target.innerHTML = opt.native == true ? `${yyyy}-${mm}-${dd}` : `${dd}/${mm}/${yyyy}`;}
   }}
 
 /*
@@ -114,27 +138,27 @@ function dotToday(dias=0, meses=0, anos=0, native=false, el=null){
 * @version  1.0
 * @since    13/06/2022
 * @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com}
-* @param    {Int} horas Horas a serem acrecidos
-* @param    {Int} minutos Minutos a serem acrecidos
-* @param    {Bool} segundos Setar true para mostrar segundos (default false)
-* @param    {Element} el Elemento html que ira receber o valor, se omitido retorna a hora na chamada da funcao
+* @param    {Int} hours Horas a serem acrecidos
+* @param    {Int} minutes Minutos a serem acrecidos
+* @param    {Bool} showSeconds Setar true para mostrar segundos
+* @param    {Element} target Elemento html que ira receber o valor, se omitido retorna a hora na chamada da funcao
 * @returns  {String} Retorna Hora formatada caso nao definido elemento na chamada da funcao
 * @example  
-*    dotNow();           Retorna hora atual (hh:mm)
-*    dotNow(5);          Retorna hora atual somando 5 horas
-*    dotNow(0,0,0, el);  Insere a hora atual no atributo value (ou innerHTML) do elemento informando
+*    timeNow();           Retorna hora atual (hh:mm)
+*    timeNow({hour:5});   Retorna hora atual somando 5 horas
+*    timeNow({target:el, showSeconds:true}); Insere a hora atual no atributo value (ou innerHTML) do elemento informando no formato 'hh:mm:ss'
 */
-function dotNow(horas=0, minutos=0, segundos=false, el=null){
+function timeNow(opt={}){
   let today = new Date();
-  today.setHours(today.getHours() + horas);
-  today.setMinutes(today.getMinutes() + minutos);
+  if(opt.hours){today.setHours(today.getHours() + opt.hours)}
+  if(opt.minutes){today.setMinutes(today.getMinutes() + opt.minutes)}
   const hh = String(today.getHours()).padStart(2, '0');
   const ii = String(today.getMinutes()).padStart(2, '0');
   const ss = String(today.getSeconds()).padStart(2, '0');
-  if(!el){return segundos == true ? `${hh}:${ii}:${ss}` : `${hh}:${ii}`;}
+  if(!opt.target){return opt.showSeconds == true ? `${hh}:${ii}:${ss}` : `${hh}:${ii}`;}
   else{
-    if(el.hasAttribute('value')){el.value = segundos == true ? `${hh}:${ii}:${ss}` : `${hh}:${ii}`;}
-    else{el.innerHTML = segundos == true ? `${hh}:${ii}:${ss}` : `${hh}:${ii}`;}
+    if(opt.target.hasAttribute('value')){opt.target.value = opt.showSeconds == true ? `${hh}:${ii}:${ss}` : `${hh}:${ii}`;}
+    else{opt.target.innerHTML = opt.showSeconds == true ? `${hh}:${ii}:${ss}` : `${hh}:${ii}`;}
   }}
 
 /*
@@ -162,8 +186,7 @@ function prismStart(){
     }
   });
 
-
-  function code_copy_clipboard(e){
+  function code_copy_clipboard(e){ // Funcao auxiliar ao componente prism
     let copyLabel = '<i class="fas fa-copy"></i>';
     let doneLabel = '<i class="fas fa-check"></i>';
     let b = e.target.tagName == 'SPAN' ? e.target : e.target.parentElement;

@@ -11,7 +11,7 @@ var __langDB = {};
 
 
 function i18n_start(){
-    console.log(`i18n: Start translating at ${dotNow(0,0,true)}`);
+    console.log(`i18n: Start translating at ${timeNow({showSeconds:true})}`);
     document.querySelectorAll('[data-i18n]').forEach((e) => {
         try{
             let result = e.dataset.i18n.split('.').reduce((previous, current) => previous[current], __langDB);
@@ -21,11 +21,11 @@ function i18n_start(){
         }
         catch(error){console.log(`i18n: [ERROR] Entry [${e.dataset.i18n}] not found for (${__lang})`)}
     })
-    console.log(`i18n: End translating at ${dotNow(0,0,true)}`);
+    console.log(`i18n: End translating at ${timeNow({showSeconds:true})}`);
 }
 
 if(__lang != __langDefault){ // Se language do cliente for diferente da default, carrega base com traducoes
-    console.log(`i18n: Sending request to server at ${dotNow(0,0,true)}`);
+    console.log(`i18n: Sending request to server at ${timeNow({showSeconds:true})}`);
     dotAppData(`/app_data/i18n__${__lang}.json`).then((d) => {
         if(d != ''){__langDB = d}
         i18n_start();        

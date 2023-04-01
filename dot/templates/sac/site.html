@@ -139,8 +139,8 @@
   fone1.addEventListener('input', inputHandler.bind(undefined, telMask, 14), false);
   fone2.addEventListener('input', inputHandler.bind(undefined, telMask, 14), false);
   
-  dotToday(0,0,0,true,document.getElementById('id_data'));
-  dotNow(0,0,false,document.getElementById('id_hora'));
+  dateToday({native:true,target:document.getElementById('id_data')});
+  timeNow({target: document.getElementById('id_hora')});
   {% endif %}
   
   </script>
