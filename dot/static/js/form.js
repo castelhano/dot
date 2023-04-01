@@ -22,7 +22,7 @@ class jsForm{
         this.sortBtn = null; // Aponta para o botao de classificar
         this.jsonBtn = null; // Aponta para o botao para exportar json
         // Configuracao
-        this.data = options?.data || {key:'', value:""}; // Json com dados do form
+        this.data = options?.data || {key:'value'}; // Json com dados do form
         this.container = options?.container || document.body; // parentNode do form, caso nao informado append no document.body
         this.legend = options?.legend || ''; // String com a legenda do form
         this.readOnly = options?.readOnly != undefined ? options.readOnly : false; // Se definido pata true, desabilita opcao de editar campos, save, sort, etc..

@@ -50,7 +50,7 @@ class jsKanban{
         this.canExportJson = options?.canExportJson != undefined ? options.canExportJson : true; // Boolean, exibe/oculta controle para exportar json
         // Estilizacao
         this.kanbanClasslist = options?.kanbanClasslist || 'row'; // classlist para o container principal
-        this.headerClasslist = options?.headerClasslist || 'col-12 bg-white p-2'; // classlist para o header container
+        this.headerClasslist = options?.headerClasslist || 'col-12 p-2'; // classlist para o header container
         // this.navContainerClasslist = options?.navContainerClasslist || 'd-none d-md-block col-auto bg-light text-muted border rounded pt-3 ps-2 fs-7 position-relative'; // classlist para o nav container
         this.navContainerClasslist = options?.navContainerClasslist || 'col-lg-auto collapse navCollapse bg-light text-muted border rounded pt-1 pt-lg-3 fs-7 position-relative'; // classlist para o nav container
         this.navClasslist = options?.navClasslist || 'list-unstyled navCollapse'; // classlist para o nav (ul)
@@ -321,7 +321,7 @@ class jsKanban{
             this.cleanFilters();
             this.nav.querySelector('[data-type="navCleanFilter"]').classList.remove('d-none');
             vencidosLink.classList.add('fw-bold', 'text-primary');
-            let hoje = today(0,0,0,true);
+            let hoje = dateToday({native:true});
             let tasks = this.body.querySelectorAll('.callout').forEach((el) => {
                 if(el.dataset?.termino && el.dataset.termino < hoje && parseInt(el.dataset?.progresso || 0) < 100){}
                 else{el.classList.add('d-none')}
@@ -443,7 +443,7 @@ class jsKanban{
     __calcFiltersTaksSummary(from){
         let vencidosCount = 0;
         let semPrazoCount = 0;
-        let hoje = today(0,0,0,true);
+        let hoje = dateToday({native:true});
         this.body.querySelectorAll('.callout').forEach((el) => {
             if(el.dataset?.termino && el.dataset.termino < hoje && parseInt(el.dataset?.progresso || 0) < 100){vencidosCount++}
             // --
@@ -513,7 +513,7 @@ class jsKanban{
     }
     __boardAddControls(header_controls, dnd_container){
         let dropdown = document.createElement('div');dropdown.classList = 'dropdown';
-        let dropdownLink = document.createElement('a');dropdownLink.classList = 'btn btn-sm btn-light';dropdownLink.setAttribute('data-bs-toggle','dropdown');dropdownLink.innerHTML = '<i class="fas fa-caret-down"></i>';
+        let dropdownLink = document.createElement('a');dropdownLink.classList = 'btn btn-sm bg-body-secondary';dropdownLink.setAttribute('data-bs-toggle','dropdown');dropdownLink.innerHTML = '<i class="fas fa-caret-down"></i>';
         let dropdownMenu = document.createElement('ul');dropdownMenu.classList = 'dropdown-menu dropdown-menu-end fs-7';
         if(this.canAddTask){
             let addBtn = document.createElement('li');addBtn.classList = 'dropdown-item pointer';addBtn.innerHTML = '<i class="fas fa-plus text-success fa-fw"></i> Nova Task';
@@ -573,7 +573,7 @@ class jsKanban{
             let objTag = this.__getTag(options.tags[tag]);
             if(objTag){this.__taskAddTag(body, objTag)}
         }
-        let config = document.createElement('button');config.classList = 'btn btn-sm btn-light text-muted fs-8';config.innerHTML = '<i class="fas fa-sliders-h"></i>';
+        let config = document.createElement('button');config.classList = 'btn btn-sm bg-body-tertiary text-muted fs-8';config.innerHTML = '<i class="fas fa-sliders-h"></i>';
         if(!this.readOnly){
             let tags = this.__tagsConfig(body); // Controle para adicionar tags
             config.onclick = () => {
@@ -640,7 +640,7 @@ class jsKanban{
     }
     __tagsConfig(taskBody){
         let dropdown = document.createElement('div');dropdown.classList = 'dropdown dropup';
-        let dropdownLink = document.createElement('a');dropdownLink.classList = 'btn btn-sm btn-light text-muted fs-8';dropdownLink.setAttribute('data-bs-toggle','dropdown');dropdownLink.innerHTML = '<i class="fas fa-tags"></i>';
+        let dropdownLink = document.createElement('a');dropdownLink.classList = 'btn btn-sm bg-body-tertiary text-muted fs-8 me-1';dropdownLink.setAttribute('data-bs-toggle','dropdown');dropdownLink.innerHTML = '<i class="fas fa-tags"></i>';
         dropdownLink.onclick = (e) => { // Carrega tags no menu do dropdown
             if(Object.keys(this.tags).length == 0){dropdownMenu.classList.remove('show');dropdownLink.classList.remove('show');return false;} // Se nao existe tag cadastrada, nao exibe menu do dropdown
             dropdownMenu.innerHTML = ''; // Limpa tags (caso carregado anteriormente)

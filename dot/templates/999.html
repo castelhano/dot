@@ -3,7 +3,7 @@
 {% block model %}999 <b class="ms-2">Test Page</b>{% endblock %}
 
 {% block style_src %}
-<link rel="stylesheet" href="{% static 'css/timeline.css' %}">
+<!-- <link rel="stylesheet" href="{% static 'css/pages.css' %}"> -->
 {% endblock%}
 <style>
   {% block style %}
@@ -17,25 +17,18 @@
   <li class="breadcrumb-item"><a href="#">Library</a></li>
   <li class="breadcrumb-item active">Data</li>
 </ol>
-<form action="">
-  <input type="text" name="nome" id="id_nome">
-  <input type="text" name="idade" id="id_idade">
-  <input type="text" name="sexo" id="id_sexo">
-</form>
+
+
 {% endblock%}
 
 
 {% block add_script_src %}
-<script src="{% static 'js/i18n.js' %}"></script>
+<!-- <script src="{% static 'js/form_extra.js' %}"></script> -->
 {% endblock %}
 
 
 <script>
 {% block add_script %}
-dateToday({target:document.getElementById('foo'),days:2,months:5})
-formLoad({nome:"Rafael Alves", idade:25, sexo:'M'})
-let foo = form2Dict(document.querySelector('form'));
-console.log(foo);
 
 {% endblock %}
 </script>
