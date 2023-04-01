@@ -26,7 +26,8 @@
   <main class="form-signin">
     <form role="form" id="login_form" action="{% url 'authenticate' %}" method="POST" autocomplete="off">
       {% csrf_token %}
-      <img class="mb-4" src="{% static 'img/logo.png' %}" alt="" width="75" height="74">
+      <img id="logo" class="mb-4" src="{% static 'img/logo.png' %}" alt="" width="75" height="74">
+      <div style="height: 74;"><span class="logo"></span></div>
       <!-- <h1 class="h3 mb-3 fw-normal">Entrar</h1> -->
       <input type="text" id="id_username" name="username" class="form-control bg-light" placeholder="Username" required autofocus>
       <input type="password" id="id_password" name="password" class="form-control bg-light" placeholder="Password">
@@ -45,6 +46,7 @@
 <script>
   if(localStorage.theme){
     document.documentElement.dataset.bsTheme = localStorage.theme;
+    if(localStorage.theme == 'dark'){document.getElementById('logo').setAttribute('src', '{% static 'img/logo-dark.png' %}')}
   }
   else if(window.matchMedia){
     let theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? 'dark' : 'light';

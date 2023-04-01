@@ -22,13 +22,27 @@
         margin-top: 4px;
       }
     }
+    .theme-switch__input,.theme-switch__label {position: relative;cursor: pointer;}
+    .theme-switch__input {opacity: 0;}
+    .theme-switch__input:hover + .theme-switch__label, .theme-switch__input:focus + .theme-switch__label {background-color: lightSlateGray;}
+    .theme-switch__input:hover + .theme-switch__label span::after, .theme-switch__input:focus + .theme-switch__label span::after {background-color: #d4ebf2;}
+    .theme-switch__label {transition: background-color 200ms ease-in-out;width: 50px;height: 25px;border-radius: 50px;text-align: center;background-color: slateGray;box-shadow: -4px 4px 15px inset rgba(0, 0, 0, 0.4);}
+    .theme-switch__label::before, .theme-switch__label::after {font-size: 1.8rem;position: absolute;transform: translate3d(0, -50%, 0);top: 50%;}
+    .theme-switch__label::before {content: "☼"; right: 100%;margin-right: 5px;color: orange;}
+    .theme-switch__label::after{content: "☾"; left: 100%; margin-left: 5px; color: lightSlateGray;}
+    .theme-switch__label span::after{position: absolute; top: 5px;left: 5px;width: 15px;height: 15px;content: "";border-radius: 50%;background-color: lightBlue;transition: transform 200ms, background-color 200ms;box-shadow: -3px 3px 8px rgba(0, 0, 0, 0.4); }
+    .theme-switch__input:checked ~ .theme-switch__label{background-color: lightSlateGray;}
+    .theme-switch__input:checked ~ .theme-switch__label::before {color: lightSlateGray;}
+    .theme-switch__input:checked ~ .theme-switch__label::after {color: turquoise;}
+    .theme-switch__input:checked ~ .theme-switch__label span::after {transform: translate3d(26px, 0, 0);}
   </style>
 </head>
 
-<body class="bg-light">
+<body class="bg-body-tertiary">
+  <div class="position-absolute" style="top: 10px; right: 35px;"><input type="checkbox" id="themeSwitch" name="theme-switch" class="theme-switch__input"> <label for="themeSwitch" class="theme-switch__label"><span></span></label></div>
   <div class="container">
     <div class="py-3 text-center">
-      <img class="d-block mx-auto mb-4" src="{% static 'img/logo.png' %}" alt="" width="140">
+      <img id="logo" class="d-block mx-auto mb-4" src="{% static 'img/logo.png' %}" alt="" width="140">
       <h2>SAC - Atendimento ao Cliente</h2>
     </div>
     {% include 'sac/_extract_site.html' with status=status %}    
@@ -77,6 +91,31 @@
   <script type="text/javascript">
   
   var TAB_ON_ENTER = true;
+
+  if(localStorage.theme){
+      document.documentElement.dataset.bsTheme = localStorage.theme;
+      document.getElementById('themeSwitch').checked = localStorage.theme == 'dark';
+      if(localStorage.theme == 'dark'){document.getElementById('logo').setAttribute('src', '{% static 'img/logo-dark.png' %}')}
+    }
+    else if(window.matchMedia){
+      let theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? 'dark' : 'light';
+      document.documentElement.dataset.bsTheme = theme;
+      document.getElementById('themeSwitch').checked = theme == 'dark';
+      if(theme == 'dark'){document.getElementById('logo').setAttribute('src', '{% static 'img/logo-dark.png' %}')}
+    }
+
+    document.getElementById('themeSwitch').onclick = (e) => {
+      if(e.target.checked){
+        document.documentElement.dataset.bsTheme = 'dark';
+        localStorage.theme = 'dark'
+        document.getElementById('logo').setAttribute('src', '{% static 'img/logo-dark.png' %}');
+      }
+      else{
+        document.documentElement.dataset.bsTheme = 'light';
+        localStorage.theme = 'light';
+        document.getElementById('logo').setAttribute('src', '{% static 'img/logo.png' %}');
+      }
+    };
   
   {% if not status %}
   

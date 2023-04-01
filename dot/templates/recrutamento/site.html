@@ -42,7 +42,7 @@
   <div class="position-absolute" style="top: 10px; right: 35px;"><input type="checkbox" id="themeSwitch" name="theme-switch" class="theme-switch__input"> <label for="themeSwitch" class="theme-switch__label"><span></span></label></div>
   <div class="container">
     <div class="py-5 text-center">
-      <img class="d-block mx-auto mb-4" src="{% static 'img/logo.png' %}" alt="" width="140">
+      <img id="logo" class="d-block mx-auto mb-4" src="{% static 'img/logo.png' %}" alt="" width="140">
       <h2 data-i18n="recrutamento.candidato.cadastro_titulo">Cadastro de Candidato</h2>
     </div>
     {% include 'recrutamento/_extract_site.html' with status=status %}    
@@ -95,21 +95,25 @@
     if(localStorage.theme){
       document.documentElement.dataset.bsTheme = localStorage.theme;
       document.getElementById('themeSwitch').checked = localStorage.theme == 'dark';
+      if(localStorage.theme == 'dark'){document.getElementById('logo').setAttribute('src', '{% static 'img/logo-dark.png' %}')}
     }
     else if(window.matchMedia){
       let theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? 'dark' : 'light';
       document.documentElement.dataset.bsTheme = theme;
       document.getElementById('themeSwitch').checked = theme == 'dark';
+      if(theme == 'dark'){document.getElementById('logo').setAttribute('src', '{% static 'img/logo-dark.png' %}')}
     }
 
     document.getElementById('themeSwitch').onclick = (e) => {
       if(e.target.checked){
         document.documentElement.dataset.bsTheme = 'dark';
-        localStorage.theme = 'dark'
+        localStorage.theme = 'dark';
+        document.getElementById('logo').setAttribute('src', '{% static 'img/logo-dark.png' %}');
       }
       else{
         document.documentElement.dataset.bsTheme = 'light';
-        localStorage.theme = 'light'
+        localStorage.theme = 'light';
+        document.getElementById('logo').setAttribute('src', '{% static 'img/logo.png' %}');
       }
     };
 
