@@ -3,7 +3,7 @@
 {% block model %}999 <b class="ms-2">Test Page</b>{% endblock %}
 
 {% block style_src %}
-<!-- <link rel="stylesheet" href="{% static 'css/pages.css' %}"> -->
+<link rel="stylesheet" href="{% static 'css/report.css' %}">
 {% endblock%}
 <style>
   {% block style %}
@@ -17,18 +17,30 @@
   <li class="breadcrumb-item"><a href="#">Library</a></li>
   <li class="breadcrumb-item active">Data</li>
 </ol>
-
-
+<div class="row g-3 mb-2">
+  <div class="col">
+    <textarea name="editor" id="id_editor" class="form-control" style="min-height: 350px;" autofocus></textarea>
+  </div>
+  <div class="col position-relative">
+    <span class="badge bg-purple position-absolute" style="top: -14px; right: 10px;">Preview</span>
+    <div class="border rounded h-100 p-5" id="preview"></div>
+  </div>
+</div>
+<button class="btn btn-sm btn-primary" onclick="report.parse()">Preview</button>
 {% endblock%}
 
 
 {% block add_script_src %}
-<!-- <script src="{% static 'js/form_extra.js' %}"></script> -->
+<script src="{% static 'js/report.js' %}"></script>
 {% endblock %}
 
 
 <script>
 {% block add_script %}
+const report = new jsReport({
+  editor: document.getElementById('id_editor'),
+  previewTarget: document.getElementById('preview'),
+});
 
 {% endblock %}
 </script>
