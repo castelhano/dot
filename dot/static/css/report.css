@@ -1,5 +1,6 @@
 p{
     margin: 0;
+    padding: 0;
 }
 .report-block{
     padding: 5px 10px;
@@ -14,4 +15,11 @@ p{
     font-size: 1.2rem;
     border-left: 3px solid var(--bs-border-color);
     padding-left: 10px;
+}
+
+.report-ddicon-list{
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 4px;
+    padding-bottom: 4px;
 }

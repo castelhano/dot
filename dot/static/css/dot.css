@@ -60,6 +60,7 @@ input[readonly], textarea[readonly]{background: rgb(233, 236, 239)!important;}
 .btn-purple-light:hover{background-color: #6169d0!important;color: #FFF!important;}
 .btn-outline-purple{border-color: #6f42c1!important;color: #6f42c1!important;}
 .btn-outline-purple:hover{background-color: #6f42c1!important;color: #FFF!important;}
+
 .btn-phanton-success{color: rgb(var(--bs-success-rgb));}
 .btn-phanton-success:hover{background-color: #198754;color: #FFF;}
 .btn-phanton-primary{color: rgb(var(--bs-primary-rgb));}

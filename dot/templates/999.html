@@ -17,16 +17,28 @@
   <li class="breadcrumb-item"><a href="#">Library</a></li>
   <li class="breadcrumb-item active">Data</li>
 </ol>
-<div class="row g-3 mb-2">
-  <div class="col">
-    <textarea name="editor" id="id_editor" class="form-control" style="min-height: 350px;" autofocus></textarea>
-  </div>
-  <div class="col position-relative">
-    <span class="badge bg-purple position-absolute" style="top: -14px; right: 10px;">Preview</span>
-    <div class="border rounded h-100 p-5" id="preview"></div>
-  </div>
-</div>
-<button class="btn btn-sm btn-primary" onclick="report.parse()">Preview</button>
+<!-- <div class="border rounded-pill bg-body-secondary px-2 py-1 mb-2">
+  <button class="btn btn-sm btn-phanton-light rounded-pill"><i class="fas fa-save"></i></button>
+  <button class="btn btn-sm btn-phanton-light rounded-pill"><i class="fas fa-user"></i></button>
+  <button class="btn btn-sm btn-phanton-light dropdown-toggle" type="button" data-bs-toggle="dropdown"><i class="fas fa-keyboard me-1"></i></button>
+  <ul class="dropdown-menu fs-7">
+    <li class="report-ddicon-list">
+      <div class="row text-center">
+        <div class="col btn-phanton-light pointer fw-bold"><i class="fas fa-heading"></i>1</div>
+        <div class="col btn-phanton-light pointer"><i class="fas fa-align-center"></i></div>
+        <div class="col btn-phanton-light pointer"><i class="fas fa-align-right"></i></div>
+      </div>
+    </li>
+    <li class="report-ddicon-list">
+      <div class="row text-center">
+        <div class="col btn-phanton-light pointer fw-bold"><i class="fas fa-heading"></i>2</div>
+        <div class="col btn-phanton-light pointer"><i class="fas fa-align-center"></i></div>
+        <div class="col btn-phanton-light pointer"><i class="fas fa-align-right"></i></div>
+      </div>
+    </li>
+  </ul>
+</div> -->
+<div id="container"></div>
 {% endblock%}
 
 
@@ -40,6 +52,8 @@
 const report = new jsReport({
   editor: document.getElementById('id_editor'),
   previewTarget: document.getElementById('preview'),
+  container: document.getElementById('container'),
+  autofocus: true
 });
 
 {% endblock %}
