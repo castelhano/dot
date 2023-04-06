@@ -2,12 +2,12 @@
 {% load static %}
 {% block model %}999 <b class="ms-2">Test Page</b>{% endblock %}
 
+{% block script_preload_src %}<script src="{% static 'js/vendor/jsPdf.js' %}"></script>{% endblock%}
 {% block style_src %}
 <link rel="stylesheet" href="{% static 'css/report.css' %}">
 {% endblock%}
 <style>
-  {% block style %}
-  {% endblock%}
+  {% block style %}{% endblock%}
 </style>
 
 {% block content_fluid %}
@@ -17,27 +17,6 @@
   <li class="breadcrumb-item"><a href="#">Library</a></li>
   <li class="breadcrumb-item active">Data</li>
 </ol>
-<!-- <div class="border rounded-pill bg-body-secondary px-2 py-1 mb-2">
-  <button class="btn btn-sm btn-phanton-light rounded-pill"><i class="fas fa-save"></i></button>
-  <button class="btn btn-sm btn-phanton-light rounded-pill"><i class="fas fa-user"></i></button>
-  <button class="btn btn-sm btn-phanton-light dropdown-toggle" type="button" data-bs-toggle="dropdown"><i class="fas fa-keyboard me-1"></i></button>
-  <ul class="dropdown-menu fs-7">
-    <li class="report-ddicon-list">
-      <div class="row text-center">
-        <div class="col btn-phanton-light pointer fw-bold"><i class="fas fa-heading"></i>1</div>
-        <div class="col btn-phanton-light pointer"><i class="fas fa-align-center"></i></div>
-        <div class="col btn-phanton-light pointer"><i class="fas fa-align-right"></i></div>
-      </div>
-    </li>
-    <li class="report-ddicon-list">
-      <div class="row text-center">
-        <div class="col btn-phanton-light pointer fw-bold"><i class="fas fa-heading"></i>2</div>
-        <div class="col btn-phanton-light pointer"><i class="fas fa-align-center"></i></div>
-        <div class="col btn-phanton-light pointer"><i class="fas fa-align-right"></i></div>
-      </div>
-    </li>
-  </ul>
-</div> -->
 <div id="container"></div>
 {% endblock%}
 
@@ -49,12 +28,27 @@
 
 <script>
 {% block add_script %}
+window.jsPDF = window.jspdf.jsPDF;
+let doc = new jsPDF();
+doc.fromHTML('<h1>Ola mundo cruel...</h1>')
+doc.save();
+// doc.text(20,20, 'Ola mundo...');
+// doc.setFontSize(26);
+// doc.setTextColor(255,0,0);
+// doc.text(20,80, 'Alterado');
+// doc.rect(20,40,280,10);
+// doc.save('foo.pdf');
+
 const report = new jsReport({
   editor: document.getElementById('id_editor'),
   previewTarget: document.getElementById('preview'),
   container: document.getElementById('container'),
+  db:{
+    'empresa.nome': 'Pantanal Transportes'
+  },
   autofocus: true
 });
+
 
 {% endblock %}
 </script>
