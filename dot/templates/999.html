@@ -4,7 +4,7 @@
 
 {% block script_preload_src %}<script src="{% static 'js/vendor/jsPdf.js' %}"></script>{% endblock%}
 {% block style_src %}
-<link rel="stylesheet" href="{% static 'css/report.css' %}">
+<!-- <link rel="stylesheet" href="% static 'css/report.css' %"> -->
 {% endblock%}
 <style>
   {% block style %}{% endblock%}
@@ -22,33 +22,22 @@
 
 
 {% block add_script_src %}
-<script src="{% static 'js/report.js' %}"></script>
+<script src="{% static 'js/mdview.js' %}"></script>
 {% endblock %}
 
 
 <script>
 {% block add_script %}
-window.jsPDF = window.jspdf.jsPDF;
-let doc = new jsPDF();
-doc.fromHTML('<h1>Ola mundo cruel...</h1>')
-doc.save();
-// doc.text(20,20, 'Ola mundo...');
-// doc.setFontSize(26);
-// doc.setTextColor(255,0,0);
-// doc.text(20,80, 'Alterado');
-// doc.rect(20,40,280,10);
-// doc.save('foo.pdf');
 
-const report = new jsReport({
+const report = new jsMdview({
   editor: document.getElementById('id_editor'),
   previewTarget: document.getElementById('preview'),
   container: document.getElementById('container'),
-  db:{
-    'empresa.nome': 'Pantanal Transportes'
-  },
+  // livePreview: false,
+  db: {nome:"Rafael", idade:55, cargo:"Analista de Sistemas"},
   autofocus: true
 });
-
+  
 
 {% endblock %}
 </script>
