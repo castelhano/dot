@@ -32,28 +32,28 @@ class jsMdview{
         let dropdown_classlist = 'btn btn-sm btn-phanton-light dropdown-toggle';
         let menu_group = document.createElement('div');menu_group.classList = 'border rounded-pill bg-body-secondary px-2 py-1 mb-2';
         let bold = document.createElement('button');bold.type = 'button';bold.classList = custom_classlist;bold.innerHTML = '<i class="fas fa-bold"></i>';bold.title = 'Negrito';
-        bold.onclick = () => {this.__editorAdd('**texto**', [2,2])}
+        bold.onclick = () => {this.__editorAdd(['**','**'], [2,2])}
         menu_group.appendChild(bold);
         let italic = document.createElement('button');italic.type = 'button';italic.classList = custom_classlist;italic.innerHTML = '<i class="fas fa-italic" style="width: 12px"></i>';italic.title = 'Italico';
-        italic.onclick = () => {this.__editorAdd('*texto*', [1,1])}
+        italic.onclick = () => {this.__editorAdd(['*','*'], [1,1])}
         menu_group.appendChild(italic);
         let heading = document.createElement('button');heading.type = 'button';heading.classList = dropdown_classlist;heading.setAttribute('data-bs-toggle', 'dropdown');heading.innerHTML = '<i class="fas fa-heading me-1"></i>';heading.title = 'Titulos';
         let heading_menu = document.createElement('ul');heading_menu.classList = 'dropdown-menu fs-7';
         let h1 = document.createElement('li');h1.classList = 'px-3 py-2 container';
         let h1_row = document.createElement('div');h1_row.classList = 'row text-center';
-        let h1_start = document.createElement('div');h1_start.classList = 'col-4 btn-phanton-light pointer fw-bold';h1_start.innerHTML = '<i class="fas fa-heading"></i>1';h1_start.onclick = () => {this.__editorAdd('# Titulo', [2,0], true)}
-        let h1_center = document.createElement('div');h1_center.classList = 'col-4 btn-phanton-light pointer';h1_center.innerHTML = '<i class="fas fa-align-center"></i>';h1_center.onclick = () => {this.editor.value += this.editor.value == '' ? '#_ Titulo' : '\n#_ Titulo';if(this.livePreview){this.parse()}}
-        let h1_end = document.createElement('div');h1_end.classList = 'col-4 btn-phanton-light pointer';h1_end.innerHTML = '<i class="fas fa-align-right"></i>';h1_end.onclick = () => {this.editor.value += this.editor.value == '' ? '#__ Titulo' : '\n#__ Titulo';if(this.livePreview){this.parse()}}
+        let h1_start = document.createElement('div');h1_start.classList = 'col-4 btn-phanton-light pointer fw-bold';h1_start.innerHTML = '<i class="fas fa-heading"></i>1';h1_start.onclick = () => {this.__editorAdd(['# ','','Titulo'], false, true)}
+        let h1_center = document.createElement('div');h1_center.classList = 'col-4 btn-phanton-light pointer';h1_center.innerHTML = '<i class="fas fa-align-center"></i>';h1_center.onclick = () => {this.__editorAdd(['#_ ','','Titulo'], false, true)}
+        let h1_end = document.createElement('div');h1_end.classList = 'col-4 btn-phanton-light pointer';h1_end.innerHTML = '<i class="fas fa-align-right"></i>';h1_end.onclick = () => {this.__editorAdd(['#__ ','','Titulo'], false, true)}
         let h2 = document.createElement('li');h2.classList = 'px-3 py-2 container';
         let h2_row = document.createElement('div');h2_row.classList = 'row text-center';
-        let h2_start = document.createElement('div');h2_start.classList = 'col-4 btn-phanton-light pointer fw-bold';h2_start.innerHTML = '<i class="fas fa-heading"></i>2';h2_start.onclick = () => {this.editor.value += this.editor.value == '' ? '## Titulo' : '\n## Titulo';if(this.livePreview){this.parse()}}
-        let h2_center = document.createElement('div');h2_center.classList = 'col-4 btn-phanton-light pointer';h2_center.innerHTML = '<i class="fas fa-align-center"></i>';h2_center.onclick = () => {this.editor.value += this.editor.value == '' ? '##_ Titulo' : '\n##_ Titulo';if(this.livePreview){this.parse()}}
-        let h2_end = document.createElement('div');h2_end.classList = 'col-4 btn-phanton-light pointer';h2_end.innerHTML = '<i class="fas fa-align-right"></i>';h2_end.onclick = () => {this.editor.value += this.editor.value == '' ? '##__ Titulo' : '\n##__ Titulo';if(this.livePreview){this.parse()}}
+        let h2_start = document.createElement('div');h2_start.classList = 'col-4 btn-phanton-light pointer fw-bold';h2_start.innerHTML = '<i class="fas fa-heading"></i>2';h2_start.onclick = () => {this.__editorAdd(['## ',''], false, true)}
+        let h2_center = document.createElement('div');h2_center.classList = 'col-4 btn-phanton-light pointer';h2_center.innerHTML = '<i class="fas fa-align-center"></i>';h2_center.onclick = () => {this.__editorAdd(['##_ ',''], false, true)}
+        let h2_end = document.createElement('div');h2_end.classList = 'col-4 btn-phanton-light pointer';h2_end.innerHTML = '<i class="fas fa-align-right"></i>';h2_end.onclick = () => {this.__editorAdd(['##__ ',''], false, true)}
         let h3 = document.createElement('li');h3.classList = 'px-3 py-2 container';
         let h3_row = document.createElement('div');h3_row.classList = 'row text-center';
-        let h3_start = document.createElement('div');h3_start.classList = 'col-4 btn-phanton-light pointer fw-bold';h3_start.innerHTML = '<i class="fas fa-heading"></i>3';h3_start.onclick = () => {this.editor.value += this.editor.value == '' ? '### Titulo' : '\n### Titulo';if(this.livePreview){this.parse()}}
-        let h3_center = document.createElement('div');h3_center.classList = 'col-4 btn-phanton-light pointer';h3_center.innerHTML = '<i class="fas fa-align-center"></i>';h3_center.onclick = () => {this.editor.value += this.editor.value == '' ? '###_ Titulo' : '\n###_ Titulo';if(this.livePreview){this.parse()}}
-        let h3_end = document.createElement('div');h3_end.classList = 'col-4 btn-phanton-light pointer';h3_end.innerHTML = '<i class="fas fa-align-right"></i>';h3_end.onclick = () => {this.editor.value += this.editor.value == '' ? '###_ Titulo' : '\n###_ Titulo';if(this.livePreview){this.parse()}}
+        let h3_start = document.createElement('div');h3_start.classList = 'col-4 btn-phanton-light pointer fw-bold';h3_start.innerHTML = '<i class="fas fa-heading"></i>3';h3_start.onclick = () => {this.__editorAdd(['### ',''], false, true)}
+        let h3_center = document.createElement('div');h3_center.classList = 'col-4 btn-phanton-light pointer';h3_center.innerHTML = '<i class="fas fa-align-center"></i>';h3_center.onclick = () => {this.__editorAdd(['###_ ',''], false, true)}
+        let h3_end = document.createElement('div');h3_end.classList = 'col-4 btn-phanton-light pointer';h3_end.innerHTML = '<i class="fas fa-align-right"></i>';h3_end.onclick = () => {this.__editorAdd(['###__ ',''], false, true)}
         h1_row.appendChild(h1_start);h1_row.appendChild(h1_center);h1_row.appendChild(h1_end);
         h2_row.appendChild(h2_start);h2_row.appendChild(h2_center);h2_row.appendChild(h2_end);
         h3_row.appendChild(h3_start);h3_row.appendChild(h3_center);h3_row.appendChild(h3_end);
@@ -63,31 +63,20 @@ class jsMdview{
         menu_group.appendChild(heading_menu);
         // ---------
         let align_center = document.createElement('button');align_center.type = 'button';align_center.classList = custom_classlist;align_center.innerHTML = '<i class="fas fa-align-center"></i>';align_center.title = 'Parágrafo centralizado';
-        align_center.onclick = () => {
-            this.editor.value += this.editor.value == '' ? '__ texto' : '\n__ texto';
-            if(this.livePreview){this.parse()}
-        }
+        align_center.onclick = () => {this.__editorAdd(['__ '], [3,0], true)}
         menu_group.appendChild(align_center);
         let align_end = document.createElement('button');align_end.type = 'button';align_end.classList = custom_classlist;align_end.innerHTML = '<i class="fas fa-align-right"></i>';align_end.title = 'Parágrafo a direita';
-        align_end.onclick = () => {
-            this.editor.value += this.editor.value == '' ? '___ texto' : '\n___ texto';
-            if(this.livePreview){this.parse()}
-        }
+        align_end.onclick = () => {this.__editorAdd(['___ ',''], [4,0], true)}
         menu_group.appendChild(align_end);
         let vr1 = document.createElement('span');vr1.classList = 'text-body-tertiary';vr1.innerHTML = '&nbsp;&nbsp;|&nbsp;&nbsp;';menu_group.appendChild(vr1);
         let blockquote = document.createElement('button');blockquote.type = 'button';blockquote.classList = custom_classlist;blockquote.innerHTML = '<i class="fas fa-terminal"></i>';blockquote.title = 'Citação';
-        blockquote.onclick = () => {
-            this.editor.value += this.editor.value == '' ? '> texto' : '\n> texto';
-            if(this.livePreview){this.parse()}
-        }
+        blockquote.onclick = () => {this.__editorAdd(['> ',''], [2,0], true)}
         menu_group.appendChild(blockquote);
         let blockbox = document.createElement('button');blockbox.type = 'button';blockbox.classList = custom_classlist;blockbox.innerHTML = '<b>[ ab ]</b>';blockbox.title = 'Caixa de texto';menu_group.appendChild(blockbox);
-        blockbox.onclick = () => {
-            this.editor.value += this.editor.value == '' ? '[[texto]]' : '\n[[texto]]';
-            if(this.livePreview){this.parse()}
-        }
+        blockbox.onclick = () => {this.__editorAdd(['[[ ',' ]]'], [3,3], true)}
         let breakWord = document.createElement('button');breakWord.type = 'button';breakWord.classList = custom_classlist;breakWord.innerHTML = '<i class="fas fa-level-down-alt rotate-90 fs-6" style="width: 12px"></i>';breakWord.title = 'Quebra de linha';
-        breakWord.onclick = () => {this.editor.value += '<br />';if(this.livePreview){this.parse()}};menu_group.appendChild(breakWord);
+        breakWord.onclick = () => {this.__editorAdd(['<br />',''], false, false, false)};
+        menu_group.appendChild(breakWord);
         let hr = document.createElement('button');hr.type = 'button';hr.classList = custom_classlist;hr.innerHTML = '<b>---</b>';hr.title = 'Linha horizontal';
         hr.onclick = () => {this.editor.value += this.editor.value == '' ? '---' : '\n---';if(this.livePreview){this.parse()}};menu_group.appendChild(hr);
         let pagebreak = document.createElement('button');pagebreak.type = 'button';pagebreak.classList = custom_classlist;pagebreak.innerHTML = '<i class="fas fa-cut fs-6"></i>';pagebreak.onclick = () => {this.editor.value += this.editor.value == '' ? '[break]' : '\n[break]'};pagebreak.title = 'Quebra de página';menu_group.appendChild(pagebreak);
@@ -137,21 +126,25 @@ class jsMdview{
         wrapper.appendChild(ul);
         return wrapper;
     }
-    __editorAdd(text,select=false,newline=false){ // Insere o texto fornecido na posicao do cursor
+    __editorAdd(pre_pos,select=false,newline=false,allowPlot=true){ // Insere o texto fornecido na posicao do cursor
         let start = this.editor.selectionStart;
         let end = this.editor.selectionEnd;
-        let value = this.editor.value;
-        let len = value.length;
-        if(newline && value != ''){
-            if(value.substring(start - 1, start) != '\n'){text = `\n${text}`}
-        }
-        this.editor.value = value.substring(0, start) + text + value.substring(end, len);
+        let text = this.editor.value;
+        let len = text.length;
+        console.log(allowPlot && start != end);
+        console.log(pre_pos[2] == undefined); // ESTOU AQUIIII
+        let value = allowPlot && start != end ? text.substring(start, end) : pre_pos[2] == undefined ? 'texto' : pre_pos[2];
+        console.log(value);
+        // let value = pre_pos[2] != undefined ? pre_pos[2] : start == end ? 'texto' : text.substring(start, end);
+        
+        let br = newline && !['\n',''].includes(text.substring(start - 1, start)) ? true : false;
+        let br_txt = br ? '\n' : '';
+        let br_len = br ? 1 : 0;
+        
+        this.editor.value = text.substring(0, start) + br_txt + `${pre_pos[0]}${value}${pre_pos[1]}` + text.substring(end, len);
         // Retornando o foco na posicao correta
-        this.editor.selectionEnd = (end + text.length - (end - start));
-        if(select){
-            this.editor.selectionStart = start + select[0];
-            this.editor.selectionEnd -= select[1];
-        }        
+        this.editor.selectionEnd = (end + value.length + pre_pos[0].length + br_len) - (end - start);
+        if(select){this.editor.selectionStart = start + select[0] + br_len;}
         this.editor.focus();
         if(this.livePreview){this.parse()}
     }
@@ -172,8 +165,8 @@ class jsMdview{
             .replace(/^\> (.*$)/gim, '<blockquote class="ps-2 border-start border-3 border-dark-subtle" style="font-size: 1.15rem">$1</blockquote>')
             .replace(/\[\[(.*?)\]\]/gim, '<div class="px-2 py-1 border rounded bg-body-secondary my-2">$1</div>')
             .replaceAll('[break]', '<span data-role="page-break"></span>')
-            .replace(/\*\*(.*)\*\*/gim, '<b>$1</b>')
-            .replace(/\*(.*)\*/gim, '<i>$1</i>')
+            .replace(/\*\*(.*?)\*\*/gim, '<b>$1</b>')
+            .replace(/\*(.*?)\*/gim, '<i>$1</i>')
             .replace(/!\[(.*?)\]\((.*?)\)/gim, "<img alt='$1' src='$2' />")
             .replace(/\[(.*?)\]\((.*?)\)/gim, "<a href='$2' target='_blank'>$1</a>")
             .replace(/\n/gim, '<br>')
