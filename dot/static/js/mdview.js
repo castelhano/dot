@@ -7,11 +7,17 @@ class jsMdview{
         this.container = options?.container || document.body; // Container para criacao do editor
         this.livePreview = options?.livePreview != undefined ? options.livePreview : true;
         this.autofocus = options?.autofocus != undefined ? options.autofocus : false;
+        this.shortcuts = options?.shortcuts != undefined ? options.shortcuts : true;
+        this.extra = options?.extra || []; // Botoes adicionais definidos no cliente
         this.db = options?.db || {}; // Padroes regex a serem aplicados no doc
+        this.modelos = options?.modelos || {}; // Modelos de documento fornecidos pelo cliente
         this.minHeight = options?.minHeight || 700;
         // *************
         this.buildControls();
         this.build();
+        if(this.extra.length > 0){this.__loadExtra()}
+        if(this.shortcuts){this.__addShortcutMap()}; // Adiciona integracao com lib listener.js para atalhos dos elementos do menu
+
     }
     build() {
         let row = document.createElement('div');row.classList = 'row g-3';
@@ -30,84 +36,104 @@ class jsMdview{
     buildControls(){
         let custom_classlist = 'btn btn-sm btn-phanton-light rounded-pill';
         let dropdown_classlist = 'btn btn-sm btn-phanton-light dropdown-toggle';
-        let menu_group = document.createElement('div');menu_group.classList = 'border rounded-pill bg-body-secondary px-2 py-1 mb-2';
-        let bold = document.createElement('button');bold.type = 'button';bold.classList = custom_classlist;bold.innerHTML = '<i class="fas fa-bold"></i>';bold.title = 'Negrito';
-        bold.onclick = () => {this.__editorAdd(['**','**'], [2,2])}
-        menu_group.appendChild(bold);
-        let italic = document.createElement('button');italic.type = 'button';italic.classList = custom_classlist;italic.innerHTML = '<i class="fas fa-italic" style="width: 12px"></i>';italic.title = 'Italico';
-        italic.onclick = () => {this.__editorAdd(['*','*'], [1,1])}
-        menu_group.appendChild(italic);
-        let heading = document.createElement('button');heading.type = 'button';heading.classList = dropdown_classlist;heading.setAttribute('data-bs-toggle', 'dropdown');heading.innerHTML = '<i class="fas fa-heading me-1"></i>';heading.title = 'Titulos';
-        let heading_menu = document.createElement('ul');heading_menu.classList = 'dropdown-menu fs-7';
+        let menu_group = document.createElement('div');menu_group.classList = 'border rounded-pill bg-body-secondary p-1 mb-2';
+        this.bold = document.createElement('button');this.bold.type = 'button';this.bold.classList = custom_classlist;this.bold.innerHTML = '<i class="fas fa-bold"></i>';this.bold.title = 'Negrito';
+        this.bold.onclick = () => {this.__editorAdd(['**','**'], [2,2])}
+        menu_group.appendChild(this.bold);
+        this.italic = document.createElement('button');this.italic.type = 'button';this.italic.classList = custom_classlist;this.italic.innerHTML = '<i class="fas fa-italic" style="width: 12px"></i>';this.italic.title = 'Italico';
+        this.italic.onclick = () => {this.__editorAdd(['*','*'], [1,1])}
+        menu_group.appendChild(this.italic);
+        this.heading = document.createElement('button');this.heading.type = 'button';this.heading.classList = dropdown_classlist;this.heading.setAttribute('data-bs-toggle', 'dropdown');this.heading.innerHTML = '<i class="fas fa-heading me-1"></i>';this.heading.title = 'Titulos';
+        this.heading_menu = document.createElement('ul');this.heading_menu.classList = 'dropdown-menu fs-7';
         let h1 = document.createElement('li');h1.classList = 'px-3 py-2 container';
         let h1_row = document.createElement('div');h1_row.classList = 'row text-center';
-        let h1_start = document.createElement('div');h1_start.classList = 'col-4 btn-phanton-light pointer fw-bold';h1_start.innerHTML = '<i class="fas fa-heading"></i>1';h1_start.onclick = () => {this.__editorAdd(['# ','','Titulo'], false, true)}
-        let h1_center = document.createElement('div');h1_center.classList = 'col-4 btn-phanton-light pointer';h1_center.innerHTML = '<i class="fas fa-align-center"></i>';h1_center.onclick = () => {this.__editorAdd(['#_ ','','Titulo'], false, true)}
-        let h1_end = document.createElement('div');h1_end.classList = 'col-4 btn-phanton-light pointer';h1_end.innerHTML = '<i class="fas fa-align-right"></i>';h1_end.onclick = () => {this.__editorAdd(['#__ ','','Titulo'], false, true)}
+        this.h1_start = document.createElement('div');this.h1_start.classList = 'col-4 btn-phanton-light pointer fw-bold';this.h1_start.innerHTML = '<i class="fas fa-heading"></i>1';this.h1_start.onclick = () => {this.__editorAdd(['# ','','Titulo'], false, true)}
+        this.h1_center = document.createElement('div');this.h1_center.classList = 'col-4 btn-phanton-light pointer';this.h1_center.innerHTML = '<i class="fas fa-align-center"></i>';this.h1_center.onclick = () => {this.__editorAdd(['#_ ','','Titulo'], false, true)}
+        this.h1_end = document.createElement('div');this.h1_end.classList = 'col-4 btn-phanton-light pointer';this.h1_end.innerHTML = '<i class="fas fa-align-right"></i>';this.h1_end.onclick = () => {this.__editorAdd(['#__ ','','Titulo'], false, true)}
         let h2 = document.createElement('li');h2.classList = 'px-3 py-2 container';
         let h2_row = document.createElement('div');h2_row.classList = 'row text-center';
-        let h2_start = document.createElement('div');h2_start.classList = 'col-4 btn-phanton-light pointer fw-bold';h2_start.innerHTML = '<i class="fas fa-heading"></i>2';h2_start.onclick = () => {this.__editorAdd(['## ',''], false, true)}
-        let h2_center = document.createElement('div');h2_center.classList = 'col-4 btn-phanton-light pointer';h2_center.innerHTML = '<i class="fas fa-align-center"></i>';h2_center.onclick = () => {this.__editorAdd(['##_ ',''], false, true)}
-        let h2_end = document.createElement('div');h2_end.classList = 'col-4 btn-phanton-light pointer';h2_end.innerHTML = '<i class="fas fa-align-right"></i>';h2_end.onclick = () => {this.__editorAdd(['##__ ',''], false, true)}
+        this.h2_start = document.createElement('div');this.h2_start.classList = 'col-4 btn-phanton-light pointer fw-bold';this.h2_start.innerHTML = '<i class="fas fa-heading"></i>2';this.h2_start.onclick = () => {this.__editorAdd(['## ','','Subtitulo'], false, true)}
+        this.h2_center = document.createElement('div');this.h2_center.classList = 'col-4 btn-phanton-light pointer';this.h2_center.innerHTML = '<i class="fas fa-align-center"></i>';this.h2_center.onclick = () => {this.__editorAdd(['##_ ','','Subtitulo'], false, true)}
+        this.h2_end = document.createElement('div');this.h2_end.classList = 'col-4 btn-phanton-light pointer';this.h2_end.innerHTML = '<i class="fas fa-align-right"></i>';this.h2_end.onclick = () => {this.__editorAdd(['##__ ','','Subtitulo'], false, true)}
         let h3 = document.createElement('li');h3.classList = 'px-3 py-2 container';
         let h3_row = document.createElement('div');h3_row.classList = 'row text-center';
-        let h3_start = document.createElement('div');h3_start.classList = 'col-4 btn-phanton-light pointer fw-bold';h3_start.innerHTML = '<i class="fas fa-heading"></i>3';h3_start.onclick = () => {this.__editorAdd(['### ',''], false, true)}
-        let h3_center = document.createElement('div');h3_center.classList = 'col-4 btn-phanton-light pointer';h3_center.innerHTML = '<i class="fas fa-align-center"></i>';h3_center.onclick = () => {this.__editorAdd(['###_ ',''], false, true)}
-        let h3_end = document.createElement('div');h3_end.classList = 'col-4 btn-phanton-light pointer';h3_end.innerHTML = '<i class="fas fa-align-right"></i>';h3_end.onclick = () => {this.__editorAdd(['###__ ',''], false, true)}
-        h1_row.appendChild(h1_start);h1_row.appendChild(h1_center);h1_row.appendChild(h1_end);
-        h2_row.appendChild(h2_start);h2_row.appendChild(h2_center);h2_row.appendChild(h2_end);
-        h3_row.appendChild(h3_start);h3_row.appendChild(h3_center);h3_row.appendChild(h3_end);
+        this.h3_start = document.createElement('div');this.h3_start.classList = 'col-4 btn-phanton-light pointer fw-bold';this.h3_start.innerHTML = '<i class="fas fa-heading"></i>3';this.h3_start.onclick = () => {this.__editorAdd(['### ','','Titulo de Seção'], false, true)}
+        this.h3_center = document.createElement('div');this.h3_center.classList = 'col-4 btn-phanton-light pointer';this.h3_center.innerHTML = '<i class="fas fa-align-center"></i>';this.h3_center.onclick = () => {this.__editorAdd(['###_ ','','Titulo de Seção'], false, true)}
+        this.h3_end = document.createElement('div');this.h3_end.classList = 'col-4 btn-phanton-light pointer';this.h3_end.innerHTML = '<i class="fas fa-align-right"></i>';this.h3_end.onclick = () => {this.__editorAdd(['###__ ','','Titulo de Seção'], false, true)}
+        h1_row.appendChild(this.h1_start);h1_row.appendChild(this.h1_center);h1_row.appendChild(this.h1_end);
+        h2_row.appendChild(this.h2_start);h2_row.appendChild(this.h2_center);h2_row.appendChild(this.h2_end);
+        h3_row.appendChild(this.h3_start);h3_row.appendChild(this.h3_center);h3_row.appendChild(this.h3_end);
         h1.appendChild(h1_row);h2.appendChild(h2_row);h3.appendChild(h3_row);
-        heading_menu.appendChild(h1);heading_menu.appendChild(h2);heading_menu.appendChild(h3);
-        menu_group.appendChild(heading);
-        menu_group.appendChild(heading_menu);
+        this.heading_menu.appendChild(h1);this.heading_menu.appendChild(h2);this.heading_menu.appendChild(h3);
+        menu_group.appendChild(this.heading);
+        menu_group.appendChild(this.heading_menu);
         // ---------
-        let align_center = document.createElement('button');align_center.type = 'button';align_center.classList = custom_classlist;align_center.innerHTML = '<i class="fas fa-align-center"></i>';align_center.title = 'Parágrafo centralizado';
-        align_center.onclick = () => {this.__editorAdd(['__ '], [3,0], true)}
-        menu_group.appendChild(align_center);
-        let align_end = document.createElement('button');align_end.type = 'button';align_end.classList = custom_classlist;align_end.innerHTML = '<i class="fas fa-align-right"></i>';align_end.title = 'Parágrafo a direita';
-        align_end.onclick = () => {this.__editorAdd(['___ ',''], [4,0], true)}
-        menu_group.appendChild(align_end);
+        this.align_center = document.createElement('button');this.align_center.type = 'button';this.align_center.classList = custom_classlist;this.align_center.innerHTML = '<i class="fas fa-align-center"></i>';this.align_center.title = 'Parágrafo centralizado';
+        this.align_center.onclick = () => {this.__editorAdd(['__ ',''], [3,0], true)}
+        menu_group.appendChild(this.align_center);
+        this.align_end = document.createElement('button');this.align_end.type = 'button';this.align_end.classList = custom_classlist;this.align_end.innerHTML = '<i class="fas fa-align-right"></i>';this.align_end.title = 'Parágrafo a direita';
+        this.align_end.onclick = () => {this.__editorAdd(['___ ',''], [4,0], true)}
+        menu_group.appendChild(this.align_end);
         let vr1 = document.createElement('span');vr1.classList = 'text-body-tertiary';vr1.innerHTML = '&nbsp;&nbsp;|&nbsp;&nbsp;';menu_group.appendChild(vr1);
-        let blockquote = document.createElement('button');blockquote.type = 'button';blockquote.classList = custom_classlist;blockquote.innerHTML = '<i class="fas fa-terminal"></i>';blockquote.title = 'Citação';
-        blockquote.onclick = () => {this.__editorAdd(['> ',''], [2,0], true)}
-        menu_group.appendChild(blockquote);
-        let blockbox = document.createElement('button');blockbox.type = 'button';blockbox.classList = custom_classlist;blockbox.innerHTML = '<b>[ ab ]</b>';blockbox.title = 'Caixa de texto';menu_group.appendChild(blockbox);
-        blockbox.onclick = () => {this.__editorAdd(['[[ ',' ]]'], [3,3], true)}
-        let breakWord = document.createElement('button');breakWord.type = 'button';breakWord.classList = custom_classlist;breakWord.innerHTML = '<i class="fas fa-level-down-alt rotate-90 fs-6" style="width: 12px"></i>';breakWord.title = 'Quebra de linha';
-        breakWord.onclick = () => {this.__editorAdd(['<br />',''], false, false, false)};
-        menu_group.appendChild(breakWord);
-        let hr = document.createElement('button');hr.type = 'button';hr.classList = custom_classlist;hr.innerHTML = '<b>---</b>';hr.title = 'Linha horizontal';
-        hr.onclick = () => {this.editor.value += this.editor.value == '' ? '---' : '\n---';if(this.livePreview){this.parse()}};menu_group.appendChild(hr);
-        let pagebreak = document.createElement('button');pagebreak.type = 'button';pagebreak.classList = custom_classlist;pagebreak.innerHTML = '<i class="fas fa-cut fs-6"></i>';pagebreak.onclick = () => {this.editor.value += this.editor.value == '' ? '[break]' : '\n[break]'};pagebreak.title = 'Quebra de página';menu_group.appendChild(pagebreak);
+        this.blockquote = document.createElement('button');this.blockquote.type = 'button';this.blockquote.classList = custom_classlist;this.blockquote.innerHTML = '<i class="fas fa-terminal"></i>';this.blockquote.title = 'Citação';
+        this.blockquote.onclick = () => {this.__editorAdd(['> ',''], [2,0], true)}
+        menu_group.appendChild(this.blockquote);
+        this.blockbox = document.createElement('button');this.blockbox.type = 'button';this.blockbox.classList = custom_classlist;this.blockbox.innerHTML = '<b>[ ab ]</b>';this.blockbox.title = 'Caixa de texto';
+        this.blockbox.onclick = () => {this.__editorAdd(['[[ ',' ]]'], [3,3], true)};menu_group.appendChild(this.blockbox);
+        this.breakWord = document.createElement('button');this.breakWord.type = 'button';this.breakWord.classList = custom_classlist;this.breakWord.innerHTML = '<i class="fas fa-level-down-alt rotate-90 fs-6" style="width: 12px"></i>';this.breakWord.title = 'Quebra de linha';
+        this.breakWord.onclick = () => {this.__editorAdd(['<br />','',''], false, false, false)};
+        menu_group.appendChild(this.breakWord);
+        this.hr = document.createElement('button');this.hr.type = 'button';this.hr.classList = custom_classlist;this.hr.innerHTML = '<b>---</b>';this.hr.title = 'Linha horizontal';
+        this.hr.onclick = () => {this.__editorAdd(['--','',''], false, false)};menu_group.appendChild(this.hr);
+        this.pagebreak = document.createElement('button');this.pagebreak.type = 'button';this.pagebreak.classList = custom_classlist;this.pagebreak.innerHTML = '<i class="fas fa-cut fs-6"></i>';this.pagebreak.onclick = () => {this.editor.value += this.editor.value == '' ? '[break]' : '\n[break]'};this.pagebreak.title = 'Quebra de página';menu_group.appendChild(this.pagebreak);
         if(Object.keys(this.db).length > 0){
-            let userBtn = this.buildClientData();
-            menu_group.appendChild(this.buildDefaultData());
+            let userBtn = this.__buildClientData();
+            menu_group.appendChild(this.__buildDefaultData());
             menu_group.appendChild(userBtn);
         }
+        let vr2 = document.createElement('span');vr2.classList = 'text-body-tertiary';vr2.innerHTML = '&nbsp;&nbsp;|&nbsp;&nbsp;';menu_group.appendChild(vr2);
         if(!this.livePreview){
-            let vr2 = document.createElement('span');vr2.classList = 'text-body-tertiary';vr2.innerHTML = '&nbsp;&nbsp;|&nbsp;&nbsp;';menu_group.appendChild(vr2);
-            let refresh = document.createElement('button');refresh.type = 'button';refresh.classList = 'btn btn-sm btn-phanton-success circle-hover ms-1';refresh.innerHTML = '<i class="fas fa-sync"></i>';refresh.title = 'Atualizar Preview';
-            refresh.onclick = () => {this.parse()};
-            menu_group.appendChild(refresh);
+            this.refresh = document.createElement('button');this.refresh.type = 'button';this.refresh.classList = 'btn btn-sm btn-phanton-success circle-hover ms-1';this.refresh.innerHTML = '<i class="fas fa-sync"></i>';this.refresh.title = 'Atualizar Preview';
+            this.refresh.onclick = () => {this.parse()};
+            menu_group.appendChild(this.refresh);
         }
+        if(this.shortcuts){
+            this.shortcutsBtn = document.createElement('button');this.shortcutsBtn.type = 'button';this.shortcutsBtn.classList = custom_classlist;this.shortcutsBtn.innerHTML = '<i class="fas fa-keyboard"></i>';this.shortcutsBtn.title = 'Atalhos de teclado';
+            this.shortcutsBtn.onclick = () => {this.__showKeymaps()};
+            menu_group.appendChild(this.shortcutsBtn);
+        }
+        this.extraBtns = document.createElement('span');this.extraBtns.classList = 'ms-2';menu_group.appendChild(this.extraBtns);
         // ---------
         this.container.appendChild(menu_group);
     }
-    buildClientData(){
+    __buildClientData(){
         let wrapper = document.createElement('span');
         let btn = document.createElement('button');btn.type = 'button';btn.classList = 'btn btn-sm btn-phanton-light dropdown-toggle';btn.innerHTML = '<i class="fas fa-database"></i>';btn.setAttribute('data-bs-toggle','dropdown');btn.title = 'Variáveis do modelo';
         let ul = document.createElement('ul');ul.classList = 'dropdown-menu fs-7';
         for(let key in this.db){
             let li = document.createElement('li');li.classList = 'dropdown-item pointer';li.innerHTML = key;
-            li.onclick = () => {this.editor.value += `$(${key})`;if(this.livePreview){this.parse()}};
+            li.onclick = () => {this.__editorAdd([`$(${key})`,'',''], false, false)};
             ul.appendChild(li);
         }
         wrapper.appendChild(btn);
         wrapper.appendChild(ul);
         return wrapper;
     }
-    buildDefaultData(){
+    __buildClientModels(){
+        // PAREI AQUIII
+        // let wrapper = document.createElement('span');
+        // let btn = document.createElement('button');btn.type = 'button';btn.classList = 'btn btn-sm btn-phanton-light dropdown-toggle';btn.innerHTML = '<i class="fas fa-database"></i>';btn.setAttribute('data-bs-toggle','dropdown');btn.title = 'Variáveis do modelo';
+        // let ul = document.createElement('ul');ul.classList = 'dropdown-menu fs-7';
+        // for(let key in this.db){
+        //     let li = document.createElement('li');li.classList = 'dropdown-item pointer';li.innerHTML = key;
+        //     li.onclick = () => {this.__editorAdd([`$(${key})`,'',''], false, false)};
+        //     ul.appendChild(li);
+        // }
+        // wrapper.appendChild(btn);
+        // wrapper.appendChild(ul);
+        // return wrapper;
+    }
+    __buildDefaultData(){
         let data = { // Adiciona chaves padrao a this.db, cria o menu de entrada para estes e retorna elemento
             'hoje': dateToday(),
             'agora': timeNow()
@@ -118,7 +144,7 @@ class jsMdview{
         for(let key in data){
             this.db[key] = data[key];
             let li = document.createElement('li');li.classList = 'dropdown-item pointer';li.innerHTML = key.charAt(0).toUpperCase() + key.slice(1);
-            li.onclick = () => {this.editor.value += `$(${key})`;if(this.livePreview){this.parse()}};
+            li.onclick = () => {this.__editorAdd([`$(${key})`,'',''], false, false)};
             ul.appendChild(li);
         }
         // ---
@@ -131,11 +157,7 @@ class jsMdview{
         let end = this.editor.selectionEnd;
         let text = this.editor.value;
         let len = text.length;
-        console.log(allowPlot && start != end);
-        console.log(pre_pos[2] == undefined); // ESTOU AQUIIII
         let value = allowPlot && start != end ? text.substring(start, end) : pre_pos[2] == undefined ? 'texto' : pre_pos[2];
-        console.log(value);
-        // let value = pre_pos[2] != undefined ? pre_pos[2] : start == end ? 'texto' : text.substring(start, end);
         
         let br = newline && !['\n',''].includes(text.substring(start - 1, start)) ? true : false;
         let br_txt = br ? '\n' : '';
@@ -174,4 +196,51 @@ class jsMdview{
         this.previewTarget.innerHTML = result.trim();
     }
     get(){return this.editor.value}
+    __addShortcutMap(){
+        SHORTCUT_MAP['bFTF'] = () => {this.bold.click();}
+        SHORTCUT_MAP['iFTF'] = () => {this.italic.click()}
+        SHORTCUT_MAP['.FTF'] = () => {this.blockquote.click()}
+        SHORTCUT_MAP['[FTF'] = () => {this.blockbox.click()}
+        SHORTCUT_MAP['enterFTF'] = () => {this.breakWord.click()}
+        SHORTCUT_MAP['/FTF'] = () => {this.pagebreak.click()}
+        // Headers shortcuts --
+        SHORTCUT_MAP['hFTF'] = () => {this.heading.click()}
+        SHORTCUT_MAP['1FFF'] = () => {if(mdviewHopen(this)){this.h1_start.click()}}
+        SHORTCUT_MAP['4FFF'] = () => {if(mdviewHopen(this)){this.h1_center.click()}}
+        SHORTCUT_MAP['7FFF'] = () => {if(mdviewHopen(this)){this.h1_end.click()}}
+        SHORTCUT_MAP['2FFF'] = () => {if(mdviewHopen(this)){this.h2_start.click()}}
+        SHORTCUT_MAP['5FFF'] = () => {if(mdviewHopen(this)){this.h2_center.click()}}
+        SHORTCUT_MAP['8FFF'] = () => {if(mdviewHopen(this)){this.h2_end.click()}}
+        SHORTCUT_MAP['3FFF'] = () => {if(mdviewHopen(this)){this.h3_start.click()}}
+        SHORTCUT_MAP['6FFF'] = () => {if(mdviewHopen(this)){this.h3_center.click()}}
+        SHORTCUT_MAP['9FFF'] = () => {if(mdviewHopen(this)){this.h3_end.click()}}
+        function mdviewHopen(self){return self.heading_menu.classList.contains('show') ? true : false;}
+    }
+    __showKeymaps(){
+        let maps = {
+            'Texto em <b>negrito</b>': 'Ctrl + B',
+            'Texto em <i>italico</i>': 'Ctrl + I',
+            'Citação': 'Ctrl + .',
+            'Caixa de texto': 'Ctrl + [',
+            'Quebra de linha': 'Ctrl + ENTER',
+            'Quebra de página': 'Ctrl + /',
+            '<b class="text-secondary">Menu de Titulos</b>': '<b class="text-secondary">Ctrl + H</b>',
+            '[seguido] Titulo (esq cen dir)': '<b>1</b> ou <b>4</b> ou <b>7</b>',
+            '[seguido] Subtitulo (esq cen dir)': '<b>2</b> ou <b>5</b> ou <b>8</b>',
+            '[seguido] Seção (esq cen dir)': '<b>3</b> ou <b>6</b> ou <b>9</b>',
+        }
+        let result = '<table class="table table-sm table-striped caption-top fs-7"><caption><b>jsReport:</b> Atalhos de teclado</caption><thead><tr><th>Ação</th><th>Atalho</th></tr></thead><tbody>';
+        for(let key in maps){result += `<tr><td>${key}</td><td>${maps[key]}</td></tr>`}
+        result += '</tbody></table>';
+        this.previewTarget.innerHTML = result;
+    }
+    __loadExtra(){
+        let custom_classlist = 'btn btn-sm btn-phanton-light rounded-pill';
+        for(let i = 0;i < this.extra.length;i++){
+            let btn = document.createElement('button');btn.type = 'button';btn.classList = this.extra[i]?.classList || custom_classlist;btn.innerHTML = this.extra[i]?.innerHTML || '--';
+            if(this.extra[i].id){btn.id = this.extra[i].id}
+            btn.onclick = this.extra[i]?.onclick || (() => {console.log('NADA A EXIBIR')});
+            this.extraBtns.appendChild(btn);
+        }
+    }
 }

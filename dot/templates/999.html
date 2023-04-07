@@ -30,14 +30,21 @@
 {% block add_script %}
 
 const report = new jsMdview({
-  editor: document.getElementById('id_editor'),
-  previewTarget: document.getElementById('preview'),
   container: document.getElementById('container'),
   // livePreview: false,
+  // shortcuts: false,
   db: {nome:"Rafael", idade:55, cargo:"Analista de Sistemas"},
+  extra: [
+    {id:'id_fei',innerHTML:'Save',onclick: salvar},
+  ],
   autofocus: true
 });
-  
+function salvar(){
+  dotNotify('success', 'Salvando....')
+}
+function baixar(){
+  dotNotify('warning', 'Baixando....')
+}
 
 {% endblock %}
 </script>
