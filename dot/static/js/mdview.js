@@ -15,7 +15,8 @@ class jsMdview{
         // *************
         this.buildControls();
         this.build();
-        if(this.extra.length > 0){this.__loadExtra()}
+        this.__buildClientModels(); // Carrega modelos de documentos
+        if(this.extra.length > 0){this.__loadExtra()}; // Adiciona botoes customizados pelo cliente
         if(this.shortcuts){this.__addShortcutMap()}; // Adiciona integracao com lib listener.js para atalhos dos elementos do menu
 
     }
@@ -36,7 +37,7 @@ class jsMdview{
     buildControls(){
         let custom_classlist = 'btn btn-sm btn-phanton-light rounded-pill';
         let dropdown_classlist = 'btn btn-sm btn-phanton-light dropdown-toggle';
-        let menu_group = document.createElement('div');menu_group.classList = 'border rounded-pill bg-body-secondary p-1 mb-2';
+        let menu_group = document.createElement('div');menu_group.classList = 'border rounded-pill bg-body-secondary px-3 py-2 px-lg-1 py-lg-1 mb-2';
         this.bold = document.createElement('button');this.bold.type = 'button';this.bold.classList = custom_classlist;this.bold.innerHTML = '<i class="fas fa-bold"></i>';this.bold.title = 'Negrito';
         this.bold.onclick = () => {this.__editorAdd(['**','**'], [2,2])}
         menu_group.appendChild(this.bold);
@@ -120,18 +121,21 @@ class jsMdview{
         return wrapper;
     }
     __buildClientModels(){
-        // PAREI AQUIII
-        // let wrapper = document.createElement('span');
-        // let btn = document.createElement('button');btn.type = 'button';btn.classList = 'btn btn-sm btn-phanton-light dropdown-toggle';btn.innerHTML = '<i class="fas fa-database"></i>';btn.setAttribute('data-bs-toggle','dropdown');btn.title = 'Variáveis do modelo';
-        // let ul = document.createElement('ul');ul.classList = 'dropdown-menu fs-7';
-        // for(let key in this.db){
-        //     let li = document.createElement('li');li.classList = 'dropdown-item pointer';li.innerHTML = key;
-        //     li.onclick = () => {this.__editorAdd([`$(${key})`,'',''], false, false)};
-        //     ul.appendChild(li);
-        // }
-        // wrapper.appendChild(btn);
-        // wrapper.appendChild(ul);
-        // return wrapper;
+        let wrapper = document.createElement('span');
+        let btn = document.createElement('button');btn.type = 'button';btn.classList = 'btn btn-sm btn-phanton-light dropdown-toggle';btn.innerHTML = '<i class="fas fa-scroll"></i>';btn.setAttribute('data-bs-toggle','dropdown');btn.title = 'Modelos';
+        let ul = document.createElement('ul');ul.classList = 'dropdown-menu fs-7';
+        for(let key in this.modelos){
+            let li = document.createElement('li');li.classList = 'dropdown-item pointer';li.innerHTML = key;
+            li.onclick = () => {this.editor.value = this.modelos[key];if(this.livePreview){this.parse()}};
+            ul.appendChild(li);
+        }
+        if(ul.children.length == 0){
+            let li = document.createElement('li');li.classList = 'dropdown-item disabled';li.innerHTML = 'Nenhum modelo fornecido';
+            ul.appendChild(li);
+        }
+        wrapper.appendChild(btn);
+        wrapper.appendChild(ul);
+        this.extraBtns.appendChild(wrapper);
     }
     __buildDefaultData(){
         let data = { // Adiciona chaves padrao a this.db, cria o menu de entrada para estes e retorna elemento
