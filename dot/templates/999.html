@@ -28,12 +28,10 @@
 
 <script>
 {% block add_script %}
-
 const report = new jsMdview({
   container: document.getElementById('container'),
-  // livePreview: false,
-  // shortcuts: false,
   db: {nome:"Rafael", idade:55, cargo:"Analista de Sistemas"},
+  value: `{{result|safe}}`,
   extra: [
     {id:'id_fei',innerHTML:'Save',onclick: salvar},
   ],

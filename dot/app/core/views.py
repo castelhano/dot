@@ -614,7 +614,17 @@ def logout(request):
     return redirect('index')
 
 def handler(request, code):
-    return render(request,f'{code}.html')
+    from .md_report import md_report
+    mod = """# Titulo principal
+##_ Subtitulo centralizado
+[[ Caixa de texto <br />em destaque]]
+##__ Subtitulo a direita com linha abaixo --
+Aqui eh um **novo paragrafo** com itens em *italico*
+> Além de uma citação
+<hr />
+    """
+    result = md_report(mod)
+    return render(request,f'{code}.html',{'result':result})
 
 def password_valid(password):
     if len(password) < 8:

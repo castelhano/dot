@@ -5,6 +5,7 @@ class jsMdview{
         this.editor;
         this.previewTarget;
         this.container = options?.container || document.body; // Container para criacao do editor
+        this.value = options?.value || ''; // Valor inicial a ser carregado no editor
         this.livePreview = options?.livePreview != undefined ? options.livePreview : true;
         this.autofocus = options?.autofocus != undefined ? options.autofocus : false;
         this.shortcuts = options?.shortcuts != undefined ? options.shortcuts : true;
@@ -18,13 +19,14 @@ class jsMdview{
         this.__buildClientModels(); // Carrega modelos de documentos
         if(this.extra.length > 0){this.__loadExtra()}; // Adiciona botoes customizados pelo cliente
         if(this.shortcuts){this.__addShortcutMap()}; // Adiciona integracao com lib listener.js para atalhos dos elementos do menu
+        if(this.value != ''){this.parse()}
 
     }
     build() {
         let row = document.createElement('div');row.classList = 'row g-3';
         let c1 = document.createElement('div');c1.classList = 'col-lg';
         let c2 = document.createElement('div');c2.classList = 'col-lg';
-        this.editor = document.createElement('textarea');this.editor.classList = 'form-control';this.editor.style = `min-height: ${this.minHeight}px;`;
+        this.editor = document.createElement('textarea');this.editor.classList = 'form-control';this.editor.style = `min-height: ${this.minHeight}px;`;this.editor.value = this.value;
         if(this.autofocus){this.editor.setAttribute('autofocus','')}
         if(this.livePreview){this.editor.oninput = () => {this.parse()}}
         c1.appendChild(this.editor);
@@ -187,7 +189,7 @@ class jsMdview{
             .replace(/^# (.*$)/gim, '<h2>$1</h2>')
             .replace(/^___(.*$)/gim, '<p class="text-end m-0">$1</p>')
             .replace(/^__(.*$)/gim, '<p class="text-center m-0">$1</p>')
-            .replace(/--[-]*/gim, '<hr >')
+            .replace(/--[-]*?/gim, '<hr >')
             .replace(/^\> (.*$)/gim, '<blockquote class="ps-2 border-start border-3 border-dark-subtle" style="font-size: 1.15rem">$1</blockquote>')
             .replace(/\[\[(.*?)\]\]/gim, '<div class="px-2 py-1 border rounded bg-body-secondary my-2">$1</div>')
             .replaceAll('[break]', '<span data-role="page-break"></span>')
@@ -195,7 +197,7 @@ class jsMdview{
             .replace(/\*(.*?)\*/gim, '<i>$1</i>')
             .replace(/!\[(.*?)\]\((.*?)\)/gim, "<img alt='$1' src='$2' />")
             .replace(/\[(.*?)\]\((.*?)\)/gim, "<a href='$2' target='_blank'>$1</a>")
-            .replace(/\n/gim, '<br>')
+            .replace(/\n/gm, '<br>')
         for(let key in this.db){result = result.replaceAll(`$(${key})`, this.db[key])} // Faz replace para os dados a serem atereados no doc
         this.previewTarget.innerHTML = result.trim();
     }
