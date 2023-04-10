@@ -17,10 +17,9 @@
   <li class="breadcrumb-item"><a href="#">Library</a></li>
   <li class="breadcrumb-item active">Data</li>
 </ol>
-<form action="{% url 'handler' '999' %}" method="POST" target="_blank" onsubmit="return ajustaEditor()">
+<form action="{% url 'handler' '999' %}" method="POST" target="_blank">
   {% csrf_token %}
   <div id="container"></div>
-  <input type="hidden" name="original" id="original">
   <button type="submit" class="btn btn-sm btn-primary mt-2">Submit</button>
 </form>
 {% endblock%}
@@ -33,11 +32,6 @@
 
 <script>
 {% block add_script %}
-
-function ajustaEditor(){
-  document.getElementById('original').value = report.get();
-  return true;
-}
 
 const report = new jsMdview({
   container: document.getElementById('container'),

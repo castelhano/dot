@@ -26,7 +26,7 @@ class jsMdview{
         let row = document.createElement('div');row.classList = 'row g-3';
         let c1 = document.createElement('div');c1.classList = 'col-lg';
         let c2 = document.createElement('div');c2.classList = 'col-lg';
-        this.editor = document.createElement('textarea');this.editor.classList = 'form-control';this.editor.style = `min-height: ${this.minHeight}px;`;this.editor.value = this.value;
+        this.editor = document.createElement('textarea');this.editor.classList = 'form-control';this.editor.style = `min-height: ${this.minHeight}px;`;this.editor.value = this.value;this.editor.name = 'mdview-editor';
         if(this.autofocus){this.editor.setAttribute('autofocus','')}
         if(this.livePreview){this.editor.oninput = () => {this.parse()}}
         c1.appendChild(this.editor);

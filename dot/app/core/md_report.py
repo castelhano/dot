@@ -5,7 +5,7 @@ from io import BytesIO
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.colors import HexColor
 from reportlab.platypus import SimpleDocTemplate, Paragraph
-from reportlab.platypus.flowables import PageBreak
+from reportlab.platypus.flowables import PageBreak, HRFlowable
 from reportlab.lib.styles import ParagraphStyle
 
 from .md_report_styles import *
@@ -95,8 +95,8 @@ def md_report(request, original, **kwargs):
             flowables.append(Paragraph(re.search(r"^___(.*$)", linha).group(1), style_base_end))
         elif re.search(r"^__(.*$)", linha):
             flowables.append(Paragraph(re.search(r"^__(.*$)", linha).group(1), style_base_center))
-        elif re.search(r"--[-]*?", linha):
-            flowables.append(Paragraph('--linha horizontal --', style_base_center))
+        elif re.search(r"^--[-]*?", linha):
+            flowables.append(HRFlowable(color='black', spaceBefore=20, spaceAfter=15))
         elif re.search(r"^\> (.*$)", linha):
             flowables.append(Paragraph(re.search(r"^\> (.*$)", linha).group(1), style_callout))
         elif re.search(r"\[\[(.*?)\]\]", linha):
@@ -107,12 +107,6 @@ def md_report(request, original, **kwargs):
             flowables.append(PageBreak())
         else:
             flowables.append(Paragraph(linha, style_base))
-
-    # titulo = 'RELATÓRIO DE CONCLUSÃO DE OCORRÊNCIA OPERACIONAL'
-    # flowables.append(Paragraph(titulo,style_h1))
-
-    
-    # flowables.append(PageBreak())
 
     if re_footer:
         doc.build(flowables, onFirstPage=footer, onLaterPages=footer)

@@ -119,8 +119,9 @@ style_box = ParagraphStyle(
     borderWidth=1,
     leftIndent=10,
     borderRadius=3,
-    backColor='whitesmoke',
+    backColor='darkgray',
+    # backColor='whitesmoke',
     leading=16,
     borderPadding=[8,5,8,10],
-    borderColor='whitesmoke'
+    borderColor='darkgray'
 )
