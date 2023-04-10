@@ -17,8 +17,12 @@
   <li class="breadcrumb-item"><a href="#">Library</a></li>
   <li class="breadcrumb-item active">Data</li>
 </ol>
-<div id="container"></div>
-<a class="btn btn-sm btn-success" href="{% url 'md_report' 'usuarios' %}">GOO</a>
+<form action="{% url 'handler' '999' %}" method="POST" target="_blank" onsubmit="return ajustaEditor()">
+  {% csrf_token %}
+  <div id="container"></div>
+  <input type="hidden" name="original" id="original">
+  <button type="submit" class="btn btn-sm btn-primary mt-2">Submit</button>
+</form>
 {% endblock%}
 
 
@@ -29,6 +33,12 @@
 
 <script>
 {% block add_script %}
+
+function ajustaEditor(){
+  document.getElementById('original').value = report.get();
+  return true;
+}
+
 const report = new jsMdview({
   container: document.getElementById('container'),
   db: {nome:"Rafael", idade:55, cargo:"Analista de Sistemas"},

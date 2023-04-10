@@ -614,7 +614,15 @@ def logout(request):
     return redirect('index')
 
 def handler(request, code):
-    return render(request,f'{code}.html')
+    if request.method == 'GET':
+        return render(request,f'{code}.html')
+    from .md_report import md_report
+    pdf = md_report(request, request.POST['original'], **{"usuario":"Rafitas"})
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="mdreport.pdf"'
+    response.write(pdf)
+    return response
+
 
 def password_valid(password):
     if len(password) < 8:

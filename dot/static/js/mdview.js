@@ -46,6 +46,9 @@ class jsMdview{
         this.italic = document.createElement('button');this.italic.type = 'button';this.italic.classList = custom_classlist;this.italic.innerHTML = '<i class="fas fa-italic" style="width: 12px"></i>';this.italic.title = 'Italico';
         this.italic.onclick = () => {this.__editorAdd(['*','*'], [1,1])}
         menu_group.appendChild(this.italic);
+        this.underline = document.createElement('button');this.underline.type = 'button';this.underline.classList = custom_classlist;this.underline.innerHTML = '<i class="fas fa-underline" style="width: 12px"></i>';this.underline.title = 'Tachado';
+        this.underline.onclick = () => {this.__editorAdd(['_-','-_'], [2,2])}
+        menu_group.appendChild(this.underline);
         this.heading = document.createElement('button');this.heading.type = 'button';this.heading.classList = dropdown_classlist;this.heading.setAttribute('data-bs-toggle', 'dropdown');this.heading.innerHTML = '<i class="fas fa-heading me-1"></i>';this.heading.title = 'Titulos';
         this.heading_menu = document.createElement('ul');this.heading_menu.classList = 'dropdown-menu fs-7';
         let h1 = document.createElement('li');h1.classList = 'px-3 py-2 container';
@@ -88,7 +91,8 @@ class jsMdview{
         menu_group.appendChild(this.breakWord);
         this.hr = document.createElement('button');this.hr.type = 'button';this.hr.classList = custom_classlist;this.hr.innerHTML = '<b>---</b>';this.hr.title = 'Linha horizontal';
         this.hr.onclick = () => {this.__editorAdd(['--','',''], false, false)};menu_group.appendChild(this.hr);
-        this.pagebreak = document.createElement('button');this.pagebreak.type = 'button';this.pagebreak.classList = custom_classlist;this.pagebreak.innerHTML = '<i class="fas fa-cut fs-6"></i>';this.pagebreak.onclick = () => {this.editor.value += this.editor.value == '' ? '[break]' : '\n[break]'};this.pagebreak.title = 'Quebra de página';menu_group.appendChild(this.pagebreak);
+        this.pagebreak = document.createElement('button');this.pagebreak.type = 'button';this.pagebreak.classList = custom_classlist;this.pagebreak.innerHTML = '<i class="fas fa-cut fs-6"></i>';
+        this.pagebreak.onclick = () => {this.__editorAdd(['[break]','',''], false, true, false)};this.pagebreak.title = 'Quebra de página';menu_group.appendChild(this.pagebreak);
         if(Object.keys(this.db).length > 0){
             let userBtn = this.__buildClientData();
             menu_group.appendChild(this.__buildDefaultData());
@@ -195,8 +199,10 @@ class jsMdview{
             .replaceAll('[break]', '<span data-role="page-break"></span>')
             .replace(/\*\*(.*?)\*\*/gim, '<b>$1</b>')
             .replace(/\*(.*?)\*/gim, '<i>$1</i>')
+            .replace(/_-(.*?)-_/gim, '<u>$1</u>')
             .replace(/!\[(.*?)\]\((.*?)\)/gim, "<img alt='$1' src='$2' />")
             .replace(/\[(.*?)\]\((.*?)\)/gim, "<a href='$2' target='_blank'>$1</a>")
+            .replace(/\[footer\](.*?)\[\/footer\]/gim, "<hr /><p class='text-center'>$1</p>")
             .replace(/\n/gm, '<br>')
         for(let key in this.db){result = result.replaceAll(`$(${key})`, this.db[key])} // Faz replace para os dados a serem atereados no doc
         this.previewTarget.innerHTML = result.trim();
