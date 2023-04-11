@@ -3,9 +3,8 @@ import re
 # IMPORTS PARA REPORTLAB
 from io import BytesIO
 from reportlab.lib.pagesizes import A4
-from reportlab.lib.colors import HexColor
 from reportlab.platypus import SimpleDocTemplate, Paragraph
-from reportlab.platypus.flowables import PageBreak, HRFlowable, BalancedColumns
+from reportlab.platypus.flowables import PageBreak, HRFlowable
 from reportlab.lib.styles import ParagraphStyle
 
 from .md_report_styles import *
@@ -22,8 +21,7 @@ from .md_report_styles import *
 
 def md_report(request, original, **kwargs):
     # PARAMETROS    
-    PAGE_WIDTH, PAGE_HEIGHT  = A4
-    # PAGE_HEIGHT = A4[1]
+    # PAGE_WIDTH, PAGE_HEIGHT  = A4
     
     MARGIN_TOP = 50
     MARGIN_BOTTOM = 30
@@ -49,25 +47,57 @@ def md_report(request, original, **kwargs):
             fontSize=9,
             alignment=CENTER
         )
-        footer_text = re_footer.group(1)
+        footer_text = md_basic(re_footer.group(1))
+        
         original = re.sub(f'\[footer\](.*?)\[\/footer\]', '', original) # Retira o footer da string original
         doc = SimpleDocTemplate(buffer,topMargin=MARGIN_TOP,bottomMargin=MARGIN_BOTTOM + len(footer_text.split('<br />')) * 20,leftMargin=MARGIN_START, rightMargin=MARGIN_END)
         FOOTER = Paragraph(footer_text, style_footer)
         w, FOOTER_HEIGHT = FOOTER.wrap(doc.width, doc.bottomMargin)
-        
+
         def footer(canvas, doc):
             canvas.saveState()
             FOOTER.drawOn(canvas, doc.leftMargin, FOOTER_HEIGHT)
+            # Inserindo linha separadora do footer
+            canvas.setLineWidth(1)
+            canvas.line(40, doc.bottomMargin - 10, 550, doc.bottomMargin - 10)
             canvas.restoreState()
     else:
         doc = SimpleDocTemplate(buffer,topMargin=MARGIN_TOP,bottomMargin=MARGIN_BOTTOM,leftMargin=MARGIN_START, rightMargin=MARGIN_END)
     
+    original = md_basic(original)
+    original = default_plot(original, **kwargs)
+    flowables = md_layout(original)
+
+    if re_footer:
+        doc.build(flowables, onFirstPage=footer, onLaterPages=footer)
+    else:
+        doc.build(flowables)
+
+    pdf_value = buffer.getvalue()
+    buffer.close()
     
+    return pdf_value
+    
+
+def md_basic(original):
+    original = re.sub(r"\*\*\*(.*?)\*\*\*", r'<b><i>\1</i></b>', original) # Bold and Italic
     original = re.sub(r"\*\*(.*?)\*\*", r'<b>\1</b>', original) # Bold
     original = re.sub(r"\*(.*?)\*", r'<i>\1</i>', original)     # Italico
     original = re.sub(r"_-(.*?)-_", r'<u>\1</u>', original)     # Tachado
-    
-    # Preenchendo o doc
+    return original
+
+def default_plot(original, **kwargs):
+    attrs = re.findall(r"\$\((.*?)\)", original) # Bold
+    for attr in attrs:
+        target = attr.split('.', 1)
+        try:
+            result = getattr(kwargs[target[0]], target[1])
+            original = original.replace(f'$({attr})', f'{result}')
+        except:
+            original = original.replace(f'$({attr})', '')
+    return original
+
+def md_layout(original):
     linhas = original.split('\n')
     flowables = []
 
@@ -97,9 +127,7 @@ def md_report(request, original, **kwargs):
         elif re.search(r"^--[-]*?", linha):
             flowables.append(HRFlowable(color='black', spaceBefore=20, spaceAfter=15))
         elif re.search(r"^\> (.*$)", linha):
-            flowables.append(Paragraph('<font face="Courier-Bold" color="grey">|</font>&nbsp;&nbsp;' + re.search(r"^\> (.*$)", linha).group(1), style_callout))
-        elif re.search(r"\[\[(.*?)\]\]", linha):
-            flowables.append(Paragraph(re.search(r"\[\[(.*?)\]\]", linha).group(1), style_box))
+            flowables.append(Paragraph('<font face="Helvetica-Bold" color="grey" size="16">|</font>&nbsp;&nbsp;' + re.search(r"^\> (.*$)", linha).group(1), style_callout))
         elif re.search(r"\[\[(.*?)\]\]", linha):
             flowables.append(Paragraph(re.search(r"\[\[(.*?)\]\]", linha).group(1), style_box))
         elif re.search(r"\[break\]", linha):
@@ -107,18 +135,4 @@ def md_report(request, original, **kwargs):
         else:
             flowables.append(Paragraph(linha, style_base))
 
-    if re_footer:
-        doc.build(flowables, onFirstPage=footer, onLaterPages=footer)
-    else:
-        doc.build(flowables)
-
-    pdf_value = buffer.getvalue()
-    buffer.close()
-    
-    return pdf_value
-    
-    # result = re.sub(r"^### (.*$)", r'<h5>\1</h5>', original) # H3
-    # result = re.sub(r"^###__ (.*$)", r'<h5>\1</h5>', original) # H3
-    # result = re.sub(r"\*\*(.*?)\*\*", r'<b>\1</b>', original) # Bold
-    # result = re.sub(r"\*\*(.*?)\*\*", r'<b>\1</b>', original) # Bold
-    # result = ''
+    return flowables

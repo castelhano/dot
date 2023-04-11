@@ -617,7 +617,8 @@ def handler(request, code):
     if request.method == 'GET':
         return render(request,f'{code}.html')
     from .md_report import md_report
-    pdf = md_report(request, request.POST['mdview-editor'], **{"usuario":"Rafitas"})
+    usuario = User.objects.get(pk=1)
+    pdf = md_report(request, request.POST['mdview-editor'], **{"usuario":usuario})
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="mdreport.pdf"'
     response.write(pdf)

@@ -6,6 +6,8 @@ class jsMdview{
         this.previewTarget;
         this.container = options?.container || document.body; // Container para criacao do editor
         this.value = options?.value || ''; // Valor inicial a ser carregado no editor
+        this.prefix = options?.prefix || ''; // Texto fixo a ser adicionado antes do conteudo
+        this.posfix = options?.posfix || ''; // Texto fixo a ser adicionado depois do conteudo
         this.livePreview = options?.livePreview != undefined ? options.livePreview : true;
         this.autofocus = options?.autofocus != undefined ? options.autofocus : false;
         this.shortcuts = options?.shortcuts != undefined ? options.shortcuts : true;
@@ -26,10 +28,12 @@ class jsMdview{
         let row = document.createElement('div');row.classList = 'row g-3';
         let c1 = document.createElement('div');c1.classList = 'col-lg';
         let c2 = document.createElement('div');c2.classList = 'col-lg';
-        this.editor = document.createElement('textarea');this.editor.classList = 'form-control';this.editor.style = `min-height: ${this.minHeight}px;`;this.editor.value = this.value;this.editor.name = 'mdview-editor';
+        this.editor = document.createElement('textarea');this.editor.classList = 'form-control';this.editor.style = `min-height: ${this.minHeight}px;`;this.editor.value = this.value;
         if(this.autofocus){this.editor.setAttribute('autofocus','')}
         if(this.livePreview){this.editor.oninput = () => {this.parse()}}
         c1.appendChild(this.editor);
+        this.mdview_input = document.createElement('input');this.mdview_input.type = 'hidden'; this.mdview_input.name = 'mdview-editor';
+        c1.appendChild(this.mdview_input);
         row.appendChild(c1);
         this.previewTarget = document.createElement('div');this.previewTarget.classList = 'border rounded h-100 p-4';
         c2.appendChild(this.previewTarget);
@@ -181,7 +185,7 @@ class jsMdview{
         if(this.livePreview){this.parse()}
     }
     parse() { // Gera preview do md
-        let result = this.editor.value
+        let result = (this.prefix + this.editor.value + this.posfix)
             .replace(/^### (.*$)/gim, '<h5>$1</h5>')
             .replace(/^###__ (.*$)/gim, '<h5 class="text-end">$1</h5>')
             .replace(/^###_ (.*$)/gim, '<h5 class="text-center">$1</h5>')
@@ -193,24 +197,27 @@ class jsMdview{
             .replace(/^# (.*$)/gim, '<h2>$1</h2>')
             .replace(/^___(.*$)/gim, '<p class="text-end m-0">$1</p>')
             .replace(/^__(.*$)/gim, '<p class="text-center m-0">$1</p>')
-            .replace(/--[-]*?/gim, '<hr >')
+            .replace(/^--[-]*$/gim, '<hr >')
             .replace(/^\> (.*$)/gim, '<blockquote class="ps-2 border-start border-3 border-dark-subtle" style="font-size: 1.15rem">$1</blockquote>')
             .replace(/\[\[(.*?)\]\]/gim, '<div class="px-2 py-1 border rounded bg-body-secondary my-2">$1</div>')
             // .replaceAll('[break]', '<span data-role="page-break"></span>')
             .replace(/\*\*(.*?)\*\*/gim, '<b>$1</b>')
             .replace(/\*(.*?)\*/gim, '<i>$1</i>')
             .replace(/_-(.*?)-_/gim, '<u>$1</u>')
-            .replace(/!\[(.*?)\]\((.*?)\)/gim, "<img alt='$1' src='$2' />")
-            .replace(/\[(.*?)\]\((.*?)\)/gim, "<a href='$2' target='_blank'>$1</a>")
+            .replace(/!\[(.*?)\]/gim, "<font face='Helvetica' color='grey'>$1</font>")
+            // .replace(/!\[(.*?)\]\((.*?)\)/gim, "<img alt='$1' src='$2' />")
+            // .replace(/\[(.*?)\]\((.*?)\)/gim, "<a href='$2' target='_blank'>$1</a>")
             .replace(/\[footer\](.*?)\[\/footer\]/gim, "<hr /><p class='text-center'>$1</p>")
             .replace(/\n/gm, '<br>')
         for(let key in this.db){result = result.replaceAll(`$(${key})`, this.db[key])} // Faz replace para os dados a serem atereados no doc
         this.previewTarget.innerHTML = result.trim();
+        this.mdview_input.value = this.prefix + this.editor.value + this.posfix;
     }
     get(){return this.editor.value}
     __addShortcutMap(){
         SHORTCUT_MAP['bFTF'] = () => {this.bold.click();}
         SHORTCUT_MAP['iFTF'] = () => {this.italic.click()}
+        SHORTCUT_MAP['uFTF'] = () => {this.underline.click()}
         SHORTCUT_MAP['.FTF'] = () => {this.blockquote.click()}
         SHORTCUT_MAP['[FTF'] = () => {this.blockbox.click()}
         SHORTCUT_MAP['enterFTF'] = () => {this.breakWord.click()}
@@ -232,6 +239,7 @@ class jsMdview{
         let maps = {
             'Texto em <b>negrito</b>': 'Ctrl + B',
             'Texto em <i>italico</i>': 'Ctrl + I',
+            'Texto <u>tachado</u>': 'Ctrl + U',
             'Citação': 'Ctrl + .',
             'Caixa de texto': 'Ctrl + [',
             'Quebra de linha': 'Ctrl + ENTER',
@@ -249,9 +257,9 @@ class jsMdview{
     __loadExtra(){
         let custom_classlist = 'btn btn-sm btn-phanton-light rounded-pill';
         for(let i = 0;i < this.extra.length;i++){
-            let btn = document.createElement('button');btn.type = 'button';btn.classList = this.extra[i]?.classList || custom_classlist;btn.innerHTML = this.extra[i]?.innerHTML || '--';
+            let btn = document.createElement('button');btn.type = this.extra[i]?.type || 'button';btn.classList = this.extra[i]?.classList || custom_classlist;btn.innerHTML = this.extra[i]?.innerHTML || '--';
             if(this.extra[i].id){btn.id = this.extra[i].id}
-            btn.onclick = this.extra[i]?.onclick || (() => {console.log('NADA A EXIBIR')});
+            btn.onclick = this.extra[i]?.onclick || (() => {});
             this.extraBtns.appendChild(btn);
         }
     }

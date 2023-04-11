@@ -20,9 +20,7 @@
 <form action="{% url 'handler' '999' %}" method="POST" target="_blank">
   {% csrf_token %}
   <div id="container"></div>
-  <button type="submit" class="btn btn-sm btn-primary mt-2">Submit</button>
 </form>
-<p class="lead">Teste do pai</p>
 {% endblock%}
 
 
@@ -34,21 +32,23 @@
 <script>
 {% block add_script %}
 
+const pre = `### Ofício N. $(usuario.username)
+___ **Cuiabá-MT, $(custom.today_full) **\n\n`;
+
+const pos = '[footer]**Pantanal Transportes LTDA**<br />Av Cel Neto, 1894, Jd Passaredo - Cuiabá, MT<br />CEP 78.245-55 Fone: 65 95654-8899[/footer]'
+
 const report = new jsMdview({
   container: document.getElementById('container'),
   db: {nome:"Rafael", idade:55, cargo:"Analista de Sistemas"},
-  value: `{{result|safe}}`,
+  value: `# Titulo
+foo bar`,
   extra: [
-    {id:'id_fei',innerHTML:'Save',onclick: salvar},
+    {id:'submit',innerHTML:'<b>G</b>ravar', type:'submit', classList:'btn btn-sm btn-success ms-1'},
   ],
+  prefix: pre,
+  posfix: pos,
   autofocus: true
 });
-function salvar(){
-  dotNotify('success', 'Salvando....')
-}
-function baixar(){
-  dotNotify('warning', 'Baixando....')
-}
 
 {% endblock %}
 </script>
