@@ -1,4 +1,6 @@
 import re
+import os
+from django.conf import settings
 
 # IMPORTS PARA REPORTLAB
 from io import BytesIO
@@ -21,7 +23,7 @@ from .md_report_styles import *
 
 def md_report(request, original, **kwargs):
     # PARAMETROS    
-    # PAGE_WIDTH, PAGE_HEIGHT  = A4
+    PAGE_WIDTH, PAGE_HEIGHT  = A4
     
     MARGIN_TOP = 50
     MARGIN_BOTTOM = 30
@@ -38,40 +40,39 @@ def md_report(request, original, **kwargs):
 
     # Ajustando o template (somente footer)
     footer_text = ''
+    re_logo = re.search(r'\!\[(.*?)\]\((.*?)\)', original)
+    if re_logo:
+        original = re.sub(r'\!\[(.*?)\]\((.*?)\)','', original)
     re_footer = re.search(f'\[footer\](.*?)\[\/footer\]', original)
-    
-    if re_footer:
-        style_footer = ParagraphStyle(
-            name='Normal',
-            fontName='Helvetica',
-            fontSize=9,
-            alignment=CENTER
-        )
-        footer_text = md_basic(re_footer.group(1))
-        
-        original = re.sub(f'\[footer\](.*?)\[\/footer\]', '', original) # Retira o footer da string original
-        doc = SimpleDocTemplate(buffer,topMargin=MARGIN_TOP,bottomMargin=MARGIN_BOTTOM + len(footer_text.split('<br />')) * 20,leftMargin=MARGIN_START, rightMargin=MARGIN_END)
-        FOOTER = Paragraph(footer_text, style_footer)
-        w, FOOTER_HEIGHT = FOOTER.wrap(doc.width, doc.bottomMargin)
 
-        def footer(canvas, doc):
-            canvas.saveState()
-            FOOTER.drawOn(canvas, doc.leftMargin, FOOTER_HEIGHT)
-            # Inserindo linha separadora do footer
-            canvas.setLineWidth(1)
-            canvas.line(40, doc.bottomMargin - 10, 550, doc.bottomMargin - 10)
-            canvas.restoreState()
-    else:
-        doc = SimpleDocTemplate(buffer,topMargin=MARGIN_TOP,bottomMargin=MARGIN_BOTTOM,leftMargin=MARGIN_START, rightMargin=MARGIN_END)
+    style_footer = ParagraphStyle(
+        name='Normal',
+        fontName='Helvetica',
+        fontSize=9,
+        alignment=CENTER
+    )
+    footer_text = md_basic(re_footer.group(1)) if re_footer else ''
+    
+    original = re.sub(f'\[footer\](.*?)\[\/footer\]', '', original) # Retira o footer da string original
+    doc = SimpleDocTemplate(buffer,topMargin=MARGIN_TOP,bottomMargin=MARGIN_BOTTOM + len(footer_text.split('<br />')) * 20,leftMargin=MARGIN_START, rightMargin=MARGIN_END)
+    FOOTER = Paragraph(footer_text, style_footer)
+    w, FOOTER_HEIGHT = FOOTER.wrap(doc.width, doc.bottomMargin)
+
+    def basic_template(canvas, doc):
+        canvas.saveState()
+        if re_logo:
+            canvas.drawInlineImage(os.path.join(settings.BASE_DIR) + '/dot' + re_logo.group(2), MARGIN_START, PAGE_HEIGHT - 70, 40, 40)
+        FOOTER.drawOn(canvas, doc.leftMargin, FOOTER_HEIGHT)
+        # Inserindo linha separadora do footer
+        canvas.setLineWidth(1)
+        canvas.line(40, doc.bottomMargin - 10, 550, doc.bottomMargin - 10)
+        canvas.restoreState()
     
     original = md_basic(original)
     original = default_plot(original, **kwargs)
     flowables = md_layout(original)
 
-    if re_footer:
-        doc.build(flowables, onFirstPage=footer, onLaterPages=footer)
-    else:
-        doc.build(flowables)
+    doc.build(flowables, onFirstPage=basic_template, onLaterPages=basic_template)
 
     pdf_value = buffer.getvalue()
     buffer.close()
@@ -84,6 +85,9 @@ def md_basic(original):
     original = re.sub(r"\*\*(.*?)\*\*", r'<b>\1</b>', original) # Bold
     original = re.sub(r"\*(.*?)\*", r'<i>\1</i>', original)     # Italico
     original = re.sub(r"_-(.*?)-_", r'<u>\1</u>', original)     # Tachado
+    original = re.sub(r"==(.*?)==", r'<font face="Helvetica" color="ReportLabFidBlue">\1</font>', original) # Texto de alerta
+    original = re.sub(r"=\-(.*?)\-=", r'<font face="Helvetica" color="firebrick">\1</font>', original) # Texto de alerta
+    original = re.sub(r"=\+(.*?)\+=", r'<font face="Helvetica" color="darkgreen">\1</font>', original) # Texto de alerta
     return original
 
 def default_plot(original, **kwargs):

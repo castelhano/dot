@@ -32,7 +32,8 @@
 <script>
 {% block add_script %}
 
-const pre = `### Ofício N. $(usuario.username)
+const pre = `![empresa.logo](/static/img/logo.png)\n\n
+### Ofício N. $(usuario.username)
 ___ **Cuiabá-MT, $(custom.today_full) **\n\n`;
 
 const pos = '[footer]**Pantanal Transportes LTDA**<br />Av Cel Neto, 1894, Jd Passaredo - Cuiabá, MT<br />CEP 78.245-55 Fone: 65 95654-8899[/footer]'
@@ -40,8 +41,7 @@ const pos = '[footer]**Pantanal Transportes LTDA**<br />Av Cel Neto, 1894, Jd Pa
 const report = new jsMdview({
   container: document.getElementById('container'),
   db: {nome:"Rafael", idade:55, cargo:"Analista de Sistemas"},
-  value: `# Titulo
-foo bar`,
+  value: ``,
   extra: [
     {id:'submit',innerHTML:'<b>G</b>ravar', type:'submit', classList:'btn btn-sm btn-success ms-1'},
   ],

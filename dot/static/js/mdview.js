@@ -21,7 +21,7 @@ class jsMdview{
         this.__buildClientModels(); // Carrega modelos de documentos
         if(this.extra.length > 0){this.__loadExtra()}; // Adiciona botoes customizados pelo cliente
         if(this.shortcuts){this.__addShortcutMap()}; // Adiciona integracao com lib listener.js para atalhos dos elementos do menu
-        if(this.value != ''){this.parse()}
+        if((this.prefix + this.value + this.posfix) != ''){this.parse()}
 
     }
     build() {
@@ -200,12 +200,13 @@ class jsMdview{
             .replace(/^--[-]*$/gim, '<hr >')
             .replace(/^\> (.*$)/gim, '<blockquote class="ps-2 border-start border-3 border-dark-subtle" style="font-size: 1.15rem">$1</blockquote>')
             .replace(/\[\[(.*?)\]\]/gim, '<div class="px-2 py-1 border rounded bg-body-secondary my-2">$1</div>')
-            // .replaceAll('[break]', '<span data-role="page-break"></span>')
             .replace(/\*\*(.*?)\*\*/gim, '<b>$1</b>')
             .replace(/\*(.*?)\*/gim, '<i>$1</i>')
             .replace(/_-(.*?)-_/gim, '<u>$1</u>')
-            .replace(/!\[(.*?)\]/gim, "<font face='Helvetica' color='grey'>$1</font>")
-            // .replace(/!\[(.*?)\]\((.*?)\)/gim, "<img alt='$1' src='$2' />")
+            .replace(/==(.*?)==/gim, "<font face='Helvetica' color='CornflowerBlue'>$1</font>")
+            .replace(/=\-(.*?)\-=/gim, "<font face='Helvetica' color='firebrick'>$1</font>")
+            .replace(/=\+(.*?)\+=/gim, "<font face='Helvetica' color='darkgreen'>$1</font>")
+            .replace(/!\[(.*?)\]\((.*?)\)/gim, "<img alt='$1' src='$2' style='max-width: 65px;max-height: 65px;' />")
             // .replace(/\[(.*?)\]\((.*?)\)/gim, "<a href='$2' target='_blank'>$1</a>")
             .replace(/\[footer\](.*?)\[\/footer\]/gim, "<hr /><p class='text-center'>$1</p>")
             .replace(/\n/gm, '<br>')
