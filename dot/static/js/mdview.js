@@ -196,7 +196,7 @@ class jsMdview{
             .replace(/--[-]*?/gim, '<hr >')
             .replace(/^\> (.*$)/gim, '<blockquote class="ps-2 border-start border-3 border-dark-subtle" style="font-size: 1.15rem">$1</blockquote>')
             .replace(/\[\[(.*?)\]\]/gim, '<div class="px-2 py-1 border rounded bg-body-secondary my-2">$1</div>')
-            .replaceAll('[break]', '<span data-role="page-break"></span>')
+            // .replaceAll('[break]', '<span data-role="page-break"></span>')
             .replace(/\*\*(.*?)\*\*/gim, '<b>$1</b>')
             .replace(/\*(.*?)\*/gim, '<i>$1</i>')
             .replace(/_-(.*?)-_/gim, '<u>$1</u>')

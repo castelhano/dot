@@ -8,7 +8,7 @@ JUSTIFY = 4
 style_base = ParagraphStyle(
     name='Normal',
     fontName='Helvetica',
-    fontSize=12,
+    fontSize=10,
     alignment=JUSTIFY,
     spaceAfter=14
 )
@@ -16,7 +16,7 @@ style_base = ParagraphStyle(
 style_base_center = ParagraphStyle(
     name='Normal',
     fontName='Helvetica',
-    fontSize=12,
+    fontSize=10,
     alignment=CENTER,
     spaceAfter=14
 )
@@ -24,7 +24,7 @@ style_base_center = ParagraphStyle(
 style_base_end = ParagraphStyle(
     name='Normal',
     fontName='Helvetica',
-    fontSize=12,
+    fontSize=10,
     alignment=RIGHT,
     spaceAfter=14
 )
@@ -104,15 +104,16 @@ style_h3_end = ParagraphStyle(
 style_callout = ParagraphStyle(
     name='Normal',
     fontName='Helvetica',
-    fontSize=14,
+    fontSize=12,
     alignment=LEFT,
+    textColor='darkslategray',
     spaceAfter=18
 )
 
 style_box = ParagraphStyle(
     name='Normal',
     fontName='Helvetica',
-    fontSize=12,
+    fontSize=10,
     alignment=LEFT,
     spaceBefore=16,
     spaceAfter=16,
@@ -122,6 +123,6 @@ style_box = ParagraphStyle(
     backColor='darkgray',
     # backColor='whitesmoke',
     leading=16,
-    borderPadding=[8,5,8,10],
+    borderPadding=[5,5,5,10],
     borderColor='darkgray'
 )

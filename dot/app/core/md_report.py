@@ -5,7 +5,7 @@ from io import BytesIO
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.colors import HexColor
 from reportlab.platypus import SimpleDocTemplate, Paragraph
-from reportlab.platypus.flowables import PageBreak, HRFlowable
+from reportlab.platypus.flowables import PageBreak, HRFlowable, BalancedColumns
 from reportlab.lib.styles import ParagraphStyle
 
 from .md_report_styles import *
@@ -22,8 +22,8 @@ from .md_report_styles import *
 
 def md_report(request, original, **kwargs):
     # PARAMETROS    
-    PAGE_WIDTH  = A4[0]
-    PAGE_HEIGHT = A4[1]
+    PAGE_WIDTH, PAGE_HEIGHT  = A4
+    # PAGE_HEIGHT = A4[1]
     
     MARGIN_TOP = 50
     MARGIN_BOTTOM = 30
@@ -71,7 +71,6 @@ def md_report(request, original, **kwargs):
     linhas = original.split('\n')
     flowables = []
 
-
     for linha in linhas:
         if re.search(r"^### (.*$)", linha):
             flowables.append(Paragraph(re.search(r"^### (.*$)", linha).group(1), style_h3))
@@ -98,7 +97,7 @@ def md_report(request, original, **kwargs):
         elif re.search(r"^--[-]*?", linha):
             flowables.append(HRFlowable(color='black', spaceBefore=20, spaceAfter=15))
         elif re.search(r"^\> (.*$)", linha):
-            flowables.append(Paragraph(re.search(r"^\> (.*$)", linha).group(1), style_callout))
+            flowables.append(Paragraph('<font face="Courier-Bold" color="grey">|</font>&nbsp;&nbsp;' + re.search(r"^\> (.*$)", linha).group(1), style_callout))
         elif re.search(r"\[\[(.*?)\]\]", linha):
             flowables.append(Paragraph(re.search(r"\[\[(.*?)\]\]", linha).group(1), style_box))
         elif re.search(r"\[\[(.*?)\]\]", linha):
