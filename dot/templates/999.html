@@ -32,11 +32,11 @@
 <script>
 {% block add_script %}
 
-const pre = `![empresa.logo](/static/img/logo.png)\n\n
+const pre = `![65,45,BOTTOM-RIGHT](/static/img/default_user.jpg)\n\n
 ### Ofício N. $(usuario.username)
-___ **Cuiabá-MT, $(custom.today_full) **\n\n`;
+___ **Cuiabá-MT, &(common.today_full) **\n\n`;
 
-const pos = '[footer]**Pantanal Transportes LTDA**<br />Av Cel Neto, 1894, Jd Passaredo - Cuiabá, MT<br />CEP 78.245-55 Fone: 65 95654-8899[/footer]'
+const pos = '[footer]**$(empresa.razao_social)**<br />$(empresa.endereco), $(empresa.bairro) - $(empresa.cidade), $(empresa.uf)<br />CEP $(empresa.cep) Fone: $(empresa.fone)[/footer]'
 
 const report = new jsMdview({
   container: document.getElementById('container'),

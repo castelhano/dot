@@ -230,9 +230,9 @@ class addOnTarefas{
         let header = document.createElement('div');header.classList = 'row mb-2';
         let col1 = document.createElement('div');col1.classList = 'col';col1.innerHTML = '<i class="fas fa-list me-2"></i>Tarefas';
         let col2 = document.createElement('div');col2.classList = 'col-auto';
-        this.btnSave = document.createElement('span');this.btnSave.style = 'padding: 2px 6px;border-radius: 20%;cursor: pointer;background-color: #F1F1F1;color: #333;opacity: 0.7;transition: all 0.5s;';this.btnSave.innerHTML = '<i class="fas fa-save"></i>';
+        this.btnSave = document.createElement('span');this.btnSave.classList = 'btn btn-sm btn-phanton-light';this.btnSave.innerHTML = '<i class="fas fa-save"></i>';
         this.btnSave.onclick = () => {this.save();};
-        this.btnAddTask = document.createElement('span');this.btnAddTask.style = 'margin-left: 4px; padding: 2px 6px;border-radius: 20%;cursor: pointer;background-color: #F1F1F1;color: #198754;opacity: 0.7;transition: all 0.5s;';this.btnAddTask.innerHTML = '<i class="fas fa-plus"></i>';
+        this.btnAddTask = document.createElement('span');this.btnAddTask.classList = 'btn btn-sm btn-phanton-light';this.btnAddTask.innerHTML = '<i class="fas fa-plus"></i>';
         this.btnAddTask.onclick = () => {this.addTask()};
         col2.appendChild(this.btnSave);
         col2.appendChild(this.btnAddTask);

@@ -618,7 +618,11 @@ def handler(request, code):
         return render(request,f'{code}.html')
     from .md_report import md_report
     usuario = User.objects.get(pk=1)
-    pdf = md_report(request, request.POST['mdview-editor'], **{"usuario":usuario})
+    try:
+        pdf = md_report(request, request.POST['mdview-editor'], **{"usuario":usuario})
+    except:
+        messages.error(request, '<b>ERRO:</b> Texto mal formatado, verifique os dados informados')
+        return render(request, '999.html')
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="mdreport.pdf"'
     response.write(pdf)

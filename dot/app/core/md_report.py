@@ -1,6 +1,7 @@
 import re
 import os
 from django.conf import settings
+from datetime import date, datetime
 
 # IMPORTS PARA REPORTLAB
 from io import BytesIO
@@ -9,6 +10,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph
 from reportlab.platypus.flowables import PageBreak, HRFlowable
 from reportlab.lib.styles import ParagraphStyle
 
+# IMPORT DE ESTILOS
 from .md_report_styles import *
 
 # MD_REPORT
@@ -35,8 +37,13 @@ def md_report(request, original, **kwargs):
     
     buffer = BytesIO()
 
-    # Carregando Estilos
-    
+    # Adicionando common fields ao kwargs
+    hoje = date.today()
+    common = {
+        "today": hoje.strftime('%d/%m/%Y'),
+        "today_full": hoje.strftime('%d de %B de %Y'),
+        "now": datetime.now()
+    }
 
     # Ajustando o template (somente footer)
     footer_text = ''
@@ -61,7 +68,20 @@ def md_report(request, original, **kwargs):
     def basic_template(canvas, doc):
         canvas.saveState()
         if re_logo:
-            canvas.drawInlineImage(os.path.join(settings.BASE_DIR) + '/dot' + re_logo.group(2), MARGIN_START, PAGE_HEIGHT - 70, 40, 40)
+            props = re_logo.group(1).split(',')
+            w = int(props[0])
+            h = int(props[1])
+            if len(props) < 3 or props[2] == 'TOP-LEFT':
+                canvas.drawInlineImage(os.path.join(settings.BASE_DIR) + '/dot' + re_logo.group(2), MARGIN_START, PAGE_HEIGHT - 70, w, h)
+            else:
+                position = {
+                    'TOP-RIGHT': [PAGE_WIDTH - (MARGIN_END + w), PAGE_HEIGHT - 70],
+                    'TOP-CENTER': [PAGE_WIDTH / 2 - (w / 2), PAGE_HEIGHT - 70],
+                    'BOTTOM-LEFT': [MARGIN_START, MARGIN_BOTTOM],
+                    'BOTTOM-CENTER': [PAGE_WIDTH / 2 - (w / 2), MARGIN_BOTTOM],
+                    'BOTTOM-RIGHT': [PAGE_WIDTH - (MARGIN_END + w), MARGIN_BOTTOM],
+                }
+                canvas.drawInlineImage(os.path.join(settings.BASE_DIR) + '/dot' + re_logo.group(2), position[props[2]][0], position[props[2]][1], w, h)
         FOOTER.drawOn(canvas, doc.leftMargin, FOOTER_HEIGHT)
         # Inserindo linha separadora do footer
         canvas.setLineWidth(1)
@@ -69,7 +89,8 @@ def md_report(request, original, **kwargs):
         canvas.restoreState()
     
     original = md_basic(original)
-    original = default_plot(original, **kwargs)
+    original = common_plot(original, common)
+    original = data_plot(original, **kwargs)
     flowables = md_layout(original)
 
     doc.build(flowables, onFirstPage=basic_template, onLaterPages=basic_template)
@@ -90,8 +111,19 @@ def md_basic(original):
     original = re.sub(r"=\+(.*?)\+=", r'<font face="Helvetica" color="darkgreen">\1</font>', original) # Texto de alerta
     return original
 
-def default_plot(original, **kwargs):
-    attrs = re.findall(r"\$\((.*?)\)", original) # Bold
+def common_plot(original, common):
+    attrs = re.findall(r"\&\((.*?)\)", original)
+    for attr in attrs:
+        try:
+            target = attr.split('.', 1)
+            result = common[target[1]]
+            original = original.replace(f'&({attr})', f'{result}')
+        except:
+            original = original.replace(f'&({attr})', '')
+    return original
+
+def data_plot(original, **kwargs):
+    attrs = re.findall(r"\$\((.*?)\)", original)
     for attr in attrs:
         target = attr.split('.', 1)
         try:

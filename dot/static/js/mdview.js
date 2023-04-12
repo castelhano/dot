@@ -13,7 +13,9 @@ class jsMdview{
         this.shortcuts = options?.shortcuts != undefined ? options.shortcuts : true;
         this.extra = options?.extra || []; // Botoes adicionais definidos no cliente
         this.db = options?.db || {}; // Padroes regex a serem aplicados no doc
-        this.modelos = options?.modelos || {}; // Modelos de documento fornecidos pelo cliente
+        this.db = options?.db || {}; // Padroes regex a serem aplicados no doc
+        this.common = options?.common || ['today','today_full','now'];
+        this.models = options?.models || {}; // Modelos de documento fornecidos pelo cliente
         this.minHeight = options?.minHeight || 700;
         // *************
         this.buildControls();
@@ -134,9 +136,9 @@ class jsMdview{
         let wrapper = document.createElement('span');
         let btn = document.createElement('button');btn.type = 'button';btn.classList = 'btn btn-sm btn-phanton-light dropdown-toggle';btn.innerHTML = '<i class="fas fa-scroll"></i>';btn.setAttribute('data-bs-toggle','dropdown');btn.title = 'Modelos';
         let ul = document.createElement('ul');ul.classList = 'dropdown-menu fs-7';
-        for(let key in this.modelos){
+        for(let key in this.models){
             let li = document.createElement('li');li.classList = 'dropdown-item pointer';li.innerHTML = key;
-            li.onclick = () => {this.editor.value = this.modelos[key];if(this.livePreview){this.parse()}};
+            li.onclick = () => {this.editor.value = this.models[key];if(this.livePreview){this.parse()}};
             ul.appendChild(li);
         }
         if(ul.children.length == 0){
@@ -148,17 +150,12 @@ class jsMdview{
         this.extraBtns.appendChild(wrapper);
     }
     __buildDefaultData(){
-        let data = { // Adiciona chaves padrao a this.db, cria o menu de entrada para estes e retorna elemento
-            'hoje': dateToday(),
-            'agora': timeNow()
-        }
         let wrapper = document.createElement('span');
         let btn = document.createElement('button');btn.type = 'button';btn.classList = 'btn btn-sm btn-phanton-light dropdown-toggle';btn.innerHTML = '<i class="fas fa-code"></i>';btn.setAttribute('data-bs-toggle','dropdown');btn.title = 'Variaveis globais';
         let ul = document.createElement('ul');ul.classList = 'dropdown-menu fs-7';
-        for(let key in data){
-            this.db[key] = data[key];
-            let li = document.createElement('li');li.classList = 'dropdown-item pointer';li.innerHTML = key.charAt(0).toUpperCase() + key.slice(1);
-            li.onclick = () => {this.__editorAdd([`$(${key})`,'',''], false, false)};
+        for(let key in this.common){
+            let li = document.createElement('li');li.classList = 'dropdown-item pointer';li.innerHTML = this.common[key];
+            li.onclick = () => {this.__editorAdd([`&(common.${this.common[key]})`,'',''], false, false)};
             ul.appendChild(li);
         }
         // ---
@@ -208,7 +205,7 @@ class jsMdview{
             .replace(/=\+(.*?)\+=/gim, "<font face='Helvetica' color='darkgreen'>$1</font>")
             .replace(/!\[(.*?)\]\((.*?)\)/gim, "<img alt='$1' src='$2' style='max-width: 65px;max-height: 65px;' />")
             // .replace(/\[(.*?)\]\((.*?)\)/gim, "<a href='$2' target='_blank'>$1</a>")
-            .replace(/\[footer\](.*?)\[\/footer\]/gim, "<hr /><p class='text-center'>$1</p>")
+            .replace(/\[footer\](.*?)\[\/footer\]/gim, "<hr><p class='text-center'>$1</p>")
             .replace(/\n/gm, '<br>')
         for(let key in this.db){result = result.replaceAll(`$(${key})`, this.db[key])} // Faz replace para os dados a serem atereados no doc
         this.previewTarget.innerHTML = result.trim();
