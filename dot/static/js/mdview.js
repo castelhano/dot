@@ -1,5 +1,3 @@
-window.jsPDF = window.jspdf.jsPDF;
-
 class jsMdview{
     constructor(options){
         this.editor;
@@ -8,11 +6,11 @@ class jsMdview{
         this.value = options?.value || ''; // Valor inicial a ser carregado no editor
         this.prefix = options?.prefix || ''; // Texto fixo a ser adicionado antes do conteudo
         this.posfix = options?.posfix || ''; // Texto fixo a ser adicionado depois do conteudo
+        this.fieldName = options?.fieldName || 'mdview-editor'; // Texto fixo a ser adicionado depois do conteudo
         this.livePreview = options?.livePreview != undefined ? options.livePreview : true;
         this.autofocus = options?.autofocus != undefined ? options.autofocus : false;
         this.shortcuts = options?.shortcuts != undefined ? options.shortcuts : true;
         this.extra = options?.extra || []; // Botoes adicionais definidos no cliente
-        this.db = options?.db || {}; // Padroes regex a serem aplicados no doc
         this.db = options?.db || {}; // Padroes regex a serem aplicados no doc
         this.common = options?.common || ['today','today_full','now'];
         this.models = options?.models || {}; // Modelos de documento fornecidos pelo cliente
@@ -20,7 +18,7 @@ class jsMdview{
         // *************
         this.buildControls();
         this.build();
-        this.__buildClientModels(); // Carrega modelos de documentos
+        this.__buildModelDocs(); // Carrega modelos de documentos
         if(this.extra.length > 0){this.__loadExtra()}; // Adiciona botoes customizados pelo cliente
         if(this.shortcuts){this.__addShortcutMap()}; // Adiciona integracao com lib listener.js para atalhos dos elementos do menu
         if((this.prefix + this.value + this.posfix) != ''){this.parse()}
@@ -34,10 +32,10 @@ class jsMdview{
         if(this.autofocus){this.editor.setAttribute('autofocus','')}
         if(this.livePreview){this.editor.oninput = () => {this.parse()}}
         c1.appendChild(this.editor);
-        this.mdview_input = document.createElement('input');this.mdview_input.type = 'hidden'; this.mdview_input.name = 'mdview-editor';
+        this.mdview_input = document.createElement('input');this.mdview_input.type = 'hidden'; this.mdview_input.name = this.fieldName;
         c1.appendChild(this.mdview_input);
         row.appendChild(c1);
-        this.previewTarget = document.createElement('div');this.previewTarget.classList = 'border rounded h-100 p-4';
+        this.previewTarget = document.createElement('page');this.previewTarget.classList = 'p-5';this.previewTarget.setAttribute('size', 'A4');
         c2.appendChild(this.previewTarget);
         row.appendChild(c2);
         this.container.appendChild(row);
@@ -86,6 +84,7 @@ class jsMdview{
         this.align_end = document.createElement('button');this.align_end.type = 'button';this.align_end.classList = custom_classlist;this.align_end.innerHTML = '<i class="fas fa-align-right"></i>';this.align_end.title = 'Parágrafo a direita';
         this.align_end.onclick = () => {this.__editorAdd(['___ ',''], [4,0], true)}
         menu_group.appendChild(this.align_end);
+        menu_group.appendChild(this.__buildExtraStyles());
         let vr1 = document.createElement('span');vr1.classList = 'text-body-tertiary';vr1.innerHTML = '&nbsp;&nbsp;|&nbsp;&nbsp;';menu_group.appendChild(vr1);
         this.blockquote = document.createElement('button');this.blockquote.type = 'button';this.blockquote.classList = custom_classlist;this.blockquote.innerHTML = '<i class="fas fa-terminal"></i>';this.blockquote.title = 'Citação';
         this.blockquote.onclick = () => {this.__editorAdd(['> ',''], [2,0], true)}
@@ -99,11 +98,9 @@ class jsMdview{
         this.hr.onclick = () => {this.__editorAdd(['--','',''], false, false)};menu_group.appendChild(this.hr);
         this.pagebreak = document.createElement('button');this.pagebreak.type = 'button';this.pagebreak.classList = custom_classlist;this.pagebreak.innerHTML = '<i class="fas fa-cut fs-6"></i>';
         this.pagebreak.onclick = () => {this.__editorAdd(['[break]','',''], false, true, false)};this.pagebreak.title = 'Quebra de página';menu_group.appendChild(this.pagebreak);
-        if(Object.keys(this.db).length > 0){
-            let userBtn = this.__buildClientData();
-            menu_group.appendChild(this.__buildDefaultData());
-            menu_group.appendChild(userBtn);
-        }
+        let common = this.__buildCommonFields();
+        menu_group.appendChild(common);
+        menu_group.appendChild(this.__buildDefaultData());
         let vr2 = document.createElement('span');vr2.classList = 'text-body-tertiary';vr2.innerHTML = '&nbsp;&nbsp;|&nbsp;&nbsp;';menu_group.appendChild(vr2);
         if(!this.livePreview){
             this.refresh = document.createElement('button');this.refresh.type = 'button';this.refresh.classList = 'btn btn-sm btn-phanton-success circle-hover ms-1';this.refresh.innerHTML = '<i class="fas fa-sync"></i>';this.refresh.title = 'Atualizar Preview';
@@ -119,7 +116,7 @@ class jsMdview{
         // ---------
         this.container.appendChild(menu_group);
     }
-    __buildClientData(){
+    __buildDefaultData(){
         let wrapper = document.createElement('span');
         let btn = document.createElement('button');btn.type = 'button';btn.classList = 'btn btn-sm btn-phanton-light dropdown-toggle';btn.innerHTML = '<i class="fas fa-database"></i>';btn.setAttribute('data-bs-toggle','dropdown');btn.title = 'Variáveis do modelo';
         let ul = document.createElement('ul');ul.classList = 'dropdown-menu fs-7';
@@ -128,13 +125,21 @@ class jsMdview{
             li.onclick = () => {this.__editorAdd([`$(${key})`,'',''], false, false)};
             ul.appendChild(li);
         }
+        if(ul.children.length > 0){
+            let divider = document.createElement('li');divider.innerHTML = '<hr class="dropdown-divider">';
+            ul.appendChild(divider);
+        }
+        this.manualData = document.createElement('li');this.manualData.classList = 'dropdown-item dropdown-item-purple pointer';this.manualData.innerHTML = 'Manual';
+        this.manualData.onclick = () => {this.__editorAdd(['$(',')','manual'], [2,1], false)}
+        ul.appendChild(this.manualData);
+
         wrapper.appendChild(btn);
         wrapper.appendChild(ul);
         return wrapper;
     }
-    __buildClientModels(){
+    __buildModelDocs(){
         let wrapper = document.createElement('span');
-        let btn = document.createElement('button');btn.type = 'button';btn.classList = 'btn btn-sm btn-phanton-light dropdown-toggle';btn.innerHTML = '<i class="fas fa-scroll"></i>';btn.setAttribute('data-bs-toggle','dropdown');btn.title = 'Modelos';
+        let btn = document.createElement('button');btn.type = 'button';btn.classList = 'btn btn-sm btn-phanton-light dropdown-toggle';btn.innerHTML = '<i class="fas fa-scroll"></i>';btn.setAttribute('data-bs-toggle','dropdown');btn.title = 'Modelos de documento';
         let ul = document.createElement('ul');ul.classList = 'dropdown-menu fs-7';
         for(let key in this.models){
             let li = document.createElement('li');li.classList = 'dropdown-item pointer';li.innerHTML = key;
@@ -149,13 +154,32 @@ class jsMdview{
         wrapper.appendChild(ul);
         this.extraBtns.appendChild(wrapper);
     }
-    __buildDefaultData(){
+    __buildCommonFields(){
         let wrapper = document.createElement('span');
-        let btn = document.createElement('button');btn.type = 'button';btn.classList = 'btn btn-sm btn-phanton-light dropdown-toggle';btn.innerHTML = '<i class="fas fa-code"></i>';btn.setAttribute('data-bs-toggle','dropdown');btn.title = 'Variaveis globais';
+        let btn = document.createElement('button');btn.type = 'button';btn.classList = 'btn btn-sm btn-phanton-light dropdown-toggle';btn.innerHTML = '<i class="fas fa-code"></i>';btn.setAttribute('data-bs-toggle','dropdown');btn.title = 'Variaveis comuns';
         let ul = document.createElement('ul');ul.classList = 'dropdown-menu fs-7';
         for(let key in this.common){
             let li = document.createElement('li');li.classList = 'dropdown-item pointer';li.innerHTML = this.common[key];
             li.onclick = () => {this.__editorAdd([`&(common.${this.common[key]})`,'',''], false, false)};
+            ul.appendChild(li);
+        }
+        // ---
+        wrapper.appendChild(btn);
+        wrapper.appendChild(ul);
+        return wrapper;
+    }
+    __buildExtraStyles(){
+        let wrapper = document.createElement('span');
+        let btn = document.createElement('button');btn.type = 'button';btn.classList = 'btn btn-sm btn-phanton-light dropdown-toggle';btn.innerHTML = '<i class="fas fa-palette"></i>';btn.setAttribute('data-bs-toggle','dropdown');btn.title = 'Outros estilos';
+        let ul = document.createElement('ul');ul.classList = 'dropdown-menu fs-7';
+        let fields = [
+            {id: 'mdreport-destaqueBtn', innerHTML:'<i class="fas fa-font text-primary fa-fw"></i>Texto destaque', pattern: ['==','=='], selectArea: [2,2]},
+            {id: 'mdreport-successBtn', innerHTML:'<i class="fas fa-font text-success fa-fw"></i>Texto sucesso', pattern: ['=+','+='], selectArea: [2,2]},
+            {id: 'mdreport-dangerBtn', innerHTML:'<i class="fas fa-font text-danger fa-fw"></i>Texto erro', pattern: ['=-','-='], selectArea: [2,2]},
+        ]
+        for(let key in fields){
+            let li = document.createElement('li');li.classList = 'dropdown-item pointer';li.innerHTML = fields[key].innerHTML;li.id = fields[key].id;
+            li.onclick = () => {this.__editorAdd(fields[key].pattern, fields[key].selectArea)};
             ul.appendChild(li);
         }
         // ---
@@ -216,10 +240,14 @@ class jsMdview{
         SHORTCUT_MAP['bFTF'] = () => {this.bold.click();}
         SHORTCUT_MAP['iFTF'] = () => {this.italic.click()}
         SHORTCUT_MAP['uFTF'] = () => {this.underline.click()}
+        SHORTCUT_MAP['1FTF'] = () => {document.getElementById('mdreport-destaqueBtn').click();}
+        SHORTCUT_MAP['2FTF'] = () => {document.getElementById('mdreport-successBtn').click();}
+        SHORTCUT_MAP['3FTF'] = () => {document.getElementById('mdreport-dangerBtn').click();}
         SHORTCUT_MAP['.FTF'] = () => {this.blockquote.click()}
         SHORTCUT_MAP['[FTF'] = () => {this.blockbox.click()}
         SHORTCUT_MAP['enterFTF'] = () => {this.breakWord.click()}
         SHORTCUT_MAP['/FTF'] = () => {this.pagebreak.click()}
+        SHORTCUT_MAP[';FTF'] = () => {this.manualData.click()}
         // Headers shortcuts --
         SHORTCUT_MAP['hFTF'] = () => {this.heading.click()}
         SHORTCUT_MAP['1FFF'] = () => {if(mdviewHopen(this)){this.h1_start.click()}}
@@ -238,10 +266,14 @@ class jsMdview{
             'Texto em <b>negrito</b>': 'Ctrl + B',
             'Texto em <i>italico</i>': 'Ctrl + I',
             'Texto <u>tachado</u>': 'Ctrl + U',
+            'Texto <b class="text-primary">destacado</b>': 'Ctrl + 1',
+            'Texto <b class="text-success">sucesso</b>': 'Ctrl + 2',
+            'Texto <b class="text-danger">erro</b>': 'Ctrl + 3',
             'Citação': 'Ctrl + .',
             'Caixa de texto': 'Ctrl + [',
             'Quebra de linha': 'Ctrl + ENTER',
             'Quebra de página': 'Ctrl + /',
+            'Campo dinamico': 'Ctrl + ;',
             '<b class="text-secondary">Menu de Titulos</b>': '<b class="text-secondary">Ctrl + H</b>',
             '[seguido] Titulo (esq cen dir)': '<b>1</b> ou <b>4</b> ou <b>7</b>',
             '[seguido] Subtitulo (esq cen dir)': '<b>2</b> ou <b>5</b> ou <b>8</b>',

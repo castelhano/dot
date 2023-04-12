@@ -32,7 +32,7 @@
       <div class="col-lg-3 pt-lg-5">
         <div class="row mx-2 mb-3 mb-lg-0">
           {% for termo in termos %}
-          <div class="card-widget card-widget-sm col-lg-6 btn-secondary"><i class="fas fa-file-code lead-image"></i><a class="widget-label stretched-link" href="{% url 'sinistro_termo_pdf' %}?acidente={{terceiro.acidente.id|safe}}&terceiro={{terceiro.id|safe}}&termo={{termo.id|safe}}" target="_blank">{{termo.nome}}</a></div>
+          <div class="card-widget card-widget-sm col-lg-6 btn-secondary"><i class="fas fa-file-code lead-image"></i><a class="widget-label stretched-link" href="{% url 'sinistro_termo_pdf' %}?terceiro={{terceiro.id|safe}}&termo={{termo.id|safe}}" target="_blank">{{termo.nome}}</a></div>
           {% endfor %}          
         </div>
       </div>

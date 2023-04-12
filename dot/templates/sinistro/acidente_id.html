@@ -117,13 +117,18 @@
   SHORTCUT_MAP['4FTF'] = () => {document.getElementById('acidente_extra_link').click()};
   SHORTCUT_MAP['pFTF'] = () => {document.getElementById('widget_acidente_capa').click()};
   
-  function eventLocalHandler(e){
-    let extras = false;
-    try{extras = document.getElementById('acidente_extra_options').classList.contains('show') ? true : false;}catch(err){}
-    if(extras && e.key.toLowerCase() == 'f')try{e.preventDefault();document.getElementById('extras_link_fotos').click();}catch(err){}
-    else if(extras && e.key.toLowerCase() == 't')try{e.preventDefault();document.getElementById('extras_link_terceiros').click();}catch(err){}
-    else if(extras && e.key.toLowerCase() == 'a')try{e.preventDefault();document.getElementById('extras_link_files').click();}catch(err){}
-  }
-  
+  SHORTCUT_MAP['fFFF'] = () => {
+    if(extrasShow()){document.getElementById('extras_link_fotos').click();}    
+  };
+
+  SHORTCUT_MAP['tFFF'] = () => {
+    if(extrasShow()){document.getElementById('extras_link_terceiros').click();}    
+  };
+
+  SHORTCUT_MAP['aFFF'] = () => {
+    if(extrasShow()){document.getElementById('extras_link_files').click();}    
+  };
+
+  function extrasShow(){ return document.getElementById('acidente_extra_options').classList.contains('show') ? true : false; }
   {% endblock %}
 </script>

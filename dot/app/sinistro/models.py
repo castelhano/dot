@@ -190,24 +190,11 @@ class Despesa(models.Model):
 
 class Termo(models.Model):
     nome = models.CharField(max_length=100, unique=True, blank=False)
-    titulo = models.CharField(max_length=60, blank=True)
-    representante = models.CharField(max_length=40, blank=True)
-    cargo = models.CharField(max_length=40, blank=True)
-    local = models.CharField(max_length=40, blank=True)
-    rodape = models.CharField(max_length=150, blank=True)
+    body = models.TextField(blank=True)
     created_on = models.DateField(blank=True, null=True, default=datetime.today)
     author = models.ForeignKey(User, blank=True, null=True, on_delete=models.RESTRICT)
     def __str__(self):
         return self.nome
-    def paragrafos(self):
-        return Paragrafo.objects.filter(termo=self).order_by('ordem')
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='sinistro.termo',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
-
-class Paragrafo(models.Model):
-    termo = models.ForeignKey(Termo, on_delete=models.CASCADE)
-    ordem = models.PositiveIntegerField(blank=False, null=False)
-    texto = models.TextField(blank=True)
-    class Meta:
-        default_permissions = ('add','change','delete',)

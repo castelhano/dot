@@ -613,6 +613,7 @@ def logout(request):
     auth.logout(request)
     return redirect('index')
 
+@login_required
 def handler(request, code):
     if request.method == 'GET':
         return render(request,f'{code}.html')

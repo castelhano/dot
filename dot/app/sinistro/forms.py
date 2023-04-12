@@ -89,10 +89,6 @@ class FormaForm(forms.ModelForm):
 class TermoForm(forms.ModelForm):
     class Meta:
         model = Termo
-        fields = ['nome','titulo','representante','cargo','local','rodape']
-    nome = forms.CharField(error_messages={'required': 'Informe um nome para o termo'},max_length=20,widget=forms.TextInput(attrs={'class': 'form-control fw-bold','placeholder':' ','autofocus':'autofocus'}))
-    titulo = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
-    representante = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
-    cargo = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
-    local = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
-    rodape = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
+        fields = ['nome','body']
+    nome = forms.CharField(error_messages={'required': 'Informe um nome para o termo'},max_length=20,widget=forms.TextInput(attrs={'class': 'form-control fw-bold','placeholder':' '}))
+    body = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','style':'min-height:200px;','placeholder':' '}))

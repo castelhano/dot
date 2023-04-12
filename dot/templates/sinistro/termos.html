@@ -32,11 +32,8 @@
         <thead>
           <tr>
             <th>Nome</th>
-            <th class="d-none d-xl-table-cell">Representante</th>
-            <th class="d-none d-xl-table-cell">Cargo</th>
-            <th class="d-none d-lg-table-cell">Local</th>
             <th class="d-none d-sm-table-cell">Criado por</th>
-            <th class="d-none d-md-table-cell">Criado em</th>
+            <th>Criado em</th>
             {% if perms.sinistro.change_termo %}
             <th>&nbsp;</th>
             {% endif %}
@@ -46,11 +43,8 @@
           {% for termo in termos %}
           <tr>
             <td>{{termo.nome}}</td>
-            <td class="d-none d-xl-table-cell">{{termo.representante}}</td>
-            <td class="d-none d-xl-table-cell">{{termo.cargo}}</td>
-            <td class="d-none d-lg-table-cell">{{termo.local}}</td>
             <td class="d-none d-sm-table-cell fw-bold">{{termo.author.username|title}}</td>
-            <td class="d-none d-md-table-cell">{{termo.created_on|date:'d/m/Y'}}</td>
+            <td>{{termo.created_on|date:'d/m/Y'}}</td>
             {% if perms.sinistro.change_termo %}
             <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'sinistro_termo_id' termo.id|safe %}"><i class="fas fa-pen"></i></a></td>
             {% endif %}
@@ -61,6 +55,7 @@
     </div>
   </div>
 </div>
+
 {% if perms.sinistro.add_termo %}
 <div class="modal fade" id="add_termo_modal" tabindex="-1">
   <div class="modal-dialog">

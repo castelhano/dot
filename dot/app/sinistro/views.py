@@ -2,16 +2,14 @@ import os
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from json import dumps
-from .models import Acidente, Foto, File,  Oficina, Classificacao, Terceiro, TipoDespesa, Despesa, Forma, Termo, Paragrafo
+from .models import Acidente, Foto, File,  Oficina, Classificacao, Terceiro, TipoDespesa, Despesa, Forma, Termo
 from .forms import AcidenteForm, ClassificacaoForm, OficinaForm, TerceiroForm, TipoDespesaForm, DespesaForm, FormaForm, TermoForm
-from core.models import Log, Empresa
-from oficina.models import Frota
-from pessoal.models import Funcionario
-from trafego.models import Linha
+from core.models import Log
+from core.md_report import md_report
 from django.contrib.auth.decorators import login_required, permission_required
 from .validators import validate_file_extension, validate_excluded_files
 from django.contrib import messages
-from django.db.models import Q, Sum, Count
+from django.db.models import Q, Sum
 from datetime import date
 
 # METODOS SHOW

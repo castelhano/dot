@@ -6,130 +6,110 @@
 {% block model_menu %}{% include "_component/menu/sinistro.html" %}{% endblock%}
 {% block style_src %}<link rel="stylesheet" href="{% static 'css/pages.css' %}" type="text/css">{% endblock %}
 
-  
-<style media="screen">
-{% block style %}
-.hover{margin-bottom: 5px;}
-.hover:hover{
-  cursor: pointer;
-  background-color: #F1F1F1;
-}
-{% endblock %}
-</style>
 
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'sinistro_termo_id' termo.id|safe %}"></a>
-
-<div class="row">
-  <div class="col">
-    <control-A4 class="mt-3">
-      <div class="d-flex">
-        <div class="dropdown">
-          <a class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown">Editar </a>
-          <ul class="dropdown-menu fs-7">
-            <li><a id="modal_link_cabecalhos" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#cabecalhos_modal" href="#" title="Alt + ENTER">Cabeçalhos</a></li>
-            {% if perms.sinistro.delete_termo %}<li><hr class="dropdown-divider"></li><li><a class="dropdown-item dropdown-item-danger" data-bs-toggle="modal" data-bs-target="#delete_modal" href="#">Excluir Termo</a></li>{% endif %}
-          </ul>
+<div class="card mt-2">
+    <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+            <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'sinistro_termos' %}"><i class="fas fa-undo"></i></a></li>
+            <li class="nav-item dropdown ms-auto">
+                <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#history_modal">Historico</a></li>
+                    {% if perms.sinistro.delete_termo %}
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal">Excluir Termo</a></li>
+                    {% endif %}
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <form id="sinistro_form" action="{% url 'sinistro_termo_update' termo.id|safe %}" method="POST" autocomplete="off">
+        {% csrf_token %}
+        <div class="card-body tab-content">
+            <h5 class="card-title mb-3"><b class="text-orange">Report MD:</b> Termo <b>{{termo.id|safe}}</b></h5>
+            <div class="tab-pane fade show active" id="base" role="tabpanel">
+                <div class="row g-1">
+                    <div class="form-floating mb-lg-1 col-lg-4">
+                        {{ form.nome }}
+                        <label for="id_nome">Nome termo</label>
+                    </div>
+                </div>
+                <div id="mdviwer_container" class="mt-2"></div>
+            </div>
         </div>
-        <div class="dropdown ms-1">
-          <a class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown"><i class="fas fa-plus pe-2"></i></a>
-          <ul class="dropdown-menu fs-7">
-            <li><a id="add" class="dropdown-item pointer" onclick="paragrafoAdd();"  title="Alt + N">Parágrafo</a></li>
-          </ul>
-        </div>
-        {% if termo.paragrafos.count == 0 %}
-        <div class="dropdown ms-1">
-          <a class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown">Modelos </a>
-          <ul class="dropdown-menu fs-7">
-            <li><a class="dropdown-item" href="{% url 'sinistro_termo_modelos' termo.id|safe%}?modelo=mod1" onclick="submitForm()">Composição M1</a></li>
-          </ul>
-        </div>
-        {% endif %}
-        <a class="btn btn-sm btn-secondary ms-1" id="back" href="{% url 'sinistro_termos' %}"><i class="fas fa-undo"></i></a>
-      </div>
-    </control-A4>
-    <!-- INICIO PAGE -->
-    <page size="A4" class="mt-2 px-3 py-2 px-xl-5 py-xl-3 d-flex flex-column position-relative">
-      <span class="position-absolute badge rounded bg-primary" style="left: 6px;top:8px;">{{termo.nome}}</span>
-      <span class="position-absolute badge rounded bg-primary" style="right: 6px;top:8px;">Preview</span>
-      <div class="row d-none d-xl-block">
-        <div class="col-12 text-center mb-5 mt-5">
-          <h4 class="text-bold mb-5">{{ termo.titulo }}</h4>
-        </div>
-      </div>
-      <span class="placeholder placeholder-lg cursor-default col-10 d-block d-xl-none mt-5 mb-3"></span>
-      {% for paragrafo in termo.paragrafos %}
-      <div class="row">
-        <div class="col paragrafo text-justify hover" id="PR{{paragrafo.id|safe}}" onclick="paragrafoUpdate('{{paragrafo.id|safe}}', this.innerText);">
-          {% autoescape off %}{{ paragrafo.texto|linebreaks }}{% endautoescape %}
-        </div>
-        <div class="col-auto" >
-          <a href="{% url 'sinistro_paragrafo_up' paragrafo.id|safe %}"><i class="fas fa-chevron-up text-dark"></i></a>
-          <a href="{% url 'sinistro_paragrafo_down' paragrafo.id|safe %}"><i class="fas fa-chevron-down text-dark"></i></a>
-        </div>
-      </div>
-      {% endfor %}
-      
-      <div class="position-absolute d-none d-xl-block" style="width: 90%; top:780px;">
-        <div class="row">
-          <div class="col-12 mb-5 mt-5">
-            <p class="text-bold">{{ termo.local }} - {% now "SHORT_DATE_FORMAT" %}</p>
-          </div>
-        </div>
-        <div class="row mt-3">
-          <div class="col-6">
-            <hr class="linha_assinatura">
-            <p class="text-center text-bold m-0">{{ termo.representante }}</p>
-            <p class="text-center m-0">{{ termo.cargo }}</p>
-          </div>
-          <div class="col-6">
-            <hr class="linha_assinatura">
-            <p class="text-center text-bold m-0">Nome Terceiro</p>
-            <p class="text-center m-0">CPF: 000.000.000-00</p>
-          </div>
-        </div>
-        <div class="row mt-4">
-          <div class="col-12 text-center mb-auto fs-8" style="">
-            <hr>
-            {{ termo.rodape }}
-          </div>
-        </div>        
-      </div>
-      <span class="placeholder placeholder-lg col-8 cursor-default bg-secondary d-block mt-3 d-xl-none"></span>
-      <div class="d-flex justify-content-between mt-4">
-        <span class="placeholder placeholder-lg col-5 cursor-default bg-secondary d-block d-xl-none"></span><span class="placeholder placeholder-lg col-5 cursor-default bg-secondary d-block d-xl-none"></span>
-      </div><br >
-      <span class="placeholder placeholder-lg col-12 cursor-default d-block mt-2 d-xl-none"></span>
-    </page>
-  </div>
+    </form>
 </div>
-{% include 'sinistro/_extract_termo_modais.html' %}
-{% include "_component/modal/loading.html" with message='Registrando termo....' %}
+
+{% if perms.sinistro.delete_termo %}
+<div class="modal fade" id="delete_modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="row">
+                <div class="col"><h5 class="ms-3 mt-3"><i class="fas fa-exclamation-triangle text-danger me-2"></i> Excluir Termo</h5></div>
+                <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+            </div>
+            <div class="modal-body">
+                <p><b class="text-danger">Atenção!!</b> Esta operação não pode ser desfeita, confirma a exclusão do registro?</p>
+                <div class="row mt-2">
+                    <div class="col text-end">
+                        <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
+                        <a class="btn btn-danger px-3" href="{% url 'sinistro_termo_delete' termo.id|safe %}">Excluir</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+<div class="modal fade" id="history_modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="row">
+                <div class="col"><h5 class="ms-3 mt-3">Histórico <sup>(last 15)</sup></h5></div>
+                <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+            </div>
+            <div class="modal-body">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Operação</th>
+                            <th>Usuário</th>
+                        </tr>
+                    </thead>
+                    <tbody class="fs-7">
+                        {% for i in termo.ultimas_alteracoes %}
+                        <tr>
+                            <td>{{i.data|date:'d/m/Y H:i:s'}}</td>
+                            <td>{{i.mensagem}}</td>
+                            <td>{{i.usuario.username|upper}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock%}
 
-{% block add_script_src %}{% endblock %}
+{% block add_script_src %}
+<script src="{% static 'js/mdview.js' %}"></script>
+{% endblock %}
 
 <script>
-  {% block add_script %}
-  var TAB_ON_ENTER = true;
-  SHORTCUT_MAP['enterTFF'] = () => {document.getElementById('modal_link_cabecalhos').click()};
-  
-  var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
-  function submitForm(){modal_loading.show();return true;}
-  
-  var paragrafo_add_modal = new bootstrap.Modal(document.getElementById('paragrafo_add_modal'), {keyboard: true});
-  var paragrafo_update_modal = new bootstrap.Modal(document.getElementById('paragrafo_update_modal'), {keyboard: true});
-  
-  function paragrafoAdd(){paragrafo_add_modal.show();setTimeout(function(){document.getElementById('id_paragrafo_add_texto').focus();},480);}
-  function paragrafoUpdate(id, text){
-    paragrafo_update_modal.show();
-    document.getElementById('id_paragrafo_update').value = id;
-    document.getElementById('id_paragrafo_update_texto').value = text;
-    setTimeout(function(){document.getElementById('id_paragrafo_update_texto').focus();},480);    
-  }
-  function paragrafoDelete(){id = document.getElementById('id_paragrafo_update').value;location.href = `{% url 'sinistro_paragrafo_delete' %}?id=${id}`;}
-  
-  
-  
-  {% endblock %}
+    {% block add_script %}
+    const report = new jsMdview({
+        container: document.getElementById('mdviwer_container'),
+        autofocus: true,
+        fieldName: 'body',
+        value: `{{termo.body|safe}}`,
+        extra: [
+            {type:'submit', innerHTML: '<b>G</b>ravar', classList: 'btn btn-sm btn-success ms-1', id:'submit'}
+        ]
+    })
+    {% endblock %}
 </script>
