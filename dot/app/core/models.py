@@ -45,6 +45,7 @@ class Empresa(models.Model):
     fone = models.CharField(max_length=20, blank=True)
     fax = models.CharField(max_length=20, blank=True)
     logo = ImageField(upload_to="core/logos/", blank=True)
+    footer = models.TextField(blank=True)
     def __str__(self):
         return self.nome
     def logo_filename(self):

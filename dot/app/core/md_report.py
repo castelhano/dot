@@ -1,5 +1,4 @@
 import re
-import os
 from django.conf import settings
 from datetime import date, datetime
 
@@ -37,19 +36,14 @@ def md_report(request, original, **kwargs):
     
     buffer = BytesIO()
 
-    # Adicionando common fields ao kwargs
-    hoje = date.today()
-    common = {
-        "today": hoje.strftime('%d/%m/%Y'),
-        "today_full": hoje.strftime('%d de %B de %Y'),
-        "now": datetime.now()
-    }
-
-    # Ajustando o template (somente footer)
+    # Ajustando o template
+    # Logo
     footer_text = ''
     re_logo = re.search(r'\!\[(.*?)\]\((.*?)\)', original)
     if re_logo:
         original = re.sub(r'\!\[(.*?)\]\((.*?)\)','', original)
+    
+    # Footer
     re_footer = re.search(f'\[footer\](.*?)\[\/footer\]', original)
 
     style_footer = ParagraphStyle(
@@ -58,7 +52,15 @@ def md_report(request, original, **kwargs):
         fontSize=9,
         alignment=CENTER
     )
-    footer_text = md_basic(re_footer.group(1)) if re_footer else ''
+    if re_footer:
+        if re_footer.group(1) != '':
+            footer_text = md_basic(re_footer.group(1))
+        elif kwargs['empresa'].footer != '':
+            footer_text = md_basic(str(kwargs['empresa'].footer))
+        else:
+            footer_text = ''
+    else:
+        footer_text = ''
     
     original = re.sub(f'\[footer\](.*?)\[\/footer\]', '', original) # Retira o footer da string original
     doc = SimpleDocTemplate(buffer,topMargin=MARGIN_TOP,bottomMargin=MARGIN_BOTTOM + len(footer_text.split('<br />')) * 20,leftMargin=MARGIN_START, rightMargin=MARGIN_END)
@@ -69,21 +71,23 @@ def md_report(request, original, **kwargs):
         canvas.saveState()
         if re_logo:
             props = re_logo.group(1).split(',')
-            url = data_plot(re_logo.group(2), **kwargs)
-            print('>>>>> ', url)
             w = int(props[0])
             h = int(props[1])
-            if len(props) < 3 or props[2] == 'TOP-LEFT':
-                canvas.drawInlineImage(settings.MEDIA_DIR + url, MARGIN_START, PAGE_HEIGHT - 70, w, h)
+            if len(props) == 2:
+                props[2] = 'TOP-LEFT'
+            position = {
+                'TOP-LEFT': [MARGIN_START, PAGE_HEIGHT - 70],
+                'TOP-RIGHT': [PAGE_WIDTH - (MARGIN_END + w), PAGE_HEIGHT - 70],
+                'TOP-CENTER': [PAGE_WIDTH / 2 - (w / 2), PAGE_HEIGHT - 70],
+                'BOTTOM-LEFT': [MARGIN_START, MARGIN_BOTTOM],
+                'BOTTOM-CENTER': [PAGE_WIDTH / 2 - (w / 2), MARGIN_BOTTOM],
+                'BOTTOM-RIGHT': [PAGE_WIDTH - (MARGIN_END + w), MARGIN_BOTTOM],
+            }
+            if re_logo.group(2) == '':
+                if kwargs['empresa'].logo != '':
+                    canvas.drawInlineImage(settings.MEDIA_ROOT + '/' + str(kwargs['empresa'].logo), position[props[2]][0], position[props[2]][1], w, h)
             else:
-                position = {
-                    'TOP-RIGHT': [PAGE_WIDTH - (MARGIN_END + w), PAGE_HEIGHT - 70],
-                    'TOP-CENTER': [PAGE_WIDTH / 2 - (w / 2), PAGE_HEIGHT - 70],
-                    'BOTTOM-LEFT': [MARGIN_START, MARGIN_BOTTOM],
-                    'BOTTOM-CENTER': [PAGE_WIDTH / 2 - (w / 2), MARGIN_BOTTOM],
-                    'BOTTOM-RIGHT': [PAGE_WIDTH - (MARGIN_END + w), MARGIN_BOTTOM],
-                }
-                canvas.drawInlineImage(os.path.join(settings.BASE_DIR) + '/dot' + re_logo.group(2), position[props[2]][0], position[props[2]][1], w, h)
+                canvas.drawInlineImage(re_logo.group(2), position[props[2]][0], position[props[2]][1], w, h)                
         FOOTER.drawOn(canvas, doc.leftMargin, FOOTER_HEIGHT)
         # Inserindo linha separadora do footer
         canvas.setLineWidth(1)
@@ -91,7 +95,16 @@ def md_report(request, original, **kwargs):
         canvas.restoreState()
     
     original = md_basic(original)
+    
+    # Adicionando common fields ao kwargs
+    hoje = date.today()
+    common = {
+        "today": hoje.strftime('%d/%m/%Y'),
+        "today_full": hoje.strftime('%d de %B de %Y'),
+        "now": datetime.now()
+    }
     original = common_plot(original, common)
+    
     original = data_plot(original, **kwargs)
     flowables = md_layout(original)
 
@@ -125,14 +138,14 @@ def common_plot(original, common):
     return original
 
 def data_plot(original, **kwargs):
-    attrs = re.findall(r"\$\[(.*?)\]", original)
+    attrs = re.findall(r"\$\((.*?)\)", original)
     for attr in attrs:
         target = attr.split('.', 1)
         try:
             result = getattr(kwargs[target[0]], target[1])
-            original = original.replace(f'$[{attr}]', f'{result}')
+            original = original.replace(f'$({attr})', f'{result}')
         except:
-            original = original.replace(f'$[{attr}]', '')
+            original = original.replace(f'$({attr})', '')
     return original
 
 def md_layout(original):

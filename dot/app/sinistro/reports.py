@@ -24,11 +24,11 @@ def termo_pdf(request):
     terceiro = Terceiro.objects.get(pk=request.GET['terceiro'])
     acidente = terceiro.acidente
     empresa = terceiro.acidente.empresa
-    # try:
-    pdf = md_report(request, termo.body, **{"acidente":acidente,"terceiro":terceiro,"empresa":empresa})
-    # except:
-    #     messages.error(request, '<b>ERRO:</b> Termo mal formatado, revise a extrutura do documento.')
-    #     return redirect('sinistro_terceiro_id', terceiro.id)
+    try:
+        pdf = md_report(request, termo.body, **{"acidente":acidente,"terceiro":terceiro,"empresa":empresa})
+    except:
+        messages.error(request, '<b>ERRO:</b> Termo mal formatado, revise a extrutura do documento.')
+        return redirect('sinistro_terceiro_id', terceiro.id)
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="termo.pdf"'
     response.write(pdf)

@@ -170,14 +170,15 @@ class jsMdview{
     }
     __buildExtraStyles(){
         let wrapper = document.createElement('span');
-        let btn = document.createElement('button');btn.type = 'button';btn.classList = 'btn btn-sm btn-phanton-light dropdown-toggle';btn.innerHTML = '<i class="fas fa-palette"></i>';btn.setAttribute('data-bs-toggle','dropdown');btn.title = 'Outros estilos';
+        let btn = document.createElement('button');btn.type = 'button';btn.classList = 'btn btn-sm btn-phanton-light dropdown-toggle';btn.innerHTML = '<i class="fas fa-th-list"></i>';btn.setAttribute('data-bs-toggle','dropdown');btn.title = 'Outros';
         let ul = document.createElement('ul');ul.classList = 'dropdown-menu fs-7';
         let fields = [
             {id: 'mdreport-destaqueBtn', innerHTML:'<i class="fas fa-font text-primary fa-fw"></i>Texto destaque', pattern: ['==','=='], selectArea: [2,2]},
             {id: 'mdreport-successBtn', innerHTML:'<i class="fas fa-font text-success fa-fw"></i>Texto sucesso', pattern: ['=+','+='], selectArea: [2,2]},
             {id: 'mdreport-dangerBtn', innerHTML:'<i class="fas fa-font text-danger fa-fw"></i>Texto erro', pattern: ['=-','-='], selectArea: [2,2]},
             {id: 'mdreport-indent', innerHTML:'<i class="fas fa-indent text-secondary fa-fw"></i>Espaçamento', pattern: ['[...]','',''], selectArea: false, newline: true},
-            // this.__editorAdd(['<br />','',''], false, false, false)
+            {id: 'mdreport-logo', innerHTML:'<i class="fas fa-image text-secondary fa-fw"></i>Logo', pattern: ['![45,45,TOP-LEFT]()','',''], selectArea: false, newline: true},
+            {id: 'mdreport-footer', innerHTML:'<i class="fas fa-text-height text-secondary fa-fw"></i>Rodapé', pattern: ['[footer]','[/footer]',''], selectArea: [8,9], newline: true},
         ]
         for(let key in fields){
             let li = document.createElement('li');li.classList = 'dropdown-item pointer';li.innerHTML = fields[key].innerHTML;li.id = fields[key].id;
@@ -232,7 +233,7 @@ class jsMdview{
             .replace(/==(.*?)==/gim, "<font face='Helvetica' color='CornflowerBlue'>$1</font>")
             .replace(/=\-(.*?)\-=/gim, "<font face='Helvetica' color='firebrick'>$1</font>")
             .replace(/=\+(.*?)\+=/gim, "<font face='Helvetica' color='darkgreen'>$1</font>")
-            .replace(/!\[(.*?)\]\((.*?)\)/gim, "[ logo ]")
+            .replace(/!\[(.*?)\]\((.*?)\)/gim, "")
             // .replace(/\[(.*?)\]\((.*?)\)/gim, "<a href='$2' target='_blank'>$1</a>")
             .replace(/\[footer\](.*?)\[\/footer\]/gim, "<hr><p class='text-center fs-7'>$1</p>")
             .replace(/^\[\.\.\.\]/gm, '<span class="d-inline-block" style="width: 60px;">&nbsp;</span>')
