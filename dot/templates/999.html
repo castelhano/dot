@@ -2,10 +2,7 @@
 {% load static %}
 {% block model %}999 <b class="ms-2">Test Page</b>{% endblock %}
 
-{% block script_preload_src %}<script src="{% static 'js/vendor/jsPdf.js' %}"></script>{% endblock%}
-{% block style_src %}
-<!-- <link rel="stylesheet" href="% static 'css/report.css' %"> -->
-{% endblock%}
+{% block style_src %} {% endblock%}
 <style>
   {% block style %}{% endblock%}
 </style>
@@ -17,38 +14,16 @@
   <li class="breadcrumb-item"><a href="#">Library</a></li>
   <li class="breadcrumb-item active">Data</li>
 </ol>
-<form action="{% url 'handler' '999' %}" method="POST" target="_blank">
-  {% csrf_token %}
-  <div id="container"></div>
-</form>
 {% endblock%}
 
 
 {% block add_script_src %}
-<script src="{% static 'js/mdview.js' %}"></script>
+<!-- <script src="{% static 'js/mdview.js' %}"></script> -->
 {% endblock %}
 
 
 <script>
 {% block add_script %}
-
-const pre = `![65,45,BOTTOM-RIGHT](/static/img/default_user.jpg)\n\n
-### Ofício N. $(usuario.username)
-___ **Cuiabá-MT, &(common.today_full) **\n\n`;
-
-const pos = '[footer]**$(empresa.razao_social)**<br />$(empresa.endereco), $(empresa.bairro) - $(empresa.cidade), $(empresa.uf)<br />CEP $(empresa.cep) Fone: $(empresa.fone)[/footer]'
-
-const report = new jsMdview({
-  container: document.getElementById('container'),
-  db: {nome:"Rafael", idade:55, cargo:"Analista de Sistemas"},
-  value: ``,
-  extra: [
-    {id:'submit',innerHTML:'<b>G</b>ravar', type:'submit', classList:'btn btn-sm btn-success ms-1'},
-  ],
-  prefix: pre,
-  posfix: pos,
-  autofocus: true
-});
 
 {% endblock %}
 </script>

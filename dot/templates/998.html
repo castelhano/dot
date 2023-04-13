@@ -1,0 +1,29 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block model %}998 <b class="ms-2">MD Viwer</b>{% endblock %}
+{% block style_src %}<link rel="stylesheet" href="{% static 'css/pages.css' %}" type="text/css">{% endblock %}
+<style>
+  {% block style %}{% endblock%}
+</style>
+
+{% block content_fluid %}
+<a class="d-none" href="{% url 'handler' '998' %}" id="clear"></a>
+<div id="container" class="mt-3"></div>
+{% endblock%}
+
+
+{% block add_script_src %}
+<script src="{% static 'js/mdview.js' %}"></script>
+{% endblock %}
+
+
+<script>
+{% block add_script %}
+
+const report = new jsMdview({
+  container: document.getElementById('container'),
+  autofocus: true
+});
+
+{% endblock %}
+</script>

@@ -1,6 +1,8 @@
 import re
 from django.conf import settings
 from datetime import date, datetime
+import locale
+locale.setlocale(locale.LC_ALL, '')
 
 # IMPORTS PARA REPORTLAB
 from io import BytesIO
@@ -56,7 +58,7 @@ def md_report(request, original, **kwargs):
         if re_footer.group(1) != '':
             footer_text = md_basic(re_footer.group(1))
         elif kwargs['empresa'].footer != '':
-            footer_text = md_basic(str(kwargs['empresa'].footer))
+            footer_text = md_basic(kwargs['empresa'].footer)
         else:
             footer_text = ''
     else:
@@ -142,7 +144,7 @@ def data_plot(original, **kwargs):
     for attr in attrs:
         target = attr.split('.', 1)
         try:
-            result = getattr(kwargs[target[0]], target[1])
+            result = get_repr(get_field(kwargs[target[0]], target[1]))
             original = original.replace(f'$({attr})', f'{result}')
         except:
             original = original.replace(f'$({attr})', '')
@@ -189,3 +191,18 @@ def md_layout(original):
             flowables.append(Paragraph(linha, style_base))
 
     return flowables
+
+def get_repr(value): 
+    if callable(value):
+        return '%s' % value()
+    return value
+
+def get_field(instance, field):
+    field_path = field.split('.')
+    attr = instance
+    for elem in field_path:
+        try:
+            attr = getattr(attr, elem)
+        except AttributeError:
+            return ''
+    return attr

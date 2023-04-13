@@ -1,10 +1,12 @@
 from django.http import HttpResponse
 from core.md_report import md_report
+# import locale
+# locale.setlocale(locale.LC_ALL, '')
 
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
-from .models import Acidente, Terceiro, Despesa, Termo
+from .models import Acidente, Terceiro, Termo
 from core.models import Empresa
 from datetime import date, datetime
 # from django.db.models.functions import TruncMonth
@@ -14,7 +16,28 @@ from django.db.models import Count
 @login_required
 @permission_required('sinistro.view_acidente')
 def capa_resumo(request):
-    pass
+    acidente = Acidente.objects.get(pk=request.GET['acidente'])
+    empresa = acidente.empresa
+    schema = """![45,45,TOP-LEFT]() <br />
+##_ RELATÓRIO DE CONCLUSÃO DE OCORRÊNCIA OPERACIONAL<br /><br />
+
+Culpabilidade: **$(acidente.get_culpabilidade_display)**<br />Classificação: **$(acidente.classificacao.nome)**<br />Data: **%s**<br />Hora: **%s**<br />Condutor: **$(acidente.condutor.matricula) - $(acidente.condutor.nome)**<br />Inspetor: **$(acidente.inspetor.matricula) - $(acidente.inspetor.matricula)**
+
+[[ $(acidente.detalhe) ]]<br />
+-- <br />
+### RESUMO DOS CUSTOS DO PROCESSO
+Acordos: **R$ $(acidente.acordos)**<br />Outras despesas: **R$ $(acidente.despesas)**<br />....................................
+**Custo Total: R$ %s**
+[footer][/footer]""" %(acidente.data.strftime('%d/%m/%Y') if acidente.data else '', acidente.hora.strftime("%H:%M") if acidente.hora else '', acidente.acordos() + acidente.despesas())
+    # try:
+    pdf = md_report(request, schema, **{"acidente":acidente,"empresa":empresa})
+    # except:
+        # messages.error(request, '<b>ERRO</b> ao gerar capa, procure o administrador do sistema')
+        # return redirect('sinistro_acidente_id', acidente.id)
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="capa.pdf"'
+    response.write(pdf)
+    return response
 
 
 @login_required
