@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+import json
 from core.md_report import md_report
 import locale
 locale.setlocale(locale.LC_ALL, '')
@@ -34,11 +35,11 @@ Acordos: **%s**<br />Outras despesas: **%s**<br />..............................
 **Custo Total: %s**
 ![105,45,TOP-LEFT]()
 [footer][/footer]""" %(acidente.data.strftime('%d/%m/%Y') if acidente.data else '', acidente.hora.strftime("%H:%M") if acidente.hora else '', terceiros_txt,acidente.detalhe.replace('\n','<br />') ,locale.currency(acidente.acordos()),locale.currency(acidente.despesas()), locale.currency(acidente.acordos() + acidente.despesas()))
-    # try:
-    pdf = md_report(request, schema, **{"acidente":acidente,"empresa":empresa})
-    # except:
-        # messages.error(request, '<b>ERRO</b> ao gerar capa, procure o administrador do sistema')
-        # return redirect('sinistro_acidente_id', acidente.id)
+    try:
+        pdf = md_report(request, schema, **{"acidente":acidente,"empresa":empresa})
+    except:
+        messages.error(request, '<b>ERRO</b> ao gerar capa, procure o administrador do sistema')
+        return redirect('sinistro_acidente_id', acidente.id)
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="capa.pdf"'
     response.write(pdf)
@@ -64,38 +65,25 @@ def termo_pdf(request):
 
 
 
-# @login_required
-# @permission_required('sinistro.change_termo')
-# def termo_modelos(request, id):
-#     try:
-#         termo = Termo.objects.get(id=id)
-#         modelo = request.GET.get('modelo', None)
-#         if modelo == 'mod1' and Paragrafo.objects.filter(termo=termo).count() == 0:
-#             mod1 = []
-#             mod1.append('De um lado, como primeiro acordante temos, {{empresa.razao_social}} pessoa jurídica de direito privado, estabelecida na {{empresa.endereco}} - bairro {{empresa.bairro}} - CEP: {{empresa.cep}}, {{empresa.cidade}} {{empresa.uf}}, incrita no CNPJ/MF {{empresa.cnpj}},')
-#             mod1.append('e, segundo acordante, {{terceiro.nome}}, portador do CPF: {{terceiro.cpf}}, residente e domiciliado à {{terceiro.endereco}}, bairro {{terceiro.bairro}} em {{terceiro.cidade}} {{terceiro.uf}}.')
-#             mod1.append('<br />{{Dos Fatos}}<br />')
-#             mod1.append('O presente termo é lavrado ante a ocorrência de colisão entre o veículo ônibus de prefixo {{acidente.veiculo}}, placa {{veiculo.placa}}, e o veículo de propriedade do segundo acordante, cuja marca/modelo se descreve: {{terceiro.veiculo}}, cor {{terceiro.cor}}, ano {{terceiro.ano}}, placa {{terceiro.placa}} - sendo o local do acidente ocorrido em {{acidente.endereco}}, {{acidente.bairro}}, {{acidente.cidade}} {{acidente.uf}}, na data de {{acidente.data}}, aproximadamente às {{acidente.hora}}')
-#             mod1.append('A empresa citada pagará o montante de {{terceiro.acordo}} em {{terceiro.forma}}, referente aos danos ocorridos no veículo do segundo acordante, conforme dados constantes do PIA nº {{acidente.pasta}} (processo interno de acidentes), e que o valor acima pago refere-se à composição amigável entre as partes, no tocante ao sinistro em apreço.')
-#             mod1.append('{{O pagamento efetuado pela empresa não acarreta reconhecimento de culpa sendo ato meramente liberal e ainda, com o pagamento acima descrito, o segundo acordante conferirá à primeira acordante a mais ampla, geral e irrevogável quitação quanto aos danos morais, materiais e lucros cessantes ou a que título for que tenha como objeto o fato descrito no presente termo.}}')
-#             mod1.append('Por estarem às partes de comum acordo, assinam.')
-#             ordem = 0
-#             for p in mod1:
-#                 Paragrafo.objects.create(termo=termo, ordem=ordem, texto=p)
-#                 ordem += 1
-#             l = Log()
-#             l.modelo = "sinistro.termo"
-#             l.objeto_id = termo.id
-#             l.objeto_str = termo.nome
-#             l.usuario = request.user
-#             l.mensagem = "LOAD MODELO"
-#             l.save()
-#             messages.success(request,f'Modelo <b>{modelo}</b> aplicado')
-#         else:
-#             messages.warning(request,'Modelo <b>não localizado</b>')
-#     except:
-#         messages.error(request,'<b>Erro</b> ao carregar modelo')
-#     return redirect('sinistro_termo_id', id)
+@login_required
+@permission_required('sinistro.change_termo')
+def termo_modelos(request):
+    modelos = []
+    md1 = """De um lado, como primeiro acordante temos, **$(empresa.razao_social)** pessoa jurídica de direito privado, estabelecida na **$(empresa.endereco)** - bairro **$(empresa.bairro)** - CEP: **$(empresa.cep)**, **$(empresa.cidade) $(empresa.uf)**, incrita no CNPJ/MF **$(empresa.cnpj)**,
+e, segundo acordante, **$(terceiro.nome)**, portador do CPF: **$(terceiro.cpf)**, residente e domiciliado à **$(terceiro.endereco)**, bairro **$(terceiro.bairro)** em **$(terceiro.cidade)** **$(terceiro.uf)**.
+
+**Dos Fatos**
+
+O presente termo é lavrado ante a ocorrência de colisão entre o veículo ônibus de prefixo **$(acidente.veiculo)**, placa **$(veiculo.placa)**, e o veículo de propriedade do segundo acordante, cuja marca/modelo se descreve: **$(terceiro.veiculo)**, cor **$(terceiro.cor)**, ano **$(terceiro.ano)**, placa **$(terceiro.placa)** - sendo o local do acidente ocorrido em **$(acidente.endereco)**, **$(acidente.bairro)**, **$(acidente.cidade) $(acidente.uf)**, na data de **$(acidente.data)**, aproximadamente às **$(acidente.hora)**<br />
+
+A empresa citada pagará o montante de **$(terceiro.acordo)** em **$(terceiro.forma)**, referente aos danos ocorridos no veículo do segundo acordante, conforme dados constantes do PIA nº **$(acidente.pasta)** (processo interno de acidentes), e que o valor acima pago refere-se à composição amigável entre as partes, no tocante ao sinistro em apreço.<br />
+
+**O pagamento efetuado pela empresa não acarreta reconhecimento de culpa sendo ato meramente liberal e ainda, com o pagamento acima descrito, o segundo acordante conferirá à primeira acordante a mais ampla, geral e irrevogável quitação quanto aos danos morais, materiais e lucros cessantes ou a que título for que tenha como objeto o fato descrito no presente termo.**
+
+Por estarem às partes de comum acordo, assinam."""
+    modelos.append(md1)
+    obj = json.dumps(list)
+    return HttpResponse(obj, content_type="application/json")
 
 @login_required
 @permission_required('sinistro.dashboard_acidente')

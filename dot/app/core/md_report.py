@@ -35,6 +35,14 @@ def md_report(request, original, **kwargs):
     
     FOOTER_HEIGHT = 0
     FOOTER_SPACE = 12
+
+    # Configurando os commons.fields
+    hoje = date.today()
+    common = {
+        "today": hoje.strftime('%d/%m/%Y'),
+        "today_full": hoje.strftime('%d de %B de %Y'),
+        "now": datetime.now().strftime('%H:%M:%S')
+    }
     
     buffer = BytesIO()
 
@@ -57,6 +65,8 @@ def md_report(request, original, **kwargs):
     if re_footer:
         if re_footer.group(1) != '':
             footer_text = md_basic(re_footer.group(1))
+            footer_text = data_plot(footer_text, **kwargs)
+            footer_text = common_plot(footer_text, common)
         elif kwargs['empresa'].footer != '':
             footer_text = md_basic(kwargs['empresa'].footer.replace('\n', '<br />'))
         else:
@@ -77,6 +87,7 @@ def md_report(request, original, **kwargs):
 
     def basic_template(canvas, doc):
         canvas.saveState()
+        canvas.setTitle('MD Report')
         if re_logo:
             if len(props) == 2:
                 props[2] = 'TOP-LEFT'
@@ -101,13 +112,6 @@ def md_report(request, original, **kwargs):
     
     original = md_basic(original)
     
-    # Adicionando common fields ao kwargs
-    hoje = date.today()
-    common = {
-        "today": hoje.strftime('%d/%m/%Y'),
-        "today_full": hoje.strftime('%d de %B de %Y'),
-        "now": datetime.now()
-    }
     original = common_plot(original, common)
     
     original = data_plot(original, **kwargs)
