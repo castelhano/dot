@@ -69,10 +69,12 @@ def md_report(request, original, **kwargs):
         canvas.saveState()
         if re_logo:
             props = re_logo.group(1).split(',')
+            url = data_plot(re_logo.group(2), **kwargs)
+            print('>>>>> ', url)
             w = int(props[0])
             h = int(props[1])
             if len(props) < 3 or props[2] == 'TOP-LEFT':
-                canvas.drawInlineImage(os.path.join(settings.BASE_DIR) + '/dot' + re_logo.group(2), MARGIN_START, PAGE_HEIGHT - 70, w, h)
+                canvas.drawInlineImage(settings.MEDIA_DIR + url, MARGIN_START, PAGE_HEIGHT - 70, w, h)
             else:
                 position = {
                     'TOP-RIGHT': [PAGE_WIDTH - (MARGIN_END + w), PAGE_HEIGHT - 70],
@@ -123,14 +125,14 @@ def common_plot(original, common):
     return original
 
 def data_plot(original, **kwargs):
-    attrs = re.findall(r"\$\((.*?)\)", original)
+    attrs = re.findall(r"\$\[(.*?)\]", original)
     for attr in attrs:
         target = attr.split('.', 1)
         try:
             result = getattr(kwargs[target[0]], target[1])
-            original = original.replace(f'$({attr})', f'{result}')
+            original = original.replace(f'$[{attr}]', f'{result}')
         except:
-            original = original.replace(f'$({attr})', '')
+            original = original.replace(f'$[{attr}]', '')
     return original
 
 def md_layout(original):
@@ -166,6 +168,8 @@ def md_layout(original):
             flowables.append(Paragraph('<font face="Helvetica-Bold" color="grey" size="16">|</font>&nbsp;&nbsp;' + re.search(r"^\> (.*$)", linha).group(1), style_callout))
         elif re.search(r"\[\[(.*?)\]\]", linha):
             flowables.append(Paragraph(re.search(r"\[\[(.*?)\]\]", linha).group(1), style_box))
+        elif re.search(r"^\[\.\.\.\]", linha):
+            flowables.append(Paragraph(re.sub(r"^\[\.\.\.\]",'&nbsp;&nbsp;&nbsp;&nbsp;', linha), style_base))
         elif re.search(r"\[break\]", linha):
             flowables.append(PageBreak())
         else:

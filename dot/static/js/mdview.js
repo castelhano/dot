@@ -35,7 +35,7 @@ class jsMdview{
         this.mdview_input = document.createElement('input');this.mdview_input.type = 'hidden'; this.mdview_input.name = this.fieldName;
         c1.appendChild(this.mdview_input);
         row.appendChild(c1);
-        this.previewTarget = document.createElement('page');this.previewTarget.classList = 'p-5';this.previewTarget.setAttribute('size', 'A4');
+        this.previewTarget = document.createElement('page');this.previewTarget.style = 'position:relative;padding-left: 110px;padding-right: 110px;padding-top: 80px;padding-bottom: 30px;font-size: 18px;text-align: justify;height: auto;'; this.previewTarget.setAttribute('size', 'A4');
         c2.appendChild(this.previewTarget);
         row.appendChild(c2);
         this.container.appendChild(row);
@@ -51,25 +51,25 @@ class jsMdview{
         this.italic.onclick = () => {this.__editorAdd(['*','*'], [1,1])}
         menu_group.appendChild(this.italic);
         this.underline = document.createElement('button');this.underline.type = 'button';this.underline.classList = custom_classlist;this.underline.innerHTML = '<i class="fas fa-underline" style="width: 12px"></i>';this.underline.title = 'Tachado';
-        this.underline.onclick = () => {this.__editorAdd(['_-','-_'], [2,2])}
+        this.underline.onclick = () => {this.__editorAdd(['_-','-_'], [2,2]);}
         menu_group.appendChild(this.underline);
         this.heading = document.createElement('button');this.heading.type = 'button';this.heading.classList = dropdown_classlist;this.heading.setAttribute('data-bs-toggle', 'dropdown');this.heading.innerHTML = '<i class="fas fa-heading me-1"></i>';this.heading.title = 'Titulos';
         this.heading_menu = document.createElement('ul');this.heading_menu.classList = 'dropdown-menu fs-7';
         let h1 = document.createElement('li');h1.classList = 'px-3 py-2 container';
         let h1_row = document.createElement('div');h1_row.classList = 'row text-center';
-        this.h1_start = document.createElement('div');this.h1_start.classList = 'col-4 btn-phanton-light pointer fw-bold';this.h1_start.innerHTML = '<i class="fas fa-heading"></i>1';this.h1_start.onclick = () => {this.__editorAdd(['# ','','Titulo'], false, true)}
-        this.h1_center = document.createElement('div');this.h1_center.classList = 'col-4 btn-phanton-light pointer';this.h1_center.innerHTML = '<i class="fas fa-align-center"></i>';this.h1_center.onclick = () => {this.__editorAdd(['#_ ','','Titulo'], false, true)}
-        this.h1_end = document.createElement('div');this.h1_end.classList = 'col-4 btn-phanton-light pointer';this.h1_end.innerHTML = '<i class="fas fa-align-right"></i>';this.h1_end.onclick = () => {this.__editorAdd(['#__ ','','Titulo'], false, true)}
+        this.h1_start = document.createElement('div');this.h1_start.classList = 'col-4 btn-phanton-light pointer fw-bold';this.h1_start.innerHTML = '<i class="fas fa-heading"></i>1';this.h1_start.onclick = () => {this.__editorAdd(['# ','','Titulo'], false, true);this.heading.click();}
+        this.h1_center = document.createElement('div');this.h1_center.classList = 'col-4 btn-phanton-light pointer';this.h1_center.innerHTML = '<i class="fas fa-align-center"></i>';this.h1_center.onclick = () => {this.__editorAdd(['#_ ','','Titulo'], false, true);this.heading.click();}
+        this.h1_end = document.createElement('div');this.h1_end.classList = 'col-4 btn-phanton-light pointer';this.h1_end.innerHTML = '<i class="fas fa-align-right"></i>';this.h1_end.onclick = () => {this.__editorAdd(['#__ ','','Titulo'], false, true);this.heading.click();}
         let h2 = document.createElement('li');h2.classList = 'px-3 py-2 container';
         let h2_row = document.createElement('div');h2_row.classList = 'row text-center';
-        this.h2_start = document.createElement('div');this.h2_start.classList = 'col-4 btn-phanton-light pointer fw-bold';this.h2_start.innerHTML = '<i class="fas fa-heading"></i>2';this.h2_start.onclick = () => {this.__editorAdd(['## ','','Subtitulo'], false, true)}
-        this.h2_center = document.createElement('div');this.h2_center.classList = 'col-4 btn-phanton-light pointer';this.h2_center.innerHTML = '<i class="fas fa-align-center"></i>';this.h2_center.onclick = () => {this.__editorAdd(['##_ ','','Subtitulo'], false, true)}
-        this.h2_end = document.createElement('div');this.h2_end.classList = 'col-4 btn-phanton-light pointer';this.h2_end.innerHTML = '<i class="fas fa-align-right"></i>';this.h2_end.onclick = () => {this.__editorAdd(['##__ ','','Subtitulo'], false, true)}
+        this.h2_start = document.createElement('div');this.h2_start.classList = 'col-4 btn-phanton-light pointer fw-bold';this.h2_start.innerHTML = '<i class="fas fa-heading"></i>2';this.h2_start.onclick = () => {this.__editorAdd(['## ','','Subtitulo'], false, true);this.heading.click();}
+        this.h2_center = document.createElement('div');this.h2_center.classList = 'col-4 btn-phanton-light pointer';this.h2_center.innerHTML = '<i class="fas fa-align-center"></i>';this.h2_center.onclick = () => {this.__editorAdd(['##_ ','','Subtitulo'], false, true);this.heading.click();}
+        this.h2_end = document.createElement('div');this.h2_end.classList = 'col-4 btn-phanton-light pointer';this.h2_end.innerHTML = '<i class="fas fa-align-right"></i>';this.h2_end.onclick = () => {this.__editorAdd(['##__ ','','Subtitulo'], false, true);this.heading.click();}
         let h3 = document.createElement('li');h3.classList = 'px-3 py-2 container';
         let h3_row = document.createElement('div');h3_row.classList = 'row text-center';
-        this.h3_start = document.createElement('div');this.h3_start.classList = 'col-4 btn-phanton-light pointer fw-bold';this.h3_start.innerHTML = '<i class="fas fa-heading"></i>3';this.h3_start.onclick = () => {this.__editorAdd(['### ','','Titulo de Seção'], false, true)}
-        this.h3_center = document.createElement('div');this.h3_center.classList = 'col-4 btn-phanton-light pointer';this.h3_center.innerHTML = '<i class="fas fa-align-center"></i>';this.h3_center.onclick = () => {this.__editorAdd(['###_ ','','Titulo de Seção'], false, true)}
-        this.h3_end = document.createElement('div');this.h3_end.classList = 'col-4 btn-phanton-light pointer';this.h3_end.innerHTML = '<i class="fas fa-align-right"></i>';this.h3_end.onclick = () => {this.__editorAdd(['###__ ','','Titulo de Seção'], false, true)}
+        this.h3_start = document.createElement('div');this.h3_start.classList = 'col-4 btn-phanton-light pointer fw-bold';this.h3_start.innerHTML = '<i class="fas fa-heading"></i>3';this.h3_start.onclick = () => {this.__editorAdd(['### ','','Titulo de Seção'], false, true);this.heading.click();}
+        this.h3_center = document.createElement('div');this.h3_center.classList = 'col-4 btn-phanton-light pointer';this.h3_center.innerHTML = '<i class="fas fa-align-center"></i>';this.h3_center.onclick = () => {this.__editorAdd(['###_ ','','Titulo de Seção'], false, true);this.heading.click();}
+        this.h3_end = document.createElement('div');this.h3_end.classList = 'col-4 btn-phanton-light pointer';this.h3_end.innerHTML = '<i class="fas fa-align-right"></i>';this.h3_end.onclick = () => {this.__editorAdd(['###__ ','','Titulo de Seção'], false, true);this.heading.click();}
         h1_row.appendChild(this.h1_start);h1_row.appendChild(this.h1_center);h1_row.appendChild(this.h1_end);
         h2_row.appendChild(this.h2_start);h2_row.appendChild(this.h2_center);h2_row.appendChild(this.h2_end);
         h3_row.appendChild(this.h3_start);h3_row.appendChild(this.h3_center);h3_row.appendChild(this.h3_end);
@@ -176,10 +176,15 @@ class jsMdview{
             {id: 'mdreport-destaqueBtn', innerHTML:'<i class="fas fa-font text-primary fa-fw"></i>Texto destaque', pattern: ['==','=='], selectArea: [2,2]},
             {id: 'mdreport-successBtn', innerHTML:'<i class="fas fa-font text-success fa-fw"></i>Texto sucesso', pattern: ['=+','+='], selectArea: [2,2]},
             {id: 'mdreport-dangerBtn', innerHTML:'<i class="fas fa-font text-danger fa-fw"></i>Texto erro', pattern: ['=-','-='], selectArea: [2,2]},
+            {id: 'mdreport-indent', innerHTML:'<i class="fas fa-indent text-secondary fa-fw"></i>Espaçamento', pattern: ['[...]','',''], selectArea: false, newline: true},
+            // this.__editorAdd(['<br />','',''], false, false, false)
         ]
         for(let key in fields){
             let li = document.createElement('li');li.classList = 'dropdown-item pointer';li.innerHTML = fields[key].innerHTML;li.id = fields[key].id;
-            li.onclick = () => {this.__editorAdd(fields[key].pattern, fields[key].selectArea)};
+            li.onclick = () => {
+                this.__editorAdd(fields[key].pattern, fields[key].selectArea, fields[key]?.newline || false);
+                if(ul.classList.contains('show')){btn.click();}
+            };
             ul.appendChild(li);
         }
         // ---
@@ -202,8 +207,8 @@ class jsMdview{
         // Retornando o foco na posicao correta
         this.editor.selectionEnd = (end + value.length + pre_pos[0].length + br_len) - (end - start);
         if(select){this.editor.selectionStart = start + select[0] + br_len;}
-        this.editor.focus();
         if(this.livePreview){this.parse()}
+        this.editor.focus();
     }
     parse() { // Gera preview do md
         let result = (this.prefix + this.editor.value + this.posfix)
@@ -227,9 +232,10 @@ class jsMdview{
             .replace(/==(.*?)==/gim, "<font face='Helvetica' color='CornflowerBlue'>$1</font>")
             .replace(/=\-(.*?)\-=/gim, "<font face='Helvetica' color='firebrick'>$1</font>")
             .replace(/=\+(.*?)\+=/gim, "<font face='Helvetica' color='darkgreen'>$1</font>")
-            .replace(/!\[(.*?)\]\((.*?)\)/gim, "<img alt='$1' src='$2' style='max-width: 65px;max-height: 65px;' />")
+            .replace(/!\[(.*?)\]\((.*?)\)/gim, "[ logo ]")
             // .replace(/\[(.*?)\]\((.*?)\)/gim, "<a href='$2' target='_blank'>$1</a>")
-            .replace(/\[footer\](.*?)\[\/footer\]/gim, "<hr><p class='text-center'>$1</p>")
+            .replace(/\[footer\](.*?)\[\/footer\]/gim, "<hr><p class='text-center fs-7'>$1</p>")
+            .replace(/^\[\.\.\.\]/gm, '<span class="d-inline-block" style="width: 60px;">&nbsp;</span>')
             .replace(/\n/gm, '<br>')
         for(let key in this.db){result = result.replaceAll(`$(${key})`, this.db[key])} // Faz replace para os dados a serem atereados no doc
         this.previewTarget.innerHTML = result.trim();
@@ -243,11 +249,13 @@ class jsMdview{
         SHORTCUT_MAP['1FTF'] = () => {document.getElementById('mdreport-destaqueBtn').click();}
         SHORTCUT_MAP['2FTF'] = () => {document.getElementById('mdreport-successBtn').click();}
         SHORTCUT_MAP['3FTF'] = () => {document.getElementById('mdreport-dangerBtn').click();}
+        SHORTCUT_MAP[']FTF'] = () => {document.getElementById('mdreport-indent').click();}
         SHORTCUT_MAP['.FTF'] = () => {this.blockquote.click()}
         SHORTCUT_MAP['[FTF'] = () => {this.blockbox.click()}
         SHORTCUT_MAP['enterFTF'] = () => {this.breakWord.click()}
         SHORTCUT_MAP['/FTF'] = () => {this.pagebreak.click()}
         SHORTCUT_MAP[';FTF'] = () => {this.manualData.click()}
+        SHORTCUT_MAP['kFTF'] = () => {this.shortcutsBtn.click()}
         // Headers shortcuts --
         SHORTCUT_MAP['hFTF'] = () => {this.heading.click()}
         SHORTCUT_MAP['1FFF'] = () => {if(mdviewHopen(this)){this.h1_start.click()}}
@@ -269,11 +277,13 @@ class jsMdview{
             'Texto <b class="text-primary">destacado</b>': 'Ctrl + 1',
             'Texto <b class="text-success">sucesso</b>': 'Ctrl + 2',
             'Texto <b class="text-danger">erro</b>': 'Ctrl + 3',
+            'Espaçamento': 'Ctrl + ]',
             'Citação': 'Ctrl + .',
             'Caixa de texto': 'Ctrl + [',
             'Quebra de linha': 'Ctrl + ENTER',
             'Quebra de página': 'Ctrl + /',
             'Campo dinamico': 'Ctrl + ;',
+            'Tabela de atalhos': 'Ctrl + K',
             '<b class="text-secondary">Menu de Titulos</b>': '<b class="text-secondary">Ctrl + H</b>',
             '[seguido] Titulo (esq cen dir)': '<b>1</b> ou <b>4</b> ou <b>7</b>',
             '[seguido] Subtitulo (esq cen dir)': '<b>2</b> ou <b>5</b> ou <b>8</b>',
@@ -282,7 +292,13 @@ class jsMdview{
         let result = '<table class="table table-sm table-striped caption-top fs-7"><caption><b>jsReport:</b> Atalhos de teclado</caption><thead><tr><th>Ação</th><th>Atalho</th></tr></thead><tbody>';
         for(let key in maps){result += `<tr><td>${key}</td><td>${maps[key]}</td></tr>`}
         result += '</tbody></table>';
-        this.previewTarget.innerHTML = result;
+        let voltar = document.createElement('button');voltar.type = 'button';voltar.classList = 'btn btn-link p-0 m-0';voltar.innerHTML = 'Fechar';
+        voltar.onclick = () => {this.parse()};
+        this.previewTarget.innerHTML = '';
+        this.previewTarget.appendChild(voltar);
+        let wrapper = document.createElement('div');wrapper.innerHTML = result;
+        this.previewTarget.appendChild(wrapper);
+        // this.previewTarget.innerHTML += result;
     }
     __loadExtra(){
         let custom_classlist = 'btn btn-sm btn-phanton-light rounded-pill';

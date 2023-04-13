@@ -5,7 +5,6 @@ from json import dumps
 from .models import Acidente, Foto, File,  Oficina, Classificacao, Terceiro, TipoDespesa, Despesa, Forma, Termo
 from .forms import AcidenteForm, ClassificacaoForm, OficinaForm, TerceiroForm, TipoDespesaForm, DespesaForm, FormaForm, TermoForm
 from core.models import Log
-from core.md_report import md_report
 from django.contrib.auth.decorators import login_required, permission_required
 from .validators import validate_file_extension, validate_excluded_files
 from django.contrib import messages
