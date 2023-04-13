@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from core.md_report import md_report
-# import locale
-# locale.setlocale(locale.LC_ALL, '')
+import locale
+locale.setlocale(locale.LC_ALL, '')
 
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
@@ -9,7 +9,6 @@ from django.contrib import messages
 from .models import Acidente, Terceiro, Termo
 from core.models import Empresa
 from datetime import date, datetime
-# from django.db.models.functions import TruncMonth
 from django.db.models import Count
 
 
@@ -18,17 +17,23 @@ from django.db.models import Count
 def capa_resumo(request):
     acidente = Acidente.objects.get(pk=request.GET['acidente'])
     empresa = acidente.empresa
-    schema = """![45,45,TOP-LEFT]() <br />
-##_ RELATÓRIO DE CONCLUSÃO DE OCORRÊNCIA OPERACIONAL<br /><br />
+    terceiros = Terceiro.objects.filter(acidente=acidente)
+    terceiros_txt = ''
+    for terceiro in terceiros:
+        terceiros_txt += f'**{terceiro.veiculo}** {terceiro.nome} | Acordo: =-{locale.currency(terceiro.acordo)}-=<br />'
+    schema = """##_ RELATÓRIO DE CONCLUSÃO DE OCORRÊNCIA OPERACIONAL<br /><br />
 
-Culpabilidade: **$(acidente.get_culpabilidade_display)**<br />Classificação: **$(acidente.classificacao.nome)**<br />Data: **%s**<br />Hora: **%s**<br />Condutor: **$(acidente.condutor.matricula) - $(acidente.condutor.nome)**<br />Inspetor: **$(acidente.inspetor.matricula) - $(acidente.inspetor.matricula)**
+Culpabilidade: **$(acidente.get_culpabilidade_display)**<br />Classificação: **$(acidente.classificacao.nome)**<br />Data: **%s**<br />Hora: **%s**<br />Condutor: **$(acidente.condutor.matricula) - $(acidente.condutor.nome)**<br />Inspetor: **$(acidente.inspetor.matricula) - $(acidente.inspetor.nome)**
+**Terceiros:**<br />[...] %s
 
-[[ $(acidente.detalhe) ]]<br />
--- <br />
-### RESUMO DOS CUSTOS DO PROCESSO
-Acordos: **R$ $(acidente.acordos)**<br />Outras despesas: **R$ $(acidente.despesas)**<br />....................................
-**Custo Total: R$ %s**
-[footer][/footer]""" %(acidente.data.strftime('%d/%m/%Y') if acidente.data else '', acidente.hora.strftime("%H:%M") if acidente.hora else '', acidente.acordos() + acidente.despesas())
+[[ %s ]]<br /><br />
+--
+<br /><br />
+### RESUMO DOS CUSTOS DO PROCESSO<br />
+Acordos: **%s**<br />Outras despesas: **%s**<br />....................................
+**Custo Total: %s**
+![105,45,TOP-LEFT]()
+[footer][/footer]""" %(acidente.data.strftime('%d/%m/%Y') if acidente.data else '', acidente.hora.strftime("%H:%M") if acidente.hora else '', terceiros_txt,acidente.detalhe.replace('\n','<br />') ,locale.currency(acidente.acordos()),locale.currency(acidente.despesas()), locale.currency(acidente.acordos() + acidente.despesas()))
     # try:
     pdf = md_report(request, schema, **{"acidente":acidente,"empresa":empresa})
     # except:

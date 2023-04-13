@@ -112,7 +112,7 @@
             <td class="d-none d-lg-table-cell">{{terceiro.acidente.condutor.matricula|default:'---'}}</td>
             <td class="d-none">{{terceiro.acidente.condutor.apelido|default:'---'}}</td>
             <td class="d-none d-xl-table-cell">{{terceiro.nome}}</td>
-            <td class="">{{terceiro.veiculo|default:'---'}}</td>
+            <td class="text-orange fw-bold">{{terceiro.veiculo|default:'---'}}</td>
             <td class="d-none d-lg-table-cell">{{terceiro.placa|default:'---'}}</td>
             <td class="d-none d-xl-table-cell">{{terceiro.acordo}}</td>
             <td class="d-none d-xl-table-cell">{{terceiro.despesas|floatformat:2}}</td>
@@ -207,12 +207,15 @@
   SHORTCUT_MAP['1FTF'] = () => {document.getElementById('tab_link_base').click()};
 
   const table = new jsTable(document.getElementById('main_table'), {
-    enablePaginate: true
+    enablePaginate: true,
+    canFilter: true,
+    filterCols: ['Empresa', 'Veiculo','Condutor','Terceiro','Carro','Placa']
   });
 
   SHORTCUT_MAP['arrowdownFTF'] = () => {table.nextRow();}
   SHORTCUT_MAP['arrowupFTF'] = () => {table.previousRow();};
   SHORTCUT_MAP['enterFTF'] = () => {table.enterRow();}
+  SHORTCUT_MAP['fFTF'] = () => {table.filterInput.select();}
   
   var inspetores_incluir_inativos = 'False';
   function carregaInspetores() {

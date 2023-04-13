@@ -1,8 +1,8 @@
 import re
 from django.conf import settings
 from datetime import date, datetime
-import locale
-locale.setlocale(locale.LC_ALL, '')
+# import locale
+# locale.setlocale(locale.LC_ALL, '')
 
 # IMPORTS PARA REPORTLAB
 from io import BytesIO
@@ -58,38 +58,41 @@ def md_report(request, original, **kwargs):
         if re_footer.group(1) != '':
             footer_text = md_basic(re_footer.group(1))
         elif kwargs['empresa'].footer != '':
-            footer_text = md_basic(kwargs['empresa'].footer)
+            footer_text = md_basic(kwargs['empresa'].footer.replace('\n', '<br />'))
         else:
             footer_text = ''
     else:
         footer_text = ''
     
+    if re_logo:
+        props = re_logo.group(1).split(',')
+        logo_w = int(props[0])
+        logo_h = int(props[1])
+    else:
+        logo_h = 0
     original = re.sub(f'\[footer\](.*?)\[\/footer\]', '', original) # Retira o footer da string original
-    doc = SimpleDocTemplate(buffer,topMargin=MARGIN_TOP,bottomMargin=MARGIN_BOTTOM + len(footer_text.split('<br />')) * 20,leftMargin=MARGIN_START, rightMargin=MARGIN_END)
+    doc = SimpleDocTemplate(buffer,topMargin=MARGIN_TOP + logo_h, bottomMargin=MARGIN_BOTTOM + len(footer_text.split('<br />')) * 20,leftMargin=MARGIN_START, rightMargin=MARGIN_END)
     FOOTER = Paragraph(footer_text, style_footer)
     w, FOOTER_HEIGHT = FOOTER.wrap(doc.width, doc.bottomMargin)
 
     def basic_template(canvas, doc):
         canvas.saveState()
         if re_logo:
-            props = re_logo.group(1).split(',')
-            w = int(props[0])
-            h = int(props[1])
             if len(props) == 2:
                 props[2] = 'TOP-LEFT'
             position = {
                 'TOP-LEFT': [MARGIN_START, PAGE_HEIGHT - 70],
-                'TOP-RIGHT': [PAGE_WIDTH - (MARGIN_END + w), PAGE_HEIGHT - 70],
-                'TOP-CENTER': [PAGE_WIDTH / 2 - (w / 2), PAGE_HEIGHT - 70],
+                'TOP-RIGHT': [PAGE_WIDTH - (MARGIN_END + logo_w), PAGE_HEIGHT - 70],
+                'TOP-CENTER': [PAGE_WIDTH / 2 - (logo_w / 2), PAGE_HEIGHT - 70],
                 'BOTTOM-LEFT': [MARGIN_START, MARGIN_BOTTOM],
-                'BOTTOM-CENTER': [PAGE_WIDTH / 2 - (w / 2), MARGIN_BOTTOM],
-                'BOTTOM-RIGHT': [PAGE_WIDTH - (MARGIN_END + w), MARGIN_BOTTOM],
+                'BOTTOM-CENTER': [PAGE_WIDTH / 2 - (logo_w / 2), MARGIN_BOTTOM],
+                'BOTTOM-RIGHT': [PAGE_WIDTH - (MARGIN_END + logo_w), MARGIN_BOTTOM],
             }
             if re_logo.group(2) == '':
                 if kwargs['empresa'].logo != '':
-                    canvas.drawInlineImage(settings.MEDIA_ROOT + '/' + str(kwargs['empresa'].logo), position[props[2]][0], position[props[2]][1], w, h)
+                    canvas.drawInlineImage(settings.MEDIA_ROOT + '/' + str(kwargs['empresa'].logo), position[props[2]][0], position[props[2]][1], logo_w, logo_h)
             else:
-                canvas.drawInlineImage(re_logo.group(2), position[props[2]][0], position[props[2]][1], w, h)                
+                canvas.drawInlineImage(re_logo.group(2), position[props[2]][0], position[props[2]][1], logo_w, logo_h)                
         FOOTER.drawOn(canvas, doc.leftMargin, FOOTER_HEIGHT)
         # Inserindo linha separadora do footer
         canvas.setLineWidth(1)
@@ -183,8 +186,8 @@ def md_layout(original):
             flowables.append(Paragraph('<font face="Helvetica-Bold" color="grey" size="16">|</font>&nbsp;&nbsp;' + re.search(r"^\> (.*$)", linha).group(1), style_callout))
         elif re.search(r"\[\[(.*?)\]\]", linha):
             flowables.append(Paragraph(re.search(r"\[\[(.*?)\]\]", linha).group(1), style_box))
-        elif re.search(r"^\[\.\.\.\]", linha):
-            flowables.append(Paragraph(re.sub(r"^\[\.\.\.\]",'&nbsp;&nbsp;&nbsp;&nbsp;', linha), style_base))
+        elif re.search(r"\[\.\.\.\]", linha):
+            flowables.append(Paragraph(re.sub(r"\[\.\.\.\]",'&nbsp;&nbsp;&nbsp;&nbsp;', linha), style_base))
         elif re.search(r"\[break\]", linha):
             flowables.append(PageBreak())
         else:

@@ -236,7 +236,7 @@ class jsMdview{
             .replace(/!\[(.*?)\]\((.*?)\)/gim, "")
             // .replace(/\[(.*?)\]\((.*?)\)/gim, "<a href='$2' target='_blank'>$1</a>")
             .replace(/\[footer\](.*?)\[\/footer\]/gim, "<hr><p class='text-center fs-7'>$1</p>")
-            .replace(/^\[\.\.\.\]/gm, '<span class="d-inline-block" style="width: 60px;">&nbsp;</span>')
+            .replace(/\[\.\.\.\]/gm, '<span class="d-inline-block" style="width: 60px;">&nbsp;</span>')
             .replace(/\n/gm, '<br>')
         for(let key in this.db){result = result.replaceAll(`$(${key})`, this.db[key])} // Faz replace para os dados a serem atereados no doc
         this.previewTarget.innerHTML = result.trim();
