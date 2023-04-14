@@ -86,7 +86,7 @@ page[size="A4"] {width: auto;min-width: 16cm; height: 12cm;}
                 <tr><td>extra</td><td>array</td><td>Botões customizados adicionais, <a href="#extra_buttons">ver aqui</a></td><td>true</td></tr>
                 <tr><td>data</td><td>array</td><td>Lista de campos para tratamento do servidor</td><td>[]</td></tr>
                 <tr><td>common</td><td>array</td><td>Lista de atributos communs para interpolação</td><td>['today','today_full','now']</td></tr>
-                <tr><td>models</td><td>dict</td><td>Dicionário com modelos de documentos, <a href="#doc_models">ver aqui</a></td><td>{}</td></tr>
+                <tr><td>models</td><td>dict</td><td>Dicionário com modelos de documentos, <a href="#doc_models">ver aqui</a></td><td>[]</td></tr>
               </tbody>
             </table>
           </div>
@@ -105,7 +105,10 @@ page[size="A4"] {width: auto;min-width: 16cm; height: 12cm;}
           <h6 id="doc_models" class="mt-5 mb-2">Modelos pré-carregados</h6>
           <small>Ao instanciar objeto:</small>
           <pre class="mb-4"><code class="language-javascript">const editor = new jsMdview({
-  models: {modelo1: `# Titulo, ...`, modelo2: `...`} 
+  models: [
+    {name: 'modelo1', body:`# Titulo, ...`},
+    {name: 'modelo2', body:`...`}
+  ]
 });</code></pre>
 
         <small id="load_models">Após objeto instanciado:</small>

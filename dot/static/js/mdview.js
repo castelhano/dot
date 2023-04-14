@@ -24,14 +24,14 @@ class jsMdview{
         this.extra = options?.extra || []; // Botoes adicionais definidos no cliente
         this.data = options?.data || []; // Lista com valores do modelo que serao tratados no servidor, Ex: empresa.nome ou acidente.terceiro.nome
         this.common = options?.common || ['today','today_full','now'];
-        this.models = options?.models || {}; // Modelos de documento fornecidos pelo cliente
+        this.models = options?.models || []; // Modelos de documento fornecidos pelo cliente
         // *************
         this.__buildControls();
         this.__build();
-        this.__buildModelDocs(); // Carrega modelos de documentos
         if(this.extra.length > 0){this.__loadExtra()}; // Adiciona botoes customizados pelo cliente
         if(this.shortcuts){this.__addShortcutMap()}; // Adiciona integracao com lib listener.js para atalhos dos elementos do menu
         if((this.prefix + this.value + this.posfix) != ''){this.parse()}
+        this.loadModels(this.models); // Carrega modelos de documentos
 
     }
     __build() {
@@ -111,6 +111,7 @@ class jsMdview{
         let common = this.__buildCommonFields();
         menu_group.appendChild(common);
         menu_group.appendChild(this.__buildDefaultData());
+        menu_group.appendChild(this.__buildModelDocs());
         let vr2 = document.createElement('span');vr2.classList = 'text-body-tertiary';vr2.innerHTML = '&nbsp;&nbsp;|&nbsp;&nbsp;';menu_group.appendChild(vr2);
         if(!this.livePreview){
             this.refresh = document.createElement('button');this.refresh.type = 'button';this.refresh.classList = 'btn btn-sm btn-phanton-success circle-hover ms-1';this.refresh.innerHTML = '<i class="fas fa-sync"></i>';this.refresh.title = 'Atualizar Preview';
@@ -158,18 +159,18 @@ class jsMdview{
         let wrapper = document.createElement('span');
         let btn = document.createElement('button');btn.type = 'button';btn.classList = 'btn btn-sm btn-phanton-light dropdown-toggle';btn.innerHTML = '<i class="fas fa-scroll"></i>';btn.setAttribute('data-bs-toggle','dropdown');btn.title = 'Modelos de documento';
         this.modelsList = document.createElement('ul');this.modelsList.classList = 'dropdown-menu fs-7';
-        for(let key in this.models){
-            let li = document.createElement('li');li.classList = 'dropdown-item pointer';li.innerHTML = key;
-            li.onclick = () => {this.editor.value = this.models[key];if(this.livePreview){this.parse()}};
-            this.modelsList.appendChild(li);
-        }
-        if(this.modelsList.children.length == 0){
-            let li = document.createElement('li');li.classList = 'dropdown-item disabled';li.innerHTML = 'Nenhum modelo fornecido';
-            this.modelsList.appendChild(li);
-        }
+        // for(let key in this.models){
+        //     let li = document.createElement('li');li.classList = 'dropdown-item pointer';li.innerHTML = key;
+        //     li.onclick = () => {this.editor.value = this.models[key];if(this.livePreview){this.parse()}};
+        //     this.modelsList.appendChild(li);
+        // }
+        // if(this.modelsList.children.length == 0){
+        //     let li = document.createElement('li');li.classList = 'dropdown-item disabled';li.innerHTML = 'Nenhum modelo fornecido';
+        //     this.modelsList.appendChild(li);
+        // }
         wrapper.appendChild(btn);
         wrapper.appendChild(this.modelsList);
-        this.extraBtns.appendChild(wrapper);
+        return wrapper;
     }
     __buildCommonFields(){
         let wrapper = document.createElement('span');
@@ -328,6 +329,10 @@ class jsMdview{
                 li.onclick = () => {this.editor.value = json[key].body;this.parse()}
                 this.modelsList.appendChild(li);
             }
+        }
+        if(this.modelsList.children.length == 0){
+            let li = document.createElement('li');li.classList = 'dropdown-item disabled';li.innerHTML = 'Nenhum modelo fornecido';
+            this.modelsList.appendChild(li);
         }
 
     }
