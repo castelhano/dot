@@ -38,7 +38,7 @@ class jsMdview{
         let row = document.createElement('div');row.classList = 'row g-3';
         let c1 = document.createElement('div');c1.classList = 'col-lg';
         let c2 = document.createElement('div');c2.classList = 'col-lg-auto';
-        this.editor = document.createElement('textarea');this.editor.classList = 'form-control';this.editor.style = `min-height: ${this.minHeight}px;`;this.editor.value = this.value;this.editor.placeholder = 'MD Editor - Version 1.4'
+        this.editor = document.createElement('textarea');this.editor.classList = 'form-control';this.editor.style = `min-height: ${this.minHeight}px;`;this.editor.value = this.value;this.editor.placeholder = 'MD Editor - Version 1.6'
         if(this.autofocus){this.editor.setAttribute('autofocus','')}
         if(this.livePreview){this.editor.oninput = () => {this.parse()}}
         c1.appendChild(this.editor);
@@ -128,22 +128,29 @@ class jsMdview{
     }
     __buildDefaultData(){
         let wrapper = document.createElement('span');
-        let btn = document.createElement('button');btn.type = 'button';btn.classList = 'btn btn-sm btn-phanton-light dropdown-toggle';btn.innerHTML = '<i class="fas fa-database"></i>';btn.setAttribute('data-bs-toggle','dropdown');btn.title = 'Variáveis do modelo';
+        this.dataInputBtn = document.createElement('button');this.dataInputBtn.type = 'button';this.dataInputBtn.classList = 'btn btn-sm btn-phanton-light dropdown-toggle';this.dataInputBtn.innerHTML = '<i class="fas fa-database"></i>';this.dataInputBtn.setAttribute('data-bs-toggle','dropdown');this.dataInputBtn.title = 'Variáveis do modelo';
+        this.dataInputBtn.onclick = () => {if(ul.classList.contains('show')){this.dataInput.select();}}
         let ul = document.createElement('ul');ul.classList = 'dropdown-menu fs-7';
+        let li = document.createElement('li');li.classList = 'dropdown-item';
+        this.dataInput = document.createElement('input');this.dataInput.type = 'search';this.dataInput.classList = 'form-control form-control-sm';
+        this.dataInput.setAttribute('list','mdview-datalist');
+        this.dataInput.onkeydown = (e) => {
+            if(e.key == 'Enter'){e.preventDefault();this.__editorAdd([`$(${this.dataInput.value})`,'',''], false, false);this.dataInputBtn.click();}
+        }
+        li.appendChild(this.dataInput)
+        this.dataDatalist = document.createElement('datalist');this.dataDatalist.id = 'mdview-datalist';
+        ul.appendChild(li)
         for(let key in this.data){
-            let li = document.createElement('li');li.classList = 'dropdown-item pointer';li.innerHTML = key;
-            li.onclick = () => {this.__editorAdd([`$(${key})`,'',''], false, false)};
-            ul.appendChild(li);
+            let option = document.createElement('option');option.classList = '';option.innerHTML = this.data[key];
+            option.onclick = () => {this.__editorAdd(['$(',')',this.data[key]], false, false)};
+            this.dataDatalist.appendChild(option);
         }
-        if(ul.children.length > 0){
-            let divider = document.createElement('li');divider.innerHTML = '<hr class="dropdown-divider">';
-            ul.appendChild(divider);
-        }
-        this.manualData = document.createElement('li');this.manualData.classList = 'dropdown-item dropdown-item-purple pointer';this.manualData.innerHTML = 'Manual';
+        ul.appendChild(this.dataDatalist)
+        let divider = document.createElement('li');divider.innerHTML = '<hr class="dropdown-divider">';ul.appendChild(divider);
+        this.manualData = document.createElement('li');this.manualData.classList = 'dropdown-item dropdown-item-purple pointer';this.manualData.innerHTML = 'Manual <span class="text-secondary ms-2">Ctrl ;</span>';
         this.manualData.onclick = () => {this.__editorAdd(['$(',')','manual'], [2,1], false)}
         ul.appendChild(this.manualData);
-
-        wrapper.appendChild(btn);
+        wrapper.appendChild(this.dataInputBtn);
         wrapper.appendChild(ul);
         return wrapper;
     }
@@ -268,6 +275,7 @@ class jsMdview{
         SHORTCUT_MAP['/FTF'] = () => {this.pagebreak.click()}
         SHORTCUT_MAP[';FTF'] = () => {this.manualData.click()}
         SHORTCUT_MAP['kFTF'] = () => {this.shortcutsBtn.click()}
+        SHORTCUT_MAP['deadFTF'] = () => {this.dataInputBtn.click()}
         // Headers shortcuts --
         SHORTCUT_MAP['hFTF'] = () => {this.heading.click()}
         SHORTCUT_MAP['1FFF'] = () => {if(mdviewHopen(this)){this.h1_start.click()}}
@@ -322,6 +330,14 @@ class jsMdview{
             }
         }
 
+    }
+    loadData(list){
+        if(list.length > 0){
+            for(let key in list){
+                let option = document.createElement('option');option.innerHTML = list[key];
+                this.dataDatalist.appendChild(option)
+            }
+        }
     }
     __loadExtra(){
         let custom_classlist = 'btn btn-sm btn-phanton-light rounded-pill';

@@ -107,6 +107,7 @@ page[size="A4"] {width: auto;min-width: 16cm; height: 12cm;}
           <pre class="mb-4"><code class="language-javascript">const editor = new jsMdview({
   models: {modelo1: `# Titulo, ...`, modelo2: `...`} 
 });</code></pre>
+
         <small id="load_models">Após objeto instanciado:</small>
         <pre><code class="language-javascript">const editor = new jsMdview({});
 editor.loadModels({modelo1: `# Titulo, ...`, modelo2: `...`})</code></pre>
@@ -142,9 +143,26 @@ editor.loadModels({modelo1: `# Titulo, ...`, modelo2: `...`})</code></pre>
                   <td>null</td>
                   <td>Carrega modelos após instanciar objeto, <a href="#load_models">ver aqui</a></td>
                 </tr>
+                <tr>
+                  <td>loadData</td>
+                  <td>(array)</td>
+                  <td>null</td>
+                  <td>Carrega <code>datalist</code> com campos para interpolação, <a href="#loadData">ver aqui</a></td>
+                </tr>
               </tbody>
             </table>
           </div>
+
+          <h5 id="loadData" class="mt-5 mb-2">Datalist para campos de interpolação</h5>
+          <p>É possivel carregar datalist com sugestões de campos para interpolação, que deverá ser tratado do lado do servidor.</p>
+          <small>Ao instanciar objeto:</small>
+          <pre class="mb-4"><code class="language-javascript">const editor = new jsMdview({
+  data: ['empresa.nome','acidente.terceiro.id','terceiro.get_classificacao_display']
+});</code></pre>
+
+          <small>Após objeto instanciado:</small>
+          <pre><code class="language-javascript">const editor = new jsMdview({});
+          editor.loadData(['empresa.nome','acidente.terceiro.id',...])</code></pre>
         
         <p class="mt-5" id="apontadores">Variáveis e Apontadores para elementos do componente</p>
         <pre><code class="language-javascript">editor.editor // Text area do editor
@@ -186,6 +204,7 @@ editor.italic // Botão para formatar em italico
 
   const editor = new jsMdview({
     container: document.getElementById('editor_exemplo'),
+    data: ['empresa.nome','acidente.terceiro.veiculo','acidente.data'],
     value: `# Titulo principal
 ## Titulo secundário
 ### Titulo terciário

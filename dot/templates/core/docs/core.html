@@ -27,6 +27,7 @@
           <li><a class="dropdown-item" href="{% url 'docs' 'jsKanban' %}"><i class="fab fa-js-square fa-fw text-success"></i> jsKanban</a></li>
           <li><a class="dropdown-item" href="{% url 'docs' 'jsPhoto' %}"><i class="fab fa-js-square fa-fw text-success"></i> jsPhoto</a></li>
           <li><a class="dropdown-item" href="{% url 'docs' 'jsCalendar' %}"><i class="fab fa-js-square fa-fw text-success"></i> jsCalendar</a></li>
+          <li><a class="dropdown-item" href="{% url 'docs' 'jsMdview' %}"><i class="fab fa-js-square fa-fw text-success"></i> jsMdview</a></li>
           <!-- <li><hr class="dropdown-divider"></li> -->
         </ul>
       </li>
@@ -349,7 +350,7 @@ dotPlot(map);</code></pre>
           <pre><code class="language-javascript">urlPlot(); // ou urlPlot('--'), onde valores null serão convertidos para '--'</code></pre>
         
         <h5 id="i18n">I18N JS Internationalization</h5>
-        <p>Implementa funcionalidade para tradução de texto para outros idiomas (pre cadastro de entradas de chaves para cada idioma).</p>
+        <p>Implementa funcionalidade para tradução de texto para outros idiomas (pré cadastro de entradas de chaves para cada idioma).</p>
         <span class="text-purple">Como funciona:</span>
         <ol>
           <li>Ao carregar página lib verifica qual o <i>language</i> do cliente através do <code>navigator.language</code>.</li>
@@ -589,15 +590,16 @@ delayOnTouchOnly: true // default=false Se true, delay ocorre somente em touch d
             <li><i class="fas none fa-fw"></i><span class="bg-danger bg-opacity-75 border rounded px-2 text-white fs-8 me-2">Vendor</span><a href="#js_sortable">sortable.js</a> | <a href="https://github.com/SortableJS/Sortable" target="_blank">Github</a> | <a href="https://sortablejs.github.io/Sortable/" target="_blank">Project Page</a></li>
             <li><i class="fas none fa-fw"></i><span class="bg-danger bg-opacity-75 border rounded px-2 text-white fs-8 me-1">Vendor</span><span class="bg-purple-light border rounded px-2 text-white fs-8 me-2">Fork</span><a href="#js_tagin">tagin.js</a></li>
             <li><hr></li>
-            <li><i class="fab fa-js-square text-purple fa-fw mt-2"></i><a href="{% url 'docs' 'jsTable' %}">jsTable</a> <i>Manipulação de tabelas</i></li>
+            <!-- <li><i class="fab fa-js-square text-purple fa-fw mt-2"></i><a href="{% url 'docs' 'jsTable' %}">jsTable</a> <i>Manipulação de tabelas</i></li>
             <li><i class="fab fa-js-square text-purple fa-fw mt-2"></i><a href="{% url 'docs' 'jsSelectm' %}">jsSelectm</a> <i>Componente para select multiple</i></li>
             <li><i class="fab fa-js-square text-purple fa-fw mt-2"></i><a href="{% url 'docs' 'jsForm' %}">jsForm</a> <i>Geração automatica de table#forms (extra attrs)</i></li>
             <li><i class="fab fa-js-square text-purple fa-fw mt-2"></i><a href="{% url 'docs' 'jsKanban' %}">jsKanban</a> <i>Implementa componente Kanban</i></li>
             <li><i class="fab fa-js-square text-purple fa-fw mt-2"></i><a href="{% url 'docs' 'jsPhoto' %}">jsPhoto</a> <i>Implementa componente para manipulação de imagem</i></li>
             <li><i class="fab fa-js-square text-purple fa-fw mt-2"></i><a href="{% url 'docs' 'jsCalendar' %}">jsCalendar</a> <i>Implementa componente para calendario</i></li>
-            <li><i class="fab fa-js-square text-purple fa-fw mt-2"></i><a href="{% url 'docs' 'jsMdview' %}">jsMdview</a> <i>Implementa editor para markdown extendido</i></li>
+            <li><i class="fab fa-js-square text-purple fa-fw mt-2"></i><a href="{% url 'docs' 'jsMdview' %}">jsMdview</a> <i>Implementa editor para markdown extendido</i></li> -->
             <li><span class="bg-danger bg-opacity-75 border rounded px-2 text-white fs-8 me-2">Vendor</span><a href="{% url 'docs' 'chartjs' %}">Chart JS</a> | <a href="https://www.chartjs.org/" target="_blank">Project Page</a> <i>Geração de gráficos</i></li>
           </ul>
+          <br class="mb-5">
         </div>
       </div>
     </div>
@@ -620,6 +622,9 @@ delayOnTouchOnly: true // default=false Se true, delay ocorre somente em touch d
 
   prismStart();
   TAB_ON_ENTER = true;
+
+  SHORTCUT_MAP[';FFF'] = () => {document.getElementById('btn_extra').click();}
+  SHORTCUT_MAP['iFFF'] = () => {location.href = '#'}
 
   const sort = new Sortable(document.getElementById('items'), {animation:100, delay: 80, delayOnTouchOnly: true});
   new Tagin(document.getElementById('taginExample'), {separator:';', tagColor: 'primary',placeholder: 'Seu placeholder', enter:true});
