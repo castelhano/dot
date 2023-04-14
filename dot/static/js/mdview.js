@@ -1,3 +1,12 @@
+/*
+* jsMdview  Implementa editor de markdown (extended) para integração com modulo md_report (reportlab)
+*
+* @version  1.6
+* @since    02/04/2023
+* @release  14/04/2023 [adicionado componente de assinatura]
+* @author   Rafael Gustavo Alves {@email castelhano.rafael@gmail.com}
+* @depend   boostrap 5.2.0, fontawesome 5.15.4, dot.css, dot.js, page.css
+*/
 class jsMdview{
     constructor(options){
         this.editor;
@@ -140,18 +149,18 @@ class jsMdview{
     __buildModelDocs(){
         let wrapper = document.createElement('span');
         let btn = document.createElement('button');btn.type = 'button';btn.classList = 'btn btn-sm btn-phanton-light dropdown-toggle';btn.innerHTML = '<i class="fas fa-scroll"></i>';btn.setAttribute('data-bs-toggle','dropdown');btn.title = 'Modelos de documento';
-        let ul = document.createElement('ul');ul.classList = 'dropdown-menu fs-7';
+        this.modelsList = document.createElement('ul');this.modelsList.classList = 'dropdown-menu fs-7';
         for(let key in this.models){
             let li = document.createElement('li');li.classList = 'dropdown-item pointer';li.innerHTML = key;
             li.onclick = () => {this.editor.value = this.models[key];if(this.livePreview){this.parse()}};
-            ul.appendChild(li);
+            this.modelsList.appendChild(li);
         }
-        if(ul.children.length == 0){
+        if(this.modelsList.children.length == 0){
             let li = document.createElement('li');li.classList = 'dropdown-item disabled';li.innerHTML = 'Nenhum modelo fornecido';
-            ul.appendChild(li);
+            this.modelsList.appendChild(li);
         }
         wrapper.appendChild(btn);
-        wrapper.appendChild(ul);
+        wrapper.appendChild(this.modelsList);
         this.extraBtns.appendChild(wrapper);
     }
     __buildCommonFields(){
@@ -179,6 +188,7 @@ class jsMdview{
             {id: 'mdreport-indent', innerHTML:'<i class="fas fa-indent text-secondary fa-fw"></i>Espaçamento', pattern: ['[...]','',''], selectArea: false, newline: true},
             {id: 'mdreport-logo', innerHTML:'<i class="fas fa-image text-secondary fa-fw"></i>Logo', pattern: ['![45,45,TOP-LEFT]()','',''], selectArea: false, newline: true},
             {id: 'mdreport-footer', innerHTML:'<i class="fas fa-text-height text-secondary fa-fw"></i>Rodapé', pattern: ['[footer]','[/footer]',''], selectArea: [8,9], newline: true},
+            {id: 'mdreport-signature', innerHTML:'<i class="fas fa-signature text-secondary fa-fw"></i>Assinatura', pattern: ['[signature]','[/signature]','{Nome1, Detalhe};{Nome2, Detalhe}'], selectArea: false, newline: true},
         ]
         for(let key in fields){
             let li = document.createElement('li');li.classList = 'dropdown-item pointer';li.innerHTML = fields[key].innerHTML;li.id = fields[key].id;
@@ -300,6 +310,17 @@ class jsMdview{
         let wrapper = document.createElement('div');wrapper.innerHTML = result;
         this.previewTarget.appendChild(wrapper);
         // this.previewTarget.innerHTML += result;
+    }
+    loadModels(json){
+        if(json.length > 0){
+            this.modelsList.innerHTML = ''
+            for(let key in json){
+                let li = document.createElement('li');li.classList = 'dropdown-item dropdown-item-danger pointer';li.innerHTML = json[key].name;
+                li.onclick = () => {this.editor.value = json[key].body;this.parse()}
+                this.modelsList.appendChild(li);
+            }
+        }
+
     }
     __loadExtra(){
         let custom_classlist = 'btn btn-sm btn-phanton-light rounded-pill';

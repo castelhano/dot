@@ -138,3 +138,10 @@ style_box = ParagraphStyle(
     borderPadding=[5,5,3,10],
     borderColor='gainsboro'
 )
+
+signature_styles = [
+    ('LINEABOVE', (0,0), (-1,0), 1.5, 'black'),
+    ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
+    ('LINEBEFORE', (1,0), (-1,0), 12, 'white'),
+    ('ALIGN', (0,0), (-1,-1), 'CENTER'),
+    ]

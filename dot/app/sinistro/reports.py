@@ -2,7 +2,7 @@ from django.http import HttpResponse
 import json
 from core.md_report import md_report
 import locale
-locale.setlocale(locale.LC_ALL, '')
+locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
@@ -21,11 +21,11 @@ def capa_resumo(request):
     terceiros = Terceiro.objects.filter(acidente=acidente)
     terceiros_txt = ''
     for terceiro in terceiros:
-        terceiros_txt += f'**{terceiro.veiculo}** {terceiro.nome} | Acordo: =-{locale.currency(terceiro.acordo)}-=<br />'
+        terceiros_txt += f'[...]==**{terceiro.get_classificacao_display()}**== **{terceiro.veiculo}** {terceiro.nome} | Acordo: =-{locale.currency(terceiro.acordo, grouping=True)}-=<br />'
     schema = """##_ RELATÓRIO DE CONCLUSÃO DE OCORRÊNCIA OPERACIONAL<br /><br />
 
 Culpabilidade: **$(acidente.get_culpabilidade_display)**<br />Classificação: **$(acidente.classificacao.nome)**<br />Data: **%s**<br />Hora: **%s**<br />Condutor: **$(acidente.condutor.matricula) - $(acidente.condutor.nome)**<br />Inspetor: **$(acidente.inspetor.matricula) - $(acidente.inspetor.nome)**
-**Terceiros:**<br />[...] %s
+**Terceiros:**<br />%s
 
 [[ %s ]]<br /><br />
 --
@@ -34,7 +34,7 @@ Culpabilidade: **$(acidente.get_culpabilidade_display)**<br />Classificação: *
 Acordos: **%s**<br />Outras despesas: **%s**<br />....................................
 **Custo Total: %s**
 ![105,45,TOP-LEFT]()
-[footer][/footer]""" %(acidente.data.strftime('%d/%m/%Y') if acidente.data else '', acidente.hora.strftime("%H:%M") if acidente.hora else '', terceiros_txt,acidente.detalhe.replace('\n','<br />') ,locale.currency(acidente.acordos()),locale.currency(acidente.despesas()), locale.currency(acidente.acordos() + acidente.despesas()))
+[footer][/footer]""" %(acidente.data.strftime('%d/%m/%Y') if acidente.data else '', acidente.hora.strftime("%H:%M") if acidente.hora else '', terceiros_txt,acidente.detalhe.replace('\n','<br />') ,locale.currency(acidente.acordos(), grouping=True),locale.currency(acidente.despesas(), grouping=True), locale.currency(acidente.acordos() + acidente.despesas(), grouping=True))
     try:
         pdf = md_report(request, schema, **{"acidente":acidente,"empresa":empresa})
     except:
@@ -69,20 +69,24 @@ def termo_pdf(request):
 @permission_required('sinistro.change_termo')
 def termo_modelos(request):
     modelos = []
-    md1 = """De um lado, como primeiro acordante temos, **$(empresa.razao_social)** pessoa jurídica de direito privado, estabelecida na **$(empresa.endereco)** - bairro **$(empresa.bairro)** - CEP: **$(empresa.cep)**, **$(empresa.cidade) $(empresa.uf)**, incrita no CNPJ/MF **$(empresa.cnpj)**,
+    md2 = """##_ TERMO DE COMPOSIÇÃO AMIGÁVEL QUE ENTRE SI FAZEM
+
+De um lado, como primeiro acordante temos, **$(empresa.razao_social)** pessoa jurídica de direito privado, estabelecida na **$(empresa.endereco)** - bairro **$(empresa.bairro)** - CEP: **$(empresa.cep)**, **$(empresa.cidade) $(empresa.uf)**, incrita no CNPJ/MF **$(empresa.cnpj)**,
 e, segundo acordante, **$(terceiro.nome)**, portador do CPF: **$(terceiro.cpf)**, residente e domiciliado à **$(terceiro.endereco)**, bairro **$(terceiro.bairro)** em **$(terceiro.cidade)** **$(terceiro.uf)**.
 
-**Dos Fatos**
-
-O presente termo é lavrado ante a ocorrência de colisão entre o veículo ônibus de prefixo **$(acidente.veiculo)**, placa **$(veiculo.placa)**, e o veículo de propriedade do segundo acordante, cuja marca/modelo se descreve: **$(terceiro.veiculo)**, cor **$(terceiro.cor)**, ano **$(terceiro.ano)**, placa **$(terceiro.placa)** - sendo o local do acidente ocorrido em **$(acidente.endereco)**, **$(acidente.bairro)**, **$(acidente.cidade) $(acidente.uf)**, na data de **$(acidente.data)**, aproximadamente às **$(acidente.hora)**<br />
+**Dos Fatos**<br />O presente termo é lavrado ante a ocorrência de colisão entre o veículo ônibus de prefixo **$(acidente.veiculo)**, placa **$(acidente.veiculo.placa)**, e o veículo de propriedade do segundo acordante, cuja marca/modelo se descreve: **$(terceiro.veiculo)**, cor **$(terceiro.cor)**, ano **$(terceiro.ano)**, placa **$(terceiro.placa)** - sendo o local do acidente ocorrido em **$(acidente.endereco)**, **$(acidente.bairro)**, **$(acidente.cidade) $(acidente.uf)**, na data de **$(acidente.data)**, aproximadamente às **$(acidente.hora)**<br />
 
 A empresa citada pagará o montante de **$(terceiro.acordo)** em **$(terceiro.forma)**, referente aos danos ocorridos no veículo do segundo acordante, conforme dados constantes do PIA nº **$(acidente.pasta)** (processo interno de acidentes), e que o valor acima pago refere-se à composição amigável entre as partes, no tocante ao sinistro em apreço.<br />
 
 **O pagamento efetuado pela empresa não acarreta reconhecimento de culpa sendo ato meramente liberal e ainda, com o pagamento acima descrito, o segundo acordante conferirá à primeira acordante a mais ampla, geral e irrevogável quitação quanto aos danos morais, materiais e lucros cessantes ou a que título for que tenha como objeto o fato descrito no presente termo.**
 
-Por estarem às partes de comum acordo, assinam."""
-    modelos.append(md1)
-    obj = json.dumps(list)
+Por estarem as partes de comum acordo, assinam.
+[signature] {Representante, $(empresa.razao_social)};{$(terceiro.nome), $(terceiro.cpf)}[/signature]
+![105,45,TOP-LEFT]()
+[footer][/footer]
+"""
+    modelos.append({"name":"composicao","body":md2})
+    obj = json.dumps(modelos)
     return HttpResponse(obj, content_type="application/json")
 
 @login_required

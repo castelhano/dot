@@ -1,13 +1,14 @@
 import re
 from django.conf import settings
-from datetime import date, datetime
-# import locale
-# locale.setlocale(locale.LC_ALL, '')
+from datetime import date, datetime, time
+from decimal import Decimal
+import locale
+locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 
 # IMPORTS PARA REPORTLAB
 from io import BytesIO
 from reportlab.lib.pagesizes import A4
-from reportlab.platypus import SimpleDocTemplate, Paragraph
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Table
 from reportlab.platypus.flowables import PageBreak, HRFlowable
 from reportlab.lib.styles import ParagraphStyle
 
@@ -16,14 +17,15 @@ from .md_report_styles import *
 
 # MD_REPORT
 # --
-# @version  1.0
-# @since    07/04/2023
+# @version  1.6
+# @since    04/04/2023
+# @release  14/04/2023
 # @author   Rafael Gustavo Alves {@email castelhano.rafael@gmail.com }
-# @desc     Gera PDF baseado em string com markdown (customizado), podendo receber dados dinamicos
-# @param    {String} Modelo com o markdown
-# @param    {Object} Dicionario com o(s) modelo(s) utilizados
+# @desc     Gera PDF baseado em string com markdown (extendido), podendo receber dados dinamicos
+# @param    {request}   Requisição
+# @param    {String}    String com o markdown
+# @param    {**kwargs}  Dicionario com o(s) objetos(s) utilizados
 # @returns  {PDF_VALUE} Retorna PDF
-
 def md_report(request, original, **kwargs):
     # PARAMETROS    
     PAGE_WIDTH, PAGE_HEIGHT  = A4
@@ -55,6 +57,9 @@ def md_report(request, original, **kwargs):
     
     # Footer
     re_footer = re.search(f'\[footer\](.*?)\[\/footer\]', original)
+    
+    # Signature fields
+    re_signature = re.search(f'\[signature\](.*?)\[\/signature\]', original)
 
     style_footer = ParagraphStyle(
         name='Normal',
@@ -85,6 +90,21 @@ def md_report(request, original, **kwargs):
     FOOTER = Paragraph(footer_text, style_footer)
     w, FOOTER_HEIGHT = FOOTER.wrap(doc.width, doc.bottomMargin)
 
+    if re_signature and re_signature.group(1) != '':
+        signs = re_signature.group(1).split(';')
+        sig_names = []
+        sig_roles = []
+        for sig in signs:
+            sig_targets = sig.replace('{','').replace('}','').split(',')
+            if len(sig_targets) == 2:
+                sig_names.append(data_plot(sig_targets[0], **kwargs))
+                sig_roles.append(data_plot(sig_targets[1], **kwargs))
+            elif len(sig_targets) == 1:
+                sig_names.append(data_plot(sig_targets[0], **kwargs))
+                sig_roles.append('')
+        sign_tbl = [sig_names,sig_roles]
+        original = re.sub(f'\[signature\](.*?)\[\/signature\]','', original)
+
     def basic_template(canvas, doc):
         canvas.saveState()
         canvas.setTitle('MD Report')
@@ -110,12 +130,15 @@ def md_report(request, original, **kwargs):
         canvas.line(40, doc.bottomMargin - 10, 550, doc.bottomMargin - 10)
         canvas.restoreState()
     
-    original = md_basic(original)
-    
-    original = common_plot(original, common)
-    
+    original = md_basic(original)    
+    original = common_plot(original, common)    
     original = data_plot(original, **kwargs)
     flowables = md_layout(original)
+    if re_signature:
+        colSize = min((PAGE_WIDTH - (MARGIN_START + MARGIN_END) - (len(sig_names) * 12)) / len(sig_names), 280)
+        tbl = Table(sign_tbl, colWidths=colSize)
+        tbl.setStyle(signature_styles)
+        flowables.append(tbl)
 
     doc.build(flowables, onFirstPage=basic_template, onLaterPages=basic_template)
 
@@ -150,11 +173,11 @@ def data_plot(original, **kwargs):
     attrs = re.findall(r"\$\((.*?)\)", original)
     for attr in attrs:
         target = attr.split('.', 1)
-        try:
-            result = get_repr(get_field(kwargs[target[0]], target[1]))
-            original = original.replace(f'$({attr})', f'{result}')
-        except:
-            original = original.replace(f'$({attr})', '')
+        # try:
+        result = get_repr(get_field(kwargs[target[0]], target[1]))
+        original = original.replace(f'$({attr})', f'{result}')
+        # except:
+        #     original = original.replace(f'$({attr})', '')
     return original
 
 def md_layout(original):
@@ -210,6 +233,12 @@ def get_field(instance, field):
     for elem in field_path:
         try:
             attr = getattr(attr, elem)
+            if isinstance(attr, date):
+                attr = attr.strftime('%d/%m/%Y')
+            elif isinstance(attr, time):
+                attr = attr.strftime('%H:%M')
+            elif isinstance(attr, Decimal):
+                attr = locale.currency(attr, grouping=True)
         except AttributeError:
             return ''
     return attr

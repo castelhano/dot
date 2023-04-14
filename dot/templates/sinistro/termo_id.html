@@ -111,5 +111,25 @@
             {type:'submit', innerHTML: '<b>G</b>ravar', classList: 'btn btn-sm btn-success ms-1', id:'submit'}
         ]
     })
+
+    getModelos('{% url 'sinistro_termo_modelos' %}').then((json)=>{report.loadModels(json)})
+
+    
+    function getModelos(url) {
+        return new Promise(function(resolve, reject) {
+            var xhr = new XMLHttpRequest();
+            xhr.onload = function() {
+                let d = JSON.parse(this.responseText);
+                if(typeof d != 'object'){d = JSON.parse(d)}
+                resolve(d);
+            };
+            xhr.onerror = reject;
+            xhr.open('GET', url);
+            xhr.send();
+        });
+    }
+
+
+
     {% endblock %}
 </script>
