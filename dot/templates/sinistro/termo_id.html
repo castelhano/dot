@@ -104,7 +104,6 @@
     {% block add_script %}
     const report = new jsMdview({
         container: document.getElementById('mdviwer_container'),
-        autofocus: true,
         fieldName: 'body',
         value: `{{termo.body|safe}}`,
         extra: [

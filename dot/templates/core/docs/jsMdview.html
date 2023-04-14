@@ -1,0 +1,217 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Docs - jsMdview{% endblock %}
+{% block model %}<span>docs</span><i class="fas fa-angle-right fs-6 mx-2"></i><span>jsMdview</span>{% endblock %}
+{% block style_src %}
+<link rel="stylesheet" href="{% static 'css/docs.css' %}">
+<link rel="stylesheet" href="{% static 'css/pages.css' %}">
+<link rel="stylesheet" href="{% static 'css/vendor/prism.css' %}">
+{% endblock%}
+
+<style>
+{% block style %}
+page[size="A4"] {width: auto;min-width: 16cm; height: 12cm;}
+{% endblock%}
+</style>
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'docs' 'jsMdview' %}"></a>
+<div class="card mt-2">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-book"></i></a></li>
+      <li class="nav-item"><a class="nav-link" id="back" href="{% url 'docs' 'core' %}"><i class="fas fa-undo"></i></a></li>
+    </ul>
+  </div>
+  <div class="card-body tab-content">
+    <div class="tab-pane fade show active" id="base" role="tabpanel">
+      <div class="row mt-2">
+        <div class="col-lg-8 order-2 order-lg-1">
+          <h1>jsMdview</h1>
+          <hr>
+          <p>Library em javascript ( vanilla ) implementa editor de <b>markdown</b> extendido para integração com componente <code>md_report</code> do <code>reportlab</code> </p>
+          <blockquote class="callout callout-primary fs-7">
+            <div class="body">
+              Version: <b>1.6</b><br>
+              Release: <b>14/04/2023</b><br>
+              Author: &nbsp;<b>Rafael Gustavo Faria Alves</b><br>
+              Depend: <a class="badge bg-orange text-white" href="https://getbootstrap.com/docs/5.2/getting-started/introduction/" target="_blank">bootstrap 5.x</a> <a class="badge bg-purple text-white" href="https://fontawesome.com/v5/search?m=free" target="_blank">fontawesome 5.x</a> <span class="badge bg-secondary">page.css</span><br>
+            </div>
+          </blockquote>
+
+          <div class="callout callout-orange mt-4">
+            <div class="body">Precione <code class="fw-bold px-2">Ctrl K</code> para exibir no preview os atalhos de teclado</div>
+          </div>
+          
+          <div class="callout callout-primary mt-4">
+            <div class="body" id="editor_exemplo"></div>
+          </div>
+          
+          <h3 id="utilizacao">Utilização</h3>
+          <hr>
+          <p>Importe o arquivo <code>mdview.js</code>.</p>
+          <pre><code class="language-html">&lt;script src="mdview.js"&gt;&lt;/script&gt;</code></pre>
+
+          <h5 id="instanciando_componente">Instanciando o componente</h5>
+          <p class="mb-1">Crie uma instancia da classe jsMdview.</p>
+          <pre><code class="language-javascript">const editor = new jsMdview({});</code></pre>
+
+          <p class="mt-4">Ao instanciar o objeto, é criado um editor ao final do body. Para alterar o local, ao instanciar o objeto, altere a opção <code>{container: element}</code> informando o container.</p>
+          <pre><code class="language-javascript">const editor = new jsMdview({
+  container: document.getElementById('meu_container')
+});</code></pre>
+
+          <h3 id="configuracoes">Configurações</h3>
+          <hr>
+          <h5 id="recursos" class="mt-1">Recursos</h5>
+          <div class="table-responsive">
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th>Chave</th>
+                  <th>Tipo</th>
+                  <th>Descrição</th>
+                  <th>Default</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>value</td><td>string</td><td>Texto a ser pré-carregado</td><td>''</td></tr>
+                <tr><td>prefix</td><td>string</td><td>Texto a ser inserido no inicio do documento</td><td>''</td></tr>
+                <tr><td>posfix</td><td>string</td><td>Texto a ser inserido no final do documento</td><td>''</td></tr>
+                <tr><td>fieldName</td><td>string</td><td>Nome (name) para o input do editor</td><td>'mdview-editor'</td></tr>
+                <tr><td>livePreview</td><td>bool</td><td>Altere para <code>false</code> para desativar o livePreview</td><td>true</td></tr>
+                <tr><td>minHeight</td><td>int</td><td>Altura minima para editor em px</code></td><td>700</td></tr>
+                <tr><td>autofocus</td><td>bool</td><td>Move foco para o editor ao carregar a página</code></td><td>false</td></tr>
+                <tr><td>shortcuts</td><td>bool</td><td>Adiciona atalhos de teclado (listener.js)</td><td>true</td></tr>
+                <tr><td>extra</td><td>array</td><td>Botões customizados adicionais, <a href="#extra_buttons">ver aqui</a></td><td>true</td></tr>
+                <tr><td>data</td><td>array</td><td>Lista de campos para tratamento do servidor</td><td>[]</td></tr>
+                <tr><td>common</td><td>array</td><td>Lista de atributos communs para interpolação</td><td>['today','today_full','now']</td></tr>
+                <tr><td>models</td><td>dict</td><td>Dicionário com modelos de documentos, <a href="#doc_models">ver aqui</a></td><td>{}</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h6 id="extra_buttons" class="mt-4 mb-2">Adicionando botões a barra de controles</h6>
+          <p>É possivel inserir botões customizados junto a barra de controles repassando array de objetos ao instanciar classe.</p>
+          <pre><code class="language-javascript">const editor = new jsView({
+  extra: [
+    {innerHTML: 'Gravar', classList: 'btn btn-sm btn-success', onclick: ()=>{..do something}},
+    {innerHTML: 'Limpar', onclick: ()=>{..do something}},
+  ]
+})
+// Caso omitido classList, carrega com estilo default dos componentes</code></pre>
+
+
+          <h6 id="doc_models" class="mt-5 mb-2">Modelos pré-carregados</h6>
+          <small>Ao instanciar objeto:</small>
+          <pre class="mb-4"><code class="language-javascript">const editor = new jsMdview({
+  models: {modelo1: `# Titulo, ...`, modelo2: `...`} 
+});</code></pre>
+        <small id="load_models">Após objeto instanciado:</small>
+        <pre><code class="language-javascript">const editor = new jsMdview({});
+editor.loadModels({modelo1: `# Titulo, ...`, modelo2: `...`})</code></pre>
+
+          <h3 id="metodos">Métodos</h3>
+          <hr>
+          <div class="table-responsive">
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th>Metodo</th>
+                  <th>Param</th>
+                  <th>Retorno</th>
+                  <th>Descrição</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>parse</td>
+                  <td>()</td>
+                  <td>null</td>
+                  <td>Atualiza preview</td>
+                </tr>
+                <tr>
+                  <td>get</td>
+                  <td>()</td>
+                  <td>string</td>
+                  <td>Retorna valor do editor</td>
+                </tr>
+                <tr>
+                  <td>loadModels</td>
+                  <td>(json)</td>
+                  <td>null</td>
+                  <td>Carrega modelos após instanciar objeto, <a href="#load_models">ver aqui</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        
+        <p class="mt-5" id="apontadores">Variáveis e Apontadores para elementos do componente</p>
+        <pre><code class="language-javascript">editor.editor // Text area do editor
+editor.previewTarget // Container com o preview
+editor.bold // Botão para formatar em negrito
+editor.italic // Botão para formatar em italico
+...</code></pre>
+
+        <div style="margin-bottom: 80px;">&nbsp;</div>
+        </div><!-- Fim Container principal -->
+        <div class="col-lg order-1 order-lg-2 mb-3">
+          <ul class="list-unstyled menu">
+            <li><i class="fas fa-book fa-fw"></i><b><a href="#utilizacao">Utilização</a></b></li>
+            <li><i class="fas none fa-fw"></i><a href="#instanciando_componente">Instanciando o componente</a></li>
+            <li><i class="fas fa-sliders-h fa-fw mt-2"></i><b><a href="#configuracoes">Configurações</a></b></li>
+            <li><i class="fas none fa-fw"></i><a href="#extra_buttons">Adicionando botões customizados</a></li>
+            <li><i class="fas none fa-fw"></i><a href="#doc_models">Adicionando modelos de documento</a></li>
+            <li><i class="fas fa-code fa-fw mt-2"></i><b><a href="#metodos">Métodos</a></b></li>
+            <li><i class="fas fa-arrow-right fa-fw mt-2"></i><b><a href="#apontadores">Apontadores</a></b></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<a id="link_start_page" class="goTop-anchor border" onclick="window.scrollTo(0,0)"><i class="fas fa-chevron-up"></i></a> 
+
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/vendor/prism.js' %}"></script>
+<script src="{% static 'js/mdview.js' %}"></script>
+{% endblock %}
+
+<script>
+  {% block add_script %}
+  prismStart();
+
+  const editor = new jsMdview({
+    container: document.getElementById('editor_exemplo'),
+    value: `# Titulo principal
+## Titulo secundário
+### Titulo terciário
+#_ Titulo centralizado
+##__ Titulo secundário a direita
+--
+Paragrafo simples
+__ Patagrafo centralizado
+___ Paragrafo alinhado a direita
+> Paragrafo destacado (callout)
+[[ Caixa destacada, insira quebra de linha <br />manual para multiplas linhas  ]]
+### Tipografia
+Textos em **negrito** *italico* _-sublinhado-_
+Variação de texto ==destaque==, =+sucesso+= ou =-danger-=
+[...]Texto com espaçamento
+Texto com quebra <br />de linha
+--
+Precione ==Ctrl + K== para exibir os atalhos de teclado
+`,
+    previewTargetStyle: 'padding-left: 15px;padding-right: 15px;padding-top: 10px;padding-bottom: 20px;font-size: 18px;text-align: justify;height: auto;'
+  });
+
+  window.addEventListener('scroll', function() {
+    if(window.scrollY > 500) {document.getElementById('link_start_page').style.opacity = '1';}
+    else{document.getElementById('link_start_page').style.opacity = '0';}
+  });
+  
+  {% endblock %}
+</script>

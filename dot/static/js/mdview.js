@@ -17,26 +17,27 @@ class jsMdview{
         this.posfix = options?.posfix || ''; // Texto fixo a ser adicionado depois do conteudo
         this.fieldName = options?.fieldName || 'mdview-editor'; // Texto fixo a ser adicionado depois do conteudo
         this.livePreview = options?.livePreview != undefined ? options.livePreview : true;
+        this.minHeight = options?.minHeight || 700;
+        this.previewTargetStyle = options?.previewTargetStyle || 'padding-left: 110px;padding-right: 110px;padding-top: 80px;padding-bottom: 30px;font-size: 18px;text-align: justify;height: auto;';
         this.autofocus = options?.autofocus != undefined ? options.autofocus : false;
         this.shortcuts = options?.shortcuts != undefined ? options.shortcuts : true;
         this.extra = options?.extra || []; // Botoes adicionais definidos no cliente
-        this.db = options?.db || {}; // Padroes regex a serem aplicados no doc
+        this.data = options?.data || []; // Lista com valores do modelo que serao tratados no servidor, Ex: empresa.nome ou acidente.terceiro.nome
         this.common = options?.common || ['today','today_full','now'];
         this.models = options?.models || {}; // Modelos de documento fornecidos pelo cliente
-        this.minHeight = options?.minHeight || 700;
         // *************
-        this.buildControls();
-        this.build();
+        this.__buildControls();
+        this.__build();
         this.__buildModelDocs(); // Carrega modelos de documentos
         if(this.extra.length > 0){this.__loadExtra()}; // Adiciona botoes customizados pelo cliente
         if(this.shortcuts){this.__addShortcutMap()}; // Adiciona integracao com lib listener.js para atalhos dos elementos do menu
         if((this.prefix + this.value + this.posfix) != ''){this.parse()}
 
     }
-    build() {
+    __build() {
         let row = document.createElement('div');row.classList = 'row g-3';
         let c1 = document.createElement('div');c1.classList = 'col-lg';
-        let c2 = document.createElement('div');c2.classList = 'col-lg';
+        let c2 = document.createElement('div');c2.classList = 'col-lg-auto';
         this.editor = document.createElement('textarea');this.editor.classList = 'form-control';this.editor.style = `min-height: ${this.minHeight}px;`;this.editor.value = this.value;this.editor.placeholder = 'MD Editor - Version 1.4'
         if(this.autofocus){this.editor.setAttribute('autofocus','')}
         if(this.livePreview){this.editor.oninput = () => {this.parse()}}
@@ -44,12 +45,12 @@ class jsMdview{
         this.mdview_input = document.createElement('input');this.mdview_input.type = 'hidden'; this.mdview_input.name = this.fieldName;
         c1.appendChild(this.mdview_input);
         row.appendChild(c1);
-        this.previewTarget = document.createElement('page');this.previewTarget.style = 'position:relative;padding-left: 110px;padding-right: 110px;padding-top: 80px;padding-bottom: 30px;font-size: 18px;text-align: justify;height: auto;'; this.previewTarget.setAttribute('size', 'A4');
+        this.previewTarget = document.createElement('page');this.previewTarget.style = this.previewTargetStyle;this.previewTarget.setAttribute('size', 'A4');
         c2.appendChild(this.previewTarget);
         row.appendChild(c2);
         this.container.appendChild(row);
     }
-    buildControls(){
+    __buildControls(){
         let custom_classlist = 'btn btn-sm btn-phanton-light rounded-pill';
         let dropdown_classlist = 'btn btn-sm btn-phanton-light dropdown-toggle';
         let menu_group = document.createElement('div');menu_group.classList = 'border rounded-pill bg-body-secondary px-3 py-2 px-lg-1 py-lg-1 mb-2';
@@ -129,7 +130,7 @@ class jsMdview{
         let wrapper = document.createElement('span');
         let btn = document.createElement('button');btn.type = 'button';btn.classList = 'btn btn-sm btn-phanton-light dropdown-toggle';btn.innerHTML = '<i class="fas fa-database"></i>';btn.setAttribute('data-bs-toggle','dropdown');btn.title = 'Variáveis do modelo';
         let ul = document.createElement('ul');ul.classList = 'dropdown-menu fs-7';
-        for(let key in this.db){
+        for(let key in this.data){
             let li = document.createElement('li');li.classList = 'dropdown-item pointer';li.innerHTML = key;
             li.onclick = () => {this.__editorAdd([`$(${key})`,'',''], false, false)};
             ul.appendChild(li);
@@ -223,32 +224,32 @@ class jsMdview{
     }
     parse() { // Gera preview do md
         let result = (this.prefix + this.editor.value + this.posfix)
-            .replace(/^### (.*$)/gim, '<h5>$1</h5>')
-            .replace(/^###__ (.*$)/gim, '<h5 class="text-end">$1</h5>')
-            .replace(/^###_ (.*$)/gim, '<h5 class="text-center">$1</h5>')
-            .replace(/^## (.*$)/gim, '<h4>$1</h4>')
-            .replace(/^##__ (.*$)/gim, '<h4 class="text-end">$1</h4>')
-            .replace(/^##_ (.*$)/gim, '<h4 class="text-center">$1</h4>')
-            .replace(/^#__(.*$)/gim, '<h2 class="text-end">$1</h2>')
-            .replace(/^#_(.*$)/gim, '<h2 class="text-center">$1</h2>')
-            .replace(/^# (.*$)/gim, '<h2>$1</h2>')
+            .replace(/^### (.*$)/gim, '<h5 class="m-0">$1</h5>')
+            .replace(/^###__ (.*$)/gim, '<h5 class="text-end m-0">$1</h5>')
+            .replace(/^###_ (.*$)/gim, '<h5 class="text-center m-0">$1</h5>')
+            .replace(/^## (.*$)/gim, '<h4 class="m-0">$1</h4>')
+            .replace(/^##__ (.*$)/gim, '<h4 class="text-end m-0">$1</h4>')
+            .replace(/^##_ (.*$)/gim, '<h4 class="text-center m-0">$1</h4>')
+            .replace(/^#__(.*$)/gim, '<h2 class="text-end m-0">$1</h2>')
+            .replace(/^#_(.*$)/gim, '<h2 class="text-center m-0">$1</h2>')
+            .replace(/^# (.*$)/gim, '<h2 class="m-0">$1</h2>')
             .replace(/^___(.*$)/gim, '<p class="text-end m-0">$1</p>')
             .replace(/^__(.*$)/gim, '<p class="text-center m-0">$1</p>')
             .replace(/^--[-]*$/gim, '<hr >')
-            .replace(/^\> (.*$)/gim, '<blockquote class="ps-2 border-start border-3 border-dark-subtle" style="font-size: 1.15rem">$1</blockquote>')
+            .replace(/^\> (.*$)/gim, '<blockquote class="ps-2 border-start border-3 border-light-subtle" style="font-size: 1.15rem">$1</blockquote>')
             .replace(/\[\[(.*?)\]\]/gim, '<div class="px-2 py-1 border rounded bg-body-secondary my-2">$1</div>')
             .replace(/\*\*(.*?)\*\*/gim, '<b>$1</b>')
             .replace(/\*(.*?)\*/gim, '<i>$1</i>')
             .replace(/_-(.*?)-_/gim, '<u>$1</u>')
             .replace(/==(.*?)==/gim, "<font face='Helvetica' color='CornflowerBlue'>$1</font>")
-            .replace(/=\-(.*?)\-=/gim, "<font face='Helvetica' color='firebrick'>$1</font>")
-            .replace(/=\+(.*?)\+=/gim, "<font face='Helvetica' color='darkgreen'>$1</font>")
+            .replace(/=\-(.*?)\-=/gim, "<font face='Helvetica' class='text-danger-emphasis'>$1</font>")
+            .replace(/=\+(.*?)\+=/gim, "<font face='Helvetica' class='text-success-emphasis'>$1</font>")
             .replace(/!\[(.*?)\]\((.*?)\)/gim, "")
             // .replace(/\[(.*?)\]\((.*?)\)/gim, "<a href='$2' target='_blank'>$1</a>")
             .replace(/\[footer\](.*?)\[\/footer\]/gim, "<hr><p class='text-center fs-7'>$1</p>")
             .replace(/\[\.\.\.\]/gm, '<span class="d-inline-block" style="width: 60px;">&nbsp;</span>')
             .replace(/\n/gm, '<br>')
-        for(let key in this.db){result = result.replaceAll(`$(${key})`, this.db[key])} // Faz replace para os dados a serem atereados no doc
+        for(let key in this.data){result = result.replaceAll(`$(${key})`, this.data[key])} // Faz replace para os dados a serem atereados no doc
         this.previewTarget.innerHTML = result.trim();
         this.mdview_input.value = this.prefix + this.editor.value + this.posfix;
     }
