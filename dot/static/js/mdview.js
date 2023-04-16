@@ -3,7 +3,7 @@
 *
 * @version  1.6
 * @since    02/04/2023
-* @release  14/04/2023 [adicionado componente de assinatura]
+* @release  14/04/2023 [adicionado componente de assinatura, unorder list]
 * @author   Rafael Gustavo Alves {@email castelhano.rafael@gmail.com}
 * @depend   boostrap 5.2.0, fontawesome 5.15.4, dot.css, dot.js, page.css
 */
@@ -159,15 +159,6 @@ class jsMdview{
         let wrapper = document.createElement('span');
         let btn = document.createElement('button');btn.type = 'button';btn.classList = 'btn btn-sm btn-phanton-light dropdown-toggle';btn.innerHTML = '<i class="fas fa-scroll"></i>';btn.setAttribute('data-bs-toggle','dropdown');btn.title = 'Modelos de documento';
         this.modelsList = document.createElement('ul');this.modelsList.classList = 'dropdown-menu fs-7';
-        // for(let key in this.models){
-        //     let li = document.createElement('li');li.classList = 'dropdown-item pointer';li.innerHTML = key;
-        //     li.onclick = () => {this.editor.value = this.models[key];if(this.livePreview){this.parse()}};
-        //     this.modelsList.appendChild(li);
-        // }
-        // if(this.modelsList.children.length == 0){
-        //     let li = document.createElement('li');li.classList = 'dropdown-item disabled';li.innerHTML = 'Nenhum modelo fornecido';
-        //     this.modelsList.appendChild(li);
-        // }
         wrapper.appendChild(btn);
         wrapper.appendChild(this.modelsList);
         return wrapper;
@@ -195,6 +186,7 @@ class jsMdview{
             {id: 'mdreport-successBtn', innerHTML:'<i class="fas fa-font text-success fa-fw"></i>Texto sucesso', pattern: ['=+','+='], selectArea: [2,2]},
             {id: 'mdreport-dangerBtn', innerHTML:'<i class="fas fa-font text-danger fa-fw"></i>Texto erro', pattern: ['=-','-='], selectArea: [2,2]},
             {id: 'mdreport-indent', innerHTML:'<i class="fas fa-indent text-secondary fa-fw"></i>Espaçamento', pattern: ['[...]','',''], selectArea: false, newline: true},
+            {id: 'mdreport-listitem', innerHTML:'<i class="fas fa-list text-secondary fa-fw"></i>Lista', pattern: ['&- ','','Texto da lista'], selectArea: [3,0], newline: true},
             {id: 'mdreport-logo', innerHTML:'<i class="fas fa-image text-secondary fa-fw"></i>Logo', pattern: ['![45,45,TOP-LEFT]()','',''], selectArea: false, newline: true},
             {id: 'mdreport-footer', innerHTML:'<i class="fas fa-text-height text-secondary fa-fw"></i>Rodapé', pattern: ['[footer]','[/footer]',''], selectArea: [8,9], newline: true},
             {id: 'mdreport-signature', innerHTML:'<i class="fas fa-signature text-secondary fa-fw"></i>Assinatura', pattern: ['[signature]','[/signature]','{Nome1, Detalhe};{Nome2, Detalhe}'], selectArea: false, newline: true},
@@ -245,6 +237,7 @@ class jsMdview{
             .replace(/^__(.*$)/gim, '<p class="text-center m-0">$1</p>')
             .replace(/^--[-]*$/gim, '<hr >')
             .replace(/^\> (.*$)/gim, '<blockquote class="ps-2 border-start border-3 border-light-subtle" style="font-size: 1.15rem">$1</blockquote>')
+            .replace(/^\&-(.*$)/gim, '<ul class="m-0"><li>$1</li></ul>')
             .replace(/\[\[(.*?)\]\]/gim, '<div class="px-2 py-1 border rounded bg-body-secondary my-2">$1</div>')
             .replace(/\*\*(.*?)\*\*/gim, '<b>$1</b>')
             .replace(/\*(.*?)\*/gim, '<i>$1</i>')
@@ -270,6 +263,7 @@ class jsMdview{
         SHORTCUT_MAP['2FTF'] = () => {document.getElementById('mdreport-successBtn').click();}
         SHORTCUT_MAP['3FTF'] = () => {document.getElementById('mdreport-dangerBtn').click();}
         SHORTCUT_MAP[']FTF'] = () => {document.getElementById('mdreport-indent').click();}
+        SHORTCUT_MAP['lFTF'] = () => {document.getElementById('mdreport-listitem').click();}
         SHORTCUT_MAP['.FTF'] = () => {this.blockquote.click()}
         SHORTCUT_MAP['[FTF'] = () => {this.blockbox.click()}
         SHORTCUT_MAP['enterFTF'] = () => {this.breakWord.click()}
@@ -299,6 +293,7 @@ class jsMdview{
             'Texto <b class="text-success">sucesso</b>': 'Ctrl + 2',
             'Texto <b class="text-danger">erro</b>': 'Ctrl + 3',
             'Espaçamento': 'Ctrl + ]',
+            'Lista &lt;ul&gt;': 'Ctrl + L',
             'Citação': 'Ctrl + .',
             'Caixa de texto': 'Ctrl + [',
             'Quebra de linha': 'Ctrl + ENTER',

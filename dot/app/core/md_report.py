@@ -83,10 +83,11 @@ def md_report(request, original, **kwargs):
         props = re_logo.group(1).split(',')
         logo_w = int(props[0])
         logo_h = int(props[1])
+        logo_ancor = props[2].split('-')[0]
     else:
         logo_h = 0
     original = re.sub(f'\[footer\](.*?)\[\/footer\]', '', original) # Retira o footer da string original
-    doc = SimpleDocTemplate(buffer,topMargin=MARGIN_TOP + logo_h, bottomMargin=MARGIN_BOTTOM + len(footer_text.split('<br />')) * 20,leftMargin=MARGIN_START, rightMargin=MARGIN_END)
+    doc = SimpleDocTemplate(buffer,topMargin=MARGIN_TOP + logo_h if logo_ancor == 'TOP' else MARGIN_TOP, bottomMargin=MARGIN_BOTTOM + len(footer_text.split('<br />')) * 20,leftMargin=MARGIN_START, rightMargin=MARGIN_END)
     FOOTER = Paragraph(footer_text, style_footer)
     w, FOOTER_HEIGHT = FOOTER.wrap(doc.width, doc.bottomMargin)
 
@@ -203,6 +204,8 @@ def md_layout(original):
             flowables.append(Paragraph(re.search(r"^#_ (.*$)", linha).group(1), style_h1_center))
         elif re.search(r"^#__ (.*$)", linha):
             flowables.append(Paragraph(re.search(r"^#__ (.*$)", linha).group(1), style_h1_end))
+        elif re.search(r"^\&-(.*$)", linha):
+            flowables.append(Paragraph(re.sub(r"^&-(.*$)",r"<bullet>&bull;</bullet> \1", linha), style_list))
         elif re.search(r"^___(.*$)", linha):
             flowables.append(Paragraph(re.search(r"^___(.*$)", linha).group(1), style_base_end))
         elif re.search(r"^__(.*$)", linha):

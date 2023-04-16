@@ -481,7 +481,10 @@ def despesa_id(request, id):
 def termo_id(request, id):
     termo = Termo.objects.get(id=id)
     form = TermoForm(instance=termo)
-    return render(request,'sinistro/termo_id.html',{'form':form,'termo':termo})
+    acidente_keys = ['acidente.pasta','acidente.classificacao','acidente.data','acidente.hora','acidente.veiculo','acidente.linha.prefixo','acidente.linha.nome','acidente.condutor.matricula','acidente.condutor.nome','acidente.inspetor.matricula','acidente.inspetor.nome','acidente.endereco','acidente.bairro','acidente.cidade','acidente.uf','acidente.get_culpabilidade_display','acidente.detalhe','acidente.concluido']
+    empresa_keys = ['empresa.nome','empresa.cnpj','empresa.razao_social','empresa.inscricao_estadual','empresa.inscricao_municipal','empresa.cnae','empresa.atividade','empresa.endereco','empresa.bairro','empresa.cidade','empresa.uf','empresa.cep','empresa.fone','empresa.fax']
+    terceiro_keys = ['terceiro.nome','terceiro.get_classificacao_display','terceiro.rg','terceiro.cpf','terceiro.fone1','terceiro.fone2','terceiro.email','terceiro.endereco','terceiro.bairro','terceiro.cidade','terceiro.uf','terceiro.veiculo','terceiro.placa','terceiro.cor','terceiro.ano','terceiro.acordo','terceiro.forma.nome','terceiro.oficina.nome','terceiro.concluido','terceiro.pendente_nota_fiscal']
+    return render(request,'sinistro/termo_id.html',{'form':form,'termo':termo, 'keys': acidente_keys + empresa_keys + terceiro_keys})
 
 @login_required
 @permission_required('sinistro.view_file')

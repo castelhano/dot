@@ -102,10 +102,12 @@
 
 <script>
     {% block add_script %}
+
     const report = new jsMdview({
         container: document.getElementById('mdviwer_container'),
         fieldName: 'body',
         value: `{{termo.body|safe}}`,
+        data: {{keys|safe}},
         extra: [
             {type:'submit', innerHTML: '<b>G</b>ravar', classList: 'btn btn-sm btn-success ms-1', id:'submit'}
         ]

@@ -15,9 +15,9 @@
       <li id="acidente_extra_container" class="nav-item dropdown ms-1">
         <a id="acidente_extra_link" class="nav-link" data-bs-toggle="dropdown" href="#" role="button" title="Outros [Ctrl + 4]"><i class="fas fa-caret-down fs-5 text-dark"></i></a>
         <ul id="acidente_extra_options" class="dropdown-menu">
-          {% if perms.sinistro.view_foto %}<li><a id="extras_link_fotos" class="dropdown-item pointer" href="{% url 'sinistro_fotos' acidente.id|safe %}"><i class="fas fa-camera text-body-secondary me-1"></i> <b>F</b>otos</a></li>{% endif %}
-          {% if perms.sinistro.view_terceiro %}<li><a id="extras_link_terceiros" class="dropdown-item pointer" href="{% url 'sinistro_terceiros' acidente.id|safe %}"><i class="fas fa-user-injured text-body-secondary me-1"></i> <b>T</b>erceiros</a></li>{% endif %}
-          {% if perms.sinistro.view_file %}<li><a id="extras_link_files" class="dropdown-item pointer" href="{% url 'sinistro_files' acidente.id|safe %}"><i class="fas fa-file text-body-secondary me-1"></i> <b>A</b>rquivos</a></li>{% endif %}
+          {% if perms.sinistro.view_foto %}<li><a id="extras_link_fotos" class="dropdown-item pointer" href="{% url 'sinistro_fotos' acidente.id|safe %}"><i class="fas fa-camera text-body-secondary fa-fw"></i> Fotos <sup>1</sup></a></li>{% endif %}
+          {% if perms.sinistro.view_terceiro %}<li><a id="extras_link_terceiros" class="dropdown-item pointer" href="{% url 'sinistro_terceiros' acidente.id|safe %}"><i class="fas fa-user-injured text-body-secondary fa-fw"></i> Terceiros <sup>2</sup></a></li>{% endif %}
+          {% if perms.sinistro.view_file %}<li><a id="extras_link_files" class="dropdown-item pointer" href="{% url 'sinistro_files' acidente.id|safe %}"><i class="fas fa-file text-body-secondary fa-fw"></i> Arquivos <sup>3</sup></a></li>{% endif %}
         </ul>
       </li>
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'sinistro_acidentes' %}"><i class="fas fa-undo"></i></a></li>
@@ -117,15 +117,15 @@
   SHORTCUT_MAP['4FTF'] = () => {document.getElementById('acidente_extra_link').click()};
   SHORTCUT_MAP['pFTF'] = () => {document.getElementById('widget_acidente_capa').click()};
   
-  SHORTCUT_MAP['fFFF'] = () => {
+  SHORTCUT_MAP['1FFF'] = () => {
     if(extrasShow()){document.getElementById('extras_link_fotos').click();}    
   };
 
-  SHORTCUT_MAP['tFFF'] = () => {
+  SHORTCUT_MAP['2FFF'] = () => {
     if(extrasShow()){document.getElementById('extras_link_terceiros').click();}    
   };
 
-  SHORTCUT_MAP['aFFF'] = () => {
+  SHORTCUT_MAP['3FFF'] = () => {
     if(extrasShow()){document.getElementById('extras_link_files').click();}    
   };
 

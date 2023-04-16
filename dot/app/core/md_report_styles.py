@@ -32,6 +32,17 @@ style_base_end = ParagraphStyle(
     spaceAfter=14
 )
 
+style_list = ParagraphStyle(
+    name='Normal',
+    fontName='Helvetica',
+    fontSize=12,
+    leading=16,
+    alignment=JUSTIFY,
+    leftIndent=5,
+    bulletIndent=7,
+    spaceAfter=0
+)
+
 style_h1 = ParagraphStyle(
     name='Normal',
     fontName='Helvetica-Bold',
