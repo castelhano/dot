@@ -5,7 +5,6 @@ from datetime import datetime, date
 from .validators import validate_excluded_files
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from threading import Thread
 
 # EXTENDED **********************************************
 class ImageField(models.ImageField):
