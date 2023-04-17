@@ -14,6 +14,32 @@
   <li class="breadcrumb-item"><a href="#">Library</a></li>
   <li class="breadcrumb-item active">Data</li>
 </ol>
+<table class="table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>App</th>
+      <th>User</th>
+      <th>Inicio</th>
+      <th>Termino</th>
+      <th>Validade</th>
+      <th>Link</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for i in t %}
+    <tr>
+      <td>{{i.id}}</td>
+      <td>{{i.app}}</td>
+      <td>{{i.usuario.username}}</td>
+      <td>{{i.inicio}}</td>
+      <td>{{i.termino}}</td>
+      <td>{{i.validade}}</td>
+      <td><a href="{{i.link}}">Link</a></td>
+    </tr>    
+  {% endfor %}
+  </tbody>
+</table>
 {% endblock%}
 
 

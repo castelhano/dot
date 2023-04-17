@@ -3,7 +3,7 @@
 *
 * @version  1.6
 * @since    02/04/2023
-* @release  14/04/2023 [adicionado componente de assinatura, unorder list]
+* @release  14/04/2023 [adicionado componente de assinatura, unorder list, font monospace]
 * @author   Rafael Gustavo Alves {@email castelhano.rafael@gmail.com}
 * @depend   boostrap 5.2.0, fontawesome 5.15.4, dot.css, dot.js, page.css
 */
@@ -185,11 +185,12 @@ class jsMdview{
             {id: 'mdreport-destaqueBtn', innerHTML:'<i class="fas fa-font text-primary fa-fw"></i>Texto destaque', pattern: ['==','=='], selectArea: [2,2]},
             {id: 'mdreport-successBtn', innerHTML:'<i class="fas fa-font text-success fa-fw"></i>Texto sucesso', pattern: ['=+','+='], selectArea: [2,2]},
             {id: 'mdreport-dangerBtn', innerHTML:'<i class="fas fa-font text-danger fa-fw"></i>Texto erro', pattern: ['=-','-='], selectArea: [2,2]},
-            {id: 'mdreport-indent', innerHTML:'<i class="fas fa-indent text-secondary fa-fw"></i>Espaçamento', pattern: ['[...]','',''], selectArea: false, newline: true},
+            {id: 'mdreport-monospace', innerHTML:'<i class="fas fa-text-width text-secondary fa-fw"></i>Monospace', pattern: ['>- ',''], selectArea: [3,0]},
+            {id: 'mdreport-indent', innerHTML:'<i class="fas fa-indent text-secondary fa-fw"></i>Espaçamento', pattern: ['[...]','',''], selectArea: false, newline: false},
             {id: 'mdreport-listitem', innerHTML:'<i class="fas fa-list text-secondary fa-fw"></i>Lista', pattern: ['&- ','','Texto da lista'], selectArea: [3,0], newline: true},
+            {id: 'mdreport-signature', innerHTML:'<i class="fas fa-signature text-secondary fa-fw"></i>Assinatura', pattern: ['[signature]','[/signature]','{Nome1, Detalhe};{Nome2, Detalhe}'], selectArea: false, newline: true},
             {id: 'mdreport-logo', innerHTML:'<i class="fas fa-image text-secondary fa-fw"></i>Logo', pattern: ['![45,45,TOP-LEFT]()','',''], selectArea: false, newline: true},
             {id: 'mdreport-footer', innerHTML:'<i class="fas fa-text-height text-secondary fa-fw"></i>Rodapé', pattern: ['[footer]','[/footer]',''], selectArea: [8,9], newline: true},
-            {id: 'mdreport-signature', innerHTML:'<i class="fas fa-signature text-secondary fa-fw"></i>Assinatura', pattern: ['[signature]','[/signature]','{Nome1, Detalhe};{Nome2, Detalhe}'], selectArea: false, newline: true},
         ]
         for(let key in fields){
             let li = document.createElement('li');li.classList = 'dropdown-item pointer';li.innerHTML = fields[key].innerHTML;li.id = fields[key].id;
@@ -242,11 +243,11 @@ class jsMdview{
             .replace(/\*\*(.*?)\*\*/gim, '<b>$1</b>')
             .replace(/\*(.*?)\*/gim, '<i>$1</i>')
             .replace(/_-(.*?)-_/gim, '<u>$1</u>')
-            .replace(/==(.*?)==/gim, "<font face='Helvetica' color='CornflowerBlue'>$1</font>")
-            .replace(/=\-(.*?)\-=/gim, "<font face='Helvetica' class='text-danger-emphasis'>$1</font>")
-            .replace(/=\+(.*?)\+=/gim, "<font face='Helvetica' class='text-success-emphasis'>$1</font>")
+            .replace(/^\>- (.*$)/gim, "<font face='Courier'>$1</font>")
+            .replace(/==(.*?)==/gim, "<font color='CornflowerBlue'>$1</font>")
+            .replace(/=\-(.*?)\-=/gim, "<font class='text-danger-emphasis'>$1</font>")
+            .replace(/=\+(.*?)\+=/gim, "<font class='text-success-emphasis'>$1</font>")
             .replace(/!\[(.*?)\]\((.*?)\)/gim, "")
-            // .replace(/\[(.*?)\]\((.*?)\)/gim, "<a href='$2' target='_blank'>$1</a>")
             .replace(/\[footer\](.*?)\[\/footer\]/gim, "<hr><p class='text-center fs-7'>$1</p>")
             .replace(/\[\.\.\.\]/gm, '<span class="d-inline-block" style="width: 60px;">&nbsp;</span>')
             .replace(/\n/gm, '<br>')
@@ -262,6 +263,7 @@ class jsMdview{
         SHORTCUT_MAP['1FTF'] = () => {document.getElementById('mdreport-destaqueBtn').click();}
         SHORTCUT_MAP['2FTF'] = () => {document.getElementById('mdreport-successBtn').click();}
         SHORTCUT_MAP['3FTF'] = () => {document.getElementById('mdreport-dangerBtn').click();}
+        SHORTCUT_MAP['4FTF'] = () => {document.getElementById('mdreport-monospace').click();}
         SHORTCUT_MAP[']FTF'] = () => {document.getElementById('mdreport-indent').click();}
         SHORTCUT_MAP['lFTF'] = () => {document.getElementById('mdreport-listitem').click();}
         SHORTCUT_MAP['.FTF'] = () => {this.blockquote.click()}
@@ -292,6 +294,7 @@ class jsMdview{
             'Texto <b class="text-primary">destacado</b>': 'Ctrl + 1',
             'Texto <b class="text-success">sucesso</b>': 'Ctrl + 2',
             'Texto <b class="text-danger">erro</b>': 'Ctrl + 3',
+            'Texto <font face="Courier">monospace</font>': 'Ctrl + 4',
             'Espaçamento': 'Ctrl + ]',
             'Lista &lt;ul&gt;': 'Ctrl + L',
             'Citação': 'Ctrl + .',

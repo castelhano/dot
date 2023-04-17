@@ -86,6 +86,7 @@ def md_report(request, original, **kwargs):
         logo_ancor = props[2].split('-')[0]
     else:
         logo_h = 0
+        logo_ancor = False
     original = re.sub(f'\[footer\](.*?)\[\/footer\]', '', original) # Retira o footer da string original
     doc = SimpleDocTemplate(buffer,topMargin=MARGIN_TOP + logo_h if logo_ancor == 'TOP' else MARGIN_TOP, bottomMargin=MARGIN_BOTTOM + len(footer_text.split('<br />')) * 20,leftMargin=MARGIN_START, rightMargin=MARGIN_END)
     FOOTER = Paragraph(footer_text, style_footer)
@@ -154,9 +155,10 @@ def md_basic(original):
     original = re.sub(r"\*\*(.*?)\*\*", r'<b>\1</b>', original) # Bold
     original = re.sub(r"\*(.*?)\*", r'<i>\1</i>', original)     # Italico
     original = re.sub(r"_-(.*?)-_", r'<u>\1</u>', original)     # Tachado
-    original = re.sub(r"==(.*?)==", r'<font face="Helvetica" color="ReportLabFidBlue">\1</font>', original) # Texto de alerta
-    original = re.sub(r"=\-(.*?)\-=", r'<font face="Helvetica" color="firebrick">\1</font>', original) # Texto de alerta
-    original = re.sub(r"=\+(.*?)\+=", r'<font face="Helvetica" color="darkgreen">\1</font>', original) # Texto de alerta
+    original = re.sub(r"==(.*?)==", r'<font color="ReportLabFidBlue">\1</font>', original) # Texto de alerta
+    original = re.sub(r"=\-(.*?)\-=", r'<font color="firebrick">\1</font>', original) # Texto de alerta
+    original = re.sub(r"=\+(.*?)\+=", r'<font color="darkgreen">\1</font>', original) # Texto de alerta
+    original = re.sub(r"\[\.\.\.\]", r'&nbsp;&nbsp;&nbsp;&nbsp;', original) # Texto identado
     return original
 
 def common_plot(original, common):
@@ -174,11 +176,11 @@ def data_plot(original, **kwargs):
     attrs = re.findall(r"\$\((.*?)\)", original)
     for attr in attrs:
         target = attr.split('.', 1)
-        # try:
-        result = get_repr(get_field(kwargs[target[0]], target[1]))
-        original = original.replace(f'$({attr})', f'{result}')
-        # except:
-        #     original = original.replace(f'$({attr})', '')
+        try:
+            result = get_repr(get_field(kwargs[target[0]], target[1]))
+            original = original.replace(f'$({attr})', f'{result}')
+        except:
+            original = original.replace(f'$({attr})', '')
     return original
 
 def md_layout(original):
@@ -212,12 +214,14 @@ def md_layout(original):
             flowables.append(Paragraph(re.search(r"^__(.*$)", linha).group(1), style_base_center))
         elif re.search(r"^--[-]*?", linha):
             flowables.append(HRFlowable(color='black', spaceBefore=20, spaceAfter=15))
+        elif re.search(r"^\>- (.*$)", linha):
+            flowables.append(Paragraph(re.search(r"^\>- (.*$)", linha).group(1), style_monospace))
         elif re.search(r"^\> (.*$)", linha):
             flowables.append(Paragraph('<font face="Helvetica-Bold" color="grey" size="16">|</font>&nbsp;&nbsp;' + re.search(r"^\> (.*$)", linha).group(1), style_callout))
         elif re.search(r"\[\[(.*?)\]\]", linha):
             flowables.append(Paragraph(re.search(r"\[\[(.*?)\]\]", linha).group(1), style_box))
-        elif re.search(r"\[\.\.\.\]", linha):
-            flowables.append(Paragraph(re.sub(r"\[\.\.\.\]",'&nbsp;&nbsp;&nbsp;&nbsp;', linha), style_base))
+        # elif re.search(r"\^[\.\.\.\]", linha):
+        #     flowables.append(Paragraph(re.sub(r"\[\.\.\.\]",'&nbsp;&nbsp;&nbsp;&nbsp;', linha), style_base))
         elif re.search(r"\[break\]", linha):
             flowables.append(PageBreak())
         else:

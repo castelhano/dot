@@ -14,6 +14,15 @@ style_base = ParagraphStyle(
     spaceAfter=14
 )
 
+style_monospace = ParagraphStyle(
+    name='Normal',
+    fontName='Courier',
+    fontSize=12,
+    leading=16,
+    alignment=JUSTIFY,
+    spaceAfter=5
+)
+
 style_base_center = ParagraphStyle(
     name='Normal',
     fontName='Helvetica',

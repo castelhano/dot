@@ -5,6 +5,7 @@ from datetime import datetime, date
 from .validators import validate_excluded_files
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from threading import Thread
 
 # EXTENDED **********************************************
 class ImageField(models.ImageField):
@@ -108,6 +109,17 @@ class Feriado(models.Model):
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='core.feriado',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
+
+# class Appthread(Thread):
+#     app = models.CharField(max_length=70, blank=True)
+#     usuario = models.ForeignKey(User, on_delete=models.RESTRICT, null=True)
+#     inicio = models.DateTimeField(default=datetime.now)
+#     termino = models.DateTimeField(blank=True, null=True)
+#     link = models.CharField(max_length=255, blank=True)
+#     detalhe = models.TextField(blank=True)
+#     private = models.BooleanField(default=True)
+#     validade = models.DateTimeField(blank=True, null=True)
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

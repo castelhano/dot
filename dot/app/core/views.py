@@ -7,10 +7,11 @@ from django.contrib import auth, messages
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from .models import Empresa, Log, Alerta, Agenda, Feriado
+# from .models import Empresa, Log, Alerta, Agenda, Feriado, Appthread
 from .forms import EmpresaForm, UserForm, GroupForm, AgendaForm, FeriadoForm
 from .extras import clean_request
 from .console import Run
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from django.http import HttpResponse, JsonResponse
 from django.core import serializers
 from django.conf import settings
@@ -615,6 +616,16 @@ def logout(request):
 
 @login_required
 def handler(request, code):
+    # args = {
+    #     "app": "core.handler",
+    #     "link": '/docs/core',
+    #     "detalhe": 'Teste do pai...',
+    #     "private": False
+    # }
+    # id = app_thread(request, args)
+    # messages.success(request, f'Thread iniciada, id: {id}')
+    # t = Appthread.objects.all()
+    
     return render(request,f'{code}.html')
 
 
@@ -654,6 +665,22 @@ def app_data(request, fpath):
         except Exception as e:
             pass
     return HttpResponse('')
+
+
+# @login_required
+# def app_thread(request, args):
+#     thread = Appthread()
+#     thread.app = args["app"] if "app" in args else "unknown"
+#     thread.usuario = request.user
+#     thread.inicio = datetime.now()
+#     thread.validade = datetime.now() + timedelta(days=args["prazo"]) if "prazo" in args else datetime.now() + timedelta(days=30)
+#     thread.link = args["link"] if "link" in args else ""
+#     thread.detalhe = args["detalhe"] if "detalhe" in args else ""
+#     thread.private = args["private"] if "private" in args else True
+#     thread.save()
+#     return thread.id
+
+
 
 @login_required
 def get_empresas(request):
