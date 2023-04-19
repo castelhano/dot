@@ -1,8 +1,8 @@
 import os
 from django.db import models
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from datetime import datetime, date
-from .validators import validate_excluded_files
+from .validators import validate_excluded_files, validate_file_extension
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -109,16 +109,54 @@ class Feriado(models.Model):
         logs = Log.objects.filter(modelo='core.feriado',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
 
-# class Appthread(Thread):
-#     app = models.CharField(max_length=70, blank=True)
-#     usuario = models.ForeignKey(User, on_delete=models.RESTRICT, null=True)
-#     inicio = models.DateTimeField(default=datetime.now)
-#     termino = models.DateTimeField(blank=True, null=True)
-#     link = models.CharField(max_length=255, blank=True)
-#     detalhe = models.TextField(blank=True)
-#     private = models.BooleanField(default=True)
-#     validade = models.DateTimeField(blank=True, null=True)
+class Issue(models.Model):
+    TIPO_CHOICES = (
+        ('D','Duvida'),
+        ('F','Falha / Erro'),
+        ('M','Melhoria'),
+        ('S','Sugestao')
+    )
+    STATUS_CHOICES = (
+        ('E','Em Espera'),
+        ('A','Em Atendimento'),
+        ('S','Aguardando Solicitante'),
+        ('V','Pendente Validacao'),
+        ('F','Fechado'),
+        ('D','Em Desenvolvimento')
+    )
+    CLASSIFICACAO_CHOICES = (
+        ('','---'),
+        ('bug','Crash'),
+        ('logc','Logic'),
+        ('perm','Permission'),
+        ('ench','Enhancement'),
+        ('unpr','Unproven')
+    )
+    usuario = models.ForeignKey(User, related_name='usuario', on_delete=models.RESTRICT, blank=True, null=True)
+    analista = models.ForeignKey(User, related_name='analista', on_delete=models.RESTRICT, blank=True, null=True)
+    followers = models.ManyToManyField(User, related_name='issue_followers', blank=True)
+    assunto = models.CharField(max_length=255, blank=False)
+    historico = models.TextField(blank=True)
+    entrada = models.DateTimeField(default=datetime.now)
+    ultima_interacao = models.DateTimeField(default=datetime.now)
+    tipo = models.CharField(max_length=3,choices=TIPO_CHOICES, blank=True)
+    status = models.CharField(max_length=3,choices=STATUS_CHOICES, blank=True)
+    classificacao = models.CharField(max_length=5,choices=CLASSIFICACAO_CHOICES, blank=True)
+    avaliacao = models.PositiveIntegerField(blank=True, null=True)
+    class Meta:
+        permissions = [
+            ("eh_suporte", "Atuar como suporte"),
+        ]
 
+class Issuefile(models.Model):
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE)
+    file = FileField(upload_to="core/issue/%Y/%m/%d", blank=True, validators=[validate_file_extension])
+    def url_abbr(self):
+        return self.file.url.replace("/media/core/issue/","")
+    def file_name(self):
+        return self.file.name.split('/')[-1]
+    class Meta:
+        default_permissions = []
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

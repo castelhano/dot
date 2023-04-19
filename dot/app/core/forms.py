@@ -1,5 +1,5 @@
 from django import forms
-from .models import Empresa, Agenda, Feriado
+from .models import Empresa, Agenda, Feriado, Issue
 from datetime import date
 from django.contrib.auth.models import User, Group
 
@@ -63,4 +63,13 @@ class GroupForm(forms.ModelForm):
         model = Group
         fields = ['name','permissions']
     name = forms.CharField(error_messages={'required': 'Nome do grupo requerido', 'unique': 'Grupo com este nome ja existe'},widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' ','autofocus':'autofocus'}))
-    
+
+class IssueForm(forms.ModelForm):
+    class Meta:
+        model = Issue
+        fields = ['followers','assunto','historico','tipo','status','classificacao','avaliacao']
+    tipo = forms.ChoiceField(required=False,choices=Issue.TIPO_CHOICES, widget=forms.Select(attrs={'class':'form-select','autofocus':'autofocus'}))
+    assunto = forms.CharField(error_messages={'required': 'Informe o assunto'},max_length=85,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
+    status = forms.ChoiceField(choices=Issue.STATUS_CHOICES, widget=forms.Select(attrs={'class':'form-select readonly'}))
+    classificacao = forms.ChoiceField(required=False, choices=Issue.CLASSIFICACAO_CHOICES, widget=forms.Select(attrs={'class':'form-select readonly'}))
+    followers = forms.ModelMultipleChoiceField(queryset=User.objects.filter(is_active=True), required=False)

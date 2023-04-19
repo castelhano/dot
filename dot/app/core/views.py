@@ -6,17 +6,16 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import auth, messages
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.contenttypes.models import ContentType
-from .models import Empresa, Log, Alerta, Agenda, Feriado
-# from .models import Empresa, Log, Alerta, Agenda, Feriado, Appthread
-from .forms import EmpresaForm, UserForm, GroupForm, AgendaForm, FeriadoForm
+from .models import Empresa, Log, Alerta, Agenda, Feriado, Issue, Issuefile
+from .forms import EmpresaForm, UserForm, GroupForm, AgendaForm, FeriadoForm, IssueForm
 from .extras import clean_request
 from .console import Run
-from datetime import datetime, date, timedelta
+from datetime import datetime, date
 from django.http import HttpResponse, JsonResponse
 from django.core import serializers
 from django.conf import settings
 from django.db.models import Q
-# from django.core.serializers.json import DjangoJSONEncoder
+from .validators import validate_file_extension
 
 
 @login_required
@@ -97,6 +96,18 @@ def feriados(request):
     ano = request.POST['ano'] if request.method == 'POST' else date.today().year
     feriados = Feriado.objects.filter(data__year=ano).order_by('data')
     return render(request,'core/feriados.html',{'feriados':feriados,'ano':ano})
+
+
+@login_required
+@permission_required('core.view_issue')
+def issues(request):
+    args = {
+        "em_espera": Issue.objects.filter(status='E').order_by('entrada'),
+        "em_atendimento": Issue.objects.filter(status__in=['A','S','V']).order_by('entrada'),
+        "em_desenvolvimento": Issue.objects.filter(status='D').order_by('entrada')
+    }
+    return render(request,'core/issues.html', args)
+
 
 @login_required
 @permission_required('core.view_alerta')
@@ -283,6 +294,35 @@ def feriado_add(request):
         form = FeriadoForm()
     return render(request,'core/feriado_add.html',{'form':form})
 
+@login_required
+@permission_required('core.add_issue')
+def issue_add(request):
+    if request.method == 'POST':
+        form = IssueForm(request.POST)
+        if form.is_valid():
+            try:
+                registro = form.save()
+                registro.usuario = request.user
+                registro.save()
+                for file in request.FILES.getlist('files'):
+                    if validate_file_extension(file):
+                        Issuefile.objects.create(issue=registro,file=file)
+                l = Log()
+                l.modelo = "core.issue"
+                l.objeto_id = registro.id
+                l.objeto_str = registro.assunto
+                l.usuario = request.user
+                l.mensagem = "CREATED"
+                l.save()
+                messages.success(request,'Issue <b>cadastrado</b>')
+                return redirect('core_issue_add')
+            except:
+                messages.error(request,'Erro ao inserir issue [INVALID FORM]')
+                return redirect('core_issue_add')
+    else:
+        form = IssueForm()
+    return render(request,'core/issue_add.html',{'form':form})
+
 # METODOS GET
 @login_required
 @permission_required('core.change_empresa')
@@ -325,6 +365,13 @@ def feriado_id(request, id):
     form = FeriadoForm(instance=feriado)
     return render(request,'core/feriado_id.html',{'form':form,'feriado':feriado})
 
+@login_required
+@permission_required('core.view_issue')
+def issue_id(request, id):
+    issue = Issue.objects.get(id=id)
+    form = IssueForm(instance=issue)
+    return render(request,'core/issue_id.html',{'form':form,'issue':issue})
+
 # METODOS UPDATE
 @login_required
 @permission_required('core.change_empresa')
@@ -357,13 +404,9 @@ def usuario_update(request, id):
         else:
             registro.profile.force_password_change = False
         
-        try:
-            if request.POST['reset_password'] != '':
-                registro.set_password(request.POST['reset_password'])
-                registro.profile.force_password_change = True
-        except:
-            # CAMPO RESET PASSWORD EH POR PADRAO DISABLED NO FORM, EXCEPT TRATA AUSENCIA DO CAMPO NO POST
-            pass
+        if 'reset_password' in request.POST and request.POST['reset_password'] != '':
+            registro.set_password(request.POST['reset_password'])
+            registro.profile.force_password_change = True
             
         registro.save()
         registro.groups.clear()
@@ -456,6 +499,28 @@ def feriado_update(request, id):
         return redirect('core_feriado_id',id)
     else:
         return render(request,'core/feriado_id.html',{'form':form,'feriado':feriado})
+
+@login_required
+@permission_required('core.change_issue')
+def issue_update(request, id):
+    issue = Issue.objects.get(pk=id)
+    form = IssueForm(request.POST, instance=issue)
+    if form.is_valid():
+        registro = form.save()
+        for file in request.FILES.getlist('files'):
+            if validate_file_extension(file):
+                Issuefile.objects.create(issue=registro,file=file)
+        l = Log()
+        l.modelo = "core.issue"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.assunto
+        l.usuario = request.user
+        l.mensagem = "UPDATE"
+        l.save()
+        messages.success(request,f'Issue <b>{registro.id}</b> alterado')
+        return redirect('core_issue_id',id)
+    else:
+        return render(request,'core/issue_id.html',{'form':form,'issue':issue})
 
 # METODOS DELETE
 @login_required
@@ -565,6 +630,25 @@ def feriado_delete(request, id):
         messages.error(request,'ERRO ao apagar feriado')
         return redirect('core_feriado_id', id)
 
+@login_required
+@permission_required('core.delete_issue')
+def issue_delete(request, id):
+    try:
+        registro = Issue.objects.get(pk=id)
+        l = Log()
+        l.modelo = "core.issue"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.assunto
+        l.usuario = request.user
+        l.mensagem = "DELETE"
+        registro.delete()
+        l.save()
+        messages.warning(request,f'Issue <b>{registro.id}</b> apagado')
+        return redirect('core_issues')
+    except:
+        messages.error(request,'ERRO ao apagar issue')
+        return redirect('core_issue_id', id)
+
 
 # AUTENTICACAO E PERMISSAO
 def login(request):
@@ -616,16 +700,6 @@ def logout(request):
 
 @login_required
 def handler(request, code):
-    # args = {
-    #     "app": "core.handler",
-    #     "link": '/docs/core',
-    #     "detalhe": 'Teste do pai...',
-    #     "private": False
-    # }
-    # id = app_thread(request, args)
-    # messages.success(request, f'Thread iniciada, id: {id}')
-    # t = Appthread.objects.all()
-    
     return render(request,f'{code}.html')
 
 
@@ -667,21 +741,6 @@ def app_data(request, fpath):
     return HttpResponse('')
 
 
-# @login_required
-# def app_thread(request, args):
-#     thread = Appthread()
-#     thread.app = args["app"] if "app" in args else "unknown"
-#     thread.usuario = request.user
-#     thread.inicio = datetime.now()
-#     thread.validade = datetime.now() + timedelta(days=args["prazo"]) if "prazo" in args else datetime.now() + timedelta(days=30)
-#     thread.link = args["link"] if "link" in args else ""
-#     thread.detalhe = args["detalhe"] if "detalhe" in args else ""
-#     thread.private = args["private"] if "private" in args else True
-#     thread.save()
-#     return thread.id
-
-
-
 @login_required
 def get_empresas(request):
     # Metodo retorna JSON com dados das empresas
@@ -704,7 +763,6 @@ def get_empresas(request):
 @login_required
 def get_usuarios(request):
     try:
-        inativos = request.GET.get('inativos', None)
         usuarios = User.objects.all().order_by('username')
         if not request.GET.get('inativos', None):
             usuarios = usuarios.filter(is_active=True)
@@ -723,7 +781,7 @@ def get_grupos(request):
             grupos = Group.objects.filter(user=usuario).order_by('name')
         itens = []
         for item in grupos:
-            item_dict = vars(item) # Converte objetos em dicionario
+            item_dict = vars(item) # Converte objeto em dicionario
             if '_state' in item_dict: del item_dict['_state'] # Remove _state do dict (se existir)
             itens.append(item_dict)
         dataJSON = json.dumps(itens)

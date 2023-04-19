@@ -45,7 +45,7 @@ class jsMdview{
         this.mdview_input = document.createElement('input');this.mdview_input.type = 'hidden'; this.mdview_input.name = this.fieldName;
         c1.appendChild(this.mdview_input);
         row.appendChild(c1);
-        this.previewTarget = document.createElement('page');this.previewTarget.style = this.previewTargetStyle;this.previewTarget.setAttribute('size', 'A4');
+        this.previewTarget = document.createElement('div');this.previewTarget.classList = 'page';this.previewTarget.style = this.previewTargetStyle;this.previewTarget.setAttribute('size', 'A4');
         c2.appendChild(this.previewTarget);
         row.appendChild(c2);
         this.container.appendChild(row);
