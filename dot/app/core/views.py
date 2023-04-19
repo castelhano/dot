@@ -315,7 +315,7 @@ def issue_add(request):
                 l.mensagem = "CREATED"
                 l.save()
                 messages.success(request,'Issue <b>cadastrado</b>')
-                return redirect('core_issue_add')
+                return redirect('core_issue_id', registro.id)
             except:
                 messages.error(request,'Erro ao inserir issue [INVALID FORM]')
                 return redirect('core_issue_add')

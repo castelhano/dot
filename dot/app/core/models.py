@@ -143,6 +143,9 @@ class Issue(models.Model):
     status = models.CharField(max_length=3,choices=STATUS_CHOICES, blank=True)
     classificacao = models.CharField(max_length=5,choices=CLASSIFICACAO_CHOICES, blank=True)
     avaliacao = models.PositiveIntegerField(blank=True, null=True)
+    def ultimas_alteracoes(self):
+        logs = Log.objects.filter(modelo='core.issue',objeto_id=self.id).order_by('-data')[:15]
+        return reversed(logs)
     class Meta:
         permissions = [
             ("eh_suporte", "Atuar como suporte"),

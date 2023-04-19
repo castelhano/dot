@@ -1,0 +1,58 @@
+<div class="tab-pane fade show active" id="base" role="tabpanel">
+    <div class="row g-3">
+        <div class="col-lg-9">
+            <div class="row g-1">
+                <div class="form-floating mb-lg-1 col-lg-3">
+                    {{ form.tipo }}
+                    <label for="id_tipo">Tipo</label>
+                </div>
+                <div class="form-floating mb-lg-1 col-lg">
+                    {{ form.assunto }}
+                    <label for="id_assunto">Assunto</label>
+                </div>
+            </div>
+            <div class="row g-1">
+                <div class="mb-1 col-12">
+                    <textarea name="nova_interacao" id="id_nova_interacao" class="form-control" style="min-height: 150px;" placeholder=""></textarea>
+                </div>
+                <div class="mb-1 col pe-2">
+                    <input type="file" class="form-control" name="files" id="id_files">
+                </div>
+                <div class="mb-1 col-auto">
+                    <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"><b>G</b>ravar</button>
+                </div>
+            </div>
+            <ul class="timeline timeline-sm mt-2">
+                <li class="event position-relative" data-date="">
+                    <div>{% lorem %}</div>
+                    <div class="text-end fs-7"><i class="fas fa-user me-2"></i><b class="text-orange me-2">Rafael</b> 22/04 14h22</div>
+                </li>
+            </ul>
+        </div>
+        <div class="col-lg">
+            <div class="row g-1">
+                <div class="form-floating mb-1 col-12">
+                    {{ form.status }}
+                    <label for="id_status">Status</label>
+                </div>
+                <div class="form-floating mb-1 col-12">
+                    {{ form.classificacao }}
+                    <label for="id_classificacao">Classificação</label>
+                </div>
+                <div class="col-12">
+                    {{ form.followers }}
+                </div>
+            </div>
+            {% if 'issue_id' in request.get_full_path %}
+            <div class="form-check form-switch mt-3">
+                <input class="form-check-input" type="checkbox" role="switch" name="concluir_issue" tabindex="-1" id="id_concluir_issue" readonly>
+                <label class="form-check-label" for="id_concluir_issue">Finalizar issue</label>
+            </div>
+            {% endif %}
+            <h6 class="text-secondary mt-3">Anexos</h6>
+            {% for file in issue.files %}
+            <a href="{{file.url}}" target="_blank"><i class="fas fa-camera fa-fw"></i>erro.png</a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
