@@ -28,9 +28,13 @@
         </div>
         <div class="col-lg">
             <div class="row g-1">
-                <div class="form-floating mb-1 col-12">
+                <div class="form-floating mb-lg-1 col-12">
                     {{ form.status }}
                     <label for="id_status">Status</label>
+                </div>
+                <div class="form-floating mb-lg-1 col-12">
+                    <input type="text" class="form-control" id="id_analista" value="{{issue.analista.username|title}}" readonly>
+                    <label for="id_analista">Analista</label>
                 </div>
                 <div class="form-floating mb-1 col-12">
                     {{ form.classificacao }}
@@ -45,13 +49,18 @@
                 <input class="form-check-input" type="checkbox" role="switch" name="concluir_issue" tabindex="-1" id="id_concluir_issue"{% if issue.status == 'F' %}checked{% endif %}>
                 <label class="form-check-label" for="id_concluir_issue">Finalizar issue</label>
             </div>
-            <div id="finalizar_issue" class="py-3 d-none">
-                <div class="col"><i id="star_1" class="fas fa-star text-body-secondary" onclick="setStars(1)"></i> <i id="star_2" class="fas fa-star text-body-secondary" onclick="setStars(2)"></i> <i id="star_3" class="fas fa-star text-body-secondary" onclick="setStars(3)"></i> <i id="star_4" class="fas fa-star text-body-secondary" onclick="setStars(4)"></i> <i id="star_5" class="fas fa-star text-body-secondary" onclick="setStars(5)"></i></div>
+            <div id="finalizar_issue" class="py-3{% if issue.status != 'F' %} d-none{% endif %}">
+                <div class="col mb-2"><i data-star="1" class="fas fa-star text-body-secondary"></i> <i data-star="2" class="fas fa-star text-body-secondary"></i> <i data-star="3" class="fas fa-star text-body-secondary"></i> <i data-star="4" class="fas fa-star text-body-secondary"></i> <i data-star="5" class="fas fa-star text-body-secondary"></i></div>
+                {% if issue.status != 'F' %}
                 Por favor avalie como foi nosso atendimento.<br ><i class="fas fa-info-circle text-orange me-2"></i>Ao gravar este issue será finalizado.
+                {% elif not perms.core.eh_suporte %}
+                Este Issue já está fechado, caso o problema ainda persista, abra um <a href="{% url 'core_issue_add' %}">novo issue</a>.
+                {% endif %}
             </div>
+            <div id="analist_controls" class="pt-2"></div>
             {% endif %}
         </div>
     </div>
     <input type="hidden" name="historico" value="{{issue.historico}}">
-    <input type="hidden" name="avaliacao" id="id_avaliacao" value="{{issue.avaliacao}}">
+    <input type="hidden" name="avaliacao" id="id_avaliacao" value="{{issue.avaliacao|default:0}}">
 </div>

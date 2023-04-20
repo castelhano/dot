@@ -146,6 +146,12 @@ class Issue(models.Model):
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='core.issue',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
+    def tempo_em_espera(self):
+        entrada = self.entrada.replace(tzinfo=None)
+        # agora = datetime.now().replace(tzinfo=None)
+        # print('NAIVE: ', entrada)
+        # print('NOW: ', agora)
+        return (datetime.utcnow() - entrada).total_seconds() / 60
     class Meta:
         permissions = [
             ("eh_suporte", "Atuar como suporte"),

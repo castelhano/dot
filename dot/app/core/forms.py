@@ -73,4 +73,3 @@ class IssueForm(forms.ModelForm):
     status = forms.ChoiceField(choices=Issue.STATUS_CHOICES, widget=forms.Select(attrs={'class':'form-select readonly'}))
     classificacao = forms.ChoiceField(required=False, choices=Issue.CLASSIFICACAO_CHOICES, widget=forms.Select(attrs={'class':'form-select readonly'}))
     followers = forms.ModelMultipleChoiceField(queryset=User.objects.filter(is_active=True), required=False)
-    historico = forms.CharField(error_messages={'required': 'Por favor detalhe no corpo da mensagem o problema verificado'}, widget=forms.Textarea())

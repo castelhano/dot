@@ -26,9 +26,12 @@
         </ul>
     </div>
     <div class="card-body tab-content">
-        <h5 class="card-title mt-2 mb-3">Suporte: <b class="text-orange">Issues</b></h5>
+        <h5 class="card-title mt-2 mb-0">Suporte: <b class="text-orange">Issues</b></h5>
+        <small>Atualiza em: <span id="next_refresh_counter" class="text-danger"></span></small>
+        <div class="fs-7 mb-3"><span class="text-secondary fw-bold me-1">CTRL 0</span> abre próximo issue</div>
+
         <div class="tab-pane fade show active" id="base" role="tabpanel">
-            {% if issues %}
+            {% if issues or not perms.core.eh_suporte %}
             <table id="main_table" class="table border table-striped table-hover">
                 <thead>
                     <tr>
@@ -48,7 +51,7 @@
                 </thead>
                 <tbody>
                     {% for issue in issues %}
-                    <tr>
+                    <tr class="{% if issue.status == 'F'%}table-done{% endif %}">
                         <td>{{issue.id|safe}}</td>
                         <td>{{issue.assunto}}</td>
                         <td>{{issue.usuario.username}}</td>
@@ -70,10 +73,18 @@
                 <div class="col-lg-5">
                     <div class="card h-100">
                         <div class="card-body">
-                            <h6 class="text-secondary">Em espera</h6>
+                            <div class="col"><h6 class="text-secondary">Em espera</h6></div>
                             <ul class="m-0 list-unstyled">
                                 {% for issue in em_espera %}
-                                <li><div class="d-flex justify-content-between"><span class="text-truncate pe-2"><span class="badge bg-danger me-2" style="width: 45px;">{{issue.tempo_em_espera}}</span><a href="{% url 'core_issue_id' issue.id|safe %}">{{issue.assunto}}</a></span><span><b>{{issue.get_tipo_display}}</b></span></div></li>
+                                <li>
+                                    <div class="d-flex justify-content-between">
+                                        <span class="text-truncate pe-2">
+                                            <span class="badge bg-danger me-1" style="width: 45px;">{{issue.tempo_em_espera|floatformat:0}}</span>
+                                            <a data-type="issue_em_espera" href="{% url 'core_issue_id' issue.id|safe %}">{{issue.assunto}}</a>
+                                        </span>
+                                        <span>{{issue.usuario.username|title}}</span>
+                                    </div>
+                                </li>
                                 {% empty %}
                                 <li>Nenhum issue aguardando</li>
                                 {% endfor %}
@@ -103,7 +114,7 @@
                 <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
             </div>
             <div class="modal-body">
-                <form id="core_form" action="url" method="POST" autocomplete="off">
+                <form id="core_form" action="{% url 'core_issues' %}" method="POST" autocomplete="off">
                 {% csrf_token %}
                     <div class="row g-1">
                         <div class="form-floating mb-1 col-lg-12">
@@ -126,8 +137,23 @@
 
 <script>
 {% block add_script %}
-    {% if issues %}
-    const table = new jsTable(document.getElementById('main_table'),{});
+    {% if issues or not perms.core.eh_suporte %}
+    const table = new jsTable(document.getElementById('main_table'),{
+        enablePaginate: true
+    });
+    SHORTCUT_MAP['arrowrightFTF'] = () => {table.nextPage()}
+    SHORTCUT_MAP['arrowleftFTF'] = () => {table.previousPage()}
+    SHORTCUT_MAP['arrowdownFTF'] = () => {table.nextRow()}
+    SHORTCUT_MAP['arrowupFTF'] = () => {table.previousRow()}
+    SHORTCUT_MAP['enterFTF'] = () => {table.enterRow()}
+    {% else %}
+    // Atualiza página a cada x seg
+    let interval = 10000;
+    let count = 0;
+    document.getElementById('next_refresh_counter').innerHTML = interval / 1000;
+    setInterval(()=>{count += 1000;document.getElementById('next_refresh_counter').innerHTML = (interval - count) / 1000}, 1000);
+    setInterval(()=>{document.getElementById('clear').click()}, interval);
+    SHORTCUT_MAP['0FTF'] = () => {document.querySelector('a[data-type=issue_em_espera]').click()}
     {% endif %}
 {% endblock %}
 </script>

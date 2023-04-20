@@ -39,12 +39,14 @@ Informações como :
 * Detalhamento da situação onde o erro acontece
 * Imagens do erro apresentado, etc...`
 document.getElementById('id_nova_interacao').setAttribute('placeholder', textarea_placeholder);
+document.getElementById('id_nova_interacao').setAttribute('required','');
 
 const followers = new jsSelectm(document.getElementById('id_followers'), {
     title: 'Acompanhamento:',
     checkAll: false,
     optionsSelected: ['{{user.id|safe}}']
 })
+followers.rebuildTargetOptions();
 
 {% endblock %}
 </script>

@@ -53,7 +53,7 @@
   <label class="form-check-label" for="id_addOnTarefas">Addon: <b class="text-purple">Tarefas</b></label>
 </div>
 <h6 class="text-body-secondary mt-3 mb-2">Outros:</h6>
-<a class="btn btn-sm btn-danger" href="{% url 'core_issues' %}"><i class="fas fa-bug me-2"></i>Suporte</a>
+{% if perms.core.view_issue %}<a class="btn btn-sm btn-danger" href="{% url 'core_issues' %}"><i class="fas fa-bug me-2"></i>Suporte</a>{% endif %}
 <a class="btn btn-sm btn-purple" href="{% url 'handler' '998' %}"><i class="fas fa-spell-check me-2"></i>MD Editor</a>
 {% endblock %}
 

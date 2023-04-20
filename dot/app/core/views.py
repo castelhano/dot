@@ -101,11 +101,26 @@ def feriados(request):
 @login_required
 @permission_required('core.view_issue')
 def issues(request):
-    args = {
-        "em_espera": Issue.objects.filter(status='E').order_by('entrada'),
-        "em_atendimento": Issue.objects.filter(status__in=['A','S','V']).order_by('entrada'),
-        "em_desenvolvimento": Issue.objects.filter(status='D').order_by('entrada')
-    }
+    if not request.user.has_perm('core.eh_suporte'):
+        issues = Issue.objects.filter(followers=request.user).order_by('entrada')
+        if request.method == 'POST' and len(request.POST['pesquisa']) > 2:
+            issues = issues.filter(assunto__contains=request.POST['pesquisa'])
+        else:
+            issues = issues.exclude(status='F')
+        if not issues:
+            messages.warning(request,'Nenhum issue localizado')
+        args = {"issues":issues}
+    elif request.method == 'POST' and len(request.POST['pesquisa']) > 2:
+        issues = Issue.objects.filter(assunto__contains=request.POST['pesquisa']).order_by('entrada')
+        if not issues:
+            messages.warning(request,'Nenhum issue localizado com o filtro informado')
+        args = {"issues":issues}
+    else:
+        args = {
+            "em_espera": Issue.objects.filter(status='E').order_by('entrada') if request.user.has_perm('core.eh_suporte') else Issue.objects.filter(status='E',followers=request.user).order_by('entrada'),
+            "em_atendimento": Issue.objects.filter(status__in=['A','S','V']).order_by('entrada'),
+            "em_desenvolvimento": Issue.objects.filter(status='D').order_by('entrada')
+        }
     return render(request,'core/issues.html', args)
 
 
@@ -313,10 +328,12 @@ def issue_add(request):
                         has_file_errors = True
                 # Ajusta demais informacoes do registro
                 registro.usuario = request.user
+                if request.user.has_perm('core.eh_suporte'): # Se proprio analista abrir o chamado, ja vincula tambem como analista
+                    registro.analista = request.user
                 entry = [{
                         "data": date.today().strftime("%d/%m"),
                         "hora": datetime.now().strftime("%H:%M"),
-                        "origem": 0,
+                        "origem": 0 if request.user.has_perm('core.eh_suporte') else 1,
                         "usuario": request.user.username,
                         "files": files,
                         "mensagem": request.POST['nova_interacao']
@@ -536,25 +553,28 @@ def issue_update(request, id):
             else:
                 has_file_errors = True
         # Ajusta demais informacoes do registro
+        registro.ultima_interacao = datetime.now()
+        if registro.analista == None and request.user.has_perm('core.eh_suporte'): # Atribui o primeiro analista a responder o chamado
+                    registro.analista = request.user
         if request.POST['nova_interacao'] != '' or len(files) > 0:
             entry = {
                     "data": date.today().strftime("%d/%m"),
                     "hora": datetime.now().strftime("%H:%M"),
-                    "origem": 0,
+                    "origem": 0 if request.user.has_perm('core.eh_suporte') else 1,
                     "usuario": request.user.username,
                     "files": files,
-                    "mensagem": request.POST['nova_interacao']
+                    "mensagem": request.POST['nova_interacao'] if issue.status != 'F' else '[ FECHADO ] ' + request.POST['nova_interacao']
                 }
             history = json.loads(registro.historico)
             history.insert(0, entry)
             registro.historico = json.dumps(history)
-            registro.save()
+        registro.save()
         l = Log()
         l.modelo = "core.issue"
         l.objeto_id = registro.id
         l.objeto_str = registro.assunto
         l.usuario = request.user
-        l.mensagem = "UPDATE"
+        l.mensagem = "UPDATE" if issue.status != 'F' else "CLOSED"
         l.save()
         if not has_file_errors:
             messages.success(request,f'Issue <b>{registro.id}</b> atualizado')

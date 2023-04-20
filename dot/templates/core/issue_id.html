@@ -94,10 +94,43 @@
 
 <script>
 {% block add_script %}
+
 var TAB_ON_ENTER = true;
 let textarea_placeholder = `Nova mensagem...`
 document.getElementById('id_nova_interacao').setAttribute('placeholder', textarea_placeholder);
 
+let readonly = false;
+{% if not perms.core.eh_suporte %}
+// Caso usuario logado nao seja suporte, bloqueia edicao de campos de cadastro
+document.getElementById('id_tipo').classList.add('readonly');
+document.getElementById('id_assunto').setAttribute('readonly','');
+document.getElementById('id_nova_interacao').focus();
+document.getElementById('id_concluir_issue').disabled = {% if issue.status == 'F' %}true{% else %}false{% endif %};
+readonly = true;
+{% else %}
+document.getElementById('id_status').classList.remove('readonly');
+document.getElementById('id_classificacao').classList.remove('readonly');
+// Cria controles do analista
+let msg_init = `Olá <b>{{issue.usuario.username|title}}</b>,
+Darei andamento a este atendimento contigo.
+Farei algumas análises iniciais e em breve darei um retorno a respeito.
+
+Se precisar de algum apoio neste meio tempo, pode me informar aqui no ticket ;)`
+let controls = [
+    {id:'issueBTN_0', innerHTML: 'INIT', classList:'btn btn-sm btn-warning', onclick: () => {document.getElementById('id_status').value = 'A';document.getElementById('id_nova_interacao').value = msg_init;}}
+]
+for(item in controls){
+    let btn = document.createElement('button');btn.type = 'button';btn.id = controls[item].id;btn.classList = controls[item].classList;btn.innerHTML = controls[item].innerHTML;
+    btn.onclick = controls[item].onclick;
+    document.getElementById('analist_controls').appendChild(btn);
+}
+
+SHORTCUT_MAP['0FTF'] = () => {document.getElementById('issueBTN_0').click()}
+
+{% endif %}
+
+
+// Monta Historico (timeline) do issue
 const list = document.getElementById('historico_list');
 let historico = {{issue.historico|safe}};
 
@@ -109,7 +142,7 @@ for(item in historico){
     }
     li.innerHTML = `
         <div class="d-flex justify-content-between">
-            <span><i class="fas fa-${historico[item].tipo == 0 ? 'tools' : 'user'}  fa-fw"></i><b class="text-orange">${historico[item].usuario.toUpperCase()}</b></span>
+            <span><i class="fas fa-${historico[item].origem == 0 ? 'tools' : 'user'}  fa-fw"></i><b class="text-orange">${historico[item].usuario.toUpperCase()}</b></span>
             <span class="fs-8 ps-4"><i class="fas fa-clock me-2"></i>${historico[item].data} ${historico[item].hora}</span>
         </div>
         <div class="my-1">${historico[item].mensagem}</div>
@@ -117,26 +150,35 @@ for(item in historico){
     list.appendChild(li)
 }
 
+// Aplica jsSelectm para followers
 const followers = new jsSelectm(document.getElementById('id_followers'), {
     title: 'Acompanhamento:',
     checkAll: false,
+    disabled: readonly
 })
 
-{% if 'issue_id' in request.get_full_path %}
+// Trata componetes para finalizar issue (switch e stars)
 document.getElementById('id_concluir_issue').onchange = (ev) => {
     if(ev.target.checked){
         document.getElementById('id_status').value = 'F';
         document.getElementById('finalizar_issue').classList.remove('d-none');
     }
 }
-function setStars(int){
+function setStars(int){ // Funcao que trata eventos click nas stars
+    document.querySelectorAll('[data-star]').forEach((el) => {
+        if(el.dataset.star > int){el.classList.replace('text-success', 'text-body-secondary')}
+        else{el.classList.replace('text-body-secondary', 'text-success')}
+    })
     document.getElementById('id_avaliacao').value = int;
-    for(i=1;i < int + 1;i++){document.getElementById(`star_${i}`).classList.replace('text-body-secondary', 'text-success');}
-    for(i=int+1;i < 6;i++){document.getElementById(`star_${i}`).classList.replace('text-success', 'text-body-secondary');}
 }
+setStars({{issue.avaliacao|default:0}}) // Chama funcao para printar ao carregar a pagina
 
-{% endif %}
-
+{% if issue.status != 'F' %}
+// Caso issue nao esteja fechado, adicona listeners para evento click das stars
+document.querySelectorAll('[data-star]').forEach((el) => {
+    el.onclick = () => {setStars(parseInt(el.dataset.star))}
+})
+{% endif%}
 
 {% endblock %}
 </script>
