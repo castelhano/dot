@@ -25,10 +25,10 @@
             </li>
         </ul>
     </div>
-    <form id="core_form" action="url" method="POST" autocomplete="off">
+    <form id="core_form" action="{% url 'core_issue_update' issue.id|safe %}" method="POST" autocomplete="off" enctype="multipart/form-data">
     {% csrf_token %}
         <div class="card-body tab-content">
-            <h5 class="card-title mb-3">Suporte: <b class="text-orange">Issue {{issue.id|zfill:4}}</b></h5>
+            <h5 class="card-title mb-3">Suporte: <b class="text-orange">Issue {{issue.id|zfill:5}}</b></h5>
             {% include 'core/_form_issue.html' %}
         </div>
     </form>
@@ -47,7 +47,7 @@
                 <div class="row mt-2">
                     <div class="col text-end">
                         <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
-                        <a class="btn btn-danger px-3" href="url">Excluir</a>
+                        <a class="btn btn-danger px-3" href="{% url 'core_issue_delete' issue.id|safe %}">Excluir</a>
                     </div>
                 </div>
             </div>
@@ -98,19 +98,43 @@ var TAB_ON_ENTER = true;
 let textarea_placeholder = `Nova mensagem...`
 document.getElementById('id_nova_interacao').setAttribute('placeholder', textarea_placeholder);
 
+const list = document.getElementById('historico_list');
+let historico = {{issue.historico|safe}};
+
+for(item in historico){
+    let li = document.createElement('li');li.classList = 'event';
+    let anexos = '';
+    for(i in historico[item].files){
+        anexos += historico[item].files[i];
+    }
+    li.innerHTML = `
+        <div class="d-flex justify-content-between">
+            <span><i class="fas fa-${historico[item].tipo == 0 ? 'tools' : 'user'}  fa-fw"></i><b class="text-orange">${historico[item].usuario.toUpperCase()}</b></span>
+            <span class="fs-8 ps-4"><i class="fas fa-clock me-2"></i>${historico[item].data} ${historico[item].hora}</span>
+        </div>
+        <div class="my-1">${historico[item].mensagem}</div>
+        <span class="fs-7">${anexos}</span>`;
+    list.appendChild(li)
+}
+
 const followers = new jsSelectm(document.getElementById('id_followers'), {
-    title: 'Seguindo:',
+    title: 'Acompanhamento:',
     checkAll: false,
-    optionsSelected: ['{{user.id|safe}}']
 })
 
 {% if 'issue_id' in request.get_full_path %}
 document.getElementById('id_concluir_issue').onchange = (ev) => {
     if(ev.target.checked){
         document.getElementById('id_status').value = 'F';
-        dotNotify('warning', '<b>Atenção</b> ao gravar o issue será fechado')
+        document.getElementById('finalizar_issue').classList.remove('d-none');
     }
 }
+function setStars(int){
+    document.getElementById('id_avaliacao').value = int;
+    for(i=1;i < int + 1;i++){document.getElementById(`star_${i}`).classList.replace('text-body-secondary', 'text-success');}
+    for(i=int+1;i < 6;i++){document.getElementById(`star_${i}`).classList.replace('text-success', 'text-body-secondary');}
+}
+
 {% endif %}
 
 

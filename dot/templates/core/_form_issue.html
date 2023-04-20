@@ -16,18 +16,15 @@
                     <textarea name="nova_interacao" id="id_nova_interacao" class="form-control" style="min-height: 150px;" placeholder=""></textarea>
                 </div>
                 <div class="mb-1 col pe-2">
-                    <input type="file" class="form-control" name="files" id="id_files">
+                    <input type="file" class="form-control" name="files" id="id_files" multiple accept=".png,.jpg">
                 </div>
                 <div class="mb-1 col-auto">
                     <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"><b>G</b>ravar</button>
                 </div>
             </div>
-            <ul class="timeline timeline-sm mt-2">
-                <li class="event position-relative" data-date="">
-                    <div>{% lorem %}</div>
-                    <div class="text-end fs-7"><i class="fas fa-user me-2"></i><b class="text-orange me-2">Rafael</b> 22/04 14h22</div>
-                </li>
-            </ul>
+            {% if 'issue_id' in request.get_full_path %}
+            <ul class="timeline timeline-sm mt-2" id="historico_list"></ul>
+            {% endif %}
         </div>
         <div class="col-lg">
             <div class="row g-1">
@@ -45,14 +42,16 @@
             </div>
             {% if 'issue_id' in request.get_full_path %}
             <div class="form-check form-switch mt-3">
-                <input class="form-check-input" type="checkbox" role="switch" name="concluir_issue" tabindex="-1" id="id_concluir_issue" readonly>
+                <input class="form-check-input" type="checkbox" role="switch" name="concluir_issue" tabindex="-1" id="id_concluir_issue"{% if issue.status == 'F' %}checked{% endif %}>
                 <label class="form-check-label" for="id_concluir_issue">Finalizar issue</label>
             </div>
+            <div id="finalizar_issue" class="py-3 d-none">
+                <div class="col"><i id="star_1" class="fas fa-star text-body-secondary" onclick="setStars(1)"></i> <i id="star_2" class="fas fa-star text-body-secondary" onclick="setStars(2)"></i> <i id="star_3" class="fas fa-star text-body-secondary" onclick="setStars(3)"></i> <i id="star_4" class="fas fa-star text-body-secondary" onclick="setStars(4)"></i> <i id="star_5" class="fas fa-star text-body-secondary" onclick="setStars(5)"></i></div>
+                Por favor avalie como foi nosso atendimento.<br ><i class="fas fa-info-circle text-orange me-2"></i>Ao gravar este issue será finalizado.
+            </div>
             {% endif %}
-            <h6 class="text-secondary mt-3">Anexos</h6>
-            {% for file in issue.files %}
-            <a href="{{file.url}}" target="_blank"><i class="fas fa-camera fa-fw"></i>erro.png</a>
-            {% endfor %}
         </div>
     </div>
+    <input type="hidden" name="historico" value="{{issue.historico}}">
+    <input type="hidden" name="avaliacao" id="id_avaliacao" value="{{issue.avaliacao}}">
 </div>

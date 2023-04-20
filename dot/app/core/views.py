@@ -302,11 +302,27 @@ def issue_add(request):
         if form.is_valid():
             try:
                 registro = form.save()
-                registro.usuario = request.user
-                registro.save()
+                # Insere anexos
+                has_file_errors = False
+                files = []                
                 for file in request.FILES.getlist('files'):
                     if validate_file_extension(file):
-                        Issuefile.objects.create(issue=registro,file=file)
+                        img = Issuefile.objects.create(issue=registro,file=file)
+                        files.append(f'<a class="me-3" href="{img.file.url}" target="_blank"><i class="fas fa-camera me-1"></i>{img.file_name()}</a>')
+                    else:
+                        has_file_errors = True
+                # Ajusta demais informacoes do registro
+                registro.usuario = request.user
+                entry = [{
+                        "data": date.today().strftime("%d/%m"),
+                        "hora": datetime.now().strftime("%H:%M"),
+                        "origem": 0,
+                        "usuario": request.user.username,
+                        "files": files,
+                        "mensagem": request.POST['nova_interacao']
+                    }]
+                registro.historico = json.dumps(entry)
+                registro.save()
                 l = Log()
                 l.modelo = "core.issue"
                 l.objeto_id = registro.id
@@ -314,7 +330,10 @@ def issue_add(request):
                 l.usuario = request.user
                 l.mensagem = "CREATED"
                 l.save()
-                messages.success(request,'Issue <b>cadastrado</b>')
+                if not has_file_errors:
+                    messages.success(request,'Issue <b>cadastrado</b>')
+                else:
+                    messages.warning(request,'Issue <b>cadastrado</b> porém alguns arquivos tem extensão não aceita e foram descartados.')
                 return redirect('core_issue_id', registro.id)
             except:
                 messages.error(request,'Erro ao inserir issue [INVALID FORM]')
@@ -507,9 +526,29 @@ def issue_update(request, id):
     form = IssueForm(request.POST, instance=issue)
     if form.is_valid():
         registro = form.save()
+        # Insere anexos
+        has_file_errors = False
+        files = []
         for file in request.FILES.getlist('files'):
             if validate_file_extension(file):
-                Issuefile.objects.create(issue=registro,file=file)
+                img = Issuefile.objects.create(issue=registro,file=file)
+                files.append(f'<a class="me-3" href="{img.file.url}" target="_blank"><i class="fas fa-camera me-1"></i>{img.file_name()}</a>')
+            else:
+                has_file_errors = True
+        # Ajusta demais informacoes do registro
+        if request.POST['nova_interacao'] != '' or len(files) > 0:
+            entry = {
+                    "data": date.today().strftime("%d/%m"),
+                    "hora": datetime.now().strftime("%H:%M"),
+                    "origem": 0,
+                    "usuario": request.user.username,
+                    "files": files,
+                    "mensagem": request.POST['nova_interacao']
+                }
+            history = json.loads(registro.historico)
+            history.insert(0, entry)
+            registro.historico = json.dumps(history)
+            registro.save()
         l = Log()
         l.modelo = "core.issue"
         l.objeto_id = registro.id
@@ -517,7 +556,10 @@ def issue_update(request, id):
         l.usuario = request.user
         l.mensagem = "UPDATE"
         l.save()
-        messages.success(request,f'Issue <b>{registro.id}</b> alterado')
+        if not has_file_errors:
+            messages.success(request,f'Issue <b>{registro.id}</b> atualizado')
+        else:
+            messages.warning(request,'Issue <b>atualizado</b> porém alguns arquivos tem extensão não aceita e foram descartados.')
         return redirect('core_issue_id',id)
     else:
         return render(request,'core/issue_id.html',{'form':form,'issue':issue})
@@ -643,7 +685,7 @@ def issue_delete(request, id):
         l.mensagem = "DELETE"
         registro.delete()
         l.save()
-        messages.warning(request,f'Issue <b>{registro.id}</b> apagado')
+        messages.warning(request,f'Issue <b>apagado</b>.')
         return redirect('core_issues')
     except:
         messages.error(request,'ERRO ao apagar issue')
