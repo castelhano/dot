@@ -15,8 +15,9 @@
 <li id="gestao_list_container" class="nav-item dropdown">
   <a class="nav-link dropdown-toggle" id="menu_gestao" href="#" data-bs-toggle="dropdown" title="ALT + T">G<b>e</b>stão</a>
   <ul id="gestao_list_options" class="dropdown-menu">
-    {% if perms.core.view_agenda %}<li><a class="dropdown-item" id="relatorio_agendas" href="{% url 'core_agendas' %}"><b>A</b>genda</a></li>{% endif %}
-    {% if perms.core.view_alerta %}<li><a class="dropdown-item" id="relatorio_alertas" href="{% url 'core_alertas' %}">Aler<b>t</b>as</a></li>{% endif %}
+    {% if perms.core.view_agenda %}<li><a class="dropdown-item" id="gestao_agendas" href="{% url 'core_agendas' %}"><b>A</b>genda</a></li>{% endif %}
+    {% if perms.core.view_alerta %}<li><a class="dropdown-item" id="gestao_alertas" href="{% url 'core_alertas' %}">Aler<b>t</b>as</a></li>{% endif %}
+    {% if perms.core.view_settings %}<li><a class="dropdown-item dropdown-item-purple" id="gestao_settingss" href="{% url 'core_settings' %}">Confi<b>g</b>urações</a></li>{% endif %}
   </ul>
 </li>
 
@@ -27,13 +28,16 @@
     SHORTCUT_MAP['eTFF'] = () => {document.getElementById('menu_gestao').click()}
     SHORTCUT_MAP['eFFF'] = () => {if(exibindoCadastro()){try{document.getElementById('cadastro_empresa').click();}catch (e){}}}
     SHORTCUT_MAP['uFFF'] = () => {if(exibindoCadastro()){try{document.getElementById('cadastro_usuario').click();}catch (e){}}}
-    SHORTCUT_MAP['gFFF'] = () => {if(exibindoCadastro()){try{document.getElementById('cadastro_grupo').click();}catch (e){}}}
+    SHORTCUT_MAP['gFFF'] = () => {
+      if(exibindoCadastro()){try{document.getElementById('cadastro_grupo').click();}catch (e){}}
+      else if(exibindoGestao()){try{document.getElementById('gestao_settingss').click();}catch (e){}}
+    }
     function exibindoCadastro(){return document.getElementById('menu_cadastro').classList.contains('show') ? true : false;}
   }
   if(document.getElementById('gestao_list_options').childElementCount == 0){document.getElementById('gestao_list_container').classList.add('d-none');}
   else{
-    SHORTCUT_MAP['aFFF'] = () => {if(exibindoGestao()){try{document.getElementById('relatorio_agendas').click();}catch (e){}}}
-    SHORTCUT_MAP['tFFF'] = () => {if(exibindoGestao()){try{document.getElementById('relatorio_alertas').click();}catch (e){}}}
+    SHORTCUT_MAP['aFFF'] = () => {if(exibindoGestao()){try{document.getElementById('gestao_agendas').click();}catch (e){}}}
+    SHORTCUT_MAP['tFFF'] = () => {if(exibindoGestao()){try{document.getElementById('gestao_alertas').click();}catch (e){}}}
     function exibindoGestao(){return document.getElementById('menu_gestao').classList.contains('show') ? true : false;}
   }
   

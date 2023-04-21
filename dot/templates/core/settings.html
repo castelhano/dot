@@ -1,0 +1,106 @@
+{% extends "layout/dot.html" %}
+{% block title %}Settings{% endblock %}
+{% block model %}CORE{% endblock %}
+{% block model_menu %}{% include "_component/menu/core.html" %}{% endblock%}
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'core_settings' %}"></a>
+<div class="card mt-2">
+    <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+            <li class="nav-item dropdown ms-auto">
+                <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#history_modal">Historico</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <form id="app_form" action="{% url 'core_settings_update' settings.id|safe %}" method="POST" autocomplete="off">
+        {% csrf_token %}
+        <div class="card-body tab-content">
+            <h5 class="card-title mb-4">Settings: <b class="text-orange">CORE</b></h5>
+            <div class="tab-pane fade show active" id="base" role="tabpanel">
+                <h6>Issues:</h6>
+                <div class="form-check form-switch">
+                    {{ form.gera_notificacao_issue_atualizado }}
+                    <label class="form-check-label" for="id_gera_notificacao_issue_atualizado">Gerar notificação ao atualizar issue</label>
+                </div>
+                <hr>
+                <h6 class="mt-4">Autentição e Senhas</h6>
+                <div class="row mb-2">
+                    <div class="col-lg-2">
+                        <div class="input-group input-group-sm">
+                            {{ form.quantidade_caracteres_senha }}
+                            <span class="input-group-text">Quantidade mínima de caracteres</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-lg-2">
+                        <div class="input-group input-group-sm">
+                            {{ form.historico_senhas_nao_repetir }}
+                            <span class="input-group-text">Manter histórico de (xx) senhas **</span>
+                        </div>
+                        <small>Sistema irá impedir usar senhas do histórico</small>
+                        <small><i class="fas fa-info-circle me-2 text-warning"></i>Digite 0 (zero) para desativar verificação</small>
+                    </div>
+                </div>
+                <div class="form-check form-switch mt-3">
+                    {{ form.senha_exige_alpha }}
+                    <label class="form-check-label" for="id_senha_exige_alpha">Exigir alpha na senha</label>
+                </div>
+                <div class="form-check form-switch">
+                    {{ form.senha_exige_numero }}
+                    <label class="form-check-label" for="id_senha_exige_numero">Exigir número na senha</label>
+                </div>
+                <div class="form-check form-switch">
+                    {{ form.senha_exige_caractere }}
+                    <label class="form-check-label" for="id_senha_exige_caractere">Exigir caracteres especiais na senha</label>
+                </div>
+                <div class="form-check form-switch">
+                    {{ form.bloqueia_conta_por_tentativas_erradas }}
+                    <label class="form-check-label" for="id_bloqueia_conta_por_tentativas_erradas">Bloquear conta por tentativas erradas</label>
+                </div>
+                
+            </div>
+            <!-- CONTROLES DO FORM -->
+            <div class="row mt-3">
+                <div class="col">
+                    <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"{% if not perms.core.change_settings %} disabled{% endif %}><b>G</b>ravar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal fade" id="history_modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="row">
+                <div class="col"><h5 class="ms-3 mt-3">Histórico <sup>(last 15)</sup></h5></div>
+                <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+            </div>
+            <div class="modal-body">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Operação</th>
+                            <th>Usuário</th>
+                        </tr>
+                    </thead>
+                    <tbody class="fs-7">
+                        {% for i in settings.ultimas_alteracoes %}
+                        <tr>
+                            <td>{{i.data|date:'d/m/Y H:i:s'}}</td>
+                            <td>{{i.mensagem}}</td>
+                            <td>{{i.usuario.username|upper|default:'None'}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock%}

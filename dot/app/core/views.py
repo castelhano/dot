@@ -6,8 +6,8 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import auth, messages
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.contenttypes.models import ContentType
-from .models import Empresa, Log, Alerta, Agenda, Feriado, Issue, Issuefile
-from .forms import EmpresaForm, UserForm, GroupForm, AgendaForm, FeriadoForm, IssueForm
+from .models import Empresa, Log, Alerta, Agenda, Feriado, Issue, Issuefile, Settings
+from .forms import EmpresaForm, UserForm, GroupForm, AgendaForm, FeriadoForm, IssueForm, SettingsForm
 from .extras import clean_request
 from .console import Run
 from datetime import datetime, date
@@ -161,6 +161,27 @@ def console(request):
             return render(request, response['path'], response['data'])
     return render(request,'core/console.html')
 
+@login_required
+@permission_required('core.view_settings')
+def settings(request):
+    try: # Busca configuracao do app
+        settings = Settings.objects.all().get()
+    except: # Caso ainda nao configurado, inicia com configuracao basica
+        if Settings.objects.all().count() == 0:
+            settings = Settings()
+            settings.save()
+            l = Log()
+            l.modelo = "core.settings"
+            l.objeto_id = settings.id
+            l.objeto_str = 'n/a'
+            l.usuario = request.user
+            l.mensagem = "AUTO CREATED"
+            l.save()
+        else:
+            settings = None
+            messages.error(request,'<b>Erro::</b> Identificado duplicatas nas configurações do sistema, entre em contato com o administrador.')
+    form = SettingsForm(instance=settings)
+    return render(request,'core/settings.html',{'form':form,'settings':settings})
 
 # METODOS ADD
 @login_required
@@ -569,6 +590,20 @@ def issue_update(request, id):
             history.insert(0, entry)
             registro.historico = json.dumps(history)
         registro.save()
+        try: # Carrega configuracoes do app
+            settings = Settings.objects.all().get()
+        except: # Caso nao gerado configuracoes iniciais carrega definicoes basicas
+            settings = Settings()
+        
+        if settings.gera_notificacao_issue_atualizado:
+            for user in registro.followers.exclude(id=request.user.id):
+                args = {
+                    "titulo": f"<i class='fas fa-bug me-2'></i>Issue {registro.id} atualizado",
+                    "mensagem": f'<b class="text-secondary">{registro.get_tipo_display()}</b> - <b>{registro.usuario.username.title()}</b><br>{registro.assunto}',
+                    "link": f'/core_issue_id/{registro.id}',
+                    "usuario": user
+                }
+                Alerta.objects.create(**args)
         l = Log()
         l.modelo = "core.issue"
         l.objeto_id = registro.id
@@ -583,6 +618,25 @@ def issue_update(request, id):
         return redirect('core_issue_id',id)
     else:
         return render(request,'core/issue_id.html',{'form':form,'issue':issue})
+
+@login_required
+@permission_required('core.change_settings')
+def settings_update(request, id):
+    settings = Settings.objects.get(pk=id)
+    form = SettingsForm(request.POST, instance=settings)
+    if form.is_valid():
+        registro = form.save()
+        l = Log()
+        l.modelo = "core.settings"
+        l.objeto_id = registro.id
+        l.objeto_str = 'n/a'
+        l.usuario = request.user
+        l.mensagem = "UPDATE"
+        l.save()
+        messages.success(request,'Settings <b>CORE</b> alterado')
+        return redirect('core_settings')
+    else:
+        return render(request,'core/settings.html',{'form':form,'settings':settings})
 
 # METODOS DELETE
 @login_required
@@ -766,11 +820,18 @@ def handler(request, code):
 
 
 def password_valid(password):
-    if len(password) < 8:
+    try: # Carrega configuracoes do app
+        settings = Settings.objects.all().get()
+    except: # Caso nao gerado configuracoes iniciais carrega definicoes basicas
+        settings = Settings()
+
+    if len(password) < settings.quantidade_caracteres_senha:
         return False
-    if re.search('[0-9]',password) is None:
+    if settings.senha_exige_numero and re.search('[0-9]',password) is None:
         return False
-    if re.search('[a-z]',password) is None and re.search('[A-Z]',password) is None:
+    if settings.senha_exige_alpha and re.search('[a-z]',password, re.IGNORECASE) is None:
+        return False
+    if settings.senha_exige_caractere and re.search(r"[!@#$%^&*()_+\-=\[\]{};':\"\\|,.<>\/?]", password) is None:
         return False
     else:
         return True

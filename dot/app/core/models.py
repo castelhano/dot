@@ -148,9 +148,6 @@ class Issue(models.Model):
         return reversed(logs)
     def tempo_em_espera(self):
         entrada = self.entrada.replace(tzinfo=None)
-        # agora = datetime.now().replace(tzinfo=None)
-        # print('NAIVE: ', entrada)
-        # print('NOW: ', agora)
         return (datetime.utcnow() - entrada).total_seconds() / 60
     class Meta:
         permissions = [
@@ -187,6 +184,22 @@ class Profile(models.Model):
             ("docs", "Acessar documentacao do sistema"),
         ]
         default_permissions = []
+
+class Settings(models.Model):
+    gera_notificacao_issue_atualizado = models.BooleanField(default=True)
+    quantidade_caracteres_senha = models.PositiveIntegerField(default=8)
+    senha_exige_alpha = models.BooleanField(default=True)
+    senha_exige_numero = models.BooleanField(default=True)
+    senha_exige_caractere = models.BooleanField(default=False)
+    historico_senhas_nao_repetir = models.PositiveIntegerField(default=0)
+    bloqueia_conta_por_tentativas_erradas = models.BooleanField(default=False)
+    quantidade_tentantivas_erradas = models.PositiveIntegerField(default=3)
+    valida_senha_comum = models.BooleanField(default=False)
+    class Meta:
+        default_permissions = ('view','change',)
+    def ultimas_alteracoes(self):
+        logs = Log.objects.filter(modelo='sac.settings',objeto_id=self.id).order_by('-data')[:15]
+        return reversed(logs)
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

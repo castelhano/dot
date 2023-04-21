@@ -153,7 +153,7 @@
     document.getElementById('next_refresh_counter').innerHTML = interval / 1000;
     setInterval(()=>{count += 1000;document.getElementById('next_refresh_counter').innerHTML = (interval - count) / 1000}, 1000);
     setInterval(()=>{document.getElementById('clear').click()}, interval);
-    SHORTCUT_MAP['0FTF'] = () => {document.querySelector('a[data-type=issue_em_espera]').click()}
+    SHORTCUT_MAP['0FTF'] = () => {try {document.querySelector('a[data-type=issue_em_espera]').click()}catch (e){}}
     {% endif %}
 {% endblock %}
 </script>
