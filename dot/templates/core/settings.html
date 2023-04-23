@@ -59,8 +59,20 @@
                     <label class="form-check-label" for="id_senha_exige_caractere">Exigir caracteres especiais na senha</label>
                 </div>
                 <div class="form-check form-switch">
+                    {{ form.valida_senha_comum }}
+                    <label class="form-check-label" for="id_valida_senha_comum">Validar se senha é comum <i class="fas fa-info-circle help" title="Analisa num BD com mais de 20k senhas consideradas comuns"></i></label>
+                </div>
+                <div class="form-check form-switch">
                     {{ form.bloqueia_conta_por_tentativas_erradas }}
                     <label class="form-check-label" for="id_bloqueia_conta_por_tentativas_erradas">Bloquear conta por tentativas erradas</label>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-lg-2">
+                        <div class="input-group input-group-sm">
+                            {{ form.quantidade_tentantivas_erradas }}
+                            <span class="input-group-text">quantidade de tentativas erradas</span>
+                        </div>
+                    </div>
                 </div>
                 
             </div>

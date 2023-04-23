@@ -27,9 +27,10 @@
     </div>
     <div class="card-body tab-content">
         <h5 class="card-title mt-2 mb-0">Suporte: <b class="text-orange">Issues</b></h5>
-        <small>Atualiza em: <span id="next_refresh_counter" class="text-danger"></span></small>
+        {% if perms.core_eh_suporte %}
+        <small>Atualiza em: <span id="next_refresh_counter" class="text-danger"></span> <span id="switchAutoReload" class="link-primary pointer user-select-none" onclick="switchAutoReload()">desativar</span></small>
         <div class="fs-7 mb-3"><span class="text-secondary fw-bold me-1">CTRL 0</span> abre próximo issue</div>
-
+        {% endif %}
         <div class="tab-pane fade show active" id="base" role="tabpanel">
             {% if issues or not perms.core.eh_suporte %}
             <table id="main_table" class="table border table-striped table-hover">
@@ -151,9 +152,28 @@
     let interval = 10000;
     let count = 0;
     document.getElementById('next_refresh_counter').innerHTML = interval / 1000;
-    setInterval(()=>{count += 1000;document.getElementById('next_refresh_counter').innerHTML = (interval - count) / 1000}, 1000);
-    setInterval(()=>{document.getElementById('clear').click()}, interval);
+    let counterInteval = setInterval(()=>{count += 1000;document.getElementById('next_refresh_counter').innerHTML = (interval - count) / 1000}, 1000);
+    let refreshInterval = setInterval(()=>{document.getElementById('clear').click()}, interval);
     SHORTCUT_MAP['0FTF'] = () => {try {document.querySelector('a[data-type=issue_em_espera]').click()}catch (e){}}
+
+    let autoreload = true;
+    function switchAutoReload(){
+        autoreload = autoreload == false;
+        document.getElementById('switchAutoReload').innerHTML = autoreload ? 'desativar' : 'ativar';
+        if(autoreload){
+            count = 0;
+            document.getElementById('next_refresh_counter').innerHTML = interval / 1000;
+            counterInteval = setInterval(()=>{count += 1000;document.getElementById('next_refresh_counter').innerHTML = (interval - count) / 1000}, 1000);
+            refreshInterval = setInterval(()=>{document.getElementById('clear').click()}, interval);
+        }
+        else{
+            document.getElementById('next_refresh_counter').innerHTML = '';
+            clearInterval(counterInteval)
+            clearInterval(refreshInterval)
+        }
+    }
+
     {% endif %}
+
 {% endblock %}
 </script>

@@ -784,6 +784,10 @@ def authenticate(request):
 
 @login_required
 def change_password(request):
+    try: # Carrega configuracoes do app
+        settings = Settings.objects.all().get()
+    except: # Caso nao gerado configuracoes iniciais carrega definicoes padrao
+        settings = Settings()
     if request.method == 'POST':
         password_current = request.POST['password_current']
         password = request.POST['password']
@@ -799,7 +803,7 @@ def change_password(request):
                         messages.success(request, 'Senha alterada')
                         return redirect('login')
                     else:
-                        messages.error(request,'Senha deve ter 8 digitos, conter letras e números')
+                        messages.error(request,'Senha não atende aos requisitos mínimos')
                 else:
                     messages.error(request, 'Nova senha não pode ser igual a senha atual')
             else:
@@ -808,7 +812,7 @@ def change_password(request):
             messages.error(request, 'Senha atual não confere')
         return render(request,'core/change_password.html')
     else:
-        return render(request,'core/change_password.html')
+        return render(request,'core/change_password.html', {'settings':settings})
 
 def logout(request):
     auth.logout(request)
