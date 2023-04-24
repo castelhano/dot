@@ -1,8 +1,11 @@
 {% extends "layout/dot.html" %}
 {% load static %}
+{% load tag_extra %}
 {% block title %}Issues{% endblock %}
 {% block model %}Suporte{% endblock %}
 {% block model_menu %}{% include "_component/menu/core.html" %}{% endblock%}
+
+{% block style %}.tooltip-inner{text-align: left}{% endblock%}
 
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'core_issues' %}"></a>
@@ -27,7 +30,7 @@
     </div>
     <div class="card-body tab-content">
         <h5 class="card-title mt-2 mb-0">Suporte: <b class="text-orange">Issues</b></h5>
-        {% if perms.core_eh_suporte %}
+        {% if perms.core_eh_suporte and not issues %}
         <small>Atualiza em: <span id="next_refresh_counter" class="text-danger"></span> <span id="switchAutoReload" class="link-primary pointer user-select-none" onclick="switchAutoReload()">desativar</span></small>
         <div class="fs-7 mb-3"><span class="text-secondary fw-bold me-1">CTRL 0</span> abre próximo issue</div>
         {% endif %}
@@ -56,7 +59,7 @@
                         <td>{{issue.id|safe}}</td>
                         <td>{{issue.assunto}}</td>
                         <td>{{issue.usuario.username}}</td>
-                        <td>{{issue.nome.analista.username}}</td>
+                        <td>{{issue.analista.username}}</td>
                         <td>{{issue.entrada|date:'d/m/Y'}}</td>
                         <td>{{issue.ultima_interacao|date:'d/m/Y H:i'}}</td>
                         <td>{{issue.get_tipo_display}}</td>
@@ -70,12 +73,12 @@
                 </tbody>
             </table>
             {% else %}
-            <div class="row">
-                <div class="col-lg-5">
+            <div class="row g-2">
+                <div class="col-lg-4">
                     <div class="card h-100">
                         <div class="card-body">
                             <div class="col"><h6 class="text-secondary">Em espera</h6></div>
-                            <ul class="m-0 list-unstyled">
+                            <ul id="em_espera_list" class="m-0 list-unstyled">
                                 {% for issue in em_espera %}
                                 <li>
                                     <div class="d-flex justify-content-between">
@@ -93,11 +96,37 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-5"></div>
+                <div class="col-lg">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="col"><h6 class="text-secondary d-inline-block mb-1 me-2">Em atendimento</h6><i class="fas fa-info-circle help" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" id="status_tooltip"></i></div>
+                            <ul class="m-0 list-unstyled">
+                                {% for issue in em_atendimento %}
+                                <li>
+                                    <div class="d-flex justify-content-between">
+                                        <span class="text-truncate pe-2">
+                                            <span class="badge bg-secondary me-1" style="width: 30px;">{{issue.status}}</span>
+                                            <a data-type="issue_em_espera" href="{% url 'core_issue_id' issue.id|safe %}">{{issue.assunto}}</a>
+                                        </span>
+                                        <span>{{issue.usuario.username|title}}</span>
+                                    </div>
+                                </li>
+                                {% empty %}
+                                <li>Nenhum issue aguardando</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
                 <div class="col-lg-2">
                     <div class="card h-100">
                         <div class="card-body">
                             <h6 class="text-secondary">Resumo</h6>
+                            <ul class="list-unstyled">
+                                <li>{{em_espera.count|zfill:3}} Em espera</li>
+                                <li>{{em_atendimento.count|zfill:3}} Em atendimento</li>
+                                <li><a href="{% url 'core_issues' %}?status=D">{{em_desenvolvimento.count|zfill:3}} Em desenvlvimento</a></li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -140,8 +169,11 @@
 {% block add_script %}
     {% if issues or not perms.core.eh_suporte %}
     const table = new jsTable(document.getElementById('main_table'),{
-        enablePaginate: true
+        enablePaginate: true,
+        canFilter: true,
+        filterCols: ['Assunto', 'Usuario', 'Analista','Tipo','Status']
     });
+    SHORTCUT_MAP['fFTF'] = () => {table.filterInput.select()};
     SHORTCUT_MAP['arrowrightFTF'] = () => {table.nextPage()}
     SHORTCUT_MAP['arrowleftFTF'] = () => {table.previousPage()}
     SHORTCUT_MAP['arrowdownFTF'] = () => {table.nextRow()}
@@ -149,12 +181,12 @@
     SHORTCUT_MAP['enterFTF'] = () => {table.enterRow()}
     {% else %}
     // Atualiza página a cada x seg
-    let interval = 10000;
+    let interval = 30000;
     let count = 0;
     document.getElementById('next_refresh_counter').innerHTML = interval / 1000;
     let counterInteval = setInterval(()=>{count += 1000;document.getElementById('next_refresh_counter').innerHTML = (interval - count) / 1000}, 1000);
     let refreshInterval = setInterval(()=>{document.getElementById('clear').click()}, interval);
-    SHORTCUT_MAP['0FTF'] = () => {try {document.querySelector('a[data-type=issue_em_espera]').click()}catch (e){}}
+    SHORTCUT_MAP['0FTF'] = () => {try {document.getElementById('em_espera_list').querySelector('a[data-type=issue_em_espera]').click()}catch (e){}}
 
     let autoreload = true;
     function switchAutoReload(){
@@ -172,6 +204,10 @@
             clearInterval(refreshInterval)
         }
     }
+
+    let tooltip_status = `<b>A</b> - Em atendimento<br><b>S</b> - Aguardando solicitante<br><b>V</b> - Pendente Validação`;
+    document.getElementById('status_tooltip').title = tooltip_status;
+    tooltipActivate();
 
     {% endif %}
 

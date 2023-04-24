@@ -72,7 +72,7 @@ class IssueForm(forms.ModelForm):
     assunto = forms.CharField(error_messages={'required': 'Informe o assunto'},max_length=85,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
     status = forms.ChoiceField(choices=Issue.STATUS_CHOICES, widget=forms.Select(attrs={'class':'form-select readonly'}))
     classificacao = forms.ChoiceField(required=False, choices=Issue.CLASSIFICACAO_CHOICES, widget=forms.Select(attrs={'class':'form-select readonly'}))
-    followers = forms.ModelMultipleChoiceField(queryset=User.objects.filter(is_active=True), required=False)
+    followers = forms.ModelMultipleChoiceField(queryset=User.objects.filter(is_active=True, is_staff=True), required=False)
 
 
 class SettingsForm(forms.ModelForm):

@@ -86,7 +86,7 @@ function dotAppDataUpdate(options){let token = getCookie('csrftoken');let xhttp 
 * @since    10/04/2022
 * @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }
 * @desc     Ao carregar a pagina, chame a funcao tooltipActivate()
-* @example  tooltipActivate(); <span data-bs-toggle="tooltip" data-bs-placement="top" title="Meu foo">FOO</span>
+* @example  tooltipActivate(); <span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="Meu foo">FOO</span>
 */
 function tooltipActivate(){let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {return new bootstrap.Tooltip(tooltipTriggerEl)})}
 

@@ -115,6 +115,9 @@ def issues(request):
         if not issues:
             messages.warning(request,'Nenhum issue localizado com o filtro informado')
         args = {"issues":issues}
+    elif request.GET.get('status', None):
+            issues = Issue.objects.filter(status = request.GET['status']).order_by('entrada')
+            args = {"issues":issues}
     else:
         args = {
             "em_espera": Issue.objects.filter(status='E').order_by('entrada') if request.user.has_perm('core.eh_suporte') else Issue.objects.filter(status='E',followers=request.user).order_by('entrada'),
@@ -595,7 +598,7 @@ def issue_update(request, id):
         except: # Caso nao gerado configuracoes iniciais carrega definicoes basicas
             settings = Settings()
         
-        if settings.gera_notificacao_issue_atualizado:
+        if settings.gera_notificacao_issue_atualizado and request.POST['nova_interacao'] != '':
             for user in registro.followers.exclude(id=request.user.id):
                 args = {
                     "titulo": f"<i class='fas fa-bug me-2'></i>Issue {registro.id} atualizado",

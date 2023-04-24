@@ -41,6 +41,8 @@ Informações como :
 document.getElementById('id_nova_interacao').setAttribute('placeholder', textarea_placeholder);
 document.getElementById('id_nova_interacao').setAttribute('required','');
 
+SHORTCUT_MAP['.TFF'] = () => {window.location.href = '{% url 'core_issues' %}'}
+
 const followers = new jsSelectm(document.getElementById('id_followers'), {
     title: 'Acompanhamento:',
     checkAll: false,
