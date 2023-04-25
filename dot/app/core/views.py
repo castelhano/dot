@@ -580,6 +580,8 @@ def issue_update(request, id):
         registro.ultima_interacao = datetime.now()
         if registro.analista == None and request.user.has_perm('core.eh_suporte'): # Atribui o primeiro analista a responder o chamado
                     registro.analista = request.user
+        elif not request.user.has_perm('core.eh_suporte') and registro.status == 'S': # Se update for por parte do solicitante, altera status para Em Atendniemnto
+            registro.status = 'A'
         if request.POST['nova_interacao'] != '' or len(files) > 0:
             entry = {
                     "data": date.today().strftime("%d/%m"),

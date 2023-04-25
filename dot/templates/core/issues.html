@@ -31,7 +31,7 @@
     <div class="card-body tab-content">
         <h5 class="card-title mt-2 mb-0">Suporte: <b class="text-orange">Issues</b></h5>
         {% if perms.core_eh_suporte and not issues %}
-        <small>Atualiza em: <span id="next_refresh_counter" class="text-danger"></span> <span id="switchAutoReload" class="link-primary pointer user-select-none" onclick="switchAutoReload()">desativar</span></small>
+        <small>Atualiza em: <span id="next_refresh_counter" class="text-danger"></span> <span id="switchAutoReload" class="link-primary pointer user-select-none" onclick="switchAutoReload()"></span></small>
         <div class="fs-7 mb-3"><span class="text-secondary fw-bold me-1">CTRL 0</span> abre próximo issue</div>
         {% endif %}
         <div class="tab-pane fade show active" id="base" role="tabpanel">
@@ -44,7 +44,7 @@
                         <th>Usuario</th>
                         <th>Analista</th>
                         <th>Entrada</th>
-                        <th>Last Interac</th>
+                        <th>Atualização</th>
                         <th>Tipo</th>
                         <th>Status</th>
                         <th>Classificação</th>
@@ -55,7 +55,7 @@
                 </thead>
                 <tbody>
                     {% for issue in issues %}
-                    <tr class="{% if issue.status == 'F'%}table-done{% endif %}">
+                    <tr class="{% if issue.status == 'F'%}table-done{% elif issue.status == 'D' %}table-emphasis{% endif %}">
                         <td>{{issue.id|safe}}</td>
                         <td>{{issue.assunto}}</td>
                         <td>{{issue.usuario.username}}</td>
@@ -108,7 +108,7 @@
                                             <span class="badge bg-secondary me-1" style="width: 30px;">{{issue.status}}</span>
                                             <a data-type="issue_em_espera" href="{% url 'core_issue_id' issue.id|safe %}">{{issue.assunto}}</a>
                                         </span>
-                                        <span>{{issue.usuario.username|title}}</span>
+                                        <span>{{issue.analista.username|title}}</span>
                                     </div>
                                 </li>
                                 {% empty %}
@@ -167,6 +167,7 @@
 
 <script>
 {% block add_script %}
+
     {% if issues or not perms.core.eh_suporte %}
     const table = new jsTable(document.getElementById('main_table'),{
         enablePaginate: true,
@@ -183,16 +184,21 @@
     // Atualiza página a cada x seg
     let interval = 30000;
     let count = 0;
-    document.getElementById('next_refresh_counter').innerHTML = interval / 1000;
-    let counterInteval = setInterval(()=>{count += 1000;document.getElementById('next_refresh_counter').innerHTML = (interval - count) / 1000}, 1000);
-    let refreshInterval = setInterval(()=>{document.getElementById('clear').click()}, interval);
+    let counterInteval, refreshInterval;
+    if(localStorage.issueAutoRefresh != 'disabled'){
+        document.getElementById('switchAutoReload').innerHTML = 'desativar';
+        document.getElementById('next_refresh_counter').innerHTML = interval / 1000;
+        counterInteval = setInterval(()=>{count += 1000;document.getElementById('next_refresh_counter').innerHTML = (interval - count) / 1000}, 1000);
+        refreshInterval = setInterval(()=>{document.getElementById('clear').click()}, interval);
+    }
+    else{document.getElementById('switchAutoReload').innerHTML = 'ativar';}
     SHORTCUT_MAP['0FTF'] = () => {try {document.getElementById('em_espera_list').querySelector('a[data-type=issue_em_espera]').click()}catch (e){}}
 
-    let autoreload = true;
     function switchAutoReload(){
-        autoreload = autoreload == false;
-        document.getElementById('switchAutoReload').innerHTML = autoreload ? 'desativar' : 'ativar';
-        if(autoreload){
+        if(localStorage.issueAutoRefresh == undefined || localStorage.issueAutoRefresh == 'enable'){localStorage.issueAutoRefresh = 'disabled'}
+        else{localStorage.issueAutoRefresh = 'enable'}
+        document.getElementById('switchAutoReload').innerHTML = localStorage.issueAutoRefresh == 'enable' ? 'desativar' : 'ativar';
+        if(localStorage.issueAutoRefresh == 'enable'){
             count = 0;
             document.getElementById('next_refresh_counter').innerHTML = interval / 1000;
             counterInteval = setInterval(()=>{count += 1000;document.getElementById('next_refresh_counter').innerHTML = (interval - count) / 1000}, 1000);

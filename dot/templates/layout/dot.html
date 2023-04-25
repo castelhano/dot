@@ -67,9 +67,10 @@
     {% block style %}{% endblock %}
   </style>
   <script src="{% static 'js/listener.js' %}"></script>
-  {% if perms.core.debug %}
-  <script>window.addEventListener('error', (ev) => {document.getElementById('page-error-icon').classList.remove('d-none');});</script>
-  {% endif %}
+  <script>window.addEventListener('error', (ev) => {dotAlert('danger', `<b>Ops</b> Essa página contém um erro, pedimos informar ao administrador<br>mensagem: <i>${ev.message}`, false)});</script>
+  {# if perms.core.debug #}
+  <!-- <script>window.addEventListener('error', (ev) => {document.getElementById('page-error-icon').classList.remove('d-none');});</script> -->
+  {# endif #}
   <title>{% block title %}SIT{% endblock %}</title>
 </head>
 <body class="{% block body_classlist %}{% endblock %}" style="{% block body_style %}{% endblock %}">

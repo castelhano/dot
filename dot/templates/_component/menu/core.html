@@ -32,13 +32,13 @@
       if(exibindoCadastro()){try{document.getElementById('cadastro_grupo').click();}catch (e){}}
       else if(exibindoGestao()){try{document.getElementById('gestao_settingss').click();}catch (e){}}
     }
-    function exibindoCadastro(){return document.getElementById('menu_cadastro').classList.contains('show') ? true : false;}
   }
   if(document.getElementById('gestao_list_options').childElementCount == 0){document.getElementById('gestao_list_container').classList.add('d-none');}
   else{
     SHORTCUT_MAP['aFFF'] = () => {if(exibindoGestao()){try{document.getElementById('gestao_agendas').click();}catch (e){}}}
     SHORTCUT_MAP['tFFF'] = () => {if(exibindoGestao()){try{document.getElementById('gestao_alertas').click();}catch (e){}}}
-    function exibindoGestao(){return document.getElementById('menu_gestao').classList.contains('show') ? true : false;}
   }
+  function exibindoCadastro(){return document.getElementById('menu_cadastro').classList.contains('show') ? true : false;}
+  function exibindoGestao(){return document.getElementById('menu_gestao').classList.contains('show') ? true : false;}
   
 </script>

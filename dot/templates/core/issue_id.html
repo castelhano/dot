@@ -104,9 +104,24 @@ let readonly = false;
 // Caso usuario logado nao seja suporte, bloqueia edicao de campos de cadastro
 document.getElementById('id_tipo').classList.add('readonly');
 document.getElementById('id_assunto').setAttribute('readonly','');
-document.getElementById('id_nova_interacao').focus();
 document.getElementById('id_concluir_issue').disabled = {% if issue.status == 'F' %}true{% else %}false{% endif %};
+if(document.getElementById('id_concluir_issue').disabled){
+    document.getElementById('id_nova_interacao').setAttribute('readonly','');
+    document.getElementById('id_files').disabled = true;
+    document.getElementById('submit').disabled = true;
+}
+else{
+    document.getElementById('id_nova_interacao').focus();
+}
 readonly = true;
+document.getElementById('core_form').onsubmit = () => {
+    if(document.getElementById('id_nova_interacao').value.trim().length < 5 && document.getElementById('id_concluir_issue').checked == false){
+        dotAlert('warning', '<b>Info</b> Nos informe melhor o motivo da nova interação antes de prosseguir');
+        document.getElementById('id_nova_interacao').focus();
+        return false;
+    }
+    return true;
+}
 {% else %}
 document.getElementById('id_status').classList.remove('readonly');
 document.getElementById('id_classificacao').classList.remove('readonly');
@@ -149,7 +164,6 @@ for(item in historico){
         <div class="my-1">${historico[item].mensagem.replace(/\n/g, "<br />")}</div>
         <span class="fs-7">${anexos}</span>`;
     list.appendChild(li)
-    console.log(historico[item].mensagem.split('\r'));
 }
 
 // Aplica jsSelectm para followers
