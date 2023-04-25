@@ -40,14 +40,15 @@
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Assunto</th>
+                        <th class="d-none d-md-table-cell">Assunto</th>
                         <th>Usuario</th>
                         <th>Analista</th>
-                        <th>Entrada</th>
-                        <th>Atualização</th>
-                        <th>Tipo</th>
-                        <th>Status</th>
-                        <th>Classificação</th>
+                        <th class="d-none d-md-table-cell">Entrada</th>
+                        <th class="d-none d-lg-table-cell">Atualização</th>
+                        <th class="d-none d-lg-table-cell">Tipo</th>
+                        <th class="d-table-cell d-md-none">Codigo</th>
+                        <th class="d-none d-md-table-cell">Status</th>
+                        <th class="d-none d-lg-table-cell">Classificação</th>
                         {% if perms.core.change_issue %}
                         <th>&nbsp;</th>
                         {% endif %}
@@ -57,14 +58,15 @@
                     {% for issue in issues %}
                     <tr class="{% if issue.status == 'F'%}table-done{% elif issue.status == 'D' %}table-emphasis{% endif %}">
                         <td>{{issue.id|safe}}</td>
-                        <td>{{issue.assunto}}</td>
+                        <td class="d-none d-md-table-cell">{{issue.assunto}}</td>
                         <td>{{issue.usuario.username}}</td>
                         <td>{{issue.analista.username}}</td>
-                        <td>{{issue.entrada|date:'d/m/Y'}}</td>
-                        <td>{{issue.ultima_interacao|date:'d/m/Y H:i'}}</td>
-                        <td>{{issue.get_tipo_display}}</td>
-                        <td>{{issue.get_status_display}}</td>
-                        <td>{{issue.get_classificacao_display}}</td>
+                        <td class="d-none d-md-table-cell">{{issue.entrada|date:'d/m/Y'}}</td>
+                        <td class="d-none d-lg-table-cell">{{issue.ultima_interacao|date:'d/m/Y H:i'}}</td>
+                        <td class="d-none d-lg-table-cell">{{issue.get_tipo_display}}</td>
+                        <td class="d-table-cell d-md-none">{{issue.status}}</td>
+                        <td class="d-none d-md-table-cell">{{issue.get_status_display}}</td>
+                        <td class="d-none d-lg-table-cell">{{issue.get_classificacao_display}}</td>
                         {% if perms.core.change_issue %}
                         <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'core_issue_id' issue.id|safe %}"><i class="fas fa-pen"></i></a></td>
                         {% endif %}

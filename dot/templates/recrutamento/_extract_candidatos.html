@@ -51,7 +51,7 @@
   </thead>
   <tbody>
     {% for candidato in candidatos %}
-    <tr class="{% if candidato.status == 'D' %}table-caution{% elif candidato.status == 'C' %}table-success{% elif candidato.bloqueado %}table-emphasis{% endif %}">
+    <tr class="{% if candidato.status == 'D' %}table-caution{% elif candidato.status == 'C' %}table-done{% elif candidato.bloqueado %}table-emphasis{% endif %}">
       <td class="d-none">{{candidato.id|safe}}</td>
       <td class="d-none d-md-table-cell">{{candidato.get_origem_display}}</td>
       <td class="d-none">{{candidato.create_at|date:'d/m/Y H:i'}}</td>

@@ -44,8 +44,8 @@
         <table class="table table-sm border table-striped table-hover fs-7">
           <caption class="fs-7">
             <div class="row">
-              <div class="col-auto mb-2 mb-lg-0"><span class="px-2 py-1 border rounded" style="background-color: #D1E7DD;">Leg</span> Aprovado</div>
-              <div class="col-auto"><span class="px-2 py-1 border rounded" style="background-color: #f8d7da;">Leg</span> Reprovado</div>
+              <div class="col-auto mb-2 mb-lg-0"><span class="px-2 pb-1 border rounded bg-done">Leg</span> Aprovado</div>
+              <div class="col-auto"><span class="px-2 pb-1 border rounded bg-caution">Leg</span> Reprovado</div>
             </div>
           </caption>
           <thead>
@@ -59,7 +59,7 @@
           </thead>
           <tbody>
             {% for avaliacao in selecao.avaliacoes %}
-            <tr class="{% if avaliacao.status == 'R' %} table-caution{% elif avaliacao.status == 'A' %} table-success{% endif %}">
+            <tr class="{% if avaliacao.status == 'R' %} table-caution{% elif avaliacao.status == 'A' %} table-done{% endif %}">
               <td>{{avaliacao.criterio.nome}}</td>
               <td>{{avaliacao.get_status_display}}</td>
               {% if perms.recrutamento.delete_avaliacao %}

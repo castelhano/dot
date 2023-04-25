@@ -12,7 +12,7 @@
       <li class="nav-item"><a class="nav-link active disabled" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'recrutamento_selecoes' %}"><i class="fas fa-undo"></i></a></li>
       {% if perms.recrutamento.add_avaliacao %}
-      <li class="nav-item"><a class="nav-link border text-success pointer" id="add" data-bs-toggle="modal" data-bs-target="#avaliacao_modal" title="ALT+N"><i class="fas fa-check-square"></i></a></li>
+      <li class="nav-item"><a class="nav-link border text-success pointer" id="add" data-bs-toggle="modal" data-bs-target="#avaliacao_modal" onclick="setTimeout(()=>{document.getElementById('id_criterio').focus()},480)" title="ALT+N"><i class="fas fa-check-square"></i></a></li>
       {% endif %}
       <li class="nav-item ms-1">
         <a class="nav-link" id="menu_selecao_extras" data-bs-toggle="dropdown" href="#"><i class="fas fa-caret-down text-dark"></i></a>
@@ -95,8 +95,8 @@
           </div>
           <div class="row mt-2">
             <div class="col text-end">
-              <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
-              <button type="submit" class="btn btn-success">Adicionar</button>
+              <a class="btn btn-sm btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
+              <button type="submit" class="btn btn-sm btn-success">Gravar</button>
             </div>
           </div>
         </form>

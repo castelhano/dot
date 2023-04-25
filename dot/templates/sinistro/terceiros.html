@@ -52,7 +52,7 @@
         </thead>
         <tbody>
           {% for terceiro in terceiros %}
-          <tr class="{{terceiro.concluido|yesno:'table-success,'}}">
+          <tr class="{{terceiro.concluido|yesno:'table-done,'}}">
             <td class="d-none">{{terceiro.id|safe}}</td>
             <td class="d-none">{{terceiro.sinistro.pasta}}</td>
             <td>{{terceiro.nome}}</td>

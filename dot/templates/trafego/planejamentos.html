@@ -52,7 +52,7 @@
             <td>{{planejamento.codigo}}</td>
             <td class="d-none d-md-table-cell">{{planejamento.linha.codigo}}</td>
             <td>{{planejamento.get_dia_tipo_display}}</td>
-            <td class="{% if planejamento.ativo %}table-success{% else %}table-secondary{% endif %}">{{planejamento.ativo|yesno:'Ativo,Inativo'}}</td>
+            <td class="{% if planejamento.ativo %}table-done{% else %}table-secondary{% endif %}">{{planejamento.ativo|yesno:'Ativo,Inativo'}}</td>
             <td class="d-none d-lg-table-cell">{{planejamento.data_criacao|date:'d/m/Y'}}</td>
             <td class="d-none d-lg-table-cell">{{planejamento.usuario.username|title}}</td>
             {% if perms.trafego.change_planejamento %}

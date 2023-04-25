@@ -174,10 +174,15 @@ const followers = new jsSelectm(document.getElementById('id_followers'), {
 })
 
 // Trata componetes para finalizar issue (switch e stars)
+const initialStatus = '{{issue.status}}';
 document.getElementById('id_concluir_issue').onchange = (ev) => {
     if(ev.target.checked){
         document.getElementById('id_status').value = 'F';
         document.getElementById('finalizar_issue').classList.remove('d-none');
+    }
+    else{
+        document.getElementById('id_status').value = initialStatus;
+        document.getElementById('finalizar_issue').classList.add('d-none');
     }
 }
 function setStars(int){ // Funcao que trata eventos click nas stars

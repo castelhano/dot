@@ -44,7 +44,7 @@
         </thead>
         <tbody>
           {% for ocorrencia in ocorrencias %}
-          <tr class="{% if ocorrencia.tratado %}table-success{% endif %}">
+          <tr class="{% if ocorrencia.tratado %}table-done{% endif %}">
             <td class="d-none d-lg-table-cell">{{ocorrencia.data|date:'d/m/y'}}</td>
             <td class="d-none d-lg-table-cell">{{ocorrencia.hora}}</td>
             <td class="d-none d-md-table-cell">{{ocorrencia.empresa.nome}}</td>
