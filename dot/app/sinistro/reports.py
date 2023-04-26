@@ -53,11 +53,11 @@ def termo_pdf(request):
     terceiro = Terceiro.objects.get(pk=request.GET['terceiro'])
     acidente = terceiro.acidente
     empresa = terceiro.acidente.empresa
-    # try:
-    pdf = md_report(request, termo.body, **{"acidente":acidente,"terceiro":terceiro,"empresa":empresa})
-    # except:
-    #     messages.error(request, '<b>ERRO:</b> Termo mal formatado, revise a extrutura do documento.')
-    #     return redirect('sinistro_terceiro_id', terceiro.id)
+    try:
+        pdf = md_report(request, termo.body, **{"acidente":acidente,"terceiro":terceiro,"empresa":empresa})
+    except:
+        messages.error(request, '<b>ERRO:</b> Termo mal formatado, revise a extrutura do documento.')
+        return redirect('sinistro_terceiro_id', terceiro.id)
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="termo.pdf"'
     response.write(pdf)
@@ -69,6 +69,17 @@ def termo_pdf(request):
 @permission_required('sinistro.change_termo')
 def termo_modelos(request):
     modelos = []
+    md1 = """# Titulo
+Texto de exemplo em **negrito** *italico* ou ==destaque==
+--
+> Paragrafo destacado
+
+Nome terceiro: **$(terceiro.nome)**
+
+[[ Caixa de destaque]]
+
+Saldo é de =+R$ 222,35+= e o débito será de =-R$ -1.254,33-=
+___ Texto a direita"""
     md2 = """##_ TERMO DE COMPOSIÇÃO AMIGÁVEL QUE ENTRE SI FAZEM
 
 De um lado, como primeiro acordante temos, **$(empresa.razao_social)** pessoa jurídica de direito privado, estabelecida na **$(empresa.endereco)** - bairro **$(empresa.bairro)** - CEP: **$(empresa.cep)**, **$(empresa.cidade) $(empresa.uf)**, incrita no CNPJ/MF **$(empresa.cnpj)**,
@@ -85,7 +96,8 @@ Por estarem as partes de comum acordo, assinam.
 ![105,45,TOP-LEFT]()
 [footer][/footer]
 """
-    modelos.append({"name":"composicao","body":md2})
+    modelos.append({"name":"Exemplo","body":md1})
+    modelos.append({"name":"Composicao","body":md2})
     obj = json.dumps(modelos)
     return HttpResponse(obj, content_type="application/json")
 

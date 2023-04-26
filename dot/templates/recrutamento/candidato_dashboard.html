@@ -110,7 +110,7 @@
       <div class="card-body">
         <div class="float-end d-none d-lg-block"><i class="fas fa-chart-line widget-icon"></i></div>
         <div class="row">
-          <div class="col" style="height: 260px;"><canvas id="banco_evolucao"></canvas></div>
+          <div class="col" style="height: 260px;"><canvas id="selecoes_evolucao"></canvas></div>
         </div>        
       </div>      
     </div>
@@ -197,19 +197,20 @@
   
   const tblResumoBanco = new jsTable(document.getElementById('main_table'), {});
   const tblTerceiros = new jsTable(document.getElementById('table_terceiros'), {});
+
   
-  var ctx = document.getElementById('banco_evolucao');
+  var ctx = document.getElementById('selecoes_evolucao');
   let chart = new Chart(ctx, {
     type: 'bar',
     data: {
       datasets: [{
         label: 'Qtde',
-        data: {{ metrics.evolucao_banco.dados }},
-        backgroundColor: {{ metrics.evolucao_banco.bgcolors|safe }},
-        borderColor: {{ metrics.evolucao_banco.bordercolors|safe }},
+        data: {{ metrics.evolucao_selecoes.dados }},
+        backgroundColor: {{ metrics.evolucao_selecoes.bgcolors|safe }},
+        borderColor: {{ metrics.evolucao_selecoes.bordercolors|safe }},
         maxBarThickness: 50,
       }],
-      labels: {{ metrics.evolucao_banco.categorias|safe }},
+      labels: {{ metrics.evolucao_selecoes.categorias|safe }},
     },
     options: {
       maintainAspectRatio: false,
@@ -228,7 +229,7 @@
         title: {
           display: true,
           align: 'start',
-          text:'CADASTROS BANCO',
+          text:'PROCESSOS SELETIVOS',
           font: {size: 13},
           padding: {top: 6,bottom: 10}
         },

@@ -53,16 +53,12 @@ def selecoes(request):
             selecoes = selecoes.filter(candidato__nome__contains=request.POST['pesquisa'])
         if request.POST['de'] != '' and request.POST['ate'] != '':
             selecoes = selecoes.filter(data__range=[request.POST['de'],request.POST['ate']])
-        else:
-            ate = date.today()
-            de = ate - timedelta(days=90)
-            selecoes = selecoes.filter(data__range=[de,ate])
         if request.POST['cargo'] != '':
             selecoes = selecoes.filter(vaga__id=request.POST['cargo'])
         if request.POST['resultado'] != '':
             selecoes = selecoes.filter(resultado=request.POST['resultado'])
     else:
-        if request.GET.get('candidato',None):
+        if request.GET.get('candidato', None):
             selecoes = selecoes.filter(candidato__id=request.GET['candidato'])
         else:
             selecoes = selecoes.filter(arquivar=False)

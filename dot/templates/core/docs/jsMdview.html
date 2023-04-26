@@ -96,7 +96,7 @@ page[size="A4"] {width: auto;min-width: 16cm; height: 12cm;}
           <pre><code class="language-javascript">const editor = new jsView({
   extra: [
     {innerHTML: 'Gravar', classList: 'btn btn-sm btn-success', onclick: ()=>{..do something}},
-    {innerHTML: 'Limpar', onclick: ()=>{..do something}},
+    {id:'meu_id', innerHTML: 'Limpar', onclick: ()=>{..do something}, title:'...'},
   ]
 })
 // Caso omitido classList, carrega com estilo default dos componentes</code></pre>

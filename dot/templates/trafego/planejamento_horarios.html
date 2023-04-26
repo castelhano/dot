@@ -1,0 +1,51 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Horários{% endblock %}
+{% block model %}Tráfego{% endblock %}
+{% block navbar_classlist %}navbar-text-light bg-primary bg-gradient{% endblock %}
+{% block model_menu %}{% include "_component/menu/trafego.html" %}{% endblock%}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'trafego_planejamento_horarios' planejamento.id|safe %}"></a>
+
+<div class="card mt-2">
+    <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item"><a class="nav-link active disabled" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+        </ul>
+    </div>
+    <div class="card-body tab-content">
+        <h5 class="card-title">{{planejamento.codigo}} - {{planejamento.ativo|yesno:'<b class="text-success">ATIVO<b>,<b class="text-secondary">INATIVO</b>'|safe}}</h5>
+        <small>Linha: <b>{{planejamento.linha.codigo}}</b> - {{planejamento.linha.nome}}</small>
+        <div class="tab-pane fade show active" id="base" role="tabpanel">
+            <table id="main_table" class="table border table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Sentido</th>
+                        <th>Inicio</th>
+                        <th>Fim</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for viagem in planejamento.viagens %}
+                    <tr>
+                        <td>{{viagem.get_tipo_display}}</td>
+                        <td>{{viagem.get_sentido_display}}</td>
+                        <td>{{viagem.inicio}}</td>
+                        <td>{{viagem.fim}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/table.js' %}"></script>
+{% endblock %}
+{% block add_script %}
+const table = new jsTable(document.getElementById('main_table'),{});
+{% endblock %}

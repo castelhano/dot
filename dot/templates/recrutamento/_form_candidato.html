@@ -14,13 +14,15 @@
             <button type="button" class="btn btn-sm" data-bs-toggle="dropdown"><i class="fas fa-angle-down text-light"></i></button>
             <ul class="dropdown-menu fs-7" id="candidato_options_list">
               {% if perms.recrutamento.add_selecao  and candidato.status == 'B' %}
-              <li><a class="dropdown-item" href="{% url 'recrutamento_selecao_add' %}?candidato={{candidato.id|safe}}">Processo Seletivo</a></li>
+              <li><a class="dropdown-item" href="{% url 'recrutamento_selecao_add' %}?candidato={{candidato.id|safe}}"><i class="fas fa-plus fa-fw"></i>Processo seletivo</a></li>
               {% endif %}
+              <li><a class="dropdown-item" href="{% url 'recrutamento_selecoes' %}?candidato={{candidato.id|safe}}"><i class="fas fa-list fa-fw"></i>Listar processos</a></li>
               {% if candidato.status == 'B' or candidato.status == 'S' and perms.recrutamento.contratar_candidato %}
-              <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modal_contratar" href="#">Contratar</a></li>
+              <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modal_contratar" href="#"><i class="fas fa-user-plus fa-fw"></i>Contratar</a></li>
               {% endif %}
               {% if candidato.status == 'B' and perms.recrutamento.descartar_candidato or candidato.status == 'S' and perms.recrutamento.descartar_candidato %}
-              <li><a class="dropdown-item dropdown-item-danger" data-bs-toggle="modal" data-bs-target="#modal_descartar" href="#">Descartar Candidato</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item dropdown-item-danger" data-bs-toggle="modal" data-bs-target="#modal_descartar" href="#"><i class="fas fa-trash fa-fw"></i>Descartar</a></li>
               {% elif perms.recrutamento.descartar_candidato and candidato.status == 'D' or perms.recrutamento.contratar_candidato and  candidato.status == 'C' %}
               <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modal_retornar" href="#">Retornar</a></li>
               {% endif %}

@@ -20,6 +20,16 @@
 <script>
 {% block add_script %}
 
+// Adiciona botao para copiar conteudo para clipboard caso pagina esteja sendo excutada via https (restricao do navegador)
+let extra = [];
+if(window.isSecureContext){
+  extra = [
+  {id:'mdview_copy_btn', innerHTML:'<i class="fa fa-copy px-1"></i>', classList: 'btn btn-sm btn-success', title: 'Fooo', onclick: () => {
+      navigator.clipboard.writeText(report.get());
+      dotNotify('success', '<i class="fas fa-copy me-2"></i>Copiado para area de transferência');
+    }}
+  ]
+}
 const report = new jsMdview({
   container: document.getElementById('container'),
   autofocus: true,
@@ -36,8 +46,8 @@ Saldo é de =+R$ 222,35+= e o débito será de =-R$ -1.254,33-=
 ___ Texto a direita
 
 
-`}]
+`}],
+extra: extra
 });
-
 {% endblock %}
 </script>

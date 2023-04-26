@@ -149,7 +149,7 @@ class jsMdview{
         ul.appendChild(this.dataDatalist)
         let divider = document.createElement('li');divider.innerHTML = '<hr class="dropdown-divider">';ul.appendChild(divider);
         this.manualData = document.createElement('li');this.manualData.classList = 'dropdown-item dropdown-item-purple pointer';this.manualData.innerHTML = 'Manual <span class="text-secondary ms-2">Ctrl ;</span>';
-        this.manualData.onclick = () => {this.__editorAdd(['$(',')','manual'], [2,1], false)}
+        this.manualData.onclick = () => {this.__editorAdd(['$(',')','model.field'], [2,1], false)}
         ul.appendChild(this.manualData);
         wrapper.appendChild(this.dataInputBtn);
         wrapper.appendChild(ul);
@@ -345,7 +345,11 @@ class jsMdview{
     __loadExtra(){
         let custom_classlist = 'btn btn-sm btn-phanton-light rounded-pill';
         for(let i = 0;i < this.extra.length;i++){
-            let btn = document.createElement('button');btn.type = this.extra[i]?.type || 'button';btn.classList = this.extra[i]?.classList || custom_classlist;btn.innerHTML = this.extra[i]?.innerHTML || '--';
+            let btn = document.createElement('button');
+            btn.type = this.extra[i]?.type || 'button';
+            btn.classList = this.extra[i]?.classList || custom_classlist;
+            btn.innerHTML = this.extra[i]?.innerHTML || '--';
+            btn.title = this.extra[i]?.title || '';
             if(this.extra[i].id){btn.id = this.extra[i].id}
             btn.onclick = this.extra[i]?.onclick || (() => {});
             this.extraBtns.appendChild(btn);

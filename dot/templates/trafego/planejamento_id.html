@@ -73,12 +73,13 @@
                   {% if ativo %}
                   <button type="button" id="btn_comparar" class="btn btn-sm btn-purple" name="button" onclick="compararPlanejamentos()" title="Comparar com atual [ALT X]"><i class="fas fa-clone px-2"></i></button>
                   {% endif %}
-                  {% if perms.trafego.delete_planejamento %}
                   <a class="btn btn-sm btn-purple" data-bs-toggle="dropdown" data-bs-offset="0,5" href="#" role="button"><i class="fas fa-caret-down"></i></a>
                   <ul class="dropdown-menu dropdown-menu-end fs-7">
-                    <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal">Excluir</a></li>
+                    <li><a class="dropdown-item" href="{% url 'trafego_planejamento_horarios' planejamento.id|safe %}"><i class="fas fa-list fa-fw"></i>Horários</a></li>
+                    {% if perms.trafego.delete_planejamento %}
+                    <li><span class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal"><i class="fas fa-trash fa-fw"></i>Excluir</span></li>
+                    {% endif %}
                   </ul>                
-                  {% endif %}
                 </div>
               </div>
               <dl class="row">

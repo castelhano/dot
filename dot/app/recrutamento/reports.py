@@ -30,22 +30,23 @@ def candidato_dashboard(request):
         selecoes = selecoes.filter(vaga__cargo=vaga.cargo)
         criterios_reprovados = criterios_reprovados.filter(status='R', selecao__vaga__cargo=vaga.cargo)
     
-    evolucao_banco = candidatos.annotate(mes=TruncMonth('create_at')).values('mes').annotate(total=Count('mes'))
+    # evolucao_banco = candidatos.annotate(mes=TruncMonth('create_at')).values('mes').annotate(total=Count('mes'))
+    evolucao_selecoes = selecoes.annotate(mes=TruncMonth('data')).values('mes').annotate(total=Count('mes'))
     total_avaliacoes = criterios_reprovados.count()
     criterios_reprovados = criterios_reprovados.values('criterio__nome').annotate(qtd=Count('criterio__nome'))
     
     from core.chart_metrics import backgrounds as bg, borders as bc, MONTH_ABBR as m, COLORS as color
-    evolucao_banco_metrics = {
+    evolucao_selecoes_metrics = {
         'categorias':[],
         'dados':[],
         'bgcolors':[],
         'bordercolors':[]
         }
-    for row in evolucao_banco:
-        evolucao_banco_metrics['categorias'].append(m[row['mes'].month] + ' ' + str(row['mes'].year)[2:4])
-        evolucao_banco_metrics['dados'].append(float(row['total']))
-        evolucao_banco_metrics['bgcolors'].append(bg.purple)
-        evolucao_banco_metrics['bordercolors'].append(bc.purple)
+    for row in evolucao_selecoes:
+        evolucao_selecoes_metrics['categorias'].append(m[row['mes'].month] + ' ' + str(row['mes'].year)[2:4])
+        evolucao_selecoes_metrics['dados'].append(float(row['total']))
+        evolucao_selecoes_metrics['bgcolors'].append(bg.purple)
+        evolucao_selecoes_metrics['bordercolors'].append(bc.purple)
     
     soma_idade = 0
     quantidade_candidatos = 0
@@ -68,7 +69,7 @@ def candidato_dashboard(request):
         'cadastros_site': candidatos.filter(origem='S').count(),
         'criterios_reprovados':criterios_reprovados,
         'total_avaliacoes':total_avaliacoes,
-        'evolucao_banco':evolucao_banco_metrics,
+        'evolucao_selecoes':evolucao_selecoes_metrics,
     }
     metrics['percentual_aprovacoes'] = selecoes.filter(resultado='A').count() / metrics['processos_seletivos'] * 100 if metrics['processos_seletivos'] > 0 else 0
     return render(request, 'recrutamento/candidato_dashboard.html', {'metrics': metrics})

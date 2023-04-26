@@ -576,6 +576,12 @@ def planejamento_id(request,id):
     return render(request,'trafego/planejamento_id.html',{'form':form,'planejamento':planejamento, 'ativo':ativo})
 
 @login_required
+@permission_required('trafego.view_planejamento')
+def planejamento_horarios(request, id):
+    planejamento = Planejamento.objects.get(pk=id)
+    return render(request,'trafego/planejamento_horarios.html',{'planejamento':planejamento})
+
+@login_required
 @permission_required('trafego.change_predefinido')
 def predefinido_id(request,id):
     predefinido = Predefinido.objects.get(pk=id)
