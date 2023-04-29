@@ -3,6 +3,7 @@ import json
 from json import dumps
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.hashers import check_password
 from django.contrib import auth, messages
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.contenttypes.models import ContentType
@@ -221,6 +222,18 @@ def usuario_add(request):
                 registro = form.save(commit=False)
                 registro.set_password(request.POST['password'])
                 registro.save()
+                try: # Carrega configuracoes do app
+                    settings = Settings.objects.all().get()
+                except: # Caso nao gerado configuracoes iniciais carrega definicoes basicas
+                    settings = Settings()
+                profile = registro.profile
+                config = initializeProfileConfig()
+                if settings.historico_senhas_nao_repetir > 0:
+                    config["history_password"] = [registro.password]
+                else:
+                    config["history_password"] = []
+                profile.config = json.dumps(config)
+                profile.save()
                 for grupo in request.POST.getlist('grupos'):
                     g = Group.objects.get(id=grupo)
                     g.user_set.add(registro)
@@ -783,8 +796,43 @@ def authenticate(request):
             user = auth.authenticate(request, username=username, password=password)
             if user is not None:
                 auth.login(request, user)
+                profile = request.user.profile
+                if request.user.profile.config == '': # Inicializa config do profile caso ainda nao initializado
+                    profile.config = json.dumps(initializeProfileConfig())
+                else:
+                    config = json.loads(profile.config)
+                    config["password_errors_count"] = 0                    
+                    profile.config = json.dumps(config)
+                profile.save()
                 return redirect('index')
-    messages.error(request,'Falha na autenticação.')
+        try: # Carrega configuracoes do app
+            settings = Settings.objects.all().get()
+        except: # Caso nao gerado configuracoes iniciais carrega definicoes padrao
+            settings = Settings()
+        if settings.quantidade_tentantivas_erradas > 0:
+            try:
+                user = User.objects.get(username=request.POST['username'])
+            except User.DoesNotExist:
+                user = None
+            if user and user.is_active:
+                config = json.loads(user.profile.config) if user.profile.config != '' else initializeProfileConfig()
+                if config["password_errors_count"] + 1 == settings.quantidade_tentantivas_erradas: # Chegou ao limite de tentativas erradas
+                    config["password_errors_count"] = 0
+                    user.is_active = False
+                    user.save()
+                    messages.error(request,'Exedeu limite de tentativas, conta bloqueada, procure o administrador')
+                else:
+                    config["password_errors_count"] += 1
+                    messages.error(request,'Senha inválida, tentativas: <b>%s</b>' %(settings.quantidade_tentantivas_erradas - config["password_errors_count"]))
+                profile = user.profile
+                profile.config = json.dumps(config)
+                profile.save()
+            elif user and not user.is_active:
+                messages.error(request,'Conta bloqueada')
+            else:
+                messages.error(request,'Erro, falha na autenticação')
+        else:
+            messages.error(request,'Erro, falha na autenticação')
     return redirect('login')
 
 @login_required
@@ -801,14 +849,24 @@ def change_password(request):
         if request.user.check_password(password_current):
             if password == password_confirm:
                 if password_current != password:
-                    if password_valid(password):
+                    if password_valid(request, password):
                         request.user.set_password(password)
                         request.user.profile.force_password_change = False
                         request.user.save()
+                        if settings.historico_senhas_nao_repetir > 0: # Atualiza o historico de senhas no profile
+                            profile = request.user.profile
+                            config = json.loads(profile.config)
+                            if len(config["history_password"]) >= settings.historico_senhas_nao_repetir:
+                                config["history_password"] = config["history_password"][len(config["history_password"]) - settings.historico_senhas_nao_repetir + 1:] # Remove historico excedente
+                                config["history_password"].append(request.user.password) # Carrega novo password
+                            else:
+                                config["history_password"].append(request.user.password)
+                            profile.config = json.dumps(config)
+                            profile.save()
                         messages.success(request, 'Senha alterada')
                         return redirect('login')
                     else:
-                        messages.error(request,'Senha não atende aos requisitos mínimos')
+                        messages.error(request,'Senha não atende aos requisitos')
                 else:
                     messages.error(request, 'Nova senha não pode ser igual a senha atual')
             else:
@@ -828,7 +886,7 @@ def handler(request, code):
     return render(request,f'{code}.html')
 
 
-def password_valid(password):
+def password_valid(request, password):
     try: # Carrega configuracoes do app
         settings = Settings.objects.all().get()
     except: # Caso nao gerado configuracoes iniciais carrega definicoes basicas
@@ -842,8 +900,16 @@ def password_valid(password):
         return False
     if settings.senha_exige_caractere and re.search(r"[!@#$%^&*()_+\-=\[\]{};':\"\\|,.<>\/?]", password) is None:
         return False
-    else:
-        return True
+    if settings.historico_senhas_nao_repetir > 0:
+        profile = request.user.profile
+        config = json.loads(profile.config) if profile.config != '' else initializeProfileConfig()
+        for pw in config["history_password"]:
+            if check_password(password, pw):
+                return False
+    return True
+
+def initializeProfileConfig():
+    return {"history_password":[], "password_errors_count": 0}
 
 # AJAX METODOS
 

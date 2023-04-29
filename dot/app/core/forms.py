@@ -78,13 +78,11 @@ class IssueForm(forms.ModelForm):
 class SettingsForm(forms.ModelForm):
     class Meta:
         model = Settings
-        fields = ['gera_notificacao_issue_atualizado','quantidade_caracteres_senha','senha_exige_alpha','senha_exige_numero','senha_exige_caractere','historico_senhas_nao_repetir','bloqueia_conta_por_tentativas_erradas','quantidade_tentantivas_erradas','valida_senha_comum']
+        fields = ['gera_notificacao_issue_atualizado','quantidade_caracteres_senha','senha_exige_alpha','senha_exige_numero','senha_exige_caractere','historico_senhas_nao_repetir','quantidade_tentantivas_erradas']
     gera_notificacao_issue_atualizado = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch'}))
     quantidade_caracteres_senha = forms.IntegerField(required=False, initial=8, widget=forms.TextInput(attrs={'class': 'form-control form-control-sm','type':'number','min':'1','max':'90'}))
     senha_exige_alpha = forms.BooleanField(required=False, initial=True, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch'}))
     senha_exige_numero = forms.BooleanField(required=False, initial=True, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch'}))
     senha_exige_caractere = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch'}))
     historico_senhas_nao_repetir = forms.IntegerField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'form-control form-control-sm','type':'number','min':'0','max':'10'}))
-    bloqueia_conta_por_tentativas_erradas = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch'}))
-    quantidade_tentantivas_erradas = forms.IntegerField(required=False, initial=3, widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':'1','max':'10'}))
-    valida_senha_comum = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch'}))
+    quantidade_tentantivas_erradas = forms.IntegerField(required=False, initial=3, widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':'0','max':'10'}))

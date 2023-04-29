@@ -192,9 +192,7 @@ class Settings(models.Model):
     senha_exige_numero = models.BooleanField(default=True)
     senha_exige_caractere = models.BooleanField(default=False)
     historico_senhas_nao_repetir = models.PositiveIntegerField(default=0)
-    bloqueia_conta_por_tentativas_erradas = models.BooleanField(default=False)
     quantidade_tentantivas_erradas = models.PositiveIntegerField(default=3)
-    valida_senha_comum = models.BooleanField(default=False)
     class Meta:
         default_permissions = ('view','change',)
     def ultimas_alteracoes(self):

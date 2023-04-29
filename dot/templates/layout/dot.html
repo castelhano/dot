@@ -67,7 +67,6 @@
     {% block style %}{% endblock %}
   </style>
   <script src="{% static 'js/listener.js' %}"></script>
-  <script>window.addEventListener('error', (ev) => {dotAlert('danger', `<b>Ops</b> Essa página contém um erro, pedimos informar ao administrador<br>mensagem: <i>${ev.message}`, false)});</script>
   {# if perms.core.debug #}
   <!-- <script>window.addEventListener('error', (ev) => {document.getElementById('page-error-icon').classList.remove('d-none');});</script> -->
   {# endif #}
@@ -213,6 +212,7 @@
   <script src="{% static 'js/dot.js' %}"></script>
   {% block add_script_src %}{% endblock %}
   <script>
+    window.addEventListener('error', (ev) => {dotAlert('danger', `<b>Ops</b> Essa página contém um erro, pedimos informar ao administrador<br>mensagem: <i>${ev.message}`, false)});
     function forceReload(){window.location.href = window.location.href;}
     function settingsIconHide(){document.getElementById('page-settings-icon').style.visibility = 'hidden';}
 

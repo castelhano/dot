@@ -40,7 +40,7 @@
                     <div class="col-lg-2">
                         <div class="input-group input-group-sm">
                             {{ form.historico_senhas_nao_repetir }}
-                            <span class="input-group-text">Manter histórico de (xx) senhas **</span>
+                            <span class="input-group-text">Manter histórico últimas senhas**</span>
                         </div>
                         <small>Sistema irá impedir usar senhas do histórico</small>
                         <small><i class="fas fa-info-circle me-2 text-warning"></i>Digite 0 (zero) para desativar verificação</small>
@@ -58,20 +58,13 @@
                     {{ form.senha_exige_caractere }}
                     <label class="form-check-label" for="id_senha_exige_caractere">Exigir caracteres especiais na senha</label>
                 </div>
-                <div class="form-check form-switch">
-                    {{ form.valida_senha_comum }}
-                    <label class="form-check-label" for="id_valida_senha_comum">Validar se senha é comum <i class="fas fa-info-circle help" title="Analisa num BD com mais de 20k senhas consideradas comuns"></i></label>
-                </div>
-                <div class="form-check form-switch">
-                    {{ form.bloqueia_conta_por_tentativas_erradas }}
-                    <label class="form-check-label" for="id_bloqueia_conta_por_tentativas_erradas">Bloquear conta por tentativas erradas</label>
-                </div>
                 <div class="row mt-2">
                     <div class="col-lg-2">
                         <div class="input-group input-group-sm">
                             {{ form.quantidade_tentantivas_erradas }}
-                            <span class="input-group-text">quantidade de tentativas erradas</span>
+                            <span class="input-group-text">bloquear em tentativas erradas**</span>
                         </div>
+                        <small>Altere para 0 (zero) para desativar bloqueio</small>
                     </div>
                 </div>
                 

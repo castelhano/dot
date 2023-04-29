@@ -319,7 +319,7 @@ class jsTable{
     }
     dataUrlKeyup(e){
         clearTimeout(this.dataUrlTimeout);
-        if(e != undefined && [16, 17, 18, 37, 38, 39, 40, 13].includes(e.keyCode)){return false;} // Nao busca registros caso tecla seja enter, arrows, shift, cntrl ou alt
+        if(e != undefined && [9,13,16,17,18,19,20,27,33,34,35,36,37,38,39,40,45,91,93,112,113,114,115,116,117,118,119,120,121,122,123,144,145].includes(e.keyCode)){return false;} // Nao busca registros caso tecla seja enter, arrows, shift, cntrl ou alt
         this.dataUrlTimeout = setTimeout(this.dataUrlGet.bind(this), this.dataUrlDelay);
     }
     dataUrlKeydown(e){clearTimeout(this.dataUrlTimeout)}

@@ -17,6 +17,9 @@ from datetime import date, datetime
 @login_required
 @permission_required('trafego.view_localidade')
 def localidades(request):
+    if request.GET.get('showAll', None) == 'true':
+        localidades = Localidade.objects.all().order_by('nome')
+        return render(request,'trafego/localidades.html', {'localidades':localidades})
     return render(request,'trafego/localidades.html')
 
 @login_required
