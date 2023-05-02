@@ -32,7 +32,7 @@
               {% for empresa in empresas %}
               <li><span class="dropdown-item pointer" onclick="urlFilter('empresa',{{empresa.id}})">{{empresa.nome}}</span></li>
               {% endfor %}
-              <li><span class="dropdown-item dropdown-item-secondary pointer" onclick="urlFiltersClean(['empresa'])">Todas</span></li>
+              <li><span class="dropdown-item dropdown-item-secondary pointer" onclick="urlClean(['empresa'])">Todas</span></li>
             </ul>
           </div>
         </div>

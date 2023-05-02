@@ -202,6 +202,10 @@
                   <td>Exibe mensagem de alerta padrão do sistema</td>
                 </tr>
                 <tr>
+                  <td>dotNotify('success', 'Registro salvo')</td>
+                  <td>Exibe variação de alerta "stackable".</td>
+                </tr>
+                <tr>
                   <td>dateToday()</td>
                   <td>Retorna a data atual<small class="d-block">Ex: dateToday({days:5, native:true}) Adiciona 5 dias e retorna AAAA-mm-dd</small></td>
                 </tr>
@@ -431,7 +435,7 @@ dotPlot(map);</code></pre>
         <pre><code class="language-javascript">urlFilterTo('dot.com.br/usuarios', 'nome', 'rafael')</code></pre>
         <h6 class="mt-4"><span class="text-purple">urlFilterToogle(filter, values)</span>: Altera o valor do filtro baseado em sequencia predefinida</h6>
         <pre><code class="language-javascript">urlFilterToogle('ativo', ['true', 'false'])</code></pre>
-        <h6 class="mt-4"><span class="text-purple">urlFiltersClean(filters)</span>: Limpa filtros da URI</h6>
+        <h6 class="mt-4"><span class="text-purple">urlClean(filters)</span>: Limpa filtros da URI</h6>
         <pre><code class="language-javascript">filtersClean(['nome', 'email'])</code></pre>
         <h6 class="mt-4"><span class="text-purple">urlRedirect(url)</span>: Chama nova URL passando todos os parâmetros atuais na requisição</h6>
         <pre><code class="language-javascript">urlRedirect('dot.com/usuarios_bloqueados')</code></pre>

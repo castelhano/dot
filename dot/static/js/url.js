@@ -81,7 +81,7 @@ function urlFilterToogle(filter, values){let atual = urlGet(filter, false);if(at
 * @param    {Array} filters Lista [] com parametros a serem removidos da url
 * @example  filtersClean(['nome', 'email'])
 */
-function urlFiltersClean(filters){let h = window.location.href.split('?')[0];let p = new URLSearchParams(window.location.search);for(i=0;i < filters.length; i++){p.delete(filters[i]);}location.href = p.toString() != '' ? `${h}?${p.toString()}` : h;}
+function urlClean(filters){let h = window.location.href.split('?')[0];let p = new URLSearchParams(window.location.search);for(i=0;i < filters.length; i++){p.delete(filters[i]);}location.href = p.toString() != '' ? `${h}?${p.toString()}` : h;}
 
 /*
 * urlRedirect Carrega os filtros na url atual para uma nova url
