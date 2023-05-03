@@ -79,7 +79,7 @@
                   <div class="event-controls">
                     {% with p.labels|split:"," as labels %}
                     {% for label in labels %}
-                    <span class="badge bg-purple d-none d-lg-inline-block">{{label}}</span>
+                    <span class="btn btn-sm btn-purple py-0 disabled border-transparent">{{label}}</span>
                     {% endfor %}
                     {% endwith %}
                     <span class="btn btn-sm btn-primary py-0 disabled" style="width: 35px;">{{p.seq|safe}}</span>
@@ -106,7 +106,7 @@
                   <div class="event-controls">
                     {% with p.labels|split:"," as labels %}
                     {% for label in labels %}
-                    <span class="badge bg-purple d-none d-lg-inline-block">{{label}}</span>
+                    <span class="btn btn-sm btn-purple py-0 disabled border-transparent">{{label}}</span>
                     {% endfor %}
                     {% endwith %}
                     <span class="btn btn-sm btn-primary py-0 disabled" style="width: 35px;">{{p.seq|safe}}</span>
@@ -125,15 +125,20 @@
         <div class="col-lg-6">
           <div class="callout callout-primary">
             <div class="body">
-              <h5 class="mb-3 text-body-secondary"><i class="fas fa-road fs-6 me-2"></i>Único</h5>
+              <h5 class="mb-3 text-body-secondary"><i class="fas fa-road fs-6 me-2"></i>Trajeto Único</h5>
               <ul class="timeline timeline-sm ms-2">
                 {% for p in unico %}
                 <li class="event{% if p.fechado %} event-danger{% endif %}">
-                  {{p.local.nome}}{% if p.detalhe != '' %}<i class="fas fa-info-circle text-purple ms-2" title="{{p.detalhe}}"></i>{% endif %}
+                  {{p.local.nome}}{% if p.detalhe != '' %}<i class="fas fa-info-circle text-purple ms-2 help" title="{{p.detalhe}}"></i>{% endif %}
                   <div class="event-controls">
-                    <span class="badge btn-primary" style="width: 35px;">{{p.seq|safe}}</span>
+                    {% with p.labels|split:"," as labels %}
+                    {% for label in labels %}
+                    <span class="btn btn-sm btn-purple py-0 disabled border-transparent">{{label}}</span>
+                    {% endfor %}
+                    {% endwith %}
+                    <span class="btn btn-sm btn-primary py-0 disabled" style="width: 35px;">{{p.seq|safe}}</span>
                     {% if perms.trafego.change_linha %}
-                    <a class="badge bg-dark" href="{% url 'trafego_trajeto_delete' p.id|safe %}"><i class="fas fa-times"></i></a>
+                    <a class="btn btn-sm btn-dark py-0" href="{% url 'trafego_trajeto_delete' p.id|safe %}"><i class="fas fa-times"></i></a>
                     {% endif %}
                   </div>
                 </li>
@@ -159,14 +164,11 @@
   tooltipActivate();
   
   var labels = new Tagin(document.getElementById('id_labels'), {
-    // enter: true,
     placeholder: 'Separar por virgula',
     transform: 'input => input.toUpperCase()',
     tagColor: 'purple'
   })
 
-  // SHORTCUT_MAP['g']
-  
   {% if sentido %}document.getElementById('id_sentido').value = '{{sentido}}';{% endif %}
   
   {% endblock %}

@@ -55,6 +55,7 @@ input[readonly], textarea[readonly]{background: rgb(233, 236, 239)!important;}
 .bg-dark-light{background-color: #262626;}
 .bg-hover{opacity: 0.8;}
 .bg-hover:hover{opacity: 1;}
+.border-transparent{border-color: transparent!important;}
 .border-oil{border-color: #0065A4!important;}
 .border-orange{border-color: #FD7E14!important;}
 
@@ -197,7 +198,7 @@ div.btn-light:hover{background-color: #d3d4d5;}
 
 .code{background-color: #F8F9FA;border: 1px solid #dee2e6;border-radius: .25rem;padding: 5px 10px;margin-bottom: 15px;user-select: all;}
 
-.card-widget{min-height: 100px;border: 2px solid #FFF;position: relative;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;padding-right: 10px;}
+.card-widget{min-height: 100px;border: 2px solid var(--bs-body-bg);position: relative;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;padding-right: 10px;}
 .card-widget > .lead-image{width: 100%;line-height: 250%;text-align: center;font-size: 3.2rem;}
 .card-widget-sm > .lead-image{width: 100%;line-height: 150%;text-align: center;font-size: 2.8rem;}
 .card-widget > .widget-label{font-size: 0.9rem;color: #FFF;}
