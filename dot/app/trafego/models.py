@@ -74,7 +74,7 @@ class Trajeto(models.Model):
     linha = models.ForeignKey(Linha, blank=False, null=False, on_delete=models.RESTRICT)
     sentido = models.CharField(max_length=3,choices=SENTIDO_CHOICES, blank=True, default='I')
     seq = models.PositiveIntegerField(default=1)
-    local = models.ForeignKey(Localidade, blank=True, null=True, on_delete=models.RESTRICT)
+    local = models.ForeignKey(Localidade, on_delete=models.RESTRICT)
     labels = models.CharField(max_length=250, blank=True)
     fechado = models.BooleanField(default=False)
     detalhe = models.CharField(max_length=250, blank=True)

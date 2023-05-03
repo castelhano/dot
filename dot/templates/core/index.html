@@ -65,6 +65,7 @@
 {% endblock %}
 <script>
 {% block add_script %}
+
 SHORTCUT_MAP['1FTF'] = () => {try{document.getElementById('widget_action_gestao').click()}catch(e){}};
 SHORTCUT_MAP['pFTF'] = () => {try{document.getElementById('widget_action_pessoal').click()}catch(e){}};
 SHORTCUT_MAP['rFTF'] = () => {try{document.getElementById('widget_action_recrutamento').click()}catch(e){}};
@@ -73,8 +74,6 @@ SHORTCUT_MAP['oFTF'] = () => {try{document.getElementById('widget_action_oficina
 SHORTCUT_MAP['gFTF'] = () => {try{document.getElementById('widget_action_linha').click()}catch(e){}};
 SHORTCUT_MAP['3FTF'] = () => {try{document.getElementById('widget_action_planejamento').click()}catch(e){}};
 SHORTCUT_MAP['kFTF'] = () => {try{document.getElementById('widget_action_acidente').click()}catch(e){}};
-
-
 
 {% if perms.core.view_agenda %}
 

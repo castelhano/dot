@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="pt-br" dir="ltr">
+<html lang="pt-br" dir="ltr" data-bs-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -48,5 +48,14 @@
       </div>
     </div>    
   </div>
+  <script>
+    if(localStorage.theme){
+      document.documentElement.dataset.bsTheme = localStorage.theme;
+    }
+    else if(window.matchMedia){
+      let theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? 'dark' : 'light';
+      document.documentElement.dataset.bsTheme = theme;
+    }
+  </script>
 </body>
 </html>

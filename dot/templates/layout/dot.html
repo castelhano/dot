@@ -67,9 +67,10 @@
     {% block style %}{% endblock %}
   </style>
   <script src="{% static 'js/listener.js' %}"></script>
-  {# if perms.core.debug #}
-  <!-- <script>window.addEventListener('error', (ev) => {document.getElementById('page-error-icon').classList.remove('d-none');});</script> -->
-  {# endif #}
+  <script>
+    window.addEventListener('error', (ev) => {dotAlert('danger', `<b>Ops</b> Essa página contém um erro, pedimos informar ao administrador<br>mensagem: <i>${ev.message}`, false)});
+  </script>
+  {# if perms.core.debug #}{# endif #}
   <title>{% block title %}SIT{% endblock %}</title>
 </head>
 <body class="{% block body_classlist %}{% endblock %}" style="{% block body_style %}{% endblock %}">
@@ -205,14 +206,13 @@
       </div>
     </div>
   </div>
-  {% if perms.core.debug %}<div id="page-error-icon" class="bug_icon d-none"><i class="fas fa-bug"></i></div>{% endif %}
   <a id="page-settings-icon" class="settings_icon" data-bs-toggle="offcanvas" href="#offcanvas" role="button"><i class="fas fa-cogs"></i></a>
   
   <script src="{% static 'js/vendor/bootstrap.bundle.min.js' %}"></script>
   <script src="{% static 'js/dot.js' %}"></script>
   {% block add_script_src %}{% endblock %}
   <script>
-    window.addEventListener('error', (ev) => {dotAlert('danger', `<b>Ops</b> Essa página contém um erro, pedimos informar ao administrador<br>mensagem: <i>${ev.message}`, false)});
+    
     function forceReload(){window.location.href = window.location.href;}
     function settingsIconHide(){document.getElementById('page-settings-icon').style.visibility = 'hidden';}
 

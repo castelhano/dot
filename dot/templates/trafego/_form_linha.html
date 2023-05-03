@@ -33,14 +33,8 @@
             {{ form.classificacao }}
             <label for="id_classificacao">Classificação</label>
           </div>
-          {% include "_component/field/localidade.html" with field_name='origem' id=linha.origem.id nome=linha.origem.nome breakpoint='mb-lg-1 col-lg' %}
-          <div class="form-floating mb-lg-1 col-lg">
-          	<input type="hidden" id="id_destino" name="destino" value="{{linha.destino.id}}">
-          	<input type="text" autocomplete="off" class="form-control" list="destino_datalist" id="id_destino_nome" value="{{linha.destino.nome}}" oninput="cleanLocalID(document.getElementById('id_destino'));localidadeGetList(document.getElementById('id_destino_nome'),document.getElementById('destino_spinner'),document.getElementById('destino_datalist'));" onblur="validadeLocalidade(document.getElementById('id_destino'),document.getElementById('id_destino_nome'),document.getElementById('destino_datalist'))" onfocus="this.select()"{% if required %} required{% endif %}>
-            <label for="id_destino_nome">Local</label>
-            <datalist id="destino_datalist"></datalist>
-            <div id="destino_spinner" class="spinner-grow text-success d-none" style="position: absolute; top:12px; right:15px; z-index:10;"></div>
-          </div>
+          {% include "_component/field/localidade.html" with field_name='origem' id=linha.origem.id nome=linha.origem.nome label='Origem' breakpoint='mb-lg-1 col-lg' %}
+          {% include "_component/field/localidade.html" with field_name='destino' id=linha.destino.id nome=linha.destino.nome label='Destino' breakpoint='mb-lg-1 col-lg' %}
         </div>
       </div>
       <div class="tab-pane fade" id="extensoes" role="tabpanel">

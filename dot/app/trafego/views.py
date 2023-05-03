@@ -1283,7 +1283,7 @@ def get_linhas_empresa(request):
         return HttpResponse('')
 
 def get_localidades(request):
-    # Metodo retorna JSON ajustado para integracao com jsTable
+    # Metodo retorna JSON ajustado para (integracao jsTable e component localidade)
     try:
         localidades = Localidade.objects.filter(nome__contains=request.GET['pesquisa']).order_by('nome')
         if request.GET.get('garagem', None) and request.GET['garagem'] == 'True':
@@ -1299,7 +1299,6 @@ def get_localidades(request):
                 item_dict['cnt'] = f'<a class="btn btn-sm btn-dark float-end" href="/trafego_localidade_id/{item.id}"><i class="fas fa-pen"></i></a>'
             itens.append(item_dict)
         dataJSON = dumps(itens)
-        print(dataJSON)
         return HttpResponse(dataJSON)
     except:
         return HttpResponse('')

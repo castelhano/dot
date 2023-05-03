@@ -1,0 +1,61 @@
+<div class="form-floating {{breakpoint|default:'col-lg-12 mb-1'}}">
+	<input type="hidden" id="id_{{field_name|default:'local'}}" name="{{field_name|default:'local'}}" value="{{id|safe}}">
+	<input type="text" autocomplete="off" class="form-control" list="localidade_datalist" id="id_{{field_name|default:'local'}}_nome" value="{{nome}}" onkeyup="localidadeOnkeyup(event)" onkeydown="clearTimeout(local_urlTimeout)" onblur="validadeLocalidade()" onfocus="this.select()"{% if required %} required{% endif %}>
+	<label for="id_{{field_name|default:'local'}}_nome">Local</label>
+	<datalist id="localidade_datalist"></datalist>
+	<div id="localidade_spinner" class="spinner-grow text-success d-none" style="position: absolute; top:12px; right:15px; z-index:10;"></div>
+</div>
+
+<script>
+	const local_id = document.getElementById('id_{{field_name|default:'local'}}');
+	const local_nome = document.getElementById('id_{{field_name|default:'local'}}_nome');
+	const local_spinner = document.getElementById('localidade_spinner');
+	var local_urlTimeout = null; // Armazena o timeout para realizar consulta ajax
+	var local_urlDelay = 800; // Delay em milisegundos entre os inputs para realizar a consulta ajax
+	
+	function cleanLocalID(el=local_id){el.value = '';}
+
+	function localidadeOnkeyup(e){
+		if(e != undefined && [16, 17, 18, 37, 38, 39, 40, 13].includes(e.keyCode)){return false;} // Nao busca registros caso tecla seja enter, arrows, shift, cntrl ou alt
+		cleanLocalID();
+		local_urlTimeout = setTimeout(localidadeGetList, local_urlDelay)
+	}
+	
+	function localidadeGetList(el=local_nome, spinner=local_spinner, dl=document.getElementById("localidade_datalist")){
+		if(el.value.length > 2){
+			spinner.classList.remove('d-none');
+			
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function() {
+				if(this.readyState == 4 && this.status == 200){
+					if(this.responseText == '' || this.responseText == '{}'){el.classList.add('is-invalid');}
+					else{
+						el.classList.remove('is-invalid');
+						let obj = JSON.parse(this.responseText);
+						let locais = dl;
+						locais.innerHTML = '';
+						for(key in obj){
+							locais.innerHTML += '<option value="' + obj[key].Nome + '" data-id="' + obj[key]['#'] + '">';
+							}
+						}
+					}
+					spinner.classList.add('d-none');
+				};
+				xhttp.open("GET", "{% url 'trafego_get_localidades' %}?filtro={{filtro}}&pesquisa="+el.value, true);
+				xhttp.send();
+			}else{dl.innerHTML = '';el.classList.remove('is-invalid');}
+		}
+		
+		function validadeLocalidade(el_id=local_id, el_nome=local_nome, dl=document.getElementById("localidade_datalist")){
+			if(el_nome.value != ''){
+				let options = dl.getElementsByTagName('option');
+				let valid = false, i = 0;
+				while(!valid && i < options.length){
+					if(options[i].value == el_nome.value){valid = true;el_id.value = options[i].dataset.id;};
+					i++;
+				}
+				if(!valid){el_nome.classList.add('is-invalid');}
+			}
+		}
+		if(local_nome.value != ''){localidadeGetList();} // Carrega localidade no datalist se form ja preenchido (update)
+	</script>

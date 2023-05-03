@@ -3,7 +3,11 @@ function carregaAlertas() {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if(this.readyState == 4 && this.status == 200){
-      if(this.responseText == '[]'){document.getElementById('offcanvas_body').innerHTML = '<p class="mb-2 ps-2">Não há novas notificações</p>'}
+      if(this.responseText == '[]'){
+        document.getElementById('offcanvas_body').innerHTML = '<p class="mb-2 ps-2">Não há novas notificações</p>';
+        document.getElementById('messages_widget').classList.add('d-none');
+        document.getElementById('alertas_badge').innerHTML = '';
+      }
       else{
         let obj = JSON.parse(this.responseText);
         let qtde = 0;
@@ -23,16 +27,8 @@ function carregaAlertas() {
           document.getElementById('offcanvas_body').appendChild(alerta);
           qtde++;
         }
-        if(qtde > 0){
-          document.getElementById('messages_widget').classList.remove('d-none');
-          document.getElementById('messages_widget').classList.add('d-inline');
-          document.getElementById('alertas_badge').innerHTML = qtde;
-        }
-        else{
-          document.getElementById('messages_widget').classList.remove('d-inline');
-          document.getElementById('messages_widget').classList.add('d-none');
-          document.getElementById('alertas_badge').innerHTML = '';            
-        }
+        document.getElementById('messages_widget').classList.remove('d-none');
+        document.getElementById('alertas_badge').innerHTML = qtde;
       }
     }
   };
