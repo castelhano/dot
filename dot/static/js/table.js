@@ -1,9 +1,9 @@
 /*
 * jsTable   Implementa operacoes com tabelas previamente criadas ou gera tabela a partir de dados json
 *
-* @version  2.18
+* @version  2.19
 * @since    07/08/2022
-* @release  01/02/2023 [adicionado showCounterLabel nas configuracoes]
+* @release  04/05/2023 [data-print="false" em tags sao desconsideradas para exportacao]
 * @author   Rafael Gustavo Alves {@email castelhano.rafael@gmail.com}
 * @depend   boostrap 5.2.0, fontawesome 5.15.4, dot.css, dot.js
 */
@@ -557,8 +557,13 @@ class jsTable{
             let item = {};
             let cols = this.raw[i].querySelectorAll('td');
             let cols_size = this.canDeleteRow ? cols.length - 1 : cols.length; // cols.length - 1 desconsidera a ultima coluna dos controles
-            for(let j = 0; j < cols_size; j++){ 
-                item[this.headers[j]] = cols[j].innerText.replace('\n', '');
+            for(let j = 0; j < cols_size; j++){
+                if(cols[j].innerHTML.match(/<.*data-print="false".*>(.*?)<\/.*>/gi)){ // Verifica se existe texto a ser desconsiderado para exportacao
+                    let fakeEl = document.createElement('span');
+                    fakeEl.innerHTML = cols[j].innerHTML.replaceAll(/<.*data-print="false".*>(.*?)<\/.*>/gi, '');
+                    item[this.headers[j]] = fakeEl.innerText.replace(/(\r\n|\n|\r)/gm, '').replace(/(\s\s)/gm, ' ').trim(); // Remove espacos multiplos e quebra de linha
+                }
+                else{item[this.headers[j]] = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, '').replace(/(\s\s)/gm, ' ').trim()}
             }
             items.push(item);
         }
@@ -588,6 +593,9 @@ class jsTable{
     getJson(){return JSON.stringify(this.getRows())} // Retorna todas as linhas da tabela em formato Json
     exportJson(e){
         let data = this.getJson();
+        if(data.match(/<.*data-print="false".*>(.*?)<\/.*>/gi)){ // Verifica se existe texto a ser desconsiderado para exportacao
+            data = data.replaceAll(/<.*data-print="false".*>(.*?)<\/.*>/gi, '');
+        }
         let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(data);
         let filename = `${this.fileName}.json`;
         let btn = document.createElement('a');
@@ -611,9 +619,15 @@ class jsTable{
             let row = [], cols = this.raw[i].querySelectorAll('td, th');
             let cols_size = this.canDeleteRow ? cols.length - 1 : cols.length; // Desconsidera coluna de controles (se existir)
             for (let j = 0; j < cols_size; j++) {
-                let data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, '').replace(/(\s\s)/gm, ' '); // Remove espacos multiplos e quebra de linha
+                let data;
+                if(cols[j].innerHTML.match(/<.*data-print="false".*>(.*?)<\/.*>/gi)){ // Verifica se existe texto a ser desconsiderado para exportacao
+                    let fakeEl = document.createElement('span');
+                    fakeEl.innerHTML = cols[j].innerHTML.replaceAll(/<.*data-print="false".*>(.*?)<\/.*>/gi, '');
+                    data = fakeEl.innerText.replace(/(\r\n|\n|\r)/gm, '').replace(/(\s\s)/gm, ' '); // Remove espacos multiplos e quebra de linha
+                }
+                else{data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, '').replace(/(\s\s)/gm, ' ')}
                 if(this.csvClean){data = data.normalize("NFD").replace(/[\u0300-\u036f]/g, "");} // Remove acentuação e caracteres especiais
-                data = data.replace(/"/g, '""'); // Escape double-quote com double-double-quote 
+                data = data.replace(/"/g, '""').trim(); // Escape double-quote com double-double-quote 
                 row.push('"' + data + '"'); // Carrega string
             }
             csv.push(row.join(this.csvSeparator));

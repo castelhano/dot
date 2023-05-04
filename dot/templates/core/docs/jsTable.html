@@ -26,9 +26,9 @@
           <p>Library em javascript ( vanilla ) para operações com tabelas preexistentes ou criadas dinamicamente.</p>
           <blockquote class="callout callout-primary fs-7">
             <div class="body">
-              Version: <b>2.17</b><br>
+              Version: <b>2.19</b><br>
               Since: &nbsp;&nbsp;&nbsp;<b>12/08/2022</b><br>
-              Release: <b>31/01/2023</b><br>
+              Release: <b>04/05/2023</b><br>
               Author: &nbsp;<b>Rafael Gustavo Faria Alves</b><br>
               Depend: <a class="badge bg-orange text-white" href="https://getbootstrap.com/docs/5.2/getting-started/introduction/" target="_blank">bootstrap 5.x</a> <a class="badge bg-purple text-white" href="https://fontawesome.com/v5/search?m=free" target="_blank">fontawesome 5.x</a><br>
             </div>
@@ -319,6 +319,11 @@ SHORTCUT_MAP['enterFTF'] = () => {table.enterRow()}</code></pre>
             </table>
           </div>
 
+          <h3 class="mt-4" id="data_print_false">Ignorando texto para exportação</h3>
+          <p>Ao montar tabela, é possivel identificar partes do texto que serão ignorados para exportação (como textos de ajuda), para isso emcapsule o texto numa tag com o atributo <code>data-print="false"</code>, no exemplo abaixo somente <b>Valor</b> será exportado.</p>
+          <small>Exemplo:</small>
+          <pre><code class="language-html">&lt;td&gt;Valor&lt;sup data-print="false"&gt;texto de ajuda&lt;/sup&gt;&lt;/td&gt;</code></pre>
+
           <h3 id="acessando_elementos">Acessando elementos da tabela</h3>
           <hr>
           <blockquote class="callout callout-primary my-3"><div class="body">Os elementos abaixo são acessiveis como atributos do objeto instanciado, podendo ser acessados com <b>instancia.<span class="text-orange">elemento</span></b></div></blockquote>
@@ -441,6 +446,7 @@ var tab = new jsTable('minhaTabela', {
               <li><i class="fas fa-sliders-h fa-fw mt-2"></i><b><a href="#configuracoes">Configurações</a></b></li>
               <li><i class="fas none fa-fw"></i><a href="#estilizacao">Estilização</a></li>
               <li><i class="fas fa-code fa-fw mt-2"></i><b><a href="#metodos">Métodos</a></b></li>
+              <li><i class="fas none fa-fw"></i><a href="#data_print_false">Ignorando na exportação (CSV, JSON)</a></li>
               <li><i class="fas fa-link fa-fw mt-2"></i><b><a href="#acessando_elementos">Acessando elementos da tabela</a></b></li>
               <li><i class="fas none fa-fw"></i><a href="#integracao_listener_js">Integração com <b class="text-body-secondary">listener.js</b></a></li>
             </ul>
