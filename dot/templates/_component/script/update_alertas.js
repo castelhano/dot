@@ -7,6 +7,7 @@ function carregaAlertas() {
         document.getElementById('offcanvas_body').innerHTML = '<p class="mb-2 ps-2">Não há novas notificações</p>';
         document.getElementById('messages_widget').classList.add('d-none');
         document.getElementById('alertas_badge').innerHTML = '';
+        if(__sw >= 992){buildAppMap();}
       }
       else{
         let obj = JSON.parse(this.responseText);
@@ -29,6 +30,7 @@ function carregaAlertas() {
         }
         document.getElementById('messages_widget').classList.remove('d-none');
         document.getElementById('alertas_badge').innerHTML = qtde;
+        if(__sw >= 992){buildAppMap();}
       }
     }
   };

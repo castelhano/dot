@@ -20,19 +20,19 @@
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'index' %}"></a>
 <div id="dotWidgetsContainer" class="row px-1 pt-lg-2">
-  <div id="messages_widget" class="card-widget col-6 col-lg-4 col-xl-2 btn-secondary d-none"><i class="fas fa-inbox lead-image"> <sup id="alertas_badge" style="font-family: var(--bs-body-font-family); font-size:2rem;">0</sup></i><a class="widget-label stretched-link" data-bs-toggle="offcanvas" href="#offcanvas" role="button" title="ALT + M">Notificações<kbd class="float-end fs-9">alt m</kbd></a></div>
+  <div id="messages_widget" class="card-widget col-6 col-lg-4 col-xl-2 btn-secondary d-none"><i class="fas fa-inbox lead-image"> <sup id="alertas_badge" style="font-family: var(--bs-body-font-family); font-size:2rem;">0</sup></i><a class="widget-label stretched-link" data-bs-toggle="offcanvas" href="#offcanvas" role="button" title="ALT + M">Notificações</a></div>
   {% if perms.core.console %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-dark" title="Ctrl + C"><i class="fas fa-window-restore lead-image"></i><a id="console_link" class="widget-label stretched-link" href="{% url 'console' %}">Admin Console</a></div>{% endif %}
-  {% if perms.gestao.dashboard %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-dark" title="Ctrl + C"><i class="fas fa-chart-pie lead-image"></i><a id="widget_action_gestao" class="widget-label stretched-link" href="{% url 'gestao_dashboard' %}">Gerencial<kbd class="float-end fs-9 bg-body-tertiary text-dark fw-bold">ctrl 1</kbd></a></div>{% endif %}
+  {% if perms.gestao.dashboard %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-dark" title="Ctrl + C"><i class="fas fa-chart-pie lead-image"></i><a id="widget_action_gestao" class="widget-label stretched-link" href="{% url 'gestao_dashboard' %}">Gerencial</a></div>{% endif %}
   {% if perms.core.view_agenda %}<div class="card-widget card-widget-fixed col-12 col-lg-4 col-xl-2 p-0 bg-purple"><div id="loadingScreenAgenda" class="loadingWidget"><div class="spinner-border text-success"></div><span>Carregando Agenda...</span></div><div id="widget_core_agenda" class="h-100 container-fluid px-1"></div></div>{% endif %}
-  {% if perms.pessoal.view_funcionario %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-purple"><i class="fas fa-user-tie lead-image"></i><a id="widget_action_pessoal" class="widget-label stretched-link" href="{% url 'pessoal_funcionarios' %}">Pessoal<kbd class="float-end fs-9">ctrl p</kbd></a></div>{% endif %}
-  {% if perms.recrutamento.view_selecao %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-purple"><i class="fas fa-users lead-image"></i><a id="widget_action_recrutamento" class="widget-label stretched-link" href="{% url 'recrutamento_selecoes' %}">Recrutamento<kbd class="float-end fs-9">ctrl r</kbd></a></div>{% endif %}
-  {% if perms.sac.view_reclamacao %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-purple"><i class="fas fa-headset lead-image"></i><a id="widget_action_sac" class="widget-label stretched-link" href="{% url 'sac_reclamacoes' %}">SAC<kbd class="float-end fs-9">ctrl 2</kbd></a></div>{% endif %}
-  {% if perms.oficina.view_frota %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-success"><i class="fas fa-bus lead-image"></i><a id="widget_action_oficina" class="widget-label stretched-link" href="{% url 'oficina_frotas' %}">Oficina<kbd class="float-end fs-9">ctrl o</kbd></a></div>{% endif %}
-  {% if perms.trafego.view_linha %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-primary"><i class="fas fa-route lead-image"></i><a id="widget_action_linha" class="widget-label stretched-link" href="{% url 'trafego_linhas' %}">Linhas<kbd class="float-end fs-9">ctrl g</kbd></a></div>{% endif %}
-  {% if perms.trafego.view_planejamento %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-primary"><i class="fas fa-random lead-image"></i><a id="widget_action_planejamento" class="widget-label stretched-link" href="{% url 'trafego_planejamentos' %}">Planejamento<kbd class="float-end fs-9">ctrl 3</kbd></a></div>{% endif %}
+  {% if perms.pessoal.view_funcionario %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-purple"><i class="fas fa-user-tie lead-image"></i><a id="widget_action_pessoal" class="widget-label stretched-link" href="{% url 'pessoal_funcionarios' %}">Pessoal</a></div>{% endif %}
+  {% if perms.recrutamento.view_selecao %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-purple"><i class="fas fa-users lead-image"></i><a id="widget_action_recrutamento" class="widget-label stretched-link" href="{% url 'recrutamento_selecoes' %}">Recrutamento</a></div>{% endif %}
+  {% if perms.sac.view_reclamacao %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-purple"><i class="fas fa-headset lead-image"></i><a id="widget_action_sac" class="widget-label stretched-link" href="{% url 'sac_reclamacoes' %}">SAC</a></div>{% endif %}
+  {% if perms.oficina.view_frota %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-success"><i class="fas fa-bus lead-image"></i><a id="widget_action_oficina" class="widget-label stretched-link" href="{% url 'oficina_frotas' %}">Oficina</a></div>{% endif %}
+  {% if perms.trafego.view_linha %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-primary"><i class="fas fa-route lead-image"></i><a id="widget_action_linha" class="widget-label stretched-link" href="{% url 'trafego_linhas' %}">Linhas</a></div>{% endif %}
+  {% if perms.trafego.view_planejamento %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-primary"><i class="fas fa-random lead-image"></i><a id="widget_action_planejamento" class="widget-label stretched-link" href="{% url 'trafego_planejamentos' %}">Planejamento</a></div>{% endif %}
   {% if perms.trafego.view_notificacao %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-primary"><i class="fas fa-file-signature lead-image"></i><a id="widget_action_notificacao" class="widget-label stretched-link" href="{% url 'trafego_notificacoes' %}">Notificações</a></div>{% endif %}
   {% if perms.trafego.view_ocorrencia %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-primary"><i class="fas fa-road lead-image"></i><a id="widget_action_ocorrencia" class="widget-label stretched-link" href="{% url 'trafego_ocorrencias' %}">Ocorrências</a></div>{% endif %}
-  {% if perms.sinistro.view_acidente %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-primary"><i class="fas fa-car-crash lead-image"></i><a id="widget_action_acidente" class="widget-label stretched-link" href="{% url 'sinistro_acidentes' %}">Sinistro<kbd class="float-end fs-9">ctrl k</kbd></a></div>{% endif %}
+  {% if perms.sinistro.view_acidente %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-primary"><i class="fas fa-car-crash lead-image"></i><a id="widget_action_acidente" class="widget-label stretched-link" href="{% url 'sinistro_acidentes' %}">Sinistro</a></div>{% endif %}
   {% if perms.globus.view_escala %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-orange"><i class="fas fa-file-import lead-image"></i><a id="widget_action_globus" class="widget-label stretched-link" href="{% url 'globus_escalas' %}">Escalas (Globus)</a></div>{% endif %}
   {% if perms.globus.consultar_escala %}<div class="card-widget col-6 col-lg-4 col-xl-2 btn-orange"><i class="fas fa-user-clock lead-image"></i><a id="widget_action_consultar_escala" class="widget-label stretched-link" href="{% url 'globus_consultar_escala' %}">Consultar Escala</a></div>{% endif %}
   {% if perms.globus.localizar_escala %}
@@ -66,17 +66,6 @@
 <script>
 {% block add_script %}
 
-SHORTCUT_MAP['1FTF'] = () => {try{document.getElementById('widget_action_gestao').click()}catch(e){}};
-SHORTCUT_MAP['pFTF'] = () => {try{document.getElementById('widget_action_pessoal').click()}catch(e){}};
-SHORTCUT_MAP['rFTF'] = () => {try{document.getElementById('widget_action_recrutamento').click()}catch(e){}};
-SHORTCUT_MAP['2FTF'] = () => {try{document.getElementById('widget_action_sac').click()}catch(e){}};
-SHORTCUT_MAP['oFTF'] = () => {try{document.getElementById('widget_action_oficina').click()}catch(e){}};
-SHORTCUT_MAP['gFTF'] = () => {try{document.getElementById('widget_action_linha').click()}catch(e){}};
-SHORTCUT_MAP['3FTF'] = () => {try{document.getElementById('widget_action_planejamento').click()}catch(e){}};
-SHORTCUT_MAP['kFTF'] = () => {try{document.getElementById('widget_action_acidente').click()}catch(e){}};
-
-
-
 if(__sw >= 992){ // Implementa navegacao nos apps para viewport LG+
   SHORTCUT_MAP['arrowrightFTF'] = nextApp;
   SHORTCUT_MAP['arrowleftFTF'] = previousApp;
@@ -84,15 +73,17 @@ if(__sw >= 992){ // Implementa navegacao nos apps para viewport LG+
   SHORTCUT_MAP['arrowupFTF'] = appOnTop;
   SHORTCUT_MAP['enterFTF'] = appClick;
   
-  let apps = document.querySelectorAll('div:not(.d-none).card-widget');
-  let appSelectedIndex = apps ? 0 : null;
-  let x = apps ? 0 : null;
-  let y = apps ? 0 : null;
-  let maxCols = __ss == 'lg' ? 3 : 6;
-  let rows = apps ? Math.ceil(apps.length / maxCols) : 0;
-  let appsMap = [];
+  var apps,appSelectedIndex, x, y, maxCols, rows, appsMap;
+  function buildAppMap(){
+    apps = document.querySelectorAll('div:not(.d-none).card-widget');
+    appSelectedIndex = apps ? 0 : null;
+    x = apps ? 0 : null;
+    y = apps ? 0 : null;
+    maxCols = __ss == 'lg' ? 3 : 6;
+    rows = apps ? Math.ceil(apps.length / maxCols) : 0;
+    appsMap = [];
 
-  for(i = 0; i < rows; i++){
+    for(i = 0; i < rows; i++){
     let row = [];
     for(j = 0; j < maxCols; j++){
       if(apps[i * maxCols + j]){
@@ -101,8 +92,15 @@ if(__sw >= 992){ // Implementa navegacao nos apps para viewport LG+
     }
     appsMap.push(row);
   }
+  if(apps){ // Se pelo menos um app habilitado, adiciona classe de selecao no primeiro app
+    document.querySelectorAll('.card-selected').forEach((e)=>{e.classList.remove('card-selected')})
+    apps[0].classList.add('card-selected');
+  }
+  }
+  buildAppMap();
+  
 
-  if(apps){apps[0].classList.add('card-selected')} // Se pelo menos um app habilitado, adiciona classe de selecao no primeiro app
+  
   
   function appClick(){
     try{appsMap[y][x].querySelector('a.stretched-link').click();}catch(e){}
