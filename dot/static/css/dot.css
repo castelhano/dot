@@ -147,7 +147,8 @@ div.btn-light:hover{background-color: #d3d4d5;}
   .dropdown-menu-dark > li:hover, .dropdown-menu-dark > li.hover{background-color: #52575D;}
   .placeholder-end-lg::placeholder {text-align: right;font-weight: bold;color: #999;}
   .dotAlert{position: fixed;width: 100%;bottom: 1px;}
-  .card-widget-fixed{height: 166px;overflow-y: auto;}
+  .card-widget{height: 166px;}
+  .card-widget-fixed{overflow-y: auto;}
 }
 
 .rotate-90{transform: rotateZ(90deg);}
@@ -208,8 +209,8 @@ div.btn-light:hover{background-color: #d3d4d5;}
 .card-widget-sm > .widget-label{font-size: 0.85rem;color: #FFF;}
 .card-widget > .widget-control{position: absolute;padding-top: 5px;padding-bottom: 5px;padding-left: 14px;padding-right: 14px;border-radius: 25px;text-align: center;border: 1px solid transparent;cursor: pointer;top: 5px;right: 10px;z-index: 500;transition: background-color 0.3s;user-select: none;}
 .card-widget > .widget-control:hover{background-color: #FFF;opacity: 0.6;color: #444!important;}
-.card-selected{border-left:6px solid var(--bs-warning)}
-[data-bs-theme="dark"] .card-selected{border-left:4px solid #FFF}
+.card-selected{border-bottom:4px solid inherit;}
+[data-bs-theme="dark"] .card-selected{border-bottom:4px solid #FFF;}
 
 
 .widget-flat{position: relative;overflow: hidden;border: none;}
