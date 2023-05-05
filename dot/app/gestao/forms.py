@@ -63,5 +63,7 @@ class PlanoForm(forms.ModelForm):
 class SettingsForm(forms.ModelForm):
     class Meta:
         model = Settings
-        fields = ['analytics_foco_mes_atual']
-    analytics_foco_mes_atual = forms.BooleanField(required=False, initial=True, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch'}))
+        fields = ['analytics_foco_mes_atual','gerar_alerta_nova_analise','gerar_alerta_nova_diretriz']
+    analytics_foco_mes_atual = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch'}))
+    gerar_alerta_nova_analise = forms.BooleanField(required=False, initial=True, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch'}))
+    gerar_alerta_nova_diretriz = forms.BooleanField(required=False, initial=True, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch'}))

@@ -27,6 +27,14 @@
         	{{form.analytics_foco_mes_atual}}
         	<label class="form-check-label" for="id_analytics_foco_mes_atual">Analytics: Focar apontamento no <b id="label_apontamento_analytics">{{settings.analytics_foco_mes_atual|yesno:'mês atual,mês anterior'}}</b></label>
         </div>
+        <div class="form-check form-switch my-2">
+        	{{form.gerar_alerta_nova_diretriz}}
+        	<label class="form-check-label" for="id_gerar_alerta_nova_diretriz">Gerar alerta para nova diretriz</label>
+        </div>
+        <div class="form-check form-switch my-2">
+        	{{form.gerar_alerta_nova_analise}}
+        	<label class="form-check-label" for="id_gerar_alerta_nova_analise">Gerar alerta para nova análises</label>
+        </div>
       </div>
       <!-- CONTROLES DO FORM -->
       <div class="row mt-3">

@@ -16,7 +16,7 @@
         </ul>
     </div>
     <div class="card-body tab-content">
-        <h5 class="card-title">{{planejamento.codigo}} - {{planejamento.ativo|yesno:'<b class="text-success">ATIVO<b>,<b class="text-secondary">INATIVO</b>'|safe}}</h5>
+        <h5 class="card-title">{{planejamento.codigo}} - {{planejamento.ativo|yesno:'<b class="text-success">ATIVO</b>,<b class="text-secondary">INATIVO</b>'|safe}}</h5>
         <small>Linha: <b>{{planejamento.linha.codigo}}</b> - {{planejamento.linha.nome}}</small>
         <div class="tab-pane fade show active" id="base" role="tabpanel">
             <div class="row">

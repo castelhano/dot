@@ -104,7 +104,7 @@ def analytics(request):
             return redirect('gestao_dashboard')
         try: # Carrega configuracoes do app
             settings = Settings.objects.all().get()
-        except: # Caso nao gerado configuracoes iniciais carrega definicoes basicas
+        except: # Caso nao gerado configuracoes iniciais carrega definicoes padrao
             settings = Settings()
         
         # Exibe ultimo conforme definido nas configuracoes (mes atual ou anterior)
@@ -213,10 +213,9 @@ def settings(request):
             l.usuario = request.user
             l.mensagem = "AUTO CREATED"
             l.save()
-            messages.warning(request,'<b>Informativo:</b> App configurado pela primeira vez')
         else:
-            settings = None
-            messages.error(request,'<b>Erro::</b> Identificado duplicatas nas configurações do sistema, entre em contato com o administrador.')
+            messages.error(request,'<b>Erro:</b> Identificado duplicatas nas configurações do sistema, entre em contato com o administrador.')
+            return redirect ('gestao_dashboard')
     form = SettingsForm(instance=settings)
     return render(request,'gestao/settings.html',{'form':form,'settings':settings})
 
@@ -570,16 +569,21 @@ def diretriz_add(request):
                 l.usuario = request.user
                 l.mensagem = "CREATED"
                 l.save()
+                try: # Carrega configuracoes do app
+                    settings = Settings.objects.all().get()
+                except: # Caso nao gerado configuracoes iniciais carrega definicoes padrao
+                    settings = Settings()
                 # Cria alerta para pessoal na staff sobre nova diretriz
-                staffs = Staff.objects.filter(usuario__is_active=True, usuario__profile__empresas=registro.empresa).exclude(usuario=request.user)
-                params = {
-                    'titulo':'Nova Diretriz criada',
-                    'mensagem':f'<b>{registro.titulo}</b><br />Empresa: <b>{registro.empresa.nome}</b> <br />Indicador: <b>{registro.indicador.nome}</b>',
-                    'link': f'gestao_diretriz_id/{registro.id}'
-                }
-                for item in staffs:
-                    params['usuario'] = item.usuario                    
-                    Alerta.objects.create(**params)
+                if settings.gerar_alerta_nova_diretriz:
+                    staffs = Staff.objects.filter(usuario__is_active=True, usuario__profile__empresas=registro.empresa).exclude(usuario=request.user)
+                    params = {
+                        'titulo':'Nova Diretriz criada',
+                        'mensagem':f'<b>{registro.titulo}</b><br />Empresa: <b>{registro.empresa.nome}</b> <br />Indicador: <b>{registro.indicador.nome}</b>',
+                        'link': f'gestao_diretriz_id/{registro.id}'
+                    }
+                    for item in staffs:
+                        params['usuario'] = item.usuario                    
+                        Alerta.objects.create(**params)
                 messages.success(request,'Diretriz <b>' + str(registro.id) + '</b> criada')
                 return redirect('gestao_dashboard')
             except:
@@ -648,8 +652,12 @@ def analise_add(request):
             l.usuario = request.user
             l.mensagem = "CREATED"
             l.save()
+            try: # Carrega configuracoes do app
+                settings = Settings.objects.all().get()
+            except: # Caso nao gerado configuracoes iniciais carrega definicoes padrao
+                settings = Settings()
             # Se analise for nao conforme ou melhoria gera alerta para staffs no grupo Manager informando da nova analise
-            if analise.tipo in ['N','M']:
+            if settings.gerar_alerta_nova_analise and analise.tipo in ['N','M']:
                 staffs = Staff.objects.filter(role__in=['M','E','G'], usuario__is_active=True).exclude(usuario=analise.created_by)
                 critico = '<br /><b class="text-danger">Critico</b>' if analise.critico else ''
                 params = {
@@ -943,8 +951,12 @@ def analise_update(request):
         else:
             analise.critico = False
         analise.save()
+        try: # Carrega configuracoes do app
+            settings = Settings.objects.all().get()
+        except: # Caso nao gerado configuracoes iniciais carrega definicoes padrao
+            settings = Settings()
         # Se analise for nao conforme ou melhoria gera alerta para staffs no grupo Manager informando da nova analise
-        if changed_tipo and analise.tipo in ['N','M']:
+        if changed_tipo and settings.gerar_alerta_nova_analise and analise.tipo in ['N','M']:
             staffs = Staff.objects.filter(role__in=['M','E','G'], usuario__is_active=True).exclude(usuario=analise.created_by)
             critico = '<br /><b class="text-danger">Critico</b>' if analise.critico else ''
             params = {

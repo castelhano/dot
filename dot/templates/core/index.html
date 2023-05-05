@@ -75,6 +75,107 @@ SHORTCUT_MAP['gFTF'] = () => {try{document.getElementById('widget_action_linha')
 SHORTCUT_MAP['3FTF'] = () => {try{document.getElementById('widget_action_planejamento').click()}catch(e){}};
 SHORTCUT_MAP['kFTF'] = () => {try{document.getElementById('widget_action_acidente').click()}catch(e){}};
 
+
+
+if(__sw >= 992){ // Implementa navegacao nos apps para viewport LG+
+  SHORTCUT_MAP['arrowrightFTF'] = nextApp;
+  SHORTCUT_MAP['arrowleftFTF'] = previousApp;
+  SHORTCUT_MAP['arrowdownFTF'] = appOnBottom;
+  SHORTCUT_MAP['arrowupFTF'] = appOnTop;
+  SHORTCUT_MAP['enterFTF'] = appClick;
+  
+  let apps = document.querySelectorAll('div:not(.d-none).card-widget');
+  let appSelectedIndex = apps ? 0 : null;
+  let x = apps ? 0 : null;
+  let y = apps ? 0 : null;
+  let maxCols = __ss == 'lg' ? 3 : 6;
+  let rows = apps ? Math.ceil(apps.length / maxCols) : 0;
+  let appsMap = [];
+
+  for(i = 0; i < rows; i++){
+    let row = [];
+    for(j = 0; j < maxCols; j++){
+      if(apps[i * maxCols + j]){
+        row.push(apps[i * maxCols + j])
+      }
+    }
+    appsMap.push(row);
+  }
+
+  if(apps){apps[0].classList.add('card-selected')} // Se pelo menos um app habilitado, adiciona classe de selecao no primeiro app
+  
+  function appClick(){
+    try{appsMap[y][x].querySelector('a.stretched-link').click();}catch(e){}
+  }
+
+  function nextApp(){
+    if(!apps){return false}
+    if(appsMap[y][x + 1]){
+      appsMap[y][x].classList.remove('card-selected');
+      x++;
+      appsMap[y][x].classList.add('card-selected');
+    }
+    else{
+      appsMap[y][x].classList.remove('card-selected');
+      x = 0
+      appsMap[y][x].classList.add('card-selected');
+    }
+  }
+  function previousApp(){
+    if(!apps){return false}
+    appsMap[y][x].classList.remove('card-selected');
+    if(appsMap[y][x - 1]){
+      x--;
+      appsMap[y][x].classList.add('card-selected');
+    }
+    else{
+      x = appsMap[y].length - 1;
+      appsMap[y][x].classList.add('card-selected');
+    }
+  }
+
+  function appOnTop(){
+    if(!apps){return false}
+    appsMap[y][x].classList.remove('card-selected');
+    if(appsMap[y - 1] && appsMap[y - 1][x]){
+      y--;
+      appsMap[y][x].classList.add('card-selected');
+    }
+    else if(appsMap[y - 1]){
+      y--;
+      x = appsMap[y].length - 1;
+      appsMap[y][x].classList.add('card-selected');
+    }
+    else if(appsMap[rows - 1][x]){ // Nao tem linha anterior, aponta para ultima linha e mesma coluna (se existir)
+      y = rows - 1;
+      appsMap[y][x].classList.add('card-selected');
+    }
+    else{ // Nao tem linha anterior e nao existe mesma coluna na ultima linha, aponta para ultimo item da ultima linha
+      y = rows - 1;
+      x = appsMap[y].length - 1;
+      appsMap[y][x].classList.add('card-selected');
+    }
+  }
+  function appOnBottom(){
+    if(!apps){return false}
+    appsMap[y][x].classList.remove('card-selected');
+    if(appsMap[y + 1] && appsMap[y + 1][x]){
+      y++;
+      appsMap[y][x].classList.add('card-selected');
+    }
+    else if(appsMap[y + 1]){
+      y++;
+      x = appsMap[y].length - 1;
+      appsMap[y][x].classList.add('card-selected');
+    }
+    else if(appsMap[0][x]){ // Nao tem proxima linha, aponta para primeira linha e mesma coluna (se existir)
+      y = 0;
+      appsMap[y][x].classList.add('card-selected');
+    }
+  }
+}
+
+
 {% if perms.core.view_agenda %}
 
 let today = new Date();

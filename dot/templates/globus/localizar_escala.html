@@ -11,7 +11,6 @@
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
-      <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'index' %}"><i class="fas fa-undo"></i></a></li>
     </ul>
   </div>
   <form id="app_form" action="{% url 'globus_localizar_escala' %}" method="POST" autocomplete="off">
@@ -84,7 +83,9 @@
 
 {% endblock%}
 
-{% block add_script_src %}{% endblock %}
+{% block add_script_src %}
+<script src="{% static 'js/date.js' %}"></script>
+{% endblock %}
 
 <script>
   {% block add_script %}
@@ -92,5 +93,6 @@
     if(tipo == 'funcionario'){document.getElementById('veiculo_container').classList.add('d-none');document.getElementById('funcionario_container').classList.remove('d-none');}
     else if(tipo == 'veiculo'){document.getElementById('veiculo_container').classList.remove('d-none');document.getElementById('funcionario_container').classList.add('d-none');}    
   }
+  dateInputExtra_start();
   {% endblock %}
 </script>

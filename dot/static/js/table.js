@@ -593,8 +593,8 @@ class jsTable{
     getJson(){return JSON.stringify(this.getRows())} // Retorna todas as linhas da tabela em formato Json
     exportJson(e){
         let data = this.getJson();
-        if(data.match(/<.*data-print="false".*>(.*?)<\/.*>/gi)){ // Verifica se existe texto a ser desconsiderado para exportacao
-            data = data.replaceAll(/<.*data-print="false".*>(.*?)<\/.*>/gi, '');
+        if(data.match(/<[^>]+data-print="false".*>(.*?)<\/.+?>/gi)){ // Verifica se existe texto a ser desconsiderado para exportacao
+            data = data.replaceAll(/<[^>]+data-print="false".*>(.*?)<\/.+?>/gi, '');
         }
         let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(data);
         let filename = `${this.fileName}.json`;
@@ -620,9 +620,9 @@ class jsTable{
             let cols_size = this.canDeleteRow ? cols.length - 1 : cols.length; // Desconsidera coluna de controles (se existir)
             for (let j = 0; j < cols_size; j++) {
                 let data;
-                if(cols[j].innerHTML.match(/<.*data-print="false".*>(.*?)<\/.*>/gi)){ // Verifica se existe texto a ser desconsiderado para exportacao
+                if(cols[j].innerHTML.match(/<[^>]+data-print="false".*>(.*?)<\/.+?>/gi)){ // Verifica se existe texto a ser desconsiderado para exportacao
                     let fakeEl = document.createElement('span');
-                    fakeEl.innerHTML = cols[j].innerHTML.replaceAll(/<.*data-print="false".*>(.*?)<\/.*>/gi, '');
+                    fakeEl.innerHTML = cols[j].innerHTML.replaceAll(/<[^>]+data-print="false".*>(.*?)<\/.+?>/gi, '');
                     data = fakeEl.innerText.replace(/(\r\n|\n|\r)/gm, '').replace(/(\s\s)/gm, ' '); // Remove espacos multiplos e quebra de linha
                 }
                 else{data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, '').replace(/(\s\s)/gm, ' ')}

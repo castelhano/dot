@@ -197,6 +197,8 @@ class Plano(models.Model):
 
 class Settings(models.Model):
     analytics_foco_mes_atual = models.BooleanField(default=False)
+    gerar_alerta_nova_analise = models.BooleanField(default=True)
+    gerar_alerta_nova_diretriz = models.BooleanField(default=True)
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='gestao.settings',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
