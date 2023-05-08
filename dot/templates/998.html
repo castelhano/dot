@@ -24,7 +24,7 @@
 let extra = [];
 if(window.isSecureContext){
   extra = [
-  {id:'mdview_copy_btn', innerHTML:'<i class="fa fa-copy px-1"></i>', classList: 'btn btn-sm btn-success', title: 'Fooo', onclick: () => {
+  {id:'mdview_copy_btn', innerHTML:'<i class="fa fa-copy px-1"></i>', classList: 'btn btn-sm btn-success', title: 'Copiar', onclick: () => {
       navigator.clipboard.writeText(report.get());
       dotNotify('success', '<i class="fas fa-copy me-2"></i>Copiado para area de transferência');
     }}

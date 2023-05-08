@@ -199,11 +199,11 @@
               <tbody>
                 <tr>
                   <td>dotAlert('success', 'Registro salvo')</td>
-                  <td>Exibe mensagem de alerta padrão do sistema</td>
+                  <td>Exibe mensagem de alerta padrão do sistema <span class="link-primary pointer" onclick="dotAlert('success', 'Alerta de exemplo')">exemplo</span></td>
                 </tr>
                 <tr>
                   <td>dotNotify('success', 'Registro salvo')</td>
-                  <td>Exibe variação de alerta "stackable".</td>
+                  <td>Exibe variação de alerta "stackable"  <span class="link-primary pointer" onclick="dotNotify('success', 'Alerta de exemplo')">exemplo</span></td>
                 </tr>
                 <tr>
                   <td>dateToday()</td>
@@ -281,12 +281,14 @@
   'lTFF':{...}, // Alt + L: Evento click do elemento ID clear
   'gTFF':{...}, // Alt + G: Evento click do elemento ID submit
   '/FTF':{...}, // Ctrl + /: Evento click do elemento ID search
-  'dTFF':{...}, // Ctrl + D: Aciona evento click do elemento ID download
+  'dTFF':{...}, // Ctrl + D: Download table (integracao com table.js)
   'iTFF':{...}, // Alt + I: Aciona evento click do elemento ID home
   '.TFF':{...}, // Alt + .: Aciona evento click do elemento ID app_root
   'mTFF':{...}, // Alt + M: Aciona evento click do elemento ID messages
   'sTFF':{...}, // Alt + S: Aciona evento click do elemento ID system
-  'dTFF':{...}  // Ctrl + D: Aciona evento click do elemento ID docs
+  'f1TFF':{...}, // Alt + F1: Abre link para docs
+  'kTFF':{...}, // Alt + K: Modal atalhos de teclado e info sistema
+  'qTFF':{...}, // Alt + Q: Logout sistema
 }</code></pre>
         <h6 class="mt-4">Inserir novo atalho (ou alterar):</h6>
         <pre><code class="language-javascript">SHORTCUT_MAP['xFTF'] = () => {...};</code></pre>
@@ -559,7 +561,7 @@ delayOnTouchOnly: true // default=false Se true, delay ocorre somente em touch d
   enter: true,                                // Default = false
   autofocus: true,                            // Default = false
   placeholder: 'Enter ou ,',                  // Default = ''
-  transform: 'input => input.toUpperCase()',  // Deafult = 'input => input'
+  transform: 'input => input.toUpperCase()',  // Default = 'input => input'
   duplicate: true,                            // Default = false
 })</code></pre>
 

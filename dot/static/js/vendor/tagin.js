@@ -78,7 +78,7 @@
             input.type = 'text';
             input.className = this.classInput;
             input.placeholder = this.placeholder;
-            if(this.enter){input.setAttribute('listener-js','escape-tab')}
+            if(this.enter){input.setAttribute('data-listener_js','escape-tab')}
             const wrapper = document.createElement('div');
             wrapper.className = `${this.classWrapper} ${this.target.className}`;
             wrapper.classList.remove(this.classElement);
