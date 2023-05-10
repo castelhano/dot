@@ -10,7 +10,7 @@ from django.db.models import Count
 
 
 @login_required
-@permission_required('sac.dashboard_reclamacao')
+@permission_required('sac.dashboard_reclamacao', login_url="/handler/403")
 def reclamacao_dashboard(request):
     periodo_de = request.GET.get('periodo_de', date.today().replace(day=1))
     periodo_ate = request.GET.get('periodo_ate', date.today())

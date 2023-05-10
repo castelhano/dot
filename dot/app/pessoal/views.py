@@ -13,20 +13,20 @@ from datetime import datetime
 
 # METODOS SHOW
 @login_required
-@permission_required('pessoal.view_setor')
+@permission_required('pessoal.view_setor', login_url="/handler/403")
 def setores(request):
     setores = Setor.objects.all().order_by('nome')
     return render(request,'pessoal/setores.html', {'setores' : setores})
 
 @login_required
-@permission_required('pessoal.view_cargo')
+@permission_required('pessoal.view_cargo', login_url="/handler/403")
 def cargos(request):
     cargos = Cargo.objects.all().order_by('nome')
     return render(request,'pessoal/cargos.html',{'cargos':cargos})
 
 
 @login_required
-@permission_required('pessoal.view_funcionario')
+@permission_required('pessoal.view_funcionario', login_url="/handler/403")
 def funcionarios(request):
     funcionarios = None
     if request.method == 'POST':
@@ -77,7 +77,7 @@ def funcionarios(request):
     return render(request,'pessoal/funcionarios.html',{'funcionarios':funcionarios})
 
 @login_required
-@permission_required('pessoal.view_afastamento')
+@permission_required('pessoal.view_afastamento', login_url="/handler/403")
 def afastamentos(request, id):
     try:
         funcionario = Funcionario.objects.get(id=id,empresa__in=request.user.profile.empresas.all())
@@ -87,7 +87,7 @@ def afastamentos(request, id):
     return render(request,'pessoal/afastamentos.html', {'funcionario' : funcionario})
 
 @login_required
-@permission_required('pessoal.view_dependente')
+@permission_required('pessoal.view_dependente', login_url="/handler/403")
 def dependentes(request, id):
     try:
         funcionario = Funcionario.objects.get(id=id,empresa__in=request.user.profile.empresas.all())
@@ -97,7 +97,7 @@ def dependentes(request, id):
     return render(request,'pessoal/dependentes.html', {'funcionario' : funcionario})
 
 @login_required
-@permission_required('pessoal.view_funcaofixa')
+@permission_required('pessoal.view_funcaofixa', login_url="/handler/403")
 def funcoes_fixas(request):
     funcoes_fixas = FuncaoFixa.objects.all()
     return render(request,'pessoal/funcoes_fixas.html', {'funcoes_fixas' : funcoes_fixas})
@@ -105,7 +105,7 @@ def funcoes_fixas(request):
 
 # METODOS ADD
 @login_required
-@permission_required('pessoal.add_setor')
+@permission_required('pessoal.add_setor', login_url="/handler/403")
 def setor_add(request):
     if request.method == 'POST':
         form = SetorForm(request.POST)
@@ -129,7 +129,7 @@ def setor_add(request):
     return render(request,'pessoal/setor_add.html',{'form':form})
     
 @login_required
-@permission_required('pessoal.add_cargo')
+@permission_required('pessoal.add_cargo', login_url="/handler/403")
 def cargo_add(request):
     if request.method == 'POST':
         form = CargoForm(request.POST)
@@ -153,7 +153,7 @@ def cargo_add(request):
     return render(request,'pessoal/cargo_add.html',{'form':form})
 
 @login_required
-@permission_required('pessoal.add_funcionario')
+@permission_required('pessoal.add_funcionario', login_url="/handler/403")
 def funcionario_add(request):
     if request.method == 'POST':
         form = FuncionarioForm(request.POST, request.FILES)
@@ -191,7 +191,7 @@ def funcionario_add(request):
     return render(request,'pessoal/funcionario_add.html',{'form':form})
 
 @login_required
-@permission_required('pessoal.add_afastamento')
+@permission_required('pessoal.add_afastamento', login_url="/handler/403")
 def afastamento_add(request, id):
     if request.method == 'POST':
         form = AfastamentoForm(request.POST)
@@ -225,7 +225,7 @@ def afastamento_add(request, id):
     return render(request,'pessoal/afastamento_add.html',{'form':form,'funcionario':funcionario})
 
 @login_required
-@permission_required('pessoal.add_dependente')
+@permission_required('pessoal.add_dependente', login_url="/handler/403")
 def dependente_add(request, id):
     if request.method == 'POST':
         form = DependenteForm(request.POST)
@@ -253,7 +253,7 @@ def dependente_add(request, id):
     return render(request,'pessoal/dependente_add.html',{'form':form,'funcionario':funcionario})
 
 @login_required
-@permission_required('pessoal.add_funcaofixa')
+@permission_required('pessoal.add_funcaofixa', login_url="/handler/403")
 def funcao_fixa_add(request):
     if request.method == 'POST':
         form = FuncaoFixaForm(request.POST)
@@ -278,21 +278,21 @@ def funcao_fixa_add(request):
 
 # METODOS GET
 @login_required
-@permission_required('pessoal.change_setor')
+@permission_required('pessoal.change_setor', login_url="/handler/403")
 def setor_id(request,id):
     setor = Setor.objects.get(pk=id)
     form = SetorForm(instance=setor)
     return render(request,'pessoal/setor_id.html',{'form':form,'setor':setor})
 
 @login_required
-@permission_required('pessoal.change_cargo')
+@permission_required('pessoal.change_cargo', login_url="/handler/403")
 def cargo_id(request,id):
     cargo = Cargo.objects.get(pk=id)
     form = CargoForm(instance=cargo)
     return render(request,'pessoal/cargo_id.html',{'form':form,'cargo':cargo})
 
 @login_required
-@permission_required('pessoal.view_funcionario')
+@permission_required('pessoal.view_funcionario', login_url="/handler/403")
 def funcionario_id(request,id):
     try:
         funcionario = Funcionario.objects.get(pk=id,empresa__in=request.user.profile.empresas.all())
@@ -303,21 +303,21 @@ def funcionario_id(request,id):
     return render(request,'pessoal/funcionario_id.html',{'form':form,'funcionario':funcionario})
 
 @login_required
-@permission_required('pessoal.change_afastamento')
+@permission_required('pessoal.change_afastamento', login_url="/handler/403")
 def afastamento_id(request,id):
     afastamento = Afastamento.objects.get(pk=id)
     form = AfastamentoForm(instance=afastamento)
     return render(request,'pessoal/afastamento_id.html',{'form':form,'afastamento':afastamento})
 
 @login_required
-@permission_required('pessoal.change_dependente')
+@permission_required('pessoal.change_dependente', login_url="/handler/403")
 def dependente_id(request,id):
     dependente = Dependente.objects.get(pk=id)
     form = DependenteForm(instance=dependente)
     return render(request,'pessoal/dependente_id.html',{'form':form,'dependente':dependente, 'funcionario':dependente.funcionario})
 
 @login_required
-@permission_required('pessoal.change_funcaofixa')
+@permission_required('pessoal.change_funcaofixa', login_url="/handler/403")
 def funcao_fixa_id(request, id):
     funcao_fixa = FuncaoFixa.objects.get(id=id)
     form = FuncaoFixaForm(instance=funcao_fixa)
@@ -326,7 +326,7 @@ def funcao_fixa_id(request, id):
 
 # METODOS UPDATE
 @login_required
-@permission_required('pessoal.change_setor')
+@permission_required('pessoal.change_setor', login_url="/handler/403")
 def setor_update(request,id):
     setor = Setor.objects.get(pk=id)
     form = SetorForm(request.POST, instance=setor)
@@ -345,7 +345,7 @@ def setor_update(request,id):
         return render(request,'pessoal/setor_id.html',{'form':form,'setor':setor})
 
 @login_required
-@permission_required('pessoal.change_cargo')
+@permission_required('pessoal.change_cargo', login_url="/handler/403")
 def cargo_update(request,id):
     cargo = Cargo.objects.get(pk=id)
     form = CargoForm(request.POST, instance=cargo)
@@ -364,7 +364,7 @@ def cargo_update(request,id):
         return render(request,'pessoal/cargo_id.html',{'form':form,'cargo':cargo})
 
 @login_required
-@permission_required('pessoal.change_funcionario')
+@permission_required('pessoal.change_funcionario', login_url="/handler/403")
 def funcionario_update(request,id):
     funcionario = Funcionario.objects.get(pk=id)
     if funcionario.status == 'D':
@@ -400,7 +400,7 @@ def funcionario_update(request,id):
         return render(request,'pessoal/funcionario_id.html',{'form':form,'funcionario':funcionario})
 
 @login_required
-@permission_required('pessoal.change_afastamento')
+@permission_required('pessoal.change_afastamento', login_url="/handler/403")
 def afastamento_update(request,id):
     afastamento = Afastamento.objects.get(pk=id)
     if afastamento.funcionario.status == 'D':
@@ -436,7 +436,7 @@ def afastamento_update(request,id):
         return render(request,'pessoal/afastamento_id.html',{'form':form,'afastamento':afastamento})
 
 @login_required
-@permission_required('pessoal.change_dependente')
+@permission_required('pessoal.change_dependente', login_url="/handler/403")
 def dependente_update(request,id):
     dependente = Dependente.objects.get(pk=id)
     if dependente.funcionario.status == 'D':
@@ -462,7 +462,7 @@ def dependente_update(request,id):
         return render(request,'pessoal/dependente_id.html',{'form':form,'dependente':dependente})
 
 @login_required
-@permission_required('pessoal.change_funcaofixa')
+@permission_required('pessoal.change_funcaofixa', login_url="/handler/403")
 def funcao_fixa_update(request, id):
     funcao_fixa = FuncaoFixa.objects.get(pk=id)
     form = FuncaoFixaForm(request.POST, instance=funcao_fixa)
@@ -482,7 +482,7 @@ def funcao_fixa_update(request, id):
 
 # METODOS DELETE
 @login_required
-@permission_required('pessoal.delete_setor')
+@permission_required('pessoal.delete_setor', login_url="/handler/403")
 def setor_delete(request,id):
     try:
         registro = Setor.objects.get(pk=id)
@@ -501,7 +501,7 @@ def setor_delete(request,id):
         return redirect('pessoal_setor_id', id)
 
 @login_required
-@permission_required('pessoal.delete_cargo')
+@permission_required('pessoal.delete_cargo', login_url="/handler/403")
 def cargo_delete(request,id):
     try:
         registro = Cargo.objects.get(pk=id)
@@ -520,7 +520,7 @@ def cargo_delete(request,id):
         return redirect('pessoal_cargo_id', id)
 
 @login_required
-@permission_required('pessoal.delete_funcionario')
+@permission_required('pessoal.delete_funcionario', login_url="/handler/403")
 def funcionario_delete(request,id):
     try:
         registro = Funcionario.objects.get(pk=id)
@@ -539,7 +539,7 @@ def funcionario_delete(request,id):
         return redirect('pessoal_funcionario_id', id)
 
 @login_required
-@permission_required('pessoal.delete_afastamento')
+@permission_required('pessoal.delete_afastamento', login_url="/handler/403")
 def afastamento_delete(request,id):
     try:
         registro = Afastamento.objects.get(pk=id)
@@ -562,7 +562,7 @@ def afastamento_delete(request,id):
         return redirect('pessoal_afastamento_id', id)
 
 @login_required
-@permission_required('pessoal.delete_dependente')
+@permission_required('pessoal.delete_dependente', login_url="/handler/403")
 def dependente_delete(request,id):
     try:
         registro = Dependente.objects.get(pk=id)
@@ -584,7 +584,7 @@ def dependente_delete(request,id):
 
 
 @login_required
-@permission_required('pessoal.delete_funcaofixa')
+@permission_required('pessoal.delete_funcaofixa', login_url="/handler/403")
 def funcao_fixa_delete(request, id):
     try:
         registro = FuncaoFixa.objects.get(id=id)
@@ -604,7 +604,7 @@ def funcao_fixa_delete(request, id):
 
 # OUTROS METODOS
 @login_required
-@permission_required('pessoal.desligar_funcionario')
+@permission_required('pessoal.desligar_funcionario', login_url="/handler/403")
 def funcionario_desligar(request):
     if request.method == 'POST':
         try:
@@ -631,7 +631,7 @@ def funcionario_desligar(request):
         return redirect('pessoal_funcionarios')
         
 @login_required
-@permission_required('pessoal.afastar_funcionario')
+@permission_required('pessoal.afastar_funcionario', login_url="/handler/403")
 def funcionario_afastar(request):
     if request.method == 'POST':
         try:

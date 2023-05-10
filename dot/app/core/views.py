@@ -14,7 +14,7 @@ from .console import Run
 from datetime import datetime, date
 from django.http import HttpResponse, JsonResponse
 from django.core import serializers
-from django.conf import settings
+from django.conf import settings as SETTINGS
 from django.db.models import Q
 from .validators import validate_file_extension
 
@@ -35,7 +35,7 @@ def empresas(request):
     return render(request,'core/empresas.html',{'empresas':empresas})
 
 @login_required
-@permission_required('auth.view_group')
+@permission_required('auth.view_group', login_url="/handler/403")
 def grupos(request):
     grupos = Group.objects.all().order_by('name')
     pesquisa = request.GET.get('pesquisa', None)
@@ -46,7 +46,7 @@ def grupos(request):
     return render(request,'core/grupos.html',{'grupos':grupos})
 
 @login_required
-@permission_required('auth.view_group')
+@permission_required('auth.view_group', login_url="/handler/403")
 def usuarios_grupo(request, id):
     grupo = Group.objects.get(pk=id)
     usuarios = User.objects.filter(groups=grupo)
@@ -55,7 +55,7 @@ def usuarios_grupo(request, id):
 
 
 @login_required
-@permission_required('auth.view_user')
+@permission_required('auth.view_user', login_url="/handler/403")
 def usuarios(request):
     usuarios = User.objects.all().order_by('username')
     if request.GET:
@@ -71,7 +71,7 @@ def usuarios(request):
     return render(request,'core/usuarios.html',{'usuarios':usuarios})
 
 @login_required
-@permission_required('core.view_log')
+@permission_required('core.view_log', login_url="/handler/403")
 def logs(request):
     target_model = request.GET.get('target_model',None)
     mensagem = request.GET.get('mensagem',None)
@@ -82,17 +82,17 @@ def logs(request):
     return render(request,'core/logs.html',{'logs':logs})
 
 @login_required
-@permission_required('core.docs')
+@permission_required('core.docs', login_url="/handler/403")
 def docs(request, page='core'):
     return render(request,f'core/docs/{page}.html')
 
 @login_required
-@permission_required('core.view_agenda')
+@permission_required('core.view_agenda', login_url="/handler/403")
 def agendas(request):
     return render(request,'core/agendas.html')
 
 @login_required
-@permission_required('core.view_feriado')
+@permission_required('core.view_feriado', login_url="/handler/403")
 def feriados(request):
     ano = request.POST['ano'] if request.method == 'POST' else date.today().year
     feriados = Feriado.objects.filter(data__year=ano).order_by('data')
@@ -100,7 +100,7 @@ def feriados(request):
 
 
 @login_required
-@permission_required('core.view_issue')
+@permission_required('core.view_issue', login_url="/handler/403")
 def issues(request):
     if not request.user.has_perm('core.eh_suporte'):
         issues = Issue.objects.filter(followers=request.user).order_by('entrada')
@@ -129,7 +129,7 @@ def issues(request):
 
 
 @login_required
-@permission_required('core.view_alerta')
+@permission_required('core.view_alerta', login_url="/handler/403")
 def alertas(request):
     alertas = None
     if request.method == 'POST':
@@ -152,7 +152,7 @@ def alertas(request):
     return render(request,'core/alertas.html',{'alertas':alertas})
 
 @login_required
-@permission_required('core.console')
+@permission_required('core.console', login_url="/handler/403")
 def console(request):
     if request.method == 'POST':
         response = Run(request, json.loads(request.POST['script']))
@@ -166,7 +166,7 @@ def console(request):
     return render(request,'core/console.html')
 
 @login_required
-@permission_required('core.view_settings')
+@permission_required('core.view_settings', login_url="/handler/403")
 def settings(request):
     try: # Busca configuracao do app
         settings = Settings.objects.all().get()
@@ -189,7 +189,7 @@ def settings(request):
 
 # METODOS ADD
 @login_required
-@permission_required('core.add_empresa')
+@permission_required('core.add_empresa', login_url="/handler/403")
 def empresa_add(request):
     if request.method == 'POST':
         form = EmpresaForm(request.POST, request.FILES)
@@ -213,7 +213,7 @@ def empresa_add(request):
     return render(request,'core/empresa_add.html',{'form':form})
 
 @login_required
-@permission_required('auth.add_user')
+@permission_required('auth.add_user', login_url="/handler/403")
 def usuario_add(request):
     if request.method == 'POST':
         form = UserForm(request.POST)
@@ -262,7 +262,7 @@ def usuario_add(request):
     return render(request,'core/usuario_add.html',{'form':form})
 
 @login_required
-@permission_required('auth.add_group')
+@permission_required('auth.add_group', login_url="/handler/403")
 def grupo_add(request):
     if request.method == 'POST':
         form = GroupForm(request.POST)
@@ -286,7 +286,7 @@ def grupo_add(request):
     return render(request,'core/grupo_add.html',{'form':form})
 
 @login_required
-@permission_required('core.add_agenda')
+@permission_required('core.add_agenda', login_url="/handler/403")
 def agenda_add(request):
     if request.method == 'POST':
         form = AgendaForm(request.POST, request.FILES)
@@ -323,7 +323,7 @@ def agenda_add(request):
     return render(request,'core/agenda_add.html',{'form':form})
 
 @login_required
-@permission_required('core.add_feriado')
+@permission_required('core.add_feriado', login_url="/handler/403")
 def feriado_add(request):
     if request.method == 'POST':
         form = FeriadoForm(request.POST)
@@ -347,7 +347,7 @@ def feriado_add(request):
     return render(request,'core/feriado_add.html',{'form':form})
 
 @login_required
-@permission_required('core.add_issue')
+@permission_required('core.add_issue', login_url="/handler/403")
 def issue_add(request):
     if request.method == 'POST':
         form = IssueForm(request.POST)
@@ -398,48 +398,48 @@ def issue_add(request):
 
 # METODOS GET
 @login_required
-@permission_required('core.change_empresa')
+@permission_required('core.change_empresa', login_url="/handler/403")
 def empresa_id(request, id):
     empresa = Empresa.objects.get(id=id)
     form = EmpresaForm(instance=empresa)
     return render(request,'core/empresa_id.html',{'form':form,'empresa':empresa})
 
 @login_required
-@permission_required('auth.change_user')
+@permission_required('auth.change_user', login_url="/handler/403")
 def usuario_id(request, id):
     usuario = User.objects.get(id=id)
     form = UserForm(instance=usuario)
     return render(request,'core/usuario_id.html',{'form':form,'usuario':usuario})
 
 @login_required
-@permission_required('auth.change_group')
+@permission_required('auth.change_group', login_url="/handler/403")
 def grupo_id(request, id):
     grupo = Group.objects.get(id=id)
     form = GroupForm(instance=grupo)
     return render(request,'core/grupo_id.html',{'form':form,'grupo':grupo})
 
 @login_required
-@permission_required('core.view_alerta')
+@permission_required('core.view_alerta', login_url="/handler/403")
 def alerta_id(request, id):
     alerta = Alerta.objects.get(id=id)
     return render(request,'core/alerta_id.html',{'alerta':alerta})
 
 @login_required
-@permission_required('core.view_agenda')
+@permission_required('core.view_agenda', login_url="/handler/403")
 def agenda_id(request, id):
     agenda = Agenda.objects.get(id=id)
     form = AgendaForm(instance=agenda)
     return render(request,'core/agenda_id.html',{'form':form,'agenda':agenda})
 
 @login_required
-@permission_required('core.view_feriado')
+@permission_required('core.view_feriado', login_url="/handler/403")
 def feriado_id(request, id):
     feriado = Feriado.objects.get(id=id)
     form = FeriadoForm(instance=feriado)
     return render(request,'core/feriado_id.html',{'form':form,'feriado':feriado})
 
 @login_required
-@permission_required('core.view_issue')
+@permission_required('core.view_issue', login_url="/handler/403")
 def issue_id(request, id):
     issue = Issue.objects.get(id=id)
     form = IssueForm(instance=issue)
@@ -447,7 +447,7 @@ def issue_id(request, id):
 
 # METODOS UPDATE
 @login_required
-@permission_required('core.change_empresa')
+@permission_required('core.change_empresa', login_url="/handler/403")
 def empresa_update(request, id):
     empresa = Empresa.objects.get(pk=id)
     form = EmpresaForm(request.POST, request.FILES, instance=empresa)
@@ -466,7 +466,7 @@ def empresa_update(request, id):
         return render(request,'core/empresa_id.html',{'form':form,'empresa':empresa})
 
 @login_required
-@permission_required('auth.change_user')
+@permission_required('auth.change_user', login_url="/handler/403")
 def usuario_update(request, id):
     usuario = User.objects.get(pk=id)
     form = UserForm(request.POST, instance=usuario)
@@ -509,7 +509,7 @@ def usuario_update(request, id):
         return render(request,'core/usuario_id.html',{'form':form,'usuario':usuario})
 
 @login_required
-@permission_required('auth.change_group')
+@permission_required('auth.change_group', login_url="/handler/403")
 def grupo_update(request, id):
     grupo = Group.objects.get(pk=id)
     form = GroupForm(request.POST, instance=grupo)
@@ -536,7 +536,7 @@ def alerta_marcar_lido(request):
     return HttpResponse('')
 
 @login_required
-@permission_required('core.change_agenda')
+@permission_required('core.change_agenda', login_url="/handler/403")
 def agenda_update(request, id):
     agenda = Agenda.objects.get(pk=id)
     form = AgendaForm(request.POST, request.FILES, instance=agenda)
@@ -555,7 +555,7 @@ def agenda_update(request, id):
         return render(request,'core/agenda_id.html',{'form':form,'agenda':agenda})
 
 @login_required
-@permission_required('core.change_feriado')
+@permission_required('core.change_feriado', login_url="/handler/403")
 def feriado_update(request, id):
     feriado = Feriado.objects.get(pk=id)
     form = FeriadoForm(request.POST, instance=feriado)
@@ -574,7 +574,7 @@ def feriado_update(request, id):
         return render(request,'core/feriado_id.html',{'form':form,'feriado':feriado})
 
 @login_required
-@permission_required('core.change_issue')
+@permission_required('core.change_issue', login_url="/handler/403")
 def issue_update(request, id):
     issue = Issue.objects.get(pk=id)
     form = IssueForm(request.POST, instance=issue)
@@ -638,7 +638,7 @@ def issue_update(request, id):
         return render(request,'core/issue_id.html',{'form':form,'issue':issue})
 
 @login_required
-@permission_required('core.change_settings')
+@permission_required('core.change_settings', login_url="/handler/403")
 def settings_update(request, id):
     settings = Settings.objects.get(pk=id)
     form = SettingsForm(request.POST, instance=settings)
@@ -658,7 +658,7 @@ def settings_update(request, id):
 
 # METODOS DELETE
 @login_required
-@permission_required('core.delete_empresa')
+@permission_required('core.delete_empresa', login_url="/handler/403")
 def empresa_delete(request, id):
     try:
         registro = Empresa.objects.get(pk=id)
@@ -677,7 +677,7 @@ def empresa_delete(request, id):
         return redirect('core_empresa_id', id)
 
 @login_required
-@permission_required('auth.delete_user')
+@permission_required('auth.delete_user', login_url="/handler/403")
 def usuario_delete(request, id):
     try:
         registro = User.objects.get(pk=id)
@@ -696,7 +696,7 @@ def usuario_delete(request, id):
         return redirect('core_usuario_id', id)
 
 @login_required
-@permission_required('auth.delete_group')
+@permission_required('auth.delete_group', login_url="/handler/403")
 def grupo_delete(request, id):
     try:
         registro = Group.objects.get(pk=id)
@@ -715,7 +715,7 @@ def grupo_delete(request, id):
         return redirect('core_grupo_id', id)
 
 @login_required
-@permission_required('core.delete_alerta')
+@permission_required('core.delete_alerta', login_url="/handler/403")
 def alerta_delete(request, id):
     try:
         registro = Alerta.objects.get(pk=id)
@@ -727,7 +727,7 @@ def alerta_delete(request, id):
         return redirect('core_alerta_id', id)
 
 @login_required
-@permission_required('core.delete_agenda')
+@permission_required('core.delete_agenda', login_url="/handler/403")
 def agenda_delete(request, id):
     try:
         registro = Agenda.objects.get(pk=id)
@@ -746,7 +746,7 @@ def agenda_delete(request, id):
         return redirect('core_agenda_id', id)
 
 @login_required
-@permission_required('core.delete_feriado')
+@permission_required('core.delete_feriado', login_url="/handler/403")
 def feriado_delete(request, id):
     try:
         registro = Feriado.objects.get(pk=id)
@@ -765,7 +765,7 @@ def feriado_delete(request, id):
         return redirect('core_feriado_id', id)
 
 @login_required
-@permission_required('core.delete_issue')
+@permission_required('core.delete_issue', login_url="/handler/403")
 def issue_delete(request, id):
     try:
         registro = Issue.objects.get(pk=id)
@@ -923,7 +923,7 @@ def initializeProfileConfig():
 def app_data(request, fpath): 
     if request.method == 'GET': # Requisicao, abre arquivo (se existir) e retorna conteudo (em json)
         try:
-            f = open(f'{settings.APP_DATA}/{fpath}', 'r', encoding='utf-8')
+            f = open(f'{SETTINGS.APP_DATA}/{fpath}', 'r', encoding='utf-8')
             data = json.load(f)
             f.close()
         except Exception as e:
@@ -1035,7 +1035,7 @@ def get_alertas(request):
     return HttpResponse(data, content_type="application/json")
 
 @login_required
-@permission_required('core.view_agenda')
+@permission_required('core.view_agenda', login_url="/handler/403")
 def get_agenda(request):
     ano = request.GET.get('ano', date.today().year)
     mes = request.GET.get('mes', date.today().month)

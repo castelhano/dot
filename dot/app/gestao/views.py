@@ -15,7 +15,7 @@ from datetime import date, datetime, timedelta
 
 # METODOS SHOW
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def dashboard(request):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -40,7 +40,7 @@ def dashboard(request):
     return render(request,'gestao/dashboard.html',{'staff':staff,'diretrizes':diretrizes,'empresa':empresa,'empresas':empresas})
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def roadmap(request):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -87,7 +87,7 @@ def roadmap(request):
     return render(request,'gestao/roadmap.html',metrics)
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def analytics(request):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -133,7 +133,7 @@ def analytics(request):
     return render(request,'gestao/analytics.html',{'staff':staff,'metrics':metrics})
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def stratified(request):
     try:
         indicador = Indicador.objects.get(id=request.GET['indicador'])
@@ -220,13 +220,13 @@ def settings(request):
     return render(request,'gestao/settings.html',{'form':form,'settings':settings})
 
 @login_required
-@permission_required('gestao.view_kanban')
+@permission_required('gestao.view_kanban', login_url="/handler/403")
 def kanban(request):
     empresas = request.user.profile.empresas.all()
     return render(request, 'gestao/kanban.html',{'empresas':empresas})
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def indicadores(request):
     indicadores = Indicador.objects.all().order_by('nome')
     fields = ['ativo']
@@ -246,7 +246,7 @@ def indicadores(request):
         return redirect('gestao_indicadores')
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def planos_arquivo(request):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -262,7 +262,7 @@ def planos_arquivo(request):
     
 
 @login_required
-@permission_required('gestao.staff')
+@permission_required('gestao.staff', login_url="/handler/403")
 def staffs(request):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -279,7 +279,7 @@ def staffs(request):
         return redirect('gestao_staffs')
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def diretrizes(request):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -292,7 +292,7 @@ def diretrizes(request):
     return render(request,'gestao/diretrizes.html', {'diretrizes' : diretrizes, 'staff':staff})
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def labels(request):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -305,7 +305,7 @@ def labels(request):
     return render(request,'gestao/labels.html', {'labels' : labels,'staff':'staff'})
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def analises(request):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -341,7 +341,7 @@ def analises(request):
     return render(request,'gestao/analises.html', metrics)
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def analise_arquivo(request):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -371,7 +371,7 @@ def analise_arquivo(request):
 
 # METODOS ADD
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def indicador_add(request):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -418,7 +418,7 @@ def gte(v1, v2, qmm=True):
             return 0
 
 @login_required
-@permission_required('gestao.add_apontamento')
+@permission_required('gestao.add_apontamento', login_url="/handler/403")
 def apontamento_add(request):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -522,7 +522,7 @@ def apontamento_add(request):
             return render(request, 'gestao/apontamento_add.html')
 
 @login_required
-@permission_required('gestao.staff')
+@permission_required('gestao.staff', login_url="/handler/403")
 def staff_add(request):
     if request.method == 'POST':
         form = StaffForm(request.POST)
@@ -546,7 +546,7 @@ def staff_add(request):
     return render(request,'gestao/staff_add.html',{'form':form})
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def diretriz_add(request):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -594,7 +594,7 @@ def diretriz_add(request):
     return render(request,'gestao/diretriz_add.html',{'form':form})
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def label_add(request):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -625,7 +625,7 @@ def label_add(request):
     return render(request,'gestao/label_add.html',{'form':form})
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def analise_add(request):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -681,7 +681,7 @@ def analise_add(request):
     return redirect('gestao_dashboard')
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def plano_add(request, diretriz):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -722,7 +722,7 @@ def plano_add(request, diretriz):
 
 # METODOS GET
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def indicador_id(request,id):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -736,14 +736,14 @@ def indicador_id(request,id):
     return render(request,'gestao/indicador_id.html',{'form':form,'indicador':indicador,'staff':staff})
 
 @login_required
-@permission_required('gestao.staff')
+@permission_required('gestao.staff', login_url="/handler/403")
 def staff_id(request,id):
     staff = Staff.objects.get(pk=id)
     form = StaffForm(instance=staff)
     return render(request,'gestao/staff_id.html',{'form':form,'staff':staff})
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def diretriz_id(request,id):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -755,7 +755,7 @@ def diretriz_id(request,id):
     return render(request,'gestao/diretriz_id.html',{'form':form,'diretriz':diretriz,'staff':staff})
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def label_id(request,id):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -769,7 +769,7 @@ def label_id(request,id):
     return render(request,'gestao/label_id.html',{'form':form,'label':label})
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def plano_id(request,id):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -785,7 +785,7 @@ def plano_id(request,id):
 
 # METODOS UPDATE
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def indicador_update(request,id):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -811,7 +811,7 @@ def indicador_update(request,id):
         return render(request,'gestao/indicador_id.html',{'form':form,'indicador':indicador})
 
 @login_required
-@permission_required('gestao.staff')
+@permission_required('gestao.staff', login_url="/handler/403")
 def staff_update(request,id):
     staff = Staff.objects.get(pk=id)
     form = StaffForm(request.POST, instance=staff)
@@ -830,7 +830,7 @@ def staff_update(request,id):
         return render(request,'gestao/staff_id.html',{'form':form,'staff':staff})
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def diretriz_update(request,id):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -856,7 +856,7 @@ def diretriz_update(request,id):
         return render(request,'gestao/diretriz_id.html',{'form':form,'diretriz':diretriz,'staff':staff})
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def diretriz_finalizar(request):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -881,7 +881,7 @@ def diretriz_finalizar(request):
     return redirect('gestao_dashboard')
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def diretriz_reativar(request, id):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -906,7 +906,7 @@ def diretriz_reativar(request, id):
     return redirect('gestao_dashboard')
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def label_update(request,id):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -932,7 +932,7 @@ def label_update(request,id):
         return render(request,'gestao/label_id.html',{'form':form,'label':label})
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def analise_update(request):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -980,7 +980,7 @@ def analise_update(request):
     return redirect('gestao_analises')
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def analise_movimentar(request):
     try:
         operacao = request.POST['operacao']
@@ -1011,7 +1011,7 @@ def analise_movimentar(request):
     return redirect('gestao_analises')
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def plano_update(request,id):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -1041,7 +1041,7 @@ def plano_update(request,id):
         return render(request,'gestao/plano_id.html',{'form':form,'plano':plano})
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def plano_movimentar(request,id):
     operacao = request.GET.get('operacao', None)
     try:
@@ -1082,7 +1082,7 @@ def plano_movimentar(request,id):
     return redirect('gestao_dashboard')
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def plano_avaliar(request):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -1131,7 +1131,7 @@ def settings_update(request, id):
         
 # METODOS DELETE
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def indicador_delete(request,id):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -1157,7 +1157,7 @@ def indicador_delete(request,id):
         return redirect('gestao_indicador_id', id)
 
 @login_required
-@permission_required('gestao.add_apontamento')
+@permission_required('gestao.add_apontamento', login_url="/handler/403")
 def apontamento_delete(request):
     try:
         ano = request.POST['ano']
@@ -1190,7 +1190,7 @@ def apontamento_delete(request):
     return redirect('gestao_analytics')
 
 @login_required
-@permission_required('gestao.staff')
+@permission_required('gestao.staff', login_url="/handler/403")
 def staff_delete(request,id):
     try:
         registro = Staff.objects.get(pk=id)
@@ -1209,7 +1209,7 @@ def staff_delete(request,id):
         return redirect('gestao_staff_id', id)
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def diretriz_delete(request,id):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -1237,7 +1237,7 @@ def diretriz_delete(request,id):
         return redirect('gestao_diretriz_id', id)
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def label_delete(request,id):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -1263,7 +1263,7 @@ def label_delete(request,id):
         return redirect('gestao_label_id', id)
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def analise_delete(request):
     try:
         staff = Staff.objects.get(usuario=request.user)
@@ -1289,7 +1289,7 @@ def analise_delete(request):
         return redirect('gestao_analises')
 
 @login_required
-@permission_required('gestao.dashboard')
+@permission_required('gestao.dashboard', login_url="/handler/403")
 def plano_delete(request,id):
     try:
         staff = Staff.objects.get(usuario=request.user)

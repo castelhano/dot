@@ -11,13 +11,13 @@ from django.conf import settings as ROOT
 
 # METODOS SHOW
 @login_required
-@permission_required('sac.view_classificacao')
+@permission_required('sac.view_classificacao', login_url="/handler/403")
 def classificacoes(request):
     classificacoes = Classificacao.objects.all().order_by('nome')
     return render(request, 'sac/classificacoes.html', {'classificacoes':classificacoes})
 
 @login_required
-@permission_required('sac.view_reclamacao')
+@permission_required('sac.view_reclamacao', login_url="/handler/403")
 def reclamacoes(request):
     reclamacoes = Reclamacao.objects.all().order_by('entrada')
     if request.GET.get('empresa', None):
@@ -49,7 +49,7 @@ def reclamacoes(request):
     return render(request, 'sac/reclamacoes.html', metrics)
 
 @login_required
-@permission_required('sac.view_settings')
+@permission_required('sac.view_settings', login_url="/handler/403")
 def settings(request):
     try: # Busca configuracao do app
         settings = Settings.objects.all().get()
@@ -108,7 +108,7 @@ def site(request):
 
 # METODOS ADD
 @login_required
-@permission_required('sac.add_classificacao')
+@permission_required('sac.add_classificacao', login_url="/handler/403")
 def classificacao_add(request):
     if request.method == 'POST':
         form = ClassificacaoForm(request.POST)
@@ -132,7 +132,7 @@ def classificacao_add(request):
     return render(request,'sac/classificacao_add.html',{'form':form})
 
 @login_required
-@permission_required('sac.add_reclamacao')
+@permission_required('sac.add_reclamacao', login_url="/handler/403")
 def reclamacao_add(request):
     if request.method == 'POST':
         form = ReclamacaoForm(request.POST)
@@ -161,14 +161,14 @@ def reclamacao_add(request):
 
 # METODOS GET
 @login_required
-@permission_required('sac.change_classificacao')
+@permission_required('sac.change_classificacao', login_url="/handler/403")
 def classificacao_id(request,id):
     classificacao = Classificacao.objects.get(pk=id)
     form = ClassificacaoForm(instance=classificacao)
     return render(request,'sac/classificacao_id.html',{'form':form,'classificacao':classificacao})
 
 @login_required
-@permission_required('sac.change_reclamacao')
+@permission_required('sac.change_reclamacao', login_url="/handler/403")
 def reclamacao_id(request,id):
     reclamacao = Reclamacao.objects.get(pk=id)
     form = ReclamacaoForm(instance=reclamacao)
@@ -178,7 +178,7 @@ def reclamacao_id(request,id):
 
 # METODOS UPDATE
 @login_required
-@permission_required('sac.change_classificacao')
+@permission_required('sac.change_classificacao', login_url="/handler/403")
 def classificacao_update(request,id):
     classificacao = Classificacao.objects.get(pk=id)
     form = ClassificacaoForm(request.POST, instance=classificacao)
@@ -197,7 +197,7 @@ def classificacao_update(request,id):
         return render(request,'sac/classificacao_id.html',{'form':form,'classificacao':classificacao})
 
 @login_required
-@permission_required('sac.change_reclamacao')
+@permission_required('sac.change_reclamacao', login_url="/handler/403")
 def reclamacao_update(request,id):
     reclamacao = Reclamacao.objects.get(pk=id)
     form = ReclamacaoForm(request.POST, instance=reclamacao)
@@ -217,7 +217,7 @@ def reclamacao_update(request,id):
 
 
 @login_required
-@permission_required('sac.change_settings')
+@permission_required('sac.change_settings', login_url="/handler/403")
 def settings_update(request, id):
     settings = Settings.objects.get(pk=id)
     form = SettingsForm(request.POST, instance=settings)
@@ -237,7 +237,7 @@ def settings_update(request, id):
 
 # METODOS DELETE
 @login_required
-@permission_required('sac.delete_classificacao')
+@permission_required('sac.delete_classificacao', login_url="/handler/403")
 def classificacao_delete(request,id):
     try:
         registro = Classificacao.objects.get(pk=id)
@@ -256,7 +256,7 @@ def classificacao_delete(request,id):
         return redirect('sac_classificacao_id', id)
 
 @login_required
-@permission_required('sac.delete_reclamacao')
+@permission_required('sac.delete_reclamacao', login_url="/handler/403")
 def reclamacao_delete(request,id):
     try:
         registro = Reclamacao.objects.get(pk=id)

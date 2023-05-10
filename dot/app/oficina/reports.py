@@ -10,7 +10,7 @@ from django.db.models.functions import TruncYear
 from django.db.models import Sum, Count
 
 @login_required
-@permission_required('oficina.dashboard_frota')
+@permission_required('oficina.dashboard_frota', login_url="/handler/403")
 def frota_dashboard(request):
     if request.GET.get('data_simulada', None):
         data_simulada = datetime.strptime(request.GET.get('data_simulada', None), '%Y-%m-%d').date()

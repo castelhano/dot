@@ -42,7 +42,8 @@
               </li>
               <li><span class="dropdown-item pointer" onclick="console_model('dotCleaner')">Cleaner</span></li>
               <li><hr class="dropdown-divider"></li>
-              <li><span class="dropdown-item pointer text-danger" onclick="console_model('runscript')">Runscript</span></li>
+              <li><span class="dropdown-item pointer dropdown-item-danger" onclick="console_model('user_force_change_password')">Global Change Password</span></li>
+              <li><span class="dropdown-item pointer" onclick="console_model('runscript')">Runscript</span></li>
             </ul>
           </div>
           <div class="btn-group" role="group">
@@ -83,6 +84,7 @@
     'alerta_style':'<span class="badge bg-orange text-uppercase">@alert</span>\n<span class="badge bg-success">operation=new</span>\n<span class="badge bg-success" contenteditable="true">username=username</span>\n<span class="badge bg-primary" contenteditable="true">critico=False</span>\n<span class="badge bg-primary" contenteditable="true">alert_class_list=alert alert-dark alert-dismissible mb-1 pb-2</span>\n<span class="badge bg-primary" contenteditable="true">action_class_list=fs-7</span>\n<span class="badge bg-secondary" contenteditable="true">titulo=informe um titulo</span>\n<span class="badge bg-secondary" contenteditable="true">mensagem=escreva a mensagem do alerta aqui..</span>',
     'runscript':'<span class="badge bg-orange text-uppercase">@runscript</span>\n<span class="badge bg-success" contenteditable="true">code=000000</span>\n',
     'dotCleaner':'<span class="badge bg-orange text-uppercase">@dotCleaner</span>\n<span class="badge bg-success" contenteditable="true">until=aaaa-mm-dd</span>\n<span class="badge bg-primary" contenteditable="true">cleanlogs=False</span>\n<span class="badge bg-primary" contenteditable="true">cleanalertas=True</span>\n<span class="badge bg-primary" contenteditable="true">cleanescalas=True</span>\n<span class="badge bg-success" contenteditable="true">force=False</span>',
+    'user_force_change_password':'<span class="badge bg-orange text-uppercase">@user</span>\n<span class="badge bg-success">operation=global_change_pw</span>\n',
     'pessoal_cancelar_desligamento':'<span class="badge bg-orange text-uppercase">@pessoal</span>\n<span class="badge bg-success">operation=reengage</span>\n<span class="badge bg-primary" contenteditable="true">matricula=00000</span>\n',
     'escala_clean':'<span class="badge bg-orange text-uppercase">@globus</span>\n<span class="badge bg-success">operation=clean</span>\n<span class="badge bg-success" contenteditable="true">until=aaaa-mm-dd</span>',
   };
@@ -93,6 +95,7 @@
   function console_model(key){
     dotConsole.innerHTML = models[key];addParam.classList.remove('d-none');
     if(key.includes('alerta')){help_label.innerHTML = '<i class="fas fa-info-circle text-body-secondary"></i> <b>Dica:</b> <span class="badge bg-success">username=all</span> cria alerta para <b>todos</b> os <b>usuarios ativos</b>.';}
+    else if(key.includes('user')){help_label.innerHTML = '<i class="fas fa-info text-danger me-1"></i> <b>Atenção:</b> Ao confirmar, todos os usuários (exceto superusers) deverão trocar a senha no próximo login';}
     else if(key.includes('escala_clean')){help_label.innerHTML = '<i class="fas fa-info text-danger"></i> <b>Atenção:</b> Este processo pode demorar vários minutos dependendo do período informado.';}
     else if(key.includes('dotCleaner')){help_label.innerHTML = '<i class="fas fa-info text-body-secondary"></i> <b>Atenção:</b> Após executar, a página será redirecionada para o relatório de coclusão da rotina</b>.<br/><span class="badge bg-success">force=True</span>irá remover inclusive alertas criticos';}
     else{help_label.innerHTML = '';}

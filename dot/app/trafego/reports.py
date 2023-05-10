@@ -16,7 +16,7 @@ import locale
 locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 
 @login_required
-@permission_required('trafego.dashboard_ocorrencia')
+@permission_required('trafego.dashboard_ocorrencia', login_url="/handler/403")
 def ocorrencia_dashboard(request):
     periodo_de = request.GET.get('periodo_de', date.today().replace(day=1))
     periodo_ate = request.GET.get('periodo_ate', date.today())
@@ -130,7 +130,7 @@ def ocorrencia_dashboard(request):
 #  ------------------------------------
 
 @login_required
-@permission_required('trafego.view_notificacao')
+@permission_required('trafego.view_notificacao', login_url="/handler/403")
 def notificacao_capa(request):
     notificacao = Notificacao.objects.get(pk=request.GET['notificacao'])
     

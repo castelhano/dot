@@ -9,7 +9,7 @@ from django.db.models.functions import TruncMonth
 from django.db.models import Count, Sum
 
 @login_required
-@permission_required('recrutamento.dashboard_recrutamento')
+@permission_required('recrutamento.dashboard_recrutamento', login_url="/handler/403")
 def candidato_dashboard(request):
     if request.GET.get('periodo_analise_dias', None) != 'all':
         periodo_analise_dias = int(request.GET.get('periodo_analise_dias', 365))

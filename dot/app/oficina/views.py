@@ -12,7 +12,7 @@ from .forms import FrotaForm, MarcaForm, CategoriaForm, ComponenteForm, ModeloFo
 
 # METODOS SHOW
 @login_required
-@permission_required('oficina.view_frota')
+@permission_required('oficina.view_frota', login_url="/handler/403")
 def frotas(request):
     if request.method == 'POST':
         frotas = Frota.objects.filter(empresa__in=request.user.profile.empresas.all()).order_by('prefixo')
@@ -74,13 +74,13 @@ def frotas(request):
         return render(request,'oficina/frotas.html')
 
 @login_required
-@permission_required('oficina.view_marca')
+@permission_required('oficina.view_marca', login_url="/handler/403")
 def marcas(request):
     marcas = Marca.objects.all().order_by('nome')
     return render(request,'oficina/marcas.html', {'marcas' : marcas})
 
 @login_required
-@permission_required('oficina.view_categoria')
+@permission_required('oficina.view_categoria', login_url="/handler/403")
 def categorias(request):
     categorias = Categoria.objects.all().order_by('nome')
     if request.method == 'POST':
@@ -88,7 +88,7 @@ def categorias(request):
     return render(request,'oficina/categorias.html', {'categorias' : categorias})
 
 @login_required
-@permission_required('oficina.view_componente')
+@permission_required('oficina.view_componente', login_url="/handler/403")
 def componentes(request):
     componentes = Componente.objects.all().order_by('nome')
     if request.method == 'POST':
@@ -96,7 +96,7 @@ def componentes(request):
     return render(request,'oficina/componentes.html', {'componentes' : componentes})
 
 @login_required
-@permission_required('oficina.view_classificacao')
+@permission_required('oficina.view_classificacao', login_url="/handler/403")
 def classificacoes(request):
     classificacoes = Classificacao.objects.all().order_by('nome')
     if request.method == 'POST':
@@ -104,7 +104,7 @@ def classificacoes(request):
     return render(request,'oficina/classificacoes.html', {'classificacoes' : classificacoes})
 
 @login_required
-@permission_required('oficina.view_carroceria')
+@permission_required('oficina.view_carroceria', login_url="/handler/403")
 def carrocerias(request):
     carrocerias = Carroceria.objects.all().order_by('nome')
     if request.method == 'POST':
@@ -112,7 +112,7 @@ def carrocerias(request):
     return render(request,'oficina/carrocerias.html', {'carrocerias' : carrocerias})
 
 @login_required
-@permission_required('oficina.view_modelo')
+@permission_required('oficina.view_modelo', login_url="/handler/403")
 def modelos(request):
     modelos = Modelo.objects.all().order_by('marca__nome','nome')
     if request.method == 'POST':
@@ -121,7 +121,7 @@ def modelos(request):
 
 # METODOS ADD
 @login_required
-@permission_required('oficina.add_frota')
+@permission_required('oficina.add_frota', login_url="/handler/403")
 def frota_add(request):
     if request.method == 'POST':
         form = FrotaForm(request.POST, request.FILES)
@@ -144,7 +144,7 @@ def frota_add(request):
     return render(request,'oficina/frota_add.html',{'form':form})
 
 @login_required
-@permission_required('oficina.add_marca')
+@permission_required('oficina.add_marca', login_url="/handler/403")
 def marca_add(request):
     if request.method == 'POST':
         form = MarcaForm(request.POST)
@@ -167,7 +167,7 @@ def marca_add(request):
     return render(request,'oficina/marca_add.html',{'form':form})
 
 @login_required
-@permission_required('oficina.add_classificacao')
+@permission_required('oficina.add_classificacao', login_url="/handler/403")
 def classificacao_add(request):
     if request.method == 'POST':
         form = ClassificacaoForm(request.POST)
@@ -190,7 +190,7 @@ def classificacao_add(request):
     return render(request,'oficina/classificacao_add.html',{'form':form})
 
 @login_required
-@permission_required('oficina.add_categoria')
+@permission_required('oficina.add_categoria', login_url="/handler/403")
 def categoria_add(request):
     if request.method == 'POST':
         form = CategoriaForm(request.POST)
@@ -213,7 +213,7 @@ def categoria_add(request):
     return render(request,'oficina/categoria_add.html',{'form':form})
 
 @login_required
-@permission_required('oficina.add_componente')
+@permission_required('oficina.add_componente', login_url="/handler/403")
 def componente_add(request):
     if request.method == 'POST':
         form = ComponenteForm(request.POST)
@@ -236,7 +236,7 @@ def componente_add(request):
     return render(request,'oficina/componente_add.html',{'form':form})
 
 @login_required
-@permission_required('oficina.add_carroceria')
+@permission_required('oficina.add_carroceria', login_url="/handler/403")
 def carroceria_add(request):
     if request.method == 'POST':
         form = CarroceriaForm(request.POST)
@@ -259,7 +259,7 @@ def carroceria_add(request):
     return render(request,'oficina/carroceria_add.html',{'form':form})
 
 @login_required
-@permission_required('oficina.add_modelo')
+@permission_required('oficina.add_modelo', login_url="/handler/403")
 def modelo_add(request):
     if request.method == 'POST':
         form = ModeloForm(request.POST)
@@ -283,7 +283,7 @@ def modelo_add(request):
     
 # METODOS GET
 @login_required
-@permission_required('oficina.view_frota')
+@permission_required('oficina.view_frota', login_url="/handler/403")
 def frota_id(request, id):
     try:
         frota = Frota.objects.get(empresa__in=request.user.profile.empresas.all(),id=id)
@@ -294,42 +294,42 @@ def frota_id(request, id):
     return render(request,'oficina/frota_id.html',{'form':form,'frota':frota})
 
 @login_required
-@permission_required('oficina.change_marca')
+@permission_required('oficina.change_marca', login_url="/handler/403")
 def marca_id(request, id):
     marca = Marca.objects.get(id=id)
     form = MarcaForm(instance=marca)
     return render(request,'oficina/marca_id.html',{'form':form,'marca':marca})
 
 @login_required
-@permission_required('oficina.change_classificacao')
+@permission_required('oficina.change_classificacao', login_url="/handler/403")
 def classificacao_id(request, id):
     classificacao = Classificacao.objects.get(id=id)
     form = ClassificacaoForm(instance=classificacao)
     return render(request,'oficina/classificacao_id.html',{'form':form,'classificacao':classificacao})
 
 @login_required
-@permission_required('oficina.change_categoria')
+@permission_required('oficina.change_categoria', login_url="/handler/403")
 def categoria_id(request, id):
     categoria = Categoria.objects.get(id=id)
     form = CategoriaForm(instance=categoria)
     return render(request,'oficina/categoria_id.html',{'form':form,'categoria':categoria})
 
 @login_required
-@permission_required('oficina.change_componente')
+@permission_required('oficina.change_componente', login_url="/handler/403")
 def componente_id(request, id):
     componente = Componente.objects.get(id=id)
     form = ComponenteForm(instance=componente)
     return render(request,'oficina/componente_id.html',{'form':form,'componente':componente})
 
 @login_required
-@permission_required('oficina.change_carroceria')
+@permission_required('oficina.change_carroceria', login_url="/handler/403")
 def carroceria_id(request, id):
     carroceria = Carroceria.objects.get(id=id)
     form = CarroceriaForm(instance=carroceria)
     return render(request,'oficina/carroceria_id.html',{'form':form,'carroceria':carroceria})
 
 @login_required
-@permission_required('oficina.change_modelo')
+@permission_required('oficina.change_modelo', login_url="/handler/403")
 def modelo_id(request, id):
     modelo = Modelo.objects.get(id=id)
     form = ModeloForm(instance=modelo)
@@ -338,7 +338,7 @@ def modelo_id(request, id):
 
 # METODOS UPDATE
 @login_required
-@permission_required('oficina.change_frota')
+@permission_required('oficina.change_frota', login_url="/handler/403")
 def frota_update(request, id):
     try:
         frota = Frota.objects.get(empresa__in=request.user.profile.empresas.all(), pk=id)
@@ -360,7 +360,7 @@ def frota_update(request, id):
         return render(request,'oficina/frota_id.html',{'form':form,'frota':frota})
 
 @login_required
-@permission_required('oficina.change_frota')
+@permission_required('oficina.change_frota', login_url="/handler/403")
 def frota_movimentar(request, id):
     frota = Frota.objects.get(pk=id)
     l = Log()
@@ -384,7 +384,7 @@ def frota_movimentar(request, id):
     return redirect('oficina_frota_id', id)
 
 @login_required
-@permission_required('oficina.change_marca')
+@permission_required('oficina.change_marca', login_url="/handler/403")
 def marca_update(request, id):
     marca = Marca.objects.get(pk=id)
     form = MarcaForm(request.POST, instance=marca)
@@ -403,7 +403,7 @@ def marca_update(request, id):
         return render(request,'oficina/marca.html',{'form':form,'marca':marca})
 
 @login_required
-@permission_required('oficina.change_categoria')
+@permission_required('oficina.change_categoria', login_url="/handler/403")
 def categoria_update(request, id):
     categoria = Categoria.objects.get(pk=id)
     form = CategoriaForm(request.POST, instance=categoria)
@@ -422,7 +422,7 @@ def categoria_update(request, id):
         return render(request,'oficina/categoria.html',{'form':form,'categoria':categoria})
 
 @login_required
-@permission_required('oficina.change_componente')
+@permission_required('oficina.change_componente', login_url="/handler/403")
 def componente_update(request, id):
     componente = Componente.objects.get(pk=id)
     form = ComponenteForm(request.POST, instance=componente)
@@ -441,7 +441,7 @@ def componente_update(request, id):
         return render(request,'oficina/componente.html',{'form':form,'componente':componente})
 
 @login_required
-@permission_required('oficina.change_carroceria')
+@permission_required('oficina.change_carroceria', login_url="/handler/403")
 def carroceria_update(request, id):
     carroceria = Carroceria.objects.get(pk=id)
     form = CarroceriaForm(request.POST, instance=carroceria)
@@ -460,7 +460,7 @@ def carroceria_update(request, id):
         return render(request,'oficina/carroceria.html',{'form':form,'carroceria':carroceria})
 
 @login_required
-@permission_required('oficina.change_classificacao')
+@permission_required('oficina.change_classificacao', login_url="/handler/403")
 def classificacao_update(request, id):
     classificacao = Classificacao.objects.get(pk=id)
     form = ClassificacaoForm(request.POST, instance=classificacao)
@@ -479,7 +479,7 @@ def classificacao_update(request, id):
         return render(request,'oficina/classificacao.html',{'form':form,'classificacao':classificacao})
 
 @login_required
-@permission_required('oficina.change_modelo')
+@permission_required('oficina.change_modelo', login_url="/handler/403")
 def modelo_update(request, id):
     modelo = Modelo.objects.get(pk=id)
     form = ModeloForm(request.POST, instance=modelo)
@@ -499,7 +499,7 @@ def modelo_update(request, id):
 
 # METODOS DELETE
 @login_required
-@permission_required('oficina.delete_frota')
+@permission_required('oficina.delete_frota', login_url="/handler/403")
 def frota_delete(request, id):
     try:
         registro = Frota.objects.get(empresa__in=request.user.profile.empresas.all(), pk=id)
@@ -518,7 +518,7 @@ def frota_delete(request, id):
         return redirect('oficina_frota_id', id)
 
 @login_required
-@permission_required('oficina.delete_marca')
+@permission_required('oficina.delete_marca', login_url="/handler/403")
 def marca_delete(request, id):
     try:
         registro = Marca.objects.get(pk=id)
@@ -537,7 +537,7 @@ def marca_delete(request, id):
         return redirect('oficina_marca_id', id)
 
 @login_required
-@permission_required('oficina.delete_classificacao')
+@permission_required('oficina.delete_classificacao', login_url="/handler/403")
 def classificacao_delete(request, id):
     try:
         registro = Classificacao.objects.get(pk=id)
@@ -556,7 +556,7 @@ def classificacao_delete(request, id):
         return redirect('oficina_classificacao_id', id)
 
 @login_required
-@permission_required('oficina.delete_categoria')
+@permission_required('oficina.delete_categoria', login_url="/handler/403")
 def categoria_delete(request, id):
     try:
         registro = Categoria.objects.get(pk=id)
@@ -575,7 +575,7 @@ def categoria_delete(request, id):
         return redirect('oficina_categoria_id', id)
 
 @login_required
-@permission_required('oficina.delete_componente')
+@permission_required('oficina.delete_componente', login_url="/handler/403")
 def componente_delete(request, id):
     try:
         registro = Componente.objects.get(pk=id)
@@ -594,7 +594,7 @@ def componente_delete(request, id):
         return redirect('oficina_componente_id', id)
 
 @login_required
-@permission_required('oficina.delete_carroceria')
+@permission_required('oficina.delete_carroceria', login_url="/handler/403")
 def carroceria_delete(request, id):
     try:
         registro = Carroceria.objects.get(pk=id)
@@ -613,7 +613,7 @@ def carroceria_delete(request, id):
         return redirect('oficina_carroceria_id', id)
 
 @login_required
-@permission_required('oficina.delete_modelo')
+@permission_required('oficina.delete_modelo', login_url="/handler/403")
 def modelo_delete(request, id):
     try:
         registro = Modelo.objects.get(pk=id)

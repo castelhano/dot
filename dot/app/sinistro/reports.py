@@ -14,7 +14,7 @@ from django.db.models import Count
 
 
 @login_required
-@permission_required('sinistro.view_acidente')
+@permission_required('sinistro.view_acidente', login_url="/handler/403")
 def capa_resumo(request):
     acidente = Acidente.objects.get(pk=request.GET['acidente'])
     empresa = acidente.empresa
@@ -47,7 +47,7 @@ Acordos: **%s**<br />Outras despesas: **%s**<br />..............................
 
 
 @login_required
-@permission_required('sinistro.view_termo')
+@permission_required('sinistro.view_termo', login_url="/handler/403")
 def termo_pdf(request):
     termo = Termo.objects.get(pk=request.GET['termo'])
     terceiro = Terceiro.objects.get(pk=request.GET['terceiro'])
@@ -66,7 +66,7 @@ def termo_pdf(request):
 
 
 @login_required
-@permission_required('sinistro.change_termo')
+@permission_required('sinistro.change_termo', login_url="/handler/403")
 def termo_modelos(request):
     modelos = []
     md1 = """# Titulo
@@ -102,7 +102,7 @@ Por estarem as partes de comum acordo, assinam.
     return HttpResponse(obj, content_type="application/json")
 
 @login_required
-@permission_required('sinistro.dashboard_acidente')
+@permission_required('sinistro.dashboard_acidente', login_url="/handler/403")
 def acidente_dashboard(request):
     periodo_de = request.GET.get('periodo_de', date.today().replace(day=1))
     periodo_ate = request.GET.get('periodo_ate', date.today())

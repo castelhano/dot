@@ -14,7 +14,7 @@ from django.conf import settings as ROOT
 
 # METODOS SHOW
 @login_required
-@permission_required('recrutamento.view_candidato')
+@permission_required('recrutamento.view_candidato', login_url="/handler/403")
 def candidatos(request):
     candidatos = Candidato.objects.all().order_by('nome')
     if request.method == 'POST':
@@ -45,7 +45,7 @@ def candidatos(request):
         return render(request,'recrutamento/candidatos.html',{'summary':summary})
 
 @login_required
-@permission_required('recrutamento.view_selecao')
+@permission_required('recrutamento.view_selecao', login_url="/handler/403")
 def selecoes(request):
     selecoes = Selecao.objects.all().order_by('data','hora','candidato')
     if request.method == 'POST':
@@ -65,7 +65,7 @@ def selecoes(request):
     return render(request,'recrutamento/selecoes.html',{'selecoes':selecoes})
 
 @login_required
-@permission_required('recrutamento.view_vaga')
+@permission_required('recrutamento.view_vaga', login_url="/handler/403")
 def vagas(request):
     vagas = Vaga.objects.all()
     if request.GET.get('pesquisa', None):
@@ -80,7 +80,7 @@ def vagas(request):
     return render(request,'recrutamento/vagas.html',{'vagas':vagas})
 
 @login_required
-@permission_required('recrutamento.view_criterio')
+@permission_required('recrutamento.view_criterio', login_url="/handler/403")
 def criterios(request):
     criterios = Criterio.objects.all()
     if request.method == 'POST':
@@ -88,7 +88,7 @@ def criterios(request):
     return render(request,'recrutamento/criterios.html',{'criterios':criterios})
 
 @login_required
-@permission_required('recrutamento.view_settings')
+@permission_required('recrutamento.view_settings', login_url="/handler/403")
 def settings(request):
     try: # Busca configuracao do app
         settings = Settings.objects.all().get()
@@ -149,7 +149,7 @@ def cadastro_site(request):
 
 # METODOS ADD
 @login_required
-@permission_required('recrutamento.add_candidato')
+@permission_required('recrutamento.add_candidato', login_url="/handler/403")
 def candidato_add(request):
     if request.method == 'POST':
         form = CandidatoForm(request.POST,request.FILES)
@@ -173,7 +173,7 @@ def candidato_add(request):
     return render(request,'recrutamento/candidato_add.html',{'form':form})
 
 @login_required
-@permission_required('recrutamento.add_selecao')
+@permission_required('recrutamento.add_selecao', login_url="/handler/403")
 def selecao_add(request):
     if request.method == 'POST':
         form = SelecaoForm(request.POST)
@@ -209,7 +209,7 @@ def selecao_add(request):
     return render(request,'recrutamento/selecao_add.html',{'form':form, 'candidato':candidato})
     
 @login_required
-@permission_required('recrutamento.add_avaliacao')
+@permission_required('recrutamento.add_avaliacao', login_url="/handler/403")
 def avaliacao_add(request, selecao_id):
     if request.method == 'POST':
         try:
@@ -235,7 +235,7 @@ def avaliacao_add(request, selecao_id):
     return redirect('recrutamento_selecao_id',selecao_id)
 
 @login_required
-@permission_required('recrutamento.add_vaga')
+@permission_required('recrutamento.add_vaga', login_url="/handler/403")
 def vaga_add(request):
     if request.method == 'POST':
         form = VagaForm(request.POST)
@@ -262,7 +262,7 @@ def vaga_add(request):
     return render(request,'recrutamento/vaga_add.html',{'form':form})
 
 @login_required
-@permission_required('recrutamento.add_criterio')
+@permission_required('recrutamento.add_criterio', login_url="/handler/403")
 def criterio_add(request):
     if request.method == 'POST':
         form = CriterioForm(request.POST)
@@ -287,28 +287,28 @@ def criterio_add(request):
 
 # METODOS GET
 @login_required
-@permission_required('recrutamento.change_candidato')
+@permission_required('recrutamento.change_candidato', login_url="/handler/403")
 def candidato_id(request, id):
     candidato = Candidato.objects.get(id=id)
     form = CandidatoForm(instance=candidato)
     return render(request,'recrutamento/candidato_id.html',{'form':form,'candidato':candidato})
 
 @login_required
-@permission_required('recrutamento.change_selecao')
+@permission_required('recrutamento.change_selecao', login_url="/handler/403")
 def selecao_id(request, id):
     selecao = Selecao.objects.get(id=id)
     form = SelecaoForm(instance=selecao)
     return render(request,'recrutamento/selecao_id.html',{'form':form,'selecao':selecao})
 
 @login_required
-@permission_required('recrutamento.change_vaga')
+@permission_required('recrutamento.change_vaga', login_url="/handler/403")
 def vaga_id(request, id):
     vaga = Vaga.objects.get(id=id)
     form = VagaForm(instance=vaga)
     return render(request,'recrutamento/vaga_id.html',{'form':form,'vaga':vaga})
 
 @login_required
-@permission_required('recrutamento.change_criterio')
+@permission_required('recrutamento.change_criterio', login_url="/handler/403")
 def criterio_id(request, id):
     criterio = Criterio.objects.get(id=id)
     form = CriterioForm(instance=criterio)
@@ -317,7 +317,7 @@ def criterio_id(request, id):
 
 # METODOS UPDATE
 @login_required
-@permission_required('recrutamento.change_candidato')
+@permission_required('recrutamento.change_candidato', login_url="/handler/403")
 def candidato_update(request, id):
     candidato = Candidato.objects.get(pk=id)
     form = CandidatoForm(request.POST, request.FILES, instance=candidato)
@@ -336,7 +336,7 @@ def candidato_update(request, id):
         return render(request,'recrutamento/candidato_id.html',{'form':form,'candidato':candidato})
 
 @login_required
-@permission_required('recrutamento.change_candidato')
+@permission_required('recrutamento.change_candidato', login_url="/handler/403")
 def candidato_movimentar(request, id):
     candidato = Candidato.objects.get(pk=id)
     try: # Carrega conficuracoes do app
@@ -369,7 +369,7 @@ def candidato_movimentar(request, id):
     return redirect('recrutamento_candidato_id', id)
 
 @login_required
-@permission_required('recrutamento.change_selecao')
+@permission_required('recrutamento.change_selecao', login_url="/handler/403")
 def selecao_update(request, id):
     selecao = Selecao.objects.get(pk=id)
     form = SelecaoForm(request.POST, instance=selecao)
@@ -389,7 +389,7 @@ def selecao_update(request, id):
         return redirect('recrutamento_selecao_id', id)
 
 @login_required
-@permission_required('recrutamento.change_selecao')
+@permission_required('recrutamento.change_selecao', login_url="/handler/403")
 def selecao_movimentar(request, id):
     selecao = Selecao.objects.get(pk=id)
     l = Log()
@@ -438,7 +438,7 @@ def selecao_movimentar(request, id):
     return redirect('recrutamento_selecao_id', id)
 
 @login_required
-@permission_required('recrutamento.change_vaga')
+@permission_required('recrutamento.change_vaga', login_url="/handler/403")
 def vaga_update(request, id):
     vaga = Vaga.objects.get(pk=id)
     form = VagaForm(request.POST, instance=vaga)
@@ -457,7 +457,7 @@ def vaga_update(request, id):
         return render(request,'recrutamento/vaga_id.html',{'form':form,'vaga':vaga})
 
 @login_required
-@permission_required('recrutamento.change_criterio')
+@permission_required('recrutamento.change_criterio', login_url="/handler/403")
 def criterio_update(request, id):
     criterio = Criterio.objects.get(pk=id)
     form = CriterioForm(request.POST, instance=criterio)
@@ -476,7 +476,7 @@ def criterio_update(request, id):
         return render(request,'recrutamento/criterio_id.html',{'form':form,'criterio':criterio})
 
 @login_required
-@permission_required('recrutamento.change_settings')
+@permission_required('recrutamento.change_settings', login_url="/handler/403")
 def settings_update(request, id):
     settings = Settings.objects.get(pk=id)
     form = SettingsForm(request.POST, instance=settings)
@@ -496,7 +496,7 @@ def settings_update(request, id):
     
 # METODOS DELETE
 @login_required
-@permission_required('recrutamento.delete_candidato')
+@permission_required('recrutamento.delete_candidato', login_url="/handler/403")
 def candidato_delete(request, id):
     try:
         registro = Candidato.objects.get(id=id)
@@ -515,7 +515,7 @@ def candidato_delete(request, id):
         return redirect('recrutamento_candidato_id', id)
 
 @login_required
-@permission_required('recrutamento.delete_selecao')
+@permission_required('recrutamento.delete_selecao', login_url="/handler/403")
 def selecao_delete(request, id):
     try:
         registro = Selecao.objects.get(id=id)
@@ -534,7 +534,7 @@ def selecao_delete(request, id):
         return redirect('recrutamento_selecao_id', id)
 
 @login_required
-@permission_required('recrutamento.delete_avaliacao')
+@permission_required('recrutamento.delete_avaliacao', login_url="/handler/403")
 def avaliacao_delete(request, id):
     try:
         registro = Avaliacao.objects.get(id=id)
@@ -551,7 +551,7 @@ def avaliacao_delete(request, id):
     return redirect('recrutamento_selecao_id',registro.selecao.id)
 
 @login_required
-@permission_required('recrutamento.delete_vaga')
+@permission_required('recrutamento.delete_vaga', login_url="/handler/403")
 def vaga_delete(request, id):
     try:
         registro = Vaga.objects.get(id=id)
@@ -570,7 +570,7 @@ def vaga_delete(request, id):
         return redirect('recrutamento_vaga_id', id)
 
 @login_required
-@permission_required('recrutamento.delete_criterio')
+@permission_required('recrutamento.delete_criterio', login_url="/handler/403")
 def criterio_delete(request, id):
     try:
         registro = Criterio.objects.get(id=id)

@@ -1,26 +1,27 @@
 {
     "common":{
-        "register": "Register",
-        "cancel": "Cancel",
-        "submit": "Save",
-        "back": "Back",
-        "error": "Error",
-        "name": "Name",
-        "full_name": "Full name",
-        "birth": "Birth",
-        "sex": "Sex",
-        "male": "Male",
+        "accepted_extensions": "accepted extensions",
         "address": "Address",
+        "back": "Back",
+        "birth": "Birth",
+        "cancel": "Cancel",
         "city": "City",
-        "state": "State",
-        "district": "District",
-        "female": "Female",
         "contact": "Contact",
-        "not_inform": "Do not inform",
-        "mandatory": "mandatory",
-        "optional": "optional",
         "curriculum": "Curriculum",
-        "accepted_extensions": "accepted extensions"
+        "district": "District",
+        "error": "Error",
+        "female": "Female",
+        "full_name": "Full name",
+        "male": "Male",
+        "mandatory": "mandatory",
+        "name": "Name",
+        "not_inform": "Do not inform",
+        "optional": "optional",
+        "presentation": "Presentation",
+        "register": "Register",
+        "sex": "Sex",
+        "state": "State",
+        "submit": "Save"
     },
     "recrutamento":{
         "candidato":{
@@ -33,7 +34,7 @@
             "selecione_uma_ou_mais": "Select one or more vacancies"
         },
         "site":{
-            "welcome_message": "After completing the registration, wait for our Human Resources team to contact you to schedule an interview",
+            "welcome_message": "After completing registration, wait for our Human Resources team to contact you to schedule an interview",
             "contact_email": " or by email",
             "contact_number": ", questions contact the number",
             "dados_pessoais": "Personal data",

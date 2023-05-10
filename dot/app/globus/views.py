@@ -18,7 +18,7 @@ from datetime import datetime, date
 
 # METODOS SHOW
 @login_required
-@permission_required('globus.view_escala')
+@permission_required('globus.view_escala', login_url="/handler/403")
 def escalas(request):
     if request.GET.get('data', None):
         data = datetime.strptime(request.GET.get('data', None), '%Y-%m-%d').date()
@@ -45,7 +45,7 @@ def escalas(request):
 
 
 @login_required
-@permission_required('globus.consultar_escala')
+@permission_required('globus.consultar_escala', login_url="/handler/403")
 def consultar_escala(request): # Metodo para buscar a escala do funcionario logado
     try:
         funcionario = Funcionario.objects.get(usuario=request.user)
@@ -70,7 +70,7 @@ def consultar_escala(request): # Metodo para buscar a escala do funcionario loga
     return render(request,'globus/consulta_escala.html',{'funcionario':funcionario,'escalas':escalas,'data_consulta':data_consulta, 'settings':settings})
 
 @login_required
-@permission_required('globus.localizar_escala')
+@permission_required('globus.localizar_escala', login_url="/handler/403")
 def localizar_escala(request): # Metodo para localizar a escala de um determinado funcionario ou carro
     if request.method == 'POST':
         try:
@@ -91,14 +91,14 @@ def localizar_escala(request): # Metodo para localizar a escala de um determinad
     return render(request,'globus/localizar_escala.html',{'escalas':escalas,'data_consulta':data_consulta})
 
 @login_required
-@permission_required('globus.view_viagem')
+@permission_required('globus.view_viagem', login_url="/handler/403")
 def viagens(request, id): # Metodo retorna as viagens de uma escala (tabela) em especifico
     escala = Escala.objects.get(id=id)
     viagens = Viagem.objects.filter(escala=escala)
     return render(request,'globus/viagens.html',{'escala':escala, 'viagens':viagens})
 
 @login_required
-@permission_required('globus.view_viagem')
+@permission_required('globus.view_viagem', login_url="/handler/403")
 def planejamento_linha(request): # Retorna o planejamento da linha para um dia especifico (ou hoje se omitido)
     if request.GET.get('linha', None):
         data = datetime.strptime(request.GET['data'],'%Y-%m-%d').date() if request.GET.get('data', None) else None
@@ -138,7 +138,7 @@ def planejamento_linha(request): # Retorna o planejamento da linha para um dia e
     return render(request,'globus/planejamento_linha.html',{'linha':linha, 'tabelas':tabelas, 'data':data,'viagens_ida':viagens_ida, 'viagens_volta':viagens_volta})
 
 @login_required
-@permission_required('globus.view_settings')
+@permission_required('globus.view_settings', login_url="/handler/403")
 def settings(request):
     if request.GET.get('empresa', None):
         try: # Carrega a empresa selecionada
@@ -171,7 +171,7 @@ def settings(request):
 
 # METODOS ADD
 @login_required
-@permission_required('globus.add_escala')
+@permission_required('globus.add_escala', login_url="/handler/403")
 def escala_add(request):
     if request.method == 'POST':
         form = EscalaForm(request.POST)
@@ -196,7 +196,7 @@ def escala_add(request):
     return render(request,'globus/escala_add.html',{'form':form})
 
 @login_required
-@permission_required('globus.importar_escala')
+@permission_required('globus.importar_escala', login_url="/handler/403")
 def escala_importar(request):
     if request.method == 'POST':
         erros = []
@@ -328,7 +328,7 @@ def escala_importar(request):
         return render(request, 'globus/importar.html')
 
 @login_required
-@permission_required('globus.importar_escala')
+@permission_required('globus.importar_escala', login_url="/handler/403")
 def evento_lote(request):
     metrics = {
         'errors' : [],
@@ -360,7 +360,7 @@ def evento_lote(request):
     return render(request, 'globus/evento_lote.html', metrics)
     
 @login_required
-@permission_required('globus.add_viagem')
+@permission_required('globus.add_viagem', login_url="/handler/403")
 def viagem_add(request, id):
     if request.method == 'POST':
         form = ViagemForm(request.POST)
@@ -385,14 +385,14 @@ def viagem_add(request, id):
     
 # METODOS GET
 @login_required
-@permission_required('globus.change_escala')
+@permission_required('globus.change_escala', login_url="/handler/403")
 def escala_id(request, id):
     escala = Escala.objects.get(id=id)
     form = EscalaForm(instance=escala)
     return render(request,'globus/escala_id.html',{'form':form,'escala':escala})
 
 @login_required
-@permission_required('globus.change_viagem')
+@permission_required('globus.change_viagem', login_url="/handler/403")
 def viagem_id(request, id):
     viagem = Viagem.objects.get(id=id)
     form = ViagemForm(instance=viagem)
@@ -400,7 +400,7 @@ def viagem_id(request, id):
 
 # METODOS UPDATE
 @login_required
-@permission_required('globus.change_escala')
+@permission_required('globus.change_escala', login_url="/handler/403")
 def escala_update(request, id):
     escala = Escala.objects.get(pk=id)
     form = EscalaForm(request.POST, instance=escala)
@@ -419,7 +419,7 @@ def escala_update(request, id):
         return render(request,'globus/escala_id.html',{'form':form,'escala':escala})
 
 @login_required
-@permission_required('globus.change_viagem')
+@permission_required('globus.change_viagem', login_url="/handler/403")
 def viagem_update(request, id):
     viagem = Viagem.objects.get(pk=id)
     form = ViagemForm(request.POST, instance=viagem)
@@ -438,7 +438,7 @@ def viagem_update(request, id):
         return render(request,'globus/viagem_id.html',{'form':form,'viagem':viagem})
 
 @login_required
-@permission_required('globus.change_settings')
+@permission_required('globus.change_settings', login_url="/handler/403")
 def settings_update(request, id):
     try:
         settings = Settings.objects.get(pk=id)
@@ -465,7 +465,7 @@ def settings_update(request, id):
         
 # METODOS DELETE
 @login_required
-@permission_required('globus.delete_escala')
+@permission_required('globus.delete_escala', login_url="/handler/403")
 def escala_delete(request, id):
     try:
         registro = Escala.objects.get(pk=id)
@@ -484,7 +484,7 @@ def escala_delete(request, id):
         return redirect('globus_escala_id', id)
 
 @login_required
-@permission_required('globus.delete_viagem')
+@permission_required('globus.delete_viagem', login_url="/handler/403")
 def viagem_delete(request, id):
     try:
         registro = Viagem.objects.get(pk=id)

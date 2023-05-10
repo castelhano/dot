@@ -13,7 +13,7 @@ from datetime import date
 
 # METODOS SHOW
 @login_required
-@permission_required('sinistro.view_acidente')
+@permission_required('sinistro.view_acidente', login_url="/handler/403")
 def acidentes(request):
     semTerceiros =  Acidente.objects.filter(terceiro__isnull=True).order_by('data')
     terceiros =  Terceiro.objects.all().order_by('acidente__data')
@@ -67,33 +67,33 @@ def acidentes(request):
 
 
 @login_required
-@permission_required('sinistro.view_classificacao')
+@permission_required('sinistro.view_classificacao', login_url="/handler/403")
 def classificacoes(request):
     classificacoes = Classificacao.objects.all().order_by('nome')
     return render(request,'sinistro/classificacoes.html', {'classificacoes' : classificacoes})
 
 @login_required
-@permission_required('sinistro.view_oficina')
+@permission_required('sinistro.view_oficina', login_url="/handler/403")
 def oficinas(request):
     oficinas = Oficina.objects.all().order_by('nome')
     return render(request,'sinistro/oficinas.html', {'oficinas' : oficinas})
     
 @login_required
-@permission_required('sinistro.view_foto')
+@permission_required('sinistro.view_foto', login_url="/handler/403")
 def fotos(request, id):
     acidente = Acidente.objects.get(pk=id)
     fotos = Foto.objects.filter(acidente__id=id)
     return render(request,'sinistro/fotos.html', {'fotos':fotos,'acidente':acidente})
 
 @login_required
-@permission_required('sinistro.view_file')
+@permission_required('sinistro.view_file', login_url="/handler/403")
 def files(request, id):
     acidente = Acidente.objects.get(pk=id)
     files = File.objects.filter(acidente__id=id)
     return render(request,'sinistro/files.html', {'files':files,'acidente':acidente})
 
 @login_required
-@permission_required('sinistro.view_terceiro')
+@permission_required('sinistro.view_terceiro', login_url="/handler/403")
 def terceiros(request, id):
     acidente = Acidente.objects.get(pk=id)
     terceiros = Terceiro.objects.filter(acidente=acidente)
@@ -101,19 +101,19 @@ def terceiros(request, id):
     return render(request,'sinistro/terceiros.html', {'form':form,'terceiros':terceiros,'acidente':acidente})
 
 @login_required
-@permission_required('sinistro.view_tipodespesa')
+@permission_required('sinistro.view_tipodespesa', login_url="/handler/403")
 def tipos_despesa(request):
     tipos_despesa = TipoDespesa.objects.all().order_by('nome')
     return render(request,'sinistro/tipos_despesa.html', {'tipos_despesa':tipos_despesa})
 
 @login_required
-@permission_required('sinistro.view_forma')
+@permission_required('sinistro.view_forma', login_url="/handler/403")
 def formas(request):
     formas = Forma.objects.all().order_by('nome')
     return render(request,'sinistro/formas.html', {'formas':formas})
 
 @login_required
-@permission_required('sinistro.view_despesa')
+@permission_required('sinistro.view_despesa', login_url="/handler/403")
 def despesas(request, terceiro):
     despesas = Despesa.objects.filter(terceiro=terceiro)
     total = despesas.aggregate(Sum('valor'))['valor__sum']
@@ -121,13 +121,13 @@ def despesas(request, terceiro):
     return render(request,'sinistro/despesas.html', {'despesas':despesas,'terceiro':terceiro,'total':total})
 
 @login_required
-@permission_required('sinistro.view_termo')
+@permission_required('sinistro.view_termo', login_url="/handler/403")
 def termos(request):
     termos = Termo.objects.all().order_by('nome')
     return render(request,'sinistro/termos.html', {'termos' : termos})
 
 @login_required
-@permission_required('sinistro.view_oficina')
+@permission_required('sinistro.view_oficina', login_url="/handler/403")
 def notas_pendentes(request):
     terceiros = Terceiro.objects.filter(pendente_nota_fiscal=True)
     if request.method == 'POST':
@@ -138,7 +138,7 @@ def notas_pendentes(request):
     
 # METODOS ADD
 @login_required
-@permission_required('sinistro.add_acidente')
+@permission_required('sinistro.add_acidente', login_url="/handler/403")
 def acidente_add(request):
     if request.method == 'POST':
         form = AcidenteForm(request.POST)
@@ -171,7 +171,7 @@ def acidente_add(request):
     return render(request,'sinistro/acidente_add.html',{'form':form})
 
 @login_required
-@permission_required('sinistro.add_classificacao')
+@permission_required('sinistro.add_classificacao', login_url="/handler/403")
 def classificacao_add(request):
     if request.method == 'POST':
         form = ClassificacaoForm(request.POST)
@@ -194,7 +194,7 @@ def classificacao_add(request):
     return render(request,'sinistro/classificacao_add.html',{'form':form})
 
 @login_required
-@permission_required('sinistro.add_oficina')
+@permission_required('sinistro.add_oficina', login_url="/handler/403")
 def oficina_add(request):
     if request.method == 'POST':
         form = OficinaForm(request.POST)
@@ -217,7 +217,7 @@ def oficina_add(request):
     return render(request,'sinistro/oficina_add.html',{'form':form})
 
 @login_required
-@permission_required('sinistro.add_foto')
+@permission_required('sinistro.add_foto', login_url="/handler/403")
 def foto_add(request, id):
     if request.method == 'POST':
         acidente = Acidente.objects.get(id=id)
@@ -238,7 +238,7 @@ def foto_add(request, id):
         return redirect('sinistro_acidentes')
 
 @login_required
-@permission_required('sinistro.add_file')
+@permission_required('sinistro.add_file', login_url="/handler/403")
 def file_add(request, id):
     if request.method == 'POST':
         acidente = Acidente.objects.get(id=id)
@@ -270,7 +270,7 @@ def file_add(request, id):
         return redirect('sinistro_acidentes')
 
 @login_required
-@permission_required('sinistro.add_terceiro')
+@permission_required('sinistro.add_terceiro', login_url="/handler/403")
 def terceiro_add(request, id):
     if request.method == 'POST':
         form = TerceiroForm(request.POST)
@@ -294,7 +294,7 @@ def terceiro_add(request, id):
     return render(request,'sinistro/terceiro_add.html',{'form':form,'acidente':acidente})
 
 @login_required
-@permission_required('sinistro.view_tipodespesa')
+@permission_required('sinistro.view_tipodespesa', login_url="/handler/403")
 def tipo_despesa_add(request):
     if request.method == 'POST':
         form = TipoDespesaForm(request.POST)
@@ -317,7 +317,7 @@ def tipo_despesa_add(request):
     return render(request,'sinistro/tipo_despesa_add.html',{'form':form})
 
 @login_required
-@permission_required('sinistro.view_forma')
+@permission_required('sinistro.view_forma', login_url="/handler/403")
 def forma_add(request):
     if request.method == 'POST':
         form = FormaForm(request.POST)
@@ -340,7 +340,7 @@ def forma_add(request):
     return render(request,'sinistro/forma_add.html',{'form':form})
 
 @login_required
-@permission_required('sinistro.add_despesa')
+@permission_required('sinistro.add_despesa', login_url="/handler/403")
 def despesa_add(request, terceiro):
     if request.method == 'POST':
         form = DespesaForm(request.POST)
@@ -364,7 +364,7 @@ def despesa_add(request, terceiro):
     return render(request,'sinistro/despesa_add.html',{'form':form, 'terceiro':terceiro})
 
 @login_required
-@permission_required('sinistro.add_termo')
+@permission_required('sinistro.add_termo', login_url="/handler/403")
 def termo_add(request):
     if request.method == 'POST':
         termo = Termo()
@@ -389,7 +389,7 @@ def termo_add(request):
         return render(request,'sinistro/termos.html')
 
 @login_required
-@permission_required('sinistro.add_paragrafo')
+@permission_required('sinistro.add_paragrafo', login_url="/handler/403")
 def paragrafo_add(request, id):
     if request.method == 'POST':
         try:
@@ -420,7 +420,7 @@ def paragrafo_add(request, id):
 
 # METODOS GET
 @login_required
-@permission_required('sinistro.view_acidente')
+@permission_required('sinistro.view_acidente', login_url="/handler/403")
 def acidente_id(request, id):
     acidente = Acidente.objects.get(id=id)
     if acidente.created_by != request.user and not request.user.has_perm('sinistro.tratar_acidente'):
@@ -433,14 +433,14 @@ def acidente_id(request, id):
     return render(request,'sinistro/acidente_id.html',{'form':form,'acidente':acidente})
 
 @login_required
-@permission_required('sinistro.change_classificacao')
+@permission_required('sinistro.change_classificacao', login_url="/handler/403")
 def classificacao_id(request, id):
     classificacao = Classificacao.objects.get(id=id)
     form = ClassificacaoForm(instance=classificacao)
     return render(request,'sinistro/classificacao_id.html',{'form':form,'classificacao':classificacao})
 
 @login_required
-@permission_required('sinistro.change_oficina')
+@permission_required('sinistro.change_oficina', login_url="/handler/403")
 def oficina_id(request, id):
     oficina = Oficina.objects.get(id=id)
     form = OficinaForm(instance=oficina)
@@ -448,7 +448,7 @@ def oficina_id(request, id):
 
 
 @login_required
-@permission_required('sinistro.change_terceiro')
+@permission_required('sinistro.change_terceiro', login_url="/handler/403")
 def terceiro_id(request, id):
     terceiro = Terceiro.objects.get(id=id)
     form = TerceiroForm(instance=terceiro)
@@ -456,28 +456,28 @@ def terceiro_id(request, id):
     return render(request,'sinistro/terceiro_id.html',{'form':form,'terceiro':terceiro,'termos':termos})
 
 @login_required
-@permission_required('sinistro.change_tipodespesa')
+@permission_required('sinistro.change_tipodespesa', login_url="/handler/403")
 def tipo_despesa_id(request, id):
     tipo_despesa = TipoDespesa.objects.get(id=id)
     form = TipoDespesaForm(instance=tipo_despesa)
     return render(request,'sinistro/tipo_despesa_id.html',{'form':form,'tipo_despesa':tipo_despesa})
 
 @login_required
-@permission_required('sinistro.change_forma')
+@permission_required('sinistro.change_forma', login_url="/handler/403")
 def forma_id(request, id):
     forma = Forma.objects.get(id=id)
     form = FormaForm(instance=forma)
     return render(request,'sinistro/forma_id.html',{'form':form,'forma':forma})
 
 @login_required
-@permission_required('sinistro.change_despesa')
+@permission_required('sinistro.change_despesa', login_url="/handler/403")
 def despesa_id(request, id):
     despesa = Despesa.objects.get(id=id)
     form = DespesaForm(instance=despesa)
     return render(request,'sinistro/despesa_id.html',{'form':form,'despesa':despesa})
 
 @login_required
-@permission_required('sinistro.change_termo')
+@permission_required('sinistro.change_termo', login_url="/handler/403")
 def termo_id(request, id):
     termo = Termo.objects.get(id=id)
     form = TermoForm(instance=termo)
@@ -487,7 +487,7 @@ def termo_id(request, id):
     return render(request,'sinistro/termo_id.html',{'form':form,'termo':termo, 'keys': acidente_keys + empresa_keys + terceiro_keys})
 
 @login_required
-@permission_required('sinistro.view_file')
+@permission_required('sinistro.view_file', login_url="/handler/403")
 def file_download(request, id):
     file = File.objects.get(pk=id)
     filename = file.file.name.split('/')[-1]
@@ -497,7 +497,7 @@ def file_download(request, id):
     
 # METODOS UPDATE
 @login_required
-@permission_required('sinistro.change_acidente')
+@permission_required('sinistro.change_acidente', login_url="/handler/403")
 def acidente_update(request, id):
     acidente = Acidente.objects.get(pk=id)
     if acidente.created_by != request.user and not request.user.has_perm('sinistro.tratar_acidente'):
@@ -519,7 +519,7 @@ def acidente_update(request, id):
         return render(request,'sinistro/acidente_id.html',{'form':form,'acidente':acidente})
 
 @login_required
-@permission_required('sinistro.change_classificacao')
+@permission_required('sinistro.change_classificacao', login_url="/handler/403")
 def classificacao_update(request, id):
     classificacao = Classificacao.objects.get(pk=id)
     form = ClassificacaoForm(request.POST, instance=classificacao)
@@ -538,7 +538,7 @@ def classificacao_update(request, id):
         return render(request,'sinistro/classificacao_id.html',{'form':form,'classificacao':classificacao})
 
 @login_required
-@permission_required('sinistro.change_oficina')
+@permission_required('sinistro.change_oficina', login_url="/handler/403")
 def oficina_update(request, id):
     oficina = Oficina.objects.get(pk=id)
     form = OficinaForm(request.POST, instance=oficina)
@@ -557,7 +557,7 @@ def oficina_update(request, id):
         return render(request,'sinistro/oficina_id.html',{'form':form,'oficina':oficina})
 
 @login_required
-@permission_required('sinistro.change_terceiro')
+@permission_required('sinistro.change_terceiro', login_url="/handler/403")
 def terceiro_update(request, id):
     terceiro = Terceiro.objects.get(pk=id)
     form = TerceiroForm(request.POST, instance=terceiro)
@@ -576,7 +576,7 @@ def terceiro_update(request, id):
         return render(request,'sinistro/terceiro_id.html',{'form':form,'terceiro':terceiro})
 
 @login_required
-@permission_required('sinistro.change_tipodespesa')
+@permission_required('sinistro.change_tipodespesa', login_url="/handler/403")
 def tipo_despesa_update(request, id):
     tipo_despesa = TipoDespesa.objects.get(pk=id)
     form = TipoDespesaForm(request.POST, instance=tipo_despesa)
@@ -595,7 +595,7 @@ def tipo_despesa_update(request, id):
         return render(request,'sinistro/tipo_despesa_id.html',{'form':form,'tipo_despesa':tipo_despesa})
 
 @login_required
-@permission_required('sinistro.change_forma')
+@permission_required('sinistro.change_forma', login_url="/handler/403")
 def forma_update(request, id):
     forma = Forma.objects.get(pk=id)
     form = FormaForm(request.POST, instance=forma)
@@ -614,7 +614,7 @@ def forma_update(request, id):
         return render(request,'sinistro/forma_id.html',{'form':form,'forma':forma})
 
 @login_required
-@permission_required('sinistro.change_despesa')
+@permission_required('sinistro.change_despesa', login_url="/handler/403")
 def despesa_update(request, id):
     despesa = Despesa.objects.get(pk=id)
     form = DespesaForm(request.POST, instance=despesa)
@@ -634,7 +634,7 @@ def despesa_update(request, id):
 
 
 @login_required
-@permission_required('sinistro.change_termo')
+@permission_required('sinistro.change_termo', login_url="/handler/403")
 def termo_update(request, id):
     termo = Termo.objects.get(pk=id)
     form = TermoForm(request.POST, instance=termo)
@@ -653,7 +653,7 @@ def termo_update(request, id):
         return render(request,'sinistro/termo_id.html',{'form':form,'termo':termo})
 
 @login_required
-@permission_required('sinistro.change_paragrafo')
+@permission_required('sinistro.change_paragrafo', login_url="/handler/403")
 def paragrafo_update(request):
     if request.method == 'POST':
         paragrafo = Paragrafo.objects.get(pk=request.POST['paragrafo'])
@@ -673,7 +673,7 @@ def paragrafo_update(request):
         return redirect('sinistro_termo_id',paragrafo.termo.id)
 
 @login_required
-@permission_required('sinistro.change_paragrafo')
+@permission_required('sinistro.change_paragrafo', login_url="/handler/403")
 def paragrafo_up(request, id):
     paragrafo_atual = Paragrafo.objects.get(id=id)
     atual = paragrafo_atual.ordem
@@ -687,7 +687,7 @@ def paragrafo_up(request, id):
     return redirect('sinistro_termo_id',paragrafo_atual.termo.id)
 
 @login_required
-@permission_required('sinistro.change_paragrafo')
+@permission_required('sinistro.change_paragrafo', login_url="/handler/403")
 def paragrafo_down(request, id):
     paragrafo_atual = Paragrafo.objects.get(id=id)
     atual = paragrafo_atual.ordem
@@ -703,7 +703,7 @@ def paragrafo_down(request, id):
         
 # METODOS DELETE
 @login_required
-@permission_required('sinistro.delete_acidente')
+@permission_required('sinistro.delete_acidente', login_url="/handler/403")
 def acidente_delete(request, id):
     try:
         acidente = Acidente.objects.get(id=id)
@@ -728,7 +728,7 @@ def acidente_delete(request, id):
         return redirect('sinistro_acidente_id', id)
 
 @login_required
-@permission_required('sinistro.delete_classificacao')
+@permission_required('sinistro.delete_classificacao', login_url="/handler/403")
 def classificacao_delete(request, id):
     try:
         registro = Classificacao.objects.get(pk=id)
@@ -747,7 +747,7 @@ def classificacao_delete(request, id):
         return redirect('sinistro_classificacao_id', id)
 
 @login_required
-@permission_required('sinistro.delete_oficina')
+@permission_required('sinistro.delete_oficina', login_url="/handler/403")
 def oficina_delete(request, id):
     try:
         registro = Oficina.objects.get(pk=id)
@@ -766,7 +766,7 @@ def oficina_delete(request, id):
         return redirect('sinistro_oficina_id', id)
 
 @login_required
-@permission_required('sinistro.delete_tipodespesa')
+@permission_required('sinistro.delete_tipodespesa', login_url="/handler/403")
 def tipo_despesa_delete(request, id):
     try:
         registro = TipoDespesa.objects.get(pk=id)
@@ -785,7 +785,7 @@ def tipo_despesa_delete(request, id):
         return redirect('sinistro_tipo_despesa_id', id)
 
 @login_required
-@permission_required('sinistro.delete_forma')
+@permission_required('sinistro.delete_forma', login_url="/handler/403")
 def forma_delete(request, id):
     try:
         registro = Forma.objects.get(pk=id)
@@ -804,7 +804,7 @@ def forma_delete(request, id):
         return redirect('sinistro_forma_id', id)
 
 @login_required
-@permission_required('sinistro.delete_foto')
+@permission_required('sinistro.delete_foto', login_url="/handler/403")
 def foto_delete(request, id):
     try:
         registro = Foto.objects.get(pk=id)
@@ -825,7 +825,7 @@ def foto_delete(request, id):
         return redirect('sinistro_acidentes')
 
 @login_required
-@permission_required('sinistro.delete_file')
+@permission_required('sinistro.delete_file', login_url="/handler/403")
 def file_delete(request):
     try:
         registro = File.objects.get(pk=request.GET['file'])
@@ -846,7 +846,7 @@ def file_delete(request):
         return redirect('sinistro_acidentes')
 
 @login_required
-@permission_required('sinistro.delete_terceiro')
+@permission_required('sinistro.delete_terceiro', login_url="/handler/403")
 def terceiro_delete(request, id):
     try:
         registro = Terceiro.objects.get(pk=id)
@@ -866,7 +866,7 @@ def terceiro_delete(request, id):
         return redirect('sinistro_terceiro_id', id)
 
 @login_required
-@permission_required('sinistro.delete_despesa')
+@permission_required('sinistro.delete_despesa', login_url="/handler/403")
 def despesa_delete(request, id):
     try:
         registro = Despesa.objects.get(pk=id)
@@ -886,7 +886,7 @@ def despesa_delete(request, id):
         return redirect('sinistro_acidentes')
 
 @login_required
-@permission_required('sinistro.delete_termo')
+@permission_required('sinistro.delete_termo', login_url="/handler/403")
 def termo_delete(request, id):
     try:
         registro = Termo.objects.get(pk=id)
@@ -905,7 +905,7 @@ def termo_delete(request, id):
         return redirect('sinistro_termo_id', id)
 
 @login_required
-@permission_required('sinistro.delete_paragrafo')
+@permission_required('sinistro.delete_paragrafo', login_url="/handler/403")
 def paragrafo_delete(request):
     try:
         registro = Paragrafo.objects.get(pk=request.GET['id'])

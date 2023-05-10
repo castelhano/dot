@@ -141,24 +141,24 @@
   {% endfor %}
   
   {% if form.errors %}
-  {% for field in form %}
-  {% if field.errors %}
-  {% for error in field.errors %}
-  <div id="form_error_msg" data-type="dotAlert" class="alert dotAlert slideIn alert-danger alert-dismissible fade show mb-1" role="alert">
-    {{ error|safe }} <span class="fw-bold">[ field: {{ field.name }} ]</span>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-  {% endfor %}
-  {% endif %}
-  {% endfor %}
-  {% if form.non_field_errors %}
-  {% for error in form.non_field_errors %}
-  <div class="alert dotAlert slideIn alert-danger alert-dismissible fade show mb-1" role="alert">
-    {{ error|safe }}
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-  {% endfor %}
-  {% endif %}
+    {% for field in form %}
+      {% if field.errors %}
+        {% for error in field.errors %}
+        <div id="form_error_msg" data-type="dotAlert" class="alert dotAlert slideIn alert-danger alert-dismissible fade show mb-1" role="alert">
+          {{ error|safe }} <span class="fw-bold">[ field: {{ field.name }} ]</span>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+      {% endif %}
+    {% endfor %}
+    {% if form.non_field_errors %}
+      {% for error in form.non_field_errors %}
+      <div class="alert dotAlert slideIn alert-danger alert-dismissible fade show mb-1" role="alert">
+        {{ error|safe }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endfor %}
+    {% endif %}
   {% endif %}
   <div class="modal fade" id="shortcut_modal" tabindex="-1">
     <div class="modal-dialog modal-fullscreen">

@@ -15,7 +15,7 @@ from datetime import date, datetime
 
 # METODOS SHOW
 @login_required
-@permission_required('trafego.view_localidade')
+@permission_required('trafego.view_localidade', login_url="/handler/403")
 def localidades(request):
     if request.GET.get('showAll', None) == 'true':
         localidades = Localidade.objects.all().order_by('nome')
@@ -23,7 +23,7 @@ def localidades(request):
     return render(request,'trafego/localidades.html')
 
 @login_required
-@permission_required('trafego.view_linha')
+@permission_required('trafego.view_linha', login_url="/handler/403")
 def linhas(request):
     status = request.GET.get('status', 'A')
     linhas = Linha.objects.filter(status=status).order_by('codigo')
@@ -42,7 +42,7 @@ def linhas(request):
     return render(request,'trafego/linhas.html', {'linhas' : linhas, 'metrics':metrics})
 
 @login_required
-@permission_required('trafego.view_linha')
+@permission_required('trafego.view_linha', login_url="/handler/403")
 def trajetos(request, id_linha):
     metrics = {}
     if request.method == 'POST':
@@ -83,7 +83,7 @@ def trajetos(request, id_linha):
     return render(request, 'trafego/trajetos.html', metrics)
 
 @login_required
-@permission_required('trafego.view_planejamento')
+@permission_required('trafego.view_planejamento', login_url="/handler/403")
 def planejamentos(request):
     planejamentos = Planejamento.objects.all().order_by('linha__codigo', 'data_criacao')
     if request.GET.get('pesquisa', None):
@@ -97,19 +97,19 @@ def planejamentos(request):
     return render(request,'trafego/planejamentos.html', {'planejamentos':planejamentos})
 
 @login_required
-@permission_required('trafego.view_evento')
+@permission_required('trafego.view_evento', login_url="/handler/403")
 def eventos(request):
     eventos = Evento.objects.all().order_by('nome')
     return render(request,'trafego/eventos.html',{'eventos':eventos})
 
 @login_required
-@permission_required('trafego.view_providencia')
+@permission_required('trafego.view_providencia', login_url="/handler/403")
 def providencias(request):
     providencias = Providencia.objects.all().order_by('nome')
     return render(request,'trafego/providencias.html',{'providencias':providencias})
 
 @login_required
-@permission_required('trafego.view_ocorrencia')
+@permission_required('trafego.view_ocorrencia', login_url="/handler/403")
 def ocorrencias(request):
     ocorrencias = Ocorrencia.objects.all().order_by('data','hora')
     if request.method == 'POST':
@@ -143,7 +143,7 @@ def ocorrencias(request):
     return render(request,'trafego/ocorrencias.html',{'ocorrencias':ocorrencias})
 
 @login_required
-@permission_required('trafego.tratar_ocorrencia')
+@permission_required('trafego.tratar_ocorrencia', login_url="/handler/403")
 def tratativas(request):
     ocorrencias = Ocorrencia.objects.all().order_by('data','hora')
     if request.method == 'POST':
@@ -168,19 +168,19 @@ def tratativas(request):
     return render(request,'trafego/tratativas.html',{'ocorrencias':ocorrencias})
 
 @login_required
-@permission_required('trafego.view_predefinido')
+@permission_required('trafego.view_predefinido', login_url="/handler/403")
 def predefinidos(request):
     predefinidos = Predefinido.objects.all().order_by('abbr')
     return render(request, 'trafego/predefinidos.html', {'predefinidos':predefinidos})
 
 @login_required
-@permission_required('trafego.view_orgao')
+@permission_required('trafego.view_orgao', login_url="/handler/403")
 def orgaos(request):
     orgaos = Orgao.objects.all().order_by('nome')
     return render(request, 'trafego/orgaos.html', {'orgaos':orgaos})
 
 @login_required
-@permission_required('trafego.view_agente')
+@permission_required('trafego.view_agente', login_url="/handler/403")
 def agentes(request):
     agentes = Agente.objects.all().order_by('nome')
     if request.GET.get('orgao', None):
@@ -192,13 +192,13 @@ def agentes(request):
     return render(request, 'trafego/agentes.html', {'agentes':agentes, 'orgao_display':orgao_display})
 
 @login_required
-@permission_required('trafego.view_enquadramento')
+@permission_required('trafego.view_enquadramento', login_url="/handler/403")
 def enquadramentos(request):
     enquadramentos = Enquadramento.objects.all().order_by('nome')
     return render(request, 'trafego/enquadramentos.html', {'enquadramentos':enquadramentos})
 
 @login_required
-@permission_required('trafego.view_notificacao')
+@permission_required('trafego.view_notificacao', login_url="/handler/403")
 def notificacoes(request):
     notificacoes = Notificacao.objects.all().order_by('data','hora')
     if request.method == 'POST':
@@ -223,7 +223,7 @@ def notificacoes(request):
 
 # METODOS ADD
 @login_required
-@permission_required('trafego.add_localidade')
+@permission_required('trafego.add_localidade', login_url="/handler/403")
 def localidade_add(request):
     if request.method == 'POST':
         form = LocalidadeForm(request.POST)
@@ -246,7 +246,7 @@ def localidade_add(request):
     return render(request,'trafego/localidade_add.html',{'form':form})
 
 @login_required
-@permission_required('trafego.add_linha')
+@permission_required('trafego.add_linha', login_url="/handler/403")
 def linha_add(request):
     if request.method == 'POST':
         form = LinhaForm(request.POST)
@@ -269,7 +269,7 @@ def linha_add(request):
     return render(request,'trafego/linha_add.html',{'form':form})
 
 @login_required
-@permission_required('trafego.add_evento')
+@permission_required('trafego.add_evento', login_url="/handler/403")
 def evento_add(request):
     if request.method == 'POST':
         form = EventoForm(request.POST)
@@ -293,7 +293,7 @@ def evento_add(request):
     return render(request,'trafego/evento_add.html',{'form':form})
 
 @login_required
-@permission_required('trafego.add_providencia')
+@permission_required('trafego.add_providencia', login_url="/handler/403")
 def providencia_add(request):
     if request.method == 'POST':
         form = ProvidenciaForm(request.POST)
@@ -317,7 +317,7 @@ def providencia_add(request):
     return render(request,'trafego/providencia_add.html',{'form':form})
 
 @login_required
-@permission_required('trafego.add_ocorrencia')
+@permission_required('trafego.add_ocorrencia', login_url="/handler/403")
 def ocorrencia_add(request):
     if request.method == 'POST':
         form = OcorrenciaForm(request.POST)
@@ -346,7 +346,7 @@ def ocorrencia_add(request):
     return render(request,'trafego/ocorrencia_add.html',{'form':form})
 
 @login_required
-@permission_required('trafego.add_planejamento')
+@permission_required('trafego.add_planejamento', login_url="/handler/403")
 def planejamento_add(request):
     if request.method == 'POST':
         form = PlanejamentoForm(request.POST, request.FILES)
@@ -393,7 +393,7 @@ def planejamento_add(request):
     return render(request,'trafego/planejamento_add.html',{'form':form})
 
 @login_required
-@permission_required('trafego.add_predefinido')
+@permission_required('trafego.add_predefinido', login_url="/handler/403")
 def predefinido_add(request):
     if request.method == 'POST':
         form = PredefinidoForm(request.POST)
@@ -417,7 +417,7 @@ def predefinido_add(request):
     return render(request,'trafego/predefinido_add.html',{'form':form})
 
 @login_required
-@permission_required('trafego.add_orgao')
+@permission_required('trafego.add_orgao', login_url="/handler/403")
 def orgao_add(request):
     if request.method == 'POST':
         form = OrgaoForm(request.POST)
@@ -441,7 +441,7 @@ def orgao_add(request):
     return render(request,'trafego/orgao_add.html',{'form':form})
 
 @login_required
-@permission_required('trafego.add_agente')
+@permission_required('trafego.add_agente', login_url="/handler/403")
 def agente_add(request):
     if request.method == 'POST':
         form = AgenteForm(request.POST)
@@ -465,7 +465,7 @@ def agente_add(request):
     return render(request,'trafego/agente_add.html',{'form':form})
 
 @login_required
-@permission_required('trafego.add_enquadramento')
+@permission_required('trafego.add_enquadramento', login_url="/handler/403")
 def enquadramento_add(request):
     if request.method == 'POST':
         form = EnquadramentoForm(request.POST)
@@ -489,7 +489,7 @@ def enquadramento_add(request):
     return render(request,'trafego/enquadramento_add.html',{'form':form})
 
 @login_required
-@permission_required('trafego.add_notificacao')
+@permission_required('trafego.add_notificacao', login_url="/handler/403")
 def notificacao_add(request):
     metrics = {
     'predefinidas':Predefinido.objects.all()
@@ -519,35 +519,35 @@ def notificacao_add(request):
 
 # METODOS GET
 @login_required
-@permission_required('trafego.change_localidade')
+@permission_required('trafego.change_localidade', login_url="/handler/403")
 def localidade_id(request, id):
     localidade = Localidade.objects.get(id=id)
     form = LocalidadeForm(instance=localidade)
     return render(request,'trafego/localidade_id.html',{'form':form,'localidade':localidade})
 
 @login_required
-@permission_required('trafego.view_linha')
+@permission_required('trafego.view_linha', login_url="/handler/403")
 def linha_id(request, id):
     linha = Linha.objects.get(id=id)
     form = LinhaForm(instance=linha)
     return render(request,'trafego/linha_id.html',{'form':form,'linha':linha})
 
 @login_required
-@permission_required('trafego.change_evento')
+@permission_required('trafego.change_evento', login_url="/handler/403")
 def evento_id(request,id):
     evento = Evento.objects.get(pk=id)
     form = EventoForm(instance=evento)
     return render(request,'trafego/evento_id.html',{'form':form,'evento':evento})
 
 @login_required
-@permission_required('trafego.change_providencia')
+@permission_required('trafego.change_providencia', login_url="/handler/403")
 def providencia_id(request,id):
     providencia = Providencia.objects.get(pk=id)
     form = ProvidenciaForm(instance=providencia)
     return render(request,'trafego/providencia_id.html',{'form':form,'providencia':providencia})
 
 @login_required
-@permission_required('trafego.change_ocorrencia')
+@permission_required('trafego.change_ocorrencia', login_url="/handler/403")
 def ocorrencia_id(request,id):
     ocorrencia = Ocorrencia.objects.get(pk=id)
     if ocorrencia.usuario != request.user and not request.user.has_perm('trafego.tratar_ocorrencia'): 
@@ -558,14 +558,14 @@ def ocorrencia_id(request,id):
     return render(request,'trafego/ocorrencia_id.html',{'form':form,'ocorrencia':ocorrencia})
 
 @login_required
-@permission_required('trafego.tratar_ocorrencia')
+@permission_required('trafego.tratar_ocorrencia', login_url="/handler/403")
 def tratativa_id(request,id):
     ocorrencia = Ocorrencia.objects.get(pk=id)
     form = OcorrenciaForm(instance=ocorrencia)
     return render(request,'trafego/tratativa_id.html',{'form':form,'ocorrencia':ocorrencia})
 
 @login_required
-@permission_required('trafego.change_planejamento')
+@permission_required('trafego.change_planejamento', login_url="/handler/403")
 def planejamento_id(request,id):
     planejamento = Planejamento.objects.get(pk=id)
     if not planejamento.ativo:
@@ -579,41 +579,41 @@ def planejamento_id(request,id):
     return render(request,'trafego/planejamento_id.html',{'form':form,'planejamento':planejamento, 'ativo':ativo})
 
 @login_required
-@permission_required('trafego.view_planejamento')
+@permission_required('trafego.view_planejamento', login_url="/handler/403")
 def planejamento_horarios(request, id):
     planejamento = Planejamento.objects.get(pk=id)
     return render(request,'trafego/planejamento_horarios.html',{'planejamento':planejamento})
 
 @login_required
-@permission_required('trafego.change_predefinido')
+@permission_required('trafego.change_predefinido', login_url="/handler/403")
 def predefinido_id(request,id):
     predefinido = Predefinido.objects.get(pk=id)
     form = PredefinidoForm(instance=predefinido)
     return render(request,'trafego/predefinido_id.html',{'form':form,'predefinido':predefinido})
 
 @login_required
-@permission_required('trafego.change_orgao')
+@permission_required('trafego.change_orgao', login_url="/handler/403")
 def orgao_id(request,id):
     orgao = Orgao.objects.get(pk=id)
     form = OrgaoForm(instance=orgao)
     return render(request,'trafego/orgao_id.html',{'form':form,'orgao':orgao})
 
 @login_required
-@permission_required('trafego.change_agente')
+@permission_required('trafego.change_agente', login_url="/handler/403")
 def agente_id(request,id):
     agente = Agente.objects.get(pk=id)
     form = AgenteForm(instance=agente)
     return render(request,'trafego/agente_id.html',{'form':form,'agente':agente})
 
 @login_required
-@permission_required('trafego.change_enquadramento')
+@permission_required('trafego.change_enquadramento', login_url="/handler/403")
 def enquadramento_id(request,id):
     enquadramento = Enquadramento.objects.get(pk=id)
     form = EnquadramentoForm(instance=enquadramento)
     return render(request,'trafego/enquadramento_id.html',{'form':form,'enquadramento':enquadramento})
 
 @login_required
-@permission_required('trafego.change_notificacao')
+@permission_required('trafego.change_notificacao', login_url="/handler/403")
 def notificacao_id(request,id):
     notificacao = Notificacao.objects.get(pk=id)
     form = NotificacaoForm(instance=notificacao)
@@ -622,7 +622,7 @@ def notificacao_id(request,id):
 
 # METODOS UPDATE
 @login_required
-@permission_required('trafego.change_localidade')
+@permission_required('trafego.change_localidade', login_url="/handler/403")
 def localidade_update(request, id):
     localidade = Localidade.objects.get(pk=id)
     form = LocalidadeForm(request.POST, instance=localidade)
@@ -641,7 +641,7 @@ def localidade_update(request, id):
         return render(request,'trafego/localidade_id.html',{'form':form,'localidade':localidade})
 
 @login_required
-@permission_required('trafego.change_linha')
+@permission_required('trafego.change_linha', login_url="/handler/403")
 def linha_update(request, id):
     linha = Linha.objects.get(pk=id)
     form = LinhaForm(request.POST, instance=linha)
@@ -660,7 +660,7 @@ def linha_update(request, id):
         return render(request,'trafego/linha_id.html',{'form':form,'linha':linha})
 
 @login_required
-@permission_required('trafego.change_linha')
+@permission_required('trafego.change_linha', login_url="/handler/403")
 def linha_movimentar(request, id):
     linha = Linha.objects.get(pk=id)
     status = request.GET.get('status', None)
@@ -680,7 +680,7 @@ def linha_movimentar(request, id):
     return redirect('trafego_linha_id', id)
 
 @login_required
-@permission_required('trafego.change_patamar')
+@permission_required('trafego.change_patamar', login_url="/handler/403")
 def patamar_update(request):
     # METODO PARA ADD E UPDATE DE PATAMARES
     if request.method == 'POST':
@@ -762,7 +762,7 @@ def patamar_tratar_conflitos(patamar, patamares):
         return [False, e]
 
 @login_required
-@permission_required('trafego.change_evento')
+@permission_required('trafego.change_evento', login_url="/handler/403")
 def evento_update(request,id):
     evento = Evento.objects.get(pk=id)
     form = EventoForm(request.POST, instance=evento)
@@ -781,7 +781,7 @@ def evento_update(request,id):
         return render(request,'trafego/evento_id.html',{'form':form,'evento':evento})
 
 @login_required
-@permission_required('trafego.change_providencia')
+@permission_required('trafego.change_providencia', login_url="/handler/403")
 def providencia_update(request,id):
     providencia = Providencia.objects.get(pk=id)
     form = ProvidenciaForm(request.POST, instance=providencia)
@@ -800,7 +800,7 @@ def providencia_update(request,id):
         return render(request,'trafego/providencia_id.html',{'form':form,'providencia':providencia})
 
 @login_required
-@permission_required('trafego.change_ocorrencia')
+@permission_required('trafego.change_ocorrencia', login_url="/handler/403")
 def ocorrencia_update(request,id):
     ocorrencia = Ocorrencia.objects.get(pk=id)
     if ocorrencia.usuario != request.user and not request.user.has_perm('trafego.tratar_ocorrencia'): 
@@ -826,7 +826,7 @@ def ocorrencia_update(request,id):
         return render(request,'trafego/ocorrencia_id.html',{'form':form,'ocorrencia':ocorrencia})
 
 @login_required
-@permission_required('trafego.tratar_ocorrencia')
+@permission_required('trafego.tratar_ocorrencia', login_url="/handler/403")
 def tratativa_update(request,id):
     if request.method == 'POST':
         ocorrencia = Ocorrencia.objects.get(pk=id)
@@ -858,14 +858,14 @@ def tratativa_update(request,id):
         return redirect('trafego_tratativas')
 
 @login_required
-@permission_required('trafego.tratar_ocorrencia')
+@permission_required('trafego.tratar_ocorrencia', login_url="/handler/403")
 def tratativa_marcar_todas_tratadas(request):
     resposta = Ocorrencia.objects.filter(tratado=False).update(tratado=True)
     messages.warning(request,f'Total de <b>{resposta}</b> ocorrencia(s) tratadas')
     return redirect('trafego_tratativas')
 
 @login_required
-@permission_required('trafego.change_planejamento')
+@permission_required('trafego.change_planejamento', login_url="/handler/403")
 def planejamento_update(request,id):
     planejamento = Planejamento.objects.get(pk=id)
     form = PlanejamentoForm(request.POST, request.FILES, instance=planejamento)
@@ -914,7 +914,7 @@ def planejamento_update(request,id):
         return render(request,'trafego/planejamento_id.html',{'form':form,'planejamento':planejamento})
 
 @login_required
-@permission_required('trafego.change_predefinido')
+@permission_required('trafego.change_predefinido', login_url="/handler/403")
 def predefinido_update(request,id):
     predefinido = Predefinido.objects.get(pk=id)
     form = PredefinidoForm(request.POST, instance=predefinido)
@@ -933,7 +933,7 @@ def predefinido_update(request,id):
         return render(request,'trafego/predefinido_id.html',{'form':form,'predefinido':orgao})
 
 @login_required
-@permission_required('trafego.change_orgao')
+@permission_required('trafego.change_orgao', login_url="/handler/403")
 def orgao_update(request,id):
     orgao = Orgao.objects.get(pk=id)
     form = OrgaoForm(request.POST, instance=orgao)
@@ -952,7 +952,7 @@ def orgao_update(request,id):
         return render(request,'trafego/orgao_id.html',{'form':form,'orgao':orgao})
 
 @login_required
-@permission_required('trafego.change_agente')
+@permission_required('trafego.change_agente', login_url="/handler/403")
 def agente_update(request,id):
     agente = Agente.objects.get(pk=id)
     form = AgenteForm(request.POST, instance=agente)
@@ -971,7 +971,7 @@ def agente_update(request,id):
         return render(request,'trafego/agente_id.html',{'form':form,'agente':agente})
 
 @login_required
-@permission_required('trafego.change_enquadramento')
+@permission_required('trafego.change_enquadramento', login_url="/handler/403")
 def enquadramento_update(request,id):
     enquadramento = Enquadramento.objects.get(pk=id)
     form = EnquadramentoForm(request.POST, instance=enquadramento)
@@ -990,7 +990,7 @@ def enquadramento_update(request,id):
         return render(request,'trafego/enquadramento_id.html',{'form':form,'enquadramento':enquadramento})
 
 @login_required
-@permission_required('trafego.change_notificacao')
+@permission_required('trafego.change_notificacao', login_url="/handler/403")
 def notificacao_update(request,id):
     notificacao = Notificacao.objects.get(pk=id)
     form = NotificacaoForm(request.POST, instance=notificacao)
@@ -1010,7 +1010,7 @@ def notificacao_update(request,id):
 
 # METODOS DELETE
 @login_required
-@permission_required('trafego.delete_localidade')
+@permission_required('trafego.delete_localidade', login_url="/handler/403")
 def localidade_delete(request, id):
     try:
         registro = Localidade.objects.get(pk=id)
@@ -1029,7 +1029,7 @@ def localidade_delete(request, id):
         return redirect('trafego_localidade_id', id)
 
 @login_required
-@permission_required('trafego.delete_linha')
+@permission_required('trafego.delete_linha', login_url="/handler/403")
 def linha_delete(request, id):
     try:
         registro = Linha.objects.get(pk=id)
@@ -1048,7 +1048,7 @@ def linha_delete(request, id):
         return redirect('trafego_linha_id', id)
 
 @login_required
-@permission_required('trafego.change_linha')
+@permission_required('trafego.change_linha', login_url="/handler/403")
 def trajeto_delete(request, id):
     try:
         registro = Trajeto.objects.get(pk=id)
@@ -1069,7 +1069,7 @@ def trajeto_delete(request, id):
         return redirect('trafego_trajetos', registro.linha.id)
 
 @login_required
-@permission_required('trafego.delete_evento')
+@permission_required('trafego.delete_evento', login_url="/handler/403")
 def evento_delete(request,id):
     try:
         registro = Evento.objects.get(pk=id)
@@ -1088,7 +1088,7 @@ def evento_delete(request,id):
         return redirect('trafego_evento_id', id)
 
 @login_required
-@permission_required('trafego.delete_providencia')
+@permission_required('trafego.delete_providencia', login_url="/handler/403")
 def providencia_delete(request,id):
     try:
         registro = Providencia.objects.get(pk=id)
@@ -1107,7 +1107,7 @@ def providencia_delete(request,id):
         return redirect('trafego_providencia_id', id)
 
 @login_required
-@permission_required('trafego.delete_ocorrencia')
+@permission_required('trafego.delete_ocorrencia', login_url="/handler/403")
 def ocorrencia_delete(request,id):
     try:
         registro = Ocorrencia.objects.get(pk=id)
@@ -1126,7 +1126,7 @@ def ocorrencia_delete(request,id):
         return redirect('trafego_ocorrencia_id', id)
 
 @login_required
-@permission_required('trafego.delete_foto')
+@permission_required('trafego.delete_foto', login_url="/handler/403")
 def foto_delete(request, id):
     registro = FotoOcorrencia.objects.get(pk=id)
     id_ocorrencia = registro.ocorrencia.id
@@ -1140,7 +1140,7 @@ def foto_delete(request, id):
         return redirect('trafego_ocorrencia_id', id_ocorrencia)
 
 @login_required
-@permission_required('trafego.delete_planejamento')
+@permission_required('trafego.delete_planejamento', login_url="/handler/403")
 def planejamento_delete(request,id):
     try:
         registro = Planejamento.objects.get(pk=id)
@@ -1159,7 +1159,7 @@ def planejamento_delete(request,id):
         return redirect('trafego_planejamento_id', id)
 
 @login_required
-@permission_required('trafego.delete_predefinido')
+@permission_required('trafego.delete_predefinido', login_url="/handler/403")
 def predefinido_delete(request,id):
     try:
         registro = Predefinido.objects.get(pk=id)
@@ -1178,7 +1178,7 @@ def predefinido_delete(request,id):
         return redirect('trafego_predefinido_id', id)
 
 @login_required
-@permission_required('trafego.delete_orgao')
+@permission_required('trafego.delete_orgao', login_url="/handler/403")
 def orgao_delete(request,id):
     try:
         registro = Orgao.objects.get(pk=id)
@@ -1197,7 +1197,7 @@ def orgao_delete(request,id):
         return redirect('trafego_orgao_id', id)
 
 @login_required
-@permission_required('trafego.delete_agente')
+@permission_required('trafego.delete_agente', login_url="/handler/403")
 def agente_delete(request,id):
     try:
         registro = Agente.objects.get(pk=id)
@@ -1216,7 +1216,7 @@ def agente_delete(request,id):
         return redirect('trafego_agente_id', id)
 
 @login_required
-@permission_required('trafego.delete_enquadramento')
+@permission_required('trafego.delete_enquadramento', login_url="/handler/403")
 def enquadramento_delete(request,id):
     try:
         registro = Enquadramento.objects.get(pk=id)
@@ -1235,7 +1235,7 @@ def enquadramento_delete(request,id):
         return redirect('trafego_enquadramento_id', id)
 
 @login_required
-@permission_required('trafego.delete_notificacao')
+@permission_required('trafego.delete_notificacao', login_url="/handler/403")
 def notificacao_delete(request,id):
     try:
         registro = Notificacao.objects.get(pk=id)

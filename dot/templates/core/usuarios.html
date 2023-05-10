@@ -38,6 +38,7 @@
             <thead>
               <tr>
                 <th class="d-none d-sm-table-cell">#</th>
+                <th class="d-none d-md-table-cell fit">&nbsp;</th>
                 <th>Username</th>
                 <th class="d-none d-md-table-cell">First Name</th>
                 <th class="d-none d-md-table-cell">Last Name</th>
@@ -52,6 +53,7 @@
               {% for usuario in usuarios %}
               <tr>
                 <td class="d-none d-sm-table-cell">{{usuario.id|safe}}</td>
+                <td class="d-none d-md-table-cell">{{usuario.profile.force_password_change|yesno:'<i class="fas fa-sync" title="Trocar senha proximo login"></i>,'|safe}}</td>
                 <td>{{usuario.username}}{% if usuario.is_superuser %} <sup class="badge fs-9" style="background-color: var(--bs-dark-text); color: var(--bs-body-bg);" title="Super Usuário">SU</sup>{% endif %}{% if usuario.is_staff %} <sup class="badge bg-primary fs-9" title="Membro de equipe">ME</sup>{% endif %}</td>
                 <td class="d-none d-md-table-cell">{{usuario.first_name}}</td>
                 <td class="d-none d-md-table-cell">{{usuario.last_name}}</td>
@@ -86,6 +88,7 @@
     </div>
   </div>
 </div>
+
 {% endblock%}
 
 {% block add_script_src %}

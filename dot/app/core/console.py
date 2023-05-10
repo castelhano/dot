@@ -1,6 +1,7 @@
 from .models import Alerta, Log
 from .cron import dot_cleaner
 from pessoal.models import Funcionario
+from .models import Profile
 from globus.models import Escala
 from django.contrib.auth.models import User
 
@@ -13,6 +14,8 @@ def Run(request, script):
             message = runScript(request, v)
         elif k == '@pessoal':
             message = pessoal(request, v)
+        elif k == '@user':
+            message = usuario(request, v)
         elif k == '@globus':
             message = globus(request, v)
         elif k == '@dotCleaner':
@@ -61,6 +64,17 @@ def pessoal(request, params):
                 return [True, 'Cancelado <b>desligamento funcionário</b>']
             else:
                 return [False, f'Funcionário <b>{funcionario.matricula}</b> não está desligado']
+    except Exception as e:
+        return [False, '<b>Operação inválida</b>, verifique os dados digitados']
+
+
+def usuario(request, params):
+    try:
+        if params['operation'] == 'global_change_pw':
+            qtde = Profile.objects.filter(user__is_active=True, user__is_superuser=False, force_password_change=False).update(force_password_change=True)
+            return [True, f'<b>Concluido: {qtde}</b> usuários afetados']
+        else:
+            return [False, 'Operação <b>inválida</b>']
     except Exception as e:
         return [False, '<b>Operação inválida</b>, verifique os dados digitados']
 

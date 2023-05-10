@@ -35,7 +35,7 @@ class CandidatoForm(forms.ModelForm):
     pne = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch', 'tabindex':'-1'}))
     detalhe = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'Detalhes'}))
     bloqueado_ate = forms.DateField(required=False, widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
-    apresentacao = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'Apresentação'}))
+    apresentacao = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'Apresentação', 'data-i18n':'common.presentation', 'data-i18n-target':'placeholder'}))
     curriculo = forms.FileField(required=False, widget=forms.ClearableFileInput(attrs={'class': 'form-control','accept':'.pdf,.doc,.docx,.odt'}))
     def clean(self):
         cleaned_data = super(CandidatoForm, self).clean()

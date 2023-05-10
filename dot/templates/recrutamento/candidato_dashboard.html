@@ -195,7 +195,9 @@
   {% block add_script %}
   SHORTCUT_MAP['fFTF'] = () => {document.getElementById('adicional_filters_link').click()};
   
-  const tblResumoBanco = new jsTable(document.getElementById('main_table'), {});
+  const tblResumoBanco = new jsTable(document.getElementById('main_table'), {
+    emptyTableMessage: 'Nenhum candidato no banco'
+  });
   const tblTerceiros = new jsTable(document.getElementById('table_terceiros'), {});
 
   
