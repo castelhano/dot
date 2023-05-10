@@ -804,6 +804,8 @@ def authenticate(request):
                     config["password_errors_count"] = 0                    
                     profile.config = json.dumps(config)
                 profile.save()
+                if request.POST['next'] != '':
+                    return redirect(request.POST['next'])
                 return redirect('index')
         try: # Carrega configuracoes do app
             settings = Settings.objects.all().get()
