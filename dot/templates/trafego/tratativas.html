@@ -123,6 +123,7 @@
 
 {% block add_script_src %}
 <script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/date.js' %}"></script>
 {% endblock %}
 
 <script>
@@ -134,6 +135,8 @@ const table = new jsTable(document.getElementById('main_table'), {
   enablePaginate: true
 });
 
+dateInputExtra_start();
+
 SHORTCUT_MAP['.TFF'] = () => {document.getElementById('cadastro_ocorrencia').click()};
 SHORTCUT_MAP['fFTF'] = () => {table.filterInput.select()};
 SHORTCUT_MAP['arrowdownFTF'] = () => {table.nextRow();}
@@ -141,6 +144,7 @@ SHORTCUT_MAP['arrowupFTF'] = () => {table.previousRow();};
 SHORTCUT_MAP['enterFTF'] = () => {table.enterRow();}
 SHORTCUT_MAP['arrowrightFTF'] = () => {table.nextPage()};
 SHORTCUT_MAP['arrowleftFTF'] = () => {table.previousPage()};
+SHORTCUT_MAP['1FTF'] = () => {document.getElementById('tratativas_list').click()};
 
 {% endblock %}
 </script>

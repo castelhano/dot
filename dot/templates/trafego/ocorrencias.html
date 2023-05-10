@@ -169,6 +169,7 @@
 
 {% block add_script_src %}
 <script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/date.js' %}"></script>
 {% endblock %}
 
 
@@ -189,6 +190,8 @@
   SHORTCUT_MAP['arrowdownFTF'] = () => {table.nextRow();}
   SHORTCUT_MAP['arrowupFTF'] = () => {table.previousRow();};
   SHORTCUT_MAP['enterFTF'] = () => {table.enterRow();}
+
+  dateInputExtra_start();
 
   
   function carregaEventos() {

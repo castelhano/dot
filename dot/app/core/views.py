@@ -27,7 +27,7 @@ def index(request):
     return render(request,'core/index.html')
 
 @login_required
-@permission_required('core.view_empresa')
+@permission_required('core.view_empresa', login_url="/handler/403")
 def empresas(request):
     empresas = Empresa.objects.all().order_by('nome')
     if request.method == 'POST':
