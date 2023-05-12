@@ -1,0 +1,110 @@
+{% extends "layout/dot.html" %}
+{% block title %}Grupo{% endblock %}
+{% block model %}Arquivo{% endblock %}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'arquivo_grupo_id' grupo.id|safe %}"></a>
+<div class="card mt-2">
+    <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+            <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'arquivo_grupos' %}"><i class="fas fa-undo"></i></a></li>
+            <li class="nav-item dropdown ms-auto">
+                <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#history_modal">Historico</a></li>
+                    {% if perms.arquivo.delete_grupo %}
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#delete_modal">Excluir Grupo</a></li>
+                    {% endif %}
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <form id="arquivo_form" action="{% url 'arquivo_grupo_update' grupo.id|safe %}" method="POST" autocomplete="off">
+    {% csrf_token %}
+        <div class="card-body tab-content">
+            <h5 class="card-title mb-3">Cadastro de Grupo</h5>
+            <div class="tab-pane fade show active" id="base" role="tabpanel">
+                <div class="row g-1">
+                    <div class="form-floating mb-lg-1 col-lg-3">
+                        {{ form.nome }}
+                        <label for="id_nome">Nome</label>
+                    </div>
+                    <div class="form-floating mb-lg-1 col-lg-auto">
+                        {{ form.tempo_guarda }}
+                        <label for="id_tempo_guarda">Guarda <sup>1</sup></label>
+                    </div>
+                </div>
+                <small><sup>1</sup> Tempo de quarda em meses</small>
+            </div>
+            <!-- CONTROLES DO FORM -->
+            <div class="row mt-3">
+                <div class="col">
+                    <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"><b>G</b>ravar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% if perms.arquivo.delete_grupo %}
+<div class="modal fade" id="delete_modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="row">
+                <div class="col"><h5 class="ms-3 mt-3"><i class="fas fa-exclamation-triangle text-danger me-2"></i> Excluir Registro</h5></div>
+                <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+            </div>
+            <div class="modal-body">
+                <p><b class="text-danger">Atenção!!</b> Esta operação não pode ser desfeita, confirma a exclusão do registro?</p>
+                <div class="row mt-2">
+                    <div class="col text-end">
+                        <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
+                        <a class="btn btn-danger px-3" href="{% url 'arquivo_grupo_delete' grupo.id|safe %}">Excluir</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+<div class="modal fade" id="history_modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="row">
+                <div class="col"><h5 class="ms-3 mt-3">Histórico <sup>(last 15)</sup></h5></div>
+                    <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Operação</th>
+                                <th>Usuário</th>
+                            </tr>
+                        </thead>
+                    <tbody class="fs-7">
+                    {% for i in grupo.ultimas_alteracoes %}
+                        <tr>
+                            <td>{{i.data|date:'d/m/Y H:i:s'}}</td>
+                            <td>{{i.mensagem}}</td>
+                            <td>{{i.usuario.username|upper}}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock%}
+
+{% block add_script_src %}{% endblock %}
+
+<script>
+{% block add_script %}
+var TAB_ON_ENTER = true;
+{% endblock %}
+</script>

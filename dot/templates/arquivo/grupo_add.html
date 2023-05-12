@@ -1,0 +1,49 @@
+{% extends "layout/dot.html" %}
+{% block title %}Grupo{% endblock %}
+{% block model %}Arquivo{% endblock %}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'arquivo_grupo_add' %}"></a>
+<div class="card mt-2">
+    <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+            <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'arquivo_grupos' %}"><i class="fas fa-undo"></i></a></li>
+        </ul>
+    </div>
+    <form id="app_form" action="{% url 'arquivo_grupo_add' %}" method="POST" autocomplete="off">
+    {% csrf_token %}
+        <div class="card-body tab-content">
+            <h5 class="card-title mb-3">Cadastro de Grupo</h5>
+            <div class="tab-pane fade show active" id="base" role="tabpanel">
+                <div class="row g-1">
+                    <div class="form-floating mb-lg-1 col-lg-3">
+                        {{ form.nome }}
+                        <label for="id_nome">Nome</label>
+                    </div>
+                    <div class="form-floating mb-lg-1 col-lg-auto">
+                        {{ form.tempo_guarda }}
+                        <label for="id_tempo_guarda">Guarda <sup>1</sup></label>
+                    </div>
+                </div>
+                <small><sup>1</sup> Tempo de quarda em meses</small>
+            </div>
+            <!-- CONTROLES DO FORM -->
+            <div class="row mt-3">
+                <div class="col">
+                    <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"><b>G</b>ravar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock%}
+
+{% block add_script_src %}{% endblock %}
+
+<script>
+{% block add_script %}
+var TAB_ON_ENTER = true;
+{% endblock %}
+</script>

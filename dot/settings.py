@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     'globus',
     'gestao',
     'sac',
+    'arquivo',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

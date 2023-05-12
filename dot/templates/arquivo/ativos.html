@@ -1,0 +1,95 @@
+{% extends "layout/dot.html" %}
+{% block title %}Arquivo{% endblock %}
+{% block model %}Arquivo{% endblock %}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'arquivo_ativos' %}"></a>
+<div class="card mt-2">
+    <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item"><a class="nav-link active disabled" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+            {% if perms.arquivo.add_ativo %}
+            <li class="nav-item"><a class="nav-link border ms-1" id="add" href="{% url 'arquivo_ativo_add' %}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
+            {% endif %}
+            <li class="nav-item"><a class="nav-link pointer" id="search" href="{% url 'arquivo_ativos' %}?search=true" title="CTRL + /"><i class="fas fa-search"></i></a></li>
+            <li id="modelos_auxiliares_container" class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-dark" id="arquivo_extra" data-bs-toggle="dropdown" href="#" role="button"></a>
+                <ul id="modelos_auxiliares_list" class="dropdown-menu">
+                    {% if perms.arquivo.view_container %}<li><a class="dropdown-item" href="{% url 'arquivo_containers' %}"><i class="fas fa-fw fa-boxes"></i> Containers</a></li>{% endif %}
+                    {% if perms.arquivo.view_grupo %}<li><a class="dropdown-item" href="{% url 'arquivo_grupos' %}"><i class="fas fa-fw fa-layer-group"></i> Grupos</a></li>{% endif %}
+                    {% if perms.arquivo.view_limite %}<li><a class="dropdown-item" href="{% url 'arquivo_limites' %}"><i class="fas fa-fw fa-battery-half"></i> Limites</a></li>{% endif %}
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body tab-content">
+        <h5 class="card-title mb-3">Arquivo Inativo</h5>
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <div class="float-end"><i class="fas fa-layer-group widget-icon"></i></div>
+                        <h5 class="fw-normal">Ocupação</h5>
+                        <div class="row mt-4 gy-1" id="containers_list"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg"></div>
+            <div class="col-lg-2">
+                <div class="card mb-2">
+                    <div class="card-body bg-light text-body-secondary">
+                        <div class="float-end"><i class="fas fa-box widget-icon"></i></div>
+                        <h5 class="fw-normal">FÍSICOS</h5>
+                        <h1>{{fisicos}}</h1>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body bg-light text-body-secondary">
+                        <div class="float-end"><i class="fas fa-folder-open widget-icon"></i></div>
+                        <h5 class="fw-normal">DIGITAIS</h5>
+                        <h1>{{digitais}}</h1>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" name="mostrar_espaco_disco" id="id_mostrar_espaco_disco">
+                            <label class="form-check-label" for="id_mostrar_espaco_disco">Calcular espaço em disco</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock%}
+
+{% block add_script_src %}{% endblock %}
+
+<script>
+{% block add_script %}
+
+function ocupacaoContainers() {
+    var xhttp = new XMLHttpRequest();
+    let list = document.getElementById('containers_list');
+    xhttp.onreadystatechange = function() {
+        if(this.readyState == 4 && this.status == 200){
+            if(this.responseText == ''){
+                list.innerHTML = 'Nenhum container cadastrado';
+            }
+            else{
+                let obj = JSON.parse(this.responseText);
+                for(item in obj){
+                    let c1 = document.createElement('div');c1.classList = 'col-4';
+                    c1.innerHTML = obj[item].nome;
+                    let c2 = document.createElement('div');c2.classList = 'col-8';
+                    c2.innerHTML = `<div class="progress" role="progressbar" style="height: 22px;"><div class="progress-bar" style="width: ${parseInt(obj[item].ocupacao)}%">${parseInt(obj[item].ocupacao)}%</div></div>`;
+                    list.appendChild(c1);
+                    list.appendChild(c2);
+                }
+            }
+        }
+    };
+    xhttp.open("GET", "{% url 'arquivo_get_containers' %}", true);
+    xhttp.send();
+}
+ocupacaoContainers();
+
+{% endblock %}
+</script>

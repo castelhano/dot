@@ -1,0 +1,51 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Ativo{% endblock %}
+{% block model %}Arquivo{% endblock %}
+
+{% block style_src %}
+<link rel="stylesheet" href="{% static 'css/vendor/tagin.css' %}" type="text/css"/>
+{% endblock %}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'arquivo_ativo_add' %}"></a>
+<div class="card mt-2">
+    <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+            <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'arquivo_ativos' %}"><i class="fas fa-undo"></i></a></li>
+        </ul>
+    </div>
+    <form id="app_form" action="{% url 'arquivo_ativo_add' %}" method="POST" autocomplete="off">
+    {% csrf_token %}
+        {% include 'arquivo/_form_ativo.html' %}
+    </form>
+</div>
+
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/vendor/tagin.js' %}"></script>
+{% endblock %}
+
+<script>
+{% block add_script %}
+var TAB_ON_ENTER = true;
+new Tagin(document.getElementById('id_chaves'), {
+    separator:';',
+    tagColor: 'primary',
+    placeholder: 'Separar por ;'
+});
+
+document.getElementById('id_fisico').onclick = (e) => {
+    if(e.target.checked){
+        document.getElementById('hide_container').classList.remove('d-none');
+        document.getElementById('id_container').focus();
+    }
+    else{
+        document.getElementById('hide_container').classList.add('d-none');
+        document.getElementById('id_container').value = '';
+    }
+};
+{% endblock %}
+</script>

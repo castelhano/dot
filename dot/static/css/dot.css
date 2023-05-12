@@ -111,6 +111,7 @@ div.btn-secondary:hover{background-color: #5c636a;}
 div.btn-light{background-color: #f8f9fa; color: #000;}
 div.btn-light:hover{background-color: #d3d4d5;}
 
+.text-transparent{color: transparent!important;}
 .text-orange{color: #FF5722!important;}
 .text-purple{color: #6f42c1!important;}
 [data-bs-theme="dark"] .text-purple{color: #F2A2E8!important;}

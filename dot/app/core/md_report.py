@@ -1,5 +1,5 @@
 import re
-from django.conf import settings
+from django.conf import settings as ROOT
 from datetime import date, datetime, time
 from decimal import Decimal
 import locale
@@ -123,7 +123,7 @@ def md_report(request, original, **kwargs):
             }
             if re_logo.group(2) == '':
                 if kwargs['empresa'].logo != '':
-                    canvas.drawInlineImage(settings.MEDIA_ROOT + '/' + str(kwargs['empresa'].logo), position[props[2]][0], position[props[2]][1], logo_w, logo_h)
+                    canvas.drawInlineImage(ROOT.MEDIA_ROOT + '/' + str(kwargs['empresa'].logo), position[props[2]][0], position[props[2]][1], logo_w, logo_h)
             else:
                 canvas.drawInlineImage(re_logo.group(2), position[props[2]][0], position[props[2]][1], logo_w, logo_h)                
         FOOTER.drawOn(canvas, doc.leftMargin, FOOTER_HEIGHT)

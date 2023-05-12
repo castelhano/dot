@@ -14,7 +14,7 @@ from .console import Run
 from datetime import datetime, date
 from django.http import HttpResponse, JsonResponse
 from django.core import serializers
-from django.conf import settings as SETTINGS
+from django.conf import settings as ROOT
 from django.db.models import Q
 from .validators import validate_file_extension
 
@@ -925,7 +925,7 @@ def initializeProfileConfig():
 def app_data(request, fpath): 
     if request.method == 'GET': # Requisicao, abre arquivo (se existir) e retorna conteudo (em json)
         try:
-            f = open(f'{SETTINGS.APP_DATA}/{fpath}', 'r', encoding='utf-8')
+            f = open(f'{ROOT.APP_DATA}/{fpath}', 'r', encoding='utf-8')
             data = json.load(f)
             f.close()
         except Exception as e:
