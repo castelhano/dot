@@ -62,7 +62,7 @@ class Migration(migrations.Migration):
             name='File',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('file', core.models.FileField(blank=True, upload_to=arquivo.models.get_file_path, validators=[arquivo.validators.validate_file_extension])),
+                ('file', core.models.FileField(blank=True, upload_to=arquivo.models.get_file_path, validators=[arquivo.validators.validate_excluded_files])),
                 ('ativo', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='arquivo.ativo')),
             ],
             options={

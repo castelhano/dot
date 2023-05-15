@@ -5,6 +5,7 @@
 
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'arquivo_limites' %}"></a>
+<a class="d-none" id="app_root" href="{% url 'arquivo_ativos' %}"></a>
 
 <div class="card mt-2">
     <div class="card-header">
@@ -43,7 +44,7 @@
                     <tr>
                         <td class="d-none">{{limite.id|safe}}</td>
                         <td>{{limite.empresa.nome}}</td>
-                        <td>{{limite.quantidade}}<span class="ms-2">{{limite.ocupacao}}</span></td>
+                        <td>{{limite.quantidade}}</td>
                         {% if perms.arquivo.change_limite %}
                         <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'arquivo_limite_id' limite.id|safe %}"><i class="fas fa-pen"></i></a></td>
                         {% endif %}

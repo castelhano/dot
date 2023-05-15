@@ -1,6 +1,8 @@
+import os
 from json import dumps as json_dumps
 from .models import Container, Grupo, Limite, Ativo, File
 from .forms import ContainerForm, GrupoForm, LimiteForm, AtivoForm, FileForm
+from .validators import validate_excluded_files
 from core.models import Log
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -31,11 +33,25 @@ def limites(request):
 @permission_required('arquivo.view_ativo', login_url="/handler/403")
 def ativos(request):
     if request.GET.get('search', None):
-        return render(request, 'arquivo/ativos_search.html')
+        if request.GET.get('chaves', None):
+            keys = request.GET['chaves'].split(';')
+            ativos = Ativo.objects.all().order_by('entrada')
+            for key in keys:
+                ativos = ativos.filter(chaves__contains=key)
+            if not ativos.exists():
+                messages.warning(request,f'Nenhum ativo localizado com os critérios informados')
+        else:
+            ativos = None
+        return render(request, 'arquivo/ativos_search.html', {'ativos':ativos})
     else:
-        fisicos = Ativo.objects.filter(fisico=True).count()
-        digitais = Ativo.objects.filter(fisico=False).count()
-        return render(request, 'arquivo/ativos.html', {'fisicos':fisicos,'digitais':digitais})
+        metrics = {
+            "fisicos" : Ativo.objects.filter(fisico=True).count(),
+            "fisicos_vencidos" : Ativo.objects.filter(fisico=True, vencimento__lt=date.today()).count(),
+            "digitais" : Ativo.objects.filter(fisico=False).count(),
+            "digitais_vencidos" : Ativo.objects.filter(fisico=False, vencimento__lt=date.today()).count(),
+            "limites" : Limite.objects.all()
+        }
+        return render(request, 'arquivo/ativos.html', metrics)
 
 # Metodos ADD
 @login_required
@@ -121,6 +137,12 @@ def ativo_add(request):
                     delta = registro.grupo.tempo_guarda * 30
                     registro.vencimento = registro.entrada + timedelta(days=delta)
                 registro.save()
+                has_file_errors = False
+                for file in request.FILES.getlist('files'):
+                    if validate_excluded_files(file):
+                        File.objects.create(ativo=registro, file=file)
+                    else:
+                        has_file_errors = True
                 l = Log()
                 l.modelo = "arquivo.ativo"
                 l.objeto_id = registro.id
@@ -128,7 +150,10 @@ def ativo_add(request):
                 l.usuario = request.user
                 l.mensagem = "CREATED"
                 l.save()
-                messages.success(request,f'Ativo <b>{registro.id}</b> criado')
+                if has_file_errors:
+                    messages.warning(request,f'Ativo <b>{registro.id}</b> criado, porém um ou mais anexos não foram salvos devido a politica de segurança.')
+                else:
+                    messages.success(request,f'Ativo <b>{registro.id}</b> criado')
                 return redirect('arquivo_ativos')
             except:
                 pass
@@ -232,6 +257,12 @@ def ativo_update(request,id):
     form = AtivoForm(request.POST, instance=ativo)
     if form.is_valid():
         registro = form.save()
+        has_file_errors = False
+        for file in request.FILES.getlist('files'):
+            if validate_excluded_files(file):
+                File.objects.create(ativo=registro, file=file)
+            else:
+                has_file_errors = True
         l = Log()
         l.modelo = "arquivo.ativo"
         l.objeto_id = registro.id
@@ -239,7 +270,10 @@ def ativo_update(request,id):
         l.usuario = request.user
         l.mensagem = "UPDATE"
         l.save()
-        messages.success(request,'Ativo <b>' + registro.id + '</b> alterado')
+        if has_file_errors:
+            messages.warning(request,f'Ativo <b>{registro.id}</b> , porém um ou mais anexos não foram salvos devido a politica de segurança.')
+        else:
+            messages.success(request,f'Ativo <b>{registro.id}</b> alterado')
         return redirect('arquivo_ativo_id', id)
     else:
         return render(request,'arquivo/ativo_id.html',{'form':form,'ativo':ativo})
@@ -308,6 +342,8 @@ def limite_delete(request,id):
 def ativo_delete(request,id):
     try:
         registro = Ativo.objects.get(pk=id)
+        for file in registro.files():
+            os.remove(file.file.path) # REMOVE ARQUIVO FISICO
         l = Log()
         l.modelo = "arquivo.ativo"
         l.objeto_id = registro.id
@@ -316,7 +352,7 @@ def ativo_delete(request,id):
         l.mensagem = "DELETE"
         registro.delete()
         l.save()
-        messages.warning(request,f'Ativo <b>{registro.id}</b> apagado. Essa operação não pode ser desfeita')
+        messages.warning(request, 'Ativo <b>apagado</b>. Essa operação não pode ser desfeita')
         return redirect('arquivo_ativos')
     except:
         messages.error(request,'ERRO ao apagar ativo')
@@ -334,30 +370,3 @@ def get_containers(request):
         itens.append(item_dict)
     dataJSON = json_dumps(itens)
     return HttpResponse(dataJSON)
-
-@login_required
-def get_ativos(request):
-    # Metodo retorna JSON ajustado para (integracao jsTable e component localidade)
-    try:
-        ativos = Ativo.objects.filter(chaves__contains=request.GET['pesquisa']).order_by('entrada')
-        itens = []
-        for item in ativos:
-            item_dict = {
-                '#':item.id,
-                'Empresa':item.empresa.nome,
-                'Setor': item.setor.nome,
-                'Container': item.container.nome if item.container else '',
-                'Grupo': item.grupo.nome,
-                'Entrada': item.entrada.strftime("%d/%m/%Y"),
-                'Vencimento': item.vencimento.strftime("%d/%m/%Y") if item.vencimento != '' else '',
-                'Responsavel': item.responsavel,
-                'Tipo': 'FISICO' if item.fisico else 'DIGITAL',
-                'Status': item.get_status_display(),
-            }
-            if request.user.has_perm('arquivo.change_ativo'):
-                item_dict['cnt'] = f'<a class="btn btn-sm btn-dark float-end" href="/arquivo_ativo_id/{item.id}"><i class="fas fa-pen"></i></a>'
-            itens.append(item_dict)
-        dataJSON = json_dumps(itens)
-        return HttpResponse(dataJSON)
-    except:
-        return HttpResponse('[]')

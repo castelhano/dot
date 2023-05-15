@@ -31,7 +31,7 @@ class AtivoForm(forms.ModelForm):
     container = forms.ModelChoiceField(required=False, queryset = Container.objects.filter(inativo=False).order_by('nome'), widget=forms.Select(attrs={'class':'form-select'}))
     responsavel = forms.CharField(max_length=40,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
     fisico = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch'}))
-    chaves = forms.CharField(max_length=120, widget=forms.TextInput(attrs={'class': 'form-control tagin','placeholder':' '}))
+    chaves = forms.CharField(required=False, max_length=120, widget=forms.TextInput(attrs={'class': 'form-control tagin','placeholder':' '}))
 
 
 class FileForm(forms.ModelForm):

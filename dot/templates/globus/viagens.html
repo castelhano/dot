@@ -24,9 +24,9 @@ h7{display: block;}
       {% if perms.globus.add_viagem %}
       <li class="nav-item ms-1"><a class="nav-link border" id="add" href="{% url 'globus_viagem_add' escala.id|safe %}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
       {% endif %}
-      {% if request|url_get:'from' == 'consultar_escala' %}
+      {% if request.GET.from == 'consultar_escala' %}
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'globus_consultar_escala' %}?data={{escala.data|date:'Y-m-d'}}"><i class="fas fa-undo"></i></a></li>
-      {% elif request|url_get:'from' == 'localizar_escala' %}
+      {% elif request.GET.from == 'localizar_escala' %}
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'globus_localizar_escala' %}"><i class="fas fa-undo"></i></a></li>
       {% else %}
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'globus_escalas' %}?data={{escala.data|date:'Y-m-d'}}"><i class="fas fa-undo"></i></a></li>

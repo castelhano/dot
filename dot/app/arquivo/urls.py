@@ -22,6 +22,5 @@ urlpatterns = [
     path('arquivo_ativo_id/<int:id>',views.ativo_id,name='arquivo_ativo_id'),
     path('arquivo_ativo_update/<int:id>',views.ativo_update,name='arquivo_ativo_update'),
     path('arquivo_ativo_delete/<int:id>',views.ativo_delete,name='arquivo_ativo_delete'),
-    path('arquivo_get_ativos',views.get_ativos,name='arquivo_get_ativos'),
     path('arquivo_get_containers',views.get_containers,name='arquivo_get_containers'),
 ]

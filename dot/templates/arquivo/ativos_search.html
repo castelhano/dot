@@ -3,8 +3,13 @@
 {% block title %}Ativos{% endblock %}
 {% block model %}Arquivo{% endblock %}
 
+{% block style_src %}
+<link rel="stylesheet" href="{% static 'css/vendor/tagin.css' %}" type="text/css"/>
+{% endblock %}
+
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'arquivo_ativos' %}?search=true"></a>
+<a class="d-none" id="app_root" href="{% url 'arquivo_ativos' %}"></a>
 
 <div class="card mt-2">
     <div class="card-header">
@@ -24,8 +29,16 @@
     <div class="card-body tab-content">
         <h5 class="card-title">Arquivo: <b>Pesquisa Ativos</b></h5>
         <div class="tab-pane fade show active" id="base" role="tabpanel">
-            <div class="table-responsive-lg">
-                <table id="main_table" class="table border table-striped table-hover">
+            <div class="row g-1 mt-4">
+                <div class="form-floating col-lg-6">
+                    <input type="text" class="form-control tagin" id="id_keys" value="{{request.GET.chaves}}">
+                    <label for="id_keys">Palavras chave</label>
+                </div>
+                <small class="ps-1 text-secondary"><b class="text-body me-1">Ctrl + /</b> para focar o input</small>
+            </div>
+            {% if ativos %}
+            <div class="table-responsive-lg mt-4">
+                <table id="ativos_table" class="table border table-striped table-hover">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -39,13 +52,32 @@
                             <th>Tipo</th>
                             <th>Status</th>
                             {% if perms.arquivo.change_ativo %}
-                            <th class="text-transparent">cnt</th>
+                            <th>&nbsp;</th>
                             {% endif %}
                         </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody>
+                        {% for ativo in ativos %}
+                        <tr class="{% if ativo.status == 'D' %}table-caution{% endif %}">
+                            <td>{{ativo.id}}</td>
+                            <td>{{ativo.empresa.nome}}</td>
+                            <td>{{ativo.setor.nome}}</td>
+                            <td>{{ativo.container.nome}}</td>
+                            <td>{{ativo.grupo.nome}}</td>
+                            <td>{{ativo.entrada|date:'d/m/Y'}}</td>
+                            <td>{{ativo.vencimento|date:'d/m/Y'|default:'--'}}</td>
+                            <td>{{ativo.responsavel}}</td>
+                            <td>{{ativo.fisico|yesno:'FISICO,DIGITAL'}}</td>
+                            <td>{{ativo.get_status_display}}</td>
+                            {% if perms.arquivo.change_ativo %}
+                            <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'arquivo_ativo_id' ativo.id|safe %}"><i class="fas fa-pen"></i></a></td>
+                            {% endif %}
+                        </tr>                            
+                        {% endfor %}
+                    </tbody>
                 </table>
             </div>
+            {% endif %}
         </div>
     </div>
 </div>
@@ -53,22 +85,41 @@
 
 {% block add_script_src %}
 <script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/url.js' %}"></script>
+<script src="{% static 'js/vendor/tagin.js' %}"></script>
 {% endblock %}
 
 
 <script>
 {% block add_script %}
-const table = new jsTable(document.getElementById('main_table'),{
-    dataUrl: '{% url 'arquivo_get_ativos' %}',
-    enablePaginate: true,
-    emptyTableMessage: 'Selecione um filtro ou mude o criterio da pesquisa'
-});
-table.filterInput.focus();
-SHORTCUT_MAP['fFTF'] = () => {table.filterInput.select()};
-SHORTCUT_MAP['arrowrightFTF'] = () => {table.nextPage()}
-SHORTCUT_MAP['arrowleftFTF'] = () => {table.previousPage()}
-SHORTCUT_MAP['arrowdownFTF'] = () => {table.nextRow()}
-SHORTCUT_MAP['arrowupFTF'] = () => {table.previousRow()}
-SHORTCUT_MAP['enterFTF'] = () => {table.enterRow()}
+    const keys = new Tagin(document.getElementById('id_keys'), {
+        separator:';',
+        enter: true,
+        autofocus: true,
+        placeholder: 'Separar por comma ;',
+        tagColor: 'purple'
+    });
+    SHORTCUT_MAP['/FTF'] = () => {keys.input.focus()};
+    SHORTCUT_MAP['enterFFF'] = (ev) => {
+        if(keys.input == ev.target){
+            if(keys.getValue() == ''){dotAlert('warning', 'Informe <b>pelo menos uma chave</b> para realizar a pesquisa');return false;}
+            urlFilter('chaves', keys.getValue());
+        }
+    }
+    
+    {% if ativos %}
+        const table = new jsTable(document.getElementById('ativos_table'),{
+            enablePaginate: true,
+            canFilter: true,
+            filterCols: ['Empresa','Setor','Container','Grupo','Responsável','Tipo','Status']
+        });
+        SHORTCUT_MAP['fFTF'] = () => {table.filterInput.select()};
+        SHORTCUT_MAP['arrowrightFTF'] = () => {table.nextPage()}
+        SHORTCUT_MAP['arrowleftFTF'] = () => {table.previousPage()}
+        SHORTCUT_MAP['arrowdownFTF'] = () => {table.nextRow()}
+        SHORTCUT_MAP['arrowupFTF'] = () => {table.previousRow()}
+        SHORTCUT_MAP['enterFTF'] = () => {table.enterRow()}
+        setTimeout(()=>{table.filterInput.focus()}, 60);
+    {% endif  %}
 {% endblock %}
 </script>

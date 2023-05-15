@@ -9,6 +9,7 @@
 
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'arquivo_ativo_id' ativo.id|safe %}"></a>
+<a class="d-none" id="app_root" href="{% url 'arquivo_ativos' %}"></a>
 <div class="card mt-2">
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
@@ -26,7 +27,7 @@
             </li>
         </ul>
     </div>
-    <form id="arquivo_form" action="{% url 'arquivo_ativo_update' ativo.id|safe %}" method="POST" autocomplete="off">
+    <form id="arquivo_form" action="{% url 'arquivo_ativo_update' ativo.id|safe %}" method="POST" autocomplete="off" enctype="multipart/form-data" onsubmit="return submitForm()">
     {% csrf_token %}
     {% include 'arquivo/_form_ativo.html' %}
     </form>
@@ -83,6 +84,7 @@
         </div>
     </div>
 </div>
+{% include "_component/modal/loading.html" with message='Processando requisição....' background='' spinner_classlist='' message_classlist='' %}
 {% endblock%}
 
 {% block add_script_src %}
@@ -92,9 +94,9 @@
 <script>
 {% block add_script %}
     var TAB_ON_ENTER = true;
-    new Tagin(document.getElementById('id_chaves'), {
+    const keys = new Tagin(document.getElementById('id_chaves'), {
         separator:';',
-        tagColor: 'primary',
+        tagColor: 'purple',
         placeholder: 'Separar por ;'
     });
     
@@ -102,11 +104,24 @@
         if(e.target.checked){
             document.getElementById('hide_container').classList.remove('d-none');
             document.getElementById('id_container').focus();
+            document.getElementById('id_files').disabled = true;
         }
         else{
             document.getElementById('hide_container').classList.add('d-none');
             document.getElementById('id_container').value = '';
+            document.getElementById('id_files').disabled = false;
         }
     };
+
+    var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
+    function submitForm(){
+        if(keys.getValue() == ''){
+            dotAlert('danger', 'Informe <b>pelo menos uma chave</b> para consulta do ativo');
+            keys.input.focus();
+            return false;
+        }
+        modal_loading.show();
+        return true;
+    }
 {% endblock %}
 </script>

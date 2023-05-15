@@ -1,6 +1,21 @@
 {% extends "layout/dot.html" %}
+{% load static %}
+{% load tag_extra %}
 {% block title %}Arquivo{% endblock %}
 {% block model %}Arquivo{% endblock %}
+
+{% block style_src %}
+<link rel="stylesheet" href="{% static 'css/chart.css' %}">
+{% endblock %}
+
+<style>
+{% block style %}
+.card-limite:hover{
+    cursor: pointer;
+    background-color: var(--bs-secondary-bg);
+}
+{% endblock %}
+</style>
 
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'arquivo_ativos' %}"></a>
@@ -23,9 +38,17 @@
         </ul>
     </div>
     <div class="card-body tab-content">
-        <h5 class="card-title mb-3">Arquivo Inativo</h5>
         <div class="row">
-            <div class="col-lg-3">
+            <div class="col-lg"><h5 class="card-title mb-1 mb-lg-3">Arquivo Inativo</h5></div>
+            <div class="col-lg-auto mb-3 mb-lg-1">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" name="hd_usage" id="id_hd_usage"{% if request.GET.hd_usage == 'true' %} checked{% endif %}>
+                    <label class="form-check-label" for="id_hd_usage">Calcular uso de disco</label>
+                </div>
+            </div>
+        </div>
+        <div class="row gy-2">
+            <div class="col-lg-3 order-2 order-lg-1">
                 <div class="card mb-2">
                     <div class="card-body">
                         <div class="float-end"><i class="fas fa-layer-group widget-icon"></i></div>
@@ -34,62 +57,104 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg"></div>
-            <div class="col-lg-2">
-                <div class="card mb-2">
+            <div class="col-lg order-1 order-1 order-lg-2">
+                <div class="row gx-3 gy-2">
+                    {% for limite in limites %}
+                    <div class="col-lg-6">
+                        <div class="card card-limite mb-2">
+                            <div class="card-body pb-2 text-body-secondary">
+                                <h4 class="text-center">{{limite.empresa.nome}}</h4>
+                                <div class="row g-0">
+                                    {% with limite.ocupacao as ocupacao %}
+                                    <div class="col-auto p-0"><div class="semipie animate mb-1" style="--v:{{ocupacao|minimo:100|floatformat:0}};--w:150px;--b:30px;--c:var({% if ocupacao >= 90 %}--bs-danger{% elif ocupacao >= 80 %}--bs-warning{% else %}--bs-success{% endif %});">{{ocupacao|floatformat:0}}%</div><br><small>Limite: {{limite.quantidade}} un</small></div>
+                                    {% endwith %}
+                                    <div class="col text-end">
+                                        <h3>{{limite.ativos}} <span class="fs-6">un</span></h3>
+                                        {% if request.GET.hd_usage == 'true' %}
+                                        <h3>{{limite.hd_usage|filesizeformat}}</h3>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-lg-2 order-3">
+                <div class="card mb-2 mb-lg-3">
                     <div class="card-body bg-light text-body-secondary">
                         <div class="float-end"><i class="fas fa-box widget-icon"></i></div>
                         <h5 class="fw-normal">FÍSICOS</h5>
-                        <h1>{{fisicos}}</h1>
+                        <h1>{{fisicos}}<span class="fs-6"> un</span></h1>
+                        {% if fisicos_vencidos > 0 %}
+                        <h6><a href="" title="Listar ativos vencidos"><i class="fas fa-history me-1"></i> {{fisicos_vencidos}} vencido{{fisicos_vencidos|pluralize}}</a></h6>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="card">
                     <div class="card-body bg-light text-body-secondary">
                         <div class="float-end"><i class="fas fa-folder-open widget-icon"></i></div>
                         <h5 class="fw-normal">DIGITAIS</h5>
-                        <h1>{{digitais}}</h1>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" role="switch" name="mostrar_espaco_disco" id="id_mostrar_espaco_disco">
-                            <label class="form-check-label" for="id_mostrar_espaco_disco">Calcular espaço em disco</label>
-                        </div>
+                        <h1>{{digitais}}<span class="fs-6"> un</span></h1>
+                        {% if digitais_vencidos > 0 %}
+                        <h6><a href="" title="Listar ativos vencidos"><i class="fas fa-history me-1"></i> {{digitais_vencidos}} vencido{{digitais_vencidos|pluralize}}</a></h6>
+                        {% endif %}
+                        {% if request.GET.hd_usage == 'true' %}
+                        <h6>{{hd_usage|filesizeformat}}</h6>
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+{% include "_component/modal/loading.html" with message='Processando requisição....' background='' spinner_classlist='' message_classlist='' %}
 {% endblock%}
 
-{% block add_script_src %}{% endblock %}
+{% block add_script_src %}
+<script src="{% static 'js/url.js' %}"></script>
+{% endblock %}
 
 <script>
-{% block add_script %}
+    {% block add_script %}
 
-function ocupacaoContainers() {
-    var xhttp = new XMLHttpRequest();
-    let list = document.getElementById('containers_list');
-    xhttp.onreadystatechange = function() {
-        if(this.readyState == 4 && this.status == 200){
-            if(this.responseText == ''){
-                list.innerHTML = 'Nenhum container cadastrado';
-            }
-            else{
-                let obj = JSON.parse(this.responseText);
-                for(item in obj){
-                    let c1 = document.createElement('div');c1.classList = 'col-4';
-                    c1.innerHTML = obj[item].nome;
-                    let c2 = document.createElement('div');c2.classList = 'col-8';
-                    c2.innerHTML = `<div class="progress" role="progressbar" style="height: 22px;"><div class="progress-bar" style="width: ${parseInt(obj[item].ocupacao)}%">${parseInt(obj[item].ocupacao)}%</div></div>`;
-                    list.appendChild(c1);
-                    list.appendChild(c2);
+    SHORTCUT_MAP[';FTF'] = () => {
+        document.getElementById('arquivo_extra').click();
+    }
+    
+    function ocupacaoContainers() {
+        var xhttp = new XMLHttpRequest();
+        let list = document.getElementById('containers_list');
+        xhttp.onreadystatechange = function() {
+            if(this.readyState == 4 && this.status == 200){
+                if(this.responseText == ''){
+                    list.innerHTML = 'Nenhum container cadastrado';
+                }
+                else{
+                    let obj = JSON.parse(this.responseText);
+                    for(item in obj){
+                        let c1 = document.createElement('div');c1.classList = 'col-4';
+                        c1.innerHTML = obj[item].nome;
+                        let c2 = document.createElement('div');c2.classList = 'col-8';
+                        c2.innerHTML = `<div class="progress" role="progressbar" style="height: 22px;"><div class="progress-bar" style="width: ${parseInt(obj[item].ocupacao)}%">${parseInt(obj[item].ocupacao)}%</div></div>`;
+                        list.appendChild(c1);
+                        list.appendChild(c2);
+                    }
                 }
             }
-        }
-    };
-    xhttp.open("GET", "{% url 'arquivo_get_containers' %}", true);
-    xhttp.send();
-}
-ocupacaoContainers();
+        };
+        xhttp.open("GET", "{% url 'arquivo_get_containers' %}", true);
+        xhttp.send();
+    }
+    ocupacaoContainers();
 
-{% endblock %}
+    var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
+    document.getElementById('id_hd_usage').onclick = (ev) => {
+        modal_loading.show();
+        if(ev.target.checked){urlFilter('hd_usage', 'true')}
+        else{urlClean(['hd_usage'])}
+    };
+    
+    {% endblock %}
 </script>

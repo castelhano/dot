@@ -1,43 +1,66 @@
 <div class="card-body tab-content">
     <h5 class="card-title mb-3">Cadastro de Ativo</h5>
     <div class="tab-pane fade show active" id="base" role="tabpanel">
-        <div class="row g-1">
-            {% include "_component/field/empresa.html" with empresa_atual=ativo.empresa.id|safe attrs='autofocus' container_classlist='form-floating mb-lg-1 col-lg-4' %}
-            <div class="form-floating mb-1 col-lg-4">
-                {{ form.setor }}
-                <label for="id_setor">Setor</label>
+        <div class="row">
+            <div class="col-lg">
+                <div class="row g-1">
+                    {% include "_component/field/empresa.html" with empresa_atual=ativo.empresa.id|safe attrs='autofocus' container_classlist='form-floating mb-lg-1 col-lg' %}
+                    <div class="form-floating mb-1 col-lg">
+                        {{ form.setor }}
+                        <label for="id_setor">Setor</label>
+                    </div>
+                </div>
+                <div class="row g-1">
+                    <div class="form-floating mb-lg-1 col-lg-3">
+                        {{ form.entrada }}
+                        <label for="id_entrada">Entrada</label>
+                    </div>
+                    <div class="form-floating mb-lg-1 col-lg-4">
+                        {{ form.grupo }}
+                        <label for="id_grupo">Grupo</label>
+                    </div>
+                    <div class="form-floating mb-lg-1 col-lg-5">
+                        {{ form.responsavel }}
+                        <label for="id_responsavel">Responsável</label>
+                    </div>
+                </div>
+                <div class="row g-1">
+                    <div class="form-floating mb-1 col-12">
+                        {{ form.chaves }}
+                        <label for="id_chaves">Palavras chave</label>
+                    </div>
+                </div>
+                <div class="row g-1">
+                    <div class="col-12"><input class="form-control" type="file" id="id_files" name="files" multiple{% if ativo.fisico %} disabled{% endif %} ></div>
+                </div>
+                <div class="form-check form-switch mt-2">
+                    {{ form.fisico }}
+                    <label class="form-check-label" for="id_fisico">Arquivo Físico</label>
+                </div>
+                <div id="hide_container" class="row g-1 mt-2{{ativo.fisico|yesno:', d-none'}}">
+                    <div class="form-floating mb-1 col-lg-2">
+                        {{ form.container }}
+                        <label for="id_container">Container</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="row g-2">
+                    {% for ativo in ativo.files %}
+                    <div class="col-6">
+                        <div class="card pointer">
+                            <div class="card-body bg-light">
+                                <div class="float-end"><i class="fas fa-download widget-icon"></i></div>
+                                <h1 class="text-uppercase">{{ativo.extensao}}</h1>
+                                <span>{{ativo.filename}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
-        <div class="row g-1">
-            <div class="form-floating mb-lg-1 col-lg-2">
-                {{ form.entrada }}
-                <label for="id_entrada">Entrada</label>
-            </div>
-            <div class="form-floating mb-lg-1 col-lg-3">
-                {{ form.grupo }}
-                <label for="id_grupo">Grupo</label>
-            </div>
-            <div class="form-floating mb-lg-1 col-lg-3">
-                {{ form.responsavel }}
-                <label for="id_responsavel">Responsável</label>
-            </div>
-        </div>
-        <div class="row g-1">
-            <div class="form-floating mb-1 col-lg-8">
-                {{ form.chaves }}
-                <label for="id_chaves">Palavras chave</label>
-            </div>
-        </div>
-        <div class="form-check form-switch mt-2">
-            {{ form.fisico }}
-            <label class="form-check-label" for="id_fisico">Arquivo Físico</label>
-        </div>
-        <div id="hide_container" class="row g-1 mt-2{{ativo.fisico|yesno:', d-none'}}">
-            <div class="form-floating mb-1 col-lg-2">
-                {{ form.container }}
-                <label for="id_container">Container</label>
-            </div>
-        </div>
+        
     </div>
     <!-- CONTROLES DO FORM -->
     <div class="row mt-3">

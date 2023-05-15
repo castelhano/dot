@@ -134,19 +134,6 @@ def stars(value):
         s += '<i class="fas fa-star"></i>' if value >= x + 1 else '<i class="far fa-star"></i>'
     return s
 
-# url_get Retorna valor (ou None) de variavel informada na url
-# @version  1.0
-# @since    05/10/2021
-# @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }
-# @example  {% if request|url_get:'from' == 'consultar_escala' %}
-@register.filter
-def url_get(request,parameter):
-    parsed_url = urlparse(request.get_full_path())
-    try:
-        return parse_qs(parsed_url.query)[parameter][0]
-    except KeyError as e:
-        return None
-
 # replace Retorna string trocando um valor por outro
 # @version  1.0
 # @since    01/06/2022
@@ -165,3 +152,21 @@ def replace(value, criterio):
 @register.filter
 def split(value, separator = ' '):
     return str(value).split(separator) if value != '' else None
+
+# maximo
+# @version  1.0
+# @since    15/05/2023
+# @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }
+# @example  {{ model.value|maximo:250 }}
+@register.filter
+def maximo(value, limit):
+    return max(value, limit)
+
+# minimo
+# @version  1.0
+# @since    15/05/2023
+# @author   Rafael Gustavo ALves {@email castelhano.rafael@gmail.com }
+# @example  {{ model.value|minimo:250 }}
+@register.filter
+def minimo(value, limit):
+    return min(value, limit)
