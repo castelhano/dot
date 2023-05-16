@@ -10,6 +10,7 @@ Classes Gerais do sistema, carregado em TODAS as paginas
 a:not(.alert-link){text-decoration: none;}
 .cursor-text{cursor:text;}
 select.readonly{background: rgb(233, 236, 239)!important;pointer-events: none;touch-action: none;}
+input[type=checkbox]:indeterminate{background-color: var(--bs-secondary)!important; border-color: var(--bs-secondary-border)!important;}
 input[readonly], textarea[readonly]{background: rgb(233, 236, 239)!important;}
 [data-bs-theme="dark"] input[readonly], [data-bs-theme="dark"] .readonly, [data-bs-theme="dark"] .bg-light, [data-bs-theme="dark"] textarea[readonly]{background-color: #393939!important;color: #999!important;}
 
@@ -20,6 +21,7 @@ input[readonly], textarea[readonly]{background: rgb(233, 236, 239)!important;}
 @keyframes pulse{from{transform: scale3d(1, 1, 1);} 50% {transform: scale3d(1.05, 1.05, 1.05);} to {transform: scale3d(1, 1, 1);}}
 
 .navbar-text-light *{--bs-navbar-brand-color: rgb(255, 255, 255);--bs-navbar-brand-hover-color: rgb(255, 255, 255); --bs-nav-link-color: rgba(255, 255, 255, 0.75); --bs-nav-link-hover-color: rgba(255, 255, 255, 0.9);}
+
 
 
 .table.border tr{border-left:3px solid var(--bs-table-border-color);}
@@ -203,14 +205,14 @@ div.btn-light:hover{background-color: #d3d4d5;}
 
 .code{background-color: #F8F9FA;border: 1px solid #dee2e6;border-radius: .25rem;padding: 5px 10px;margin-bottom: 15px;user-select: all;}
 
-.card-widget{min-height: 100px;border: 2px solid var(--bs-body-bg);position: relative;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;padding-right: 10px;}
+.card-widget{opacity: 0.8; min-height: 100px;border: 2px solid var(--bs-body-bg);position: relative;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;padding-right: 10px;}
 .card-widget > .lead-image{width: 100%;line-height: 250%;text-align: center;font-size: 3.2rem;}
 .card-widget-sm > .lead-image{width: 100%;line-height: 150%;text-align: center;font-size: 2.8rem;}
 .card-widget > .widget-label{font-size: 0.9rem;color: #FFF;}
 .card-widget-sm > .widget-label{font-size: 0.85rem;color: #FFF;}
 .card-widget > .widget-control{position: absolute;padding-top: 5px;padding-bottom: 5px;padding-left: 14px;padding-right: 14px;border-radius: 25px;text-align: center;border: 1px solid transparent;cursor: pointer;top: 5px;right: 10px;z-index: 500;transition: background-color 0.3s;user-select: none;}
 .card-widget > .widget-control:hover{background-color: #FFF;opacity: 0.6;color: #444!important;}
-.card-selected{border-bottom:4px solid inherit;}
+.card-selected{opacity: 1;}
 [data-bs-theme="dark"] .card-selected{border-bottom:4px solid #FFF;}
 
 
