@@ -376,6 +376,16 @@ def ativo_delete(request,id):
         messages.error(request,'ERRO ao apagar ativo')
         return redirect('arquivo_ativo_id', id)
 
+@login_required
+@permission_required('arquivo.view_file', login_url="/handler/403")
+def file_download(request, id):
+    file = File.objects.get(pk=id)
+    filename = file.file.name.split('/')[-1]
+    response = HttpResponse(file.file)
+    response['Content-Disposition'] = 'attachment; filename="' + filename + '"'
+    return response
+
+
 # Metodos AJAX
 @login_required
 def get_containers(request):

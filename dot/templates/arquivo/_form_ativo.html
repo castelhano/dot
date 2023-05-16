@@ -46,13 +46,13 @@
             </div>
             <div class="col-lg-4">
                 <div class="row g-2">
-                    {% for ativo in ativo.files %}
+                    {% for file in ativo.files %}
                     <div class="col-6">
                         <div class="card pointer">
                             <div class="card-body bg-light">
                                 <div class="float-end"><i class="fas fa-download widget-icon"></i></div>
-                                <h1 class="text-uppercase">{{ativo.extensao}}</h1>
-                                <span>{{ativo.filename}}</span>
+                                <h1 class="text-uppercase">{{file.extensao}}</h1>
+                                <a class="stretched-link" href="{% url 'arquivo_file_download' file.id|safe %}">{{file.filename}}</a>
                             </div>
                         </div>
                     </div>
