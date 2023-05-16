@@ -7,6 +7,7 @@ from core.models import Log
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.http import HttpResponse
+from django.conf import settings as ROOT
 from django.contrib.auth.decorators import login_required, permission_required
 from datetime import date, timedelta
 
@@ -51,7 +52,24 @@ def ativos(request):
             "digitais_vencidos" : Ativo.objects.filter(fisico=False, vencimento__lt=date.today()).count(),
             "limites" : Limite.objects.all()
         }
+        if request.GET.get('hd_usage', None) == 'true':
+            total = 0
+            for dirpath, dirnames, filenames in os.walk(ROOT.MEDIA_ROOT + f'/arquivo'):
+                for f in filenames:
+                    fp = os.path.join(dirpath, f)
+                    total += os.path.getsize(fp)
+            metrics['hd_usage'] = total
         return render(request, 'arquivo/ativos.html', metrics)
+
+
+@login_required
+@permission_required('arquivo.view_ativo', login_url="/handler/403")
+def ativo_gestao(request):
+    metrics = {
+        'fisicos_vencidos': Ativo.objects.filter(fisico=True, vencimento__lt=date.today()).order_by('container__nome','vencimento')
+    }
+    return render(request, 'arquivo/gestao.html', metrics)
+
 
 # Metodos ADD
 @login_required

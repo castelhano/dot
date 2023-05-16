@@ -1,9 +1,9 @@
 /*
 * jsTable   Implementa operacoes com tabelas previamente criadas ou gera tabela a partir de dados json
 *
-* @version  2.19
+* @version  2.20
 * @since    07/08/2022
-* @release  04/05/2023 [data-print="false" em tags sao desconsideradas para exportacao]
+* @release  16/05/2023 [data-sort_role="none" em th para desativar sort][data-print="false" em tags sao desconsideradas para exportacao]
 * @author   Rafael Gustavo Alves {@email castelhano.rafael@gmail.com}
 * @depend   boostrap 5.2.0, fontawesome 5.15.4, dot.css, dot.js
 */
@@ -278,7 +278,7 @@ class jsTable{
     }
     buildListeners(){
         if(this.canSort){
-            this.thead.querySelectorAll("th").forEach(headerCell => {
+            this.thead.querySelectorAll("th:not([data-sort_role=none]").forEach(headerCell => {
                 headerCell.addEventListener("click", () => {
                     const headerIndex = Array.prototype.indexOf.call(headerCell.parentElement.children, headerCell);
                     const currentIsAscending = headerCell.classList.contains("th-sort-asc");  

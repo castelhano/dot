@@ -1,0 +1,105 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}{% endblock %}
+{% block model %}{% endblock %}
+{% block model_menu %}{% include "_component/menu/core.html" %}{% endblock%}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'arquivo_ativo_gestao' %}"></a>
+
+<div class="card mt-2">
+    <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+            <li class="nav-item dropdown ms-1">
+                <a class="nav-link dropdown-toggle text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item pointer" href="">...</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body tab-content">
+        <h5 class="card-title">Arquivo: <b class="text-orange">Gestor</b></h5>
+        <div class="tab-pane fade show active" id="base" role="tabpanel">
+            <div class="row">
+                <div class="col-lg">
+                    <table id="main_table" class="table border table-striped table-hover">
+                        <caption><h6>Ativos Físicos</h6></caption>
+                        <thead>
+                            <tr>
+                                <th class="fit" data-sort_role="none"><input type="checkbox" class="form-check-input" id="ativos_vencidos_checkAll"></th>
+                                <th>#</th>
+                                <th>Container</th>
+                                <th>Vencimento</th>
+                                {% if perms.arquivo.change_ativo %}
+                                <th data-sort_role="none">&nbsp;</th>
+                                {% endif %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ativo in fisicos_vencidos %}
+                            <tr>
+                                <td><input type="checkbox" class="form-check-input" data-ativo_ref="{{ativo.id|safe}}"></td>
+                                <td>{{ativo.id|safe}}</td>
+                                <td>{{ativo.container.nome}}</td>
+                                <td>{{ativo.vencimento|date:'d/m/Y'}}</td>
+                                {% if perms.arquivo.change_ativo %}
+                                <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="url"><i class="fas fa-pen"></i></a></td>
+                                {% endif %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-lg-4"></div>
+            </div>
+            
+        </div>
+        <div class="tab-pane fade" id="param" role="tabpanel">param</div>
+    </div>
+</div>
+
+<!-- <div class="modal fade" id="search_modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="row">
+                <div class="col"><h5 class="ms-3 mt-3">Pesquisa</h5></div>
+                <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+            </div>
+            <div class="modal-body">
+                <form id="arquivo_form" action="url" method="POST" autocomplete="off">
+                {% csrf_token %}
+                    <div class="row g-1">
+                        <div class="form-floating mb-1 col-lg-12">
+                            <input type="text" class="form-control" name="pesquisa" value="" id="id_pesquisa" placeholder="">
+                            <label for="id_pesquisa">Termo pesquisa</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> -->
+
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/table.js' %}"></script>
+{% endblock %}
+
+<script>
+{% block add_script %}
+
+const checkAll = document.getElementById('ativos_vencidos_checkAll');
+document.querySelectorAll('[data-ativo_ref]').forEach((el) =>{
+    el.onclick = () => {checkAll.indeterminate = true;}
+})
+
+
+
+const table = new jsTable(document.getElementById('main_table'),{
+});
+
+{% endblock %}
+</script>
