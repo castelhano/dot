@@ -16,7 +16,7 @@ class Container(models.Model):
     def ativos(self):
         return Ativo.objects.filter(container=self).count()
     def ocupacao(self):
-        ativos = Ativo.objects.filter(container=self).count()
+        ativos = Ativo.objects.filter(container=self).exclude(status='D').count()
         return ativos / self.capacidade * 100 if self.capacidade > 0 else 0
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='arquivo.container',objeto_id=self.id).order_by('-data')[:15]
@@ -67,7 +67,6 @@ class Ativo(models.Model):
     fisico = models.BooleanField(default=False)
     container = models.ForeignKey(Container, blank=True, null=True, on_delete=models.RESTRICT)
     status = models.CharField(max_length=3, choices=STATUS_CHOICES, default='A')
-    historico = models.TextField(blank=True)
     descarte = models.TextField(blank=True)
     created_by = models.ForeignKey(User, blank=True, null=True, on_delete=models.RESTRICT)
     def keys(self):
@@ -76,9 +75,19 @@ class Ativo(models.Model):
         return True if self.vencimento <= date.today() else False
     def files(self):
         return File.objects.filter(ativo=self)
+    def descartar(self):
+        self.status = 'D'
+        files = File.objects.filter(ativo=self)
+        for file in files:
+            os.remove(file.file.path) # REMOVE ARQUIVO FISICO
+            file.delete()
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='arquivo.ativo',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
+    class Meta:
+        permissions = [
+            ("descartar_ativo", "Pode descartar")
+        ]
 
 
 def get_file_path(instance, filename):

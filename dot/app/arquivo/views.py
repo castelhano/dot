@@ -66,7 +66,7 @@ def ativos(request):
 @permission_required('arquivo.view_ativo', login_url="/handler/403")
 def ativo_gestao(request):
     metrics = {
-        'fisicos_vencidos': Ativo.objects.filter(fisico=True, vencimento__lt=date.today()).order_by('container__nome','vencimento')
+        'fisicos_vencidos': Ativo.objects.filter(fisico=True, vencimento__lt=date.today(), status='A').order_by('container__nome','vencimento')
     }
     return render(request, 'arquivo/gestao.html', metrics)
 
@@ -296,6 +296,85 @@ def ativo_update(request,id):
     else:
         return render(request,'arquivo/ativo_id.html',{'form':form,'ativo':ativo})
 
+@login_required
+@permission_required('arquivo.change_ativo', login_url="/handler/403")
+def ativo_movimentar(request,id):
+    if request.method == 'POST':
+        ativo = Ativo.objects.get(pk=id)
+        has_error = False
+        l = Log()
+        l.objeto_str = 'n/a'
+        if request.POST['run'] == 'hire':
+            if ativo.status != 'A':
+                has_error = True
+                messages.warning(request,f'Somente <b>ativos em arquivo</b> podem ser retirados, operação cancelada')
+            else:
+                ativo.status = 'R'
+                l.mensagem = "HIRED"
+                l.objeto_str = f"{request.POST['responsavel_retirada']}"
+                messages.success(request,f'Ativo {id} <b>RETIRADO</b>')
+        elif request.POST['run'] == 'return':
+            if ativo.status != 'R':
+                has_error = True
+                messages.warning(request,f'Ativo <b>não está marcado como retirado</b>, operação cancelada')
+            else:
+                ativo.status = 'A'
+                l.mensagem = "RETURN"
+                l.objeto_str = f"{request.POST['responsavel_retirada']}"
+                messages.success(request,f'Ativo {id} <b>RETORNADO</b> ao arquivo')
+        else:
+            messages.error(request,f'<b>Erro</b>: operação inválida')
+        if not has_error:
+            ativo.save()
+            l.modelo = "arquivo.ativo"
+            l.objeto_id = ativo.id
+            l.usuario = request.user
+            l.save()
+    else:
+        messages.error(request,f'<b>Erro</b>: operação inválida')
+    return redirect('arquivo_ativo_id', id)
+
+@login_required
+@permission_required('arquivo.descartar_ativo', login_url="/handler/403")
+def ativo_descartar(request, id):
+    ativo = Ativo.objects.get(pk=id)
+    has_error = False
+    if ativo.status != 'A':
+        has_error = True
+        messages.warning(request,f'Ativo está <b>{ativo.get_status_display()}</b>, operação cancelada.')
+    else:
+        ativo.descartar()
+        ativo.save()
+        messages.success(request,f'Ativo <b>{ativo.id}</b> descartado')
+        l = Log()
+        l.modelo = "arquivo.ativo"
+        l.objeto_id = ativo.id
+        l.objeto_str = 'n/a'
+        l.usuario = request.user
+        l.mensagem = "DISCARTED"
+        l.save()
+    return redirect('arquivo_ativo_id', id)
+
+@login_required
+@permission_required('arquivo.descartar_ativo', login_url="/handler/403")
+def ativo_descartar_em_lote(request):
+    if request.method == 'POST':
+        ids = request.POST['selecionados'].split(';')
+        for id in ids:
+            ativo = Ativo.objects.get(pk=id)
+            ativo.descartar()
+            ativo.save()
+            l = Log()
+            l.modelo = "arquivo.ativo"
+            l.objeto_id = ativo.id
+            l.objeto_str = 'n/a'
+            l.usuario = request.user
+            l.mensagem = "BATCH DISCART"
+            l.save()
+        messages.success(request,f'Total de <b>%s</b> ativos descartados' %(len(ids)))
+        return redirect('arquivo_ativo_gestao')
+    else:
+        return redirect('handler', '403')
 
 # Metodos DELETE
 @login_required
@@ -362,6 +441,7 @@ def ativo_delete(request,id):
         registro = Ativo.objects.get(pk=id)
         for file in registro.files():
             os.remove(file.file.path) # REMOVE ARQUIVO FISICO
+            file.delete()
         l = Log()
         l.modelo = "arquivo.ativo"
         l.objeto_id = registro.id

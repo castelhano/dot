@@ -102,7 +102,7 @@
     SHORTCUT_MAP['/FTF'] = () => {keys.input.focus()};
     SHORTCUT_MAP['enterFFF'] = (ev) => {
         if(keys.input == ev.target){
-            if(keys.getValue() == ''){dotAlert('warning', 'Informe <b>pelo menos uma chave</b> para realizar a pesquisa');return false;}
+            if(keys.getValue() == '' || keys.getValue().trim().length < 2){dotAlert('warning', 'Informe <b>pelo menos uma chave</b> (mínimo de 2 caracteres) para realizar a pesquisa');return false;}
             urlFilter('chaves', keys.getValue());
         }
     }

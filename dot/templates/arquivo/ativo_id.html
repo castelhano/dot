@@ -4,7 +4,7 @@
 {% block model %}Arquivo{% endblock %}
 
 {% block style_src %}
-<link rel="stylesheet" href="{% static 'css/vendor/tagin.css' %}" type="text/css"/>
+<link rel="stylesheet" href="{% static 'css/vendor/tagin.css' %}" type="text/css">
 {% endblock %}
 
 {% block content_fluid %}
@@ -14,7 +14,20 @@
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
             <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
-            <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'arquivo_ativos' %}?search=true"><i class="fas fa-undo"></i></a></li>
+            <li class="nav-item dropdown" id="extra_options_li">
+                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"></a>
+                <ul class="dropdown-menu" id="extra_options_menu">
+                    {% if ativo.status == 'A' %}
+                    <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#movimentar_modal" onclick="movimentarModal('hire')"><i class="fas fa-retweet fa-fw"></i> Retirada</a></li>
+                        {% if perms.arquivo.descartar_ativo %}
+                        <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#descartar_modal" onclick="descartarModal()"><i class="fas fa-trash fa-fw"></i> Descartar</a></li>
+                        {% endif %}
+                    {% elif ativo.status == 'R' %}
+                    <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#movimentar_modal" onclick="movimentarModal('return')"><i class="fas fa-retweet fa-fw"></i> Devolução</a></li>
+                    {% endif %}
+                </ul>
+            </li>
+            <li class="nav-item ms-1"><a class="nav-link" id="back" title="ALT + V" href="{% url 'arquivo_ativos' %}?search=true"><i class="fas fa-undo"></i></a></li>
             <li class="nav-item dropdown ms-auto">
                 <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
                 <ul class="dropdown-menu">
@@ -54,8 +67,61 @@
     </div>
 </div>
 {% endif %}
+
+<div class="modal fade" id="movimentar_modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="row">
+                <div class="col"><h5 class="ms-3 mt-3"><i class="fas fa-retweet me-2"></i> <span id="movimentacao_titulo"></span> de Ativo</h5></div>
+                <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'arquivo_ativo_movimentar' ativo.id|safe %}" method="POST" autocomplete="off">
+                    {% csrf_token %}
+                    <div class="row g-1">
+                        <div class="form-floating mb-1 col-lg-12">
+                            <input type="text" name="responsavel_retirada" id="id_responsavel_retirada" class="form-control" required>
+                            <label for="id_responsavel_retirada">Responsavel</label>
+                        </div>
+                    </div>
+                    <input type="hidden" name="run" id="id_run" value="hire">
+                    <div class="row mt-2">
+                        <div class="col text-end">
+                            <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% if perms.arquivo.descartar_ativo %}
+<div class="modal fade" id="descartar_modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="row">
+                <div class="col"><h5 class="ms-3 mt-3"><i class="fas fa-retweet me-2"></i> Descarte de Ativo</h5></div>
+                <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'arquivo_ativo_descartar' ativo.id|safe %}" method="POST" autocomplete="off" onsubmit="modal_loading.show()">
+                    {% csrf_token %}
+                    <div class="text-justify mb-3"><b class="text-danger">Atenção</b>: Ao confirmar o ativo será marcado como <b>descartado</b> e todos eventuais anexos atrelados a ele serão excluidos <b class="text-danger">permanentemente</b>, este processo não pode ser desfeito.</div>
+                    <div class="row mt-2">
+                        <div class="col text-end">
+                            <a class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</a>
+                            <button type="submit" id="descartar_submit" class="btn btn-danger" disabled>Descartar <span id="descartar_contador"></span></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
 <div class="modal fade" id="history_modal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
             <div class="row">
                 <div class="col"><h5 class="ms-3 mt-3">Histórico <sup>(last 15)</sup></h5></div>
@@ -74,7 +140,7 @@
                     {% for i in ativo.ultimas_alteracoes %}
                         <tr>
                             <td>{{i.data|date:'d/m/Y H:i:s'}}</td>
-                            <td>{{i.mensagem}}</td>
+                            <td>{{i.mensagem}}{% if i.mensagem == 'HIRED' or i.mensagem == 'RETURN' %} [ <b>{{i.objeto_str|upper}}</b> ]{% endif %}</td>
                             <td>{{i.usuario.username|upper}}</td>
                         </tr>
                     {% endfor %}
@@ -94,6 +160,9 @@
 <script>
 {% block add_script %}
     var TAB_ON_ENTER = true;
+    
+    if(document.getElementById('extra_options_menu').childElementCount == 0){document.getElementById('extra_options_li').classList.add('d-none');}
+
     const keys = new Tagin(document.getElementById('id_chaves'), {
         separator:';',
         tagColor: 'purple',
@@ -122,6 +191,23 @@
         }
         modal_loading.show();
         return true;
+    }
+
+    function movimentarModal(operacao){
+        document.getElementById('id_run').value = operacao;
+        document.getElementById('movimentacao_titulo').innerHTML = operacao == 'hire' ? 'Retirada' : 'Devolução';
+        setTimeout(function(){document.getElementById('id_responsavel_retirada').select()}, 480);
+    }
+
+    function descartarModal(){
+        document.getElementById('descartar_submit').disabled = true;
+        document.getElementById('descartar_contador').innerHTML = 10;
+        let minterv = setInterval(()=>{document.getElementById('descartar_contador').innerText -= 1; }, 1000);
+        setTimeout(()=>{
+            document.getElementById('descartar_submit').disabled = false;
+            clearInterval(minterv);
+            document.getElementById('descartar_contador').innerHTML = '';
+        }, 10000);
     }
 {% endblock %}
 </script>

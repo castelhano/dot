@@ -6,6 +6,7 @@
 
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'arquivo_ativo_gestao' %}"></a>
+<a class="d-none" id="app_root" href="{% url 'arquivo_ativos' %}"></a>
 
 <div class="card mt-2">
     <div class="card-header">
@@ -17,10 +18,17 @@
                     <li><a class="dropdown-item pointer" href="">...</a></li>
                 </ul>
             </li>
+            <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'arquivo_ativos' %}"><i class="fas fa-undo"></i></a></li>
         </ul>
     </div>
     <div class="card-body tab-content">
         <h5 class="card-title">Arquivo: <b class="text-orange">Gestor</b></h5>
+        <div class="dropdown">
+            <button class="btn btn-sm btn-secondary dropdown-toggle" id="selecionados_button" type="button" data-bs-toggle="dropdown" disabled><i class="fas fa-check-square me-2"></i></button>
+            <ul class="dropdown-menu fs-7">
+                <li><a class="dropdown-item dropdown-item-danger" href="#" data-bs-toggle="modal" data-bs-target="#descartar_modal" onclick="descartarModal()"><i class="fas fa-trash fa-fw"></i> Descartar</a></li>
+            </ul>
+        </div>
         <div class="tab-pane fade show active" id="base" role="tabpanel">
             <div class="row">
                 <div class="col-lg">
@@ -45,7 +53,7 @@
                                 <td>{{ativo.container.nome}}</td>
                                 <td>{{ativo.vencimento|date:'d/m/Y'}}</td>
                                 {% if perms.arquivo.change_ativo %}
-                                <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="url"><i class="fas fa-pen"></i></a></td>
+                                <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'arquivo_ativo_id' ativo.id|safe %}"><i class="fas fa-pen"></i></a></td>
                                 {% endif %}
                             </tr>
                             {% endfor %}
@@ -60,27 +68,28 @@
     </div>
 </div>
 
-<!-- <div class="modal fade" id="search_modal" tabindex="-1">
+<div class="modal fade" id="descartar_modal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="row">
-                <div class="col"><h5 class="ms-3 mt-3">Pesquisa</h5></div>
-                <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+                <div class="col"><h5 class="ms-3 mt-3 text-danger"><i class="fas fa-exclamation-circle fa-fw"></i> Descarte de ativos</h5></div>
+                <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
             </div>
-            <div class="modal-body">
-                <form id="arquivo_form" action="url" method="POST" autocomplete="off">
-                {% csrf_token %}
-                    <div class="row g-1">
-                        <div class="form-floating mb-1 col-lg-12">
-                            <input type="text" class="form-control" name="pesquisa" value="" id="id_pesquisa" placeholder="">
-                            <label for="id_pesquisa">Termo pesquisa</label>
-                        </div>
+            <div class="modal-body text-justify">
+                <p><b>ATENÇÃO</b>: Ao confirmar todos os <span class="text-danger fw-bold" id="selecionados_counter_label"></span> ativos selecionados serão descartados, e todos os anexos excluidos permanentemente.</p>
+                <p><b>Este processo não pode ser desfeito.</b> Confirma operação</p>
+                <form id="arquivo_form" action="{% url 'arquivo_ativo_descartar_em_lote' %}" method="POST" autocomplete="off">
+                    {% csrf_token %}
+                    <input type="hidden" id="id_selecionados" name="selecionados" value="">
+                    <div class="float-end mt-2">
+                        <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Cancelar</button>
+                        <button class="btn btn-danger" id="descartar_submit" type="submit" disabled>Descartar todos <span id="descartar_contador"></span></button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-</div> -->
+</div>
 
 {% endblock%}
 
@@ -92,14 +101,59 @@
 {% block add_script %}
 
 const checkAll = document.getElementById('ativos_vencidos_checkAll');
-document.querySelectorAll('[data-ativo_ref]').forEach((el) =>{
-    el.onclick = () => {checkAll.indeterminate = true;}
+const itens = document.querySelectorAll('[data-ativo_ref]');
+
+
+itens.forEach((el) =>{ // Adiciona listener para evento click nos ativos, altera status no checkbox principal para indeterminate
+    el.onclick = () => {checkAll.indeterminate = true;checkSelected()}
 })
 
+checkAll.onclick = () => {
+    itens.forEach((el) => {el.checked = checkAll.checked})
+    checkSelected();    
+}
+
+function checkSelected(){ // Exibe ou oculta dropdown comopcao para itens selecionados
+    let anySelected = document.querySelector('[data-ativo_ref]:checked');
+    if(anySelected){document.getElementById('selecionados_button').disabled = false;}
+    else{document.getElementById('selecionados_button').disabled = true;}
+}
+
+function descartarModal(){
+    document.getElementById('descartar_submit').disabled = true;
+    document.getElementById('descartar_contador').innerHTML = 10;
+    let selecionados = document.querySelectorAll('[data-ativo_ref]:checked');
+    let input = document.getElementById('id_selecionados');
+    let ids_list = '';
+    let count = selecionados.length;
+    for(i=0; i < count; i++){
+        ids_list += `${selecionados[i].dataset.ativo_ref};`;
+    }
+    input.value = ids_list.substring(0, ids_list.length - 1);
+    document.getElementById('selecionados_counter_label').innerHTML = count;
+    let minterv = setInterval(()=>{document.getElementById('descartar_contador').innerText -= 1; }, 1000);
+    setTimeout(()=>{
+        document.getElementById('descartar_submit').disabled = false;
+        clearInterval(minterv);
+        document.getElementById('descartar_contador').innerHTML = '';
+    }, 10000);
+}
 
 
-const table = new jsTable(document.getElementById('main_table'),{
+
+
+const table = new jsTable(document.getElementById('main_table'), {
+    canFilter: true,
+    filterCols: ['Container']
 });
+
+SHORTCUT_MAP['fFTF'] = () => {table.filterInput.select()};
+SHORTCUT_MAP['arrowdownFTF'] = () => {table.nextRow()}
+SHORTCUT_MAP['arrowupFTF'] = () => {table.previousRow()}
+SHORTCUT_MAP['enterFTF'] = () => {table.enterRow()}
+SHORTCUT_MAP[' FTF'] = () => {itens[table.activeRow].click()}
+SHORTCUT_MAP['tTFF'] = () => {checkAll.click()}
+SHORTCUT_MAP['enterFTF'] = () => {document.getElementById('selecionados_button').click()}
 
 {% endblock %}
 </script>
