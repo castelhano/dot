@@ -33,6 +33,10 @@
                     {% if perms.arquivo.view_container %}<li><a class="dropdown-item" href="{% url 'arquivo_containers' %}"><i class="fas fa-fw fa-boxes"></i> Containers</a></li>{% endif %}
                     {% if perms.arquivo.view_grupo %}<li><a class="dropdown-item" href="{% url 'arquivo_grupos' %}"><i class="fas fa-fw fa-layer-group"></i> Grupos</a></li>{% endif %}
                     {% if perms.arquivo.view_limite %}<li><a class="dropdown-item" href="{% url 'arquivo_limites' %}"><i class="fas fa-fw fa-battery-half"></i> Limites</a></li>{% endif %}
+                    {% if perms.arquivo.descartar_ativo %}
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a id="ativos_gestao_link" class="dropdown-item" href="{% url 'arquivo_ativo_gestao' %}" title="Ctrl + G"><i class="fas fa-fw fa-cogs"></i> Vencidos</a></li>
+                    {% endif %}
                 </ul>
             </li>
         </ul>
@@ -87,7 +91,7 @@
                         <div class="float-end"><i class="fas fa-box widget-icon"></i></div>
                         <h5 class="fw-normal">FÍSICOS</h5>
                         <h1>{{fisicos}}<span class="fs-6"> un</span></h1>
-                        {% if fisicos_vencidos > 0 %}
+                        {% if fisicos_vencidos > 0 and perms.arquivo.descartar_ativo %}
                         <h6><a href="{% url 'arquivo_ativo_gestao' %}" title="Listar ativos vencidos"><i class="fas fa-history me-1"></i> {{fisicos_vencidos}} vencido{{fisicos_vencidos|pluralize}}</a></h6>
                         {% endif %}
                     </div>
@@ -97,7 +101,7 @@
                         <div class="float-end"><i class="fas fa-folder-open widget-icon"></i></div>
                         <h5 class="fw-normal">DIGITAIS</h5>
                         <h1>{{digitais}}<span class="fs-6"> un</span></h1>
-                        {% if digitais_vencidos > 0 %}
+                        {% if digitais_vencidos > 0 and perms.arquivo.descartar_ativo %}
                         <h6><a href="{% url 'arquivo_ativo_gestao' %}" title="Listar ativos vencidos"><i class="fas fa-history me-1"></i> {{digitais_vencidos}} vencido{{digitais_vencidos|pluralize}}</a></h6>
                         {% endif %}
                         {% if request.GET.hd_usage == 'true' %}
@@ -122,6 +126,9 @@
     SHORTCUT_MAP[';FTF'] = () => {
         document.getElementById('arquivo_extra').click();
     }
+    {% if perms.arquivo.descartar_ativo %}
+    SHORTCUT_MAP['gFTF'] = () => {document.getElementById('ativos_gestao_link').click();}
+    {% endif %}
     
     function ocupacaoContainers() {
         var xhttp = new XMLHttpRequest();

@@ -47,9 +47,9 @@ def ativos(request):
     else:
         metrics = {
             "fisicos" : Ativo.objects.filter(fisico=True).count(),
-            "fisicos_vencidos" : Ativo.objects.filter(fisico=True, vencimento__lt=date.today()).count(),
+            "fisicos_vencidos" : Ativo.objects.filter(fisico=True, vencimento__lt=date.today()).exclude(status='D').count(),
             "digitais" : Ativo.objects.filter(fisico=False).count(),
-            "digitais_vencidos" : Ativo.objects.filter(fisico=False, vencimento__lt=date.today()).count(),
+            "digitais_vencidos" : Ativo.objects.filter(fisico=False, vencimento__lt=date.today()).exclude(status='D').count(),
             "limites" : Limite.objects.all()
         }
         if request.GET.get('hd_usage', None) == 'true':
@@ -63,11 +63,16 @@ def ativos(request):
 
 
 @login_required
-@permission_required('arquivo.view_ativo', login_url="/handler/403")
+@permission_required('arquivo.descartar_ativo', login_url="/handler/403")
 def ativo_gestao(request):
     metrics = {
-        'fisicos_vencidos': Ativo.objects.filter(fisico=True, vencimento__lt=date.today(), status='A').order_by('container__nome','vencimento')
+        'fisicos_vencidos': Ativo.objects.filter(fisico=True, vencimento__lt=date.today(), status='A').order_by('container__nome','vencimento'),
+        'digitais_vencidos': Ativo.objects.filter(fisico=False, vencimento__lt=date.today(), status='A').order_by('container__nome','vencimento'),
+        'digitais_vencidos_size': 0
     }
+    for ativo in metrics['digitais_vencidos']:
+        for file in ativo.files():
+            metrics['digitais_vencidos_size'] += os.path.getsize(file.file.path)
     return render(request, 'arquivo/gestao.html', metrics)
 
 
@@ -305,9 +310,9 @@ def ativo_movimentar(request,id):
         l = Log()
         l.objeto_str = 'n/a'
         if request.POST['run'] == 'hire':
-            if ativo.status != 'A':
+            if ativo.status != 'A' or ativo.fisico == False:
                 has_error = True
-                messages.warning(request,f'Somente <b>ativos em arquivo</b> podem ser retirados, operação cancelada')
+                messages.warning(request,f'Somente <b>ativos fisicos em arquivo</b> podem ser retirados, operação cancelada')
             else:
                 ativo.status = 'R'
                 l.mensagem = "HIRED"

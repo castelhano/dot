@@ -96,7 +96,16 @@ function formDisable(form){
   for(i in elements){
     if(elements[i] instanceof HTMLElement && elements[i].getAttribute('dot-role') == 'alwaysEnable'){continue;} // Para habilitar um controle num form disabled adicione o attr dot-role='always_enable'
     if(['INPUT','TEXTAREA','BUTTON'].includes(elements[i].tagName)){elements[i].disabled = true;}
-    else if(elements[i].tagName == 'SELECT'){elements[i].classList.add('readonly')}
+    else if(elements[i].tagName == 'SELECT'){elements[i].classList.add('readonly');elements[i].tabIndex = -1;}
+  }
+}
+
+function formReadonly(form){
+  let elements = form.elements;
+  for(i in elements){
+    if(elements[i] instanceof HTMLElement && elements[i].getAttribute('dot-role') == 'alwaysEnable'){continue;} // Para habilitar um controle num form disabled adicione o attr dot-role='always_enable'
+    if(['INPUT','TEXTAREA'].includes(elements[i].tagName)){elements[i].readonly = true; elements[i].onclick = ()=> {return false};}
+    else if(elements[i].tagName == 'SELECT'){elements[i].classList.add('readonly');elements[i].tabIndex = -1;}
   }
 }
 

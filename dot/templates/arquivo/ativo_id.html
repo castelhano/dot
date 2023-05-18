@@ -18,10 +18,8 @@
                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"></a>
                 <ul class="dropdown-menu" id="extra_options_menu">
                     {% if ativo.status == 'A' %}
-                    <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#movimentar_modal" onclick="movimentarModal('hire')"><i class="fas fa-retweet fa-fw"></i> Retirada</a></li>
-                        {% if perms.arquivo.descartar_ativo %}
-                        <li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#descartar_modal" onclick="descartarModal()"><i class="fas fa-trash fa-fw"></i> Descartar</a></li>
-                        {% endif %}
+                        {% if ativo.fisico %}<li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#movimentar_modal" onclick="movimentarModal('hire')"><i class="fas fa-retweet fa-fw"></i> Retirada</a></li>{% endif %}
+                        {% if perms.arquivo.descartar_ativo %}<li><a class="dropdown-item dropdown-item-danger pointer" data-bs-toggle="modal" data-bs-target="#descartar_modal" onclick="descartarModal()"><i class="fas fa-trash fa-fw"></i> Descartar</a></li>{% endif %}
                     {% elif ativo.status == 'R' %}
                     <li><a class="dropdown-item pointer" data-bs-toggle="modal" data-bs-target="#movimentar_modal" onclick="movimentarModal('return')"><i class="fas fa-retweet fa-fw"></i> Devolução</a></li>
                     {% endif %}
@@ -159,16 +157,18 @@
 
 <script>
 {% block add_script %}
-    var TAB_ON_ENTER = true;
-    
-    if(document.getElementById('extra_options_menu').childElementCount == 0){document.getElementById('extra_options_li').classList.add('d-none');}
 
-    const keys = new Tagin(document.getElementById('id_chaves'), {
-        separator:';',
-        tagColor: 'purple',
-        placeholder: 'Separar por ;'
-    });
-    
+let taginOpt = {
+    separator:';',
+    tagColor: 'purple',
+    placeholder: 'Separar por ;'
+}
+{% if ativo.status == 'D' %}
+    formDisable(document.getElementById('arquivo_form'));
+    taginOpt.disabled = true;
+    window.addEventListener('load', ()=>{document.activeElement.blur()})
+{% else %}
+    var TAB_ON_ENTER = true;
     document.getElementById('id_fisico').onclick = (e) => {
         if(e.target.checked){
             document.getElementById('hide_container').classList.remove('d-none');
@@ -190,7 +190,7 @@
             return false;
         }
         modal_loading.show();
-        return true;
+        return false;
     }
 
     function movimentarModal(operacao){
@@ -209,5 +209,9 @@
             document.getElementById('descartar_contador').innerHTML = '';
         }, 10000);
     }
+{% endif %}
+    const keys = new Tagin(document.getElementById('id_chaves'), taginOpt);
+    if(document.getElementById('extra_options_menu').childElementCount == 0){document.getElementById('extra_options_li').classList.add('d-none');}
+
 {% endblock %}
 </script>

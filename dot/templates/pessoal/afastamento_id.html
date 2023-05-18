@@ -95,7 +95,7 @@
 <script>
   {% block add_script %}
   {% if afastamento.funcionario.status == 'D' %}
-  formDisable(document.getElementById('pessoal_form'));
+  formReadonly(document.getElementById('pessoal_form'));
   {% endif %}
   {% endblock %}
 </script>

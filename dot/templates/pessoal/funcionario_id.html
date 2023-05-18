@@ -149,7 +149,7 @@
   document.getElementById('id_nome').focus();
   
   // Se desligado, bloqueia todos os campos do form
-  {% if funcionario.status == 'D' %}formDisable(document.getElementById('pessoal_form'));{% endif %}
+  {% if funcionario.status == 'D' %}formReadonly(document.getElementById('pessoal_form'));{% endif %}
   
   {% if perms.pessoal.change_funcionario and funcionario.status != 'D' %}
   let locked = true;

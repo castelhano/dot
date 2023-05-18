@@ -65,12 +65,15 @@
             this.duplicate = options?.duplicate || inputElement.dataset.taginDuplicate !== undefined;
             this.transform = options?.transform || inputElement.dataset.taginTransform || 'input => input';
             this.enter = options?.enter || inputElement.dataset.taginEnter !== undefined;
+            this.disabled = options?.disabled || options.disabled == true;
             this.autofocus = options?.autofocus || inputElement.autofocus;
             this.tagColor = options?.tagColor || inputElement.dataset.tagColor || '';
             this.createWrapper();
             this.autowidth();
-            this.addEventListener();
-            if(this.autofocus){this.input.focus()}
+            if(!this.disabled){
+                this.addEventListener();
+                if(this.autofocus){this.input.focus()}
+            }
         }
         createWrapper() {
             const tags = this.getValue() === '' ? '' : this.getValues().map(val => this.createTag(val)).join('');

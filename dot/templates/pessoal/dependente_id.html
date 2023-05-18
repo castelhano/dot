@@ -94,7 +94,7 @@
   var TAB_ON_ENTER = true;
   VMasker(document.getElementById("id_cpf")).maskPattern('999.999.999-99');
   
-  {% if dependente.funcionario.status == 'D' %}formDisable(document.getElementById('pessoal_form'));{% endif %}
+  {% if dependente.funcionario.status == 'D' %}formReadonly(document.getElementById('pessoal_form'));{% endif %}
   
   {% endblock %}
 </script>

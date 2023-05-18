@@ -59,6 +59,9 @@
                     </div>
                     {% endfor %}
                 </div>
+                {% if ativo.files %}
+                <div class="text-end mb-1"><a href="#" onclick="dotNotify('warning', 'Em desenvolvimento....')"><i class="fas fa-download fa-fw"></i> Baixar todos</a></div>
+                {% endif %}
             </div>
         </div>
         

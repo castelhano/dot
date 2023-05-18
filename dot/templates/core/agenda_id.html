@@ -116,7 +116,7 @@ const tags = new Tagin(document.getElementById('id_tags'), {
 let options = {}
 {% if not perms.core.change_agenda %}
 options['disabled'] = true;
-formDisable(document.getElementById('core_form'));
+formReadonly(document.getElementById('core_form'));
 {% endif %}
 const participantes = new jsSelectm(document.getElementById('id_participantes'),options);
 
