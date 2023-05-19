@@ -11,7 +11,7 @@ class GrupoForm(forms.ModelForm):
         model = Grupo
         fields = ['nome','tempo_guarda']
     nome = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' ','autofocus':'autofocus'}))
-    tempo_guarda = forms.IntegerField(initial=12, widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':'0','max':'9999'}))
+    tempo_guarda = forms.IntegerField(initial=12, widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':'0','max':'9999','onfocus':'this.select()'}))
 
 class ContainerForm(forms.ModelForm):
     class Meta:

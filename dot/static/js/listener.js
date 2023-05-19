@@ -34,7 +34,7 @@ var SHORTCUT_MAP = {
 };
 
 document.addEventListener('keydown', (e) => {
-	// console.log(e);
+	// console.log(e.key);
 	// 1) ETAPA
 	let command = null;
 	try {command = e.key.toLowerCase();command += e.altKey == true ? 'T': 'F';command += e.ctrlKey == true ? 'T': 'F';command += e.shiftKey == true ? 'T': 'F';}catch(err){command = '';}

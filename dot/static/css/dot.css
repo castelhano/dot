@@ -200,6 +200,7 @@ div.btn-light:hover{background-color: #d3d4d5;}
 .breadcrumb-item+.breadcrumb-item::before {content: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='8'><path d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='gray'/></svg>");}
 
 .form-floating-display{padding: 1rem 0.75rem;border: 1px solid #ced4da;border-radius: 0.25rem;background-color: #e9ecef;}
+.form-floating-button{padding: 1rem 0.75rem;}
 .form-floating-display, .form-floating-control{height: calc(3.5rem + 2px);line-height: 1.25;}
 .form-check-label{user-select: none;}
 

@@ -13,6 +13,14 @@
             {% if perms.arquivo.add_container %}
             <li class="nav-item ms-1"><a class="nav-link border" id="add" href="{% url 'arquivo_container_add' %}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
             {% endif %}
+            {% if perms.arquivo.change_ativo %}
+            <li class="nav-item dropdown ms-1">
+                <a class="nav-link dropdown-toggle text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
+                <ul class="dropdown-menu">
+                    <li><a id="movimentar_link" class="dropdown-item pointer" href="#" data-bs-toggle="modal" data-bs-target="#movimentar_modal" onclick="setTimeout(function(){document.getElementById('id_container_de').focus();},480);" title="Ctrl M"><i class="fas fa-retweet fa-fw"></i> Movimentar</a></li>
+                </ul>
+            </li>
+            {% endif %}
             <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'arquivo_ativos' %}"><i class="fas fa-undo"></i></a></li>
             <li class="nav-item dropdown ms-auto">
                 <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
@@ -33,6 +41,8 @@
                         <th class="d-none">id</th>
                         <th>Nome</th>
                         <th>Capacidade</th>
+                        <th>Ativos</th>
+                        <th>Ocupação</th>
                         <th>Status</th>
                         {% if perms.arquivo.change_container %}
                         <th>&nbsp;</th>
@@ -45,6 +55,8 @@
                         <td class="d-none">{{container.id|safe}}</td>
                         <td>{{container.nome}}</td>
                         <td>{{container.capacidade}}</td>
+                        <td>{{container.ativos}}</td>
+                        <td><div class="progress" role="progressbar" style="height: 22px;"><div class="progress-bar" style="width: {{container.ocupacao|floatformat:0}}%"></div></div></td>
                         <td>{{container.inativo|yesno:'INATIVO, ATIVO'}}</td>
                         {% if perms.arquivo.change_container %}
                         <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'arquivo_container_id' container.id|safe %}"><i class="fas fa-pen"></i></a></td>
@@ -56,6 +68,54 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="movimentar_modal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="row">
+                <div class="col"><h5 class="ms-3 mt-3"><i class="fas fa-retweet me-2"></i> Movimentar containers</h5></div>
+                <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'arquivo_container_movimentar' %}" method="POST" autocomplete="off" onsubmit="return submitForm()">
+                    {% csrf_token %}
+                    <div class="row g-1">
+                        <div class="form-floating mb-lg-1 col-lg">
+                            <select class="form-select" id="id_container_de" name="container_de">
+                                {% for container in containers %}
+                                <option value="{{container.id|safe}}">{{container.nome}}</option>
+                                {% endfor %}
+                            </select>
+                            <label for="id_container_de">De</label>
+                        </div>
+                        <div class="form-floating mb-1 col-lg">
+                            <select class="form-select" id="id_container_para" name="container_para">
+                                {% for container in containers %}
+                                <option value="{{container.id|safe}}">{{container.nome}}</option>
+                                {% endfor %}
+                            </select>
+                            <label for="id_container_para">Para</label>
+                        </div>
+                        <div class="form-floating mb-lg-1 col-lg">
+                            <select class="form-select bg-light" id="id_operacao" name="operacao">
+                                <option value="move">Mover</option>
+                                <option value="invert">Inverter</option>
+                            </select>
+                            <label for="id_operacao">Operação</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-auto ms-auto mt-2">
+                            <button class="btn btn-secondary" type="button" data-bs-dismiss="modal" tabindex="-1">Cancelar</button>
+                            <button class="btn btn-warning" type="submit">Mover</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% include "_component/modal/loading.html" with message='Pode demorar vários segundos..' spinner_classlist='text-orange' %}
 {% endblock%}
 
 {% block add_script_src %}
@@ -65,16 +125,21 @@
 
 <script>
 {% block add_script %}
+var TAB_ON_ENTER = true;
 const table = new jsTable(document.getElementById('main_table'),{
     enablePaginate:true,
     canFilter: true,
     filterCols: ['Nome']
 });
+var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
+function submitForm(){modal_loading.show();return true;}
+
 SHORTCUT_MAP['fFTF'] = () => {table.filterInput.select()};
 SHORTCUT_MAP['arrowrightFTF'] = () => {table.nextPage()}
 SHORTCUT_MAP['arrowleftFTF'] = () => {table.previousPage()}
 SHORTCUT_MAP['arrowdownFTF'] = () => {table.nextRow()}
 SHORTCUT_MAP['arrowupFTF'] = () => {table.previousRow()}
 SHORTCUT_MAP['enterFTF'] = () => {table.enterRow()}
+SHORTCUT_MAP['mFTF'] = () => {document.getElementById('movimentar_link').click()}
 {% endblock %}
 </script>

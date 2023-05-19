@@ -33,7 +33,10 @@
                                 <th class="fit" data-sort_role="none"><input type="checkbox" class="form-check-input" id="ativos_vencidos_checkAll"></th>
                                 <th>#</th>
                                 <th>Container</th>
-                                <th>Vencimento</th>
+                                <th class="d-none d-lg-table-cell">Empresa</th>
+                                <th class="d-none d-lg-table-cell">Setor</th>
+                                <th class="d-none d-lg-table-cell">Grupo</th>
+                                <th class="d-none d-md-table-cell">Vencimento</th>
                                 {% if perms.arquivo.change_ativo %}
                                 <th data-sort_role="none">&nbsp;</th>
                                 {% endif %}
@@ -45,7 +48,10 @@
                                 <td><input type="checkbox" class="form-check-input" data-ativo_ref="{{ativo.id|safe}}"></td>
                                 <td>{{ativo.id|safe}}</td>
                                 <td>{{ativo.container.nome}}</td>
-                                <td>{{ativo.vencimento|date:'d/m/Y'}}</td>
+                                <td class="d-none d-lg-table-cell">{{ativo.empresa.nome}}</td>
+                                <td class="d-none d-lg-table-cell">{{ativo.setor.nome}}</td>
+                                <td class="d-none d-lg-table-cell">{{ativo.grupo.nome}}</td>
+                                <td class="d-none d-md-table-cell">{{ativo.vencimento|date:'d/m/Y'}}</td>
                                 {% if perms.arquivo.change_ativo %}
                                 <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'arquivo_ativo_id' ativo.id|safe %}"><i class="fas fa-pen"></i></a></td>
                                 {% endif %}
@@ -58,14 +64,14 @@
                     <div class="card">
                         <div class="card-body bg-light text-body-secondary">
                             <div class="row">
-                                <div class="col">
+                                <div class="col-md">
                                     <h5>Digitais Vencidos</h5>
-                                    <h2>{{digitais_vencidos.count}} <span class="fs-6">un</span></h2>
+                                    <h2><span id="digitais_vencidos_count">{{digitais_vencidos.count}}</span> <span class="fs-6">un</span></h2>
                                     <h4>{{digitais_vencidos_size|filesizeformat}}</h4>
                                 </div>
-                                <div class="col-auto">
+                                <div class="col-md-auto mt-2 mt-md-0">
                                     <div class="d-grid gap-2">
-                                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#descartar_modal" type="button">Excluir Todos</button>
+                                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#descartar_modal" onclick="descartarModal('D')" type="button"{% if digitais_vencidos.count == 0 %} disabled{% endif %}>Excluir Todos</button>
                                     </div>
                                 </div>
                             </div>
@@ -89,7 +95,7 @@
             <div class="modal-body text-justify">
                 <p><b>ATENÇÃO</b>: Ao confirmar todos os <span class="text-danger fw-bold" id="selecionados_counter_label"></span> ativos selecionados serão descartados, e todos os anexos excluidos permanentemente.</p>
                 <p><b>Este processo não pode ser desfeito.</b> Confirma operação</p>
-                <form id="fisicos_form" action="{% url 'arquivo_ativo_descartar_em_lote' %}" method="POST" autocomplete="off">
+                <form id="fisicos_form" action="{% url 'arquivo_ativo_descartar_em_lote' %}" method="POST" autocomplete="off" onsubmit="return submitForm();">
                     {% csrf_token %}
                     <input type="hidden" id="id_selecionados" name="selecionados" value="">
                     <div class="float-end mt-2">
@@ -102,6 +108,7 @@
     </div>
 </div>
 
+{% include "_component/modal/loading.html" with message='Limpando ativos....' %}
 {% endblock%}
 
 {% block add_script_src %}
@@ -111,11 +118,18 @@
 <script>
 {% block add_script %}
 
+var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
+function submitForm(){
+    try {
+        modal_loading.show();
+        return true;
+    } catch(e){return false}
+}
+
 let digitais_vencidos_id = '';
 {% for ativo in digitais_vencidos %}
 digitais_vencidos_id += '{{ativo.id|safe}};';
 {% endfor %}
-digitais_vencidos_id = digitais_vencidos_id.substring(0,digitais_vencidos_id.length - 1);
 
 const checkAll = document.getElementById('ativos_vencidos_checkAll');
 const itens = document.querySelectorAll('[data-ativo_ref]');
@@ -140,15 +154,17 @@ function checkSelected(){ // Exibe ou oculta dropdown comopcao para itens seleci
 function descartarModal(target='F'){
     document.getElementById('descartar_submit').disabled = true;
     document.getElementById('descartar_contador').innerHTML = 10;
-    if(target == 'D'){}
+    let input = document.getElementById('id_selecionados');
+    let count = 0;
+    let ids_list = '';
+    if(target == 'D'){
+        count = document.getElementById('digitais_vencidos_count').innerText;
+        ids_list = digitais_vencidos_id;
+    }
     else{
         let selecionados = document.querySelectorAll('[data-ativo_ref]:checked');
-        let input = document.getElementById('id_selecionados');
-        let ids_list = '';
-        let count = selecionados.length;
+        count = selecionados.length;
         for(i=0; i < count; i++){ ids_list += `${selecionados[i].dataset.ativo_ref};`; }
-
-        // PAREI AQUIII ************************
 
     }
     input.value = ids_list.substring(0, ids_list.length - 1);

@@ -12,6 +12,7 @@ urlpatterns = [
     path('arquivo_container_id/<int:id>',views.container_id,name='arquivo_container_id'),
     path('arquivo_container_update/<int:id>',views.container_update,name='arquivo_container_update'),
     path('arquivo_container_delete/<int:id>',views.container_delete,name='arquivo_container_delete'),
+    path('arquivo_container_movimentar',views.container_movimentar,name='arquivo_container_movimentar'),
     path('arquivo_limites',views.limites,name='arquivo_limites'),
     path('arquivo_limite_add',views.limite_add,name='arquivo_limite_add'),
     path('arquivo_limite_id/<int:id>',views.limite_id,name='arquivo_limite_id'),
@@ -29,4 +30,5 @@ urlpatterns = [
     path('arquivo_file_download/<int:id>',views.file_download,name='arquivo_file_download'),
     # path('arquivo_files_download/<int:id>',views.files_download,name='arquivo_files_download'),
     path('arquivo_get_containers',views.get_containers,name='arquivo_get_containers'),
+    path('arquivo_get_grupos',views.get_grupos,name='arquivo_get_grupos'),
 ]

@@ -41,6 +41,16 @@ def ativos(request):
                 ativos = ativos.filter(chaves__contains=key)
             if not ativos.exists():
                 messages.warning(request,f'Nenhum ativo localizado com os critérios informados')
+        elif request.GET.get('criterio', None):
+            ativos = Ativo.objects.all().order_by('entrada')
+            if request.GET['criterio'] == 'retirados':
+                ativos = ativos.filter(status='R')
+            elif request.GET['criterio'] == 'grupo':
+                ativos = ativos.filter(grupo__id=request.GET['alvo'], status='A')
+            elif request.GET['criterio'] == 'container':
+                ativos = ativos.filter(container__id=request.GET['alvo'], status='A')
+            if not ativos.exists():
+                messages.warning(request,f'Nenhum ativo localizado com os critérios informados')
         else:
             ativos = None
         return render(request, 'arquivo/ativos_search.html', {'ativos':ativos})
@@ -253,6 +263,42 @@ def container_update(request,id):
         return redirect('arquivo_container_id', id)
     else:
         return render(request,'arquivo/container_id.html',{'form':form,'container':container})
+
+@login_required
+@permission_required('arquivo.change_ativo', login_url="/handler/403")
+def container_movimentar(request):
+    if request.method == 'POST':
+        operacao = request.POST['operacao']
+        origem = list(Ativo.objects.filter(container__id=request.POST['container_de'], status='A'))
+        container_destino = Container.objects.get(pk=request.POST['container_para'])
+        if operacao == 'invert':
+            destino = list(Ativo.objects.filter(container__id=request.POST['container_para'], status='A'))
+            container_origem = Container.objects.get(pk=request.POST['container_de'])
+            for ativo in destino:
+                ativo.container = container_origem
+                ativo.save()
+                l = Log()
+                l.modelo = "arquivo.ativo"
+                l.objeto_str = 'n/a'
+                l.usuario = request.user
+                l.mensagem = "MOVED"
+                l.objeto_id = ativo.id
+                l.save()
+        for ativo in origem:
+            ativo.container = container_destino
+            ativo.save()
+            l = Log()
+            l.modelo = "arquivo.ativo"
+            l.objeto_str = 'n/a'
+            l.usuario = request.user
+            l.mensagem = "MOVED"
+            l.objeto_id = ativo.id
+            l.save()
+        messages.success(request,'Ativos movimentados com sucesso')
+        return redirect('arquivo_containers')
+    else:
+        return redirect('handler', 403)
+
 
 @login_required
 @permission_required('arquivo.change_limite', login_url="/handler/403")
@@ -479,6 +525,17 @@ def get_containers(request):
     for item in containers:
         item_dict = vars(item) # Converte objeto em dicionario
         item_dict['ocupacao'] = item.ocupacao()
+        if '_state' in item_dict: del item_dict['_state'] # Remove _state do dict (se existir)
+        itens.append(item_dict)
+    dataJSON = json_dumps(itens)
+    return HttpResponse(dataJSON)
+
+@login_required
+def get_grupos(request):
+    grupos = Grupo.objects.all().order_by('nome')
+    itens = []
+    for item in grupos:
+        item_dict = vars(item) # Converte objeto em dicionario
         if '_state' in item_dict: del item_dict['_state'] # Remove _state do dict (se existir)
         itens.append(item_dict)
     dataJSON = json_dumps(itens)

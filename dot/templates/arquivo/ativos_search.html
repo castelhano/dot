@@ -14,7 +14,8 @@
 <div class="card mt-2">
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
-            <li class="nav-item"><a class="nav-link active disabled" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+            <li class="nav-item"><a id="base_link" class="nav-link active" data-bs-toggle="tab" data-bs-target="#tags" href="#" title="Ctrl 1"><i class="fas fa-tags"></i></a></li>
+            <li class="nav-item"><a id="filter_extra" class="nav-link" data-bs-toggle="tab" data-bs-target="#extra" href="#" title="Ctrl + /"><i class="fas fa-filter"></i></a></li>
             <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'arquivo_ativos' %}"><i class="fas fa-undo"></i></a></li>
             <li class="nav-item dropdown ms-auto">
                 <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
@@ -28,13 +29,13 @@
     </div>
     <div class="card-body tab-content">
         <h5 class="card-title">Arquivo: <b>Pesquisa Ativos</b></h5>
-        <div class="tab-pane fade show active" id="base" role="tabpanel">
+        <div class="tab-pane fade show active" id="tags" role="tabpanel">
             <div class="row g-1 mt-4">
                 <div class="form-floating col-lg-6">
                     <input type="text" class="form-control tagin" id="id_keys" value="{{request.GET.chaves}}">
                     <label for="id_keys">Palavras chave</label>
                 </div>
-                <small class="ps-1 text-secondary"><b class="text-body me-1">Ctrl + /</b> para focar o input</small>
+                <small class="ps-1 text-secondary"><b class="text-body me-1">Ctrl + F</b> para focar o input</small>
             </div>
             {% if ativos %}
             <div class="table-responsive-lg mt-4">
@@ -79,6 +80,25 @@
             </div>
             {% endif %}
         </div>
+        <div class="tab-pane fade" id="extra" role="tabpanel">
+            <div class="row g-2">
+                <div class="form-floating mb-1 col-lg-auto">
+                    <select class="form-select pe-5" id="id_criterio" name="criterio">
+                        <option value="retirados">Ativos Retirados</option>
+                        <option value="container">Por Container</option>
+                        <option value="grupo">Por Grupo</option>
+                    </select>
+                    <label for="id_criterio">Criterio</label>
+                </div>
+                <div id="alvo_container" class="form-floating mb-1 col-lg-auto d-none">
+                    <select class="form-select pe-5" id="id_alvo" name="alvo"></select>
+                    <label for="id_alvo">Opção</label>
+                </div>
+                <div class="col-lg-auto">
+                    <button class="btn btn-primary px-3 form-floating-button" type="button" onclick="extraSearch()">Buscar</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock%}
@@ -99,12 +119,82 @@
         placeholder: 'Separar por comma ;',
         tagColor: 'purple'
     });
-    SHORTCUT_MAP['/FTF'] = () => {keys.input.focus()};
+    SHORTCUT_MAP['fFTF'] = () => {keys.input.focus()};
+    SHORTCUT_MAP['1FTF'] = () => {
+        document.getElementById('base_link').click();
+        keys.input.focus();
+    };
+    SHORTCUT_MAP['/FTF'] = () => {
+        document.getElementById('filter_extra').click();
+        document.getElementById('id_criterio').focus();
+    };
     SHORTCUT_MAP['enterFFF'] = (ev) => {
         if(keys.input == ev.target){
             if(keys.getValue() == '' || keys.getValue().trim().length < 2){dotAlert('warning', 'Informe <b>pelo menos uma chave</b> (mínimo de 2 caracteres) para realizar a pesquisa');return false;}
             urlFilter('chaves', keys.getValue());
         }
+    }
+
+    
+
+    let criterio = document.getElementById('id_criterio');
+    let alvo = document.getElementById('id_alvo');
+    let alvo_container = document.getElementById('alvo_container');
+    
+    function extraSearch(){
+        if(criterio.value == 'retirados'){urlFilter('criterio', criterio.value);}
+        else{urlFilters(['criterio', 'alvo'], [criterio.value, alvo.value]);}
+    }
+    
+    
+    let containers = '';
+    let grupos = ''
+    criterio.onchange = (ev) => {
+        if(criterio.value == 'retirados'){alvo_container.classList.add('d-none')}
+        else{
+            alvo.innerHTML = '';
+            alvo_container.classList.remove('d-none');
+            if(criterio.value == 'container'){
+                if(containers != ''){alvo.innerHTML = containers;}
+                else{getContainer()}
+            }
+            else if(criterio.value == 'grupo'){
+                if(grupos != ''){alvo.innerHTML = grupos;}
+                else{getGrupos()}
+            }
+            alvo.focus();
+        }
+    }
+
+    function getContainer() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if(this.readyState == 4 && this.status == 200){
+                if(this.responseText == ''){}
+                else{
+                    let obj = JSON.parse(this.responseText);
+                    for(key in obj){alvo.innerHTML += '<option value="' + obj[key].id + '">' + obj[key].nome + '</option>';}
+                    containers = alvo.innerHTML;
+                }
+            }
+        };
+        xhttp.open("GET", "{% url 'arquivo_get_containers' %}", true);
+        xhttp.send();
+    }
+    function getGrupos() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if(this.readyState == 4 && this.status == 200){
+                if(this.responseText == ''){}
+                else{
+                    let obj = JSON.parse(this.responseText);
+                    for(key in obj){alvo.innerHTML += '<option value="' + obj[key].id + '">' + obj[key].nome + '</option>';}
+                    grupos = alvo.innerHTML;
+                }
+            }
+        };
+        xhttp.open("GET", "{% url 'arquivo_get_grupos' %}", true);
+        xhttp.send();
     }
     
     {% if ativos %}

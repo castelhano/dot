@@ -190,7 +190,7 @@ let taginOpt = {
             return false;
         }
         modal_loading.show();
-        return false;
+        return true;
     }
 
     function movimentarModal(operacao){
@@ -212,6 +212,5 @@ let taginOpt = {
 {% endif %}
     const keys = new Tagin(document.getElementById('id_chaves'), taginOpt);
     if(document.getElementById('extra_options_menu').childElementCount == 0){document.getElementById('extra_options_li').classList.add('d-none');}
-
 {% endblock %}
 </script>

@@ -14,7 +14,7 @@ class Container(models.Model):
     def __str__(self):
         return self.nome
     def ativos(self):
-        return Ativo.objects.filter(container=self).count()
+        return Ativo.objects.filter(container=self, status='A').count()
     def ocupacao(self):
         ativos = Ativo.objects.filter(container=self).exclude(status='D').count()
         return ativos / self.capacidade * 100 if self.capacidade > 0 else 0
