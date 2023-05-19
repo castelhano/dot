@@ -84,9 +84,9 @@
             <div class="row g-2">
                 <div class="form-floating mb-1 col-lg-auto">
                     <select class="form-select pe-5" id="id_criterio" name="criterio">
-                        <option value="retirados">Ativos Retirados</option>
-                        <option value="container">Por Container</option>
-                        <option value="grupo">Por Grupo</option>
+                        <option value="retirados">Retirados</option>
+                        <option value="container">Container</option>
+                        <option value="grupo">Grupo</option>
                     </select>
                     <label for="id_criterio">Criterio</label>
                 </div>
@@ -101,6 +101,7 @@
         </div>
     </div>
 </div>
+{% include "_component/modal/loading.html" with message='Pesquisando....' spinner_classlist='text-success' %}
 {% endblock%}
 
 {% block add_script_src %}
@@ -112,6 +113,7 @@
 
 <script>
 {% block add_script %}
+var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
     const keys = new Tagin(document.getElementById('id_keys'), {
         separator:';',
         enter: true,
@@ -131,6 +133,7 @@
     SHORTCUT_MAP['enterFFF'] = (ev) => {
         if(keys.input == ev.target){
             if(keys.getValue() == '' || keys.getValue().trim().length < 2){dotAlert('warning', 'Informe <b>pelo menos uma chave</b> (mínimo de 2 caracteres) para realizar a pesquisa');return false;}
+            modal_loading.show();
             urlFilter('chaves', keys.getValue());
         }
     }
@@ -142,6 +145,7 @@
     let alvo_container = document.getElementById('alvo_container');
     
     function extraSearch(){
+        modal_loading.show();
         if(criterio.value == 'retirados'){urlFilter('criterio', criterio.value);}
         else{urlFilters(['criterio', 'alvo'], [criterio.value, alvo.value]);}
     }
