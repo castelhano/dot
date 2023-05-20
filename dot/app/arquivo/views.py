@@ -46,9 +46,9 @@ def ativos(request):
             if request.GET['criterio'] == 'retirados':
                 ativos = ativos.filter(status='R')
             elif request.GET['criterio'] == 'grupo':
-                ativos = ativos.filter(grupo__id=request.GET['alvo'], status='A')
+                ativos = ativos.filter(grupo__id=request.GET['alvo']).exclude(status='D')
             elif request.GET['criterio'] == 'container':
-                ativos = ativos.filter(container__id=request.GET['alvo'], status='A')
+                ativos = ativos.filter(container__id=request.GET['alvo']).exclude(status='D')
             if not ativos.exists():
                 messages.warning(request,f'Nenhum ativo localizado com os critérios informados')
         else:
@@ -56,9 +56,9 @@ def ativos(request):
         return render(request, 'arquivo/ativos_search.html', {'ativos':ativos})
     else:
         metrics = {
-            "fisicos" : Ativo.objects.filter(fisico=True).count(),
+            "fisicos" : Ativo.objects.filter(fisico=True).exclude(status='D').count(),
             "fisicos_vencidos" : Ativo.objects.filter(fisico=True, vencimento__lt=date.today()).exclude(status='D').count(),
-            "digitais" : Ativo.objects.filter(fisico=False).count(),
+            "digitais" : Ativo.objects.filter(fisico=False).exclude(status='D').count(),
             "digitais_vencidos" : Ativo.objects.filter(fisico=False, vencimento__lt=date.today()).exclude(status='D').count(),
             "limites" : Limite.objects.all()
         }
@@ -269,10 +269,10 @@ def container_update(request,id):
 def container_movimentar(request):
     if request.method == 'POST':
         operacao = request.POST['operacao']
-        origem = list(Ativo.objects.filter(container__id=request.POST['container_de'], status='A'))
+        origem = list(Ativo.objects.filter(container__id=request.POST['container_de']).exclude(status='D'))
         container_destino = Container.objects.get(pk=request.POST['container_para'])
         if operacao == 'invert':
-            destino = list(Ativo.objects.filter(container__id=request.POST['container_para'], status='A'))
+            destino = list(Ativo.objects.filter(container__id=request.POST['container_para']).exclude(status='D'))
             container_origem = Container.objects.get(pk=request.POST['container_de'])
             for ativo in destino:
                 ativo.container = container_origem

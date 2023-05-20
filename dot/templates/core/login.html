@@ -52,6 +52,7 @@
   else if(window.matchMedia){
     let theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? 'dark' : 'light';
     document.documentElement.dataset.bsTheme = theme;
+    if(theme == 'dark'){document.getElementById('logo').setAttribute('src', '{% static 'img/logo-dark.png' %}')}
   }
 </script>
 

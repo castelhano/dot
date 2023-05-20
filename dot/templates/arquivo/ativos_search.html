@@ -15,7 +15,7 @@
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
             <li class="nav-item"><a id="base_link" class="nav-link active" data-bs-toggle="tab" data-bs-target="#tags" href="#" title="Ctrl 1"><i class="fas fa-tags"></i></a></li>
-            <li class="nav-item"><a id="filter_extra" class="nav-link" data-bs-toggle="tab" data-bs-target="#extra" href="#" title="Ctrl + /"><i class="fas fa-filter"></i></a></li>
+            <li class="nav-item"><a id="filter_extra" class="nav-link" data-bs-toggle="tab" data-bs-target="#extra" href="#" title="Ctrl 2"><i class="fas fa-filter"></i></a></li>
             <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'arquivo_ativos' %}"><i class="fas fa-undo"></i></a></li>
             <li class="nav-item dropdown ms-auto">
                 <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
@@ -35,7 +35,7 @@
                     <input type="text" class="form-control tagin" id="id_keys" value="{{request.GET.chaves}}">
                     <label for="id_keys">Palavras chave</label>
                 </div>
-                <small class="ps-1 text-secondary"><b class="text-body me-1">Ctrl + F</b> para focar o input</small>
+                <small class="ps-1 text-secondary"><b class="text-body me-1">Ctrl + /</b> para focar o input</small>
             </div>
             {% if ativos %}
             <div class="table-responsive-lg mt-4">
@@ -59,7 +59,7 @@
                     </thead>
                     <tbody>
                         {% for ativo in ativos %}
-                        <tr class="{% if ativo.status == 'D' %}table-caution{% endif %}">
+                        <tr class="{% if ativo.status == 'D' %}table-caution{% elif ativo.status == 'R' %}table-emphasis{% endif %}">
                             <td>{{ativo.id}}</td>
                             <td>{{ativo.empresa.nome}}</td>
                             <td>{{ativo.setor.nome}}</td>
@@ -121,12 +121,12 @@ var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading')
         placeholder: 'Separar por comma ;',
         tagColor: 'purple'
     });
-    SHORTCUT_MAP['fFTF'] = () => {keys.input.focus()};
+    SHORTCUT_MAP['/FTF'] = () => {keys.input.focus()};
     SHORTCUT_MAP['1FTF'] = () => {
         document.getElementById('base_link').click();
         keys.input.focus();
     };
-    SHORTCUT_MAP['/FTF'] = () => {
+    SHORTCUT_MAP['2FTF'] = () => {
         document.getElementById('filter_extra').click();
         document.getElementById('id_criterio').focus();
     };
