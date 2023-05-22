@@ -23,7 +23,7 @@
       <h6>Carro: <b class="text-primary">{{acidente.veiculo.prefixo}}</b></h6>
       <div class="row">
         {% for foto in fotos %}
-        <div class="card-widget col-md-6 col-lg-4 col-xl-3 btn-light">
+        <div class="card-widget col-md-6 col-lg-4 col-xl-3 btn-light" style="height: auto;">
           {% if perms.sinistro.delete_foto %}
           <a class="widget-control text-light mt-2 me-2" data-bs-toggle="dropdown" role="button"><i class="fas fa-ellipsis-v"></i></a>
           <ul class="dropdown-menu dropdown-menu-end">

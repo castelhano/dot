@@ -8,7 +8,7 @@ class AcidenteForm(forms.ModelForm):
         model = Acidente
         fields = ['empresa','pasta','classificacao','data','hora','veiculo','linha','condutor','inspetor','endereco','bairro','cidade','uf','culpabilidade','detalhe','concluido']
     pasta = forms.CharField(error_messages={'required': 'Informe uma identificação para a pasta','unique': 'Código de pasta já cadastrado'},widget=forms.TextInput(attrs={'class': 'form-control fw-bold','placeholder':' '}))
-    classificacao = forms.ModelChoiceField(required=False, queryset = Classificacao.objects.all().order_by('nome'), widget=forms.Select(attrs={'class':'form-select'}))
+    classificacao = forms.ModelChoiceField(required=False, queryset = Classificacao.objects.all().order_by('nome'), empty_label=None, widget=forms.Select(attrs={'class':'form-select'}))
     data = forms.DateField(required=False,initial=date.today(),widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
     hora = forms.TimeField(required=False, widget=forms.TextInput(attrs={'class':'form-control','type':'time'}))
     endereco = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))

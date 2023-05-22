@@ -150,6 +150,7 @@ div.btn-light:hover{background-color: #d3d4d5;}
   .dropdown-menu-dark > li:hover, .dropdown-menu-dark > li.hover{background-color: #52575D;}
   .placeholder-end-lg::placeholder {text-align: right;font-weight: bold;color: #999;}
   .card-widget{height: 166px;}
+  .card-widget-sm{height: auto;}
   .card-widget-fixed{overflow-y: auto;}
 }
 .dotAlert{position: fixed;width: 100%;bottom: 0;z-index: 300;margin-bottom: 0;}
