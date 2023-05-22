@@ -35,6 +35,7 @@ class Grupo(models.Model):
 class Limite(models.Model):
     empresa = models.OneToOneField(Empresa, on_delete=models.RESTRICT)
     quantidade = models.PositiveIntegerField(default=0, blank=True, null=True)
+    armazenamento = models.PositiveIntegerField(default=0, blank=True, null=True)
     def ativos(self):
         return Ativo.objects.filter(empresa=self.empresa, fisico=True, status='A').count()
     def ocupacao(self):
@@ -46,7 +47,8 @@ class Limite(models.Model):
             for f in filenames:
                 fp = os.path.join(dirpath, f)
                 total += os.path.getsize(fp)
-        return total
+        perc = total / self.armazenamento * 100 if self.armazenamento > 0 else 0
+        return [total, perc]
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='arquivo.limite',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)

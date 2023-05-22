@@ -11,7 +11,6 @@
 <style>
 {% block style %}
 .card-limite:hover{
-    cursor: pointer;
     background-color: var(--bs-secondary-bg);
 }
 {% endblock %}
@@ -32,7 +31,7 @@
                 <ul id="modelos_auxiliares_list" class="dropdown-menu">
                     {% if perms.arquivo.view_container %}<li><a class="dropdown-item" href="{% url 'arquivo_containers' %}"><i class="fas fa-fw fa-boxes"></i> Containers</a></li>{% endif %}
                     {% if perms.arquivo.view_grupo %}<li><a class="dropdown-item" href="{% url 'arquivo_grupos' %}"><i class="fas fa-fw fa-layer-group"></i> Grupos</a></li>{% endif %}
-                    {% if perms.arquivo.view_limite %}<li><a class="dropdown-item" href="{% url 'arquivo_limites' %}"><i class="fas fa-fw fa-battery-half"></i> Limites</a></li>{% endif %}
+                    {% if perms.arquivo.view_limite %}<li><a class="dropdown-item" href="{% url 'arquivo_limites' %}" onclick="modal_loading.show()"><i class="fas fa-fw fa-battery-half"></i> Limites</a></li>{% endif %}
                     {% if perms.arquivo.descartar_ativo %}
                     <li><hr class="dropdown-divider"></li>
                     <li><a id="ativos_gestao_link" class="dropdown-item" href="{% url 'arquivo_ativo_gestao' %}" title="Ctrl + G"><i class="fas fa-fw fa-history"></i> Vencidos</a></li>
@@ -67,7 +66,11 @@
                     <div class="col-lg-6">
                         <div class="card card-limite mb-2">
                             <div class="card-body pb-2 text-body-secondary">
+                                {% if perms.arquivo.change_limite %}
+                                <a href="{% url 'arquivo_limite_id' limite.id|safe %}" class="stretched-link"><h4 class="text-center">{{limite.empresa.nome}}</h4></a>
+                                {% else %}
                                 <h4 class="text-center">{{limite.empresa.nome}}</h4>
+                                {% endif %}
                                 <div class="row g-0">
                                     {% with limite.ocupacao as ocupacao %}
                                     <div class="col-auto p-0"><div class="semipie animate mb-1" style="--v:{{ocupacao|minimo:100|floatformat:0}};--w:150px;--b:30px;--c:var({% if ocupacao >= 90 %}--bs-danger{% elif ocupacao >= 80 %}--bs-warning{% else %}--bs-success{% endif %});">{{ocupacao|floatformat:0}}%</div><br><small>Limite: {{limite.quantidade}} un</small></div>
@@ -122,6 +125,8 @@
 
 <script>
     {% block add_script %}
+
+    if(document.getElementById('modelos_auxiliares_list').childElementCount == 0){document.getElementById('modelos_auxiliares_container').classList.add('d-none');}
 
     SHORTCUT_MAP[';FTF'] = () => {
         document.getElementById('arquivo_extra').click();

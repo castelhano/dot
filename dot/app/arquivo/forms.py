@@ -5,7 +5,6 @@ from core.models import Empresa
 from datetime import date
 
 
-
 class GrupoForm(forms.ModelForm):
     class Meta:
         model = Grupo
@@ -44,6 +43,7 @@ class FileForm(forms.ModelForm):
 class LimiteForm(forms.ModelForm):
     class Meta:
         model = Limite
-        fields = ['empresa','quantidade']
+        fields = ['empresa','quantidade','armazenamento']
     empresa = forms.ModelChoiceField(error_messages={'required': 'Empresa inválida', 'unique':'Já existe limite definido para esta empresa'}, queryset = Empresa.objects.all())
     quantidade = forms.IntegerField(required=False, initial=100, widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':'0','max':'99999','onfocus':'this.select()'}))
+    armazenamento = forms.IntegerField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':'0','onfocus':'this.select()'}))

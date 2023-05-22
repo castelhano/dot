@@ -1,5 +1,6 @@
 {% extends "layout/dot.html" %}
 {% load static %}
+{% load tag_extra %}
 {% block title %}Limites{% endblock %}
 {% block model %}Arquivo{% endblock %}
 
@@ -33,7 +34,8 @@
                     <tr>
                         <th class="d-none">id</th>
                         <th>Empresa</th>
-                        <th>Limite</th>
+                        <th>Fisico</th>
+                        <th>Digital</th>
                         {% if perms.arquivo.change_limite %}
                         <th>&nbsp;</th>
                         {% endif %}
@@ -44,7 +46,26 @@
                     <tr>
                         <td class="d-none">{{limite.id|safe}}</td>
                         <td>{{limite.empresa.nome}}</td>
-                        <td>{{limite.quantidade}}</td>
+                        <td>
+                            <div class="row">
+                                <div class="col-lg">{{limite.quantidade}} un</div>
+                                <div class="col-lg-9">
+                                    {% with limite.ocupacao as ocupacao %}
+                                    <div class="progress" role="progressbar" style="height: 22px;"><div class="progress-bar{% if ocupacao >= 90 %} bg-danger{% elif ocupacao >= 80 %} bg-warning{% endif %}" style="width: {{ocupacao|floatformat:0}}%">{{ocupacao|floatformat:0}}%</div></div>
+                                    {% endwith %}
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="col-lg">{{limite.armazenamento|filesizeformat}}</div>
+                                <div class="col-lg-9">
+                                    {% with limite.hd_usage as hd_usage %}
+                                    <div class="progress" role="progressbar" style="height: 22px;"><div class="progress-bar{% if hd_usage.1 >= 90 %} bg-danger{% elif hd_usage.1 >= 80 %} bg-warning{% endif %}" style="width: {{hd_usage.1|floatformat:0}}%">{{hd_usage.0|filesizeformat}}</div></div>
+                                    {% endwith %}
+                                </div>
+                            </div>
+                        </td>
                         {% if perms.arquivo.change_limite %}
                         <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'arquivo_limite_id' limite.id|safe %}"><i class="fas fa-pen"></i></a></td>
                         {% endif %}
@@ -55,6 +76,8 @@
         </div>
     </div>
 </div>
+
+{% include "_component/modal/loading.html" with message='Processando requisição....' background='' spinner_classlist='' message_classlist='' %}
 {% endblock%}
 
 {% block add_script_src %}
@@ -64,6 +87,11 @@
 
 <script>
 {% block add_script %}
+var modal_loading = new bootstrap.Modal(document.getElementById('modal_loading'), {keyboard: false});
+
+
+window.addEventListener('beforeunload', ()=>{modal_loading.show()})
+
 const table = new jsTable(document.getElementById('main_table'),{
     enablePaginate:true,
     canFilter: true,
