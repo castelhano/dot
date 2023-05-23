@@ -36,6 +36,7 @@
                     <li><hr class="dropdown-divider"></li>
                     <li><a id="ativos_gestao_link" class="dropdown-item" href="{% url 'arquivo_ativo_gestao' %}" title="Ctrl + G"><i class="fas fa-fw fa-history"></i> Vencidos</a></li>
                     {% endif %}
+                    {% if perms.core.view_log %}<li><a class="dropdown-item" href="{% url 'logs' %}?target_model=arquivo.ativo&mensagem=DELETE" target="_blank"><i class="fas fa-clipboard-list fa-fw"></i> Log de Exclusões</a></li> {% endif %}
                 </ul>
             </li>
         </ul>
@@ -78,7 +79,7 @@
                                     <div class="col text-end">
                                         <h3>{{limite.ativos}} <span class="fs-6">un</span></h3>
                                         {% if request.GET.hd_usage == 'true' %}
-                                        <h3>{{limite.hd_usage|filesizeformat}}</h3>
+                                        <h3>{{limite.hd_usage.0|filesizeformat}}</h3>
                                         {% endif %}
                                     </div>
                                 </div>
