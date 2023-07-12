@@ -12,7 +12,7 @@
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
-      <li class="nav-item"><a class="nav-link" href="{% url 'sinistro_notas_pendentes' %}"><i class="fas fa-dollar-sign" title="Notas Pendentes"></i></a></li>
+      <li class="nav-item"><a id="notas_pendentes" class="nav-link" href="{% url 'sinistro_notas_pendentes' %}"><i class="fas fa-dollar-sign" title="Notas Pendentes"></i></a></li>
       {% if perms.sinistro.add_oficina %}
       <li class="nav-item"><a class="nav-link border" id="add" href="{% url 'sinistro_oficina_add' %}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
       {% endif %}
@@ -89,5 +89,6 @@ const table = new jsTable(document.getElementById('main_table'), {
 SHORTCUT_MAP['arrowdownFTF'] = () => {table.nextRow();}
 SHORTCUT_MAP['arrowupFTF'] = () => {table.previousRow();};
 SHORTCUT_MAP['enterFTF'] = () => {table.enterRow();}
+SHORTCUT_MAP['2FTF'] = () => {document.getElementById('notas_pendentes').click();}
 {% endblock %}
 </script>
