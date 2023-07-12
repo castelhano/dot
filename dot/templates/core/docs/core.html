@@ -193,8 +193,8 @@
             <table class="table table-bordered table-hover table-strip">
               <thead>
                 <tr>
-                  <th class="table-secondary">Função</th>
-                  <th class="table-secondary">Descrição / Exemplo</th>
+                  <th class="bg-body-secondary">Função</th>
+                  <th class="bg-body-secondary">Descrição / Exemplo</th>
                 </tr>
               </thead>
               <tbody>
@@ -249,8 +249,8 @@
             <table class="table table-bordered table-hover table-strip">
               <thead>
                 <tr>
-                  <th class="table-secondary">Constante</th>
-                  <th class="table-secondary">Descrição / Exemplo</th>
+                  <th class="bg-body-secondary">Constante</th>
+                  <th class="bg-body-secondary">Descrição / Exemplo</th>
                 </tr>
               </thead>
               <tbody>
@@ -333,7 +333,7 @@
             <p class="m-0"><i class="fas fa-info me-2"></i> Lógica somente faz a tabulação de campos dentro de um elemento <code>form</code> .</p>
             <p class="m-0">Implementação trata campos desabilitados (disabled) e campos não visiveis, e busca próximo elemento disponível.</p>
             <hr>
-            <p class="m-0">Para evitar tabulação em um input em especifico adicione o atributo <code>listener-js="escape-tab"</code></p>
+            <p class="m-0">Para evitar tabulação em um input em especifico adicione o atributo <code>data-listener-js="escape-tab"</code></p>
           </div>
         </div>
 
@@ -439,7 +439,7 @@ dotPlot(map);</code></pre>
         <h6 class="mt-4"><span class="text-purple">urlFilterToogle(filter, values)</span>: Altera o valor do filtro baseado em sequencia predefinida</h6>
         <pre><code class="language-javascript">urlFilterToogle('ativo', ['true', 'false'])</code></pre>
         <h6 class="mt-4"><span class="text-purple">urlClean(filters)</span>: Limpa filtros da URI</h6>
-        <pre><code class="language-javascript">filtersClean(['nome', 'email'])</code></pre>
+        <pre><code class="language-javascript">urlClean(['nome', 'email'])</code></pre>
         <h6 class="mt-4"><span class="text-purple">urlRedirect(url)</span>: Chama nova URL passando todos os parâmetros atuais na requisição</h6>
         <pre><code class="language-javascript">urlRedirect('dot.com/usuarios_bloqueados')</code></pre>
         <h6 class="mt-4"><span class="text-purple">urlHasParam(param)</span>: Verifica se o parâmetro informado consta na URI</h6>
