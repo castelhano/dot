@@ -88,7 +88,8 @@
 
 <script>
   {% block add_script %}
-  
+  formDisable(document.getElementById('gestao_form'));
+  staffOptions['disabled'] = true;
   const select = new jsSelectm(document.getElementById('id_staff'), staffOptions)
   {% endblock %}
 </script>
