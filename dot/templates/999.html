@@ -14,27 +14,31 @@
   <li class="breadcrumb-item"><a href="#">Library</a></li>
   <li class="breadcrumb-item active">Data</li>
 </ol>
-<div class="row">
-  <div class="col-2 py-5 text-bg-info" data-color="blue;green">DATA</div>
-  <div class="col-2 py-5 text-bg-success" data-color="green">DATA</div>
-  <div class="col-2 py-5 text-bg-danger" data-color="red">DATA</div>
-  <div class="col-2 py-5 text-bg-primary" data-color="blue">DATA</div>
-  <div class="col-2 py-5 text-bg-warning">DATA</div>
-  <div class="col-2 py-5 bg-body-secondary">DATA</div>
-  <div class="col-2 py-5 text-bg-secondary">DATA</div>
-</div>
-
-<ol>
+<div id="table_container"></div>
 {% endblock%}
 
 
 {% block add_script_src %}
-<!-- <script src="{% static 'js/mdview.js' %}"></script> -->
+<script src="{% static 'js/table.js' %}"></script>
 {% endblock %}
 
 
 <script>
 {% block add_script %}
+
+let data = [{nome:'Rafael',idade:25,sexo:'M'},{nome:'Maria',idade:44,sexo:'F', fone:'5458-5544'},{nome:'Joao',idade:12,sexo:'M'}]
+
+const table = new jsTable('minhaTabela', {
+  data: data,
+  container: document.getElementById('table_container')
+});
+
+SHORTCUT_MAP['fFTF'] = () => {table.filterInput.select()};
+SHORTCUT_MAP['arrowrightFTF'] = () => {table.nextPage()}
+SHORTCUT_MAP['arrowleftFTF'] = () => {table.previousPage()}
+SHORTCUT_MAP['arrowdownFTF'] = () => {table.nextRow()}
+SHORTCUT_MAP['arrowupFTF'] = () => {table.previousRow()}
+SHORTCUT_MAP['enterFTF'] = () => {table.enterRow()}
 
 {% endblock %}
 </script>

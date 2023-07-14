@@ -67,7 +67,7 @@ class jsTable{
         this.rowsCountLabelClasslist = options?.rowsCountLabelClasslist || 'btn btn-sm btn-dark';
         this.addRowButtonClasslist = options?.addRowButtonClasslist || 'btn btn-sm btn-outline-success';
         this.addRowButtonText = options?.addRowButtonText || '<i class="fas fa-plus px-1"></i>';
-        this.newRowClasslist = options?.newRowClasslist || 'table-success';
+        this.newRowClasslist = options?.newRowClasslist || 'table-done';
         this.deleteRowButtonClasslist = options?.deleteRowButtonClasslist || 'btn btn-sm btn-secondary';
         this.deleteRowButtonText = options?.deleteRowButtonText || '<i class="fas fa-trash"></i>';
         this.saveButtonClasslist = options?.saveButtonClasslist || 'btn btn-sm btn-outline-primary';
@@ -480,7 +480,7 @@ class jsTable{
     }
     enterRow(){
         if(this.activeRow != null){
-            try {this.tbody.querySelectorAll('tr')[this.activeRow].querySelector(this.actionRowSelector).click();}catch(e){console.log(e);}
+            try {this.tbody.querySelectorAll('tr')[this.activeRow].querySelector(this.actionRowSelector).click();}catch(e){}
         }
     }
     sort(column, asc=true){
@@ -542,7 +542,7 @@ class jsTable{
     }
     restoreRow(){
         let tr = this.trash.pop();
-        tr.classList = 'table-warning';
+        tr.classList = 'table-emphasis';
         if(this.raw.length == 0){this.tbody.innerHTML = ''} // Case tabela fazia, remove linha com mensagem de emptyrow
         if(this.enablePaginate){this.goToPage(this.lastPage)};
         this.tbody.appendChild(tr);
