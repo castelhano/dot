@@ -1,7 +1,7 @@
 /*
 * jsTable   Implementa operacoes com tabelas previamente criadas ou gera tabela a partir de dados json
 *
-* @version  2.20
+* @version  2.21
 * @since    07/08/2022
 * @release  16/05/2023 [data-sort_role="none" em th para desativar sort][data-print="false" em tags sao desconsideradas para exportacao]
 * @author   Rafael Gustavo Alves {@email castelhano.rafael@gmail.com}
@@ -436,8 +436,8 @@ class jsTable{
         }
     }
     goToPage(page){this.activePage = page;this.paginate();}
-    previousPage(){this.activePage--;this.paginate();}
-    nextPage(){this.activePage++;this.paginate();}
+    previousPage(){if(!this.enablePaginate){return false}this.activePage--;this.paginate();}
+    nextPage(){if(!this.enablePaginate){return false}this.activePage++;this.paginate();}
     clearRowFocus(){}
     nextRow(){
         let tableRowsCount = this.tbody.querySelectorAll('tr:not(.emptyRow)').length;

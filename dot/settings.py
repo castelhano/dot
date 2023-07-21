@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     'gestao',
     'sac',
     'arquivo',
+    'portaria',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

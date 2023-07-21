@@ -1,0 +1,31 @@
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('portaria_movimentacao',views.movimentacao,name='portaria_movimentacao'),
+    path('portaria_veiculos',views.veiculos,name='portaria_veiculos'),
+    path('portaria_veiculo_add',views.veiculo_add,name='portaria_veiculo_add'),
+    path('portaria_veiculo_id/<int:id>',views.veiculo_id,name='portaria_veiculo_id'),
+    path('portaria_veiculo_update/<int:id>',views.veiculo_update,name='portaria_veiculo_update'),
+    path('portaria_veiculo_delete/<int:id>/delete',views.veiculo_delete,name='portaria_veiculo_delete'),
+    path('portaria_vagas',views.vagas,name='portaria_vagas'),
+    path('portaria_vaga_add',views.vaga_add,name='portaria_vaga_add'),
+    path('portaria_vaga_id/<int:id>',views.vaga_id,name='portaria_vaga_id'),
+    path('portaria_vaga_update/<int:id>',views.vaga_update,name='portaria_vaga_update'),
+    path('portaria_vaga_delete/<int:id>/delete',views.vaga_delete,name='portaria_vaga_delete'),
+    path('portaria_visitantes',views.visitantes,name='portaria_visitantes'),
+    path('portaria_visitante_add',views.visitante_add,name='portaria_visitante_add'),
+    path('portaria_visitante_id/<int:id>',views.visitante_id,name='portaria_visitante_id'),
+    path('portaria_visitante_update/<int:id>',views.visitante_update,name='portaria_visitante_update'),
+    # path('portaria_visitante_bloquear/<int:id>',views.visitante_bloquear,name='portaria_visitante_bloquear'),
+    path('portaria_visitante_delete/<int:id>/delete',views.visitante_delete,name='portaria_visitante_delete'),
+    path('portaria_registros',views.registros,name='portaria_registros'),
+    path('portaria_registro_add',views.registro_add,name='portaria_registro_add'),
+    path('portaria_registro_id/<int:id>',views.registro_id,name='portaria_registro_id'),
+    path('portaria_registro_update/<int:id>',views.registro_update,name='portaria_registro_update'),
+    path('portaria_registro_delete/<int:id>/delete',views.registro_delete,name='portaria_registro_delete'),
+    # path('portaria_registro_saida',views.registro_saida,name='portaria_registro_saida'),
+    # path('portaria_get_visitante',views.get_visitante,name='portaria_get_visitante'),
+    # path('portaria_get_veiculo',views.get_veiculo,name='portaria_get_veiculo'),
+    # path('portaria_get_vaga',views.get_vaga,name='portaria_get_vaga'),
+]

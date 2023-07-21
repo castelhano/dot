@@ -1,0 +1,37 @@
+{% extends "layout/dot.html" %}
+{% block title %}Portaria{% endblock %}
+{% block model %}Portaria{% endblock %}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'portaria_movimentacao' %}"></a>
+<div class="card mt-2">
+    <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item"><a class="nav-link active disabled" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+            <li id="modelos_auxiliares_container" class="nav-item dropdown ms-1">
+                <a class="nav-link dropdown-toggle text-dark" id="portaria_extra" data-bs-toggle="dropdown" href="#" role="button"></a>
+                <ul id="modelos_auxiliares_list" class="dropdown-menu fs-7">
+                  {% if perms.portaria.view_veiculo %}<li><a class="dropdown-item" href="{% url 'portaria_veiculos' %}"><i class="fas fa-fw fa-car"></i> Funcionários</a></li>{% endif %}
+                  {% if perms.portaria.view_visitante %}<li><a class="dropdown-item" href="{% url 'portaria_visitantes' %}"><i class="fas fa-fw fa-users"></i> Visitantes</a></li>{% endif %}
+                  {% if perms.portaria.view_vaga %}<li><a class="dropdown-item" href="{% url 'portaria_vagas' %}"><i class="fas fa-fw fa-th"></i> Vagas</a></li>{% endif %}
+                </ul>
+              </li>
+        </ul>
+    </div>
+    <div class="card-body tab-content">
+        <h5 class="card-title mb-3">Controle de Portaria</h5>
+        <div class="tab-pane fade show active" id="base" role="tabpanel">
+            <p>Ola mundo..</p>
+        </div>
+    </div>
+</div>
+
+{% endblock%}
+
+{% block add_script_src %}{% endblock %}
+
+<script>
+    {% block add_script %}
+    SHORTCUT_MAP['2FTF'] = () => {document.getElementById('portaria_extra').click()}
+    {% endblock %}
+</script>
