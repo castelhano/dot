@@ -25,11 +25,13 @@ class Area(models.Model):
         return str(self.nome)
     def vagas(self):
         return Vaga.objects.filter(area=self).order_by('codigo')
+    def vagas_ativas(self) :
+        return Vaga.objects.filter(area=self, inativa=False).order_by('codigo')
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='portaria.area',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
     class Meta:
-        default_permissions = ('add','update','delete',)
+        default_permissions = ('add','change','delete',)
 
 class Vaga(models.Model):
     codigo = models.CharField(max_length=10, blank=False)
@@ -37,6 +39,7 @@ class Vaga(models.Model):
     fixa = models.BooleanField(default=False)
     ocupada = models.BooleanField(default=False)
     inativa = models.BooleanField(default=True)
+    detalhe = models.CharField(max_length=100, blank=True)
     def __str__(self):
         return self.codigo
     def disponivel(self):

@@ -19,17 +19,17 @@ class AreaForm(forms.ModelForm):
         model = Area
         fields = ['nome','css_breakpoint']
     nome = forms.CharField(error_messages={'required': 'Informe um nome para area'}, max_length=15, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' ','autofocus':'autofocus'}))
-    css_breakpoint = forms.CharField(required=False, max_length=200, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
+    css_breakpoint = forms.CharField(required=False, initial='col col-lg', max_length=200, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
 
 class VagaForm(forms.ModelForm):
     class Meta:
         model = Vaga
-        fields = ['codigo','area','fixa','ocupada','inativa']
-    codigo = forms.CharField(error_messages={'required': 'Informe o código da vaga'}, max_length=4, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' ','autofocus':'autofocus'}))
-    area = forms.ModelChoiceField(error_messages={'required': 'Area inválida'}, queryset = Area.objects.all().order_by('nome'), widget=forms.Select(attrs={'class':'form-select'}))
+        fields = ['codigo','area','fixa','inativa','detalhe']
+    area = forms.ModelChoiceField(error_messages={'required': 'Área inválida'}, empty_label=None, queryset = Area.objects.all().order_by('nome'), widget=forms.Select(attrs={'class':'form-select','autofocus':'autofocus'}))
+    codigo = forms.CharField(error_messages={'required': 'Informe o código da vaga'}, max_length=4, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
     fixa = forms.BooleanField(required=False,initial=False,widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
-    ocupada = forms.BooleanField(required=False,initial=False,widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
     inativa = forms.BooleanField(required=False,initial=False,widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
+    detalhe = forms.CharField(required=False, max_length=100, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
 
 class VisitanteForm(forms.ModelForm):
     class Meta:

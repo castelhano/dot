@@ -12,7 +12,8 @@ from core.models import Log
 @login_required
 @permission_required('portaria.view_veiculo', login_url="/handler/403")
 def movimentacao(request):
-    return render(request, 'portaria/movimentacao.html')
+    areas = Area.objects.all().order_by('nome')
+    return render(request, 'portaria/movimentacao.html', {'areas':areas})
 
 @login_required
 @permission_required('portaria.view_veiculo', login_url="/handler/403")
@@ -21,16 +22,10 @@ def veiculos(request):
     return render(request,'portaria/veiculos.html', {'veiculos' : veiculos})
 
 @login_required
-@permission_required('portaria.view_area', login_url="/handler/403")
-def areas(request):
-    areas = Vaga.objects.all().order_by('nome')
-    return render(request,'portaria/areas.html', {'areas' : areas})
-
-@login_required
 @permission_required('portaria.view_vaga', login_url="/handler/403")
 def vagas(request):
-    vagas = Vaga.objects.all().order_by('codigo')
-    return render(request,'portaria/vagas.html', {'vagas' : vagas})
+    areas = Area.objects.all().order_by('nome')
+    return render(request,'portaria/vagas.html', {'areas' : areas})
 
 @login_required
 @permission_required('portaria.view_visitante', login_url="/handler/403")
@@ -77,6 +72,30 @@ def veiculo_add(request):
     return render(request,'portaria/veiculo_add.html',{'form':form})
 
 @login_required
+@permission_required('portaria.add_area', login_url="/handler/403")
+def area_add(request):
+    if request.method == 'POST':
+        form = AreaForm(request.POST)
+        if form.is_valid():
+            try:
+                registro = form.save()
+                l = Log()
+                l.modelo = "portaria.area"
+                l.objeto_id = registro.id
+                l.objeto_str = registro.nome
+                l.usuario = request.user
+                l.mensagem = "CREATED"
+                l.save()
+                messages.success(request,f'Área <b>{registro.nome}</b> criada')
+                return redirect('portaria_area_add')
+            except:
+                messages.error(request,'Erro ao inserir area [INVALID FORM]')
+                return redirect('portaria_area_add')
+    else:
+        form = AreaForm()
+    return render(request,'portaria/area_add.html',{'form':form})
+
+@login_required
 @permission_required('portaria.add_vaga', login_url="/handler/403")
 def vaga_add(request):
     if request.method == 'POST':
@@ -91,7 +110,7 @@ def vaga_add(request):
                 l.usuario = request.user
                 l.mensagem = "CREATED"
                 l.save()
-                messages.success(request,'Vaga criada')
+                messages.success(request,f'Vaga <b>{registro.codigo}</b> criada')
                 return redirect('portaria_vaga_add')
             except:
                 messages.error(request,'Erro ao inserir vaga [INVALID FORM]')
@@ -115,7 +134,7 @@ def visitante_add(request):
                 l.usuario = request.user
                 l.mensagem = "CREATED"
                 l.save()
-                messages.success(request,'Visitante cadastrado')
+                messages.success(request,f'Visitante <b>{registro.cpf}</b> cadastrado')
                 return redirect('portaria_visitante_add')
             except:
                 messages.error(request,'Erro ao inserir visitante [INVALID FORM]')
@@ -167,6 +186,13 @@ def veiculo_id(request,id):
     return render(request,'portaria/veiculo_id.html',{'form':form,'veiculo':veiculo})
 
 @login_required
+@permission_required('portaria.change_area', login_url="/handler/403")
+def area_id(request,id):
+    area = Area.objects.get(pk=id)
+    form = AreaForm(instance=area)
+    return render(request,'portaria/area_id.html',{'form':form,'area':area})
+
+@login_required
 @permission_required('portaria.change_vaga', login_url="/handler/403")
 def vaga_id(request,id):
     vaga = Vaga.objects.get(pk=id)
@@ -214,6 +240,25 @@ def veiculo_update(request,id):
         return render(request,'portaria/veiculo_id.html',{'form':form,'veiculo':veiculo})
 
 @login_required
+@permission_required('portaria.change_area', login_url="/handler/403")
+def area_update(request,id):
+    area = Area.objects.get(pk=id)
+    form = AreaForm(request.POST, instance=area)
+    if form.is_valid():
+        registro = form.save()
+        l = Log()
+        l.modelo = "portaria.area"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.nome
+        l.usuario = request.user
+        l.mensagem = "UPDATE"
+        l.save()
+        messages.success(request,f'Área <b>{registro.nome}</b> alterada')
+        return redirect('portaria_area_id', id)
+    else:
+        return render(request,'portaria/area_id.html',{'form':form,'area':area})
+
+@login_required
 @permission_required('portaria.change_vaga', login_url="/handler/403")
 def vaga_update(request,id):
     vaga = Vaga.objects.get(pk=id)
@@ -227,7 +272,7 @@ def vaga_update(request,id):
         l.usuario = request.user
         l.mensagem = "UPDATE"
         l.save()
-        messages.success(request,'Vaga alterada')
+        messages.success(request,f'Vaga <b>{registro.codigo}</b> alterada')
         return redirect('portaria_vaga_id', id)
     else:
         return render(request,'portaria/vaga_id.html',{'form':form,'vaga':vaga})
@@ -246,7 +291,7 @@ def visitante_update(request,id):
         l.usuario = request.user
         l.mensagem = "UPDATE"
         l.save()
-        messages.success(request,'Visitante alterado')
+        messages.success(request,f'Visitante <b>{registro.cpf}</b> alterado')
         return redirect('portaria_visitante_id', id)
     else:
         return render(request,'portaria/visitante_id.html',{'form':form,'visitante':visitante})
@@ -358,6 +403,25 @@ def veiculo_delete(request,id):
     except:
         messages.error(request,'ERRO ao apagar veiculo')
         return redirect('portaria_veiculo_id', id)
+
+@login_required
+@permission_required('portaria.delete_area', login_url="/handler/403")
+def area_delete(request,id):
+    try:
+        registro = Area.objects.get(pk=id)
+        l = Log()
+        l.modelo = "portaria.area"
+        l.objeto_id = registro.id
+        l.objeto_str = registro.nome
+        l.usuario = request.user
+        l.mensagem = "DELETE"
+        l.save()
+        registro.delete()
+        messages.warning(request,'Área apagada. Essa operação não pode ser desfeita')
+        return redirect('portaria_vagas')
+    except:
+        messages.error(request,'ERRO ao apagar area')
+        return redirect('portaria_area_id', id)
 
 @login_required
 @permission_required('portaria.delete_vaga', login_url="/handler/403")
