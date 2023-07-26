@@ -86,6 +86,7 @@ class Visitante(models.Model):
     
             
 class Registro(models.Model):
+    vaga = models.ForeignKey(Vaga, blank=True, null=True, on_delete=models.RESTRICT)
     data_entrada = models.DateField(default = datetime.today)
     hora_entrada = models.TimeField(default = datetime.now)
     km_entrada = models.PositiveIntegerField(blank=True, null=True)
@@ -109,7 +110,6 @@ class RegistroVisitante(Registro):
     modelo = models.CharField(max_length=20, blank=True)
     cor = models.CharField(max_length=15, blank=True)
     placa = models.CharField(max_length=15, blank=True)
-    vaga = models.ForeignKey(Vaga, blank=True, null=True, on_delete=models.RESTRICT)
     autorizado_por = models.CharField(max_length=80, blank=True)
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='portaria.registro_visitante',objeto_id=self.id).order_by('-data')[:15]
