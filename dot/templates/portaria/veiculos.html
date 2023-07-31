@@ -30,13 +30,13 @@
             <table id="main_table" class="table border table-striped table-hover">
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th class="d-none d-md-table-cell">ID</th>
                         <th>Matricula</th>
-                        <th>Apelido</th>
-                        <th>Cargo</th>
+                        <th class="d-none d-lg-table-cell">Apelido</th>
+                        <th class="d-none d-md-table-cell">Cargo</th>
                         <th>Modelo</th>
-                        <th>Cor</th>
-                        <th>Placa</th>
+                        <th class="d-none d-lg-table-cell">Cor</th>
+                        <th class="d-none d-lg-table-cell">Placa</th>
                         <th>Status</th>
                         {% if perms.portaria.change_veiculo %}
                         <th>&nbsp;</th>
@@ -46,13 +46,13 @@
                 <tbody>
                     {% for veiculo in veiculos %}
                     <tr>
-                        <td>{{veiculo.id|safe}}</td>
+                        <td class="d-none d-md-table-cell">{{veiculo.id|safe}}</td>
                         <td>{{veiculo.funcionario.matricula}}</td>
-                        <td>{{veiculo.funcionario.apelido}}</td>
-                        <td>{{veiculo.funcionario.cargo.nome}}</td>
+                        <td class="d-none d-lg-table-cell">{{veiculo.funcionario.apelido}}</td>
+                        <td class="d-none d-md-table-cell">{{veiculo.funcionario.cargo.nome}}</td>
                         <td>{{veiculo.modelo}}</td>
-                        <td>{{veiculo.cor}}</td>
-                        <td>{{veiculo.placa}}</td>
+                        <td class="d-none d-lg-table-cell">{{veiculo.cor}}</td>
+                        <td class="d-none d-lg-table-cell">{{veiculo.placa}}</td>
                         <td>{{veiculo.ativo|yesno:'<b class="text-success">ATIVO</b>,<b class="text-danger">INATIVO</b>'|safe}}</td>
                         {% if perms.portaria.change_veiculo %}
                         <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'portaria_veiculo_id' veiculo.id|safe %}"><i class="fas fa-pen"></i></a></td>

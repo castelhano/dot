@@ -1,0 +1,96 @@
+{% load static %}
+<div class="tab-pane fade show active" id="base" role="tabpanel">
+    <div class="row">
+        <div class="col-lg-auto bg-dark-light bg-gradient rounded p-2 widget-thumb-container">
+            {% if visitante.foto %}
+            <img src="{{visitante.foto_url}}" class="widget-thumb-img pointer" style="min-width: 110px;" onclick="photo.modal.show();" id="visitanteFoto" alt="Foto Visitante">
+            {% else %}
+            <img src="{% static 'img/default_user.jpg' %}" class="widget-thumb-img pointer" style="min-width: 110px;" onclick="photo.modal.show();" id="visitanteFoto" alt="Foto Visitante">
+            {% endif %}
+            <div class="widget-thumb-controls ms-2 ms-lg-0">
+                <div class="row g-0">
+                    <div class="col"><div class="d-grid">
+                        {% if not visitante %}
+                        <a class="btn btn-sm btn-light px-4 px-lg-0 disabled">NOVO</a>
+                        {% elif visitante.bloqueado %}
+                        <a class="btn btn-sm btn-success px-4 px-lg-0 disabled">BLOQUEADO</a>
+                        {% else %}
+                        <a class="btn btn-sm btn-warning px-4 px-lg-0 disabled">ATIVO</a>
+                        {% endif %}
+                    </div></div>
+                    {# if 'visitante_id' in request.get_full_path or 'visitante_update' in request.get_full_path #}
+                    <div class="col-auto">
+                        <button type="button" id="menu_visitante_extras" class="btn btn-sm" data-bs-toggle="dropdown" dot-role="alwaysEnable"><i class="fas fa-angle-down text-light"></i></button>
+                        <ul id="visitante_extra_options" class="dropdown-menu fs-7">
+                            <li><a class="dropdown-item" href="">Baixar CSV</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                        </ul>
+                    </div>
+                    {# endif #}
+                </div>
+            </div>      
+        </div>
+        <div class="col-lg-8">
+            <input type="hidden" name="foto_data_url" id="id_foto_data_url">
+            <div class="row g-1">
+                <div class="form-floating mb-1 col-lg-8">
+                    {{ form.nome }}
+                    <label for="id_nome">Nome</label>
+                </div>
+                <div class="form-floating mb-1 col-lg-4">
+                    {{ form.cpf }}
+                    <label for="id_cpf">CPF</label>
+                </div>
+            </div>
+            <div class="row g-1">
+                <div class="form-floating mb-1 col-lg">
+                    {{ form.empresa }}
+                    <label for="id_empresa">Empresa</label>
+                </div>
+                <div class="form-floating mb-1 col-lg-4">
+                    {{ form.rg }}
+                    <label for="id_rg">RG</label>
+                </div>
+            </div>
+            <div class="row g-1">
+                <div class="form-floating mb-1 col-lg-3">
+                    {{ form.fone1 }}
+                    <label for="id_fone1">Fone 1</label>
+                </div>
+                <div class="form-floating mb-1 col-lg-3">
+                    {{ form.fone2 }}
+                    <label for="id_fone2">Fone 2</label>
+                </div>
+                <div class="form-floating mb-1 col-lg">
+                    {{ form.email }}
+                    <label for="id_email">Email</label>
+                </div>
+            </div>
+            <div class="row g-1">
+                <div class="form-floating mb-1 col-12">
+                    {{ form.endereco }}
+                    <label for="id_endereco">Endereco</label>
+                </div>
+            </div>
+            <div class="row g-1">
+                <div class="form-floating mb-lg-1 col" style="max-width: 100px;">
+                    {{ form.uf }}
+                    <label for="id_uf">UF</label>
+                </div>
+                <div class="form-floating mb-lg-1 col">
+                    {{ form.cidade }}
+                    <label for="id_cidade">Cidade</label>
+                </div>
+                <div class="form-floating mb-1 col-lg">
+                    {{ form.bairro }}
+                    <label for="id_bairro">Bairro</label>
+                </div>
+            </div>
+            <div class="row g-1">
+                <div class="mb-1 col-12">
+                    {{ form.detalhe }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

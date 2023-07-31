@@ -1,0 +1,53 @@
+{% extends "layout/dot.html" %}
+{% load static %}
+{% block title %}Visitante{% endblock %}
+{% block model %}Portaria{% endblock %}
+
+{% block style_src %}
+<link rel="stylesheet" href="{% static 'css/vendor/cropper.css' %}" type="text/css">
+{% endblock%}
+
+{% block content_fluid %}
+<a class="d-none" id="clear" href="{% url 'portaria_visitante_add' %}"></a>
+<div class="card mt-2">
+    <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item"><a class="nav-link active disabled" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+            <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'portaria_visitantes' %}"><i class="fas fa-undo"></i></a></li>
+        </ul>
+    </div>
+    <form id="app_form" action="{% url 'portaria_visitante_add' %}" method="POST" autocomplete="off">
+        {% csrf_token %}
+        <div class="card-body tab-content">
+            <h5 class="card-title mb-3">Cadastro de Visitante</h5>
+            {% include 'portaria/_form_visitante.html' %}
+            <!-- CONTROLES DO FORM -->
+            <div class="row mt-3">
+                <div class="col">
+                    <button type="submit" id="submit" class="btn btn-primary" title="ALT + G"><b>G</b>ravar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock%}
+
+{% block add_script_src %}
+<script src="{% static 'js/vendor/mask.js' %}"></script>
+<script src="{% static 'js/vendor/cropper.js' %}"></script>
+<script src="{% static 'js/photo.js' %}"></script>
+{% endblock %}
+
+<script>
+    {% block add_script %}
+    var TAB_ON_ENTER = true;
+    VMasker(document.getElementById("id_cpf")).maskPattern('999.999.999-99');
+
+    const photo = new jsPhoto({
+        inputTarget: document.getElementById('id_foto_data_url'),
+        previewTarget: document.getElementById('visitanteFoto'),
+        cropperFixed: true
+    });
+    {% endblock %}
+</script>

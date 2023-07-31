@@ -49,7 +49,7 @@ class VisitanteForm(forms.ModelForm):
     cidade = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
     uf = forms.CharField(required=False, max_length=2,widget=forms.TextInput(attrs={'class': 'form-control text-center','placeholder':' '}))
     foto = forms.ImageField(required=False)
-    detalhe = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','style':'min-height:200px;','placeholder':' '}))
+    detalhe = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','style':'min-height:200px;','placeholder':'Detalhes'}))
 
 class RegistroFuncionarioForm(forms.ModelForm):
     class Meta:
