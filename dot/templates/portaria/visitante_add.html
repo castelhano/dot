@@ -43,6 +43,27 @@
     {% block add_script %}
     var TAB_ON_ENTER = true;
     VMasker(document.getElementById("id_cpf")).maskPattern('999.999.999-99');
+    
+    // FONE MASK
+    function inputHandler(masks, max, event) {
+    	var c = event.target;
+    	var v = c.value.replace(/\D/g, '');
+    	var m = c.value.length > max ? 1 : 0;
+    	VMasker(c).unMask();
+    	VMasker(c).maskPattern(masks[m]);
+    	c.value = VMasker.toPattern(v, masks[m]);
+    }
+    var telMask = ['(99) 9999-99999', '(99) 99999-9999'];
+    var fone1 = document.getElementById('id_fone1');
+    var fone2 = document.getElementById('id_fone2');
+    VMasker(fone1).maskPattern(telMask[0]);
+    VMasker(fone2).maskPattern(telMask[0]);
+    fone1.addEventListener('input', inputHandler.bind(undefined, telMask, 14), false);
+    fone2.addEventListener('input', inputHandler.bind(undefined, telMask, 14), false);
+    
+    fone1.dispatchEvent(new Event("input"));
+    fone2.dispatchEvent(new Event("input"));
+    
 
     const photo = new jsPhoto({
         inputTarget: document.getElementById('id_foto_data_url'),

@@ -29,18 +29,18 @@
             <table id="main_table" class="table border table-striped table-hover">
                 <thead>
                     <tr>
-                        <th class="">ID</th>
-                        <th>Empresa</th>
+                        <th class="d-none d-lg-table-cell">ID</th>
+                        <th class="d-none d-md-table-cell">Empresa</th>
                         <th>Nome</th>
-                        <th>RG</th>
-                        <th>CPF</th>
-                        <th>Fone1</th>
-                        <th>Fone2</th>
-                        <th>Email</th>
-                        <th>Endereço</th>
-                        <th>Bairro</th>
-                        <th>Cidade</th>
-                        <th>UF</th>
+                        <th class="d-none">RG</th>
+                        <th class="d-none">CPF</th>
+                        <th class="d-none d-md-table-cell">Fone1</th>
+                        <th class="d-none d-lg-table-cell">Fone2</th>
+                        <th class="d-none">Email</th>
+                        <th class="d-none">Endereço</th>
+                        <th class="d-none">Bairro</th>
+                        <th class="d-none">Cidade</th>
+                        <th class="d-none">UF</th>
                         <th>Status</th>
                         {% if perms.portaria.change_visitante %}
                         <th>&nbsp;</th>
@@ -50,21 +50,21 @@
                 <tbody>
                     {% for visitante in visitantes %}
                     <tr>
-                        <td>{{visitante.id}}</td>
-                        <td>{{visitante.empresa}}</td>
+                        <td class="d-none d-lg-table-cell">{{visitante.id}}</td>
+                        <td class="d-none d-md-table-cell">{{visitante.empresa}}</td>
                         <td>{{visitante.nome}}</td>
-                        <td>{{visitante.rg}}</td>
-                        <td>{{visitante.cpf}}</td>
-                        <td>{{visitante.fone1}}</td>
-                        <td>{{visitante.fone2}}</td>
-                        <td>{{visitante.email}}</td>
-                        <td>{{visitante.endereco}}</td>
-                        <td>{{visitante.bairro}}</td>
-                        <td>{{visitante.cidade}}</td>
-                        <td>{{visitante.uf}}</td>
-                        <td>{{visitante.bloqueado|yesno:'BLOQUEADO,Ativo'}}</td>
+                        <td class="d-none">{{visitante.rg}}</td>
+                        <td class="d-none">{{visitante.cpf}}</td>
+                        <td class="d-none d-md-table-cell">{{visitante.fone1}}</td>
+                        <td class="d-none d-lg-table-cell">{{visitante.fone2}}</td>
+                        <td class="d-none">{{visitante.email}}</td>
+                        <td class="d-none">{{visitante.endereco}}</td>
+                        <td class="d-none">{{visitante.bairro}}</td>
+                        <td class="d-none">{{visitante.cidade}}</td>
+                        <td class="d-none">{{visitante.uf}}</td>
+                        <td>{{visitante.bloqueado|yesno:'<b class="text-danger">BLOQUEADO</b>,Ativo'|safe}}</td>
                         {% if perms.portaria.change_visitante %}
-                        <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="url"><i class="fas fa-pen"></i></a></td>
+                        <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'portaria_visitante_id' visitante.id|safe %}"><i class="fas fa-pen"></i></a></td>
                         {% endif %}
                     </tr>
                     {% endfor %}
@@ -89,6 +89,13 @@ const table = new jsTable(document.getElementById('main_table'),{
     filterCols: ['Empresa','Nome','RG','CPF','Status'],
     enablePaginate: true
 });
+
+SHORTCUT_MAP['fFTF'] = () => {table.filterInput.select()};
+SHORTCUT_MAP['arrowrightFTF'] = () => {table.nextPage()}
+SHORTCUT_MAP['arrowleftFTF'] = () => {table.previousPage()}
+SHORTCUT_MAP['arrowdownFTF'] = () => {table.nextRow()}
+SHORTCUT_MAP['arrowupFTF'] = () => {table.previousRow()}
+SHORTCUT_MAP['enterFTF'] = () => {table.enterRow()}
 
 
 {% endblock %}

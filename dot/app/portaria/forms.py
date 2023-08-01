@@ -36,7 +36,7 @@ class VagaForm(forms.ModelForm):
 class VisitanteForm(forms.ModelForm):
     class Meta:
         model = Visitante
-        fields = ['nome','empresa','rg','cpf','fone1','fone2','email','endereco','bairro','cidade','uf','foto','detalhe']
+        fields = ['nome','empresa','rg','cpf','fone1','fone2','email','endereco','bairro','cidade','uf','foto','detalhe','bloqueado']
     nome = forms.CharField(error_messages={'required': 'Informe o nome do visitante'}, max_length=120,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' ','autofocus':'autofocus'}))
     empresa = forms.CharField(required=False, max_length=30,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
     rg = forms.CharField(required=False, max_length=15, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
@@ -50,6 +50,7 @@ class VisitanteForm(forms.ModelForm):
     uf = forms.CharField(required=False, max_length=2,widget=forms.TextInput(attrs={'class': 'form-control text-center','placeholder':' '}))
     foto = forms.ImageField(required=False)
     detalhe = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','style':'min-height:200px;','placeholder':'Detalhes'}))
+    bloqueado = forms.BooleanField(required=False,initial=False,widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
 
 class RegistroFuncionarioForm(forms.ModelForm):
     class Meta:

@@ -6,6 +6,9 @@ from .forms import VeiculoForm, AreaForm, VagaForm, VisitanteForm, RegistroFunci
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from core.models import Log
+from django.conf import settings
+from core.extras import create_image
+from datetime import datetime
 
 
 # METODOS SHOW
@@ -127,6 +130,19 @@ def visitante_add(request):
         if form.is_valid():
             try:
                 registro = form.save()
+                if request.POST['foto_data_url'] != '':
+                    prefix = '%s_%s' %(registro.id, registro.nome.split(' ')[0].lower())
+                    today = datetime.now()
+                    timestamp = datetime.timestamp(today)
+                    file_name = f'{prefix}_{timestamp}.png'
+                    result = create_image(request.POST['foto_data_url'], f'{settings.MEDIA_ROOT}/portaria/visitantes', file_name, f'{prefix}_')
+                    has_warnings = False
+                    if result[0]:
+                        registro.foto = f'pessoal/fotos/{file_name}'
+                        registro.save()
+                    else:
+                        has_warnings = True
+                        messages.warning(request,'<b>Erro ao salvar foto:</b> ' + result[1])
                 l = Log()
                 l.modelo = "portaria.visitante"
                 l.objeto_id = registro.id
@@ -134,8 +150,9 @@ def visitante_add(request):
                 l.usuario = request.user
                 l.mensagem = "CREATED"
                 l.save()
-                messages.success(request,f'Visitante <b>{registro.cpf}</b> cadastrado')
-                return redirect('portaria_visitante_add')
+                if not has_warnings:
+                    messages.success(request,f'Visitante <b>{registro.cpf}</b> cadastrado')
+                return redirect('portaria_visitante_id', registro.id)
             except:
                 messages.error(request,'Erro ao inserir visitante [INVALID FORM]')
                 return redirect('portaria_visitante_add')
