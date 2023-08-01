@@ -75,7 +75,7 @@ class Visitante(models.Model):
     bairro = models.CharField(max_length=100, blank=True)
     cidade = models.CharField(max_length=60, blank=True)
     uf = models.CharField(max_length=5, blank=True)
-    foto = core_ImageField(upload_to='portaria/fotos/', blank=True)
+    foto = core_ImageField(upload_to='portaria/visitante/', blank=True)
     detalhe = models.TextField(blank=True)
     bloqueado = models.BooleanField(default=False)
     def __str__(self):
@@ -83,6 +83,10 @@ class Visitante(models.Model):
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='portaria.visitante',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
+    def foto_url(self):
+        return self.foto.url
+    def foto_name(self):
+        return self.foto.name.split('/')[-1]
     
             
 class Registro(models.Model):

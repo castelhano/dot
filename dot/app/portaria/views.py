@@ -135,10 +135,10 @@ def visitante_add(request):
                     today = datetime.now()
                     timestamp = datetime.timestamp(today)
                     file_name = f'{prefix}_{timestamp}.png'
-                    result = create_image(request.POST['foto_data_url'], f'{settings.MEDIA_ROOT}/portaria/visitantes', file_name, f'{prefix}_')
+                    result = create_image(request.POST['foto_data_url'], f'{settings.MEDIA_ROOT}/portaria/visitante', file_name, f'{prefix}_')
                     has_warnings = False
                     if result[0]:
-                        registro.foto = f'pessoal/fotos/{file_name}'
+                        registro.foto = f'portaria/visitante/{file_name}'
                         registro.save()
                     else:
                         has_warnings = True
