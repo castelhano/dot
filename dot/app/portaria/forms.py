@@ -21,7 +21,7 @@ class AreaForm(forms.ModelForm):
         model = Area
         fields = ['nome','css_breakpoint']
     nome = forms.CharField(error_messages={'required': 'Informe um nome para area'}, max_length=15, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' ','autofocus':'autofocus'}))
-    css_breakpoint = forms.CharField(required=False, initial='col col-lg', max_length=200, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
+    css_breakpoint = forms.CharField(required=False, initial='col-lg', max_length=200, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
 
 class VagaForm(forms.ModelForm):
     class Meta:
@@ -40,7 +40,7 @@ class VisitanteForm(forms.ModelForm):
     nome = forms.CharField(error_messages={'required': 'Informe o nome do visitante'}, max_length=120,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' ','autofocus':'autofocus'}))
     empresa = forms.CharField(required=False, max_length=30,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
     rg = forms.CharField(required=False, max_length=15, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
-    cpf = forms.CharField(error_messages={'required': 'Informe o cpf do visitante'}, max_length=15,widget=forms.TextInput(attrs={'class': 'form-control bg-body-secondary','placeholder':' '}))
+    cpf = forms.CharField(error_messages={'required': 'Informe o cpf do visitante', 'unique':'CPF já cadastrado'}, max_length=15,widget=forms.TextInput(attrs={'class': 'form-control bg-body-secondary','placeholder':' '}))
     fone1 = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
     fone2 = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
     email = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))

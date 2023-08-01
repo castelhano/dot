@@ -1,6 +1,9 @@
 {% extends "layout/dot.html" %}
 {% block title %}Vaga{% endblock %}
 {% block model %}Portaria{% endblock %}
+{% block model_menu %}
+{% include "_component/menu/portaria.html" %}
+{% endblock%}
 
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'portaria_vaga_id' vaga.id|safe %}"></a>

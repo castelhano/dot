@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
-# from django.http import HttpResponse
-# from json import dumps
+from django.http import HttpResponse
+from json import dumps as json_dumps
 from .models import Veiculo, Area, Vaga, Visitante, RegistroFuncionario, RegistroVisitante
 from .forms import VeiculoForm, AreaForm, VagaForm, VisitanteForm, RegistroFuncionarioForm, RegistroVisitanteForm
 from django.contrib.auth.decorators import login_required, permission_required
@@ -130,13 +130,13 @@ def visitante_add(request):
         if form.is_valid():
             try:
                 registro = form.save()
+                has_warnings = False
                 if request.POST['foto_data_url'] != '':
                     prefix = '%s_%s' %(registro.id, registro.nome.split(' ')[0].lower())
                     today = datetime.now()
                     timestamp = datetime.timestamp(today)
                     file_name = f'{prefix}_{timestamp}.png'
                     result = create_image(request.POST['foto_data_url'], f'{settings.MEDIA_ROOT}/portaria/visitante', file_name, f'{prefix}_')
-                    has_warnings = False
                     if result[0]:
                         registro.foto = f'portaria/visitante/{file_name}'
                         registro.save()
@@ -301,6 +301,19 @@ def visitante_update(request,id):
     form = VisitanteForm(request.POST, request.FILES, instance=visitante)
     if form.is_valid():
         registro = form.save()
+        has_warnings = False
+        if request.POST['foto_data_url'] != '':
+            prefix = '%s_%s' %(registro.id, registro.nome.split(' ')[0].lower())
+            today = datetime.now()
+            timestamp = datetime.timestamp(today)
+            file_name = f'{prefix}_{timestamp}.png'
+            result = create_image(request.POST['foto_data_url'], f'{settings.MEDIA_ROOT}/portaria/visitante', file_name, f'{prefix}_')
+            if result[0]:
+                registro.foto = f'portaria/visitante/{file_name}'
+                registro.save()
+            else:
+                has_warnings = True
+                messages.warning(request,'<b>Erro ao salvar foto:</b> ' + result[1])
         l = Log()
         l.modelo = "portaria.visitante"
         l.objeto_id = registro.id
@@ -308,30 +321,11 @@ def visitante_update(request,id):
         l.usuario = request.user
         l.mensagem = "UPDATE"
         l.save()
-        messages.success(request,f'Visitante <b>{registro.cpf}</b> alterado')
+        if not has_warnings:
+            messages.success(request,f'Visitante <b>{registro.cpf}</b> alterado')
         return redirect('portaria_visitante_id', id)
     else:
         return render(request,'portaria/visitante_id.html',{'form':form,'visitante':visitante})
-
-# @login_required
-# @permission_required('portaria.change_visitante', login_url="/handler/403")
-# def visitante_bloquear(request,id):
-#     visitante = Visitante.objects.get(pk=id)
-#     l = Log()
-#     if visitante.bloqueado:
-#         visitante.bloqueado = False
-#         l.mensagem = "LIBERADO"
-#     else:
-#         visitante.bloqueado = True
-#         l.mensagem = "BLOQUEADO"
-#     visitante.save()
-#     l.modelo = "portaria.visitante"
-#     l.objeto_id = visitante.id
-#     l.objeto_str = visitante.cpf
-#     l.usuario = request.user
-#     l.save()
-#     messages.success(request,'Visitante alterado')
-#     return redirect('portaria_visitante_id', id)
 
 @login_required
 @permission_required('portaria.change_registro', login_url="/handler/403")
@@ -519,17 +513,20 @@ def registro_delete(request,id):
 #     except:
 #         return HttpResponse('')
 
-# @login_required
-# def get_veiculo(request):
-#     try:
-#         veiculo_key = request.GET.get('veiculo_key',None)
-#         if len(veiculo_key) < 7:
-#             veiculo = Veiculo.objects.get(id=veiculo_key)
-#         else:
-#             veiculo = Veiculo.objects.get(placa=veiculo_key)
-#         return HttpResponse(str(veiculo.id) + ';' + veiculo.funcionario.nome + ';' + veiculo.modelo + ';' + str(veiculo.ativo()))
-#     except:
-#         return HttpResponse('')
+@login_required
+def get_veiculo(request):
+    try:
+        placa = request.GET.get('placa', None)
+        veiculo = Veiculo.objects.get(placa=placa)
+        item_dict = vars(veiculo) # Gera lista com atributos do veiculo
+        item_dict['status'] = 'ATIVO' if veiculo.ativo() else 'INATIVO'
+        item_dict['funcionario'] = veiculo.funcionario.nome
+        if '_state' in item_dict: del item_dict['_state'] # Remove _state do dict (se existir)
+        del item_dict['valido_ate'] # Remove data de validade
+        dataJSON = json_dumps(item_dict)
+        return HttpResponse(dataJSON)
+    except:
+        return HttpResponse('')
 
 # @login_required
 # def get_vaga(request):

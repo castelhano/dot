@@ -2,6 +2,9 @@
 {% load static %}
 {% block title %}Visitantes{% endblock %}
 {% block model %}Portaria{% endblock %}
+{% block model_menu %}
+{% include "_component/menu/portaria.html" %}
+{% endblock%}
 
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'portaria_visitantes' %}"></a>
@@ -33,7 +36,7 @@
                         <th class="d-none d-md-table-cell">Empresa</th>
                         <th>Nome</th>
                         <th class="d-none">RG</th>
-                        <th class="d-none">CPF</th>
+                        <th class="d-none d-lg-table-cell">CPF</th>
                         <th class="d-none d-md-table-cell">Fone1</th>
                         <th class="d-none d-lg-table-cell">Fone2</th>
                         <th class="d-none">Email</th>
@@ -54,7 +57,7 @@
                         <td class="d-none d-md-table-cell">{{visitante.empresa}}</td>
                         <td>{{visitante.nome}}</td>
                         <td class="d-none">{{visitante.rg}}</td>
-                        <td class="d-none">{{visitante.cpf}}</td>
+                        <td class="d-none d-lg-table-cell">{{visitante.cpf}}</td>
                         <td class="d-none d-md-table-cell">{{visitante.fone1}}</td>
                         <td class="d-none d-lg-table-cell">{{visitante.fone2}}</td>
                         <td class="d-none">{{visitante.email}}</td>

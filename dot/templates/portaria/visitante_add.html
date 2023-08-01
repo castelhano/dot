@@ -2,6 +2,9 @@
 {% load static %}
 {% block title %}Visitante{% endblock %}
 {% block model %}Portaria{% endblock %}
+{% block model_menu %}
+{% include "_component/menu/portaria.html" %}
+{% endblock%}
 
 {% block style_src %}
 <link rel="stylesheet" href="{% static 'css/vendor/cropper.css' %}" type="text/css">

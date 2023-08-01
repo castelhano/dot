@@ -2,7 +2,6 @@
 {% load static %}
 {% block title %}Portaria{% endblock %}
 {% block model %}Portaria{% endblock %}
-
 <style>
     {% block style %}
     .area{
@@ -94,11 +93,11 @@
                     <h5>Vaga: <span id="modal_codigo"></span> - <span class="text-purple" id="modal_operacao"></span></h5>
                     <div id="controls_container">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="radioTipo" id="optFuncionario" value="funcionario" onclick="switchTipo('f')" checked>
+                            <input class="form-check-input" type="radio" name="tipo" id="optFuncionario" value="funcionario" onclick="switchTipo('f')" checked>
                             <label class="form-check-label" for="optFuncionario">Funcionário</label>
                         </div>
                         <div class="form-check form-check-inline mt-2">
-                            <input class="form-check-input" type="radio" name="radioTipo" id="optVisitante" value="visitante" onclick="switchTipo('v')">
+                            <input class="form-check-input" type="radio" name="tipo" id="optVisitante" value="visitante" onclick="switchTipo('v')">
                             <label class="form-check-label" for="optVisitante">Visitante</label>
                         </div>
                     </div>
@@ -114,6 +113,12 @@
                                 <label for="id_veiculo_detalhe">Detalhes</label>
                             </div>
                             <input type="hidden" name="veiculo" id="id_veiculo" value="">
+                        </div>
+                        <div class="row g-1 mb-1">
+                            <div class="form-floating col-12">
+                                <input type="text" class="form-control" name="nome_funcionario" id="id_nome_funcionario" value="" placeholder=" " disabled>
+                                <label for="id_nome_funcionario">Funcionário</label>
+                            </div>
                         </div>
                     </div>
                     <div id="visitante_container" class="d-none mb-1">
@@ -181,7 +186,7 @@
                     <div class="row mt-2">
                         <div class="col text-end">
                             <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
-                            <a class="btn btn-primary px-3" href="">Gravar</a>
+                            <button type="submit" class="btn btn-primary px-3">Gravar</button>
                         </div>
                     </div>
                 </div>
@@ -217,6 +222,14 @@
     const saida_container = document.getElementById('saida_container');
     const controls_container = document.getElementById('controls_container');
     const detalhe_container = document.getElementById('detalhe_container');
+    
+    const optFuncionario = document.getElementById('optFuncionario');
+    const optVisitante = document.getElementById('optVisitante');
+
+    const placa = document.getElementById('id_placa_consulta');
+    const veiculo_detalhe = document.getElementById("id_veiculo_detalhe");
+    const nome_funcionario = document.getElementById("id_nome_funcionario");
+    const veiculo = document.getElementById("id_veiculo");
     
     dateToday({ // Inicia o modal de alocacao com a data atual no campo data_entrada
         target: document.getElementById('id_data_entrada'),
@@ -260,10 +273,47 @@
             }
             vaga_alocar.show();
         }
-        
     }
     
-    function getVeiculo(){}
+    function getVeiculo(){
+        if(placa.value.length == 0){return false;}
+        if(placa.value.length < 8){
+            veiculo_detalhe.value = 'PLACA INVALIDA';
+            placa.classList.add('is-invalid');
+            placa.focus();
+            return false;
+        }
+        let xhttp_veiculo = new XMLHttpRequest();
+        xhttp_veiculo.onreadystatechange = function() {
+            if(this.readyState == 4 && this.status == 200){
+                if(this.responseText == ''){
+                    placa.classList.add('is-invalid');
+                    veiculo_detalhe.value = 'Veiculo não cadastrado';  
+                    nome_funcionario.value = '';  
+                    veiculo.value = '';
+                }
+                else{
+                    placa.classList.remove('is-invalid');
+                    let dados = JSON.parse(this.responseText);
+                    veiculo_detalhe.value = `${dados.modelo} [ ${dados.status.toUpperCase()} ]`;
+                    nome_funcionario.value = dados.funcionario
+                    return false; // PAREI AQUIII **********************************
+                    veiculo.value = this.responseText.split(';')[0];
+                    id.value = this.responseText.split(';')[0];
+                    if(this.responseText.split(';')[3] == 'True'){
+                        status.classList.remove('is-invalid');
+                        status.value = 'Ativo';
+                    }
+                    else{
+                        status.classList.add('is-invalid');
+                        status.value = 'Vencido';
+                    }
+                }
+            }
+        };
+        xhttp_veiculo.open("GET", "{% url 'portaria_get_veiculo' %}?placa=" + placa.value.toUpperCase().trim(), true);
+        xhttp_veiculo.send();  
+    }
     function getVisitante(){}
     
 

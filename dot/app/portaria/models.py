@@ -67,7 +67,7 @@ class Visitante(models.Model):
     nome = models.CharField(max_length=100, blank=False)
     empresa = models.CharField(max_length=100, blank=True)
     rg = models.CharField(max_length=20, blank=True)
-    cpf = models.CharField(max_length=20,blank=True)
+    cpf = models.CharField(max_length=20,blank=False, unique=True)
     fone1 = models.CharField(max_length=20, blank=True)
     fone2 = models.CharField(max_length=20, blank=True)
     email = models.CharField(max_length=150, blank=True)

@@ -2,6 +2,13 @@
 {% load static %}
 {% block title %}Visitante{% endblock %}
 {% block model %}Portaria{% endblock %}
+{% block model_menu %}
+{% include "_component/menu/portaria.html" %}
+{% endblock%}
+
+{% block style_src %}
+<link rel="stylesheet" href="{% static 'css/vendor/cropper.css' %}" type="text/css">
+{% endblock%}
 
 {% block content_fluid %}
 <a class="d-none" id="clear" href="{% url 'portaria_visitante_id' visitante.id|safe %}"></a>
@@ -25,9 +32,8 @@
     <form id="portaria_form" action="{% url 'portaria_visitante_update' visitante.id|safe %}" method="POST" autocomplete="off">
         {% csrf_token %}
         <div class="card-body tab-content">
-            <h5 class="card-title mb-0">Cadastro de Visitante</h5>
+            <h5 class="card-title mb-3">Cadastro de Visitante</h5>
             {% include 'portaria/_form_visitante.html' %}
-            </div>
             <!-- CONTROLES DO FORM -->
             <div class="row mt-3">
                 <div class="col">
@@ -124,6 +130,7 @@
     
 
     const photo = new jsPhoto({
+        {% if visitante.foto %}imageSrc: '{{ visitante.foto_url }}',{% endif %}
         inputTarget: document.getElementById('id_foto_data_url'),
         previewTarget: document.getElementById('visitanteFoto'),
         cropperFixed: true
