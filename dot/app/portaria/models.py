@@ -47,9 +47,9 @@ class Vaga(models.Model):
     def reservar(self):
         if not self.ocupada and not self.inativa:
             self.ocupada = True
-            return True
+            return [True, '']
         else:
-            return False
+            return [False, 'Vaga não está disponivel']
     def desocupar(self):
         self.ocupada = False
     def ultimas_alteracoes(self):

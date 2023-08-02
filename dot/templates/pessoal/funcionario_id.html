@@ -30,7 +30,7 @@
       </li>
     </ul>
   </div>
-  <form id="pessoal_form" action="{% url 'pessoal_funcionario_update' funcionario.id|safe %}" method="POST" enctype="multipart/form-data" autocomplete="off" onsubmit="return submitForm();" novalidate>
+  <form id="pessoal_form" action="{% url 'pessoal_funcionario_update' funcionario.id|safe %}" method="POST" enctype="multipart/form-data" autocomplete="off" novalidate>
     {% csrf_token %}
     {% include 'pessoal/_form_funcionario.html' %}
   </form>

@@ -20,7 +20,7 @@
       <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'pessoal_funcionarios' %}"><i class="fas fa-undo"></i></a></li>
     </ul>
   </div>
-  <form id="app_form" action="{% url 'pessoal_funcionario_add' %}" method="POST" enctype="multipart/form-data" autocomplete="off" onsubmit="return submitForm();" novalidate>
+  <form id="app_form" action="{% url 'pessoal_funcionario_add' %}" method="POST" enctype="multipart/form-data" autocomplete="off" novalidate>
     {% csrf_token %}
     {% include 'pessoal/_form_funcionario.html' %}
   </form>

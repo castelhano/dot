@@ -52,17 +52,23 @@ class VisitanteForm(forms.ModelForm):
     detalhe = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','style':'min-height:200px;','placeholder':'Detalhes'}))
     bloqueado = forms.BooleanField(required=False,initial=False,widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
 
-class RegistroFuncionarioForm(forms.ModelForm):
+class EntradaFuncionarioForm(forms.ModelForm):
     class Meta:
         model = RegistroFuncionario
-        fields = ['vaga','veiculo','data_entrada','hora_entrada','km_entrada','data_saida','hora_saida','km_saida','detalhe']
+        fields = ['vaga','veiculo','data_entrada','hora_entrada','km_entrada','detalhe']
     data_entrada = forms.DateField(error_messages={'required': 'Informe a data de entrada'}, initial=date.today(), widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
     hora_entrada = forms.TimeField(error_messages={'required': 'Informe a hora de entrada'}, initial=datetime.now().strftime('%H:%M'),widget=forms.TextInput(attrs={'class':'form-control','type':'time'}))
     km_entrada = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'class': 'form-control text-end','type':'text','onkeyup':'mask_number(event,this)'}))
+    km_saida = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'class': 'form-control text-end','type':'text','onkeyup':'mask_number(event,this)'}))
+    detalhe = forms.CharField(required=False, max_length=200, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
+
+class SaidaFuncionarioForm(forms.ModelForm):
+    class Meta:
+        model = RegistroFuncionario
+        fields = ['data_saida','hora_saida','km_saida']
     data_saida = forms.DateField(required=False, widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
     hora_saida = forms.TimeField(required=False, widget=forms.TextInput(attrs={'class':'form-control','type':'time'}))
     km_saida = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'class': 'form-control text-end','type':'text','onkeyup':'mask_number(event,this)'}))
-    detalhe = forms.CharField(required=False, max_length=200, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
 
 class RegistroVisitanteForm(forms.ModelForm):
     class Meta:

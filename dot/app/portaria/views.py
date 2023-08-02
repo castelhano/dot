@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from json import dumps as json_dumps
 from .models import Veiculo, Area, Vaga, Visitante, RegistroFuncionario, RegistroVisitante
-from .forms import VeiculoForm, AreaForm, VagaForm, VisitanteForm, RegistroFuncionarioForm, RegistroVisitanteForm
+from .forms import VeiculoForm, AreaForm, VagaForm, VisitanteForm, EntradaFuncionarioForm, SaidaFuncionarioForm, RegistroVisitanteForm
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from core.models import Log
@@ -164,34 +164,46 @@ def visitante_add(request):
 @permission_required('portaria.add_registro', login_url="/handler/403")
 def registro_add(request):
     if request.method == 'POST':
-        tipo = request.POST['tipo']
-        if tipo == 'visitante':
-            form = RegistroVisitanteForm(request.POST)
-        elif tipo == 'funcionario':
-            form = RegistroFuncionarioForm(request.POST)
-        if form.is_valid():
-            try:
-                registro = form.save()
-                if registro.vaga != None:
+        sentido = request.POST['sentido']
+        if sentido == 'saida':
+            pass
+        else:
+            tipo = request.POST['tipo']
+            if tipo == 'visitante':
+                form = RegistroVisitanteForm(request.POST)
+            elif tipo == 'funcionario':
+                if sentido == 'saida':
+                    form = SaidaFuncionarioForm(request.POST)
+                else:
+                    form = EntradaFuncionarioForm(request.POST)
+            if form.is_valid():
+                try:
+                    registro = form.save(commit=False)
+                    if RegistroFuncionario.objects.filter(veiculo=registro.veiculo, data_saida=None).exists():
+                        messages.error(request,f'<b>Atenção:</b> Veículo já alocado <b>em outra vaga</b>, operação cancelada')
+                        return redirect('portaria_movimentacao')
                     vaga = registro.vaga
-                    vaga.reservar()
+                    retorno = vaga.reservar() # Marca vaga como ocupada (se possivel, caso nao gera [False, 'msg...'] como retorno)
+                    if not retorno[0]:
+                        messages.error(request,f'<b>Atenção:</b> {retorno[1]}, operação cancelada')
+                        return redirect('portaria_movimentacao')
+                    registro.save()
                     vaga.save()
-                l = Log()
-                l.modelo = f"portaria.registro{tipo}"
-                l.objeto_id = registro.id
-                l.objeto_str = registro.visitante.cpf if tipo == 'visitante' else registro.veiculo.placa
-                l.usuario = request.user
-                l.mensagem = "CREATED"
-                l.save()
-                messages.success(request,f'Entrada {tipo} inserida')
-                return redirect('portaria_movimentacao')
-            except:
-                messages.error(request,'Erro ao inserir registro visitante [INVALID FORM]')
-                return redirect('portaria_movimentacao')
-
+                    l = Log()
+                    l.modelo = f"portaria.registro{tipo}"
+                    l.objeto_id = registro.id
+                    l.objeto_str = registro.visitante.cpf if tipo == 'visitante' else registro.veiculo.placa
+                    l.usuario = request.user
+                    l.mensagem = sentido.upper()
+                    l.save()
+                    messages.success(request,'<b>%s %s</b> registrada' %(sentido.capitalize(), tipo))
+                except:
+                    messages.error(request,'Erro ao inserir registro visitante [GENERIC ERROR]')
+            else:
+                messages.error(request,'<b>Dados inválidos</b>, verifique as informações lançadas e tente novamente')
+            return redirect('portaria_movimentacao')
     else:
-        form = VisitanteForm()
-        return render(request,'portaria/registro_add.html', {'form':form})
+        return render(request,'portaria/movimentacao.html')
 
 
 # METODOS GET
@@ -519,7 +531,7 @@ def get_veiculo(request):
         placa = request.GET.get('placa', None)
         veiculo = Veiculo.objects.get(placa=placa)
         item_dict = vars(veiculo) # Gera lista com atributos do veiculo
-        item_dict['status'] = 'ATIVO' if veiculo.ativo() else 'INATIVO'
+        item_dict['status'] = 'ATIVO' if veiculo.ativo() else 'VENCIDO'
         item_dict['funcionario'] = veiculo.funcionario.nome
         if '_state' in item_dict: del item_dict['_state'] # Remove _state do dict (se existir)
         del item_dict['valido_ate'] # Remove data de validade

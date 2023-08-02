@@ -301,49 +301,13 @@
               cargo_atual = '{{funcionario.cargo.id|safe}}';
               for(key in obj){
                 if(obj[key] == cargo_atual){cargos.innerHTML += '<option value="' + obj[key] + '" selected>' + key + '</option>';}
-                else{cargos.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}}
+                else{cargos.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
               }
             }
-          };
-          xhttp.open("GET", "{% url 'pessoal_get_cargos' %}?setor=" + setor, true);
-          xhttp.send();
-        }
-      }
-      
-      function submitForm(){
-        // Faz validacao para form antes de envio
-        let matricula = document.getElementById('id_matricula');
-        let empresa = document.getElementById('id_empresa');
-        let nome = document.getElementById('id_nome');
-        let baseTabHidden = isHidden(matricula);
-        if(matricula.value == ''){
-          dotAlert('danger', 'Campo <b>matricula<b> é obrigatório.',false);
-            if(baseTabHidden){
-              document.getElementById('menu_funcionario_basico').click();
-              setTimeout(() => {matricula.focus()}, 480);
-            }
-            else{matricula.focus()}
-            return false;
           }
-          if(empresa.value == ''){
-            dotAlert('danger', 'Campo <b>empresa<b> é obrigatório.',false);
-              if(baseTabHidden){
-                document.getElementById('menu_funcionario_basico').click();
-                setTimeout(() => {empresa.focus()}, 480);
-              }
-              else{empresa.focus()}
-              return false;
-            }
-            if(nome.value.trim() == ''){
-              dotAlert('danger', 'Campo <b>nome<b> é obrigatório.',false);
-                if(baseTabHidden){
-                  document.getElementById('menu_funcionario_basico').click();
-                  setTimeout(() => {nome.focus()}, 480);
-                }
-                else{nome.focus()}
-                return false;
-              }
-              modal_loading.show();
-              return true;
-            }
-          </script>
+        };
+        xhttp.open("GET", "{% url 'pessoal_get_cargos' %}?setor=" + setor, true);
+        xhttp.send();
+      }
+    } 
+    </script>

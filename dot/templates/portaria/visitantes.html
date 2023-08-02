@@ -16,6 +16,7 @@
             {% if perms.portaria.add_visitante %}
             <li class="nav-item ms-1"><a class="nav-link border" id="add" href="{% url 'portaria_visitante_add' %}" title="ALT+N"><i class="fas fa-plus text-success"></i></a></li>
             {% endif %}
+            <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'portaria_movimentacao' %}"><i class="fas fa-undo"></i></a></li>
             <li class="nav-item dropdown ms-auto">
                 <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
                 <ul class="dropdown-menu">

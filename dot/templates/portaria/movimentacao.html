@@ -80,7 +80,7 @@
 </div>
 
 {% if perms.portaria.add_registro %}
-<div class="modal fade" id="vaga_alocar" tabindex="-1">
+<div class="modal fade" id="modal_registro" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <form id="vaga_alocar_form" action="{% url 'portaria_registro_add' %}" method="POST" autocomplete="off">
@@ -186,16 +186,19 @@
                     <div class="row mt-2">
                         <div class="col text-end">
                             <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
-                            <button type="submit" class="btn btn-primary px-3">Gravar</button>
+                            <button type="submit" class="btn btn-primary px-3" data-bs-target="#modal_loading" data-bs-toggle="modal">Gravar</button>
                         </div>
                     </div>
                 </div>
+                <input type="hidden" id="id_sentido" name="sentido" value="">
+                <input type="hidden" id="id_vaga" name="vaga" value="">
             </form>
         </div>
     </div>
 </div>
 {% endif %}
 
+{% include "_component/modal/loading.html" with message='Processando requisição....' %}
 {% endblock%}
 
 {% block add_script_src %}
@@ -206,6 +209,8 @@
     {% block add_script %}
     var TAB_ON_ENTER = true;
     SHORTCUT_MAP['2FTF'] = () => {document.getElementById('portaria_extra').click()}
+
+    const modal_registro = new bootstrap.Modal(document.getElementById('modal_registro'), {keyboard: true});
     
     VMasker(document.getElementById("id_placa_consulta")).maskPattern('AAA-9S99');
     VMasker(document.getElementById("id_placa")).maskPattern('AAA-9S99');
@@ -214,7 +219,6 @@
     const canAdd = {{perms.portaria.add_registro|yesno:'true,false'}};
     const canChange = {{perms.portaria.change_registro|yesno:'true,false'}};
     
-    const vaga_alocar = new bootstrap.Modal(document.getElementById('vaga_alocar'), {keyboard: true});
     
     const funcionario_container = document.getElementById('funcionario_container');
     const visitante_container = document.getElementById('visitante_container');
@@ -225,6 +229,7 @@
     
     const optFuncionario = document.getElementById('optFuncionario');
     const optVisitante = document.getElementById('optVisitante');
+    const vaga = document.getElementById('id_vaga');
 
     const placa = document.getElementById('id_placa_consulta');
     const veiculo_detalhe = document.getElementById("id_veiculo_detalhe");
@@ -240,13 +245,14 @@
     function vagaOnclick(ev){
         let id = ev.target.dataset.id;
         let status = ev.target.dataset.status;
+        vaga.value = ev.target.dataset.id;
         if(status == 'livre' && canAdd || status == 'ocupada' && canChange){
             document.getElementById('modal_codigo').innerHTML = ev.target.innerText;
             document.getElementById('modal_operacao').innerHTML = status == 'livre' ? 'ENTRADA' : 'SAIDA';
             
             timeNow({target: document.getElementById('id_hora_entrada')}) // Atualiza o modal de alocacao com a hora atual no campo hora_entrada
             
-            if(status == 'livre'){ // Exibe campos de entrada
+            if(status == 'livre' || true){ // Exibe campos de entrada
                 entrada_container.classList.remove('d-none');
                 controls_container.classList.remove('d-none');
                 saida_container.classList.add('d-none');
@@ -259,6 +265,7 @@
                     setTimeout(()=>{document.getElementById('id_cpf').focus()}, 500);
                 }
                 detalhe_container.classList.remove('d-none');
+                document.getElementById('id_sentido').value = 'entrada';
             }
             else{
                 funcionario_container.classList.add('d-none')
@@ -269,9 +276,10 @@
                 detalhe_container.classList.add('d-none');
                 
                 timeNow({target: document.getElementById('id_hora_saida')}) // Atualiza o modal de alocacao com a hora atual no campo hora_saida
+                document.getElementById('id_sentido').value = 'saida';
                 setTimeout(()=>{document.getElementById('id_km_saida').focus()}, 500);
             }
-            vaga_alocar.show();
+            modal_registro.show();
         }
     }
     
@@ -295,19 +303,11 @@
                 else{
                     placa.classList.remove('is-invalid');
                     let dados = JSON.parse(this.responseText);
-                    veiculo_detalhe.value = `${dados.modelo} [ ${dados.status.toUpperCase()} ]`;
+                    veiculo_detalhe.value = `${dados.modelo} [ ${dados.status} ]`;
                     nome_funcionario.value = dados.funcionario
-                    return false; // PAREI AQUIII **********************************
-                    veiculo.value = this.responseText.split(';')[0];
-                    id.value = this.responseText.split(';')[0];
-                    if(this.responseText.split(';')[3] == 'True'){
-                        status.classList.remove('is-invalid');
-                        status.value = 'Ativo';
-                    }
-                    else{
-                        status.classList.add('is-invalid');
-                        status.value = 'Vencido';
-                    }
+                    veiculo.value = dados.id;
+                    if(dados.status == 'VENCIDO'){veiculo_detalhe.classList.add('is-invalid')}
+                    else{veiculo_detalhe.classList.remove('is-invalid')}
                 }
             }
         };
