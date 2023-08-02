@@ -236,6 +236,10 @@
     const nome_funcionario = document.getElementById("id_nome_funcionario");
     const veiculo = document.getElementById("id_veiculo");
     
+    const cpf = document.getElementById('id_cpf');
+    const visitante_detalhe = document.getElementById("id_visitante_detalhe");
+    const visitante = document.getElementById("id_visitante");
+    
     dateToday({ // Inicia o modal de alocacao com a data atual no campo data_entrada
         target: document.getElementById('id_data_entrada'),
         native: true
@@ -252,7 +256,7 @@
             
             timeNow({target: document.getElementById('id_hora_entrada')}) // Atualiza o modal de alocacao com a hora atual no campo hora_entrada
             
-            if(status == 'livre' || true){ // Exibe campos de entrada
+            if(status == 'livre'){ // Exibe campos de entrada
                 entrada_container.classList.remove('d-none');
                 controls_container.classList.remove('d-none');
                 saida_container.classList.add('d-none');
@@ -314,7 +318,45 @@
         xhttp_veiculo.open("GET", "{% url 'portaria_get_veiculo' %}?placa=" + placa.value.toUpperCase().trim(), true);
         xhttp_veiculo.send();  
     }
-    function getVisitante(){}
+
+    function getVisitante(){
+        if(cpf.value.length == 0){return false;}
+        if(cpf.value.length < 14){
+            visitante_detalhe.value = 'CPF INVALIDO';
+            cpf.classList.add('is-invalid');
+            cpf.focus();
+            return false;
+        }
+        let xhttp_visitante = new XMLHttpRequest();
+        xhttp_visitante.onreadystatechange = function() {
+            if(this.readyState == 4 && this.status == 200){
+                if(this.responseText == ''){
+                    cpf.classList.add('is-invalid');
+                    visitante_detalhe.value = 'CPF não localizado';  
+                    // nome_funcionario.value = '';  
+                    visitante.value = '';
+                }
+                else{
+                    cpf.classList.remove('is-invalid');
+                    let dados = JSON.parse(this.responseText);
+                    visitante_detalhe.value = dados.nome;
+                    // nome_funcionario.value = dados.funcionario
+                    if(dados.bloqueado == 'True'){
+                        visitante.value = '';
+                        visitante_detalhe.classList.add('is-invalid');
+                        dotAlert('danger', 'Visitante <b>BLOQUEADO</b>')
+                        cpf.focus();
+                    }
+                    else{
+                        visitante_detalhe.classList.remove('is-invalid');
+                        visitante.value = dados.id;
+                    }
+                }
+            }
+        };
+        xhttp_visitante.open("GET", "{% url 'portaria_get_visitante' %}?cpf=" + cpf.value, true);
+        xhttp_visitante.send();  
+    }
     
 
     

@@ -29,7 +29,7 @@ urlpatterns = [
     path('portaria_registro_update/<int:id>',views.registro_update,name='portaria_registro_update'),
     path('portaria_registro_delete/<int:id>/delete',views.registro_delete,name='portaria_registro_delete'),
     # path('portaria_registro_saida',views.registro_saida,name='portaria_registro_saida'),
-    # path('portaria_get_visitante',views.get_visitante,name='portaria_get_visitante'),
+    path('portaria_get_visitante',views.get_visitante,name='portaria_get_visitante'),
     path('portaria_get_veiculo',views.get_veiculo,name='portaria_get_veiculo'),
     # path('portaria_get_vaga',views.get_vaga,name='portaria_get_vaga'),
 ]

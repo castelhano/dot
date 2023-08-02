@@ -6,7 +6,7 @@ from core.models import Log, ImageField as core_ImageField
 class Veiculo(models.Model):
     modelo = models.CharField(max_length=20, blank=False)
     cor = models.CharField(max_length=15, blank=True)
-    placa = models.CharField(max_length=15, blank=False)
+    placa = models.CharField(max_length=15, blank=False, unique=True)
     funcionario = models.ForeignKey(Funcionario, blank=True, null=True, on_delete=models.RESTRICT)
     valido_ate = models.DateField(blank=True, null=True, default = datetime.today)
     km_inicial = models.PositiveIntegerField(default=0, blank=True, null=True)
@@ -47,11 +47,21 @@ class Vaga(models.Model):
     def reservar(self):
         if not self.ocupada and not self.inativa:
             self.ocupada = True
-            return [True, '']
+            return [True]
         else:
             return [False, 'Vaga não está disponivel']
     def desocupar(self):
+        if not self.ocupada:
+            return [False, 'Vaga não está ocupada']
         self.ocupada = False
+        return [True]
+    def ocupante(self):
+        if not self.ocupada:
+            return None
+        if RegistroFuncionario.objects.filter(vaga=self,data_saida=None).exists():
+            return RegistroFuncionario.objects.filter(vaga=self,data_saida=None).get()
+        if RegistroVisitante.objects.filter(vaga=self,data_saida=None).exists():
+            return RegistroVisitante.objects.filter(vaga=self,data_saida=None).get()
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='portaria.vaga',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
@@ -106,6 +116,8 @@ class RegistroFuncionario(Registro):
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='portaria.registro_funcionario',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
+    def ocupante_id(self):
+        return self.veiculo.id
     class Meta:
         default_permissions = []
 
@@ -118,5 +130,7 @@ class RegistroVisitante(Registro):
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='portaria.registro_visitante',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
+    def ocupante_id(self):
+        return self.visitante.id
     class Meta:
         default_permissions = []

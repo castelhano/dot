@@ -10,9 +10,9 @@ class VeiculoForm(forms.ModelForm):
         fields = ['modelo','cor','placa','funcionario','valido_ate','km_inicial']
     modelo = forms.CharField(error_messages={'required': 'Informe o modelo'},max_length=20,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
     cor = forms.CharField(required=False,max_length=15, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
-    placa = forms.CharField(error_messages={'required': 'Informe a placa'}, widget=forms.TextInput(attrs={'class':'form-control text-uppercase','placeholder':' '}))
+    placa = forms.CharField(error_messages={'required': 'Informe a placa do veiculo','unique':'Placa já cadastrada para outro veiculo'}, widget=forms.TextInput(attrs={'class':'form-control text-uppercase','placeholder':' '}))
     valido_ate = forms.DateField(required=False, initial=date.today() + timedelta(days=30), widget=forms.TextInput(attrs={'class':'form-control bg-body-secondary','type':'date'}))
-    km_inicial = forms.IntegerField(required=False,initial=0, widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':'0','max':'999999','onfocus':'this.select()'}))
+    km_inicial = forms.IntegerField(required=False,initial=0, widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':'0','max':'9999999','onfocus':'this.select()'}))
     def clean_placa(self):
         return self.cleaned_data['placa'].upper()
 
@@ -58,8 +58,7 @@ class EntradaFuncionarioForm(forms.ModelForm):
         fields = ['vaga','veiculo','data_entrada','hora_entrada','km_entrada','detalhe']
     data_entrada = forms.DateField(error_messages={'required': 'Informe a data de entrada'}, initial=date.today(), widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
     hora_entrada = forms.TimeField(error_messages={'required': 'Informe a hora de entrada'}, initial=datetime.now().strftime('%H:%M'),widget=forms.TextInput(attrs={'class':'form-control','type':'time'}))
-    km_entrada = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'class': 'form-control text-end','type':'text','onkeyup':'mask_number(event,this)'}))
-    km_saida = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'class': 'form-control text-end','type':'text','onkeyup':'mask_number(event,this)'}))
+    km_entrada = forms.IntegerField(required=False,initial=0, widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':'0','max':'9999999','onfocus':'this.select()'}))
     detalhe = forms.CharField(required=False, max_length=200, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
 
 class SaidaFuncionarioForm(forms.ModelForm):
@@ -68,20 +67,25 @@ class SaidaFuncionarioForm(forms.ModelForm):
         fields = ['data_saida','hora_saida','km_saida']
     data_saida = forms.DateField(required=False, widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
     hora_saida = forms.TimeField(required=False, widget=forms.TextInput(attrs={'class':'form-control','type':'time'}))
-    km_saida = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'class': 'form-control text-end','type':'text','onkeyup':'mask_number(event,this)'}))
+    km_saida = forms.IntegerField(required=False,initial=0, widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':'0','max':'9999999','onfocus':'this.select()'}))
 
-class RegistroVisitanteForm(forms.ModelForm):
+class EntradaVisitanteForm(forms.ModelForm):
     class Meta:
         model = RegistroVisitante
-        fields = ['vaga','visitante','modelo','cor','placa','autorizado_por','data_entrada','hora_entrada','km_entrada','data_saida','hora_saida','km_saida','detalhe']
+        fields = ['vaga','visitante','modelo','cor','placa','autorizado_por','data_entrada','hora_entrada','km_entrada','detalhe']
     modelo = forms.CharField(required=False, max_length=20,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
     cor = forms.CharField(required=False, max_length=15,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
     placa = forms.CharField(required=False, max_length=15,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
     autorizado_por = forms.CharField(required=False, max_length=40,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
     data_entrada = forms.DateField(error_messages={'required': 'Informe a data de entrada'}, initial=date.today(), widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
     hora_entrada = forms.TimeField(error_messages={'required': 'Informe a hora de entrada'}, widget=forms.TextInput(attrs={'class':'form-control','type':'time'}))
-    km_entrada = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':'0','max':'999999'}))
+    km_entrada = forms.IntegerField(required=False,initial=0, widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':'0','max':'9999999','onfocus':'this.select()'}))
+    detalhe = forms.CharField(required=False, max_length=200, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
+
+class SaidaVisitanteForm(forms.ModelForm):
+    class Meta:
+        model = RegistroVisitante
+        fields = ['data_saida','hora_saida','km_saida']
     data_saida = forms.DateField(required=False, widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
     hora_saida = forms.TimeField(required=False, widget=forms.TextInput(attrs={'class':'form-control','type':'time'}))
-    km_saida = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':'0','max':'999999'}))
-    detalhe = forms.CharField(required=False, max_length=200, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
+    km_saida = forms.IntegerField(required=False,initial=0, widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':'0','max':'9999999','onfocus':'this.select()'}))
