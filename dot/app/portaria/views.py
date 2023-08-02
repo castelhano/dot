@@ -555,12 +555,15 @@ def get_veiculo(request):
     except:
         return HttpResponse('')
 
-# @login_required
-# def get_vaga(request):
-#     try:
-#         codigo = request.GET.get('codigo',None)
-#         vaga = Vaga.objects.get(codigo=codigo, inativa=False)
-#         status = 'L' if vaga.disponivel() else 'O'
-#         return HttpResponse(str(vaga.id) + ';' + status)
-#     except:
-#         return HttpResponse('')
+@login_required
+def get_ocupante(request):
+    try:
+        vaga = Vaga.objects.get(id=request.GET['vaga'])
+        ocupante = vaga.ocupante()
+        item_dict = {}
+        if isinstance(ocupante, RegistroFuncionario):
+            item_dict['tipo'] = 'FUNCIONARIO'
+            item_dict['nome'] = ocupante.veiculo.funcionario.nome
+            # PAREI AQUI ********************************************
+        if isinstance(ocupante, RegistroVisitante):
+            pass

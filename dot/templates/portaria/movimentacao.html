@@ -164,6 +164,11 @@
                         </div>
                     </div>
                     <div class="row g-1 d-none mt-2 mb-1" id="saida_container">
+                        <p id="ocupante_tipo"></p>
+                        <p id="ocupante_nome"></p>
+                        <p id="ocupante_veiculo"></p>
+                        <p id="ocupante_detalhe"></p>
+                        <p>Entrada: <span id="ocupante_entrada"></span></p>
                         <div class="form-floating col-6">
                             <input type="date" class="form-control" id="id_data_saida" name="data_saida" value="">
                             <label for="id_data_saida">Saida</label>
@@ -239,6 +244,11 @@
     const cpf = document.getElementById('id_cpf');
     const visitante_detalhe = document.getElementById("id_visitante_detalhe");
     const visitante = document.getElementById("id_visitante");
+    
+    const ocupante_tipo = document.getElementById("ocupante_tipo");
+    const ocupante_nome = document.getElementById("ocupante_nome");
+    const ocupante_veiculo = document.getElementById("ocupante_veiculo");
+    const ocupante_detalhe = document.getElementById("ocupante_detalhe");
     
     dateToday({ // Inicia o modal de alocacao com a data atual no campo data_entrada
         target: document.getElementById('id_data_entrada'),
@@ -333,14 +343,12 @@
                 if(this.responseText == ''){
                     cpf.classList.add('is-invalid');
                     visitante_detalhe.value = 'CPF não localizado';  
-                    // nome_funcionario.value = '';  
                     visitante.value = '';
                 }
                 else{
                     cpf.classList.remove('is-invalid');
                     let dados = JSON.parse(this.responseText);
                     visitante_detalhe.value = dados.nome;
-                    // nome_funcionario.value = dados.funcionario
                     if(dados.bloqueado == 'True'){
                         visitante.value = '';
                         visitante_detalhe.classList.add('is-invalid');
@@ -356,6 +364,31 @@
         };
         xhttp_visitante.open("GET", "{% url 'portaria_get_visitante' %}?cpf=" + cpf.value, true);
         xhttp_visitante.send();  
+    }
+
+    function getOcupante(vaga){
+        ocupante_tipo.value = '';
+        ocupante_nome.value = '';
+        ocupante_veiculo.value = '';
+        ocupante_detalhe.value = '';
+        let xhttp_ocupante = new XMLHttpRequest();
+        xhttp_ocupante.onreadystatechange = function() {
+            if(this.readyState == 4 && this.status == 200){
+                if(this.responseText == ''){
+                    ocupante_tipo.value == 'INVALID';
+                    dotAlert('danger', '<b>Erro:</b> Ocupante não localizado, entre em contato com o administrador', false)
+                }
+                else{
+                    let dados = JSON.parse(this.responseText);
+                    ocupante_tipo.value = dados.tipo;
+                    ocupante_nome.value = dados.nome;
+                    // ocupante_veiculo.value = dados.veiculo;
+                    ocupante_detalhe.value = dados.detalhe;
+                }
+            }
+        };
+        xhttp_ocupante.open("GET", "{% url 'portaria_get_ocupante' %}?vaga=" + vaga, true);
+        xhttp_ocupante.send();  
     }
     
 
