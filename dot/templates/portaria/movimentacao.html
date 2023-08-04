@@ -81,7 +81,7 @@
 
 {% if perms.portaria.add_registro %}
 <div class="modal fade" id="modal_registro" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <form id="vaga_alocar_form" action="{% url 'portaria_registro_add' %}" method="POST" autocomplete="off">
                 {% csrf_token %}
@@ -91,103 +91,107 @@
                 </div>
                 <div class="modal-body">
                     <h5>Vaga: <span id="modal_codigo"></span> - <span class="text-purple" id="modal_operacao"></span></h5>
-                    <div id="controls_container">
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="tipo" id="optFuncionario" value="funcionario" onclick="switchTipo('f')" checked>
-                            <label class="form-check-label" for="optFuncionario">Funcionário</label>
+                    <div class="row">
+                        <div class="col-lg order-2 order-lg-1">
+                            <div id="controls_container">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="tipo" id="optFuncionario" value="funcionario" onclick="switchTipo('f')" checked>
+                                    <label class="form-check-label" for="optFuncionario">Funcionário</label>
+                                </div>
+                                <div class="form-check form-check-inline mt-2">
+                                    <input class="form-check-input" type="radio" name="tipo" id="optVisitante" value="visitante" onclick="switchTipo('v')">
+                                    <label class="form-check-label" for="optVisitante">Visitante</label>
+                                </div>
+                            </div>
+                            <div id="funcionario_container">
+                                <div class="row g-1 mt-2 mb-1">
+                                    <div class="form-floating col-auto" style="max-width: 130px;">
+                                        <input type="text" class="form-control text-uppercase" name="placa_consulta" id="id_placa_consulta" value="" placeholder="" onfocusout="getVeiculo();">
+                                        <label for="id_placa_consulta">Placa</label>
+                                    </div>
+                                    <div class="form-floating col">
+                                        <input type="text" class="form-control" name="veiculo_detalhe" id="id_veiculo_detalhe" value="" disabled>
+                                        <label for="id_veiculo_detalhe">Detalhes</label>
+                                    </div>
+                                    <input type="hidden" name="veiculo" id="id_veiculo" value="">
+                                </div>
+                                <div class="row g-1 mb-1">
+                                    <div class="form-floating col-12">
+                                        <input type="text" class="form-control" name="nome_funcionario" id="id_nome_funcionario" value="" placeholder=" " disabled>
+                                        <label for="id_nome_funcionario">Funcionário</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="visitante_container" class="d-none mb-1">
+                                <div class="row g-1 mt-2 mb-1">
+                                    <div class="form-floating col-auto" style="max-width: 150px;">
+                                        <input type="text" class="form-control" name="cpf" id="id_cpf" value="" placeholder="" onfocusout="getVisitante();">
+                                        <label for="id_cpf">CPF</label>
+                                    </div>
+                                    <div class="form-floating col">
+                                        <input type="text" class="form-control" name="visitante_detalhe" id="id_visitante_detalhe" value="" disabled>
+                                        <label for="id_visitante_detalhe">Nome</label>
+                                    </div>
+                                    <input type="hidden" name="visitante" id="id_visitante" value="">
+                                </div>
+                                <div class="row g-1">
+                                    <div class="form-floating col-4">
+                                        <input type="text" class="form-control" name="modelo" id="id_modelo" value="" placeholder=" ">
+                                        <label for="id_modelo">Veiculo</label>
+                                    </div>
+                                    <div class="form-floating col-4">
+                                        <input type="text" class="form-control" name="cor" id="id_cor" value="" placeholder=" ">
+                                        <label for="id_cor">Cor</label>
+                                    </div>
+                                    <div class="form-floating col-4">
+                                        <input type="text" class="form-control text-uppercase" name="placa" id="id_placa" value="" placeholder=" ">
+                                        <label for="id_placa">Placa</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row g-1 mb-1" id="entrada_container">
+                                <div class="form-floating col-6">
+                                    <input type="date" class="form-control" id="id_data_entrada" name="data_entrada" value="">
+                                    <label for="id_data_entrada">Entrada</label>
+                                </div>
+                                <div class="form-floating col-6">
+                                    <input type="time" class="form-control" id="id_hora_entrada" name="hora_entrada" value="">
+                                    <label for="id_hora_entrada">Hora</label>
+                                </div>
+                                <div class="form-floating col-12">
+                                    <input type="number" class="form-control" id="id_km_entrada" name="km_entrada" value="" placeholder=" ">
+                                    <label for="id_km_entrada">Km Entrada</label>
+                                </div>
+                            </div>
+                            <div class="row g-1 d-none mt-2 mb-1" id="saida_container">
+                                <div class="bg-body-tertiary px-3 py-2 my-1 rounded">
+                                    <p class="m-0"><span class="fw-bold text-purple" id="ocupante_tipo"></span>: <span id="ocupante_nome"></span></p>
+                                    <p class="m-0" id="ocupante_veiculo"></p>
+                                    <p class="m-0">Entrada: <span id="ocupante_entrada"></span></p>
+                                </div>
+                                <div class="form-floating col-6">
+                                    <input type="date" class="form-control" id="id_data_saida" name="data_saida" value="">
+                                    <label for="id_data_saida">Saida</label>
+                                </div>
+                                <div class="form-floating col-6">
+                                    <input type="time" class="form-control" id="id_hora_saida" name="hora_saida" value="">
+                                    <label for="id_hora_saida">Hora</label>
+                                </div>
+                                <div class="form-floating col-12">
+                                    <input type="number" class="form-control" id="id_km_saida" name="km_saida" value="" placeholder=" ">
+                                    <label for="id_km_saida">Km Saida</label>
+                                </div>
+                            </div>
+                            <div class="row" id="detalhe_container">
+                                <div class="mb-1 col-12">
+                                    <textarea class="form-control" name="detalhe" id="id_detalhe" placeholder="Detalhe"></textarea>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-check form-check-inline mt-2">
-                            <input class="form-check-input" type="radio" name="tipo" id="optVisitante" value="visitante" onclick="switchTipo('v')">
-                            <label class="form-check-label" for="optVisitante">Visitante</label>
+                        <div class="col-lg-auto bg-dark-light bg-gradient rounded p-2 widget-thumb-container order-1 order-lg-2">
+                            <img src="{% static 'img/default_user.jpg' %}" class="widget-thumb-img" style="min-width: 110px;" id="ocupante_foto">
                         </div>
                     </div>
-                    <!-- **** -->
-                    <div id="funcionario_container">
-                        <div class="row g-1 mt-2 mb-1">
-                            <div class="form-floating col-auto" style="max-width: 130px;">
-                                <input type="text" class="form-control text-uppercase" name="placa_consulta" id="id_placa_consulta" value="" placeholder="" onfocusout="getVeiculo();">
-                                <label for="id_placa_consulta">Placa</label>
-                            </div>
-                            <div class="form-floating col">
-                                <input type="text" class="form-control" name="veiculo_detalhe" id="id_veiculo_detalhe" value="" disabled>
-                                <label for="id_veiculo_detalhe">Detalhes</label>
-                            </div>
-                            <input type="hidden" name="veiculo" id="id_veiculo" value="">
-                        </div>
-                        <div class="row g-1 mb-1">
-                            <div class="form-floating col-12">
-                                <input type="text" class="form-control" name="nome_funcionario" id="id_nome_funcionario" value="" placeholder=" " disabled>
-                                <label for="id_nome_funcionario">Funcionário</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="visitante_container" class="d-none mb-1">
-                        <div class="row g-1 mt-2 mb-1">
-                            <div class="form-floating col-auto" style="max-width: 150px;">
-                                <input type="text" class="form-control" name="cpf" id="id_cpf" value="" placeholder="" onfocusout="getVisitante();">
-                                <label for="id_cpf">CPF</label>
-                            </div>
-                            <div class="form-floating col">
-                                <input type="text" class="form-control" name="visitante_detalhe" id="id_visitante_detalhe" value="" disabled>
-                                <label for="id_visitante_detalhe">Nome</label>
-                            </div>
-                            <input type="hidden" name="visitante" id="id_visitante" value="">
-                        </div>
-                        <div class="row g-1">
-                            <div class="form-floating col-4">
-                                <input type="text" class="form-control" name="modelo" id="id_modelo" value="" placeholder=" ">
-                                <label for="id_modelo">Veiculo</label>
-                            </div>
-                            <div class="form-floating col-4">
-                                <input type="text" class="form-control" name="cor" id="id_cor" value="" placeholder=" ">
-                                <label for="id_cor">Cor</label>
-                            </div>
-                            <div class="form-floating col-4">
-                                <input type="text" class="form-control text-uppercase" name="placa" id="id_placa" value="" placeholder=" ">
-                                <label for="id_placa">Placa</label>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- *** -->
-                    <div class="row g-1 mb-1" id="entrada_container">
-                        <div class="form-floating col-6">
-                            <input type="date" class="form-control" id="id_data_entrada" name="data_entrada" value="">
-                            <label for="id_data_entrada">Entrada</label>
-                        </div>
-                        <div class="form-floating col-6">
-                            <input type="time" class="form-control" id="id_hora_entrada" name="hora_entrada" value="">
-                            <label for="id_hora_entrada">Hora</label>
-                        </div>
-                        <div class="form-floating col-12">
-                            <input type="number" class="form-control" id="id_km_entrada" name="km_entrada" value="" placeholder=" ">
-                            <label for="id_km_entrada">Km Entrada</label>
-                        </div>
-                    </div>
-                    <div class="row g-1 d-none mt-2 mb-1" id="saida_container">
-                        <div class="bg-body-tertiary px-3 py-2 my-1 rounded">
-                            <p class="m-0"><span class="fw-bold text-purple" id="ocupante_tipo"></span>: <span id="ocupante_nome"></span></p>
-                            <p class="m-0" id="ocupante_veiculo"></p>
-                            <p class="m-0">Entrada: <span id="ocupante_entrada"></span></p>
-                        </div>
-                        <div class="form-floating col-6">
-                            <input type="date" class="form-control" id="id_data_saida" name="data_saida" value="">
-                            <label for="id_data_saida">Saida</label>
-                        </div>
-                        <div class="form-floating col-6">
-                            <input type="time" class="form-control" id="id_hora_saida" name="hora_saida" value="">
-                            <label for="id_hora_saida">Hora</label>
-                        </div>
-                        <div class="form-floating col-12">
-                            <input type="number" class="form-control" id="id_km_saida" name="km_saida" value="" placeholder=" ">
-                            <label for="id_km_saida">Km Saida</label>
-                        </div>
-                    </div>
-                    <div class="row" id="detalhe_container">
-                        <div class="mb-1 col-12">
-                            <textarea class="form-control" name="detalhe" id="id_detalhe" placeholder="Detalhe"></textarea>
-                        </div>
-                    </div>
-                    
                     <div class="row mt-2">
                         <div class="col text-end">
                             <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
@@ -249,6 +253,7 @@
     const ocupante_nome = document.getElementById("ocupante_nome");
     const ocupante_veiculo = document.getElementById("ocupante_veiculo");
     const ocupante_entrada = document.getElementById("ocupante_entrada");
+    const ocupante_foto = document.getElementById("ocupante_foto");
     
     dateToday({ // Inicia o modal de alocacao com a data atual no campo data_entrada
         target: document.getElementById('id_data_entrada'),
@@ -368,10 +373,11 @@
     }
 
     function getOcupante(vaga){
-        ocupante_tipo.innerHTML = '';
-        ocupante_nome.innerHTML = '';
+        ocupante_tipo.innerHTML = 'CARREGANDO';
+        ocupante_nome.innerHTML = 'Aguarde....';
         ocupante_veiculo.innerHTML = '';
         ocupante_entrada.innerHTML = '';
+        ocupante_foto.src = '{% static "img/default_user.jpg" %}';
         let xhttp_ocupante = new XMLHttpRequest();
         xhttp_ocupante.onreadystatechange = function() {
             if(this.readyState == 4 && this.status == 200){
@@ -385,6 +391,9 @@
                     ocupante_nome.innerHTML = dados.nome;
                     ocupante_veiculo.innerHTML = `${dados.veiculo}<b class="px-2">${dados.placa}</b>${dados.cor}`;
                     ocupante_entrada.innerHTML = `<b class="pe-2">${dados.data_entrada}</b> <b class="pe-2">${dados.hora_entrada}</b>`;
+                    if(dados.foto){
+                        ocupante_foto.src = dados.foto;
+                    }
                 }
             }
         };

@@ -189,6 +189,9 @@ def registro_add(request):
                 if sentido == 'entrada' and tipo == 'funcionario' and RegistroFuncionario.objects.filter(veiculo=registro.veiculo, data_saida=None).exists():
                     messages.error(request,f'<b>Atenção:</b> Veículo já alocado <b>em outra vaga</b>, operação cancelada')
                     return redirect('portaria_movimentacao')
+                elif sentido == 'entrada' and tipo == 'visitante' and RegistroVisitante.objects.filter(visitante=registro.visitante, data_saida=None).exists():
+                    messages.error(request,f'<b>Atenção:</b> Visitante já alocado <b>em outra vaga</b>, operação cancelada')
+                    return redirect('portaria_movimentacao')
                 vaga = registro.vaga
                 if sentido == 'entrada':
                     retorno = vaga.reservar() # Marca vaga como ocupada (se possivel, caso nao gera [False, 'msg...'] como retorno)
@@ -568,6 +571,9 @@ def get_ocupante(request):
             item_dict['cor'] = ocupante.veiculo.cor
             item_dict['placa'] = ocupante.veiculo.placa
             item_dict['empresa'] = ocupante.veiculo.funcionario.empresa.nome
+            if ocupante.veiculo.funcionario.foto:
+                item_dict['foto'] = ocupante.veiculo.funcionario.foto_url()
+
         if isinstance(ocupante, RegistroVisitante):
             item_dict['tipo'] = 'VISITANTE'
             item_dict['nome'] = ocupante.visitante.nome
@@ -575,10 +581,12 @@ def get_ocupante(request):
             item_dict['cor'] = ocupante.cor
             item_dict['placa'] = ocupante.placa
             item_dict['empresa'] = ocupante.visitante.empresa
+            if ocupante.visitante.foto:
+                item_dict['foto'] = ocupante.visitante.foto_url()
         
         item_dict['data_entrada'] = ocupante.data_entrada.strftime("%d/%m/%Y")
         item_dict['hora_entrada'] = ocupante.hora_entrada.strftime("%H:%M")
-        
+
         dataJSON = json_dumps(item_dict)
         return HttpResponse(dataJSON)
     except:

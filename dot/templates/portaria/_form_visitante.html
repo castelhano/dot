@@ -7,21 +7,15 @@
             {% else %}
             <img src="{% static 'img/default_user.jpg' %}" class="widget-thumb-img pointer" style="min-width: 110px;" onclick="photo.modal.show();" id="visitanteFoto" alt="Foto Visitante">
             {% endif %}
-            <!-- <div class="widget-thumb-controls ms-2 ms-lg-0">
-                <div class="row g-0">
-                    <div class="col"> -->
-                        <div class="d-block d-lg-grid mt-0 mt-lg-2 ms-2 ms-lg-0">
-                            {% if not visitante %}
-                            <a class="btn btn-sm btn-light px-4 px-lg-0 disabled">NOVO</a>
-                            {% elif visitante.bloqueado %}
-                            <a class="btn btn-sm btn-success px-4 px-lg-0 disabled">BLOQUEADO</a>
-                            {% else %}
-                            <a class="btn btn-sm btn-warning px-4 px-lg-0 disabled">ATIVO</a>
-                            {% endif %}
-                        </div>
-                    <!-- </div>
-                </div>
-            </div>       -->
+            <div class="d-block d-lg-grid mt-0 mt-lg-2 ms-2 ms-lg-0">
+                {% if not visitante %}
+                <a class="btn btn-sm btn-light px-4 px-lg-0 disabled">NOVO</a>
+                {% elif visitante.bloqueado %}
+                <a class="btn btn-sm btn-success px-4 px-lg-0 disabled">BLOQUEADO</a>
+                {% else %}
+                <a class="btn btn-sm btn-warning px-4 px-lg-0 disabled">ATIVO</a>
+                {% endif %}
+            </div>
         </div>
         <div class="col-lg-8">
             <input type="hidden" name="foto_data_url" id="id_foto_data_url">
