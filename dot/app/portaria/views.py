@@ -564,6 +564,22 @@ def get_ocupante(request):
         if isinstance(ocupante, RegistroFuncionario):
             item_dict['tipo'] = 'FUNCIONARIO'
             item_dict['nome'] = ocupante.veiculo.funcionario.nome
-            # PAREI AQUI ********************************************
+            item_dict['veiculo'] = ocupante.veiculo.modelo
+            item_dict['cor'] = ocupante.veiculo.cor
+            item_dict['placa'] = ocupante.veiculo.placa
+            item_dict['empresa'] = ocupante.veiculo.funcionario.empresa.nome
         if isinstance(ocupante, RegistroVisitante):
-            pass
+            item_dict['tipo'] = 'VISITANTE'
+            item_dict['nome'] = ocupante.visitante.nome
+            item_dict['veiculo'] = ocupante.modelo
+            item_dict['cor'] = ocupante.cor
+            item_dict['placa'] = ocupante.placa
+            item_dict['empresa'] = ocupante.visitante.empresa
+        
+        item_dict['data_entrada'] = ocupante.data_entrada.strftime("%d/%m/%Y")
+        item_dict['hora_entrada'] = ocupante.hora_entrada.strftime("%H:%M")
+        
+        dataJSON = json_dumps(item_dict)
+        return HttpResponse(dataJSON)
+    except:
+        return HttpResponse('')
