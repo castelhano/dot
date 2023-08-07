@@ -530,16 +530,10 @@ def get_visitante(request):
     try:
         visitante = Visitante.objects.get(cpf=request.GET['cpf'])
         item_dict = vars(visitante) # Gera lista com atributos do visitante
+        item_dict['foto'] = visitante.foto_url()
         if '_state' in item_dict: del item_dict['_state'] # Remove _state do dict (se existir)
-        # del item_dict['valido_ate'] # Remove data de validade
         dataJSON = json_dumps(item_dict)
         return HttpResponse(dataJSON)
-        # visitante_key = request.GET.get('visitante_key',None)
-        # if len(visitante_key) < 14:
-        # else:
-        #     visitante = Visitante.objects.get(cpf=visitante_key)
-        # url = str(visitante.foto.url) if visitante.foto else ''
-        # return HttpResponse(str(visitante.id) + ';' + visitante.nome + ';' + str(not visitante.bloqueado) + ';' + url)
     except:
         return HttpResponse('')
 

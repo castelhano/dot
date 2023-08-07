@@ -255,6 +255,8 @@
     const ocupante_entrada = document.getElementById("ocupante_entrada");
     const ocupante_foto = document.getElementById("ocupante_foto");
     
+    const default_foto_path = '{% static "img/default_user.jpg" %}';
+    
     dateToday({ // Inicia o modal de alocacao com a data atual no campo data_entrada
         target: document.getElementById('id_data_entrada'),
         native: true
@@ -365,6 +367,9 @@
                         visitante_detalhe.classList.remove('is-invalid');
                         visitante.value = dados.id;
                     }
+                    if(dados.foto){
+                        ocupante_foto.src = dados.foto;
+                    }
                 }
             }
         };
@@ -377,7 +382,7 @@
         ocupante_nome.innerHTML = 'Aguarde....';
         ocupante_veiculo.innerHTML = '';
         ocupante_entrada.innerHTML = '';
-        ocupante_foto.src = '{% static "img/default_user.jpg" %}';
+        ocupante_foto.src = default_foto_path;
         let xhttp_ocupante = new XMLHttpRequest();
         xhttp_ocupante.onreadystatechange = function() {
             if(this.readyState == 4 && this.status == 200){
