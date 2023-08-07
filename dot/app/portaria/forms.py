@@ -1,6 +1,5 @@
 from django import forms
 from .models import Veiculo, Area, Vaga, Visitante, RegistroFuncionario, RegistroVisitante
-# from django.contrib.auth.models import User
 from datetime import datetime, date, timedelta
 
 

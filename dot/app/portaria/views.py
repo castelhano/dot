@@ -545,6 +545,8 @@ def get_veiculo(request):
         item_dict = vars(veiculo) # Gera lista com atributos do veiculo
         item_dict['status'] = 'ATIVO' if veiculo.ativo() else 'VENCIDO'
         item_dict['funcionario'] = veiculo.funcionario.nome
+        if veiculo.funcionario.foto:
+            item_dict['foto'] = veiculo.funcionario.foto_url()
         if '_state' in item_dict: del item_dict['_state'] # Remove _state do dict (se existir)
         del item_dict['valido_ate'] # Remove data de validade
         dataJSON = json_dumps(item_dict)
@@ -560,6 +562,7 @@ def get_ocupante(request):
         item_dict = {}
         if isinstance(ocupante, RegistroFuncionario):
             item_dict['tipo'] = 'FUNCIONARIO'
+            item_dict['matricula'] = ocupante.veiculo.funcionario.matricula
             item_dict['nome'] = ocupante.veiculo.funcionario.nome
             item_dict['veiculo'] = ocupante.veiculo.modelo
             item_dict['cor'] = ocupante.veiculo.cor
