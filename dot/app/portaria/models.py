@@ -62,6 +62,13 @@ class Vaga(models.Model):
             return RegistroFuncionario.objects.filter(vaga=self,data_saida=None).get()
         if RegistroVisitante.objects.filter(vaga=self,data_saida=None).exists():
             return RegistroVisitante.objects.filter(vaga=self,data_saida=None).get()
+    def ocupante_abbr(self):
+        if not self.ocupada:
+            return None
+        if RegistroFuncionario.objects.filter(vaga=self,data_saida=None).exists():
+            return RegistroFuncionario.objects.filter(vaga=self,data_saida=None).get().veiculo.funcionario.nome.split(' ')[0]
+        if RegistroVisitante.objects.filter(vaga=self,data_saida=None).exists():
+            return RegistroVisitante.objects.filter(vaga=self,data_saida=None).get().visitante.nome.split(' ')[0]
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='portaria.vaga',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)

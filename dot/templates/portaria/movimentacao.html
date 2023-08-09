@@ -17,6 +17,7 @@
         user-select: none;
         border-bottom: 4px solid var(--bs-border-color)!important;
     }
+    .vaga *{pointer-events: none}
     .vaga-inativa{background-color: var(--bs-danger-bg-subtle)!important;}
     .vaga-ocupada{background-color: var(--bs-warning-bg-subtle)!important;}
     .vaga-icon{
@@ -53,6 +54,8 @@
             </div>
             <div class="col-auto">
                 <a id="clear" href="{% url 'portaria_movimentacao' %}">Atualizar</a>
+                <small class="text-secondary">|</small>
+                <a href="#" onclick="urlFilterToogle('detalhado', ['true','false'])">{% if request.GET.detalhado == 'true' %}Ocultar nomes{% else %}Exibir nomes{% endif %}</a>
             </div>
         </div>
         <div class="tab-pane fade show active" id="base" role="tabpanel">
@@ -64,7 +67,10 @@
                         {% for vaga in area.vagas_ativas %}
                         <h6 data-id="{{vaga.id|safe}}" data-status="{{vaga.ocupada|yesno:'ocupada,livre'}}" class="vaga border rounded p-4 {{vaga.inativa|yesno:'vaga-inativa ,'}}vaga-{{vaga.ocupada|yesno:'ocupada,livre'}} bg-body-secondary" title="{{vaga.detalhe}}" onclick="vagaOnclick(event)">
                             {% if vaga.fixa %}<i class="vaga-icon fas fa-thumbtack"></i>{% endif %}
-                            {{vaga.codigo}}
+                            <div>{{vaga.codigo}}</div>
+                            {% if request.GET.detalhado == 'true' %}
+                            <small class="fw-normal fs-8">{{vaga.ocupante_abbr|default:'--'}}</small>
+                            {% endif %}
                         </h6>
                         {% empty %}
                         <small>Nenhuma vaga</small>
@@ -96,11 +102,11 @@
                             <div id="controls_container">
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="tipo" id="optFuncionario" value="funcionario" onclick="switchTipo('f')" checked>
-                                    <label class="form-check-label" for="optFuncionario">Funcionário</label>
+                                    <label class="form-check-label" for="optFuncionario" title="Ctrl + &larr;">Funcionário</label>
                                 </div>
                                 <div class="form-check form-check-inline mt-2">
                                     <input class="form-check-input" type="radio" name="tipo" id="optVisitante" value="visitante" onclick="switchTipo('v')">
-                                    <label class="form-check-label" for="optVisitante">Visitante</label>
+                                    <label class="form-check-label" for="optVisitante" title="Ctrl + &rarr;">Visitante</label>
                                 </div>
                             </div>
                             <div id="funcionario_container">
@@ -213,6 +219,7 @@
 
 {% block add_script_src %}
 <script src="{% static 'js/vendor/mask.js' %}"></script>
+<script src="{% static 'js/url.js' %}"></script>
 {% endblock %}
 
 <script>
@@ -222,6 +229,18 @@
     SHORTCUT_MAP['gTFF'] = (ev) => {
         if(document.getElementById('modal_registro').classList.contains('show')){
             document.getElementById('modal_registro_submit').click();
+        }
+    }
+    SHORTCUT_MAP['arrowrightFTF'] = (ev) => {
+        if(document.getElementById('modal_registro').classList.contains('show')){
+            document.getElementById('optVisitante').click();
+            document.getElementById('id_cpf').focus();
+        }
+    }
+    SHORTCUT_MAP['arrowleftFTF'] = (ev) => {
+        if(document.getElementById('modal_registro').classList.contains('show')){
+            document.getElementById('optFuncionario').click();
+            document.getElementById('id_placa_consulta').focus();
         }
     }
     
@@ -430,11 +449,15 @@
             funcionario_container.classList.remove('d-none');
             visitante_container.classList.add('d-none');
         }
+
+        // Ao mudar tipo, limpa remove classe de inputs com erro (caso exista), 
+        // necessario para evitar inconsistencia ao mover foco no metodo onsubmit do form
+        document.querySelectorAll('input.is-invalid').forEach((el) => {el.classList.remove('is-invalid');})
     }
 
     document.getElementById('vaga_alocar_form').onsubmit = () => { // Faz validação dos dados do form antes de enviar
         if(registro_sentido.value == 'saida'){return true;} // Nao eh necessario validacao para registro de saida
-        if(optFuncionario.checked){ // Se funcionario checa se veiculo ja foi consultado e esta devidamente setado
+        if(optFuncionario.checked){ // Se funcionario, checa se veiculo ja foi consultado e esta devidamente setado
             if(veiculo.value == ''){
                 modal_registro.hide();
                 dotAlert('warning', '<b>Alerta:</b> Informe os dados do veiculo do funcionário', false)
@@ -442,29 +465,25 @@
             }
             return true;
         }
-        else{ // Se visitante checa se visitante foi carregado, e informado dados referente ao carro
+        else{ // Se visitante, checa se visitante foi carregado, e informado dados referente ao carro
             let has_error = false;
             if(visitante.value == ''){
                 cpf.classList.add('is-invalid');
-                // cpf.focus()
                 has_error = true;
             }
             if(visitante_modelo.value.trim() == ''){
                 visitante_modelo.classList.add('is-invalid');
-                // visitante_modelo.focus()
                 has_error = true;
             }
             if(visitante_cor.value.trim() == ''){
                 visitante_cor.classList.add('is-invalid');
-                // visitante_cor.focus()
                 has_error = true;
             }
             if(visitante_placa.value.trim().length < 8){
                 visitante_placa.classList.add('is-invalid');
-                // visitante_placa.focus()
                 has_error = true;
             }
-            if(has_error){
+            if(has_error){ // Se verificado algum erro, move foco para primeiro campo com erro identificado
                 try {document.querySelector('input.is-invalid').focus()} catch(e) {}
                 return false;
             }
