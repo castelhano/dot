@@ -76,7 +76,7 @@ class Vaga(models.Model):
         permissions = [
             ("view_registro", "Visualizar registro"),
             ("add_registro", "Adicionar registro"),
-            ("update_registro", "Atualizar registro"),
+            ("change_registro", "Atualizar registro"),
             ("delete_registro", "Excluir registro"),
         ]
     

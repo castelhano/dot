@@ -39,15 +39,22 @@ def visitantes(request):
 @login_required
 @permission_required('portaria.view_registro', login_url="/handler/403")
 def registros(request):
-    tipo = request.GET.get('tipo', None)
-    if not request.user.has_perm(f'portaria.view_registro{tipo}'):
-        return redirect('handler', 403)
-    target_id = request.GET.get('target_id', None)
-    if tipo == 'funcionario':
-        registros = RegistroFuncionario.objects.filter(veiculo__funcionario__id=target_id).order_by('-data_entrada','-hora_entrada')
-    elif tipo == 'visitante':
-        registros = RegistroVisitante.objects.filter(visitante__id=target_id).order_by('-data_entrada','-hora_entrada')
-    return render(request,'portaria/registros.html', {'registros' : registros})    
+    ativo = request.GET.get('ativo', True)  # Se True (ou nao informado), exibe apenas os registros sem saida (ainda ativos)
+    tipo = request.GET.get('tipo', None)     # Recebe f (default) para registro de funcionario ou v para visitante 
+    qs = {}
+    if not tipo or tipo == 'f':
+        qs['registrosFuncionario'] = RegistroFuncionario.objects.filter(data_saida=None).order_by('data_entrada','hora_entrada')
+    if not tipo or tipo == 'v':
+        qs['registrosVisitante'] = RegistroVisitante.objects.filter(data_saida=None).order_by('data_entrada','hora_entrada')
+    
+    # if not request.user.has_perm(f'portaria.view_registro{tipo}'):
+    #     return redirect('handler', 403)
+    # target_id = request.GET.get('target_id', None)
+    # if tipo == 'funcionario':
+    #     registros = RegistroFuncionario.objects.filter(veiculo__funcionario__id=target_id).order_by('-data_entrada','-hora_entrada')
+    # elif tipo == 'visitante':
+    #     registros = RegistroVisitante.objects.filter(visitante__id=target_id).order_by('-data_entrada','-hora_entrada')
+    return render(request,'portaria/registros.html', qs)    
         
 # METODOS ADD
 @login_required
@@ -530,7 +537,10 @@ def get_visitante(request):
     try:
         visitante = Visitante.objects.get(cpf=request.GET['cpf'])
         item_dict = vars(visitante) # Gera lista com atributos do visitante
-        item_dict['foto'] = visitante.foto_url()
+        if visitante.foto:
+            item_dict['foto'] = visitante.foto_url()
+        else:
+            del item_dict['foto']
         if '_state' in item_dict: del item_dict['_state'] # Remove _state do dict (se existir)
         dataJSON = json_dumps(item_dict)
         return HttpResponse(dataJSON)

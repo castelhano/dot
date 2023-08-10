@@ -80,6 +80,8 @@ class EntradaVisitanteForm(forms.ModelForm):
     hora_entrada = forms.TimeField(error_messages={'required': 'Informe a hora de entrada'}, widget=forms.TextInput(attrs={'class':'form-control','type':'time'}))
     km_entrada = forms.IntegerField(required=False,initial=0, widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':'0','max':'9999999','onfocus':'this.select()'}))
     detalhe = forms.CharField(required=False, max_length=200, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
+    def clean_placa(self):
+        return self.cleaned_data['placa'].upper()
 
 class SaidaVisitanteForm(forms.ModelForm):
     class Meta:

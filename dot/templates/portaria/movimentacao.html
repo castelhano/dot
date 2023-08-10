@@ -45,14 +45,15 @@
                     {% if perms.portaria.view_vaga %}<li><a class="dropdown-item" href="{% url 'portaria_vagas' %}"><i class="fas fa-fw fa-th"></i> Vagas</a></li>{% endif %}
                 </ul>
             </li>
+            <li class="nav-item"><a id="search" class="nav-link" href="{% url 'portaria_registros' %}" title="Pesquisar - Ctrl K"><i class="fas fa-search"></i></a></li>
         </ul>
     </div>
     <div class="card-body tab-content">
         <div class="row">
-            <div class="col">
-                <h5 class="card-title mb-3">Controle de Portaria</h5>
+            <div class="col-lg">
+                <h5 class="card-title mb-lg-3">Controle de Portaria</h5>
             </div>
-            <div class="col-auto">
+            <div class="col-lg-auto mb-3 mb-lg-0">
                 <a id="clear" href="{% url 'portaria_movimentacao' %}">Atualizar</a>
                 <small class="text-secondary">|</small>
                 <a href="#" onclick="urlFilterToogle('detalhado', ['true','false'])">{% if request.GET.detalhado == 'true' %}Ocultar nomes{% else %}Exibir nomes{% endif %}</a>
@@ -404,6 +405,7 @@
                     if(dados.foto){
                         ocupante_foto.src = dados.foto;
                     }
+                    else{ocupante_foto.src = default_foto_path;}
                 }
             }
         };
