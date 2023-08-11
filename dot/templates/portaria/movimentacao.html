@@ -197,7 +197,7 @@
                             </div>
                         </div>
                         <div class="col-lg-auto bg-dark-light bg-gradient rounded p-2 widget-thumb-container order-1 order-lg-2">
-                            <img src="{% static 'img/default_user.jpg' %}" class="widget-thumb-img" style="min-width: 110px;" id="ocupante_foto">
+                            <img src="{% static 'img/default_user.png' %}" class="widget-thumb-img" style="min-width: 110px;" id="ocupante_foto">
                         </div>
                     </div>
                     <div class="row mt-2">
@@ -286,7 +286,7 @@
     const ocupante_entrada = document.getElementById("ocupante_entrada");
     const ocupante_foto = document.getElementById("ocupante_foto");
     
-    const default_foto_path = '{% static "img/default_user.jpg" %}';
+    const default_foto_path = '{% static "img/default_user.png" %}';
     
     dateToday({ // Inicia o modal de alocacao com a data atual no campo data_entrada
         target: document.getElementById('id_data_entrada'),
@@ -365,6 +365,7 @@
                     if(dados.foto){
                         ocupante_foto.src = dados.foto;
                     }
+                    else{ocupante_foto.src = default_foto_path;}
                 }
             }
         };

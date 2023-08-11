@@ -23,19 +23,19 @@
         <h5 class="card-title">Portaria: <b class="text-purple">Registros</b></h5>
         <div class="tab-pane fade show active" id="base" role="tabpanel">
             <div class="row">
-                <div class="col">
+                <div class="col-lg order-2 order-lg-1">
                     <table id="main_table" class="table border table-striped table-hover">
                         <thead>
                             <tr>
                                 <th>Vaga</th>
                                 <th>Tipo</th>
                                 <th>Veiculo</th>
-                                <th>Cor</th>
-                                <th>Placa</th>
-                                <th>Empresa</th>
-                                <th>Nome</th>
-                                <th>Entrada</th>
-                                <th>Saida</th>
+                                <th class="d-none d-md-table-cell">Cor</th>
+                                <th class="d-none d-md-table-cell">Placa</th>
+                                <th class="d-none d-lg-table-cell">Empresa</th>
+                                <th class="d-none d-lg-table-cell">Nome</th>
+                                <th class="d-none d-lg-table-cell">Entrada</th>
+                                <th class="d-none d-lg-table-cell">Saida</th>
                                 {% if perms.portaria.change_registro %}
                                 <th>&nbsp;</th>
                                 {% endif %}
@@ -45,14 +45,14 @@
                             {% for registro in registrosFuncionario %}
                             <tr>
                                 <td>{{registro.vaga.codigo}}</td>
-                                <td><span class="text-orange">FUNCIONARIO</span></td>
+                                <td><span class="text-orange">F<span class="d-none d-lg-inline">UNCIONARIO</span></span></td>
                                 <td>{{registro.veiculo.modelo}}</td>
-                                <td>{{registro.veiculo.cor}}</td>
-                                <td>{{registro.veiculo.placa}}</td>
-                                <td>{{registro.veiculo.funcionario.empresa.nome}}</td>
-                                <td>{{registro.veiculo.funcionario.nome}} [{{registro.veiculo.funcionario.matricula}}]</td>
-                                <td>{{registro.data_entrada|date:'d/m/y'}} {{registro.hora_entrada}}</td>
-                                <td>{{registro.data_saida|date:'d/m/y'|default:'--'}} {{registro.hora_saida|default:'--'}}</td>
+                                <td class="d-none d-md-table-cell">{{registro.veiculo.cor}}</td>
+                                <td class="d-none d-md-table-cell">{{registro.veiculo.placa}}</td>
+                                <td class="d-none d-lg-table-cell">{{registro.veiculo.funcionario.empresa.nome}}</td>
+                                <td class="d-none d-lg-table-cell">{{registro.veiculo.funcionario.nome}} [{{registro.veiculo.funcionario.matricula}}]</td>
+                                <td class="d-none d-lg-table-cell">{{registro.data_entrada|date:'d/m/y'}} {{registro.hora_entrada}}</td>
+                                <td class="d-none d-lg-table-cell">{{registro.data_saida|date:'d/m/y'|default:'--'}} {{registro.hora_saida|default:'--'}}</td>
                                 {% if perms.portaria.change_registro %}
                                 <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="url"><i class="fas fa-pen"></i></a></td>
                                 {% endif %}
@@ -61,14 +61,14 @@
                             {% for registro in registrosVisitante %}
                             <tr>
                                 <td>{{registro.vaga.codigo}}</td>
-                                <td><span class="text-purple">VISITANTE</span></td>
+                                <td><span class="text-purple">V<span class="d-none d-lg-inline">ISITANTE</span></span></td>
                                 <td>{{registro.modelo}}</td>
-                                <td>{{registro.cor}}</td>
-                                <td>{{registro.placa}}</td>
-                                <td>{{registro.visitante.empresa}}</td>
-                                <td>{{registro.visitante.nome}}</td>
-                                <td>{{registro.data_entrada|date:'d/m/y'}} {{registro.hora_entrada}}</td>
-                                <td>{{registro.data_saida|date:'d/m/y'|default:'--'}} {{registro.hora_saida|default:'--'}}</td>
+                                <td class="d-none d-md-table-cell">{{registro.cor}}</td>
+                                <td class="d-none d-md-table-cell">{{registro.placa}}</td>
+                                <td class="d-none d-lg-table-cell">{{registro.visitante.empresa}}</td>
+                                <td class="d-none d-lg-table-cell">{{registro.visitante.nome}}</td>
+                                <td class="d-none d-lg-table-cell">{{registro.data_entrada|date:'d/m/y'}} {{registro.hora_entrada}}</td>
+                                <td class="d-none d-lg-table-cell">{{registro.data_saida|date:'d/m/y'|default:'--'}} {{registro.hora_saida|default:'--'}}</td>
                                 {% if perms.portaria.change_registro %}
                                 <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="url"><i class="fas fa-pen"></i></a></td>
                                 {% endif %}
@@ -81,15 +81,14 @@
                     <div class="filter-container">
                         <h6 class="text-body-secondary d-flex justify-content-between">Filtros:<a class="text-body-secondary text-decoration-none fs-8" id="clear" href="{% url 'portaria_registros' %}">Limpar</a></h6>
                         <ul class="list-unstyled">
-                            <li><a href="#" id="id_vaga"><i class="fas fa-map-marked-alt fa-fw me-2"></i>Vaga</a></li>
-                            <li><a href="#" id="id_funcionario">Funcionário</a></li>
-                            <li><a href="#" id="id_visitante">Visitante</a></li>
+                            <li><a href="#" onclick="showSearchModal('vaga')"><i class="fas fa-map-marked-alt fa-fw me-2"></i>Vaga</a></li>
+                            <li><a href="#" onclick="showSearchModal('funcionario')"><i class="fas fa-user fa-fw me-2"></i>Funcionário</a></li>
+                            <li><a href="#" onclick="showSearchModal('visitante')"><i class="fas fa-user-tag fa-fw me-2"></i>Visitante</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="tab-pane fade" id="param" role="tabpanel">param</div>
     </div>
 </div>
 
@@ -102,19 +101,29 @@
             </div>
             <div class="modal-body">
                 <form id="portaria_form" action="url" method="POST" autocomplete="off">
-                {% csrf_token %}
-                    <div class="row g-1">
-                        <div class="form-floating mb-1 col-lg-12">
-                            <input type="text" class="form-control" name="pesquisa" value="" id="id_pesquisa" placeholder="">
-                            <label for="id_pesquisa">Termo pesquisa</label>
+                    {% csrf_token %}
+                    <div data-container class="d-none" id="vaga-container">
+                        <div class="row g-1">
+                            <div class="form-floating mb-lg-1 col-lg-auto" style="width: 150px;">
+                                <select class="form-select" id="id_vaga" name="vaga"></select>
+                                <label for="id_vaga">Vaga</label>
+                            </div>
+                            <div class="form-floating mb-1 col d-none d-lg-block">
+                                <input type="text" class="form-control" disabled>
+                            </div>
                         </div>
+                    </div>
+                    <div data-container class="" id="funcionario-container">
+                        {% include "_component/field/funcionario.html" with required=False incluir_inativos=False mostrar_cargo=False %}
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col text-end"><button type="submit" class="btn btn-warning">Pesquisar</button></div>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
-
 {% endblock%}
 
 {% block add_script_src %}
@@ -136,5 +145,31 @@ SHORTCUT_MAP['arrowleftFTF'] = () => {table.previousPage()}
 SHORTCUT_MAP['arrowdownFTF'] = () => {table.nextRow()}
 SHORTCUT_MAP['arrowupFTF'] = () => {table.previousRow()}
 SHORTCUT_MAP['enterFTF'] = () => {table.enterRow()}
+
+const search_modal = new bootstrap.Modal(document.getElementById('search_modal'), {keyboard: true});
+
+function showSearchModal(tipo){
+    search_modal.show();
+}
+
+
+function getVagas() {
+    let vagas = document.getElementById("id_vaga");
+    vagas.innerHTML = '';
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if(this.readyState == 4 && this.status == 200){
+            if(this.responseText == '' || true){vagas.innerHTML = '<option value="">--</option>';}
+            else{
+                let obj = JSON.parse(this.responseText);
+                for(key in obj){vagas.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
+            }
+        }
+    };
+    xhttp.open("GET", "{% url 'portaria_get_vagas' %}", true);
+    xhttp.send();
+}
+getVagas();
+
 {% endblock %}
 </script>

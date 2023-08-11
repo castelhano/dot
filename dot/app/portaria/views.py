@@ -548,6 +548,18 @@ def get_visitante(request):
         return HttpResponse('')
 
 @login_required
+def get_vagas(request):
+    try:
+        vagas = Vaga.objects.filter(inativa=False)
+        item_dict = {}
+        for vaga in vagas:
+            item_dict[vaga.codigo] = vaga.id
+        dataJSON = json_dumps(item_dict)
+        return HttpResponse(dataJSON)
+    except:
+        return HttpResponse('')
+
+@login_required
 def get_veiculo(request):
     try:
         placa = request.GET.get('placa', None)

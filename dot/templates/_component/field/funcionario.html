@@ -7,7 +7,7 @@
     <input type="text" class="form-control" name="nome_funcionario" id="id_nome_funcionario" value="{{nome}}" disabled>
     <label for="id_nome_funcionario">Nome Funcionario</label>
   </div>
-  <div class="form-floating mb-1 col-4 d-none d-lg-block">
+  <div class="form-floating mb-1 col-4 {% if mostrar_cargo == None or mostrar_cargo == true %}d-none d-lg-block{% else %}d-none{% endif %}">
     <input type="text" class="form-control" name="cargo_funcionario" id="id_cargo_funcionario" value="{{cargo}}" disabled>
     <label for="id_cargo_funcionario">Cargo</label>
   </div>
