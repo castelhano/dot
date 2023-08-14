@@ -578,7 +578,7 @@ def get_veiculo(request):
 
 @login_required
 def get_ocupante(request):
-    try:
+    # try:
         vaga = Vaga.objects.get(id=request.GET['vaga'])
         ocupante = vaga.ocupante()
         item_dict = {}
@@ -590,6 +590,7 @@ def get_ocupante(request):
             item_dict['cor'] = ocupante.veiculo.cor
             item_dict['placa'] = ocupante.veiculo.placa
             item_dict['empresa'] = ocupante.veiculo.funcionario.empresa.nome
+            item_dict['km_entrada'] = ocupante.km_entrada
             if ocupante.veiculo.funcionario.foto:
                 item_dict['foto'] = ocupante.veiculo.funcionario.foto_url()
 
@@ -600,6 +601,7 @@ def get_ocupante(request):
             item_dict['cor'] = ocupante.cor
             item_dict['placa'] = ocupante.placa
             item_dict['empresa'] = ocupante.visitante.empresa
+            item_dict['km_entrada'] = ocupante.km_entrada
             if ocupante.visitante.foto:
                 item_dict['foto'] = ocupante.visitante.foto_url()
         
@@ -608,5 +610,5 @@ def get_ocupante(request):
 
         dataJSON = json_dumps(item_dict)
         return HttpResponse(dataJSON)
-    except:
-        return HttpResponse('')
+    # except:
+    #     return HttpResponse('')

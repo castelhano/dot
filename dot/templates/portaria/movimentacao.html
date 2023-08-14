@@ -166,7 +166,7 @@
                                     <label for="id_hora_entrada">Hora</label>
                                 </div>
                                 <div class="form-floating col-12">
-                                    <input type="number" class="form-control" id="id_km_entrada" name="km_entrada" value="" placeholder=" ">
+                                    <input type="text" class="form-control" id="id_km_entrada" name="km_entrada" value="" placeholder=" ">
                                     <label for="id_km_entrada">Km Entrada</label>
                                 </div>
                             </div>
@@ -251,6 +251,7 @@
     VMasker(document.getElementById("id_placa_consulta")).maskPattern('AAA-9S99');
     VMasker(document.getElementById("id_placa")).maskPattern('AAA-9S99');
     VMasker(document.getElementById("id_cpf")).maskPattern('999.999.999-99');
+    VMasker(document.getElementById("id_km_entrada")).maskMoney({delimiter: '.',precision:0});
 
     const canAdd = {{perms.portaria.add_registro|yesno:'true,false'}};
     const canChange = {{perms.portaria.change_registro|yesno:'true,false'}};
@@ -272,6 +273,8 @@
     const veiculo_detalhe = document.getElementById("id_veiculo_detalhe");
     const nome_funcionario = document.getElementById("id_nome_funcionario");
     const veiculo = document.getElementById("id_veiculo");
+    const km_entrada = document.getElementById("id_km_entrada");
+    const km_saida = document.getElementById("id_km_saida");
     
     const cpf = document.getElementById('id_cpf');
     const visitante_detalhe = document.getElementById("id_visitante_detalhe");
@@ -432,7 +435,7 @@
                     ocupante_tipo.innerHTML = dados.tipo;
                     ocupante_nome.innerHTML = dados.matricula ? `${dados.nome} [ <b>${dados.matricula}</b> ]` : dados.nome;
                     ocupante_veiculo.innerHTML = `${dados.veiculo}&nbsp;&nbsp;&nbsp;&nbsp;${dados.cor}&nbsp;&nbsp;&nbsp;&nbsp;<b>${dados.placa}</b>`;
-                    ocupante_entrada.innerHTML = `<b class="pe-2">${dados.data_entrada}</b> <b class="pe-2">${dados.hora_entrada}</b>`;
+                    ocupante_entrada.innerHTML = `<b class="pe-2">${dados.data_entrada}</b> <b class="pe-2">${dados.hora_entrada}</b> Km <b class="pe-2">${dados.km_entrada ? VMasker.toMoney(dados.km_entrada, {precision: 0, delimiter:'.'}) : '--'}</b>`;
                     if(dados.foto){
                         ocupante_foto.src = dados.foto;
                     }
@@ -466,6 +469,8 @@
                 dotAlert('warning', '<b>Alerta:</b> Informe os dados do veiculo do funcionário', false)
                 return false;
             }
+            km_entrada.value = km_entrada.value.replace('.','').replace('-','');
+            km_saida.value = km_saida.value.replace('.','').replace('-','');
             return true;
         }
         else{ // Se visitante, checa se visitante foi carregado, e informado dados referente ao carro

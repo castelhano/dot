@@ -1,6 +1,7 @@
 from django import forms
 from .models import Veiculo, Area, Vaga, Visitante, RegistroFuncionario, RegistroVisitante
 from datetime import datetime, date, timedelta
+from django.core.exceptions import ValidationError
 
 
 class VeiculoForm(forms.ModelForm):
@@ -13,7 +14,10 @@ class VeiculoForm(forms.ModelForm):
     valido_ate = forms.DateField(required=False, initial=date.today() + timedelta(days=30), widget=forms.TextInput(attrs={'class':'form-control bg-body-secondary','type':'date'}))
     km_inicial = forms.IntegerField(required=False,initial=0, widget=forms.TextInput(attrs={'class': 'form-control','type':'number','min':'0','max':'9999999','onfocus':'this.select()'}))
     def clean_placa(self):
-        return self.cleaned_data['placa'].upper()
+        data = self.cleaned_data["placa"]
+        if len(data) != 8:
+            raise ValidationError("<b>Placa</b> em formato Inválido")
+        return data.upper()
 
 class AreaForm(forms.ModelForm):
     class Meta:
@@ -50,6 +54,11 @@ class VisitanteForm(forms.ModelForm):
     foto = forms.ImageField(required=False)
     detalhe = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','style':'min-height:200px;','placeholder':'Detalhes'}))
     bloqueado = forms.BooleanField(required=False,initial=False,widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
+    def clean_cpf(self):
+        data = self.cleaned_data["cpf"]
+        if len(data) != 14:
+            raise ValidationError("<b>CPF</b> em formato Inválido")
+        return data
 
 class EntradaFuncionarioForm(forms.ModelForm):
     class Meta:
