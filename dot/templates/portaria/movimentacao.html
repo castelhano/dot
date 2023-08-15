@@ -6,8 +6,13 @@
     {% block style %}
     .area{
         display: flex;
-        gap: 12px;
+        flex-wrap: wrap;
+        column-gap: 12px;
+        row-gap: 6px;
         margin-bottom: 20px;
+    }
+    @media(max-width: 768px){
+        .area{column-gap: 8px;row-gap: 0px;}
     }
     .vaga{
         position: relative;
@@ -165,9 +170,13 @@
                                     <input type="time" class="form-control" id="id_hora_entrada" name="hora_entrada" value="">
                                     <label for="id_hora_entrada">Hora</label>
                                 </div>
-                                <div class="form-floating col-12">
+                                <div class="form-floating col-lg">
                                     <input type="text" class="form-control" id="id_km_entrada" name="km_entrada" value="" placeholder=" ">
                                     <label for="id_km_entrada">Km Entrada</label>
+                                </div>
+                                <div class="form-floating col-lg d-none" id="autorizado_por_container">
+                                    <input type="text" class="form-control" id="id_autorizado_por" name="autorizado_por" value="" placeholder=" ">
+                                    <label for="id_autorizado_por">Autorizado por</label>
                                 </div>
                             </div>
                             <div class="row g-1 d-none mt-2 mb-1" id="saida_container">
@@ -176,6 +185,7 @@
                                     <p class="m-0" id="ocupante_nome"></p>
                                     <p class="m-0" id="ocupante_veiculo"></p>
                                     <p class="m-0">Entrada: <span id="ocupante_entrada"></span></p>
+                                    <p class="m-0 text-secondary" id="ocupante_detalhe"></p>
                                 </div>
                                 <div class="form-floating col-6">
                                     <input type="date" class="form-control" id="id_data_saida" name="data_saida" value="">
@@ -264,6 +274,7 @@
     const saida_container = document.getElementById('saida_container');
     const controls_container = document.getElementById('controls_container');
     const detalhe_container = document.getElementById('detalhe_container');
+    const autorizado_por_container = document.getElementById('autorizado_por_container');
     
     const optFuncionario = document.getElementById('optFuncionario');
     const optVisitante = document.getElementById('optVisitante');
@@ -288,6 +299,7 @@
     const ocupante_veiculo = document.getElementById("ocupante_veiculo");
     const ocupante_entrada = document.getElementById("ocupante_entrada");
     const ocupante_foto = document.getElementById("ocupante_foto");
+    const ocupante_detalhe = document.getElementById("ocupante_detalhe");
     
     const default_foto_path = '{% static "img/default_user.png" %}';
     
@@ -432,10 +444,11 @@
                 }
                 else{
                     let dados = JSON.parse(this.responseText);
-                    ocupante_tipo.innerHTML = dados.tipo;
+                    ocupante_tipo.innerHTML = dados.autorizado_por ? `${dados.tipo} <span class="text-body ps-2 fs-6 fw-normal">[ ${dados.autorizado_por} ]</span>` : dados.tipo;
                     ocupante_nome.innerHTML = dados.matricula ? `${dados.nome} [ <b>${dados.matricula}</b> ]` : dados.nome;
                     ocupante_veiculo.innerHTML = `${dados.veiculo}&nbsp;&nbsp;&nbsp;&nbsp;${dados.cor}&nbsp;&nbsp;&nbsp;&nbsp;<b>${dados.placa}</b>`;
                     ocupante_entrada.innerHTML = `<b class="pe-2">${dados.data_entrada}</b> <b class="pe-2">${dados.hora_entrada}</b> Km <b class="pe-2">${dados.km_entrada ? VMasker.toMoney(dados.km_entrada, {precision: 0, delimiter:'.'}) : '--'}</b>`;
+                    ocupante_detalhe.innerHTML = dados.detalhe
                     if(dados.foto){
                         ocupante_foto.src = dados.foto;
                     }
@@ -450,10 +463,12 @@
         if(opt == 'v'){
             funcionario_container.classList.add('d-none');
             visitante_container.classList.remove('d-none');
+            autorizado_por_container.classList.remove('d-none');
         }
         else{
             funcionario_container.classList.remove('d-none');
             visitante_container.classList.add('d-none');
+            autorizado_por_container.classList.add('d-none');
         }
 
         // Ao mudar tipo, limpa remove classe de inputs com erro (caso exista), 

@@ -39,21 +39,27 @@ def visitantes(request):
 @login_required
 @permission_required('portaria.view_registro', login_url="/handler/403")
 def registros(request):
-    ativo = request.GET.get('ativo', True)  # Se True (ou nao informado), exibe apenas os registros sem saida (ainda ativos)
-    tipo = request.GET.get('tipo', None)     # Recebe f (default) para registro de funcionario ou v para visitante 
+    search_by = request.POST.get('search_by', None)     # vaga, funcionario ou visitante
     qs = {}
-    if not tipo or tipo == 'f':
-        qs['registrosFuncionario'] = RegistroFuncionario.objects.filter(data_saida=None).order_by('data_entrada','hora_entrada')
-    if not tipo or tipo == 'v':
-        qs['registrosVisitante'] = RegistroVisitante.objects.filter(data_saida=None).order_by('data_entrada','hora_entrada')
-    
-    # if not request.user.has_perm(f'portaria.view_registro{tipo}'):
-    #     return redirect('handler', 403)
-    # target_id = request.GET.get('target_id', None)
-    # if tipo == 'funcionario':
-    #     registros = RegistroFuncionario.objects.filter(veiculo__funcionario__id=target_id).order_by('-data_entrada','-hora_entrada')
-    # elif tipo == 'visitante':
-    #     registros = RegistroVisitante.objects.filter(visitante__id=target_id).order_by('-data_entrada','-hora_entrada')
+    qs['registrosFuncionario'] = RegistroFuncionario.objects.all().order_by('data_entrada','hora_entrada')
+    qs['registrosVisitante'] = RegistroVisitante.objects.all().order_by('data_entrada','hora_entrada')
+    if request.method == 'GET' and not search_by:
+        qs['registrosFuncionario'] = qs['registrosFuncionario'].filter(data_saida=None)
+        qs['registrosVisitante'] = qs['registrosVisitante'].filter(data_saida=None)
+    else:
+        if search_by == 'vaga':
+            qs['registrosFuncionario'] = qs['registrosFuncionario'].filter(vaga=request.POST['vaga'])
+            qs['registrosVisitante'] = qs['registrosVisitante'].filter(vaga=request.POST['vaga'])
+        elif search_by == 'funcionario':
+            qs['registrosFuncionario'] = qs['registrosFuncionario'].filter(veiculo__funcionario__id=request.POST['funcionario'])
+            qs['registrosVisitante'] = None
+        elif search_by == 'visitante':
+            qs['registrosFuncionario'] = None
+            qs['registrosVisitante'] = qs['registrosVisitante'].filter(visitante__id=request.POST['visitante'])
+        else:
+            qs['registrosFuncionario'] = None
+            qs['registrosVisitante'] = None
+            messages.error(request,'Atenção: Erro ao realizar consulta, se o erro persistir informe ao administrador do sistema')
     return render(request,'portaria/registros.html', qs)    
         
 # METODOS ADD
@@ -578,7 +584,7 @@ def get_veiculo(request):
 
 @login_required
 def get_ocupante(request):
-    # try:
+    try:
         vaga = Vaga.objects.get(id=request.GET['vaga'])
         ocupante = vaga.ocupante()
         item_dict = {}
@@ -601,14 +607,16 @@ def get_ocupante(request):
             item_dict['cor'] = ocupante.cor
             item_dict['placa'] = ocupante.placa
             item_dict['empresa'] = ocupante.visitante.empresa
+            item_dict['autorizado_por'] = ocupante.autorizado_por
             item_dict['km_entrada'] = ocupante.km_entrada
             if ocupante.visitante.foto:
                 item_dict['foto'] = ocupante.visitante.foto_url()
         
         item_dict['data_entrada'] = ocupante.data_entrada.strftime("%d/%m/%Y")
         item_dict['hora_entrada'] = ocupante.hora_entrada.strftime("%H:%M")
+        item_dict['detalhe'] = ocupante.detalhe
 
         dataJSON = json_dumps(item_dict)
         return HttpResponse(dataJSON)
-    # except:
-    #     return HttpResponse('')
+    except:
+        return HttpResponse('')

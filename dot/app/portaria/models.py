@@ -119,7 +119,7 @@ class Registro(models.Model):
         abstract = True
 
 class RegistroFuncionario(Registro):
-    veiculo = models.ForeignKey(Veiculo, on_delete=models.RESTRICT)
+    veiculo = models.ForeignKey(Veiculo, blank=True, null=True, on_delete=models.RESTRICT)
     def ultimas_alteracoes(self):
         logs = Log.objects.filter(modelo='portaria.registro_funcionario',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)

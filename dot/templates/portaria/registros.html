@@ -79,7 +79,7 @@
                 </div>
                 <div class="col-lg-auto ps-auto ps-lg-0 order-1 order-lg-2">
                     <div class="filter-container">
-                        <h6 class="text-body-secondary d-flex justify-content-between">Arquivo:<a class="text-body-secondary text-decoration-none fs-8" id="clear" href="{% url 'portaria_registros' %}">Limpar</a></h6>
+                        <h6 class="text-body-secondary d-flex justify-content-between">Antigos:<a class="text-body-secondary text-decoration-none fs-8" id="clear" href="{% url 'portaria_registros' %}">Limpar</a></h6>
                         <ul class="list-unstyled">
                             <li><a href="#" onclick="showSearchModal('vaga')"><i class="fas fa-map-marked-alt fa-fw me-2"></i>Vaga</a></li>
                             <li><a href="#" onclick="showSearchModal('funcionario')"><i class="fas fa-user fa-fw me-2"></i>Funcionário</a></li>
@@ -100,7 +100,7 @@
                 <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
             </div>
             <div class="modal-body">
-                <form id="portaria_form" action="url" method="POST" autocomplete="off">
+                <form id="portaria_form" action="{% url 'portaria_registros' %}" method="POST" autocomplete="off">
                     {% csrf_token %}
                     <div data-container class="d-none" id="vaga-container">
                         <div class="row g-1">
@@ -113,12 +113,27 @@
                             </div>
                         </div>
                     </div>
-                    <div data-container class="" id="funcionario-container">
+                    <div data-container class="d-none" id="funcionario-container">
+                        {% include "_component/field/empresa.html" %}
                         {% include "_component/field/funcionario.html" with required=False incluir_inativos=False mostrar_cargo=False %}
+                    </div>
+                    <div data-container class="d-none" id="visitante-container">
+                        <div class="row g-1 mt-2 mb-1">
+                            <div class="form-floating col-auto" style="max-width: 150px;">
+                                <input type="text" class="form-control" name="cpf" id="id_cpf" value="" placeholder="" onfocusout="getVisitante();">
+                                <label for="id_cpf">CPF</label>
+                            </div>
+                            <div class="form-floating col">
+                                <input type="text" class="form-control" name="visitante_detalhe" id="id_visitante_detalhe" value="" disabled>
+                                <label for="id_visitante_detalhe">Nome</label>
+                            </div>
+                            <input type="hidden" name="visitante" id="id_visitante" value="">
+                        </div>
                     </div>
                     <div class="row mt-2">
                         <div class="col text-end"><button type="submit" class="btn btn-warning">Pesquisar</button></div>
                     </div>
+                    <input type="hidden" name="search_by" id="id_search_by">
                 </form>
             </div>
         </div>
@@ -128,6 +143,7 @@
 
 {% block add_script_src %}
 <script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/vendor/mask.js' %}"></script>
 {% endblock %}
 
 
@@ -139,6 +155,8 @@ const table = new jsTable(document.getElementById('main_table'),{
     enablePaginate: true,
 });
 
+var TAB_ON_ENTER = true;
+
 SHORTCUT_MAP['fFTF'] = () => {table.filterInput.select()};
 SHORTCUT_MAP['arrowrightFTF'] = () => {table.nextPage()}
 SHORTCUT_MAP['arrowleftFTF'] = () => {table.previousPage()}
@@ -146,20 +164,49 @@ SHORTCUT_MAP['arrowdownFTF'] = () => {table.nextRow()}
 SHORTCUT_MAP['arrowupFTF'] = () => {table.previousRow()}
 SHORTCUT_MAP['enterFTF'] = () => {table.enterRow()}
 
+const search_by = document.getElementById('id_search_by');
+const cpf = document.getElementById('id_cpf');
+const empresa = document.getElementById('id_empresa');
+const matricula_funcionario = document.getElementById('id_matricula_funcionario');
+const visitante = document.getElementById('id_visitante');
+const visitante_detalhe = document.getElementById('id_visitante_detalhe');
+const vagas = document.getElementById("id_vaga");
+VMasker(cpf).maskPattern('999.999.999-99');
+
+const vaga_container = document.getElementById('vaga-container');
+const funcionario_container = document.getElementById('funcionario-container');
+const visitante_container = document.getElementById('visitante-container');
+
 const search_modal = new bootstrap.Modal(document.getElementById('search_modal'), {keyboard: true});
 
 function showSearchModal(tipo){
+    document.querySelectorAll('[data-container]').forEach((el)=>{el.classList.add('d-none')}); // Oculta todos os containers
+    search_by.value = tipo;
+    switch(tipo){
+        case 'vaga':
+            getVagas(); // Busca as vagas
+            vaga_container.classList.remove('d-none');
+            setTimeout(()=>{vagas.focus()}, 480);
+            break;
+        case 'funcionario':
+            funcionario_container.classList.remove('d-none');
+            setTimeout(()=>{empresa.focus()}, 480);
+            break;
+        case 'visitante':
+            visitante_container.classList.remove('d-none');
+            setTimeout(()=>{cpf.focus()}, 480);
+            break;
+    }
     search_modal.show();
 }
 
 
 function getVagas() {
-    let vagas = document.getElementById("id_vaga");
     vagas.innerHTML = '';
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if(this.readyState == 4 && this.status == 200){
-            if(this.responseText == '' || true){vagas.innerHTML = '<option value="">--</option>';}
+            if(this.responseText == ''){vagas.innerHTML = '<option value="">--</option>';}
             else{
                 let obj = JSON.parse(this.responseText);
                 for(key in obj){vagas.innerHTML += '<option value="' + obj[key] + '">' + key + '</option>';}
@@ -169,7 +216,46 @@ function getVagas() {
     xhttp.open("GET", "{% url 'portaria_get_vagas' %}", true);
     xhttp.send();
 }
-getVagas();
+
+function getVisitante(){
+    if(cpf.value.length == 0){return false;}
+    if(cpf.value.length < 14){
+        visitante_detalhe.value = 'CPF INVALIDO';
+        cpf.classList.add('is-invalid');
+        cpf.focus();
+        return false;
+    }
+    let xhttp_visitante = new XMLHttpRequest();
+    xhttp_visitante.onreadystatechange = function() {
+        if(this.readyState == 4 && this.status == 200){
+            if(this.responseText == ''){
+                cpf.classList.add('is-invalid');
+                visitante_detalhe.value = 'CPF não localizado';  
+                visitante.value = '';
+                cpf.select();
+            }
+            else{
+                cpf.classList.remove('is-invalid');
+                let dados = JSON.parse(this.responseText);
+                visitante_detalhe.value = dados.nome;
+                if(dados.bloqueado == 'True'){
+                    visitante.value = '';
+                    visitante_detalhe.classList.add('is-invalid');
+                    dotAlert('danger', 'Visitante <b>BLOQUEADO</b>')
+                    cpf.select();
+                }
+                else{
+                    visitante_detalhe.classList.remove('is-invalid');
+                    visitante.value = dados.id;
+                }
+            }
+        }
+    };
+    xhttp_visitante.open("GET", "{% url 'portaria_get_visitante' %}?cpf=" + cpf.value, true);
+    xhttp_visitante.send();  
+}
+
+
 
 {% endblock %}
 </script>

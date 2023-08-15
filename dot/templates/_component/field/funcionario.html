@@ -25,11 +25,11 @@
   
   
   function getFuncionario() {
-    empresa = document.getElementById('id_empresa');
-    matricula = document.getElementById('id_matricula_funcionario');
-    nome = document.getElementById("id_nome_funcionario");
-    cargo = document.getElementById("id_cargo_funcionario");
-    funcionario = document.getElementById("id_funcionario");
+    let empresa = document.getElementById('id_empresa');
+    let matricula = document.getElementById('id_matricula_funcionario');
+    let nome = document.getElementById("id_nome_funcionario");
+    let cargo = document.getElementById("id_cargo_funcionario");
+    let funcionario = document.getElementById("id_funcionario");
     if(matricula.value != ''){
       var xhttp_funcionario = new XMLHttpRequest();
     	xhttp_funcionario.onreadystatechange = function() {
