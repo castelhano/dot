@@ -66,26 +66,58 @@
         </div>
         <div class="tab-pane fade show active" id="base" role="tabpanel">
             <div class="row">
-                {% for area in areas %}
-                <div class="{{area.css_breakpoint}}">
-                    <span class="d-inline-block fs-5 fw-bold mb-2">{{area.nome}}</span>
-                    <div class="area">
-                        {% for vaga in area.vagas_ativas %}
-                        <h6 data-id="{{vaga.id|safe}}" data-status="{{vaga.ocupada|yesno:'ocupada,livre'}}" class="vaga border rounded p-4 {{vaga.inativa|yesno:'vaga-inativa ,'}}vaga-{{vaga.ocupada|yesno:'ocupada,livre'}} bg-body-secondary" title="{{vaga.detalhe}}" onclick="vagaOnclick(event)">
-                            {% if vaga.fixa %}<i class="vaga-icon fas fa-thumbtack"></i>{% endif %}
-                            <div>{{vaga.codigo}}</div>
-                            {% if request.GET.detalhado == 'true' %}
-                            <small class="fw-normal fs-8">{{vaga.ocupante_abbr|default:'--'}}</small>
-                            {% endif %}
-                        </h6>
+                <div class="col-lg order-2 order-lg-1">
+                    <div class="row">
+                        {% for area in areas %}
+                        <div class="{{area.css_breakpoint}}">
+                            <span class="d-inline-block fs-5 fw-bold mb-2">{{area.nome}}</span>
+                            <div class="area">
+                                {% for vaga in area.vagas_ativas %}
+                                <h6 data-id="{{vaga.id|safe}}" data-status="{{vaga.ocupada|yesno:'ocupada,livre'}}" class="vaga border rounded p-4 {{vaga.inativa|yesno:'vaga-inativa ,'}}vaga-{{vaga.ocupada|yesno:'ocupada,livre'}} bg-body-secondary" title="{{vaga.detalhe}}" onclick="vagaOnclick(event)">
+                                    {% if vaga.fixa %}<i class="vaga-icon fas fa-thumbtack"></i>{% endif %}
+                                    <div>{{vaga.codigo}}</div>
+                                    {% if request.GET.detalhado == 'true' %}
+                                    <small class="fw-normal fs-8">{{vaga.ocupante_abbr|default:'--'}}</small>
+                                    {% endif %}
+                                </h6>
+                                {% empty %}
+                                <small>Nenhuma vaga</small>
+                                {% endfor %}
+                            </div>
+                        </div>
                         {% empty %}
-                        <small>Nenhuma vaga</small>
+                        <p class="mt-2">Crie uma <b>área</b> para começar</p>
                         {% endfor %}
                     </div>
                 </div>
-                {% empty %}
-                <p class="mt-2">Crie uma <b>área</b> para começar</p>
-                {% endfor %}
+                <div class="col-lg-4 order-1 order-lg-2">
+                    <div class="row">
+                        <div class="col"><h6>Entrada Pedestres</h6></div>
+                        <div class="col-auto"><button id="add" class="btn btn-sm btn-success" type="button" onclick="pedestreEntrada()"><i class="fas fa-plus"></i></button></div>
+                    </div>
+                    <table id="pedestres_table" class="table fs-7 border table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th class="d-none">Empresa</th>
+                                <th>Entrada</th>
+                                <th>Fone 1</th>
+                                <th class="d-none">Autorizado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for registro in pedestres %}
+                            <tr>
+                                <td>{{registro.visitante.nome}}</td>
+                                <td class="d-none">{{registro.visitante.empresa}}</td>
+                                <td>{{registro.data_entrada|date:'d/m/y'}} {{registro.hora_entrada}}</td>
+                                <td>{{registro.visitante.fone1}}</td>
+                                <td class="d-none">{{registro.autorizado_por}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -102,7 +134,7 @@
                     <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
                 </div>
                 <div class="modal-body">
-                    <h5>Vaga: <span id="modal_codigo"></span> - <span class="text-purple" id="modal_operacao"></span></h5>
+                    <h5 id="vaga_title">Vaga: <span id="modal_codigo"></span> - <span class="text-purple" id="modal_operacao"></span></h5>
                     <div class="row">
                         <div class="col-lg order-2 order-lg-1">
                             <div id="controls_container">
@@ -146,7 +178,7 @@
                                     </div>
                                     <input type="hidden" name="visitante" id="id_visitante" value="">
                                 </div>
-                                <div class="row g-1">
+                                <div id="veiculo_container" class="row g-1">
                                     <div class="form-floating col-4">
                                         <input type="text" class="form-control" name="modelo" id="id_modelo" value="" placeholder=" ">
                                         <label for="id_modelo">Veiculo</label>
@@ -170,7 +202,7 @@
                                     <input type="time" class="form-control" id="id_hora_entrada" name="hora_entrada" value="">
                                     <label for="id_hora_entrada">Hora</label>
                                 </div>
-                                <div class="form-floating col-lg">
+                                <div id="km_entrada_container" class="form-floating col-lg">
                                     <input type="text" class="form-control" id="id_km_entrada" name="km_entrada" value="" placeholder=" ">
                                     <label for="id_km_entrada">Km Entrada</label>
                                 </div>
@@ -200,9 +232,10 @@
                                     <label for="id_km_saida">Km Saida</label>
                                 </div>
                             </div>
-                            <div class="row" id="detalhe_container">
-                                <div class="mb-1 col-12">
-                                    <textarea class="form-control" name="detalhe" id="id_detalhe" placeholder="Detalhe"></textarea>
+                            <div class="row g-1" id="detalhe_container">
+                                <div class="form-floating col-12">
+                                    <input type="text" class="form-control" id="id_detalhe" name="detalhe" value="" placeholder=" ">
+                                    <label for="id_detalhe">Detalhe</label>
                                 </div>
                             </div>
                         </div>
@@ -219,6 +252,7 @@
                 </div>
                 <input type="hidden" id="id_sentido" name="sentido" value="">
                 <input type="hidden" id="id_vaga" name="vaga" value="">
+                <input type="hidden" id="id_modal" name="modal" value="">
             </form>
         </div>
     </div>
@@ -231,11 +265,18 @@
 {% block add_script_src %}
 <script src="{% static 'js/vendor/mask.js' %}"></script>
 <script src="{% static 'js/url.js' %}"></script>
+<script src="{% static 'js/table.js' %}"></script>
 {% endblock %}
 
 <script>
     {% block add_script %}
     var TAB_ON_ENTER = true;
+
+    const table = new jsTable(document.getElementById('pedestres_table'),{
+        canFilter: true,
+        filterCols: ['Nome']
+    });
+    
     SHORTCUT_MAP['2FTF'] = () => {document.getElementById('portaria_extra').click()}
     SHORTCUT_MAP['gTFF'] = (ev) => {
         if(document.getElementById('modal_registro').classList.contains('show')){
@@ -267,11 +308,15 @@
     const canChange = {{perms.portaria.change_registro|yesno:'true,false'}};
     
     const registro_sentido = document.getElementById('id_sentido');
+    const registro_modal = document.getElementById('id_modal');
     
     const funcionario_container = document.getElementById('funcionario_container');
     const visitante_container = document.getElementById('visitante_container');
     const entrada_container = document.getElementById('entrada_container');
     const saida_container = document.getElementById('saida_container');
+    const km_entrada_container = document.getElementById('km_entrada_container');
+    const veiculo_container = document.getElementById('veiculo_container');
+    const vaga_title = document.getElementById('vaga_title');
     const controls_container = document.getElementById('controls_container');
     const detalhe_container = document.getElementById('detalhe_container');
     const autorizado_por_container = document.getElementById('autorizado_por_container');
@@ -309,10 +354,26 @@
     })
     document.getElementById('id_data_saida').value = document.getElementById('id_data_entrada').value;
     
+    function pedestreEntrada(){
+        optVisitante.click();
+        registro_modal.value = 'pedestre';
+        document.getElementById('id_sentido').value = 'entrada';
+        saida_container.classList.add('d-none');
+        entrada_container.classList.remove('d-none');
+        vaga_title.classList.add('d-none');
+        controls_container.classList.add('d-none');
+        veiculo_container.classList.add('d-none');
+        km_entrada_container.classList.add('d-none');
+        timeNow({target: document.getElementById('id_hora_entrada')}) // Atualiza o modal de alocacao com a hora atual no campo hora_entrada
+        modal_registro.show();
+        setTimeout(()=>{cpf.focus()}, 500);
+    }
+
     function vagaOnclick(ev){
         let id = ev.target.dataset.id;
         let status = ev.target.dataset.status;
         vaga.value = ev.target.dataset.id;
+        registro_modal.value = 'veiculo';
         if(status == 'livre' && canAdd || status == 'ocupada' && canChange){
             document.getElementById('modal_codigo').innerHTML = ev.target.innerText;
             document.getElementById('modal_operacao').innerHTML = status == 'livre' ? 'ENTRADA' : 'SAIDA';

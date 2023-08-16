@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from json import dumps as json_dumps
 from .models import Veiculo, Area, Vaga, Visitante, RegistroFuncionario, RegistroVisitante
-from .forms import VeiculoForm, AreaForm, VagaForm, VisitanteForm, EntradaFuncionarioForm, SaidaFuncionarioForm, EntradaVisitanteForm, SaidaVisitanteForm
+from .forms import VeiculoForm, AreaForm, VagaForm, VisitanteForm, EntradaFuncionarioForm, SaidaFuncionarioForm, EntradaVisitanteForm, SaidaVisitanteForm, EntradaVisitantePedestreForm
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from core.models import Log
@@ -16,7 +16,8 @@ from datetime import datetime
 @permission_required('portaria.view_veiculo', login_url="/handler/403")
 def movimentacao(request):
     areas = Area.objects.all().order_by('nome')
-    return render(request, 'portaria/movimentacao.html', {'areas':areas})
+    pedestres = RegistroVisitante.objects.filter(vaga=None, data_saida=None).order_by('data_entrada','hora_entrada')
+    return render(request, 'portaria/movimentacao.html', {'areas':areas, 'pedestres':pedestres})
 
 @login_required
 @permission_required('portaria.view_veiculo', login_url="/handler/403")
@@ -179,6 +180,7 @@ def registro_add(request):
     if request.method == 'POST':
         sentido = request.POST['sentido']   # entrada ou saida
         tipo = request.POST['tipo']         # visitante ou funcionario
+        modal = request.POST['modal']       # veiculo ou pedestre
         if sentido == 'saida':
             vaga = Vaga.objects.get(id=request.POST['vaga'])
             ocupante = vaga.ocupante()
@@ -192,8 +194,10 @@ def registro_add(request):
                 messages.error(request, '<b>Erro:</b> ao identificar ocupante da vaga, procure o administrador')
                 return redirect('portaria_movimentacao')
         else:
-            if tipo == 'visitante':
+            if tipo == 'visitante' and modal == 'veiculo':
                 form = EntradaVisitanteForm(request.POST)
+            elif tipo == 'visitante' and modal == 'pedestre':
+                form = EntradaVisitantePedestreForm(request.POST)
             elif tipo == 'funcionario':
                 form = EntradaFuncionarioForm(request.POST)
         if form.is_valid():

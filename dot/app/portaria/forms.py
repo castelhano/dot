@@ -92,6 +92,15 @@ class EntradaVisitanteForm(forms.ModelForm):
     def clean_placa(self):
         return self.cleaned_data['placa'].upper()
 
+class EntradaVisitantePedestreForm(forms.ModelForm):
+    class Meta:
+        model = RegistroVisitante
+        fields = ['visitante','autorizado_por','data_entrada','hora_entrada','detalhe']
+    autorizado_por = forms.CharField(required=False, max_length=40,widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
+    data_entrada = forms.DateField(error_messages={'required': 'Informe a data de entrada'}, initial=date.today(), widget=forms.TextInput(attrs={'class':'form-control','type':'date'}))
+    hora_entrada = forms.TimeField(error_messages={'required': 'Informe a hora de entrada'}, widget=forms.TextInput(attrs={'class':'form-control','type':'time'}))
+    detalhe = forms.CharField(required=False, max_length=200, widget=forms.TextInput(attrs={'class': 'form-control','placeholder':' '}))
+
 class SaidaVisitanteForm(forms.ModelForm):
     class Meta:
         model = RegistroVisitante
