@@ -11,9 +11,9 @@
                 {% if not visitante %}
                 <a class="btn btn-sm btn-light px-4 px-lg-0 disabled">NOVO</a>
                 {% elif visitante.bloqueado %}
-                <a class="btn btn-sm btn-success px-4 px-lg-0 disabled">BLOQUEADO</a>
+                <a class="btn btn-sm btn-danger px-4 px-lg-0 disabled">BLOQUEADO</a>
                 {% else %}
-                <a class="btn btn-sm btn-warning px-4 px-lg-0 disabled">ATIVO</a>
+                <a class="btn btn-sm btn-success px-4 px-lg-0 disabled">ATIVO</a>
                 {% endif %}
             </div>
         </div>

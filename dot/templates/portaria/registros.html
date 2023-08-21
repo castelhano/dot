@@ -32,13 +32,13 @@
                                 <th>Veiculo</th>
                                 <th class="d-none d-md-table-cell">Cor</th>
                                 <th class="d-none d-md-table-cell">Placa</th>
-                                <th class="d-none d-lg-table-cell">Empresa</th>
-                                <th class="d-none d-lg-table-cell">Nome</th>
+                                <th class="d-none d-xl-table-cell">Empresa</th>
+                                <th class="d-none d-xl-table-cell">Nome</th>
                                 <th class="d-none d-lg-table-cell">Entrada</th>
                                 <th class="d-none d-lg-table-cell">Saida</th>
-                                {% if perms.portaria.change_registro %}
+                                <th class="d-none">Km entrada</th>
+                                <th class="d-none">Km saida</th>
                                 <th>&nbsp;</th>
-                                {% endif %}
                             </tr>
                         </thead>
                         <tbody>
@@ -49,13 +49,34 @@
                                 <td>{{registro.veiculo.modelo}}</td>
                                 <td class="d-none d-md-table-cell">{{registro.veiculo.cor}}</td>
                                 <td class="d-none d-md-table-cell">{{registro.veiculo.placa}}</td>
-                                <td class="d-none d-lg-table-cell">{{registro.veiculo.funcionario.empresa.nome}}</td>
-                                <td class="d-none d-lg-table-cell">{{registro.veiculo.funcionario.nome}} [{{registro.veiculo.funcionario.matricula}}]</td>
+                                <td class="d-none d-xl-table-cell">{{registro.veiculo.funcionario.empresa.nome}}</td>
+                                <td class="d-none d-xl-table-cell">{{registro.veiculo.funcionario.nome}} [{{registro.veiculo.funcionario.matricula}}]</td>
                                 <td class="d-none d-lg-table-cell">{{registro.data_entrada|date:'d/m/y'}} {{registro.hora_entrada}}</td>
                                 <td class="d-none d-lg-table-cell">{{registro.data_saida|date:'d/m/y'|default:'--'}} {{registro.hora_saida|default:'--'}}</td>
-                                {% if perms.portaria.change_registro %}
-                                <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="url"><i class="fas fa-pen"></i></a></td>
-                                {% endif %}
+                                <td class="d-none">{{registro.km_entrada|default:0}}</td>
+                                <td class="d-none">{{registro.km_saida|default:0}}</td>
+                                <td class="text-end fit py-1">
+                                    <button type="button"
+                                        data-tipo="funcionario" 
+                                        data-vaga="{{registro.vaga.codigo|default:'--'}}" 
+                                        data-nome="{{registro.veiculo.funcionario.nome}}" 
+                                        data-matricula="{{registro.veiculo.funcionario.matricula}}" 
+                                        data-veiculo="{{registro.veiculo.modelo}}" 
+                                        data-veiculo_cor="{{registro.veiculo.cor}}" 
+                                        data-veiculo_placa="{{registro.veiculo.placa}}" 
+                                        data-data_entrada="{{registro.data_entrada|date:'d/m/y'}}" 
+                                        data-hora_entrada="{{registro.hora_entrada}}" 
+                                        data-km_entrada="{{registro.km_entrada}}" 
+                                        data-data_saida="{{registro.data_saida|date:'d/m/y'|default:'--'}}" 
+                                        data-hora_saida="{{registro.hora_saida|default:'--'}}" 
+                                        data-km_saida="{{registro.km_saida}}" 
+                                        data-foto_url="{{registro.veiculo.funcionario.foto_url|default:'null'}}" 
+                                        class="btn btn-sm btn-dark" 
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#delete_modal"
+                                        onclick="registroDelete(this, 'funcionario', {{registro.id|safe}})"><i class="fas fa-pen"></i>
+                                    </button>
+                                </td>
                             </tr>
                             {% endfor %}
                             {% for registro in registrosVisitante %}
@@ -65,13 +86,34 @@
                                 <td>{{registro.modelo}}</td>
                                 <td class="d-none d-md-table-cell">{{registro.cor}}</td>
                                 <td class="d-none d-md-table-cell">{{registro.placa}}</td>
-                                <td class="d-none d-lg-table-cell">{{registro.visitante.empresa}}</td>
-                                <td class="d-none d-lg-table-cell">{{registro.visitante.nome}}</td>
+                                <td class="d-none d-xl-table-cell">{{registro.visitante.empresa}}</td>
+                                <td class="d-none d-xl-table-cell">{{registro.visitante.nome}}</td>
                                 <td class="d-none d-lg-table-cell">{{registro.data_entrada|date:'d/m/y'}} {{registro.hora_entrada}}</td>
                                 <td class="d-none d-lg-table-cell">{{registro.data_saida|date:'d/m/y'|default:'--'}} {{registro.hora_saida|default:'--'}}</td>
-                                {% if perms.portaria.change_registro %}
-                                <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="url"><i class="fas fa-pen"></i></a></td>
-                                {% endif %}
+                                <td class="d-none">{{registro.km_entrada|default:0}}</td>
+                                <td class="d-none">{{registro.km_saida|default:0}}</td>
+                                <td class="text-end fit py-1">
+                                    <button type="button"
+                                        data-tipo="visitante" 
+                                        data-vaga="{{registro.vaga.codigo|default:'--'}}" 
+                                        data-nome="{{registro.visitante.nome}}" 
+                                        data-veiculo="{{registro.modelo}}" 
+                                        data-veiculo_cor="{{registro.cor}}" 
+                                        data-veiculo_placa="{{registro.placa}}" 
+                                        data-data_entrada="{{registro.data_entrada|date:'d/m/y'}}" 
+                                        data-hora_entrada="{{registro.hora_entrada}}" 
+                                        data-km_entrada="{{registro.km_entrada}}" 
+                                        data-data_saida="{{registro.data_saida|date:'d/m/y'|default:'--'}}" 
+                                        data-hora_saida="{{registro.hora_saida|default:'--'}}" 
+                                        data-km_saida="{{registro.km_saida}}" 
+                                        data-autorizado_por="{{registro.autorizado_por}}" 
+                                        data-foto_url="{{registro.visitante.foto_url|default:'null'}}" 
+                                        class="btn btn-sm btn-dark" 
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#delete_modal"
+                                        onclick="registroDelete(this, 'visitante', {{registro.id|safe}})"><i class="fas fa-pen"></i>
+                                    </button>
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -139,6 +181,46 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="delete_modal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="row">
+                <div class="col"><h5 class="ms-3 mt-3"><i class="fas fa-exclamation-triangle text-danger me-2"></i> Detalhes Registro</h5></div>
+                <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col">
+                        <div class="bg-body-tertiary px-3 py-2 my-1 rounded">
+                            <p class="m-0 fw-bold text-purple" id="ocupante_tipo"></p>
+                            <p class="m-0" id="ocupante_nome"></p>
+                            <p class="m-0" id="ocupante_veiculo"></p>
+                            <p class="m-0">Entrada: <span id="ocupante_entrada"></span></p>
+                            <p class="m-0">Saida: <span id="ocupante_saida"></span></p>
+                            <p class="m-0 text-secondary" id="ocupante_detalhe"></p>
+                        </div>
+                    </div>
+                    <div class="col-auto bg-dark-light bg-gradient rounded p-2 widget-thumb-container">
+                        <img src="{% static 'img/default_user.png' %}" class="widget-thumb-img" style="min-width: 110px;" id="ocupante_foto">
+                    </div>
+                </div>
+                {% if perms.portaria.delete_registro %}
+                <hr>
+                <p><b class="text-danger ps-2">Atenção!!</b> A operação de exclusão não pode ser desfeita, confirma a exclusão do registro?</p>
+                {% endif %}
+                <div class="row mt-2">
+                    <div class="col text-end">
+                        <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Fechar</a>
+                        {% if perms.portaria.delete_registro %}
+                        <a class="btn btn-danger px-3" id="submit_delete_btn" href="#">Excluir</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock%}
 
 {% block add_script_src %}
@@ -163,6 +245,29 @@ SHORTCUT_MAP['arrowleftFTF'] = () => {table.previousPage()}
 SHORTCUT_MAP['arrowdownFTF'] = () => {table.nextRow()}
 SHORTCUT_MAP['arrowupFTF'] = () => {table.previousRow()}
 SHORTCUT_MAP['enterFTF'] = () => {table.enterRow()}
+
+const ocupante_tipo = document.getElementById("ocupante_tipo");
+const ocupante_nome = document.getElementById("ocupante_nome");
+const ocupante_veiculo = document.getElementById("ocupante_veiculo");
+const ocupante_entrada = document.getElementById("ocupante_entrada");
+const ocupante_saida = document.getElementById("ocupante_saida");
+const ocupante_foto = document.getElementById("ocupante_foto");
+const ocupante_detalhe = document.getElementById("ocupante_detalhe");
+
+const default_foto_path = '{% static "img/default_user.png" %}';
+
+function registroDelete(el, tipo, id){
+    ocupante_tipo.innerHTML = el.dataset.autorizado_por != undefined && el.dataset.autorizado_por != '' ? `${el.dataset.tipo.toUpperCase()} <span class="text-body ps-2 fs-6 fw-normal">[ ${el.dataset.autorizado_por} ]</span>` : el.dataset.tipo.toUpperCase();
+    ocupante_nome.innerHTML = el.dataset.matricula ? `${el.dataset.nome} [ <b>${el.dataset.matricula}</b> ]` : el.dataset.nome;
+    ocupante_veiculo.innerHTML = `${el.dataset.veiculo}&nbsp;&nbsp;&nbsp;&nbsp;${el.dataset.veiculo_cor}&nbsp;&nbsp;&nbsp;&nbsp;<b>${el.dataset.veiculo_placa}</b>`;
+    ocupante_entrada.innerHTML = `<b class="pe-2">${el.dataset.data_entrada}</b> <b class="pe-2">${el.dataset.hora_entrada}</b> Km: <b>${VMasker.toMoney(el.dataset.km_entrada, {precision: 0, delimiter:'.'})}</b>`;
+    ocupante_saida.innerHTML = `<b class="pe-2">${el.dataset.data_saida}</b> <b class="pe-2">${el.dataset.hora_saida}</b> Km: <b>${VMasker.toMoney(el.dataset.km_saida, {precision: 0, delimiter:'.'})}</b>`;
+    ocupante_foto.src = el.dataset.foto_url != 'null' ? el.dataset.foto_url : default_foto_path;
+
+    {% if perms.portaria.delete_registro %}
+    document.getElementById('submit_delete_btn').href = `{% url 'portaria_registro_delete' %}?tipo=${tipo}&id=${id}`
+    {% endif %}
+}
 
 const search_by = document.getElementById('id_search_by');
 const cpf = document.getElementById('id_cpf');

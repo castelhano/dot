@@ -187,7 +187,7 @@ class Funcionario(Pessoa):
         except:
             return [False,'Erro ao desligar funcionario']
     def foto_url(self):
-        return self.foto.url
+        return self.foto.url if self.foto else None
     def foto_name(self):
         return self.foto.name.split('/')[-1]
     def ultimas_alteracoes(self):

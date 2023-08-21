@@ -13,7 +13,7 @@ from datetime import datetime
 
 # METODOS SHOW
 @login_required
-@permission_required('portaria.view_veiculo', login_url="/handler/403")
+@permission_required('portaria.view_registro', login_url="/handler/403")
 def movimentacao(request):
     areas = Area.objects.all().order_by('nome')
     pedestres = RegistroVisitante.objects.filter(vaga=None, data_saida=None).order_by('data_entrada','hora_entrada')
@@ -182,17 +182,21 @@ def registro_add(request):
         tipo = request.POST['tipo']         # visitante ou funcionario
         modal = request.POST['modal']       # veiculo ou pedestre
         if sentido == 'saida':
-            vaga = Vaga.objects.get(id=request.POST['vaga'])
-            ocupante = vaga.ocupante()
-            if isinstance(ocupante, RegistroFuncionario):
-                form = SaidaFuncionarioForm(request.POST, instance=ocupante)
-                tipo = 'funcionario'
-            elif isinstance(ocupante, RegistroVisitante):
-                form = SaidaVisitanteForm(request.POST, instance=ocupante)
-                tipo = 'visitante'
+            if modal == 'veiculo':
+                vaga = Vaga.objects.get(id=request.POST['vaga'])
+                ocupante = vaga.ocupante()
+                if isinstance(ocupante, RegistroFuncionario):
+                    form = SaidaFuncionarioForm(request.POST, instance=ocupante)
+                    tipo = 'funcionario'
+                elif isinstance(ocupante, RegistroVisitante):
+                    form = SaidaVisitanteForm(request.POST, instance=ocupante)
+                    tipo = 'visitante'
+                else:
+                    messages.error(request, '<b>Erro:</b> ao identificar ocupante da vaga, procure o administrador')
+                    return redirect('portaria_movimentacao')
             else:
-                messages.error(request, '<b>Erro:</b> ao identificar ocupante da vaga, procure o administrador')
-                return redirect('portaria_movimentacao')
+                ocupante = RegistroVisitante.objects.filter(visitante__id=request.POST['visitante'], data_saida=None).get()
+                form = SaidaVisitanteForm(request.POST, instance=ocupante)
         else:
             if tipo == 'visitante' and modal == 'veiculo':
                 form = EntradaVisitanteForm(request.POST)
@@ -207,18 +211,19 @@ def registro_add(request):
                     messages.error(request,f'<b>Atenção:</b> Veículo já alocado <b>em outra vaga</b>, operação cancelada')
                     return redirect('portaria_movimentacao')
                 elif sentido == 'entrada' and tipo == 'visitante' and RegistroVisitante.objects.filter(visitante=registro.visitante, data_saida=None).exists():
-                    messages.error(request,f'<b>Atenção:</b> Visitante já alocado <b>em outra vaga</b>, operação cancelada')
+                    messages.error(request,f'<b>Atenção:</b> Visitante já tem registro de entrada em aberto, operação cancelada')
                     return redirect('portaria_movimentacao')
-                vaga = registro.vaga
-                if sentido == 'entrada':
-                    retorno = vaga.reservar() # Marca vaga como ocupada (se possivel, caso nao gera [False, 'msg...'] como retorno)
-                else:
-                    retorno = vaga.desocupar() # Marca vaga como livre (se possivel, caso nao gera [False, 'msg...'] como retorno)
-                if not retorno[0]:
-                    messages.error(request,f'<b>Atenção:</b> {retorno[1]}, operação cancelada')
-                    return redirect('portaria_movimentacao')
+                if modal == 'veiculo':
+                    vaga = registro.vaga
+                    if sentido == 'entrada':
+                        retorno = vaga.reservar() # Marca vaga como ocupada (se possivel, caso nao gera [False, 'msg...'] como retorno)
+                    else:
+                        retorno = vaga.desocupar() # Marca vaga como livre (se possivel, caso nao gera [False, 'msg...'] como retorno)
+                    if not retorno[0]:
+                        messages.error(request,f'<b>Atenção:</b> {retorno[1]}, operação cancelada')
+                        return redirect('portaria_movimentacao')
+                    vaga.save()
                 registro.save()
-                vaga.save()
                 l = Log()
                 l.modelo = 'portaria.visitante' if tipo == 'visitante' else 'portaria.veiculo'
                 l.objeto_id = registro.ocupante_id() if tipo == 'visitante' else registro.veiculo.id
@@ -369,39 +374,39 @@ def visitante_update(request,id):
     else:
         return render(request,'portaria/visitante_id.html',{'form':form,'visitante':visitante})
 
-@login_required
-@permission_required('portaria.change_registro', login_url="/handler/403")
-def registro_update(request,id):
-    tipo = request.POST['tipo']
-    if tipo == 'visitante':
-        pre_registro = RegistroVisitante.objects.get(pk=id)
-        form = RegistroVisitanteForm(request.POST, instance=pre_registro)
-    elif tipo == 'funcionario':
-        pre_registro = RegistroFuncionario.objects.get(pk=id)
-        form = RegistroFuncionarioForm(request.POST, instance=pre_registro)
-    vaga_atual = pre_registro.vaga
-    if form.is_valid():
-        registro = form.save()
-        if registro.vaga != vaga_atual:
-            if vaga_atual != None:
-                vaga_atual.desocupar()
-                vaga_atual.save()
-            if registro.vaga != None:
-                vaga = registro.vaga
-                vaga.reservar()
-                vaga.save()
-        l = Log()
-        l.modelo = f"portaria.registro{tipo}"
-        l.objeto_id = registro.id
-        l.objeto_str = registro.visitante.cpf if tipo == 'visitante' else registro.veiculo.placa
-        l.usuario = request.user
-        l.mensagem = "UPDATE"
-        l.save()
-        messages.success(request,f'Registro {tipo} alterado')
-        return redirect('portaria_registro_id', id)
-    else:
-        vagas = Vaga.objects.filter(inativa=False).order_by('codigo')
-        return render(request,'portaria/registro_id.html',{'form':form,'registro':registro,'vagas':vagas})
+# @login_required
+# @permission_required('portaria.change_registro', login_url="/handler/403")
+# def registro_update(request,id):
+#     tipo = request.POST['tipo']
+#     if tipo == 'visitante':
+#         pre_registro = RegistroVisitante.objects.get(pk=id)
+#         form = RegistroVisitanteForm(request.POST, instance=pre_registro)
+#     elif tipo == 'funcionario':
+#         pre_registro = RegistroFuncionario.objects.get(pk=id)
+#         form = RegistroFuncionarioForm(request.POST, instance=pre_registro)
+#     vaga_atual = pre_registro.vaga
+#     if form.is_valid():
+#         registro = form.save()
+#         if registro.vaga != vaga_atual:
+#             if vaga_atual != None:
+#                 vaga_atual.desocupar()
+#                 vaga_atual.save()
+#             if registro.vaga != None:
+#                 vaga = registro.vaga
+#                 vaga.reservar()
+#                 vaga.save()
+#         l = Log()
+#         l.modelo = f"portaria.registro{tipo}"
+#         l.objeto_id = registro.id
+#         l.objeto_str = registro.visitante.cpf if tipo == 'visitante' else registro.veiculo.placa
+#         l.usuario = request.user
+#         l.mensagem = "UPDATE"
+#         l.save()
+#         messages.success(request,f'Registro {tipo} alterado')
+#         return redirect('portaria_registro_id', id)
+#     else:
+#         vagas = Vaga.objects.filter(inativa=False).order_by('codigo')
+#         return render(request,'portaria/registro_id.html',{'form':form,'registro':registro,'vagas':vagas})
 
 # @login_required
 # def registro_saida(request):
@@ -516,21 +521,22 @@ def visitante_delete(request,id):
 
 @login_required
 @permission_required('portaria.delete_registro', login_url="/handler/403")
-def registro_delete(request,id):
+def registro_delete(request):
     try:
         tipo = request.GET['tipo']
+        id = request.GET['id']
         if tipo == 'visitante':
             registro = RegistroVisitante.objects.get(pk=id)
         elif tipo == 'funcionario':
             registro = RegistroFuncionario.objects.get(pk=id)
         l = Log()
-        l.modelo = f"portaria.registro{tipo}"
+        l.modelo = f"portaria.registro"
         l.objeto_id = registro.id
-        l.objeto_str = registro.visitante.cpf if tipo == 'visitante' else registro.veiculo.placa
+        l.objeto_str = registro.visitante.nome if tipo == 'visitante' else registro.veiculo.placa
         l.usuario = request.user
         l.mensagem = "DELETE"
         l.save()
-        if registro.vaga != '':
+        if registro.vaga:
             vaga = registro.vaga
             vaga.desocupar()
             vaga.save()
@@ -551,6 +557,24 @@ def get_visitante(request):
             item_dict['foto'] = visitante.foto_url()
         else:
             del item_dict['foto']
+        if '_state' in item_dict: del item_dict['_state'] # Remove _state do dict (se existir)
+        dataJSON = json_dumps(item_dict)
+        return HttpResponse(dataJSON)
+    except:
+        return HttpResponse('')
+
+@login_required
+def get_registro(request):
+    try:
+        registro = RegistroVisitante.objects.get(id=request.GET['id'])
+        item_dict = vars(registro) # Gera lista com atributos do visitante
+        item_dict['nome'] = registro.visitante.nome
+        item_dict['data_entrada'] = registro.data_entrada.strftime("%d/%m/%Y")
+        item_dict['data_saida'] = registro.data_saida.strftime("%d/%m/%Y") if registro.data_saida else ''
+        item_dict['hora_entrada'] = registro.hora_entrada.strftime("%H:%M") if registro.hora_entrada else ''
+        item_dict['hora_saida'] = registro.hora_saida.strftime("%H:%M") if registro.hora_saida else ''
+        if registro.visitante.foto:
+            item_dict['foto'] = registro.visitante.foto_url()
         if '_state' in item_dict: del item_dict['_state'] # Remove _state do dict (se existir)
         dataJSON = json_dumps(item_dict)
         return HttpResponse(dataJSON)

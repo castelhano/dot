@@ -103,6 +103,7 @@
                                 <th>Entrada</th>
                                 <th>Fone 1</th>
                                 <th class="d-none">Autorizado</th>
+                                <th>&nbsp;</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -113,6 +114,13 @@
                                 <td>{{registro.data_entrada|date:'d/m/y'}} {{registro.hora_entrada}}</td>
                                 <td>{{registro.visitante.fone1}}</td>
                                 <td class="d-none">{{registro.autorizado_por}}</td>
+                                <td class="text-end fit py-1">
+                                    <button type="button"
+                                        class="btn btn-sm btn-dark" 
+                                        data-id="{{registro.id|safe}}"
+                                        onclick="pedestreSaida(this)"><i class="fas fa-pen"></i>
+                                    </button>
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -123,7 +131,7 @@
     </div>
 </div>
 
-{% if perms.portaria.add_registro %}
+{# if perms.portaria.add_registro #}
 <div class="modal fade" id="modal_registro" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -211,7 +219,7 @@
                                     <label for="id_autorizado_por">Autorizado por</label>
                                 </div>
                             </div>
-                            <div class="row g-1 d-none mt-2 mb-1" id="saida_container">
+                            <div class="d-none mt-2 mb-1" id="saida_container">
                                 <div class="bg-body-tertiary px-3 py-2 my-1 rounded">
                                     <p class="m-0 fw-bold text-purple" id="ocupante_tipo"></p>
                                     <p class="m-0" id="ocupante_nome"></p>
@@ -219,17 +227,19 @@
                                     <p class="m-0">Entrada: <span id="ocupante_entrada"></span></p>
                                     <p class="m-0 text-secondary" id="ocupante_detalhe"></p>
                                 </div>
-                                <div class="form-floating col-6">
-                                    <input type="date" class="form-control" id="id_data_saida" name="data_saida" value="">
-                                    <label for="id_data_saida">Saida</label>
-                                </div>
-                                <div class="form-floating col-6">
-                                    <input type="time" class="form-control" id="id_hora_saida" name="hora_saida" value="">
-                                    <label for="id_hora_saida">Hora</label>
-                                </div>
-                                <div class="form-floating col-12">
-                                    <input type="number" class="form-control" id="id_km_saida" name="km_saida" value="" placeholder=" ">
-                                    <label for="id_km_saida">Km Saida</label>
+                                <div id="saida_controls" class="row g-1">
+                                    <div class="form-floating col-6">
+                                        <input type="date" class="form-control" id="id_data_saida" name="data_saida" value="">
+                                        <label for="id_data_saida">Saida</label>
+                                    </div>
+                                    <div class="form-floating col-6">
+                                        <input type="time" class="form-control" id="id_hora_saida" name="hora_saida" value="">
+                                        <label for="id_hora_saida">Hora</label>
+                                    </div>
+                                    <div id="km_saida_container" class="form-floating col-12">
+                                        <input type="number" class="form-control" id="id_km_saida" name="km_saida" value="" placeholder=" ">
+                                        <label for="id_km_saida">Km Saida</label>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row g-1" id="detalhe_container">
@@ -245,8 +255,10 @@
                     </div>
                     <div class="row mt-2">
                         <div class="col text-end">
-                            <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancelar</a>
+                            <a class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Fechar</a>
+                            {% if perms.portaria.add_registro %}
                             <button type="submit" id="modal_registro_submit" class="btn btn-primary px-3">Gravar</button>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -257,7 +269,7 @@
         </div>
     </div>
 </div>
-{% endif %}
+{# endif #}
 
 {% include "_component/modal/loading.html" with message='Processando requisição....' %}
 {% endblock%}
@@ -305,7 +317,6 @@
     VMasker(document.getElementById("id_km_entrada")).maskMoney({delimiter: '.',precision:0});
 
     const canAdd = {{perms.portaria.add_registro|yesno:'true,false'}};
-    const canChange = {{perms.portaria.change_registro|yesno:'true,false'}};
     
     const registro_sentido = document.getElementById('id_sentido');
     const registro_modal = document.getElementById('id_modal');
@@ -314,7 +325,9 @@
     const visitante_container = document.getElementById('visitante_container');
     const entrada_container = document.getElementById('entrada_container');
     const saida_container = document.getElementById('saida_container');
+    const saida_controls = document.getElementById('saida_controls');
     const km_entrada_container = document.getElementById('km_entrada_container');
+    const km_saida_container = document.getElementById('km_saida_container');
     const veiculo_container = document.getElementById('veiculo_container');
     const vaga_title = document.getElementById('vaga_title');
     const controls_container = document.getElementById('controls_container');
@@ -356,10 +369,12 @@
     
     function pedestreEntrada(){
         optVisitante.click();
+        ocupante_foto.src = default_foto_path; // Limpa imagem (caso carregada)
         registro_modal.value = 'pedestre';
         document.getElementById('id_sentido').value = 'entrada';
         saida_container.classList.add('d-none');
         entrada_container.classList.remove('d-none');
+        detalhe_container.classList.remove('d-none');
         vaga_title.classList.add('d-none');
         controls_container.classList.add('d-none');
         veiculo_container.classList.add('d-none');
@@ -369,27 +384,53 @@
         setTimeout(()=>{cpf.focus()}, 500);
     }
 
+    function pedestreSaida(el){
+        getPedestre(el.dataset.id); // Busca via Ajax dados do ocupante da vaga
+        optVisitante.click();
+        document.getElementById('id_sentido').value = 'saida';
+        registro_modal.value = 'pedestre';
+        vaga_title.classList.add('d-none');
+        controls_container.classList.add('d-none');
+        visitante_container.classList.add('d-none')
+        entrada_container.classList.add('d-none');
+        detalhe_container.classList.add('d-none');
+        saida_container.classList.remove('d-none');
+        km_saida_container.classList.add('d-none');
+        dateToday({target: document.getElementById('id_data_saida'), native: true}) // Atualiza o modal de alocacao com a data atual no campo data_saida
+        timeNow({target: document.getElementById('id_hora_saida')}) // Atualiza o modal de alocacao com a hora atual no campo hora_saida
+        if(canAdd){
+            saida_controls.classList.remove('d-none')
+            setTimeout(()=>{document.getElementById('modal_registro_submit').focus();}, 500);
+        }
+        else{saida_controls.classList.add('d-none')}
+        modal_registro.show();
+    }
+
     function vagaOnclick(ev){
         let id = ev.target.dataset.id;
         let status = ev.target.dataset.status;
         vaga.value = ev.target.dataset.id;
         registro_modal.value = 'veiculo';
-        if(status == 'livre' && canAdd || status == 'ocupada' && canChange){
+        ocupante_foto.src = default_foto_path; // Limpa imagem (caso carregada)
+        if(status == 'livre' && canAdd || status == 'ocupada'){
             document.getElementById('modal_codigo').innerHTML = ev.target.innerText;
             document.getElementById('modal_operacao').innerHTML = status == 'livre' ? 'ENTRADA' : 'SAIDA';
             
-            timeNow({target: document.getElementById('id_hora_entrada')}) // Atualiza o modal de alocacao com a hora atual no campo hora_entrada
-            
             if(status == 'livre'){ // Exibe campos de entrada
-                entrada_container.classList.remove('d-none');
+                timeNow({target: document.getElementById('id_hora_entrada')}) // Atualiza o modal de alocacao com a hora atual no campo hora_entrada
                 controls_container.classList.remove('d-none');
+                entrada_container.classList.remove('d-none');
+                km_entrada.classList.remove('d-none');
                 saida_container.classList.add('d-none');
                 if(document.getElementById('optFuncionario').checked){
                     funcionario_container.classList.remove('d-none');
+                    autorizado_por_container.classList.add('d-none');
                     setTimeout(()=>{document.getElementById('id_placa_consulta').focus()}, 500);
                 }
                 else{
                     visitante_container.classList.remove('d-none');
+                    veiculo_container.classList.remove('d-none');
+                    km_entrada_container.classList.remove('d-none');
                     setTimeout(()=>{document.getElementById('id_cpf').focus()}, 500);
                 }
                 detalhe_container.classList.remove('d-none');
@@ -401,12 +442,15 @@
                 visitante_container.classList.add('d-none')
                 entrada_container.classList.add('d-none');
                 controls_container.classList.add('d-none');
-                saida_container.classList.remove('d-none');
                 detalhe_container.classList.add('d-none');
-                
-                timeNow({target: document.getElementById('id_hora_saida')}) // Atualiza o modal de alocacao com a hora atual no campo hora_saida
+                saida_container.classList.remove('d-none');
                 document.getElementById('id_sentido').value = 'saida';
-                setTimeout(()=>{document.getElementById('id_km_saida').focus()}, 500);
+                if(canAdd){
+                    saida_controls.classList.remove('d-none')
+                    timeNow({target: document.getElementById('id_hora_saida')}) // Atualiza o modal de alocacao com a hora atual no campo hora_saida
+                    setTimeout(()=>{document.getElementById('id_km_saida').focus()}, 500);
+                }
+                else{saida_controls.classList.add('d-none')}
             }
             modal_registro.show();
         }
@@ -479,15 +523,43 @@
                         visitante_detalhe.classList.remove('is-invalid');
                         visitante.value = dados.id;
                     }
-                    if(dados.foto){
-                        ocupante_foto.src = dados.foto;
-                    }
-                    else{ocupante_foto.src = default_foto_path;}
+                    if(dados.foto){ocupante_foto.src = dados.foto;}
                 }
             }
         };
         xhttp_visitante.open("GET", "{% url 'portaria_get_visitante' %}?cpf=" + cpf.value, true);
         xhttp_visitante.send();  
+    }
+
+    function getPedestre(id){
+        ocupante_tipo.innerHTML = 'CARREGANDO';
+        ocupante_nome.innerHTML = 'Aguarde....';
+        ocupante_veiculo.innerHTML = '';
+        ocupante_entrada.innerHTML = '';
+        ocupante_foto.src = default_foto_path;
+        let xhttp_pedestre = new XMLHttpRequest();
+        xhttp_pedestre.onreadystatechange = function() {
+            if(this.readyState == 4 && this.status == 200){
+                if(this.responseText == ''){
+                    modal_registro.hide();
+                    dotAlert('danger', '<b>Erro:</b> Ocupante não localizado, entre em contato com o administrador', false)
+                }
+                else{
+                    let dados = JSON.parse(this.responseText);
+                    visitante.value = dados.visitante_id;
+                    ocupante_tipo.innerHTML = dados.autorizado_por ? `VISITANTE <span class="text-body ps-2 fs-6 fw-normal">[ ${dados.autorizado_por} ]</span>` : 'VISITANTE';
+                    ocupante_nome.innerHTML = dados.nome;
+                    ocupante_entrada.innerHTML = `<b class="pe-2">${dados.data_entrada}</b> <b>${dados.hora_entrada}</b>`;
+                    ocupante_detalhe.innerHTML = dados.detalhe
+                    if(dados.foto){
+                        ocupante_foto.src = dados.foto;
+                    }
+                }
+            }
+        };
+        xhttp_pedestre.open("GET", "{% url 'portaria_get_registro' %}?id=" + id, true);
+        xhttp_pedestre.send();  
+        
     }
 
     function getOcupante(vaga){
@@ -501,6 +573,7 @@
             if(this.readyState == 4 && this.status == 200){
                 if(this.responseText == ''){
                     ocupante_tipo.innerHTML == 'INVALID';
+                    modal_registro.hide();
                     dotAlert('danger', '<b>Erro:</b> Ocupante não localizado, entre em contato com o administrador', false)
                 }
                 else{
@@ -529,6 +602,7 @@
         else{
             funcionario_container.classList.remove('d-none');
             visitante_container.classList.add('d-none');
+            km_entrada_container.classList.remove('d-none');
             autorizado_por_container.classList.add('d-none');
         }
 
@@ -555,17 +629,19 @@
                 cpf.classList.add('is-invalid');
                 has_error = true;
             }
-            if(visitante_modelo.value.trim() == ''){
-                visitante_modelo.classList.add('is-invalid');
-                has_error = true;
-            }
-            if(visitante_cor.value.trim() == ''){
-                visitante_cor.classList.add('is-invalid');
-                has_error = true;
-            }
-            if(visitante_placa.value.trim().length < 8){
-                visitante_placa.classList.add('is-invalid');
-                has_error = true;
+            if(registro_modal == 'veiculo'){
+                if(visitante_modelo.value.trim() == ''){
+                    visitante_modelo.classList.add('is-invalid');
+                    has_error = true;
+                }
+                if(visitante_cor.value.trim() == ''){
+                    visitante_cor.classList.add('is-invalid');
+                    has_error = true;
+                }
+                if(visitante_placa.value.trim().length < 8){
+                    visitante_placa.classList.add('is-invalid');
+                    has_error = true;
+                }
             }
             if(has_error){ // Se verificado algum erro, move foco para primeiro campo com erro identificado
                 try {document.querySelector('input.is-invalid').focus()} catch(e) {}

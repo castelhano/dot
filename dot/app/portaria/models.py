@@ -76,7 +76,6 @@ class Vaga(models.Model):
         permissions = [
             ("view_registro", "Visualizar registro"),
             ("add_registro", "Adicionar registro"),
-            ("change_registro", "Atualizar registro"),
             ("delete_registro", "Excluir registro"),
         ]
     
@@ -101,7 +100,7 @@ class Visitante(models.Model):
         logs = Log.objects.filter(modelo='portaria.visitante',objeto_id=self.id).order_by('-data')[:15]
         return reversed(logs)
     def foto_url(self):
-        return self.foto.url
+        return self.foto.url if self.foto else None
     def foto_name(self):
         return self.foto.name.split('/')[-1]
     
