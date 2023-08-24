@@ -37,12 +37,16 @@ const table = new jsTable('minhaTabela', {
   container: document.getElementById('table_container')
 });
 
-SHORTCUT_MAP['fFTF'] = () => {table.filterInput.select()};
-SHORTCUT_MAP['arrowrightFTF'] = () => {table.nextPage()}
-SHORTCUT_MAP['arrowleftFTF'] = () => {table.previousPage()}
-SHORTCUT_MAP['arrowdownFTF'] = () => {table.nextRow()}
-SHORTCUT_MAP['arrowupFTF'] = () => {table.previousRow()}
-SHORTCUT_MAP['enterFTF'] = () => {table.enterRow()}
+SHORTCUT_MAP['.FFF'] = () => {
+  dotNotify('success', 'Aeee, fui precionado!!!!');
+}
+
+// SHORTCUT_MAP['fFTF'] = () => {table.filterInput.select()};
+// SHORTCUT_MAP['arrowrightFTF'] = () => {table.nextPage()}
+// SHORTCUT_MAP['arrowleftFTF'] = () => {table.previousPage()}
+// SHORTCUT_MAP['arrowdownFTF'] = () => {table.nextRow()}
+// SHORTCUT_MAP['arrowupFTF'] = () => {table.previousRow()}
+// SHORTCUT_MAP['enterFTF'] = () => {table.enterRow()}
 
 {% endblock %}
 </script>

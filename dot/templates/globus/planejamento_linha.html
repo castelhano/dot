@@ -28,6 +28,7 @@
         <div class="col-md-auto d-grid d-md-block text-center"><button type="button" class="btn btn-sm btn-primary" onclick="submitData()"><i class="fas fa-search"></i> Buscar</button></div>        
       </div>
       {% if viagens_ida or viagens_volta %}
+      <h5 class="mt-3">HORÁRIOS - {{linha.codigo}} {{linha.nome}}</h5>
       <div class="form-check form-check-inline mt-2">
         <input class="form-check-input" type="radio" name="view" id="view_corridos" onclick="changeView('c')" checked>
         <label class="form-check-label" for="view_corridos">Corridos</label>

@@ -94,6 +94,7 @@
 
 <script>
   {% block add_script %}
+  var TAB_ON_ENTER = true;
   {% if afastamento.funcionario.status == 'D' %}
   formReadonly(document.getElementById('pessoal_form'));
   {% endif %}

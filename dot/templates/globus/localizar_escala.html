@@ -64,11 +64,10 @@
                       <div class="col-12"><b>{{escala.funcionario.matricula}}</b> - <b>{{escala.funcionario.apelido}}</b></div>
                       <div class="col-12">Veiculo: <b>{{escala.veiculo.prefixo}}</b></div>
                       <div class="col-xl-auto"><b>{{escala.inicio|default:"--:--"}}</b> a <b>{{escala.termino|default:"--:--"}}</b></div>
-                      <div class="col-xl">Pegada: <b>{{escala.local_pegada}}</b></div>
                     </div>
                   </div>
                   {% if escala.status == 'E' %}
-                  <div class="col-auto my-auto p-0"><a class="btn btn-dark fs-3" href="{% url 'globus_viagens' escala.id|safe %}?from=localizar_escala" title="Viagens"><i class="fas fa-list"></i></a></div>
+                  <div class="col-auto my-auto p-0 me-1"><a class="btn btn-dark fs-3" href="{% url 'globus_viagens' escala.id|safe %}?from=localizar_escala" title="Viagens"><i class="fas fa-list"></i></a></div>
                   {% endif %}
                 </div>
               </div>

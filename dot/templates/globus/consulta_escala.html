@@ -22,7 +22,7 @@
         <div class="bg-secondary bg-hover card h-100" style="padding-top: 10px;"><a class="stretched-link text-light text-decoration-none fs-4" id="clear" href="{% url 'globus_consultar_escala' %}">Hoje</a></div>
       </div>
       <div class="form-floating col col-lg-4">
-        <input type="date" class="form-control bg-light" name="data" value="{{data_consulta|date:'Y-m-d'}}" min="{{settings.consulta_escala_inicio|date:'Y-m-d'|default:''}}" max="{{settings.consulta_escala_fim|date:'Y-m-d'|default:''}}" onchange="urlFilter('data', this.value)">
+        <input type="date" class="form-control bg-light" name="data" value="{{data_consulta|date:'Y-m-d'}}" min="{{settings.consulta_escala_inicio|date:'Y-m-d'|default:''}}" max="{{settings.consulta_escala_fim|date:'Y-m-d'|default:''}}" onkeydown="return false" onchange="urlFilter('data', this.value)">
         <label for="id_data">Data</label>
       </div>
     </div>
@@ -38,11 +38,10 @@
                   <div class="col-12"><b>{{escala.linha.nome}}</b></div>
                   <div class="col-12"><b>{{escala.veiculo.prefixo}}</b></div>
                   <div class="col-xl-auto"><b>{{escala.inicio|default:"--:--"}}</b> a <b>{{escala.termino|default:"--:--"}}</b></div>
-                  <div class="col-xl">Pegada: <b>{{escala.local_pegada|default:'--'}}</b></div>
                 </div>
               </div>
               {% if escala.status == 'E' and perms.globus.view_viagem %}
-              <div class="col-auto my-auto p-0"><a class="btn btn-dark fs-3" href="{% url 'globus_viagens' escala.id|safe %}?from=consultar_escala" title="Viagens"><i class="fas fa-list"></i></a></div>
+              <div class="col-auto my-auto p-0 me-1"><a class="btn btn-dark fs-3" href="{% url 'globus_viagens' escala.id|safe %}?from=consultar_escala" title="Viagens"><i class="fas fa-list"></i></a></div>
               {% endif %}
             </div>
           </div>

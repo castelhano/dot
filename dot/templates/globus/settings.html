@@ -27,7 +27,9 @@
     <div class="card-body tab-content">
       <h5 class="card-title mb-4">Settings: <b class="text-orange">Escala Globus</b></h5>
       <div class="tab-pane fade show active" id="base" role="tabpanel">
-        {% include "_component/field/empresa.html" with empresa_atual=settings.empresa.id|safe breakpoint='col-lg-6 mb-1' attrs='onchange="urlFilter(\'empresa\', this.value)" autofocus' %}
+        <div class="row g-1">
+          {% include "_component/field/empresa.html" with empresa_atual=settings.empresa.id|safe container_classlist='form-floating col-lg-6 mb-1' attrs='onchange="urlFilter(\'empresa\', this.value)" autofocus' %}
+        </div>
         <div class="row g-1">
         	<div class="form-floating mb-lg-1 col-lg-3">
         		{{ form.consulta_escala_inicio }}
@@ -51,7 +53,9 @@
   <div class="card-body tab-content">
     <h5 class="card-title mb-4">Settings: <b class="text-orange">Escala Globus</b></h5>
     <div class="tab-pane fade show active" id="base" role="tabpanel">
-      {% include "_component/field/empresa.html" with blank_row='true' blank_row_message='Escolha uma empresa' breakpoint='col-lg-6' attrs='onchange="urlFilter(\'empresa\', this.value)" autofocus' %}
+      <div class="row g-1">
+        {% include "_component/field/empresa.html" with blank_row='true' blank_row_message='Escolha uma empresa' container_classlist='form-floating col-lg-6 mb-1' attrs='onchange="urlFilter(\'empresa\', this.value)" autofocus' %}
+      </div>
     </div>
   </div>
   {% endif %}
@@ -99,5 +103,6 @@
 <script>
 {% block add_script %}
 dateInputExtra_start();
+var TAB_ON_ENTER = true;
 {% endblock %}
 </script>

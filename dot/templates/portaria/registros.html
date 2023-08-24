@@ -9,6 +9,7 @@
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
             <li class="nav-item"><a class="nav-link active disabled" data-bs-toggle="tab" data-bs-target="#base" href="#"><i class="fas fa-list"></i></a></li>
+            <li class="nav-item"><a class="nav-link" id="back" title="ALT + V" href="{% url 'portaria_movimentacao' %}"><i class="fas fa-undo"></i></a></li>
             <li class="nav-item dropdown ms-auto">
                 <a class="nav-link dropdown-toggle border text-dark" data-bs-toggle="dropdown" href="#" role="button"></a>
                 <ul class="dropdown-menu">
@@ -186,7 +187,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="row">
-                <div class="col"><h5 class="ms-3 mt-3"><i class="fas fa-exclamation-triangle text-danger me-2"></i> Detalhes Registro</h5></div>
+                <div class="col"><h5 class="ms-3 mt-3"><i class="fas fa-list text-orange me-2"></i> Detalhes Registro</h5></div>
                 <div class="col-auto pe-4 pt-2"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
             </div>
             <div class="modal-body">
@@ -359,6 +360,25 @@ function getVisitante(){
     xhttp_visitante.open("GET", "{% url 'portaria_get_visitante' %}?cpf=" + cpf.value, true);
     xhttp_visitante.send();  
 }
+
+document.getElementById('portaria_form').onsubmit = () => {
+    if(search_by.value == 'vaga'){
+        if(vagas.value == ''){
+            vagas.classList.add('is-invalid');
+            vagas.select()
+            return false;
+        }
+    }
+    else if(search_by.value == 'funcionario'){
+        if(document.getElementById('id_funcionario').value == ''){
+            document.getElementById('id_matricula_funcionario').classList.add('is-invalid');
+            document.getElementById('id_matricula_funcionario').select();
+            return false;
+        }
+    }
+    return false;
+    // if(search_by == 'visitante'){}
+};
 
 
 

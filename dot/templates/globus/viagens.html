@@ -39,7 +39,7 @@ h7{display: block;}
     <div class="tab-pane fade show active mt-2" id="base" role="tabpanel">
       <table id="main_table" class="table border table-striped table-hover fs-7">
         <caption>
-          <span class="px-2 border rounded fs-7" style="background-color: rgb(255, 243, 205);">Leg</span> Improdutiva
+          <span class="px-2 border rounded fs-7 bg-warning-subtle">Leg</span> Improdutiva
         </caption>
         <thead>
           <tr>
@@ -48,7 +48,7 @@ h7{display: block;}
             <th>Sentido</th>
             <th>Inicio</th>
             <th>Fim</th>
-            <th class="d-none d-lg-table-cell">Extra</th>
+            <th class="d-none d-md-table-cell">Extra</th>
             {% if perms.globus.change_viagem %}
             <th>&nbsp;</th>
             {% endif %}
@@ -62,7 +62,7 @@ h7{display: block;}
             <td><h7>{{viagem.origem|default:'--'}}</h7><span>{{viagem.destino|default:'--'}}</span></td>
             <td>{{viagem.inicio}}</td>
             <td>{{viagem.termino}}</td>
-            <td class="d-none d-lg-table-cell">{{viagem.extra|yesno:"<b class='text-purple'>Extra</b>,"|safe}}</td>
+            <td class="d-none d-md-table-cell">{{viagem.extra|yesno:"<b class='text-purple'>Extra</b>,"|safe}}</td>
             {% if perms.globus.change_viagem %}
             <td class="text-end fit py-1"><a class="btn btn-sm btn-dark" href="{% url 'globus_viagem_id' viagem.id|safe %}"><i class="fas fa-pen"></i></a></td>
             {% endif %}

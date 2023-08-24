@@ -115,7 +115,6 @@ def planejamento_linha(request): # Retorna o planejamento da linha para um dia e
                         viagens_ida.append(v.inicio)
                 else:
                     tabelas[v.escala.tabela][1].append(v.inicio) if v.produtiva == 1 else tabelas[v.escala.tabela][1].append(f'<b class="text-danger">{v.inicio.strftime("%H:%M")}</b>')
-                    # tabelas[v.escala.tabela][1].append(v.inicio)
                     if v.produtiva == 1:
                         viagens_volta.append(v.inicio)
             else:
