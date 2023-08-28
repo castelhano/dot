@@ -34,11 +34,18 @@ let data = [{nome:'Rafael',idade:25,sexo:'M'},{nome:'Maria',idade:44,sexo:'F', f
 
 const table = new jsTable('minhaTabela', {
   data: data,
-  container: document.getElementById('table_container')
+  container: document.getElementById('table_container'),
+  editableCols: ['idade', 'sexo']
 });
 
+let nextClass = 'success';
+let classSequence = ['success', 'warning', 'danger','primary', 'info'];
+
+
 SHORTCUT_MAP['.FFF'] = () => {
-  dotNotify('success', 'Aeee, fui precionado!!!!');
+  dotNotify(nextClass, 'Aeee, fui precionado!!!!');
+  nextClass = classSequence[classSequence.indexOf(nextClass) + 1] || classSequence[0];
+  return false;
 }
 
 // SHORTCUT_MAP['fFTF'] = () => {table.filterInput.select()};
