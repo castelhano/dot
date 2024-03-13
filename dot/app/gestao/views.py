@@ -439,7 +439,7 @@ def apontamento_add(request):
                     registro.referencia = f"{ano}_{mes}"
                     registro.meta = registro.indicador.meta
                     # Levanta se indicador tem registro no mes anterior para comparar evolucao
-                    if int(mes) > 0:
+                    if int(mes) > 1:
                         ultima_referencia = f"{ano}_{str(int(mes) - 1).zfill(2)}"
                     else:
                         ultima_referencia = f"{int(ano) - 1}_12"
