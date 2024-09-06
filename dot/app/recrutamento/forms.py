@@ -8,10 +8,11 @@ from datetime import date, datetime, timedelta
 class SelecaoForm(forms.ModelForm):
     class Meta:
         model = Selecao
-        fields = ['candidato','data','hora','vaga','arquivar']
+        fields = ['candidato','data','hora','vaga','arquivar','detalhes']
     data = forms.DateField(error_messages={'required': 'Informe uma data'},initial=date.today() + timedelta(1),widget=forms.TextInput(attrs={'class':'form-control','type':'date','placeholder':' '}))
     hora = forms.TimeField(required=False, initial='08:00', widget=forms.TextInput(attrs={'class':'form-control','type':'time', 'placeholder':''}))
     arquivar = forms.BooleanField(required=False, initial=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input','role':'switch', 'tabindex':'-1'}))
+    detalhes = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control','placeholder':'Detalhes', 'data-i18n':'common.details', 'data-i18n-target':'placeholder'}))
     
 
 class CandidatoForm(forms.ModelForm):

@@ -6,7 +6,6 @@ from core.models import Log, Empresa
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.db.models import Q
-import re
 from .forms import FrotaForm, MarcaForm, CategoriaForm, ComponenteForm, ModeloForm, ClassificacaoForm, CarroceriaForm
 
 
@@ -42,20 +41,20 @@ def frotas(request):
             validado = True
         if request.POST['ano_fabricacao'] != '':
             if request.POST['ano_fabricacao'][0] == '*':
-                frotas = frotas.filter(ano_fabricacao__lte=re.sub('\D', '',request.POST['ano_fabricacao']))
+                frotas = frotas.filter(ano_fabricacao__lte=request.POST['ano_fabricacao'][1:])
                 validado = True
             elif request.POST['ano_fabricacao'][-1] == '*':
-                frotas = frotas.filter(ano_fabricacao__gte=re.sub('\D', '',request.POST['ano_fabricacao']))
+                frotas = frotas.filter(ano_fabricacao__gte=request.POST['ano_fabricacao'][:-1])
                 validado = True
             else:
                 frotas = frotas.filter(ano_fabricacao=request.POST['ano_fabricacao'])
                 validado = True
         if request.POST['ano_modelo'] != '':
             if request.POST['ano_modelo'][0] == '*':
-                frotas = frotas.filter(ano_modelo__lte=re.sub('\D', '',request.POST['ano_modelo']))
+                frotas = frotas.filter(ano_modelo__lte=request.POST['ano_modelo'][1:])
                 validado = True
             elif request.POST['ano_modelo'][-1] == '*':
-                frotas = frotas.filter(ano_modelo__gte=re.sub('\D', '',request.POST['ano_modelo']))
+                frotas = frotas.filter(ano_modelo__gte=request.POST['ano_modelo'][:-1])
                 validado = True
             else:
                 frotas = frotas.filter(ano_modelo=request.POST['ano_modelo'])

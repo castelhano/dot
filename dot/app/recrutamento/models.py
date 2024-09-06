@@ -107,6 +107,7 @@ class Selecao(models.Model):
     hora = models.TimeField(blank=True, null=True)
     vaga = models.ForeignKey(Vaga, on_delete=models.RESTRICT)
     resultado = models.CharField(max_length=3,choices=RESULTADO_CHOICES, blank=True)
+    detalhes = models.TextField(blank=True)
     arquivar = models.BooleanField(default=False)
     def __str__(self):
         return self.candidato

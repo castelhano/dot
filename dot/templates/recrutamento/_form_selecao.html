@@ -37,6 +37,11 @@
           {{form.arquivar}}
           <label class="form-check-label" for="id_arquivar">Arquivar</label>
         </div>
+        <div class="row g-1">
+          <div class="mb-1 col-lg-12">
+          {{ form.detalhes }}
+          </div>
+        </div>
         {% endif %}
       </div>
       {% if 'selecao_id' in request.get_full_path %}

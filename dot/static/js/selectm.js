@@ -111,7 +111,7 @@ class jsSelectm{
         for(let i in this.groups){
             let acc_item = document.createElement('div');acc_item.classList = 'accordion-item';
             let acc_header = document.createElement('div');acc_header.classList = 'accordion-header pointer';
-            let acc_button = document.createElement('span');acc_button.classList = 'accordion-button collapsed fs-6 py-2';acc_button.setAttribute('data-bs-toggle','collapse');acc_button.setAttribute('data-bs-target',`[data-group=${i}]`);
+            let acc_button = document.createElement('span');acc_button.classList = 'accordion-button collapsed fs-6 py-2';acc_button.setAttribute('data-bs-toggle','collapse');acc_button.setAttribute('data-bs-target',`[data-group='${i}']`);
             acc_button.innerHTML = i;
             let acc_container = document.createElement('div');acc_container.classList = 'accordion-collapse collapse';acc_container.setAttribute('data-group', i);acc_container.setAttribute('data-bs-parent', '[data-jsSelect-role=group_container]');
             if(this.checkAll){this.__addCheckAll(acc_container);}
@@ -158,7 +158,7 @@ class jsSelectm{
     }
     __getGroupContainer(key){ // Localiza se item esta em algum grupo, se sim retorna o container do grupo, caso nao retorna o container principal
         for(let group in this.groups){
-            if(this.groups[group].includes(key)){return this.optionsContainer.querySelector(`[data-group=${group}]`);}
+            if(this.groups[group].includes(key)){return this.optionsContainer.querySelector(`[data-group='${group}']`);}
         }
         return this.optionsContainer;
     }

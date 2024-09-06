@@ -71,7 +71,7 @@
                 </div>
                 <div class="row mt-1">
                   <div class="col text-truncate">{{plano.get_status_display}} <span class="badge bg-secondary">{{plano.termino|now_until_date}} dias</span></div>
-                  <div class="col-auto"><span class="badge bg-orange">{{plano.diretriz.empresa.nome|default:'--'}}</span> <span class="badge bg-dark">{{plano.responsavel.usuario.username|default:'--'|title}}</span> <span class="badge bg-primary">+ {{plano.staff.count|sub:1}}</span></div>
+                  <div class="col-auto"><span class="badge bg-orange">{{plano.diretriz.empresa.nome|default:'--'}}</span> <span class="badge bg-dark">{{plano.responsavel.usuario.username|default:'--'|title}}</span> <span class="badge bg-primary">+ {{plano.staff.count|sub:1|maximo:0}}</span></div>
                 </div>
                 <div class="row mt-1">
                   <div class="col text-truncate">{% for label in plano.labels.all %}<span class="badge me-1" style="background:{{label.cor}};color:{{label.fonte}}">{{label.nome}}</span>{% endfor %}</div>
@@ -123,7 +123,7 @@
                 </div>
                 <div class="row mt-1">
                   <div class="col text-truncate">{{plano.get_status_display}}</div>
-                  <div class="col-auto"><span class="badge bg-orange">{{plano.diretriz.empresa.nome|default:'--'}}</span> <span class="badge bg-dark">{{plano.responsavel.usuario.username|default:'--'|title}}</span> <span class="badge bg-primary">+ {{plano.staff.count|sub:1}}</span></div>
+                  <div class="col-auto"><span class="badge bg-orange">{{plano.diretriz.empresa.nome|default:'--'}}</span> <span class="badge bg-dark">{{plano.responsavel.usuario.username|default:'--'|title}}</span> <span class="badge bg-primary">+ {{plano.staff.count|sub:1|maximo:0}}</span></div>
                 </div>
                 <div class="row mt-1">
                   <div class="col text-success">{{plano.avaliacao|default:0|stars|safe}}</div>
