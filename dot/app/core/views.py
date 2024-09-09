@@ -925,6 +925,7 @@ def initializeProfileConfig():
 def app_data(request, fpath): 
     if request.method == 'GET': # Requisicao, abre arquivo (se existir) e retorna conteudo (em json)
         try:
+            fpath = fpath.replace('-','/')
             f = open(f'{ROOT.APP_DATA}/{fpath}', 'r', encoding='utf-8')
             data = json.load(f)
             f.close()

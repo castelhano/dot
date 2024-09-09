@@ -1,0 +1,56 @@
+{
+    "common":{
+        "accepted_extensions": "accepted extensions",
+        "address": "Address",
+        "back": "Back",
+        "birth": "Birth",
+        "cancel": "Cancel",
+        "city": "City",
+        "contact": "Contact",
+        "curriculum": "Curriculum",
+        "detais": "Details",
+        "district": "District",
+        "error": "Error",
+        "female": "Female",
+        "full_name": "Full name",
+        "male": "Male",
+        "mandatory": "mandatory",
+        "name": "Name",
+        "not_inform": "Do not inform",
+        "optional": "optional",
+        "presentation": "Presentation",
+        "register": "Register",
+        "sex": "Sex",
+        "state": "State",
+        "submit": "Save"
+    },
+    "recrutamento":{
+        "candidato":{
+            "cadastro_titulo": "Candidate Registration",
+            "cadastro_success": "Registered <b class=\"text-success\">successfully</b>"
+        },
+        "vaga":{
+            "vagas": "Vacancies",
+            "disponiveis_titulo": "Available vacancies",
+            "selecione_uma_ou_mais": "Select one or more vacancies"
+        },
+        "site":{
+            "welcome_message": "After completing registration, wait for our Human Resources team to contact you to schedule an interview",
+            "contact_email": " or by email",
+            "contact_number": ", questions contact the number",
+            "dados_pessoais": "Personal data",
+            "quem_indicou": "Who referred you to our company",
+            "pne_descricao": "PNE Person with special needs (PCD)",
+            "apresentacao": "Presentation",
+            "apresentacao_tip": "Describe your professional experiences (optional)",
+            "erro_msg": "registration has not been completed. Check the fields entered",
+            "sem_vagas_msg": "<b class=\"text-warning\">Informative:</b> At the moment we don't have any vacancies, you can try again in the future or send your CV to our human resources department"
+        }
+    },
+    "999":{
+            "sad_message": "Hello, cruel <b>world</b>",
+            "input": {
+                "placeholder": "Teste del papito"
+            }
+        }
+}

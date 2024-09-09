@@ -8,52 +8,35 @@
 </style>
 
 {% block content_fluid %}
-<a class="d-none" href="{% url 'handler' '999' %}" id="clear"></a>
-<ol class="breadcrumb mt-3">
-  <li class="breadcrumb-item"><a href="#">Home</a></li>
-  <li class="breadcrumb-item"><a href="#">Library</a></li>
-  <li class="breadcrumb-item active">Data</li>
-</ol>
-<div class="row">
-  <div class="col-lg-6 bg-info">foo</div>
-  <div class="col-lg-4 bg-warning">foo</div>
+<a href="{% url 'handler' 999 %}" id="clear"></a>
+<div class="row g-1">
+  <div class="form-floating mb-1 col-lg-12">
+    <select class="form-select" id="id_lang" name="lang">
+      <option value="pt-BR" selected>pt-BT</option>
+      <option value="en">en</option>
+      <option value="es">es</option>
+      <option value="es-US">es-US</option>
+      <option value="es-PH">es-PH</option>
+    </select>
+    <label for="id_lang">lang</label>
+  </div>
 </div>
-<div id="table_container"></div>
+<p data-i18n="999.sad_message">Ola <b>mundo</b> cruel</p>
+<p data-i18n="999.sys.home">Link para home</p>
+<input type="text" name="foo" data-i18n="999.input.placeholder" data-i18n-target="placeholder" placeholder="Teste do pai">
 {% endblock%}
 
 
 {% block add_script_src %}
 <script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/i18n.js' %}"></script>
 {% endblock %}
 
 
 <script>
 {% block add_script %}
+document.getElementById('id_lang').onchange = (ev)=>{i18n_setLang(ev.target.value)}
 
-let data = [{nome:'Rafael',idade:25,sexo:'M'},{nome:'Maria',idade:44,sexo:'F', fone:'5458-5544'},{nome:'Joao',idade:12,sexo:'M'}]
-
-const table = new jsTable('minhaTabela', {
-  data: data,
-  container: document.getElementById('table_container'),
-  editableCols: ['idade', 'sexo']
-});
-
-let nextClass = 'success';
-let classSequence = ['success', 'warning', 'danger','primary', 'info'];
-
-
-SHORTCUT_MAP['.FFF'] = () => {
-  dotNotify(nextClass, 'Aeee, fui precionado!!!!');
-  nextClass = classSequence[classSequence.indexOf(nextClass) + 1] || classSequence[0];
-  return false;
-}
-
-// SHORTCUT_MAP['fFTF'] = () => {table.filterInput.select()};
-// SHORTCUT_MAP['arrowrightFTF'] = () => {table.nextPage()}
-// SHORTCUT_MAP['arrowleftFTF'] = () => {table.previousPage()}
-// SHORTCUT_MAP['arrowdownFTF'] = () => {table.nextRow()}
-// SHORTCUT_MAP['arrowupFTF'] = () => {table.previousRow()}
-// SHORTCUT_MAP['enterFTF'] = () => {table.enterRow()}
 
 {% endblock %}
 </script>

@@ -66,6 +66,7 @@ function formLoad(dict, ignore=[]){for(key in dict){if(!ignore.includes(key)){tr
 * @example  var data = [];
 *           dotAppData('{% url 'app_data' 'data_test.json' %}').then((r) => data = r);
 *           dotAppData('{% url 'app_data' 'data_test.json' %}').then((r) => data = r).catch(() = > {...});
+*           dotAppData('{% url 'app_data' 'ope-i18n-en.json' %}'); para subpastas use - ao invez de /
 */
 function dotAppData(url) {return new Promise(function(resolve, reject) {let xhr = new XMLHttpRequest();xhr.onload = function() {let d = JSON.parse(this.responseText);if(typeof d != 'object'){d = JSON.parse(d)}resolve(d);};xhr.onerror = reject;xhr.open('GET', url);xhr.send();});}
 

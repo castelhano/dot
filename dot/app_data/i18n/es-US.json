@@ -46,5 +46,8 @@
             "erro_msg": "registration has not been completed. Check the fields entered",
             "sem_vagas_msg": "<b class=\"text-warning\">Informative:</b> At the moment we don't have any vacancies, you can try again in the future or send your CV to our human resources department"
         }
-    }
+    },
+    "999":{
+            "sad_message": "Ahhh que porquera"
+        }
 }
