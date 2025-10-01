@@ -46,10 +46,10 @@ function i18n_start(){
 
 
 function i18n_setLang(lang){ // altera manualmente o lang e atualiza traducao
-    if(__lang == lang){
-        console.log(`i18n: ${lang} is already the language in use, escaping.`);
-        return false;
-    }
+    // if(__lang == lang){
+    //     console.log(`i18n: ${lang} is already the language in use, escaping.`);
+    //     return false;
+    // }
     __lang = lang;
     __genericLang = __lang.includes('-') ? __lang.split('-')[0] : false;
     if(__lang == __langDefault){ // se lang == langDefault, apenas retorna dict para status original e chama metodo i18n_start
@@ -77,4 +77,5 @@ function i18n_setLang(lang){ // altera manualmente o lang e atualiza traducao
         }
     });
 }
-if(__lang != __langDefault){i18n_setLang()} // Se language do cliente for diferente da default, carrega base com traducoes
+if(__lang != __langDefault){i18n_setLang(__lang)} // Se language do cliente for diferente da default, carrega base com traducoes
+else{console.log('i18n: Default language, ending script...')}
